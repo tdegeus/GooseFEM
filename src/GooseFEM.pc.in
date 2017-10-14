@@ -1,0 +1,9 @@
+prefix=@CMAKE_INSTALL_PREFIX@
+exec_prefix=${prefix}
+
+Name: GooseFEM
+Description: Several Finite Element simulation, and some simple meshes and operations (C++/Python)
+Requires:
+Version: @GOOSEMESH_VERSION_NUMBER@
+Libs:
+Cflags: -I${prefix}/@INCLUDE_INSTALL_DIR@
