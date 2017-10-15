@@ -8,6 +8,7 @@
 #define GOOSEFEM_MESHQUAD4_H
 
 #include "Macros.h"
+#include "Mesh.h"
 
 // -------------------------------------------------------------------------------------------------
 
@@ -45,6 +46,8 @@ public:
   ColS   nodesRight   ();            // nodes along the right  edge
   MatS   nodesPeriodic();            // periodic node pairs [ : , 2 ]: ( independent , dependent )
   size_t nodesRef     ();            // lower-left node, to be used as reference for periodicity
+  MatS   dofs         ();            // DOF-numbers for each component of each node (sequential)
+  MatS   dofsPeriodic ();            // DOF-numbers for each component of each node (sequential)
 };
 
 // ====================== MESH WITH A FINE LAYER THAT EXPONENTIALLY COARSENS =======================
@@ -176,6 +179,33 @@ MatS Regular::nodesPeriodic()
 size_t Regular::nodesRef()
 {
   return 0;
+}
+
+// -------------------------------------------------------------------------------------------------
+
+MatS Regular::dofs()
+{
+  return GooseFEM::Mesh::dofs(m_nnode,m_ndim);
+}
+
+// -------------------------------------------------------------------------------------------------
+
+MatS Regular::dofsPeriodic()
+{
+  // DOF-numbers for each component of each node (sequential)
+  MatS out = GooseFEM::Mesh::dofs(m_nnode,m_ndim);
+
+  // periodic node-pairs
+  MatS   nodePer = nodesPeriodic();
+  size_t nper    = static_cast<size_t>(nodePer.rows());
+
+  // eliminate 'dependent' DOFs; renumber "out" to be sequential for the remaining DOFs
+  for ( size_t i = 0 ; i < nper ; ++i )
+    for ( size_t j = 0 ; j < m_ndim ; ++j )
+      out(nodePer(i,1),j) = out(nodePer(i,0),j);
+
+  // renumber "out" to be sequential
+  return GooseFEM::Mesh::renumber(out);
 }
 
 // =================================================================================================

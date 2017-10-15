@@ -16,16 +16,17 @@ Before proceeding, a words about optimization. Of course one should use optimiza
 
   This code depends on `eigen3 <https://github.com/RLovelett/eigen>`_ and `cppmat <https://github.com/tdegeus/cppmat>`_. Both are also header-only libraries. Both can be 'installed' using identical steps as described below.
 
+Manual compiler flags
+=====================
+
 GNU / Clang
-===========
+-----------
 
 Add the following compiler's arguments:
 
 .. code-block:: bash
 
-  -I${PATH_TO_GOOSEFEM}/include -std=c++11
-
-(or ``-std=c++14``, ...).
+  -I${PATH_TO_GOOSEFEM}/src -std=c++14
 
 .. note:: **(Not recommended)**
 
@@ -33,7 +34,7 @@ Add the following compiler's arguments:
 
   1.  Include this module as a submodule using ``git submodule add https://github.com/tdegeus/GooseFEM.git``.
 
-  2.  Replace the first line of this example by ``#include "GooseFEM/src/GooseFEM/MeshQuad4.h"``.
+  2.  Replace the first line of this example by ``#include "GooseFEM/src/GooseFEM/GooseFEM.h"``.
 
       *If you decide to manually copy the header file, you might need to modify this relative path to your liking.*
 
@@ -41,36 +42,22 @@ Add the following compiler's arguments:
 
 .. _compile_automatic:
 
-Automating build
-================
+(Semi-)Automatic compiler flags
+===============================
 
 Install
 -------
 
-To enable automatic build one should 'install' ``GooseFEM`` somewhere.
-
-.. note:: **(Not recommended)**
-
-  If you do not wish to use ``CMake``, or you want to do something custom. You can of course. Follow these steps:
-
-  1.  Copy the file ``src/GooseFEM.pc.in`` to ``GooseFEM.pc`` to some location that can be found by ``pkg_config`` (for example by adding ``export PKG_CONFIG_PATH=/path/to/GooseFEM.pc:$PKG_CONFIG_PATH`` to the ``.bashrc``).
-
-  2.  Modify the line ``prefix=@CMAKE_INSTALL_PREFIX@`` to ``prefix=/path/to/GooseFEM``.
-
-  3.  Modify the line ``Cflags: -I${prefix}/@INCLUDE_INSTALL_DIR@`` to ``Cflags: -I${prefix}/src``.
-
-  4.  Modify the line ``Version: @GOOSEFEM_VERSION_NUMBER@`` to reflect the correct release version.
+To enable (semi-)automatic build, one should 'install' ``GooseFEM`` somewhere.
 
 Install system-wide (root)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-1.  Make a temporary build directory. For example
+1.  Proceed to a (temporary) build directory. For example
 
     .. code-block:: bash
 
-      $ cd /path/to/GooseFEM/src
-      $ mkdir build
-      $ cd build
+      $ cd /path/to/GooseFEM/src/build
 
 2.  'Build' ``GooseFEM``
 
@@ -79,16 +66,16 @@ Install system-wide (root)
       $ cmake ..
       $ make install
 
+    (If you've used another build directory, change the first command to ``$ cmake /path/to/GooseFEM/src``)
+
 Install in custom location (user)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-1.  Make a temporary build directory. For example
+1.  Proceed to a (temporary) build directory. For example
 
     .. code-block:: bash
 
-      $ cd /path/to/GooseFEM/src
-      $ mkdir build
-      $ cd build
+      $ cd /path/to/GooseFEM/src/build
 
 2.  'Build' ``GooseFEM``, to install it in a custom location
 
@@ -98,35 +85,47 @@ Install in custom location (user)
       $ cmake .. -DCMAKE_INSTALL_PREFIX:PATH=/custom/install/path
       $ make install
 
+    (If you've used another build directory, change the first command to ``$ cmake /path/to/GooseFEM/src``)
+
 3.  Add the following path to your ``~/.bashrc`` (or ``~/.zshrc``):
 
     .. code-block:: bash
 
       export PKG_CONFIG_PATH=/custom/install/path/share/pkgconfig:$PKG_CONFIG_PATH
 
-pkg-config
-----------
+.. note:: **(Not recommended)**
+
+  If you do not wish to use ``CMake`` for the installation, or you want to do something custom. You can of course. Follow these steps:
+
+  1.  Copy the file ``src/GooseFEM.pc.in`` to ``GooseFEM.pc`` to some location that can be found by ``pkg_config`` (for example by adding ``export PKG_CONFIG_PATH=/path/to/GooseFEM.pc:$PKG_CONFIG_PATH`` to the ``.bashrc``).
+
+  2.  Modify the line ``prefix=@CMAKE_INSTALL_PREFIX@`` to ``prefix=/path/to/GooseFEM``.
+
+  3.  Modify the line ``Cflags: -I${prefix}/@INCLUDE_INSTALL_DIR@`` to ``Cflags: -I${prefix}/src``.
+
+  4.  Modify the line ``Version: @GOOSEFEM_VERSION_NUMBER@`` to reflect the correct release version.
+
+Compiler arguments from 'pkg-config'
+------------------------------------
 
 Instead of ``-I...`` one can now use
 
 .. code-block:: bash
 
-  `pkg-config --cflags GooseFEM` -std=c++11
+  `pkg-config --cflags GooseFEM` -std=c++14
 
-to compile in a single command.
+as compiler argument.
 
-cmake
------
+Compiler arguments from 'cmake'
+-------------------------------
 
 Add the following to your ``CMakeLists.txt``:
 
 .. code-block:: cmake
 
-  set(CMAKE_CXX_STANDARD 11)
+  set(CMAKE_CXX_STANDARD 14)
 
   find_package(PkgConfig)
 
   pkg_check_modules(GOOSEFEM REQUIRED GooseFEM)
   include_directories(${GOOSEFEM_INCLUDE_DIRS})
-
-or use ``set(CMAKE_CXX_STANDARD 14)``, ....

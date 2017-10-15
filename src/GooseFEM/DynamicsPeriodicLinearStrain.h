@@ -66,7 +66,6 @@ public:
     const MatD &x0,
     const MatS &conn,
     const MatS &dofs,
-    size_t      ndof,
     double      dt
   );
 
@@ -90,7 +89,6 @@ Simulation<Material,Element,Tensor>::Simulation(
   const MatD               &_x0,
   const MatS               &_conn,
   const MatS               &_dofs,
-  size_t                    _ndof,
   double                    _dt
 )
 {
@@ -102,7 +100,6 @@ Simulation<Material,Element,Tensor>::Simulation(
   x0    = _x0;
   conn  = _conn;
   dofs  = _dofs;
-  ndof  = _ndof;
 
   // time integration
   dt    = _dt;
@@ -112,6 +109,7 @@ Simulation<Material,Element,Tensor>::Simulation(
   ndim  = static_cast<size_t>(x0  .cols());
   nelem = static_cast<size_t>(conn.rows());
   nne   = static_cast<size_t>(conn.cols());
+  ndof  = dofs.maxCoeff()+1;
 
   // nodal quantities
   u  .conservativeResize(nnode,ndim); u  .setZero();
