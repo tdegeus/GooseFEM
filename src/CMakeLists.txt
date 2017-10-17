@@ -48,15 +48,12 @@ set(PKGCONFIG_INSTALL_DIR
 
 # list all header files
 set(GOOSEFEM_HEADERS
-  GooseFEM/DynamicsPeriodicLinearStrain.h
   GooseFEM/GooseFEM.h
   GooseFEM/Macros.h
+  GooseFEM/DynamicsPeriodicDiagonal.h
   GooseFEM/Mesh.h
   GooseFEM/MeshQuad4.h
   GooseFEM/MeshTri3.h
-  GooseFEM/Quad4.h
-  GooseFEM/Quad8.h
-  GooseFEM/Tri3.h
 )
 
 # Disable pkg-config for native Windows builds

@@ -21,18 +21,21 @@ namespace Quad4 {
 class Regular
 {
 private:
-  size_t m_nrow;   // number of 'pixel' rows
-  size_t m_ncol;   // number of 'pixel' columns
+  size_t m_nx;     // number of 'pixel' horizontal direction
+  size_t m_ny;     // number of 'pixel' vertical direction
+  double m_Lx;     // length in horizontal direction
+  double m_Ly;     // length in vertical direction
   size_t m_nelem;  // number of elements
   size_t m_nnode;  // number of nodes
   size_t m_nne=4;  // number of nodes-per-element
   size_t m_ndim=2; // number of dimensions
 
 public:
-  Regular            (const Regular &) = default;
-  Regular& operator= (const Regular &) = default;
-  Regular(){};
-  Regular(size_t nrow, size_t ncol); // create mesh with [nrow,ncol] 'pixels' (nrow*ncol elements)
+  // Regular            (const Regular &) = default;
+  // Regular& operator= (const Regular &) = default;
+  // Regular(){};
+  // mesh with "nx" pixels in horizontal direction (total length "Lx"), idem in vertical direction
+  Regular(size_t nx, size_t ny, double Lx=1., double Ly=1.);
 
   size_t nelem() { return m_nelem;}; // number of elements
   size_t nnode() { return m_nnode;}; // number of nodes
@@ -55,13 +58,13 @@ public:
 
 // ========================================== SOURCE CODE ==========================================
 
-Regular::Regular(size_t nrow, size_t ncol): m_nrow(nrow), m_ncol(ncol)
+Regular::Regular(size_t nx, size_t ny, double Lx, double Ly): m_nx(nx), m_ny(ny), m_Lx(Lx), m_Ly(Ly)
 {
-  assert( m_nrow >= 1 );
-  assert( m_ncol >= 1 );
+  assert( m_nx >= 1 );
+  assert( m_ny >= 1 );
 
-  m_nnode = (m_nrow+1) * (m_ncol+1);
-  m_nelem =  m_nrow    *  m_ncol   ;
+  m_nnode = (m_nx+1) * (m_ny+1);
+  m_nelem =  m_nx    *  m_ny   ;
 }
 
 // -------------------------------------------------------------------------------------------------
@@ -70,13 +73,13 @@ MatD Regular::coor()
 {
   MatD coor( m_nnode , m_ndim );
 
-  ColD x = ColD::LinSpaced( m_ncol+1 , 0.0 , 1.0 );
-  ColD y = ColD::LinSpaced( m_nrow+1 , 0.0 , 1.0 );
+  ColD x = ColD::LinSpaced( m_nx+1 , 0.0 , m_Lx );
+  ColD y = ColD::LinSpaced( m_ny+1 , 0.0 , m_Ly );
 
   size_t inode = 0;
 
-  for ( size_t row = 0 ; row < m_nrow+1 ; ++row ) {
-    for ( size_t col = 0 ; col < m_ncol+1 ; ++col ) {
+  for ( size_t row = 0 ; row < m_ny+1 ; ++row ) {
+    for ( size_t col = 0 ; col < m_nx+1 ; ++col ) {
       coor(inode,0) = x(col);
       coor(inode,1) = y(row);
       ++inode;
@@ -94,12 +97,12 @@ MatS Regular::conn()
 
   size_t ielem = 0;
 
-  for ( size_t row = 0 ; row < m_nrow ; ++row ) {
-    for ( size_t col = 0 ; col < m_ncol ; ++col ) {
-      conn(ielem,0) = (row+0)*(m_ncol+1)+col+0;
-      conn(ielem,1) = (row+0)*(m_ncol+1)+col+1;
-      conn(ielem,3) = (row+1)*(m_ncol+1)+col+0;
-      conn(ielem,2) = (row+1)*(m_ncol+1)+col+1;
+  for ( size_t row = 0 ; row < m_ny ; ++row ) {
+    for ( size_t col = 0 ; col < m_nx ; ++col ) {
+      conn(ielem,0) = (row+0)*(m_nx+1)+col+0;
+      conn(ielem,1) = (row+0)*(m_nx+1)+col+1;
+      conn(ielem,3) = (row+1)*(m_nx+1)+col+0;
+      conn(ielem,2) = (row+1)*(m_nx+1)+col+1;
       ++ielem;
     }
   }
@@ -111,9 +114,9 @@ MatS Regular::conn()
 
 ColS Regular::nodesBottom()
 {
-  ColS nodes(m_ncol+1);
+  ColS nodes(m_nx+1);
 
-  for ( size_t col = 0 ; col < m_ncol+1 ; ++col ) nodes(col) = col;
+  for ( size_t col = 0 ; col < m_nx+1 ; ++col ) nodes(col) = col;
 
   return nodes;
 }
@@ -122,9 +125,9 @@ ColS Regular::nodesBottom()
 
 ColS Regular::nodesTop()
 {
-  ColS nodes(m_ncol+1);
+  ColS nodes(m_nx+1);
 
-  for ( size_t col = 0 ; col < m_ncol+1 ; ++col ) nodes(col) = col+m_nrow*(m_ncol+1);
+  for ( size_t col = 0 ; col < m_nx+1 ; ++col ) nodes(col) = col+m_ny*(m_nx+1);
 
   return nodes;
 }
@@ -133,9 +136,9 @@ ColS Regular::nodesTop()
 
 ColS Regular::nodesLeft()
 {
-  ColS nodes(m_nrow+1);
+  ColS nodes(m_ny+1);
 
-  for ( size_t row = 0 ; row < m_nrow+1 ; ++row ) nodes(row) = row*(m_ncol+1);
+  for ( size_t row = 0 ; row < m_ny+1 ; ++row ) nodes(row) = row*(m_nx+1);
 
   return nodes;
 }
@@ -144,9 +147,9 @@ ColS Regular::nodesLeft()
 
 ColS Regular::nodesRight()
 {
-  ColS nodes(m_nrow+1);
+  ColS nodes(m_ny+1);
 
-  for ( size_t row = 0 ; row < m_nrow+1 ; ++row ) nodes(row) = row*(m_ncol+1)+m_ncol;
+  for ( size_t row = 0 ; row < m_ny+1 ; ++row ) nodes(row) = row*(m_nx+1)+m_nx;
 
   return nodes;
 }

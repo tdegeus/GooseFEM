@@ -57,10 +57,12 @@ mMesh.def("renumber", py::overload_cast<const GooseFEM::MatS&,const GooseFEM::Co
 py::class_<GooseFEM::Mesh::Quad4::Regular>(mMeshQuad4, "Regular")
 
   .def(
-    py::init<size_t,size_t>(),
-    "Regular mesh with 'nrow' rows and 'ncol' columns of elements",
-    py::arg("nrow"),
-    py::arg("ncol")
+    py::init<size_t,size_t,double,double>(),
+    "Regular mesh: 'nx' pixels in horizontal direction (length 'Lx'), idem in vertical direction",
+    py::arg("nx"),
+    py::arg("ny"),
+    py::arg("Lx")=1.,
+    py::arg("Ly")=1.
   )
 
   .def("coor"         ,&GooseFEM::Mesh::Quad4::Regular::coor         )
@@ -75,6 +77,8 @@ py::class_<GooseFEM::Mesh::Quad4::Regular>(mMeshQuad4, "Regular")
   .def("nodesRight"   ,&GooseFEM::Mesh::Quad4::Regular::nodesRight   )
   .def("nodesPeriodic",&GooseFEM::Mesh::Quad4::Regular::nodesPeriodic)
   .def("nodesRef"     ,&GooseFEM::Mesh::Quad4::Regular::nodesRef     )
+  .def("dofs"         ,&GooseFEM::Mesh::Quad4::Regular::dofs         )
+  .def("dofsPeriodic" ,&GooseFEM::Mesh::Quad4::Regular::dofsPeriodic )
 
   .def("__repr__",
     [](const GooseFEM::Mesh::Quad4::Regular &a){ return "<GooseFEM.Mesh.Quad4.Regular>"; }

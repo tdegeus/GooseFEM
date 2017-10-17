@@ -9,11 +9,7 @@
 
 #include "Macros.h"
 
-#include "DynamicsPeriodicLinearStrain.h"
-
-#include "Tri3.h"
-#include "Quad4.h"
-#include "Quad8.h"
+#include "DynamicsPeriodicDiagonal.h"
 
 #include "Mesh.h"
 #include "MeshTri3.h"
