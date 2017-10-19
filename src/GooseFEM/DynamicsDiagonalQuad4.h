@@ -1,4 +1,4 @@
-/* ========================================== DESCRIPTION ==========================================
+/* =================================================================================================
 
 (c - GPLv3) T.W.J. de Geus (Tom) | tom@geus.me | www.geus.me | github.com/tdegeus/GooseFEM
 
@@ -23,7 +23,7 @@ using T2  = cppmat::cartesian2d::tensor2 <double>;
 using T2s = cppmat::cartesian2d::tensor2s<double>;
 using T2d = cppmat::cartesian2d::tensor2d<double>;
 
-// =================================================================================================
+// ========================== N.B. most loops are unrolled for efficiency ==========================
 
 template <class QuadraturePoint>
 class Quad4
@@ -101,11 +101,14 @@ void Quad4<QuadraturePoint>::computeM(size_t elem)
     dNdxi(3,0) = -.25*(1.+xi_n(k,1)); dNdxi(3,1) = +.25*(1.-xi_n(k,0));
 
     // - Jacobian
+    //   J(i,j) += dNdxi(m,i) * xe(m,j)
     J.zeros();
-    for ( size_t m = 0 ; m < nne ; ++m )
-      for ( size_t i = 0 ; i < ndim ; ++i )
-        for ( size_t j = 0 ; j < ndim ; ++j )
-          J(i,j) += dNdxi(m,i) * xe(m,j);
+    for ( size_t m = 0 ; m < nne ; ++m ) {
+      J(0,0) += dNdxi(m,0) * xe(m,0);
+      J(0,1) += dNdxi(m,0) * xe(m,1);
+      J(1,0) += dNdxi(m,1) * xe(m,0);
+      J(1,1) += dNdxi(m,1) * xe(m,1);
+    }
 
     // - determinant and inverse of the Jacobian
     Jdet = J.det();
@@ -115,8 +118,9 @@ void Quad4<QuadraturePoint>::computeM(size_t elem)
     V = w_n(k) * Jdet;
 
     // - assemble to element mass matrix (use the delta properties of the shape functions)
-    for ( size_t i = 0 ; i < ndim ; ++i )
-      M(i,i) += quad->density(elem,k,V) * V;
+    //   M(m+i,n+i) = N(m) * rho * V * N(n);
+    M(k*2  ,k*2  ) = quad->density(elem,k,V) * V;
+    M(k*2+1,k*2+1) = quad->density(elem,k,V) * V;
   }
 }
 
@@ -138,11 +142,14 @@ void Quad4<QuadraturePoint>::computeFu(size_t elem)
     dNdxi(3,0) = -.25*(1.+xi(k,1)); dNdxi(3,1) = +.25*(1.-xi(k,0));
 
     // - Jacobian
+    //   J(i,j) += dNdxi(m,i) * xe(m,j)
     J.zeros();
-    for ( size_t m = 0 ; m < nne ; ++m )
-      for ( size_t i = 0 ; i < ndim ; ++i )
-        for ( size_t j = 0 ; j < ndim ; ++j )
-          J(i,j) += dNdxi(m,i) * xe(m,j);
+    for ( size_t m = 0 ; m < nne ; ++m ) {
+      J(0,0) += dNdxi(m,0) * xe(m,0);
+      J(0,1) += dNdxi(m,0) * xe(m,1);
+      J(1,0) += dNdxi(m,1) * xe(m,0);
+      J(1,1) += dNdxi(m,1) * xe(m,1);
+    }
 
     // - determinant and inverse of the Jacobian
     Jdet = J.det();
@@ -152,35 +159,38 @@ void Quad4<QuadraturePoint>::computeFu(size_t elem)
     V = w(k) * Jdet;
 
     // - shape function gradients (global coordinates)
-    dNdx.zeros();
-    for ( size_t m = 0 ; m < nne ; ++m )
-      for ( size_t i = 0 ; i < ndim ; ++i )
-        for ( size_t j = 0 ; j < ndim ; ++j )
-          dNdx(m,i) += Jinv(i,j) * dNdxi(m,j);
+    //   dNdx(m,i) += Jinv(i,j) * dNdxi(m,j)
+    for ( size_t m = 0 ; m < nne ; ++m ) {
+      dNdx(m,0) = Jinv(0,0) * dNdxi(m,0) + Jinv(0,1) * dNdxi(m,1);
+      dNdx(m,1) = Jinv(1,0) * dNdxi(m,0) + Jinv(1,1) * dNdxi(m,1);
+    }
 
     // - displacement gradient
+    //   gradu(i,j) += dNdx(m,i) * ue(m,j)
     gradu.zeros();
-    for ( size_t m = 0 ; m < nne ; ++m )
-      for ( size_t i = 0 ; i < ndim ; ++i )
-        for ( size_t j = 0 ; j < ndim ; ++j )
-          gradu(i,j) += dNdx(m,i) * ue(m,j);
+    for ( size_t m = 0 ; m < nne ; ++m ) {
+      gradu(0,0) += dNdx(m,0) * ue(m,0);
+      gradu(0,1) += dNdx(m,0) * ue(m,1);
+      gradu(1,0) += dNdx(m,1) * ue(m,0);
+      gradu(1,1) += dNdx(m,1) * ue(m,1);
+    }
 
     // - strain tensor (symmetric part of "gradu")
-    for ( size_t i = 0 ; i < ndim ; ++i ) {
-      for ( size_t j = i ; j < ndim ; ++j ) {
-        quad->eps(i,j) = .5 * ( gradu(i,j) + gradu(j,i) );
-        quad->eps(j,i) = quad->eps(i,j);
-      }
-    }
+    //   quad->eps(i,j) = .5 * ( gradu(i,j) + gradu(j,i) )
+    quad->eps(0,0) = gradu(0,0);
+    quad->eps(0,1) = .5 * ( gradu(0,1) + gradu(1,0) );
+    quad->eps(1,0) = quad->eps(0,1);
+    quad->eps(1,1) = gradu(1,1);
 
     // - constitutive response
     quad->stressStrain(elem,k,V);
 
     // - assemble to element force
-    for ( size_t m = 0 ; m < nne ; ++m )
-      for ( size_t i = 0 ; i < ndim ; ++i )
-        for ( size_t j = 0 ; j < ndim ; ++j )
-          fu(m*ndim+j) += dNdx(m,i) * quad->sig(i,j) * V;
+    //   fu(m*ndim+j) += dNdx(m,i) * quad->sig(i,j) * V;
+    for ( size_t m = 0 ; m < nne ; ++m ) {
+      fu(m*ndim+0) += dNdx(m,0) * quad->sig(0,0) * V + dNdx(m,1) * quad->sig(1,0) * V;
+      fu(m*ndim+1) += dNdx(m,0) * quad->sig(0,1) * V + dNdx(m,1) * quad->sig(1,1) * V;
+    }
   }
 }
 
@@ -202,11 +212,14 @@ void Quad4<QuadraturePoint>::computeFv(size_t elem)
     dNdxi(3,0) = -.25*(1.+xi(k,1)); dNdxi(3,1) = +.25*(1.-xi(k,0));
 
     // - Jacobian
+    //   J(i,j) += dNdxi(m,i) * xe(m,j)
     J.zeros();
-    for ( size_t m = 0 ; m < nne ; ++m )
-      for ( size_t i = 0 ; i < ndim ; ++i )
-        for ( size_t j = 0 ; j < ndim ; ++j )
-          J(i,j) += dNdxi(m,i) * xe(m,j);
+    for ( size_t m = 0 ; m < nne ; ++m ) {
+      J(0,0) += dNdxi(m,0) * xe(m,0);
+      J(0,1) += dNdxi(m,0) * xe(m,1);
+      J(1,0) += dNdxi(m,1) * xe(m,0);
+      J(1,1) += dNdxi(m,1) * xe(m,1);
+    }
 
     // - determinant and inverse of the Jacobian
     Jdet = J.det();
@@ -216,35 +229,38 @@ void Quad4<QuadraturePoint>::computeFv(size_t elem)
     V = w(k) * Jdet;
 
     // - shape function gradients (global coordinates)
-    dNdx.zeros();
-    for ( size_t m = 0 ; m < nne ; ++m )
-      for ( size_t i = 0 ; i < ndim ; ++i )
-        for ( size_t j = 0 ; j < ndim ; ++j )
-          dNdx(m,i) += Jinv(i,j) * dNdxi(m,j);
+		//   dNdx(m,i) += Jinv(i,j) * dNdxi(m,j)
+    for ( size_t m = 0 ; m < nne ; ++m ) {
+      dNdx(m,0) = Jinv(0,0) * dNdxi(m,0) + Jinv(0,1) * dNdxi(m,1);
+      dNdx(m,1) = Jinv(1,0) * dNdxi(m,0) + Jinv(1,1) * dNdxi(m,1);
+    }
 
     // - velocity gradient
+		//   gradv(i,j) += dNdx(m,i) * ve(m,j)
     gradv.zeros();
-    for ( size_t m = 0 ; m < nne ; ++m )
-      for ( size_t i = 0 ; i < ndim ; ++i )
-        for ( size_t j = 0 ; j < ndim ; ++j )
-          gradv(i,j) += dNdx(m,i) * ve(m,j);
-
-    // - strain-rate tensor (symmetric part of "gradu")
-    for ( size_t i = 0 ; i < ndim ; ++i ) {
-      for ( size_t j = i ; j < ndim ; ++j ) {
-        quad->epsdot(i,j) = .5 * ( gradu(i,j) + gradu(j,i) );
-        quad->epsdot(j,i) = quad->epsdot(i,j);
-      }
+    for ( size_t m = 0 ; m < nne ; ++m ) {
+      gradv(0,0) += dNdx(m,0) * ve(m,0);
+      gradv(0,1) += dNdx(m,0) * ve(m,1);
+      gradv(1,0) += dNdx(m,1) * ve(m,0);
+      gradv(1,1) += dNdx(m,1) * ve(m,1);
     }
+
+    // - strain-rate tensor (symmetric part of "gradv")
+		//   quad->epsdot(i,j) = .5 * ( gradv(i,j) + gradv(j,i) )
+    quad->epsdot(0,0) = gradv(0,0);
+    quad->epsdot(0,1) = .5 * ( gradv(0,1) + gradv(1,0) );
+    quad->epsdot(1,0) = quad->epsdot(0,1);
+    quad->epsdot(1,1) = gradv(1,1);
 
     // - constitutive response
     quad->stressStrainRate(elem,k,V);
 
     // - assemble to element force
-    for ( size_t m = 0 ; m < nne ; ++m )
-      for ( size_t i = 0 ; i < ndim ; ++i )
-        for ( size_t j = 0 ; j < ndim ; ++j )
-          fv(m*ndim+j) += dNdx(m,i) * quad->sig(i,j) * V;
+		//   fv(m*ndim+j) += dNdx(m,i) * quad->sig(i,j) * V;
+    for ( size_t m = 0 ; m < nne ; ++m ) {
+      fv(m*2+0) += dNdx(m,0) * quad->sig(0,0) * V + dNdx(m,1) * quad->sig(1,0) * V;
+      fv(m*2+1) += dNdx(m,0) * quad->sig(0,1) * V + dNdx(m,1) * quad->sig(1,1) * V;
+    }
   }
 }
 
@@ -263,11 +279,14 @@ void Quad4<QuadraturePoint>::post(size_t elem)
     dNdxi(3,0) = -.25*(1.+xi(k,1)); dNdxi(3,1) = +.25*(1.-xi(k,0));
 
     // - Jacobian
+    //   J(i,j) += dNdxi(m,i) * xe(m,j)
     J.zeros();
-    for ( size_t m = 0 ; m < nne ; ++m )
-      for ( size_t i = 0 ; i < ndim ; ++i )
-        for ( size_t j = 0 ; j < ndim ; ++j )
-          J(i,j) += dNdxi(m,i) * xe(m,j);
+    for ( size_t m = 0 ; m < nne ; ++m ) {
+      J(0,0) += dNdxi(m,0) * xe(m,0);
+      J(0,1) += dNdxi(m,0) * xe(m,1);
+      J(1,0) += dNdxi(m,1) * xe(m,0);
+      J(1,1) += dNdxi(m,1) * xe(m,1);
+    }
 
     // - determinant and inverse of the Jacobian
     Jdet = J.det();
@@ -277,41 +296,45 @@ void Quad4<QuadraturePoint>::post(size_t elem)
     V = w(k) * Jdet;
 
     // - shape function gradients (global coordinates)
-    dNdx.zeros();
-    for ( size_t m = 0 ; m < nne ; ++m )
-      for ( size_t i = 0 ; i < ndim ; ++i )
-        for ( size_t j = 0 ; j < ndim ; ++j )
-          dNdx(m,i) += Jinv(i,j) * dNdxi(m,j);
+    //   dNdx(m,i) += Jinv(i,j) * dNdxi(m,j)
+    for ( size_t m = 0 ; m < nne ; ++m ) {
+      dNdx(m,0) = Jinv(0,0) * dNdxi(m,0) + Jinv(0,1) * dNdxi(m,1);
+      dNdx(m,1) = Jinv(1,0) * dNdxi(m,0) + Jinv(1,1) * dNdxi(m,1);
+    }
 
     // - displacement gradient
+    //   gradu(i,j) += dNdx(m,i) * ue(m,j)
     gradu.zeros();
-    for ( size_t m = 0 ; m < nne ; ++m )
-      for ( size_t i = 0 ; i < ndim ; ++i )
-        for ( size_t j = 0 ; j < ndim ; ++j )
-          gradu(i,j) += dNdx(m,i) * ue(m,j);
+    for ( size_t m = 0 ; m < nne ; ++m ) {
+      gradu(0,0) += dNdx(m,0) * ue(m,0);
+      gradu(0,1) += dNdx(m,0) * ue(m,1);
+      gradu(1,0) += dNdx(m,1) * ue(m,0);
+      gradu(1,1) += dNdx(m,1) * ue(m,1);
+    }
 
     // - strain tensor (symmetric part of "gradu")
-    for ( size_t i = 0 ; i < ndim ; ++i ) {
-      for ( size_t j = i ; j < ndim ; ++j ) {
-        quad->eps(i,j) = .5 * ( gradu(i,j) + gradu(j,i) );
-        quad->eps(j,i) = quad->eps(i,j);
-      }
-    }
+    //   quad->eps(i,j) = .5 * ( gradu(i,j) + gradu(j,i) )
+    quad->eps(0,0) = gradu(0,0);
+    quad->eps(0,1) = .5 * ( gradu(0,1) + gradu(1,0) );
+    quad->eps(1,0) = quad->eps(0,1);
+    quad->eps(1,1) = gradu(1,1);
 
     // - velocity gradient
+    //   gradv(i,j) += dNdx(m,i) * ve(m,j)
     gradv.zeros();
-    for ( size_t m = 0 ; m < nne ; ++m )
-      for ( size_t i = 0 ; i < ndim ; ++i )
-        for ( size_t j = 0 ; j < ndim ; ++j )
-          gradv(i,j) += dNdx(m,i) * ve(m,j);
-
-    // - strain-rate tensor (symmetric part of "gradu")
-    for ( size_t i = 0 ; i < ndim ; ++i ) {
-      for ( size_t j = i ; j < ndim ; ++j ) {
-        quad->epsdot(i,j) = .5 * ( gradu(i,j) + gradu(j,i) );
-        quad->epsdot(j,i) = quad->epsdot(i,j);
-      }
+    for ( size_t m = 0 ; m < nne ; ++m ) {
+      gradv(0,0) += dNdx(m,0) * ve(m,0);
+      gradv(0,1) += dNdx(m,0) * ve(m,1);
+      gradv(1,0) += dNdx(m,1) * ve(m,0);
+      gradv(1,1) += dNdx(m,1) * ve(m,1);
     }
+
+    // - strain-rate tensor (symmetric part of "gradv")
+    //   quad->epsdot(i,j) = .5 * ( gradv(i,j) + gradv(j,i) )
+    quad->epsdot(0,0) = gradv(0,0);
+    quad->epsdot(0,1) = .5 * ( gradv(0,1) + gradv(1,0) );
+    quad->epsdot(1,0) = quad->epsdot(0,1);
+    quad->epsdot(1,1) = gradv(1,1);
 
     // - constitutive response
     quad->stressStrainPost    (elem,k,V);

@@ -67,10 +67,10 @@ public:
 
   void velocityVerlet();  // 1 time step of time integrator
   void Verlet();          // 1 time step of time integrator (Fv == 0)
-  void computeMinv();     // element loop <- "elem->computeM"
-  void computeFu();       // element loop <- "elem->computeFu"
-  void computeFv();
-  void post();
+  void computeMinv();     // element loop: inverse mass matrix            <- "elem->computeM"
+  void computeFu();       // element loop: displacement dependent forces  <- "elem->computeFu"
+  void computeFv();       // element loop: velocity dependent forces      <- "elem->computeFv"
+  void post();            // element loop: post-process                   <- "elem->post"
 
 };
 
@@ -119,7 +119,7 @@ Periodic<Element>::Periodic(
   A   .conservativeResize(ndof); A   .setZero();
   A_n .conservativeResize(ndof); A_n .setZero();
 
-  // compute inverse mass matrix
+  // compute inverse mass matrix : assumed constant in time
   computeMinv();
 }
 
@@ -236,10 +236,12 @@ void Periodic<Element>::computeMinv()
 
     // - check that the user provided a diagonal mass matrix
     #ifndef NDEBUG
-      for ( size_t i = 0 ; i < nne*ndim ; ++i )
-        for ( size_t j = 0 ; j < nne*ndim ; ++j )
-          if ( i != j )
-            assert( !elem->M(i,j) );
+      for ( size_t i = 0 ; i < nne*ndim ; ++i ) {
+        for ( size_t j = 0 ; j < nne*ndim ; ++j ) {
+          if ( i != j ) assert( ! elem->M(i,j) );
+          else          assert(   elem->M(i,i) );
+        }
+      }
     #endif
   }
 
