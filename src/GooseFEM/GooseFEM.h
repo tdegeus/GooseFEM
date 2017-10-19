@@ -9,7 +9,8 @@
 
 #include "Macros.h"
 
-#include "DynamicsPeriodicDiagonal.h"
+#include "DynamicsDiagonalPeriodic.h"
+#include "DynamicsDiagonalQuad4.h"
 
 #include "Mesh.h"
 #include "MeshTri3.h"

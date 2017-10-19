@@ -4,8 +4,8 @@
 
 ================================================================================================= */
 
-#ifndef GOOSEFEM_DYNAMICS_PERIODIC_DIAGONAL_H
-#define GOOSEFEM_DYNAMICS_PERIODIC_DIAGONAL_H
+#ifndef GOOSEFEM_DYNAMICS_DIAGONAL_PERIODIC_H
+#define GOOSEFEM_DYNAMICS_DIAGONAL_PERIODIC_H
 
 #include "Macros.h"
 #include <cppmat/cppmat.h>
@@ -14,12 +14,12 @@
 
 namespace GooseFEM {
 namespace Dynamics {
-namespace Periodic {
+namespace Diagonal {
 
 // =========================================== OVERVIEW ============================================
 
 template <class Element>
-class DiagonalMass
+class Periodic
 {
 public:
 
@@ -31,24 +31,23 @@ public:
 
   // mesh : nodal quantities and connectivity
   MatS   dofs;    // DOF-numbers       of each node    (column of 'vectors')
-  MatS   conn;    // node numbers      of each element (column of elements )
+  MatS   conn;    // node numbers      of each element (column of elements)
   MatD   x0;      // initial positions of each node    (column of vectors)
   MatD   u;       // displacements     of each node    (column of vectors)
   MatD   v;       // velocities        of each node    (column of vectors)
-  MatD   v_n;     // velocities        of each node    (column of vectors, last increment)
-  MatD   dv;      // velocities        of each node    (column of vectors, update)
   MatD   a;       // accelerations     of each node    (column of vectors)
   size_t nnode;   // number of nodes
   size_t nelem;   // number of elements
   size_t nne;     // number of nodes-per-element
   size_t ndim;    // number of dimensions
   size_t ndof;    // number of DOFs (after eliminating periodic dependencies)
-  size_t refNode; // reference node (whose position will stay fixed at all times)
 
   // linear system
   ColD Minv;      // inverse of mass matrix (constructed diagonal -> inverse == diagonal)
   ColD Fu;        // force that depends on displacement (column)
   ColD Fv;        // force that depends on velocity (and displacement) (column)
+  ColD V;         // velocity (column)
+  ColD V_n;       // velocity (column, last increment)
   ColD A;         // acceleration (column)
   ColD A_n;       // acceleration (column, last increment)
 
@@ -60,113 +59,121 @@ public:
   // constructor
   // -----------
 
-  DiagonalMass(std::shared_ptr<Element> elem, const MatD &x0,const MatS &conn,const MatS &dofs,
-    size_t refNode, double dt, double alpha=0.0 );
+  Periodic(std::shared_ptr<Element> elem, const MatD &x0,const MatS &conn,const MatS &dofs,
+    double dt, double alpha=0.0 );
 
   // functions
   // ---------
 
-  void increment();
-  void removeRigidBodyMotion();
-  void computeInverseMassMatrix();
-  void computeInternalForce();
-  void computeDampingForce();
+  void velocityVerlet();  // 1 time step of time integrator
+  void Verlet();          // 1 time step of time integrator (Fv == 0)
+  void computeMinv();     // element loop <- "elem->computeM"
+  void computeFu();       // element loop <- "elem->computeFu"
+  void computeFv();
+  void post();
 
 };
 
 // ========================================== SOURCE CODE ==========================================
 
 template<class Element>
-DiagonalMass<Element>::DiagonalMass(
+Periodic<Element>::Periodic(
   std::shared_ptr<Element> _elem, const MatD &_x0, const MatS &_conn, const MatS &_dofs,
-  size_t _refNode, double _dt, double _alpha
+  double _dt, double _alpha
 )
 {
   // problem specific settings
-  elem    = _elem;
+  elem  = _elem;
 
   // mesh definition
-  x0      = _x0;
-  conn    = _conn;
-  dofs    = _dofs;
-  refNode = _refNode;
+  x0    = _x0;
+  conn  = _conn;
+  dofs  = _dofs;
 
   // time integration
-  dt      = _dt;
-  alpha   = _alpha;
+  dt    = _dt;
+  alpha = _alpha;
 
   // extract mesh size from definition
-  nnode   = static_cast<size_t>(x0  .rows());
-  ndim    = static_cast<size_t>(x0  .cols());
-  nelem   = static_cast<size_t>(conn.rows());
-  nne     = static_cast<size_t>(conn.cols());
-  ndof    = dofs.maxCoeff()+1;
+  nnode = static_cast<size_t>(x0  .rows());
+  ndim  = static_cast<size_t>(x0  .cols());
+  nelem = static_cast<size_t>(conn.rows());
+  nne   = static_cast<size_t>(conn.cols());
+  ndof  = dofs.maxCoeff()+1;
+
+  // check
+  assert( dofs.size() == nnode * ndim );
+  assert( ndof        <  nnode * ndim );
 
   // nodal quantities
-  u  .conservativeResize(nnode,ndim); u  .setZero();
-  v  .conservativeResize(nnode,ndim); v  .setZero();
-  v_n.conservativeResize(nnode,ndim); v_n.setZero();
-  dv .conservativeResize(nnode,ndim); dv .setZero();
-  a  .conservativeResize(nnode,ndim); a  .setZero();
+  u.conservativeResize(nnode,ndim); u.setZero();
+  v.conservativeResize(nnode,ndim); v.setZero();
+  a.conservativeResize(nnode,ndim); a.setZero();
 
-  // linear system
-  Minv .conservativeResize(ndof); Minv .setZero();
-  Fu   .conservativeResize(ndof); Fu   .setZero();
-  Fv   .conservativeResize(ndof); Fv   .setZero();
-  A    .conservativeResize(ndof); A    .setZero();
-  A_n  .conservativeResize(ndof); A_n  .setZero();
+  // linear system (DOFs)
+  Minv.conservativeResize(ndof); Minv.setZero();
+  Fu  .conservativeResize(ndof); Fu  .setZero();
+  Fv  .conservativeResize(ndof); Fv  .setZero();
+  V   .conservativeResize(ndof); V   .setZero();
+  V_n .conservativeResize(ndof); V_n .setZero();
+  A   .conservativeResize(ndof); A   .setZero();
+  A_n .conservativeResize(ndof); A_n .setZero();
 
   // compute inverse mass matrix
-  computeInverseMassMatrix();
+  computeMinv();
 }
 
 // =================================================================================================
 
 template<class Element>
-void DiagonalMass<Element>::increment()
+void Periodic<Element>::velocityVerlet()
 {
   // (1) new nodal positions (displacements)
   // - apply update (nodal) : x_{n+1} = x_n + dt * v_n + .5 * dt^2 * a_n"
   u += dt * v + ( .5 * std::pow(dt,2.) ) * a;
-  // - remove rigid body motion ( u(refNode,:) == 0. )
-  removeRigidBodyMotion();
   // - compute forces that are dependent on the displacement, but not on the velocity
-  computeInternalForce();
+  computeFu();
 
   // (2a) estimate nodal velocities
-  // - update nodal velocities
-  v = v_n + dt * a;
+  // - update velocities (DOFs)
+  V.noalias() = V_n + dt * A;
+  // - convert to nodal velocity (periodicity implies that several nodes depend on the same DOF)
+  for ( size_t i=0; i<nnode*ndim; ++i ) v(i) = V(dofs(i));
   // - compute forces that are dependent on the velocity
-  computeDampingForce();
+  computeFv();
   // - solve for accelerations (DOFs)
-  A = Minv.cwiseProduct( - Fu - Fv );
-  // - update nodal velocities (periodicity implies that several nodes depend on the same DOF)
-  for ( size_t i=0; i<ndof; ++i ) v(i) = v_n(i) + ( .5 * dt ) * ( A(dofs(i)) + A_n(dofs(i)) );
+  A.noalias() = Minv.cwiseProduct( - Fu - Fv - alpha*V );
+  // - update velocities (DOFs)
+  V.noalias() = V_n + ( .5 * dt ) * ( A_n + A );
+  // - convert to nodal velocity (periodicity implies that several nodes depend on the same DOF)
+  for ( size_t i=0; i<nnode*ndim; ++i ) v(i) = V(dofs(i));
   // - compute forces that are dependent on the velocity
-  computeDampingForce();
+  computeFv();
 
   // (2b) new nodal velocities
   // - solve for accelerations (DOFs)
-  A = Minv.cwiseProduct( - Fu - Fv );
-  // - update nodal velocities (periodicity implies that several nodes depend on the same DOF)
-  for ( size_t i=0; i<ndof; ++i ) v(i) = v_n(i) + ( .5 * dt ) * ( A(dofs(i)) + A_n(dofs(i)) );
+  A.noalias() = Minv.cwiseProduct( - Fu - Fv - alpha*V );
+  // - update velocities (DOFs)
+  V.noalias() = V_n + ( .5 * dt ) * ( A_n + A );
+  // - convert to nodal velocity (periodicity implies that several nodes depend on the same DOF)
+  for ( size_t i=0; i<nnode*ndim; ++i ) v(i) = V(dofs(i));
   // - compute forces that are dependent on the velocity
-  computeDampingForce();
+  computeFv();
 
   // (3) new nodal accelerations
   // - solve for accelerations (DOFs)
-  A = Minv.cwiseProduct( - Fu - Fv );
-  // - set nodal accelerations (periodicity implies that several nodes depend on the same DOF)
-  for ( size_t i=0; i<ndof; ++i ) a(i) = A(dofs(i));
+  A.noalias() = Minv.cwiseProduct( - Fu - Fv - alpha*V );
+  // - convert to nodal acceleration (periodicity implies that several nodes depend on the same DOF)
+  for ( size_t i=0; i<nnode*ndim; ++i ) a(i) = A(dofs(i));
 
   // store history
-  A_n = A;  // accelerations (DOFs)
-  v_n = v;  // nodal velocities
-  t  += dt; // current time instance
+  A_n.noalias() = A;  // accelerations (DOFs)
+  V_n.noalias() = V;  // nodal velocities
+  t            += dt; // current time instance
 
   // N.B. at this point:
   // "a", "A", "A_n"  ->  new nodal accelerations, their DOF equivalents, and a 'back-up'
-  // "v",      "v_n"  ->  new nodal velocities,                           and a 'back-up'
+  // "v",      "V_n"  ->  new nodal velocities,                           and a 'back-up'
   // "u"              ->  new nodal displacements
   // The forces "Fu" and "Fv" correspond to this state of the system
 }
@@ -174,23 +181,34 @@ void DiagonalMass<Element>::increment()
 // =================================================================================================
 
 template<class Element>
-void DiagonalMass<Element>::removeRigidBodyMotion()
+void Periodic<Element>::Verlet()
 {
-  // remove the amount of deformation applied the reference node
-  for ( size_t i = 0 ; i < nnode ; ++i )
-    for ( size_t j = 0 ; j < ndim ; ++j )
-      if ( i != refNode )
-        u(i,j) -= u(refNode,j);
+  // (1) new nodal positions (displacements)
+  // - apply update (nodal) : x_{n+1} = x_n + dt * v_n + .5 * dt^2 * a_n"
+  u += dt * v + ( .5 * std::pow(dt,2.) ) * a;
+  // - compute forces that are dependent on the displacement, but not on the velocity
+  computeFu();
+  // - solve for accelerations (DOFs)
+  A.noalias() = Minv.cwiseProduct( - Fu );
+  // - convert to nodal acceleration (periodicity implies that several nodes depend on the same DOF)
+  for ( size_t i=0; i<nnode*ndim; ++i ) a(i) = A(dofs(i));
 
-  // remove the deformation of the reference node
-  for ( size_t j = 0 ; j < ndim ; ++j )
-    u(refNode,j) = 0.;
+  // (2) propagate velocities
+  // - update velocities (DOFs)
+  V.noalias() = V_n + ( .5 * dt ) * ( A_n + A );
+  // - convert to nodal velocity (periodicity implies that several nodes depend on the same DOF)
+  for ( size_t i=0; i<nnode*ndim; ++i ) v(i) = V(dofs(i));
+
+  // store history
+  A_n.noalias() = A;  // accelerations (DOFs)
+  V_n.noalias() = V;  // nodal velocities
+  t            += dt; // current time instance
 }
 
 // =================================================================================================
 
 template<class Element>
-void DiagonalMass<Element>::computeInverseMassMatrix()
+void Periodic<Element>::computeMinv()
 {
   // array with DOF numbers of each node
   cppmat::matrix2<size_t> dofe(nne,ndim);
@@ -210,11 +228,19 @@ void DiagonalMass<Element>::computeInverseMassMatrix()
       }
     }
 
-    // - compute element mass matrix
-    elem->computeMassMatrix(e);
+    // - compute element mass matrix using problem specific "Element" class
+    elem->computeM(e);
 
-    // - assemble element mass matrix : take only the diagonal (approximation!!)
+    // - assemble element mass matrix : take only the diagonal
     for ( size_t i = 0 ; i < nne*ndim ; ++i ) M(dofe[i]) += elem->M(i,i);
+
+    // - check that the user provided a diagonal mass matrix
+    #ifndef NDEBUG
+      for ( size_t i = 0 ; i < nne*ndim ; ++i )
+        for ( size_t j = 0 ; j < nne*ndim ; ++j )
+          if ( i != j )
+            assert( !elem->M(i,j) );
+    #endif
   }
 
   // compute inverse of the mass matrix
@@ -224,12 +250,12 @@ void DiagonalMass<Element>::computeInverseMassMatrix()
 // =================================================================================================
 
 template<class Element>
-void DiagonalMass<Element>::computeInternalForce()
+void Periodic<Element>::computeFu()
 {
   // array with DOF numbers of each node
   cppmat::matrix2<size_t> dofe(nne,ndim);
 
-  // zero-initialize internal force
+  // zero-initialize displacement dependent force
   Fu.setZero();
 
   // loop over all elements
@@ -244,10 +270,10 @@ void DiagonalMass<Element>::computeInternalForce()
       }
     }
 
-    // - compute element mass matrix
-    elem->computeInternalForce(e);
+    // - compute element force using problem specific "Element" class
+    elem->computeFu(e);
 
-    // - assemble internal force to global system
+    // - assemble force to global system
     for ( size_t i = 0 ; i < nne*ndim ; ++i ) Fu(dofe[i]) += elem->fu(i);
   }
 }
@@ -255,12 +281,12 @@ void DiagonalMass<Element>::computeInternalForce()
 // =================================================================================================
 
 template<class Element>
-void DiagonalMass<Element>::computeDampingForce()
+void Periodic<Element>::computeFv()
 {
   // array with DOF numbers of each node
   cppmat::matrix2<size_t> dofe(nne,ndim);
 
-  // zero-initialize internal force
+  // zero-initialize velocity dependent force
   Fv.setZero();
 
   // loop over all elements
@@ -276,18 +302,42 @@ void DiagonalMass<Element>::computeDampingForce()
       }
     }
 
-    // - compute element mass matrix
-    elem->computeDampingForce(e);
+    // - compute element force using problem specific "Element" class
+    elem->computeFv(e);
 
-    // - assemble internal force to global system
+    // - assemble force to global system
     for ( size_t i = 0 ; i < nne*ndim ; ++i ) Fv(dofe[i]) += elem->fv(i);
   }
 }
 
 // =================================================================================================
 
-} // namespace Periodic
-} // namespace Dynamics
-} // namespace GooseFEM
+template<class Element>
+void Periodic<Element>::post()
+{
+  // array with DOF numbers of each node
+  cppmat::matrix2<size_t> dofe(nne,ndim);
+
+  // loop over all elements
+  for ( size_t e = 0 ; e < nelem ; ++e )
+  {
+    // - nodal positions, displacement, velocity, and DOF numbers for element "e"
+    for ( size_t m = 0 ; m < nne ; ++m ) {
+      for ( size_t i = 0 ; i < ndim ; ++i ) {
+        elem->xe(m,i) = x0  (conn(e,m),i);
+        elem->ue(m,i) = u   (conn(e,m),i);
+        elem->ve(m,i) = v   (conn(e,m),i);
+        dofe    (m,i) = dofs(conn(e,m),i);
+      }
+    }
+
+    // - run post-process function of the problem specific "Element" class (output is handled there)
+    elem->post(e);
+  }
+}
+
+// =================================================================================================
+
+}}} // namespace GooseFEM::Dynamics::Diagonal
 
 #endif
