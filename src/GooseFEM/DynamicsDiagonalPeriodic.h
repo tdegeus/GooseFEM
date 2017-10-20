@@ -59,14 +59,14 @@ public:
   // constructor
   // -----------
 
-  Periodic(std::shared_ptr<Element> elem, const MatD &x0,const MatS &conn,const MatS &dofs,
+  Periodic(std::shared_ptr<Element> elem, const MatD &x0, const MatS &conn, const MatS &dofs,
     double dt, double alpha=0.0 );
 
   // functions
   // ---------
 
-  void velocityVerlet();  // 1 time step of time integrator
-  void Verlet();          // 1 time step of time integrator (Fv == 0)
+  void velocityVerlet();  // one time step of time integrator
+  void Verlet();          // one time step of time integrator (Fv == 0)
   void computeMinv();     // element loop: inverse mass matrix            <- "elem->computeM"
   void computeFu();       // element loop: displacement dependent forces  <- "elem->computeFu"
   void computeFv();       // element loop: velocity dependent forces      <- "elem->computeFv"
@@ -101,7 +101,7 @@ Periodic<Element>::Periodic(
   nne   = static_cast<size_t>(conn.cols());
   ndof  = dofs.maxCoeff()+1;
 
-  // check
+  // basic check (mostly the user is 'trusted')
   assert( dofs.size() == nnode * ndim );
   assert( ndof        <  nnode * ndim );
 
@@ -167,14 +167,14 @@ void Periodic<Element>::velocityVerlet()
   for ( size_t i=0; i<nnode*ndim; ++i ) a(i) = A(dofs(i));
 
   // store history
-  A_n.noalias() = A;  // accelerations (DOFs)
-  V_n.noalias() = V;  // nodal velocities
-  t            += dt; // current time instance
+  A_n = A;  // accelerations (DOFs)
+  V_n = V;  // nodal velocities
+  t  += dt; // current time instance
 
   // N.B. at this point:
-  // "a", "A", "A_n"  ->  new nodal accelerations, their DOF equivalents, and a 'back-up'
-  // "v",      "V_n"  ->  new nodal velocities,                           and a 'back-up'
-  // "u"              ->  new nodal displacements
+  // "a" == "A" == "A_n"  ->  new nodal accelerations, their DOF equivalents, and a 'back-up'
+  // "v" ==        "V_n"  ->  new nodal velocities,                           and a 'back-up'
+  // "u"                  ->  new nodal displacements
   // The forces "Fu" and "Fv" correspond to this state of the system
 }
 
@@ -200,9 +200,15 @@ void Periodic<Element>::Verlet()
   for ( size_t i=0; i<nnode*ndim; ++i ) v(i) = V(dofs(i));
 
   // store history
-  A_n.noalias() = A;  // accelerations (DOFs)
-  V_n.noalias() = V;  // nodal velocities
-  t            += dt; // current time instance
+  A_n = A;  // accelerations (DOFs)
+  V_n = V;  // nodal velocities
+  t  += dt; // current time instance
+
+  // N.B. at this point:
+  // "a" == "A" == "A_n"  ->  new nodal accelerations, their DOF equivalents, and a 'back-up'
+  // "v" ==        "V_n"  ->  new nodal velocities,                           and a 'back-up'
+  // "u"                  ->  new nodal displacements
+  // The forces "Fu" correspond to this state of the system
 }
 
 // =================================================================================================

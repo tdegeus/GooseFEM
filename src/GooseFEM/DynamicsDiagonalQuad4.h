@@ -15,6 +15,7 @@
 namespace GooseFEM {
 namespace Dynamics {
 namespace Diagonal {
+namespace LinearStrain {
 
 // -------------------------------------------------------------------------------------------------
 
@@ -44,7 +45,7 @@ public:
   double Jdet, V;
   // sizes (nodes per element, dimensions, quadrature points)
   size_t nne=4, ndim=2, nk=4;
-  // quadrature point
+  // quadrature point : provides the constitutive response
   std::shared_ptr<QuadraturePoint> quad;
 
   // constructor
@@ -114,7 +115,7 @@ void Quad4<QuadraturePoint>::computeM(size_t elem)
     Jdet = J.det();
     Jinv = J.inv();
 
-    // - integration point volume (== volume associated with the node, in this element)
+    // - integration point volume (== part of the element volume associated with the node)
     V = w_n(k) * Jdet;
 
     // - assemble to element mass matrix (use the delta properties of the shape functions)
@@ -344,6 +345,6 @@ void Quad4<QuadraturePoint>::post(size_t elem)
 
 // =================================================================================================
 
-}}} // namespace GooseFEM::Dynamics::Diagonal
+}}}} // namespace GooseFEM::Dynamics::Diagonal::LinearStrain
 
 #endif
