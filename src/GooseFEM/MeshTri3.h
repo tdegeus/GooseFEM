@@ -8,6 +8,7 @@
 #define GOOSEFEM_MESHTRI3_H
 
 #include "Macros.h"
+#include "Mesh.h"
 
 // -------------------------------------------------------------------------------------------------
 
@@ -20,18 +21,17 @@ namespace Tri3 {
 class Regular
 {
 private:
-  size_t m_nrow;   // number of 'pixel' rows
-  size_t m_ncol;   // number of 'pixel' columns
+  size_t m_nx;     // number of 'pixels' horizontal direction (length == "m_nx * m_h")
+  size_t m_ny;     // number of 'pixels' vertical direction   (length == "m_ny * m_h")
+  double m_h;      // size of the element edge (equal in both directions)
   size_t m_nelem;  // number of elements
   size_t m_nnode;  // number of nodes
   size_t m_nne=3;  // number of nodes-per-element
   size_t m_ndim=2; // number of dimensions
 
 public:
-  Regular            (const Regular &) = default;
-  Regular& operator= (const Regular &) = default;
-  Regular(){};
-  Regular(size_t nrow, size_t ncol); // create mesh with [nrow,ncol] 'pixels' (nrow*ncol*2 elements)
+  // mesh with "nx" pixels in horizontal direction, "ny" in vertical direction and "h" the edge size
+  Regular(size_t nx, size_t ny, double h=1.);
 
   size_t nelem() { return m_nelem;}; // number of elements
   size_t nnode() { return m_nnode;}; // number of nodes
@@ -45,6 +45,8 @@ public:
   ColS   nodesRight   ();            // nodes along the right  edge
   MatS   nodesPeriodic();            // periodic node pairs [ : , 2 ]: ( independent , dependent )
   size_t nodeOrigin   ();            // bottom-left node, to be used as reference for periodicity
+  MatS   dofs         ();            // DOF-numbers for each component of each node (sequential)
+  MatS   dofsPeriodic ();            // DOF-numbers for each component of each node (sequential)
 };
 
 // ========================================= MESH ANALYSIS =========================================
@@ -100,13 +102,13 @@ public:
 
 // ================================== REGULAR MESH - SOURCE CODE ===================================
 
-Regular::Regular(size_t nrow, size_t ncol): m_nrow(nrow), m_ncol(ncol)
+Regular::Regular(size_t nx, size_t ny, double h): m_nx(nx), m_ny(ny), m_h(h)
 {
-  assert( m_nrow >= 1 );
-  assert( m_ncol >= 1 );
+  assert( m_nx >= 1 );
+  assert( m_ny >= 1 );
 
-  m_nnode = (m_nrow+1) * (m_ncol+1)   ;
-  m_nelem =  m_nrow    *  m_ncol   * 2;
+  m_nnode = (m_nx+1) * (m_ny+1)    ;
+  m_nelem =  m_nx    *  m_ny    * 2;
 }
 
 // -------------------------------------------------------------------------------------------------
@@ -115,13 +117,13 @@ MatD Regular::coor()
 {
   MatD coor( m_nnode , m_ndim );
 
-  ColD x = ColD::LinSpaced( m_ncol+1 , 0.0 , 1.0 );
-  ColD y = ColD::LinSpaced( m_nrow+1 , 0.0 , 1.0 );
+  ColD x = ColD::LinSpaced( m_nx+1 , 0.0 , m_h * static_cast<double>(m_nx) );
+  ColD y = ColD::LinSpaced( m_ny+1 , 0.0 , m_h * static_cast<double>(m_ny) );
 
   size_t inode = 0;
 
-  for ( size_t row = 0 ; row < m_nrow+1 ; ++row ) {
-    for ( size_t col = 0 ; col < m_ncol+1 ; ++col ) {
+  for ( size_t row = 0 ; row < m_ny+1 ; ++row ) {
+    for ( size_t col = 0 ; col < m_nx+1 ; ++col ) {
       coor(inode,0) = x(col);
       coor(inode,1) = y(row);
       ++inode;
@@ -139,15 +141,15 @@ MatS Regular::conn()
 
   size_t ielem = 0;
 
-  for ( size_t row = 0 ; row < m_nrow ; ++row ) {
-    for ( size_t col = 0 ; col < m_ncol ; ++col ) {
-      conn(ielem,0) = (row+0)*(m_ncol+1)+col+0;
-      conn(ielem,1) = (row+0)*(m_ncol+1)+col+1;
-      conn(ielem,2) = (row+1)*(m_ncol+1)+col+0;
+  for ( size_t row = 0 ; row < m_ny ; ++row ) {
+    for ( size_t col = 0 ; col < m_nx ; ++col ) {
+      conn(ielem,0) = (row+0)*(m_nx+1)+col+0;
+      conn(ielem,1) = (row+0)*(m_nx+1)+col+1;
+      conn(ielem,2) = (row+1)*(m_nx+1)+col+0;
       ++ielem;
-      conn(ielem,0) = (row+0)*(m_ncol+1)+col+1;
-      conn(ielem,1) = (row+1)*(m_ncol+1)+col+1;
-      conn(ielem,2) = (row+1)*(m_ncol+1)+col+0;
+      conn(ielem,0) = (row+0)*(m_nx+1)+col+1;
+      conn(ielem,1) = (row+1)*(m_nx+1)+col+1;
+      conn(ielem,2) = (row+1)*(m_nx+1)+col+0;
       ++ielem;
     }
   }
@@ -159,9 +161,9 @@ MatS Regular::conn()
 
 ColS Regular::nodesBottom()
 {
-  ColS nodes(m_ncol+1);
+  ColS nodes(m_nx+1);
 
-  for ( size_t col = 0 ; col < m_ncol+1 ; ++col ) nodes(col) = col;
+  for ( size_t col = 0 ; col < m_nx+1 ; ++col ) nodes(col) = col;
 
   return nodes;
 }
@@ -170,9 +172,9 @@ ColS Regular::nodesBottom()
 
 ColS Regular::nodesTop()
 {
-  ColS nodes(m_ncol+1);
+  ColS nodes(m_nx+1);
 
-  for ( size_t col = 0 ; col < m_ncol+1 ; ++col ) nodes(col) = col+m_nrow*(m_ncol+1);
+  for ( size_t col = 0 ; col < m_nx+1 ; ++col ) nodes(col) = col+m_ny*(m_nx+1);
 
   return nodes;
 }
@@ -181,9 +183,9 @@ ColS Regular::nodesTop()
 
 ColS Regular::nodesLeft()
 {
-  ColS nodes(m_nrow+1);
+  ColS nodes(m_ny+1);
 
-  for ( size_t row = 0 ; row < m_nrow+1 ; ++row ) nodes(row) = row*(m_ncol+1);
+  for ( size_t row = 0 ; row < m_ny+1 ; ++row ) nodes(row) = row*(m_nx+1);
 
   return nodes;
 }
@@ -192,9 +194,9 @@ ColS Regular::nodesLeft()
 
 ColS Regular::nodesRight()
 {
-  ColS nodes(m_nrow+1);
+  ColS nodes(m_ny+1);
 
-  for ( size_t row = 0 ; row < m_nrow+1 ; ++row ) nodes(row) = row*(m_ncol+1)+m_ncol;
+  for ( size_t row = 0 ; row < m_ny+1 ; ++row ) nodes(row) = row*(m_nx+1)+m_nx;
 
   return nodes;
 }
@@ -227,6 +229,33 @@ MatS Regular::nodesPeriodic()
 size_t Regular::nodeOrigin()
 {
   return 0;
+}
+
+// -------------------------------------------------------------------------------------------------
+
+MatS Regular::dofs()
+{
+  return GooseFEM::Mesh::dofs(m_nnode,m_ndim);
+}
+
+// -------------------------------------------------------------------------------------------------
+
+MatS Regular::dofsPeriodic()
+{
+  // DOF-numbers for each component of each node (sequential)
+  MatS out = GooseFEM::Mesh::dofs(m_nnode,m_ndim);
+
+  // periodic node-pairs
+  MatS   nodePer = nodesPeriodic();
+  size_t nper    = static_cast<size_t>(nodePer.rows());
+
+  // eliminate 'dependent' DOFs; renumber "out" to be sequential for the remaining DOFs
+  for ( size_t i = 0 ; i < nper ; ++i )
+    for ( size_t j = 0 ; j < m_ndim ; ++j )
+      out(nodePer(i,1),j) = out(nodePer(i,0),j);
+
+  // renumber "out" to be sequential
+  return GooseFEM::Mesh::renumber(out);
 }
 
 // ================================== MESH ANALYSIS - SOURCE CODE ==================================

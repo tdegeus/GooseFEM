@@ -120,10 +120,11 @@ py::class_<GooseFEM::Mesh::Quad4::FineLayer>(mMeshQuad4, "FineLayer")
 py::class_<GooseFEM::Mesh::Tri3::Regular>(mMeshTri3, "Regular")
 
   .def(
-    py::init<size_t,size_t>(),
-    "Regular mesh with 2 x 'nrow' rows and 'ncol' columns of elements",
-    py::arg("nrow"),
-    py::arg("ncol")
+    py::init<size_t,size_t,double>(),
+    "Regular mesh: 'nx' pixels in horizontal direction, 'ny' in vertical direction, edge size 'h'",
+    py::arg("nx"),
+    py::arg("ny"),
+    py::arg("h")=1.
   )
 
   .def("coor"         ,&GooseFEM::Mesh::Tri3::Regular::coor         )
@@ -138,6 +139,8 @@ py::class_<GooseFEM::Mesh::Tri3::Regular>(mMeshTri3, "Regular")
   .def("nodesRight"   ,&GooseFEM::Mesh::Tri3::Regular::nodesRight   )
   .def("nodesPeriodic",&GooseFEM::Mesh::Tri3::Regular::nodesPeriodic)
   .def("nodeOrigin"   ,&GooseFEM::Mesh::Tri3::Regular::nodeOrigin   )
+  .def("dofs"         ,&GooseFEM::Mesh::Tri3::Regular::dofs         )
+  .def("dofsPeriodic" ,&GooseFEM::Mesh::Tri3::Regular::dofsPeriodic )
 
   .def("__repr__",
     [](const GooseFEM::Mesh::Tri3::Regular &a){ return "<GooseFEM.Mesh.Tri3.Regular>"; }
