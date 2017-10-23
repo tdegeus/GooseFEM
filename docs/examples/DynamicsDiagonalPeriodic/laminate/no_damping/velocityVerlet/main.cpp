@@ -94,7 +94,7 @@ int main()
   double gamma = .05  ; // displacement step
 
   // class which provides the mesh
-  GooseFEM::Mesh::Quad4::Regular mesh(nx,nx,static_cast<double>(nx),static_cast<double>(nx));
+  GooseFEM::Mesh::Quad4::Regular mesh(nx,nx,1.);
   // reference node
   size_t nodeOrigin = mesh.nodeOrigin();
 

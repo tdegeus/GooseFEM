@@ -1,4 +1,7 @@
 
+#define _USE_MATH_DEFINES // to use "M_PI" from "math.h"
+
+#include <math.h>
 #include <HDF5pp.h>
 #include <Eigen/Eigen>
 #include <cppmat/cppmat.h>
@@ -26,11 +29,11 @@ public:
   T2s eps, epsdot, sig;
 
   size_t nhard;
-  GM::Material hard, soft;
+  GM::Material hard, soft, rayleigh;
 
   double Ebar, Vbar;
 
-  Quadrature(size_t nhard);
+  Quadrature(size_t nhard, double eta);
 
   double density             (size_t elem, size_t k, double V);
   void   stressStrain        (size_t elem, size_t k, double V);
@@ -41,11 +44,12 @@ public:
 
 // -------------------------------------------------------------------------------------------------
 
-Quadrature::Quadrature(size_t _nhard)
+Quadrature::Quadrature(size_t _nhard, double eta)
 {
   nhard    = _nhard;
   hard     = GM::Material(100.,10.);
   soft     = GM::Material(100., 1.);
+  rayleigh = GM::Material(eta ,eta);
 }
 
 // -------------------------------------------------------------------------------------------------
@@ -65,6 +69,7 @@ void Quadrature::stressStrain(size_t elem, size_t k, double V)
 
 void Quadrature::stressStrainRate(size_t elem, size_t k, double V)
 {
+  sig = rayleigh.stress(epsdot);
 }
 // -------------------------------------------------------------------------------------------------
 
@@ -87,10 +92,16 @@ void Quadrature::stressStrainRatePost(size_t elem, size_t k, double V)
 int main()
 {
   // set simulation parameters
-  double T     = 20.  ; // total time
-  double dt    = 1.e-2; // time increment
+  double T     = 5000.; // total time
+  double dt    = 1.e-1; // time increment
   size_t nx    = 40   ; // number of elements in both directions
   double gamma = .05  ; // displacement step
+  double eta   = 0.1  ; // damping coefficient
+  double Gbar  = 1.0  ; // equivalent shear modulus
+  double rho   = 1.0  ; // density
+  // background damping
+  double alpha = std::pow(2.,.5)*2.*M_PI/static_cast<double>(nx)*std::pow(Gbar/rho,.5)*rho;
+  std::cout << alpha << std::endl;
 
   // class which provides the mesh
   GooseFEM::Mesh::Quad4::Regular mesh(nx,nx,1.);
@@ -98,7 +109,7 @@ int main()
   size_t nodeOrigin = mesh.nodeOrigin();
 
   // class which provides the constitutive response at each quadrature point
-  auto  quadrature = std::make_shared<Quadrature>(nx*nx/4);
+  auto  quadrature = std::make_shared<Quadrature>(nx*nx/4,eta);
 
   // class which provides the response of each element
   using Elem = GooseFEM::Dynamics::Diagonal::LinearStrain::Quad4<Quadrature>;
@@ -111,7 +122,7 @@ int main()
     mesh.conn(),
     mesh.dofsPeriodic(),
     dt,
-    0.0
+    alpha
   );
 
   // define update in macroscopic deformation gradient
@@ -124,16 +135,20 @@ int main()
       for ( size_t k = 0 ; k < sim.ndim ; ++k )
         sim.u(i,j) += dFbar(j,k) * ( sim.x0(i,k) - sim.x0(nodeOrigin,k) );
 
+  // compute the externally applied strain energy
+  double Eext = std::pow(40.,2.) * (.25*100.+.75*1.) * std::pow(.5*gamma,2.);
+  size_t inc;
+
   // output variables
   ColD Epot(static_cast<int>(T/dt)); Epot.setZero(); // potential energy
   ColD Ekin(static_cast<int>(T/dt)); Ekin.setZero();
   ColD t   (static_cast<int>(T/dt)); t   .setZero();
 
   // loop over increments
-  for ( size_t inc = 0 ; inc < static_cast<size_t>(Epot.size()) ; ++inc )
+  for ( inc = 0 ; inc < static_cast<size_t>(Epot.size()) ; ++inc )
   {
     // - compute increment
-    sim.Verlet();
+    sim.velocityVerlet();
 
     // - post: energy based on nodes
     // -- store time
@@ -146,7 +161,15 @@ int main()
     quadrature->Vbar = 0.0;
     sim.post();
     Epot(inc) = quadrature->Ebar;
+
+    // check stopping criterion
+    if ( inc >= 10 ) if ( Ekin(inc)/Eext < 1.e-6 and Ekin(inc-10)/Eext < 1.e-6 ) break;
   }
+
+  // truncate to simulation size
+  Epot.conservativeResize(inc);
+  Ekin.conservativeResize(inc);
+  t   .conservativeResize(inc);
 
   // write to output file
   H5p::File f = H5p::File("example.hdf5");
