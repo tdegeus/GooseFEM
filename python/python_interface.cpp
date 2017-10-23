@@ -8,10 +8,7 @@
 #include <pybind11/eigen.h>
 #include <Eigen/Dense>
 
-#include "../src/GooseFEM/Macros.h"
-#include "../src/GooseFEM/Mesh.h"
-#include "../src/GooseFEM/MeshTri3.h"
-#include "../src/GooseFEM/MeshQuad4.h"
+#include "../src/GooseFEM/GooseFEM.h"
 
 // alias for short-hand notation below
 namespace py = pybind11;
@@ -57,12 +54,11 @@ mMesh.def("renumber", py::overload_cast<const GooseFEM::MatS&,const GooseFEM::Co
 py::class_<GooseFEM::Mesh::Quad4::Regular>(mMeshQuad4, "Regular")
 
   .def(
-    py::init<size_t,size_t,double,double>(),
-    "Regular mesh: 'nx' pixels in horizontal direction (length 'Lx'), idem in vertical direction",
+    py::init<size_t,size_t,double>(),
+    "Regular mesh: 'nx' pixels in horizontal direction, 'ny' in vertical direction, edge size 'h'",
     py::arg("nx"),
     py::arg("ny"),
-    py::arg("Lx")=1.,
-    py::arg("Ly")=1.
+    py::arg("h")=1.
   )
 
   .def("coor"         ,&GooseFEM::Mesh::Quad4::Regular::coor         )
@@ -76,12 +72,47 @@ py::class_<GooseFEM::Mesh::Quad4::Regular>(mMeshQuad4, "Regular")
   .def("nodesLeft"    ,&GooseFEM::Mesh::Quad4::Regular::nodesLeft    )
   .def("nodesRight"   ,&GooseFEM::Mesh::Quad4::Regular::nodesRight   )
   .def("nodesPeriodic",&GooseFEM::Mesh::Quad4::Regular::nodesPeriodic)
-  .def("nodesRef"     ,&GooseFEM::Mesh::Quad4::Regular::nodesRef     )
+  .def("nodeOrigin"   ,&GooseFEM::Mesh::Quad4::Regular::nodeOrigin   )
   .def("dofs"         ,&GooseFEM::Mesh::Quad4::Regular::dofs         )
   .def("dofsPeriodic" ,&GooseFEM::Mesh::Quad4::Regular::dofsPeriodic )
 
   .def("__repr__",
     [](const GooseFEM::Mesh::Quad4::Regular &a){ return "<GooseFEM.Mesh.Quad4.Regular>"; }
+  );
+
+// -------------------------------------------------------------------------------------------------
+
+py::class_<GooseFEM::Mesh::Quad4::FineLayer>(mMeshQuad4, "FineLayer")
+
+  .def(
+    py::init<size_t,size_t,double,size_t,size_t>(),
+    "FineLayer mesh: 'nx' pixels in horizontal direction (length 'Lx'), idem in vertical direction",
+    py::arg("nx"),
+    py::arg("ny"),
+    py::arg("h")=1.,
+    py::arg("nfine")=0,
+    py::arg("nskip")=0
+  )
+
+  .def("shape"        ,&GooseFEM::Mesh::Quad4::FineLayer::shape        )
+  .def("coor"         ,&GooseFEM::Mesh::Quad4::FineLayer::coor         )
+  .def("conn"         ,&GooseFEM::Mesh::Quad4::FineLayer::conn         )
+  .def("nelem"        ,&GooseFEM::Mesh::Quad4::FineLayer::nelem        )
+  .def("nnode"        ,&GooseFEM::Mesh::Quad4::FineLayer::nnode        )
+  .def("nne"          ,&GooseFEM::Mesh::Quad4::FineLayer::nne          )
+  .def("ndim"         ,&GooseFEM::Mesh::Quad4::FineLayer::ndim         )
+  .def("elementsFine" ,&GooseFEM::Mesh::Quad4::FineLayer::elementsFine )
+  .def("nodesBottom"  ,&GooseFEM::Mesh::Quad4::FineLayer::nodesBottom  )
+  .def("nodesTop"     ,&GooseFEM::Mesh::Quad4::FineLayer::nodesTop     )
+  .def("nodesLeft"    ,&GooseFEM::Mesh::Quad4::FineLayer::nodesLeft    )
+  .def("nodesRight"   ,&GooseFEM::Mesh::Quad4::FineLayer::nodesRight   )
+  .def("nodesPeriodic",&GooseFEM::Mesh::Quad4::FineLayer::nodesPeriodic)
+  .def("nodeOrigin"   ,&GooseFEM::Mesh::Quad4::FineLayer::nodeOrigin   )
+  .def("dofs"         ,&GooseFEM::Mesh::Quad4::FineLayer::dofs         )
+  .def("dofsPeriodic" ,&GooseFEM::Mesh::Quad4::FineLayer::dofsPeriodic )
+
+  .def("__repr__",
+    [](const GooseFEM::Mesh::Quad4::FineLayer &a){ return "<GooseFEM.Mesh.Quad4.FineLayer>"; }
   );
 
 // ===================================== GooseFEM/MeshTri3.h ======================================
@@ -106,7 +137,7 @@ py::class_<GooseFEM::Mesh::Tri3::Regular>(mMeshTri3, "Regular")
   .def("nodesLeft"    ,&GooseFEM::Mesh::Tri3::Regular::nodesLeft    )
   .def("nodesRight"   ,&GooseFEM::Mesh::Tri3::Regular::nodesRight   )
   .def("nodesPeriodic",&GooseFEM::Mesh::Tri3::Regular::nodesPeriodic)
-  .def("nodesRef"     ,&GooseFEM::Mesh::Tri3::Regular::nodesRef     )
+  .def("nodeOrigin"   ,&GooseFEM::Mesh::Tri3::Regular::nodeOrigin   )
 
   .def("__repr__",
     [](const GooseFEM::Mesh::Tri3::Regular &a){ return "<GooseFEM.Mesh.Tri3.Regular>"; }

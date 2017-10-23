@@ -25,10 +25,11 @@ GooseFEM documentation
 .. toctree::
    :maxdepth: 1
 
-   code/compile.rst
-   code/Mesh.rst
-   code/MeshTri3.rst
-   code/develop.rst
+   compile.rst
+   Mesh.rst
+   MeshTri3.rst
+   MeshQuad4.rst
+   develop.rst
 
 Theory
 ------

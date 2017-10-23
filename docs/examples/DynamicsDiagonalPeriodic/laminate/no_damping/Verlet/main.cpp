@@ -95,7 +95,7 @@ int main()
   // class which provides the mesh
   GooseFEM::Mesh::Quad4::Regular mesh(nx,nx,static_cast<double>(nx),static_cast<double>(nx));
   // reference node
-  size_t nodeRef = mesh.nodesRef();
+  size_t nodeOrigin = mesh.nodeOrigin();
 
   // class which provides the constitutive response at each quadrature point
   auto  quadrature = std::make_shared<Quadrature>(nx*nx/4);
@@ -122,7 +122,7 @@ int main()
   for ( size_t i = 0 ; i < sim.nnode ; ++i )
     for ( size_t j = 0 ; j < sim.ndim ; ++j )
       for ( size_t k = 0 ; k < sim.ndim ; ++k )
-        sim.u(i,j) += dFbar(j,k) * ( sim.x0(i,k) - sim.x0(nodeRef,k) );
+        sim.u(i,j) += dFbar(j,k) * ( sim.x0(i,k) - sim.x0(nodeOrigin,k) );
 
   // output variables
   ColD Epot(static_cast<int>(T/dt)); Epot.setZero(); // potential energy

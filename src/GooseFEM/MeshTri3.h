@@ -44,7 +44,7 @@ public:
   ColS   nodesLeft    ();            // nodes along the left   edge
   ColS   nodesRight   ();            // nodes along the right  edge
   MatS   nodesPeriodic();            // periodic node pairs [ : , 2 ]: ( independent , dependent )
-  size_t nodesRef     ();            // lower-left node, to be used as reference for periodicity
+  size_t nodeOrigin   ();            // bottom-left node, to be used as reference for periodicity
 };
 
 // ========================================= MESH ANALYSIS =========================================
@@ -224,7 +224,7 @@ MatS Regular::nodesPeriodic()
 
 // -------------------------------------------------------------------------------------------------
 
-size_t Regular::nodesRef()
+size_t Regular::nodeOrigin()
 {
   return 0;
 }
