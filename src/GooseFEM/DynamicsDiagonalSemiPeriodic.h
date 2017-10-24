@@ -65,6 +65,8 @@ public:
   // constructor
   // -----------
 
+  SemiPeriodic(){};
+
   SemiPeriodic(std::shared_ptr<Element> elem, const MatD &x0, const MatS &conn, const MatS &dofs,
     const ColS &fixedDofs, double dt, double alpha=0.0 );
 
@@ -115,6 +117,10 @@ SemiPeriodic<Element>::SemiPeriodic(
   assert( dofs.size() == nnode * ndim );
   assert( ndof        <  nnode * ndim );
 
+  #ifndef NDEBUG
+  for ( size_t i = 0 ; i < nfixed ; ++i ) assert( fixedDofs(i) < ndof );
+  #endif
+
   // nodal quantities
   u.conservativeResize(nnode,ndim); u.setZero();
   v.conservativeResize(nnode,ndim); v.setZero();
@@ -151,20 +157,20 @@ void SemiPeriodic<Element>::velocityVerlet()
   // (2a) estimate nodal velocities
   // - update velocities (DOFs)
   V.noalias() = V_n + dt * A;
+  // - set fixed velocity
+  for ( size_t i=0; i<nfixed; ++i ) V(fixedDofs(i)) = fixedV(i);
   // - convert to nodal velocity (periodicity implies that several nodes depend on the same DOF)
   for ( size_t i=0; i<nnode*ndim; ++i ) v(i) = V(dofs(i));
-  // - set fixed velocity
-  for ( size_t i=0; i<nfixed; ++i ) v(fixedDofs(i)) = fixedV(i);
   // - compute forces that are dependent on the velocity
   computeFv();
   // - solve for accelerations (DOFs)
   A.noalias() = Minv.cwiseProduct( - Fu - Fv - alpha*V );
   // - update velocities (DOFs)
   V.noalias() = V_n + ( .5 * dt ) * ( A_n + A );
+  // - set fixed velocity
+  for ( size_t i=0; i<nfixed; ++i ) V(fixedDofs(i)) = fixedV(i);
   // - convert to nodal velocity (periodicity implies that several nodes depend on the same DOF)
   for ( size_t i=0; i<nnode*ndim; ++i ) v(i) = V(dofs(i));
-  // - set fixed velocity
-  for ( size_t i=0; i<nfixed; ++i ) v(fixedDofs(i)) = fixedV(i);
   // - compute forces that are dependent on the velocity
   computeFv();
 
@@ -173,20 +179,20 @@ void SemiPeriodic<Element>::velocityVerlet()
   A.noalias() = Minv.cwiseProduct( - Fu - Fv - alpha*V );
   // - update velocities (DOFs)
   V.noalias() = V_n + ( .5 * dt ) * ( A_n + A );
+  // - set fixed velocity
+  for ( size_t i=0; i<nfixed; ++i ) V(fixedDofs(i)) = fixedV(i);
   // - convert to nodal velocity (periodicity implies that several nodes depend on the same DOF)
   for ( size_t i=0; i<nnode*ndim; ++i ) v(i) = V(dofs(i));
-  // - set fixed velocity
-  for ( size_t i=0; i<nfixed; ++i ) v(fixedDofs(i)) = fixedV(i);
   // - compute forces that are dependent on the velocity
   computeFv();
 
   // (3) new nodal accelerations
   // - solve for accelerations (DOFs)
   A.noalias() = Minv.cwiseProduct( - Fu - Fv - alpha*V );
+  // - set fixed acceleration
+  for ( size_t i=0; i<nfixed; ++i ) A(fixedDofs(i)) = fixedA(i);
   // - convert to nodal acceleration (periodicity implies that several nodes depend on the same DOF)
   for ( size_t i=0; i<nnode*ndim; ++i ) a(i) = A(dofs(i));
-  // - set fixed acceleration
-  for ( size_t i=0; i<nfixed; ++i ) a(fixedDofs(i)) = fixedA(i);
 
   // store history
   A_n = A;  // accelerations (DOFs)
@@ -212,18 +218,18 @@ void SemiPeriodic<Element>::Verlet()
   computeFu();
   // - solve for accelerations (DOFs)
   A.noalias() = Minv.cwiseProduct( - Fu );
+  // - set fixed acceleration
+  for ( size_t i=0; i<nfixed; ++i ) A(fixedDofs(i)) = fixedA(i);
   // - convert to nodal acceleration (periodicity implies that several nodes depend on the same DOF)
   for ( size_t i=0; i<nnode*ndim; ++i ) a(i) = A(dofs(i));
-  // - set fixed acceleration
-  for ( size_t i=0; i<nfixed; ++i ) a(fixedDofs(i)) = fixedA(i);
 
   // (2) propagate velocities
   // - update velocities (DOFs)
   V.noalias() = V_n + ( .5 * dt ) * ( A_n + A );
+  // - set fixed velocity
+  for ( size_t i=0; i<nfixed; ++i ) V(fixedDofs(i)) = fixedV(i);
   // - convert to nodal velocity (periodicity implies that several nodes depend on the same DOF)
   for ( size_t i=0; i<nnode*ndim; ++i ) v(i) = V(dofs(i));
-  // - set fixed velocity
-  for ( size_t i=0; i<nfixed; ++i ) v(fixedDofs(i)) = fixedV(i);
 
   // store history
   A_n = A;  // accelerations (DOFs)
@@ -268,12 +274,12 @@ void SemiPeriodic<Element>::computeMinv()
 
     // - check that the user provided a diagonal mass matrix
     #ifndef NDEBUG
-      for ( size_t i = 0 ; i < nne*ndim ; ++i ) {
-        for ( size_t j = 0 ; j < nne*ndim ; ++j ) {
-          if ( i != j ) assert( ! elem->M(i,j) );
-          else          assert(   elem->M(i,i) );
-        }
+    for ( size_t i = 0 ; i < nne*ndim ; ++i ) {
+      for ( size_t j = 0 ; j < nne*ndim ; ++j ) {
+        if ( i != j ) assert( ! elem->M(i,j) );
+        else          assert(   elem->M(i,i) );
       }
+    }
     #endif
   }
 

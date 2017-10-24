@@ -59,6 +59,8 @@ public:
   // constructor
   // -----------
 
+  Periodic(){};
+
   Periodic(std::shared_ptr<Element> elem, const MatD &x0, const MatS &conn, const MatS &dofs,
     double dt, double alpha=0.0 );
 
@@ -242,12 +244,12 @@ void Periodic<Element>::computeMinv()
 
     // - check that the user provided a diagonal mass matrix
     #ifndef NDEBUG
-      for ( size_t i = 0 ; i < nne*ndim ; ++i ) {
-        for ( size_t j = 0 ; j < nne*ndim ; ++j ) {
-          if ( i != j ) assert( ! elem->M(i,j) );
-          else          assert(   elem->M(i,i) );
-        }
+    for ( size_t i = 0 ; i < nne*ndim ; ++i ) {
+      for ( size_t j = 0 ; j < nne*ndim ; ++j ) {
+        if ( i != j ) assert( ! elem->M(i,j) );
+        else          assert(   elem->M(i,i) );
       }
+    }
     #endif
   }
 
