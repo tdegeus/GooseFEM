@@ -49,6 +49,7 @@ set(PKGCONFIG_INSTALL_DIR
 # list all header files
 set(GOOSEFEM_HEADERS
   GooseFEM/DynamicsDiagonalLinearStrainQuad4.h
+  GooseFEM/DynamicsDiagonalSemiPeriodic.h
   GooseFEM/DynamicsDiagonalPeriodic.h
   GooseFEM/GooseFEM.h
   GooseFEM/Macros.h

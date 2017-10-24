@@ -4,8 +4,8 @@
 
 ================================================================================================= */
 
-#ifndef GOOSEFEM_DYNAMICS_DIAGONAL_PERIODIC_H
-#define GOOSEFEM_DYNAMICS_DIAGONAL_PERIODIC_H
+#ifndef GOOSEFEM_DYNAMICS_DIAGONAL_SEMIPERIODIC_H
+#define GOOSEFEM_DYNAMICS_DIAGONAL_SEMIPERIODIC_H
 
 #include "Macros.h"
 #include <cppmat/cppmat.h>
@@ -19,7 +19,7 @@ namespace Diagonal {
 // =========================================== OVERVIEW ============================================
 
 template <class Element>
-class Periodic
+class SemiPeriodic
 {
 public:
 
@@ -42,6 +42,12 @@ public:
   size_t ndim;      // number of dimensions
   size_t ndof;      // number of DOFs (after eliminating periodic dependencies)
 
+  // fixed DOFs
+  size_t nfixed;    // number of fixed DOFs
+  ColS   fixedDofs; // DOF-number that are prescribed
+  ColD   fixedV;    // prescribed velocity     for the fixed DOFs
+  ColD   fixedA;    // prescribed acceleration for the fixed DOFs
+
   // linear system
   ColD   Minv;      // inverse of mass matrix (constructed diagonal -> inverse == diagonal)
   ColD   Fu;        // force that depends on displacement (column)
@@ -59,8 +65,8 @@ public:
   // constructor
   // -----------
 
-  Periodic(std::shared_ptr<Element> elem, const MatD &x0, const MatS &conn, const MatS &dofs,
-    double dt, double alpha=0.0 );
+  SemiPeriodic(std::shared_ptr<Element> elem, const MatD &x0, const MatS &conn, const MatS &dofs,
+    const ColS &fixedDofs, double dt, double alpha=0.0 );
 
   // functions
   // ---------
@@ -77,9 +83,9 @@ public:
 // ========================================== SOURCE CODE ==========================================
 
 template<class Element>
-Periodic<Element>::Periodic(
+SemiPeriodic<Element>::SemiPeriodic(
   std::shared_ptr<Element> _elem, const MatD &_x0, const MatS &_conn, const MatS &_dofs,
-  double _dt, double _alpha
+  const ColS &_fixedDofs, double _dt, double _alpha
 )
 {
   // problem specific settings
@@ -93,6 +99,10 @@ Periodic<Element>::Periodic(
   // time integration
   dt    = _dt;
   alpha = _alpha;
+
+  // fixed DOFs
+  fixedDofs = _fixedDofs;
+  nfixed    = static_cast<size_t>(fixedDofs.size());
 
   // extract mesh size from definition
   nnode = static_cast<size_t>(x0  .rows());
@@ -119,6 +129,10 @@ Periodic<Element>::Periodic(
   A   .conservativeResize(ndof); A   .setZero();
   A_n .conservativeResize(ndof); A_n .setZero();
 
+  // fixed DOFs : default zero velocity and acceleration
+  fixedV.conservativeResize(nfixed); fixedV.setZero();
+  fixedA.conservativeResize(nfixed); fixedA.setZero();
+
   // compute inverse mass matrix : assumed constant in time
   computeMinv();
 }
@@ -126,7 +140,7 @@ Periodic<Element>::Periodic(
 // =================================================================================================
 
 template<class Element>
-void Periodic<Element>::velocityVerlet()
+void SemiPeriodic<Element>::velocityVerlet()
 {
   // (1) new nodal positions (displacements)
   // - apply update (nodal) : x_{n+1} = x_n + dt * v_n + .5 * dt^2 * a_n"
@@ -139,6 +153,8 @@ void Periodic<Element>::velocityVerlet()
   V.noalias() = V_n + dt * A;
   // - convert to nodal velocity (periodicity implies that several nodes depend on the same DOF)
   for ( size_t i=0; i<nnode*ndim; ++i ) v(i) = V(dofs(i));
+  // - set fixed velocity
+  for ( size_t i=0; i<nfixed; ++i ) v(fixedDofs(i)) = fixedV(i);
   // - compute forces that are dependent on the velocity
   computeFv();
   // - solve for accelerations (DOFs)
@@ -147,6 +163,8 @@ void Periodic<Element>::velocityVerlet()
   V.noalias() = V_n + ( .5 * dt ) * ( A_n + A );
   // - convert to nodal velocity (periodicity implies that several nodes depend on the same DOF)
   for ( size_t i=0; i<nnode*ndim; ++i ) v(i) = V(dofs(i));
+  // - set fixed velocity
+  for ( size_t i=0; i<nfixed; ++i ) v(fixedDofs(i)) = fixedV(i);
   // - compute forces that are dependent on the velocity
   computeFv();
 
@@ -157,6 +175,8 @@ void Periodic<Element>::velocityVerlet()
   V.noalias() = V_n + ( .5 * dt ) * ( A_n + A );
   // - convert to nodal velocity (periodicity implies that several nodes depend on the same DOF)
   for ( size_t i=0; i<nnode*ndim; ++i ) v(i) = V(dofs(i));
+  // - set fixed velocity
+  for ( size_t i=0; i<nfixed; ++i ) v(fixedDofs(i)) = fixedV(i);
   // - compute forces that are dependent on the velocity
   computeFv();
 
@@ -165,6 +185,8 @@ void Periodic<Element>::velocityVerlet()
   A.noalias() = Minv.cwiseProduct( - Fu - Fv - alpha*V );
   // - convert to nodal acceleration (periodicity implies that several nodes depend on the same DOF)
   for ( size_t i=0; i<nnode*ndim; ++i ) a(i) = A(dofs(i));
+  // - set fixed acceleration
+  for ( size_t i=0; i<nfixed; ++i ) a(fixedDofs(i)) = fixedA(i);
 
   // store history
   A_n = A;  // accelerations (DOFs)
@@ -181,7 +203,7 @@ void Periodic<Element>::velocityVerlet()
 // =================================================================================================
 
 template<class Element>
-void Periodic<Element>::Verlet()
+void SemiPeriodic<Element>::Verlet()
 {
   // (1) new nodal positions (displacements)
   // - apply update (nodal) : x_{n+1} = x_n + dt * v_n + .5 * dt^2 * a_n"
@@ -192,12 +214,16 @@ void Periodic<Element>::Verlet()
   A.noalias() = Minv.cwiseProduct( - Fu );
   // - convert to nodal acceleration (periodicity implies that several nodes depend on the same DOF)
   for ( size_t i=0; i<nnode*ndim; ++i ) a(i) = A(dofs(i));
+  // - set fixed acceleration
+  for ( size_t i=0; i<nfixed; ++i ) a(fixedDofs(i)) = fixedA(i);
 
   // (2) propagate velocities
   // - update velocities (DOFs)
   V.noalias() = V_n + ( .5 * dt ) * ( A_n + A );
   // - convert to nodal velocity (periodicity implies that several nodes depend on the same DOF)
   for ( size_t i=0; i<nnode*ndim; ++i ) v(i) = V(dofs(i));
+  // - set fixed velocity
+  for ( size_t i=0; i<nfixed; ++i ) v(fixedDofs(i)) = fixedV(i);
 
   // store history
   A_n = A;  // accelerations (DOFs)
@@ -214,7 +240,7 @@ void Periodic<Element>::Verlet()
 // =================================================================================================
 
 template<class Element>
-void Periodic<Element>::computeMinv()
+void SemiPeriodic<Element>::computeMinv()
 {
   // array with DOF numbers of each node
   cppmat::matrix2<size_t> dofe(nne,ndim);
@@ -258,7 +284,7 @@ void Periodic<Element>::computeMinv()
 // =================================================================================================
 
 template<class Element>
-void Periodic<Element>::computeFu()
+void SemiPeriodic<Element>::computeFu()
 {
   // array with DOF numbers of each node
   cppmat::matrix2<size_t> dofe(nne,ndim);
@@ -289,7 +315,7 @@ void Periodic<Element>::computeFu()
 // =================================================================================================
 
 template<class Element>
-void Periodic<Element>::computeFv()
+void SemiPeriodic<Element>::computeFv()
 {
   // array with DOF numbers of each node
   cppmat::matrix2<size_t> dofe(nne,ndim);
@@ -321,7 +347,7 @@ void Periodic<Element>::computeFv()
 // =================================================================================================
 
 template<class Element>
-void Periodic<Element>::post()
+void SemiPeriodic<Element>::post()
 {
   // array with DOF numbers of each node
   cppmat::matrix2<size_t> dofe(nne,ndim);
