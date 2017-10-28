@@ -1,7 +1,15 @@
 
-******************
-<GooseFEM/Mesh.h>
-******************
+**************
+GooseFEM::Mesh
+**************
+
+.. note::
+
+  Source:
+
+  .. code-block:: cpp
+
+    #include <GooseFEM/Mesh.h>
 
 ``GooseFEM::Mesh::dofs``
 ========================
@@ -55,7 +63,7 @@ For example for 3 nodes in 2 dimensions the output is
 
   .. code-block:: cpp
 
-    MatS GooseFEM::Mesh::renumber ( const MatS &in , const VecS &idx, std::string location="end" );
+    MatS GooseFEM::Mesh::renumber ( const MatS &in , const ColS &idx, std::string location="end" );
 
   For example:
 
@@ -88,6 +96,8 @@ For example for 3 nodes in 2 dimensions the output is
       5 & 2 \\
       4 & 3
     \end{bmatrix}
+
+  Consider also [:download:`source: figures/Mesh/renumber.cpp <figures/Mesh/renumber.cpp>`]
 
 
 

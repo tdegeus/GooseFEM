@@ -6,7 +6,7 @@ GooseFEM
 Introduction
 ============
 
-GooseFEM provides several standard finite element simulations, some common element definitions, and some simple finite element meshes. A basic documentation is provided here, whereby one is highly urged to also look into the code itself, or at minimum the function decelerators and their comments.
+GooseFEM provides several standard finite element simulations, some common element definitions, and some simple finite element meshes. A basic documentation is provided here, whereby one is highly urged to look into the code itself, at minimum the function decelerators and their comments.
 
 .. note::
 
@@ -29,6 +29,7 @@ GooseFEM documentation
    Mesh.rst
    MeshTri3.rst
    MeshQuad4.rst
+   DynamicsDiagonal.rst
    develop.rst
 
 Theory

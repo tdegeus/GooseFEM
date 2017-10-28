@@ -10,7 +10,7 @@ Introduction
 
 This module is header only. So one just has to ``#include <GooseFEM/GooseFEM.h>``. somewhere in the source code, and to tell the compiler where the header-files are. For the latter, several ways are described below.
 
-Before proceeding, a words about optimization. Of course one should use optimization when compiling the release of the code (``-O2`` or ``-O3``). But it is also a good idea to switch of the assertions in the code (mostly checks on size) that facilitate easy debugging, but do cost time. Therefore, include the flag ``-DNDEBUG``. Note that this is all C++ standard. I.e. it should be no surprise, and it always a good idea to do.
+Before proceeding, a words about optimization. Of course one should use optimization when compiling the release of the code (``-O2`` or ``-O3``). But it is also a good idea to switch off the assertions in the code (mostly checks on size) that facilitate easy debugging, but do cost time. Therefore, include the flag ``-DNDEBUG``. Note that this is all C++ standard. I.e. it should be no surprise, and it always a good idea to do.
 
 .. note::
 
@@ -77,7 +77,7 @@ Install in custom location (user)
 
       $ cd /path/to/GooseFEM/src/build
 
-2.  'Build' ``GooseFEM``, to install it in a custom location
+2.  'Build' ``GooseFEM`` to install it in a custom location
 
     .. code-block:: bash
 

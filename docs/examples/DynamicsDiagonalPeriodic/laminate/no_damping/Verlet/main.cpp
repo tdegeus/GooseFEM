@@ -11,10 +11,8 @@ using     MatS = GooseFEM::MatS;
 using     MatD = GooseFEM::MatD;
 using     ColD = GooseFEM::ColD;
 
-using     vec  = cppmat::cartesian2d::vector  <double>;
 using     T2   = cppmat::cartesian2d::tensor2 <double>;
 using     T2s  = cppmat::cartesian2d::tensor2s<double>;
-using     T2d  = cppmat::cartesian2d::tensor2d<double>;
 
 namespace GM   = GooseMaterial::AmorphousSolid::LinearStrain::Elastic::Cartesian2d;
 
