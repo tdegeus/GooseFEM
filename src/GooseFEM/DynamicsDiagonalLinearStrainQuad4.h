@@ -37,7 +37,7 @@ public:
   // arrays / matrices
   cppmat::tiny::matrix2<double,4,2> xe, ue, ve, xi, xi_n, dNdxi, dNdx;
   cppmat::tiny::vector <double,4>   w, w_n;
-  cppmat::tiny::matrix2<double,8,8> M;
+  cppmat::tiny::matrix2<double,8,8> M, D;
   cppmat::tiny::vector <double,8>   fu, fv;
   // tensors
   cppmat::cartesian2d::tensor2<double> J, Jinv, gradu, gradv;
@@ -57,6 +57,7 @@ public:
   // ---------
 
   void computeM (size_t elem); // mass matrix                     <- quad->density
+  void computeD (size_t elem); // non-Galilean damping matrix     <- quad->alpha
   void computeFu(size_t elem); // displacement dependent forces   <- quad->stressStrain
   void computeFv(size_t elem); // displacement dependent forces   <- quad->stressStrainRate
   void post     (size_t elem); // post-process                    <- quad->stressStrain(Rate)
@@ -92,7 +93,7 @@ void Quad4<QuadraturePoint>::computeM(size_t elem)
   // zero-initialize element mass matrix
   M.zeros();
 
-  // loop over integration points (coincide with the nodes to get a diagonal mass matrix)
+  // loop over integration points (coincide with the nodes to get a diagonal matrix)
   for ( size_t k = 0 ; k < nne ; ++k )
   {
     // - shape function gradients (local coordinates)
@@ -118,10 +119,51 @@ void Quad4<QuadraturePoint>::computeM(size_t elem)
     // - integration point volume (== part of the element volume associated with the node)
     V = w_n(k) * Jdet;
 
-    // - assemble to element mass matrix (use the delta properties of the shape functions)
+    // - assemble to element matrix (use the delta properties of the shape functions)
     //   M(m+i,n+i) = N(m) * rho * V * N(n);
     M(k*2  ,k*2  ) = quad->density(elem,k,V) * V;
     M(k*2+1,k*2+1) = quad->density(elem,k,V) * V;
+  }
+}
+
+// =================================================================================================
+
+template <class QuadraturePoint>
+void Quad4<QuadraturePoint>::computeD(size_t elem)
+{
+  // zero-initialize element non-Galilean damping matrix
+  D.zeros();
+
+  // loop over integration points (coincide with the nodes to get a diagonal matrix)
+  for ( size_t k = 0 ; k < nne ; ++k )
+  {
+    // - shape function gradients (local coordinates)
+    dNdxi(0,0) = -.25*(1.-xi_n(k,1)); dNdxi(0,1) = -.25*(1.-xi_n(k,0));
+    dNdxi(1,0) = +.25*(1.-xi_n(k,1)); dNdxi(1,1) = -.25*(1.+xi_n(k,0));
+    dNdxi(2,0) = +.25*(1.+xi_n(k,1)); dNdxi(2,1) = +.25*(1.+xi_n(k,0));
+    dNdxi(3,0) = -.25*(1.+xi_n(k,1)); dNdxi(3,1) = +.25*(1.-xi_n(k,0));
+
+    // - Jacobian
+    //   J(i,j) += dNdxi(m,i) * xe(m,j)
+    J.zeros();
+    for ( size_t m = 0 ; m < nne ; ++m ) {
+      J(0,0) += dNdxi(m,0) * xe(m,0);
+      J(0,1) += dNdxi(m,0) * xe(m,1);
+      J(1,0) += dNdxi(m,1) * xe(m,0);
+      J(1,1) += dNdxi(m,1) * xe(m,1);
+    }
+
+    // - determinant and inverse of the Jacobian
+    Jdet = J.det();
+    Jinv = J.inv();
+
+    // - integration point volume (== part of the element volume associated with the node)
+    V = w_n(k) * Jdet;
+
+    // - assemble to element matrix (use the delta properties of the shape functions)
+    //   D(m+i,n+i) = N(m) * alpha * V * N(n);
+    D(k*2  ,k*2  ) = quad->alpha(elem,k,V) * V;
+    D(k*2+1,k*2+1) = quad->alpha(elem,k,V) * V;
   }
 }
 

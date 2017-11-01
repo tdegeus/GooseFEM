@@ -30,52 +30,55 @@ public:
   std::shared_ptr<Element> elem;
 
   // mesh : nodal quantities and connectivity
-  MatS   dofs;      // DOF-numbers       of each node    (column of 'vectors')
-  MatS   conn;      // node numbers      of each element (column of elements)
-  MatD   x0;        // initial positions of each node    (column of vectors)
-  MatD   u;         // displacements     of each node    (column of vectors)
-  MatD   v;         // velocities        of each node    (column of vectors)
-  MatD   a;         // accelerations     of each node    (column of vectors)
+  MatS   dofs;      // DOF-numbers       of each node    (column of 'vectors')          [nnode,ndim]
+  MatS   conn;      // node numbers      of each element (column of elements)           [nelem,nne ]
+  MatD   x0;        // initial positions of each node    (column of vectors)            [nnode,ndim]
+  MatD   u;         // displacements     of each node    (column of vectors)            [nnode,ndim]
+  MatD   v;         // velocities        of each node    (column of vectors)            [nnode,ndim]
+  MatD   a;         // accelerations     of each node    (column of vectors)            [nnode,ndim]
   size_t nnode;     // number of nodes
   size_t nelem;     // number of elements
-  size_t nne;       // number of nodes-per-element
+  size_t nne;       // number of nodes per element
   size_t ndim;      // number of dimensions
   size_t ndof;      // number of DOFs (after eliminating periodic dependencies)
 
   // fixed DOFs
   size_t nfixed;    // number of fixed DOFs
-  ColS   fixedDofs; // DOF-number that are prescribed
-  ColD   fixedV;    // prescribed velocity     for the fixed DOFs
-  ColD   fixedA;    // prescribed acceleration for the fixed DOFs
+  ColS   fixedDofs; // indices of DOFs that are prescribed
+  ColD   fixedV;    // prescribed velocity     of each fixed DOF
+  ColD   fixedA;    // prescribed acceleration of each fixed DOF
 
-  // linear system
-  ColD   Minv;      // inverse of mass matrix (constructed diagonal -> inverse == diagonal)
-  ColD   Fu;        // force that depends on displacement (column)
-  ColD   Fv;        // force that depends on velocity (and displacement) (column)
-  ColD   V;         // velocity (column)
-  ColD   V_n;       // velocity (column, last increment)
-  ColD   A;         // acceleration (column)
-  ColD   A_n;       // acceleration (column, last increment)
+  // linear system : subset of the mesh
+  ColD   Minv;      // inverse mass matrix (constructed diagonal -> inverse == diagonal)      [ndof]
+  ColD   D;         // non-Galilean damping matrix (constructed diagonal, like "Minv")        [ndof]
+  ColD   Fu;        // force that depends on displacement (column)                            [ndof]
+  ColD   Fv;        // force that depends on velocity (and displacement) (column)             [ndof]
+  ColD   V;         // velocity (column)                                                      [ndof]
+  ColD   V_n;       // velocity (column, last increment)                                      [ndof]
+  ColD   A;         // acceleration (column)                                                  [ndof]
+  ColD   A_n;       // acceleration (column, last increment)                                  [ndof]
 
   // time integration
   double dt;        // time step
   double t = 0.0;   // current time
-  double alpha;     // non-Galilean damping coefficient
 
   // constructor
   // -----------
 
   SemiPeriodic(){};
 
-  SemiPeriodic(std::shared_ptr<Element> elem, const MatD &x0, const MatS &conn, const MatS &dofs,
-    const ColS &fixedDofs, double dt, double alpha=0.0 );
+  SemiPeriodic(
+    std::shared_ptr<Element> elem, const MatD &x0, const MatS &conn, const MatS &dofs,
+    const ColS &fixedDofs, double dt
+  );
 
   // functions
   // ---------
 
   void velocityVerlet();  // one time step of time integrator
-  void Verlet();          // one time step of time integrator (Fv == 0)
+  void Verlet();          // one time step of time integrator (Fv == 0, D ignored)
   void computeMinv();     // element loop: inverse mass matrix            <- "elem->computeM"
+  void computeD();        // element loop: non-Galilean damping matrix    <- "elem->computeD"
   void computeFu();       // element loop: displacement dependent forces  <- "elem->computeFu"
   void computeFv();       // element loop: velocity dependent forces      <- "elem->computeFv"
   void post();            // element loop: post-process                   <- "elem->post"
@@ -87,33 +90,32 @@ public:
 template<class Element>
 SemiPeriodic<Element>::SemiPeriodic(
   std::shared_ptr<Element> _elem, const MatD &_x0, const MatS &_conn, const MatS &_dofs,
-  const ColS &_fixedDofs, double _dt, double _alpha
+  const ColS &_fixedDofs, double _dt
 )
 {
   // problem specific settings
-  elem  = _elem;
+  elem = _elem;
 
   // mesh definition
-  x0    = _x0;
-  conn  = _conn;
-  dofs  = _dofs;
+  x0   = _x0;
+  conn = _conn;
+  dofs = _dofs;
 
   // time integration
-  dt    = _dt;
-  alpha = _alpha;
+  dt   = _dt;
 
   // fixed DOFs
   fixedDofs = _fixedDofs;
   nfixed    = static_cast<size_t>(fixedDofs.size());
 
-  // extract mesh size from definition
+  // extract mesh size
   nnode = static_cast<size_t>(x0  .rows());
   ndim  = static_cast<size_t>(x0  .cols());
   nelem = static_cast<size_t>(conn.rows());
   nne   = static_cast<size_t>(conn.cols());
   ndof  = dofs.maxCoeff()+1;
 
-  // basic check (mostly the user is 'trusted')
+  // basic checks (mostly the user is 'trusted')
   assert( dofs.size() == nnode * ndim );
   assert( ndof        <  nnode * ndim );
 
@@ -121,13 +123,14 @@ SemiPeriodic<Element>::SemiPeriodic(
   for ( size_t i = 0 ; i < nfixed ; ++i ) assert( fixedDofs(i) < ndof );
   #endif
 
-  // nodal quantities
+  // allocate and zero-initialize nodal quantities
   u.conservativeResize(nnode,ndim); u.setZero();
   v.conservativeResize(nnode,ndim); v.setZero();
   a.conservativeResize(nnode,ndim); a.setZero();
 
-  // linear system (DOFs)
+  // allocate and zero-initialize linear system (DOFs)
   Minv.conservativeResize(ndof); Minv.setZero();
+  D   .conservativeResize(ndof); D   .setZero();
   Fu  .conservativeResize(ndof); Fu  .setZero();
   Fv  .conservativeResize(ndof); Fv  .setZero();
   V   .conservativeResize(ndof); V   .setZero();
@@ -139,8 +142,9 @@ SemiPeriodic<Element>::SemiPeriodic(
   fixedV.conservativeResize(nfixed); fixedV.setZero();
   fixedA.conservativeResize(nfixed); fixedA.setZero();
 
-  // compute inverse mass matrix : assumed constant in time
+  // compute inverse mass matrix and non-Galilean damping matrix : assumed constant in time
   computeMinv();
+  computeD();
 }
 
 // =================================================================================================
@@ -148,48 +152,48 @@ SemiPeriodic<Element>::SemiPeriodic(
 template<class Element>
 void SemiPeriodic<Element>::velocityVerlet()
 {
-  // (1) new nodal positions (displacements)
+  // (1) new positions (displacements)
   // - apply update (nodal) : x_{n+1} = x_n + dt * v_n + .5 * dt^2 * a_n"
   u += dt * v + ( .5 * std::pow(dt,2.) ) * a;
   // - compute forces that are dependent on the displacement, but not on the velocity
   computeFu();
 
-  // (2a) estimate nodal velocities
+  // (2a) estimate new velocities
   // - update velocities (DOFs)
   V.noalias() = V_n + dt * A;
-  // - set fixed velocity
+  // - apply the fixed velocities
   for ( size_t i=0; i<nfixed; ++i ) V(fixedDofs(i)) = fixedV(i);
-  // - convert to nodal velocity (periodicity implies that several nodes depend on the same DOF)
+  // - convert to nodal velocities (periodicity implies that several nodes depend on the same DOF)
   for ( size_t i=0; i<nnode*ndim; ++i ) v(i) = V(dofs(i));
   // - compute forces that are dependent on the velocity
   computeFv();
   // - solve for accelerations (DOFs)
-  A.noalias() = Minv.cwiseProduct( - Fu - Fv - alpha*V );
+  A.noalias() = Minv.cwiseProduct( - Fu - Fv - D.cwiseProduct(V) );
   // - update velocities (DOFs)
   V.noalias() = V_n + ( .5 * dt ) * ( A_n + A );
-  // - set fixed velocity
+  // - apply the fixed velocities
   for ( size_t i=0; i<nfixed; ++i ) V(fixedDofs(i)) = fixedV(i);
-  // - convert to nodal velocity (periodicity implies that several nodes depend on the same DOF)
+  // - convert to nodal velocities (periodicity implies that several nodes depend on the same DOF)
   for ( size_t i=0; i<nnode*ndim; ++i ) v(i) = V(dofs(i));
   // - compute forces that are dependent on the velocity
   computeFv();
 
-  // (2b) new nodal velocities
+  // (2b) new velocities
   // - solve for accelerations (DOFs)
-  A.noalias() = Minv.cwiseProduct( - Fu - Fv - alpha*V );
+  A.noalias() = Minv.cwiseProduct( - Fu - Fv - D.cwiseProduct(V) );
   // - update velocities (DOFs)
   V.noalias() = V_n + ( .5 * dt ) * ( A_n + A );
-  // - set fixed velocity
+  // - apply the fixed velocities
   for ( size_t i=0; i<nfixed; ++i ) V(fixedDofs(i)) = fixedV(i);
-  // - convert to nodal velocity (periodicity implies that several nodes depend on the same DOF)
+  // - convert to nodal velocities (periodicity implies that several nodes depend on the same DOF)
   for ( size_t i=0; i<nnode*ndim; ++i ) v(i) = V(dofs(i));
   // - compute forces that are dependent on the velocity
   computeFv();
 
-  // (3) new nodal accelerations
+  // (3) new accelerations
   // - solve for accelerations (DOFs)
-  A.noalias() = Minv.cwiseProduct( - Fu - Fv - alpha*V );
-  // - set fixed acceleration
+  A.noalias() = Minv.cwiseProduct( - Fu - Fv - D.cwiseProduct(V) );
+  // - apply the fixed accelerations
   for ( size_t i=0; i<nfixed; ++i ) A(fixedDofs(i)) = fixedA(i);
   // - convert to nodal acceleration (periodicity implies that several nodes depend on the same DOF)
   for ( size_t i=0; i<nnode*ndim; ++i ) a(i) = A(dofs(i));
@@ -218,7 +222,7 @@ void SemiPeriodic<Element>::Verlet()
   computeFu();
   // - solve for accelerations (DOFs)
   A.noalias() = Minv.cwiseProduct( - Fu );
-  // - set fixed acceleration
+  // - apply the fixed accelerations
   for ( size_t i=0; i<nfixed; ++i ) A(fixedDofs(i)) = fixedA(i);
   // - convert to nodal acceleration (periodicity implies that several nodes depend on the same DOF)
   for ( size_t i=0; i<nnode*ndim; ++i ) a(i) = A(dofs(i));
@@ -226,9 +230,9 @@ void SemiPeriodic<Element>::Verlet()
   // (2) propagate velocities
   // - update velocities (DOFs)
   V.noalias() = V_n + ( .5 * dt ) * ( A_n + A );
-  // - set fixed velocity
+  // - apply the fixed velocities
   for ( size_t i=0; i<nfixed; ++i ) V(fixedDofs(i)) = fixedV(i);
-  // - convert to nodal velocity (periodicity implies that several nodes depend on the same DOF)
+  // - convert to nodal velocities (periodicity implies that several nodes depend on the same DOF)
   for ( size_t i=0; i<nnode*ndim; ++i ) v(i) = V(dofs(i));
 
   // store history
@@ -257,7 +261,7 @@ void SemiPeriodic<Element>::computeMinv()
   // loop over all elements
   for ( size_t e = 0 ; e < nelem ; ++e )
   {
-    // - nodal positions, displacement, and DOF numbers for element "e"
+    // - nodal positions, displacements, and DOF numbers for element "e"
     for ( size_t m = 0 ; m < nne ; ++m ) {
       for ( size_t i = 0 ; i < ndim ; ++i ) {
         elem->xe(m,i) = x0  (conn(e,m),i);
@@ -290,6 +294,47 @@ void SemiPeriodic<Element>::computeMinv()
 // =================================================================================================
 
 template<class Element>
+void SemiPeriodic<Element>::computeD()
+{
+  // array with DOF numbers of each node
+  cppmat::matrix2<size_t> dofe(nne,ndim);
+
+  // zero-initialize non-Galilean damping matrix
+  D.setZero();
+
+  // loop over all elements
+  for ( size_t e = 0 ; e < nelem ; ++e )
+  {
+    // - nodal positions, displacements, and DOF numbers for element "e"
+    for ( size_t m = 0 ; m < nne ; ++m ) {
+      for ( size_t i = 0 ; i < ndim ; ++i ) {
+        elem->xe(m,i) = x0  (conn(e,m),i);
+        elem->ue(m,i) = u   (conn(e,m),i);
+        dofe    (m,i) = dofs(conn(e,m),i);
+      }
+    }
+
+    // - compute element non-Galilean damping matrix using problem specific "Element" class
+    elem->computeD(e);
+
+    // - assemble element non-Galilean damping matrix : take only the diagonal
+    for ( size_t i = 0 ; i < nne*ndim ; ++i ) D(dofe[i]) += elem->D(i,i);
+
+    // - check that the user provided a diagonal non-Galilean damping matrix
+    #ifndef NDEBUG
+    for ( size_t i = 0 ; i < nne*ndim ; ++i ) {
+      for ( size_t j = 0 ; j < nne*ndim ; ++j ) {
+        if ( i != j ) assert( ! elem->D(i,j) );
+        else          assert(   elem->D(i,i) );
+      }
+    }
+    #endif
+  }
+}
+
+// =================================================================================================
+
+template<class Element>
 void SemiPeriodic<Element>::computeFu()
 {
   // array with DOF numbers of each node
@@ -301,7 +346,7 @@ void SemiPeriodic<Element>::computeFu()
   // loop over all elements
   for ( size_t e = 0 ; e < nelem ; ++e )
   {
-    // - nodal positions, displacement, and DOF numbers for element "e"
+    // - nodal positions, displacements, and DOF numbers for element "e"
     for ( size_t m = 0 ; m < nne ; ++m ) {
       for ( size_t i = 0 ; i < ndim ; ++i ) {
         elem->xe(m,i) = x0  (conn(e,m),i);
