@@ -1,5 +1,5 @@
 
-import example
+import main
 import numpy             as np
 import matplotlib        as mpl
 import matplotlib.pyplot as plt
@@ -47,7 +47,7 @@ for inu,nu in enumerate(nus):
   ninc = int(T/dt)
 
   # run simulation
-  u = example.compute(
+  u = main.velocityVerlet(
     rho        = rho,
     G          = G,
     eta        = eta,

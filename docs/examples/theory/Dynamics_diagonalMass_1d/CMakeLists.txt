@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.1)
 
 # define a project name
-project(example)
+project(main)
 
 # set optimization level
 set(CMAKE_BUILD_TYPE Release)
@@ -22,4 +22,4 @@ include_directories(${EIGEN3_INCLUDE_DIRS})
 find_package(pybind11 REQUIRED)
 
 # create the module
-pybind11_add_module(example example.cpp)
+pybind11_add_module(main main.cpp)

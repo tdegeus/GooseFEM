@@ -18,10 +18,10 @@ ColD computeM(const ColD &x, double rho)
   ColD dNdxi(2), dNdx(2), xe(2), M(x.size());
 
   // integration variables
-  double w = 1; // weight (N.B. such that total volume matches)
+  double w = 1; // weight (N.B. such that total volume is correct)
   double J, V;
 
-  // shape function gradients : local coordinates
+  // shape function gradients : local coordinates, constant over the element
   dNdxi(0) = -0.5;
   dNdxi(1) = +0.5;
 
@@ -31,7 +31,7 @@ ColD computeM(const ColD &x, double rho)
   // zero initialize force
   M.setZero();
 
-  // loop over elements
+  // loop over elements (and integration points, here equal to one and omitted)
   for ( size_t e = 0 ; e < nelem ; ++e )
   {
     // element coordinates
@@ -41,7 +41,7 @@ ColD computeM(const ColD &x, double rho)
     // Jacobian
     J = dNdxi(0) * xe(0) + dNdxi(1) * xe(1);
 
-    // element size
+    // element size (actually the integration point size)
     V = J * w;
 
     // add to force
@@ -59,13 +59,13 @@ ColD computeFu(const ColD &x, const ColD &u, double G)
   ColD dNdxi(2), dNdx(2), xe(2), ue(2), F(x.size());
 
   // integration variables
-  double w = 2; // weight (N.B. xi == 0)
+  double w = 2; // weight (N.B. xi == 0, but irrelevant because dNdxi is constant)
   double J, V;
 
   // local constitutive response
   double sig, eps;
 
-  // shape function gradients : local coordinates
+  // shape function gradients : local coordinates, constant over the element
   dNdxi(0) = -0.5;
   dNdxi(1) = +0.5;
 
@@ -75,7 +75,7 @@ ColD computeFu(const ColD &x, const ColD &u, double G)
   // zero initialize force
   F.setZero();
 
-  // loop over elements
+  // loop over elements (and integration points, here equal to one and omitted)
   for ( size_t e = 0 ; e < nelem ; ++e )
   {
     // element coordinates
@@ -89,7 +89,7 @@ ColD computeFu(const ColD &x, const ColD &u, double G)
     // Jacobian
     J = dNdxi(0) * xe(0) + dNdxi(1) * xe(1);
 
-    // element size
+    // element size (actually the integration point size)
     V = J * w;
 
     // shape function gradients : global coordinates (constant over the element)
@@ -116,13 +116,13 @@ ColD computeFv(const ColD &x, const ColD &v, double eta)
   ColD dNdxi(2), dNdx(2), xe(2), ve(2), F(x.size());
 
   // integration variables
-  double w = 2; // weight (N.B. xi == 0)
+  double w = 2; // weight (N.B. xi == 0, but irrelevant because dNdxi is constant)
   double J, V;
 
   // local constitutive response
   double sig, epsdot;
 
-  // shape function gradients : local coordinates
+  // shape function gradients : local coordinates, constant over the element
   dNdxi(0) = -0.5;
   dNdxi(1) = +0.5;
 
@@ -132,7 +132,7 @@ ColD computeFv(const ColD &x, const ColD &v, double eta)
   // zero initialize force
   F.setZero();
 
-  // loop over elements
+  // loop over elements (and integration points, here equal to one and omitted)
   for ( size_t e = 0 ; e < nelem ; ++e )
   {
     // element coordinates
@@ -146,7 +146,7 @@ ColD computeFv(const ColD &x, const ColD &v, double eta)
     // Jacobian
     J = dNdxi(0) * xe(0) + dNdxi(1) * xe(1);
 
-    // element size
+    // element size (actually the integration point size)
     V = J * w;
 
     // shape function gradients : global coordinates (constant over the element)
@@ -168,11 +168,12 @@ ColD computeFv(const ColD &x, const ColD &v, double eta)
 
 // -------------------------------------------------------------------------------------------------
 
-MatD compute(
+MatD velocityVerlet(
   double rho, double G, double eta, double h, const ColD &Fext,
   double dt, size_t ninc, size_t save_every, const ColS &save_nodes
 )
 {
+  // get dimensions from input
   size_t nel   = static_cast<size_t>(Fext.size())-1;
   double L     = h * static_cast<double>(nel);
   double t     = 0.;
@@ -180,8 +181,10 @@ MatD compute(
   size_t jsave = static_cast<size_t>(std::floor(static_cast<double>(ninc)/static_cast<double>(save_every)));
   size_t nsave = static_cast<size_t>(save_nodes.size());
 
+  // allocate output (displacement)
   MatD out(jsave,nsave);
 
+  // linear system
   ColD x   (nel+1);
   ColD u   (nel+1);
   ColD v   (nel+1);
@@ -193,14 +196,17 @@ MatD compute(
   ColD Fu  (nel+1);
   ColD Fv  (nel+1);
 
+  // nodal coordinates
   x = ColD::LinSpaced( nel+1, 0.0, L );
 
+  // zero initialize
   u  .setZero();
   v  .setZero();
   a  .setZero();
   a_n.setZero();
   v_n.setZero();
 
+  // mass matrix and its inverse (constant in time)
   M    = computeM(x,rho);
   Minv = M.cwiseInverse();
 
@@ -265,10 +271,10 @@ MatD compute(
 
 namespace py = pybind11;
 
-PYBIND11_MODULE(example,m)
+PYBIND11_MODULE(main,m)
 {
   m.def(
-    "compute", &compute,
+    "velocityVerlet", &velocityVerlet,
     py::arg("rho"), py::arg("G"), py::arg("eta"), py::arg("h"), py::arg("Fext"), py::arg("dt"),
     py::arg("ninc"), py::arg("save_every"), py::arg("save_nodes")
   );

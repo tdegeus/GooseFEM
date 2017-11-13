@@ -98,7 +98,7 @@ message(STATUS "+---------------------------------------------------------------
 message(STATUS "|")
 message(STATUS "| Use 'make install' to install in '${CMAKE_INSTALL_PREFIX}'")
 message(STATUS "| To specify a custom directory call")
-message(STATUS "|   cmake . -DCMAKE_INSTALL_PREFIX=yourprefix")
+message(STATUS "|   cmake .. -DCMAKE_INSTALL_PREFIX=yourprefix")
 message(STATUS "| For custom paths, add the following line to your '~/.bashrc'")
 message(STATUS "|   export PKG_CONFIG_PATH=${CMAKE_INSTALL_PREFIX}/share/pkgconfig:$PKG_CONFIG_PATH")
 message(STATUS "|")

@@ -1,5 +1,5 @@
 
-import example
+import main
 import numpy             as np
 import matplotlib        as mpl
 import matplotlib.pyplot as plt
@@ -34,7 +34,7 @@ T    = 50.
 ninc = int(T/dt)
 
 # run simulation
-u = example.compute(
+u = main.velocityVerlet(
   rho        = rho,
   G          = G,
   eta        = eta,
@@ -58,5 +58,5 @@ for i in range(u.shape[0])[::10]:
   plt.xlim([0,L])
   plt.ylim([-0.000012,0.000002])
 
-  plt.savefig('geometry_%05d.svg'%i)
+  plt.savefig('example_%05d.svg'%i)
   plt.close()
