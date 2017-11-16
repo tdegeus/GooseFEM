@@ -19,20 +19,20 @@ public:
   // class variables
   // ---------------
 
-  // decoupled element response
+  // shape functions, quadrature, constitutive response on element level (entirely decoupled)
   std::unique_ptr<Element> elem;
 
-  // mesh : nodal quantities and connectivity
-  MatS   dofs;  // DOF-numbers of each node     [nnode,ndim]
-  MatS   conn;  // node numbers of each element [nelem,nne ]
-  MatD   x;     // positions of each node       [nnode,ndim]
-  MatD   u;     // displacements of each node   [nnode,ndim]
-
-  // mesh : size
+  // mesh : dimensions
   size_t nnode, ndim, nelem, nne, ndof;
 
+  // mesh : nodal quantities and connectivity
+  MatS dofs;  // DOF-numbers of each node     [nnode,ndim]
+  MatS conn;  // node numbers of each element [nelem,nne ]
+  MatD x;     // positions of each node       [nnode,ndim]
+  MatD u;     // displacements of each node   [nnode,ndim]
+
   // linear system
-  ColD F;       // internal force [ndof]
+  ColD F;     // internal force               [ndof]
 
   // class functions
   // ---------------
@@ -44,7 +44,7 @@ public:
   void system2elem_x();
   void system2elem_u();
 
-  // compute global internal force
+  // compute and assemble global internal force
   void compute_F();
 };
 
@@ -61,7 +61,7 @@ Simulation<Element>::Simulation(
   dofs  = _dofs;
   elem  = std::move(_elem);
 
-  // extract mesh size
+  // extract mesh dimensions
   nnode = static_cast<size_t>(x  .rows());
   ndim  = static_cast<size_t>(x  .cols());
   nelem = static_cast<size_t>(conn.rows());
@@ -84,11 +84,14 @@ void Simulation<Element>::system2elem_x()
 {
   #pragma omp parallel
   {
+    // loop over all elements (in parallel)
     #pragma omp for
     for ( size_t e = 0 ; e < nelem ; ++e )
     {
+      // loop the nodes in element "e"
       for ( size_t m = 0 ; m < nne ; ++m )
       {
+        // loop over all dimensions
         for ( size_t i = 0 ; i < ndim ; ++i )
         {
           elem->x(e,m,i) = x(conn(e,m),i);
@@ -105,11 +108,14 @@ void Simulation<Element>::system2elem_u()
 {
   #pragma omp parallel
   {
+    // loop over all elements (in parallel)
     #pragma omp for
     for ( size_t e = 0 ; e < nelem ; ++e )
     {
+      // loop the nodes in element "e"
       for ( size_t m = 0 ; m < nne ; ++m )
       {
+        // loop over all dimensions
         for ( size_t i = 0 ; i < ndim ; ++i )
         {
           elem->u(e,m,i) = u(conn(e,m),i);
@@ -144,7 +150,7 @@ void Simulation<Element>::compute_F()
     ColD Ft(ndof);
     Ft.setZero();
 
-    // -- compute total force by looping over elements
+    // -- assemble total force by looping over elements
     #pragma omp for
     for ( size_t e = 0 ; e < nelem ; ++e )
     {
@@ -177,15 +183,22 @@ public:
   // class variables
   // ---------------
 
+  // constitutive response per element, per integration point
   std::unique_ptr<Material> mat;
+
+  // matrices to store the element data
   cppmat::matrix<double> x, u, f, dNdx, dNdxi, w, V;
+
+  // dimensions
   size_t nelem, nip=4, nne=4, ndim=2;
 
   // class functions
   // ---------------
 
+  // constructor
   Element(std::unique_ptr<Material> mat, size_t nelem);
 
+  // compute shape functions, strain, stress, force
   void compute_dNdx();
   void compute_eps();
   void compute_sig();
@@ -251,12 +264,15 @@ void Element<Material>::compute_dNdx()
 {
   #pragma omp parallel
   {
+    // intermediate quantities: Jacobian and its inverse and determinant
     cppmat::cartesian2d::tensor2<double> J, Jinv;
     double Jdet;
 
+    // loop over all elements (in parallel)
     #pragma omp for
     for ( size_t e = 0 ; e < nelem ; ++e )
     {
+      // loop over all integration points in element "e"
       for ( size_t k = 0 ; k < nip ; ++k )
       {
         // - Jacobian
@@ -296,11 +312,14 @@ void Element<Material>::compute_eps()
 {
   #pragma omp parallel
   {
+    // intermediate quantities: displacement gradient
     cppmat::cartesian2d::tensor2<double> gradu;
 
+    // loop over all elements (in parallel)
     #pragma omp for
     for ( size_t e = 0 ; e < nelem ; ++e )
     {
+      // loop over all integration points in element "e"
       for ( size_t k = 0 ; k < nip ; ++k )
       {
         // - displacement gradient
@@ -330,6 +349,7 @@ void Element<Material>::compute_eps()
 template<class Material>
 void Element<Material>::compute_sig()
 {
+  // compute stress using the Material class
   mat->compute_sig();
 }
 
@@ -338,13 +358,16 @@ void Element<Material>::compute_sig()
 template<class Material>
 void Element<Material>::compute_f()
 {
+  // zero-initialize the internal force
   f.setZero();
 
   #pragma omp parallel
   {
+    // loop over all elements (in parallel)
     #pragma omp for
     for ( size_t e = 0 ; e < nelem ; ++e )
     {
+      // loop over all integration points in element "e"
       for ( size_t k = 0 ; k < nip ; ++k )
       {
         // - assemble to element force
@@ -370,14 +393,19 @@ public:
   // class variables
   // ---------------
 
+  // strain and stress
   cppmat::matrix<double> eps, sig;
+
+  // dimensions
   size_t nip, nelem, ndim=2;
 
   // class functions
   // ---------------
 
+  // constructor
   Material(size_t nelem, size_t nip);
 
+  // compute stress based on given strain
   void compute_sig();
 };
 
@@ -400,14 +428,18 @@ void Material::compute_sig()
 {
   #pragma omp parallel
   {
+    // parameters
+    double K=1., G=1.;
+    // input quantities
     cppmat::cartesian2d::tensor2d<double> I = cppmat::cartesian2d::identity2();
     cppmat::cartesian2d::tensor2s<double> Eps, Epsd, Sig;
     double Epsm;
-    double K=1., G=1.;
 
+    // loop over all elements (in parallel)
     #pragma omp for
     for ( size_t e = 0 ; e < nelem ; ++e )
     {
+      // loop over all integration points in element "e"
       for ( size_t k = 0 ; k < nip ; ++k )
       {
         // - copy to local tensor
@@ -447,38 +479,40 @@ void Material::compute_sig()
 
 int main()
 {
+  // dimensions
   size_t ndim  = 2;
   size_t nne   = 4;
   size_t nip   = 4;
   size_t nelem = 2;
   size_t nnode = 6;
 
+  // allocate mesh
   MatS conn(nelem,nne );
   MatD coor(nnode,ndim);
   MatS dofs(nnode,ndim);
 
+  // specify mesh
+  // - nodal coordinates
   coor(0,0) = 0.; coor(0,1) = 0.;
   coor(1,0) = 1.; coor(1,1) = 0.;
   coor(2,0) = 2.; coor(2,1) = 0.;
   coor(3,0) = 0.; coor(3,1) = 1.;
   coor(4,0) = 1.; coor(4,1) = 1.;
   coor(5,0) = 2.; coor(5,1) = 1.;
-
+  // - DOF numbers per node
   dofs(0,0) =  0; dofs(0,1) =  1;
   dofs(1,0) =  2; dofs(1,1) =  3;
   dofs(2,0) =  4; dofs(2,1) =  5;
   dofs(3,0) =  6; dofs(3,1) =  7;
   dofs(4,0) =  8; dofs(4,1) =  9;
   dofs(5,0) = 10; dofs(5,1) = 11;
-
+  // - connectivity
   conn(0,0) = 0; conn(0,1) = 1; conn(0,2) = 4; conn(0,3) = 3;
   conn(1,0) = 1; conn(1,1) = 2; conn(1,2) = 5; conn(1,3) = 4;
 
-  using Elem = Element<Material>;
-  using Sim  = Simulation<Elem>;
-
-  Simulation<Elem> sim(
-    std::move(std::make_unique<Elem>(
+  // define "simulation"
+  Simulation<Element<Material>> sim(
+    std::move(std::make_unique<Element<Material>>(
       std::move(std::make_unique<Material>(nelem,nip)),
       nelem
     )),
@@ -487,12 +521,15 @@ int main()
     dofs
   );
 
+  // set hypothetical displacement
   sim.u(0,0) = -0.1; sim.u(3,0) = -0.1;
   sim.u(1,0) =  0.0; sim.u(4,0) =  0.0;
   sim.u(2,0) = +0.1; sim.u(5,0) = +0.1;
 
+  // compute the internal force
   sim.compute_F();
 
+  // print result
   std::cout << sim.F << std::endl;
 
 }

@@ -26,35 +26,19 @@ public:
   // variables
   // ---------
 
-  // element/quadrature/material definition (should match mesh)
-  std::shared_ptr<Element> elem;
+  // element/quadrature/material definition
+  std::unique_ptr<Element> elem;
 
-  // mesh : nodal quantities and connectivity
-  MatS   dofs;      // DOF-numbers       of each node    (column of 'vectors')          [nnode,ndim]
-  MatS   conn;      // node numbers      of each element (column of elements)           [nelem,nne ]
-  MatD   x0;        // initial positions of each node    (column of vectors)            [nnode,ndim]
-  MatD   u;         // displacements     of each node    (column of vectors)            [nnode,ndim]
-  MatD   v;         // velocities        of each node    (column of vectors)            [nnode,ndim]
-  MatD   a;         // accelerations     of each node    (column of vectors)            [nnode,ndim]
-  size_t nnode;     // number of nodes
-  size_t nelem;     // number of elements
-  size_t nne;       // number of nodes per element
-  size_t ndim;      // number of dimensions
-  size_t ndof;      // number of DOFs (after eliminating periodic dependencies)
+  // mesh: nodal position/displacement/velocity/acceleration, DOF-numbers, connectivity, dimensions
+  size_t nnode, nelem, nne, ndim, ndof;
+  MatS   conn, dofs;
+  MatD   x, u, v, a;
 
-  // linear system : subset of the mesh
-  ColD   Minv;      // inverse mass matrix (constructed diagonal -> inverse == diagonal)      [ndof]
-  ColD   D;         // non-Galilean damping matrix (constructed diagonal, like "Minv")        [ndof]
-  ColD   Fu;        // force that depends on displacement (column)                            [ndof]
-  ColD   Fv;        // force that depends on velocity (and displacement) (column)             [ndof]
-  ColD   V;         // velocity (column)                                                      [ndof]
-  ColD   V_n;       // velocity (column, last increment)                                      [ndof]
-  ColD   A;         // acceleration (column)                                                  [ndof]
-  ColD   A_n;       // acceleration (column, last increment)                                  [ndof]
+  // linear system: columns (also "M" and "D" which are diagonal)
+  ColD   M, Minv, D, F, V, V_n, A, A_n;
 
   // time integration
-  double dt;        // time step
-  double t = 0.0;   // current time
+  double dt, t=0.0;
 
   // constructor
   // -----------
@@ -62,43 +46,38 @@ public:
   Periodic(){};
 
   Periodic(
-    std::shared_ptr<Element> elem, const MatD &x0, const MatS &conn, const MatS &dofs, double dt
+    std::unique_ptr<Element> elem, const MatD &x, const MatS &conn, const MatS &dofs, double dt
   );
 
   // functions
   // ---------
 
-  void velocityVerlet();  // one time step of time integrator
-  void Verlet();          // one time step of time integrator (Fv == 0, D ignored)
-  void computeMinv();     // element loop: inverse mass matrix            <- "elem->computeM"
-  void computeD();        // element loop: non-Galilean damping matrix    <- "elem->computeD"
-  void computeFu();       // element loop: displacement dependent forces  <- "elem->computeFu"
-  void computeFv();       // element loop: velocity dependent forces      <- "elem->computeFv"
-  void post();            // element loop: post-process                   <- "elem->post"
-
+  void velocityVerlet();           // one time step of time integrator
+  void Verlet();                   // one time step of time integrator (no velocity dependence)
+  void updated_u(bool init=false); // process update in "u", if init all possible updates are made
+  void updated_v(bool init=false); // process update in "v", if init all possible updates are made
+  void assemble_M();               // assemble the mass matrix for the element mass matrices
+  void assemble_D();               // assemble the damping matrix for the element damping matrices
+  void assemble_F();               // assemble the force for the element forces
 };
 
 // ========================================== SOURCE CODE ==========================================
 
 template<class Element>
 Periodic<Element>::Periodic(
-  std::shared_ptr<Element> _elem, const MatD &_x0, const MatS &_conn, const MatS &_dofs, double _dt
+  std::unique_ptr<Element> _elem, const MatD &_x, const MatS &_conn, const MatS &_dofs, double _dt
 )
 {
-  // problem specific settings
-  elem = _elem;
+  // copy input
+  elem  = std::move(_elem);
+  x     = _x;
+  conn  = _conn;
+  dofs  = _dofs;
+  dt    = _dt;
 
-  // mesh definition
-  x0   = _x0;
-  conn = _conn;
-  dofs = _dofs;
-
-  // time integration
-  dt   = _dt;
-
-  // extract mesh size
-  nnode = static_cast<size_t>(x0  .rows());
-  ndim  = static_cast<size_t>(x0  .cols());
+  // compute sizes
+  nnode = static_cast<size_t>(x.rows());
+  ndim  = static_cast<size_t>(x.cols());
   nelem = static_cast<size_t>(conn.rows());
   nne   = static_cast<size_t>(conn.cols());
   ndof  = dofs.maxCoeff()+1;
@@ -113,18 +92,28 @@ Periodic<Element>::Periodic(
   a.conservativeResize(nnode,ndim); a.setZero();
 
   // allocate and zero-initialize linear system (DOFs)
-  Minv.conservativeResize(ndof); Minv.setZero();
-  D   .conservativeResize(ndof); D   .setZero();
-  Fu  .conservativeResize(ndof); Fu  .setZero();
-  Fv  .conservativeResize(ndof); Fv  .setZero();
-  V   .conservativeResize(ndof); V   .setZero();
+  Minv.conservativeResize(ndof);
+  M   .conservativeResize(ndof);
+  D   .conservativeResize(ndof);
+  F   .conservativeResize(ndof);
+  V   .conservativeResize(ndof);
   V_n .conservativeResize(ndof); V_n .setZero();
-  A   .conservativeResize(ndof); A   .setZero();
+  A   .conservativeResize(ndof);
   A_n .conservativeResize(ndof); A_n .setZero();
 
-  // compute inverse mass matrix and non-Galilean damping matrix : assumed constant in time
-  computeMinv();
-  computeD();
+  // set the nodal positions of all elements (in parallel)
+  #pragma omp parallel for
+  for ( size_t e = 0 ; e < nelem ; ++e )
+    for ( size_t m = 0 ; m < nne ; ++m )
+      for ( size_t i = 0 ; i < ndim ; ++i )
+        elem->x(e,m,i) = x(conn(e,m),i);
+
+  // signal the update
+  elem->updated_x();
+
+  // initialize all fields
+  updated_u(true);
+  updated_v(true);
 }
 
 // =================================================================================================
@@ -135,38 +124,38 @@ void Periodic<Element>::velocityVerlet()
   // (1) new positions (displacements)
   // - apply update (nodal) : x_{n+1} = x_n + dt * v_n + .5 * dt^2 * a_n"
   u += dt * v + ( .5 * std::pow(dt,2.) ) * a;
-  // - compute forces that are dependent on the displacement, but not on the velocity
-  computeFu();
+  // - process update in displacements
+  updated_u();
 
   // (2a) estimate new velocities
   // - update velocities (DOFs)
   V.noalias() = V_n + dt * A;
   // - convert to nodal velocities (periodicity implies that several nodes depend on the same DOF)
   for ( size_t i=0; i<nnode*ndim; ++i ) v(i) = V(dofs(i));
-  // - compute forces that are dependent on the velocity
-  computeFv();
+  // - process update in velocities
+  updated_v();
   // - solve for accelerations (DOFs)
-  A.noalias() = Minv.cwiseProduct( - Fu - Fv - D.cwiseProduct(V) );
+  A.noalias() = Minv.cwiseProduct( - F - D.cwiseProduct(V) );
   // - update velocities (DOFs)
   V.noalias() = V_n + ( .5 * dt ) * ( A_n + A );
   // - convert to nodal velocities (periodicity implies that several nodes depend on the same DOF)
   for ( size_t i=0; i<nnode*ndim; ++i ) v(i) = V(dofs(i));
-  // - compute forces that are dependent on the velocity
-  computeFv();
+  // - process update in velocities
+  updated_v();
 
   // (2b) new velocities
   // - solve for accelerations (DOFs)
-  A.noalias() = Minv.cwiseProduct( - Fu - Fv - D.cwiseProduct(V) );
+  A.noalias() = Minv.cwiseProduct( - F - D.cwiseProduct(V) );
   // - update velocities (DOFs)
   V.noalias() = V_n + ( .5 * dt ) * ( A_n + A );
   // - convert to nodal velocities (periodicity implies that several nodes depend on the same DOF)
   for ( size_t i=0; i<nnode*ndim; ++i ) v(i) = V(dofs(i));
-  // - compute forces that are dependent on the velocity
-  computeFv();
+  // - process update in velocities
+  updated_v();
 
   // (3) new accelerations
   // - solve for accelerations (DOFs)
-  A.noalias() = Minv.cwiseProduct( - Fu - Fv - D.cwiseProduct(V) );
+  A.noalias() = Minv.cwiseProduct( - F - D.cwiseProduct(V) );
   // - convert to nodal acceleration (periodicity implies that several nodes depend on the same DOF)
   for ( size_t i=0; i<nnode*ndim; ++i ) a(i) = A(dofs(i));
 
@@ -179,7 +168,7 @@ void Periodic<Element>::velocityVerlet()
   // "a" == "A" == "A_n"  ->  new nodal accelerations, their DOF equivalents, and a 'back-up'
   // "v" ==        "V_n"  ->  new nodal velocities,                           and a 'back-up'
   // "u"                  ->  new nodal displacements
-  // The forces "Fu" and "Fv" correspond to this state of the system
+  // The forces "F" correspond to this state of the system
 }
 
 // =================================================================================================
@@ -190,10 +179,10 @@ void Periodic<Element>::Verlet()
   // (1) new nodal positions (displacements)
   // - apply update (nodal) : x_{n+1} = x_n + dt * v_n + .5 * dt^2 * a_n"
   u += dt * v + ( .5 * std::pow(dt,2.) ) * a;
-  // - compute forces that are dependent on the displacement, but not on the velocity
-  computeFu();
+  // - process update in displacements
+  updated_u();
   // - solve for accelerations (DOFs)
-  A.noalias() = Minv.cwiseProduct( - Fu );
+  A.noalias() = Minv.cwiseProduct( - F );
   // - convert to nodal acceleration (periodicity implies that several nodes depend on the same DOF)
   for ( size_t i=0; i<nnode*ndim; ++i ) a(i) = A(dofs(i));
 
@@ -212,48 +201,81 @@ void Periodic<Element>::Verlet()
   // "a" == "A" == "A_n"  ->  new nodal accelerations, their DOF equivalents, and a 'back-up'
   // "v" ==        "V_n"  ->  new nodal velocities,                           and a 'back-up'
   // "u"                  ->  new nodal displacements
-  // The forces "Fu" correspond to this state of the system
+  // The forces "F" correspond to this state of the system
 }
 
 // =================================================================================================
 
 template<class Element>
-void Periodic<Element>::computeMinv()
+void Periodic<Element>::updated_u(bool init)
 {
-  // array with DOF numbers of each node
-  cppmat::matrix2<size_t> dofe(nne,ndim);
-
-  // zero-initialize mass matrix (only the inverse is stored)
-  ColD M(ndof); M.setZero();
-
-  // loop over all elements
+  // set the nodal displacements of all elements (in parallel)
+  #pragma omp parallel for
   for ( size_t e = 0 ; e < nelem ; ++e )
+    for ( size_t m = 0 ; m < nne ; ++m )
+      for ( size_t i = 0 ; i < ndim ; ++i )
+        elem->u(e,m,i) = u(conn(e,m),i);
+
+  // signal update
+  elem->updated_u();
+
+  // update
+  if ( elem->changed_M or init ) assemble_M();
+  if ( elem->changed_D or init ) assemble_D();
+  if ( elem->changed_f or init ) assemble_F();
+}
+
+// =================================================================================================
+
+template<class Element>
+void Periodic<Element>::updated_v(bool init)
+{
+  // set the nodal displacements of all elements (in parallel)
+  #pragma omp parallel for
+  for ( size_t e = 0 ; e < nelem ; ++e )
+    for ( size_t m = 0 ; m < nne ; ++m )
+      for ( size_t i = 0 ; i < ndim ; ++i )
+        elem->v(e,m,i) = v(conn(e,m),i);
+
+  // signal update
+  elem->updated_v();
+
+  // update
+  if ( elem->changed_M or init ) assemble_M();
+  if ( elem->changed_D or init ) assemble_D();
+  if ( elem->changed_f or init ) assemble_F();
+}
+
+// =================================================================================================
+
+template<class Element>
+void Periodic<Element>::assemble_M()
+{
+  // zero-initialize
+  M.setZero();
+
+  // temporarily disable parallelization by Eigen
+  Eigen::setNbThreads(1);
+  // assemble
+  #pragma omp parallel
   {
-    // - nodal positions, displacements, and DOF numbers for element "e"
-    for ( size_t m = 0 ; m < nne ; ++m ) {
-      for ( size_t i = 0 ; i < ndim ; ++i ) {
-        elem->xe(m,i) = x0  (conn(e,m),i);
-        elem->ue(m,i) = u   (conn(e,m),i);
-        dofe    (m,i) = dofs(conn(e,m),i);
-      }
-    }
+    // - mass matrix, per thread
+    ColD M_(ndof);
+    M_.setZero();
 
-    // - compute element mass matrix using problem specific "Element" class
-    elem->computeM(e);
+    // - assemble diagonal mass matrix, per thread
+    #pragma omp for
+    for ( size_t e = 0 ; e < nelem ; ++e )
+      for ( size_t m = 0 ; m < nne ; ++m )
+        for ( size_t i = 0 ; i < ndim ; ++i )
+          M_(dofs(conn(e,m),i)) += elem->M(e,m*ndim+i,m*ndim+i);
 
-    // - assemble element mass matrix : take only the diagonal
-    for ( size_t i = 0 ; i < nne*ndim ; ++i ) M(dofe[i]) += elem->M(i,i);
-
-    // - check that the user provided a diagonal mass matrix
-    #ifndef NDEBUG
-    for ( size_t i = 0 ; i < nne*ndim ; ++i ) {
-      for ( size_t j = 0 ; j < nne*ndim ; ++j ) {
-        if ( i != j ) assert( ! elem->M(i,j) );
-        else          assert(   elem->M(i,i) );
-      }
-    }
-    #endif
+    // - reduce "M_" per thread to total "M"
+    #pragma omp critical
+      M += M_;
   }
+  // automatic parallelization by Eigen
+  Eigen::setNbThreads(0);
 
   // compute inverse of the mass matrix
   Minv = M.cwiseInverse();
@@ -262,131 +284,65 @@ void Periodic<Element>::computeMinv()
 // =================================================================================================
 
 template<class Element>
-void Periodic<Element>::computeD()
+void Periodic<Element>::assemble_D()
 {
-  // array with DOF numbers of each node
-  cppmat::matrix2<size_t> dofe(nne,ndim);
-
-  // zero-initialize non-Galilean damping matrix
+  // zero-initialize
   D.setZero();
 
-  // loop over all elements
-  for ( size_t e = 0 ; e < nelem ; ++e )
+  // temporarily disable parallelization by Eigen
+  Eigen::setNbThreads(1);
+  // assemble
+  #pragma omp parallel
   {
-    // - nodal positions, displacements, and DOF numbers for element "e"
-    for ( size_t m = 0 ; m < nne ; ++m ) {
-      for ( size_t i = 0 ; i < ndim ; ++i ) {
-        elem->xe(m,i) = x0  (conn(e,m),i);
-        elem->ue(m,i) = u   (conn(e,m),i);
-        dofe    (m,i) = dofs(conn(e,m),i);
-      }
-    }
+    // - damping matrix, per thread
+    ColD D_(ndof);
+    D_.setZero();
 
-    // - compute element non-Galilean damping matrix using problem specific "Element" class
-    elem->computeD(e);
+    // - assemble diagonal damping matrix, per thread
+    #pragma omp for
+    for ( size_t e = 0 ; e < nelem ; ++e )
+      for ( size_t m = 0 ; m < nne ; ++m )
+        for ( size_t i = 0 ; i < ndim ; ++i )
+          D_(dofs(conn(e,m),i)) += elem->D(e,m*ndim+i,m*ndim+i);
 
-    // - assemble element non-Galilean damping matrix : take only the diagonal
-    for ( size_t i = 0 ; i < nne*ndim ; ++i ) D(dofe[i]) += elem->D(i,i);
-
-    // - check that the user provided a diagonal non-Galilean damping matrix
-    #ifndef NDEBUG
-    for ( size_t i = 0 ; i < nne*ndim ; ++i ) {
-      for ( size_t j = 0 ; j < nne*ndim ; ++j ) {
-        if ( i != j ) assert( ! elem->D(i,j) );
-        else          assert(   elem->D(i,i) );
-      }
-    }
-    #endif
+    // - reduce "D_" per thread to total "D"
+    #pragma omp critical
+      D += D_;
   }
+  // automatic parallelization by Eigen
+  Eigen::setNbThreads(0);
 }
 
 // =================================================================================================
 
 template<class Element>
-void Periodic<Element>::computeFu()
+void Periodic<Element>::assemble_F()
 {
-  // array with DOF numbers of each node
-  cppmat::matrix2<size_t> dofe(nne,ndim);
+  // zero-initialize
+  F.setZero();
 
-  // zero-initialize displacement dependent force
-  Fu.setZero();
-
-  // loop over all elements
-  for ( size_t e = 0 ; e < nelem ; ++e )
+  // temporarily disable parallelization by Eigen
+  Eigen::setNbThreads(1);
+  // assemble
+  #pragma omp parallel
   {
-    // - nodal positions, displacements, and DOF numbers for element "e"
-    for ( size_t m = 0 ; m < nne ; ++m ) {
-      for ( size_t i = 0 ; i < ndim ; ++i ) {
-        elem->xe(m,i) = x0  (conn(e,m),i);
-        elem->ue(m,i) = u   (conn(e,m),i);
-        dofe    (m,i) = dofs(conn(e,m),i);
-      }
-    }
+    // - force, per thread
+    ColD F_(ndof);
+    F_.setZero();
 
-    // - compute element force using problem specific "Element" class
-    elem->computeFu(e);
+    // - assemble force, per thread
+    #pragma omp for
+    for ( size_t e = 0 ; e < nelem ; ++e )
+      for ( size_t m = 0 ; m < nne ; ++m )
+        for ( size_t i = 0 ; i < ndim ; ++i )
+          F_(dofs(conn(e,m),i)) += elem->f(e,m,i);
 
-    // - assemble force to global system
-    for ( size_t i = 0 ; i < nne*ndim ; ++i ) Fu(dofe[i]) += elem->fu(i);
+    // - reduce "F_" per thread to total "F"
+    #pragma omp critical
+      F += F_;
   }
-}
-
-// =================================================================================================
-
-template<class Element>
-void Periodic<Element>::computeFv()
-{
-  // array with DOF numbers of each node
-  cppmat::matrix2<size_t> dofe(nne,ndim);
-
-  // zero-initialize velocity dependent force
-  Fv.setZero();
-
-  // loop over all elements
-  for ( size_t e = 0 ; e < nelem ; ++e )
-  {
-    // - nodal positions, displacement, velocity, and DOF numbers for element "e"
-    for ( size_t m = 0 ; m < nne ; ++m ) {
-      for ( size_t i = 0 ; i < ndim ; ++i ) {
-        elem->xe(m,i) = x0  (conn(e,m),i);
-        elem->ue(m,i) = u   (conn(e,m),i);
-        elem->ve(m,i) = v   (conn(e,m),i);
-        dofe    (m,i) = dofs(conn(e,m),i);
-      }
-    }
-
-    // - compute element force using problem specific "Element" class
-    elem->computeFv(e);
-
-    // - assemble force to global system
-    for ( size_t i = 0 ; i < nne*ndim ; ++i ) Fv(dofe[i]) += elem->fv(i);
-  }
-}
-
-// =================================================================================================
-
-template<class Element>
-void Periodic<Element>::post()
-{
-  // array with DOF numbers of each node
-  cppmat::matrix2<size_t> dofe(nne,ndim);
-
-  // loop over all elements
-  for ( size_t e = 0 ; e < nelem ; ++e )
-  {
-    // - nodal positions, displacement, velocity, and DOF numbers for element "e"
-    for ( size_t m = 0 ; m < nne ; ++m ) {
-      for ( size_t i = 0 ; i < ndim ; ++i ) {
-        elem->xe(m,i) = x0  (conn(e,m),i);
-        elem->ue(m,i) = u   (conn(e,m),i);
-        elem->ve(m,i) = v   (conn(e,m),i);
-        dofe    (m,i) = dofs(conn(e,m),i);
-      }
-    }
-
-    // - run post-process function of the problem specific "Element" class (output is handled there)
-    elem->post(e);
-  }
+  // automatic parallelization by Eigen
+  Eigen::setNbThreads(0);
 }
 
 // =================================================================================================
