@@ -326,7 +326,7 @@ void Quad4<Material>::updated_u()
       mat->updated_eps(e,k);
 
       // - assemble to element force
-      //   f(m,j) += dNdx(m,i) * sig(i,j) * V;
+      //   f(m,j) += dNx(m,i) * sig(i,j) * V;
       for ( size_t m = 0 ; m < nne ; ++m )
       {
         f_(m,0) += dNx_(m,0) * sig_(0,0) * V_(k) + dNx_(m,1) * sig_(1,0) * V_(k);

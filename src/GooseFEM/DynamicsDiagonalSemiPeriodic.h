@@ -60,11 +60,12 @@ public:
 
   void velocityVerlet();           // one time step of time integrator
   void Verlet();                   // one time step of time integrator (no velocity dependence)
+  void updated_x();                // process update in "x"
   void updated_u(bool init=false); // process update in "u", if init all possible updates are made
   void updated_v(bool init=false); // process update in "v", if init all possible updates are made
-  void assemble_M();               // assemble the mass matrix for the element mass matrices
-  void assemble_D();               // assemble the damping matrix for the element damping matrices
-  void assemble_F();               // assemble the force for the element forces
+  void assemble_M();               // assemble the mass matrix from the element mass matrices
+  void assemble_D();               // assemble the damping matrix from the element damping matrices
+  void assemble_F();               // assemble the force from the element forces
 };
 
 // ========================================== SOURCE CODE ==========================================
@@ -118,17 +119,8 @@ SemiPeriodic<Element>::SemiPeriodic(
   fixedV.conservativeResize(nfixed); fixedV.setZero();
   fixedA.conservativeResize(nfixed); fixedA.setZero();
 
-  // set the nodal positions of all elements (in parallel)
-  #pragma omp parallel for
-  for ( size_t e = 0 ; e < nelem ; ++e )
-    for ( size_t m = 0 ; m < nne ; ++m )
-      for ( size_t i = 0 ; i < ndim ; ++i )
-        elem->x(e,m,i) = x(conn(e,m),i);
-
-  // signal the update
-  elem->updated_x();
-
   // initialize all fields
+  updated_x();
   updated_u(true);
   updated_v(true);
 }
@@ -231,6 +223,22 @@ void SemiPeriodic<Element>::Verlet()
   // "v" ==        "V_n"  ->  new nodal velocities,                           and a 'back-up'
   // "u"                  ->  new nodal displacements
   // The forces "F" correspond to this state of the system
+}
+
+// =================================================================================================
+
+template<class Element>
+void SemiPeriodic<Element>::updated_x()
+{
+  // set the nodal positions of all elements (in parallel)
+  #pragma omp parallel for
+  for ( size_t e = 0 ; e < nelem ; ++e )
+    for ( size_t m = 0 ; m < nne ; ++m )
+      for ( size_t i = 0 ; i < ndim ; ++i )
+        elem->x(e,m,i) = x(conn(e,m),i);
+
+  // signal update
+  elem->updated_x();
 }
 
 // =================================================================================================
