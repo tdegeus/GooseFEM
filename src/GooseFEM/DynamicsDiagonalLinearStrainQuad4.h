@@ -7,6 +7,8 @@
 #ifndef GOOSEFEM_DYNAMICS_DIAGONAL_QUAD4_H
 #define GOOSEFEM_DYNAMICS_DIAGONAL_QUAD4_H
 
+// -------------------------------------------------------------------------------------------------
+
 #include "Macros.h"
 #include <cppmat/cppmat.h>
 
@@ -16,8 +18,6 @@ namespace GooseFEM {
 namespace Element {
 namespace Diagonal {
 namespace LinearStrain {
-
-// -------------------------------------------------------------------------------------------------
 
 // ========================== N.B. most loops are unrolled for efficiency ==========================
 
@@ -29,7 +29,7 @@ public:
   // class variables
   // ---------------
 
-  // constitutive response per element, per integration point
+  // constitutive response per integration point, per element
   std::unique_ptr<Material> mat;
 
   // matrices to store the element data
