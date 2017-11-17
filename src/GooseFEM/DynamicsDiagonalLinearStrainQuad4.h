@@ -290,7 +290,7 @@ void Quad4<Material>::updated_u()
   cppmat::tiny::vector <double,4>   V_;
 
   // loop over all elements (in parallel)
-  #pragma omp for schedule(dynamic)
+  #pragma omp for
   for ( size_t e = 0 ; e < nelem ; ++e )
   {
     // pointer to element forces, displacements, and integration volume
@@ -357,7 +357,7 @@ void Quad4<Material>::updated_v()
   cppmat::tiny::vector <double,4>   V_;
 
   // loop over all elements (in parallel)
-  #pragma omp for schedule(dynamic)
+  #pragma omp for
   for ( size_t e = 0 ; e < nelem ; ++e )
   {
     // pointer to element forces, displacements, and integration volume
