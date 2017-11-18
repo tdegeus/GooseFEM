@@ -4,8 +4,8 @@
 
 ================================================================================================= */
 
-#ifndef GOOSEFEM_DYNAMICS_DIAGONAL_QUAD4_H
-#define GOOSEFEM_DYNAMICS_DIAGONAL_QUAD4_H
+#ifndef GOOSEFEM_DYNAMICS_DIAGONAL_SMALLSTRAIN_QUAD4_H
+#define GOOSEFEM_DYNAMICS_DIAGONAL_SMALLSTRAIN_QUAD4_H
 
 // -------------------------------------------------------------------------------------------------
 
@@ -17,7 +17,7 @@
 namespace GooseFEM {
 namespace Element {
 namespace Diagonal {
-namespace LinearStrain {
+namespace SmallStrain {
 
 // ========================== N.B. most loops are unrolled for efficiency ==========================
 

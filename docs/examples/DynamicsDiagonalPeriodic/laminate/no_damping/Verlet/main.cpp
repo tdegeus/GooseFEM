@@ -118,7 +118,7 @@ void Material::post()
 // =================================================================================================
 
 using Mesh       = GooseFEM::Mesh::Quad4::Regular;
-using Element    = GooseFEM::Element::Diagonal::LinearStrain::Quad4<Material>;
+using Element    = GooseFEM::Element::Diagonal::SmallStrain::Quad4<Material>;
 using Simulation = GooseFEM::Dynamics::Diagonal::Periodic<Element>;
 
 // =================================================================================================
