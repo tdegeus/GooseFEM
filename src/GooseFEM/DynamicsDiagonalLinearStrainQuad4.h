@@ -362,7 +362,7 @@ void Quad4<Material>::updated_v()
   {
     // pointer to element forces, displacements, and integration volume
     f_.map(&f(e));
-    v_.map(&u(e));
+    v_.map(&v(e));
     V_.map(&V(e));
 
     // zero initialize forces
@@ -372,9 +372,9 @@ void Quad4<Material>::updated_v()
     for ( size_t k = 0 ; k < nip ; ++k )
     {
       // - pointer to the shape function gradients, strain-rate and stress tensor (stored symmetric)
-      dNx_   .map(&dNx     (e,k));
-      epsdot_.map(&mat->eps(e,k));
-      sig_   .map(&mat->sig(e,k));
+      dNx_   .map(&dNx        (e,k));
+      epsdot_.map(&mat->epsdot(e,k));
+      sig_   .map(&mat->sig   (e,k));
 
       // - displacement gradient
       //   gradv_(i,j) += dNx(m,i) * ue(m,j)

@@ -1,121 +1,174 @@
 
-#include <HDF5pp.h>
 #include <Eigen/Eigen>
 #include <cppmat/cppmat.h>
 #include <GooseFEM/GooseFEM.h>
-#include <GooseMaterial/AmorphousSolid/LinearStrain/Elastic/Cartesian2d.h>
+#include <GooseMaterial/GooseMaterial.h>
+#include <HDF5pp.h>
 
 // -------------------------------------------------------------------------------------------------
 
-using     MatS = GooseFEM::MatS;
-using     MatD = GooseFEM::MatD;
-using     ColD = GooseFEM::ColD;
-
-using     vec  = cppmat::cartesian2d::vector  <double>;
-using     T2   = cppmat::cartesian2d::tensor2 <double>;
-using     T2s  = cppmat::cartesian2d::tensor2s<double>;
-using     T2d  = cppmat::cartesian2d::tensor2d<double>;
-
-namespace GM   = GooseMaterial::AmorphousSolid::LinearStrain::Elastic::Cartesian2d;
+using ColD = GooseFEM::ColD;
+using T2   = cppmat::cartesian2d::tensor2<double>;
+using Mat  = GooseMaterial::AmorphousSolid::LinearStrain::Elastic::Cartesian2d::Material;
 
 // =================================================================================================
 
-class Quadrature
+class Material
 {
 public:
-  T2s eps, epsdot, sig;
 
-  size_t nhard;
-  GM::Material hard, soft, rayleigh;
+  // class variables
+  // ---------------
 
-  double Ebar, Vbar;
+  // strain/stress, parameters, output variables
+  cppmat::matrix<double> eps, epsdot, sig, rho, alpha, Epot;
 
-  Quadrature(size_t nhard, double eta);
+  // dimensions
+  size_t nelem, nne=4, ndim=2, nip=4;
 
-  double density             (size_t elem, size_t k, double V);
-  void   stressStrain        (size_t elem, size_t k, double V);
-  void   stressStrainRate    (size_t elem, size_t k, double V);
-  void   stressStrainPost    (size_t elem, size_t k, double V);
-  void   stressStrainRatePost(size_t elem, size_t k, double V);
+  // constitutive response
+  std::vector<Mat> material;
+
+  // damping
+  Mat rayleigh;
+
+  // class functions
+  // ---------------
+
+  // constructor
+  Material(size_t nelem, size_t nhard);
+
+  // compute stress for one integration point
+  void updated_eps   (size_t e, size_t k);
+  void updated_epsdot(size_t e, size_t k);
+
+  // compute post variables
+  void post();
 };
 
 // -------------------------------------------------------------------------------------------------
 
-Quadrature::Quadrature(size_t _nhard, double eta)
+Material::Material(size_t _nelem, size_t _nhard)
 {
-  nhard    = _nhard;
-  hard     = GM::Material(100.,10.);
-  soft     = GM::Material(100., 1.);
-  rayleigh = GM::Material(eta ,eta);
+  // copy from input
+  nelem = _nelem;
+
+  // allocate symmetric tensors and scalars of each integration point
+  epsdot.resize({nelem,nip,3});
+  eps   .resize({nelem,nip,3});
+  sig   .resize({nelem,nip,3});
+  Epot  .resize({nelem,nip  });
+
+  // allocate and set density and non-Galilean damping coefficient of each nodal integration point
+  rho  .resize({nelem,nne}); rho  .setConstant(1.0);
+  alpha.resize({nelem,nne}); alpha.setConstant(0.0);
+
+  // constitutive response per element
+  for ( size_t e = 0 ; e < nelem ; ++e )
+  {
+    if ( e < _nhard )
+    {
+      Mat mat = Mat(100.,10.);
+      material.push_back(mat);
+    }
+    else
+    {
+      Mat mat = Mat(100.,1.);
+      material.push_back(mat);
+    }
+  }
+
+  // damping
+  rayleigh = Mat(10.,.1);
 }
 
 // -------------------------------------------------------------------------------------------------
 
-double Quadrature::density(size_t elem, size_t k, double V)
+void Material::updated_eps(size_t e, size_t k)
 {
-  return 1.0;
-}
-// -------------------------------------------------------------------------------------------------
+  // local views of the global arrays (speeds up indexing, and increases readability)
+  cppmat::cartesian2d::tensor2s<double> Eps, Epsdot, Sig;
 
-void Quadrature::stressStrain(size_t elem, size_t k, double V)
-{
-  if ( elem < nhard ) sig = hard.stress(eps);
-  else                sig = soft.stress(eps);
-}
-// -------------------------------------------------------------------------------------------------
+  // pointer to stress/strain
+  Epsdot.map(&epsdot(e,k));
+  Eps   .map(&eps   (e,k));
+  Sig   .map(&sig   (e,k));
 
-void Quadrature::stressStrainRate(size_t elem, size_t k, double V)
-{
-  sig = rayleigh.stress(epsdot);
-}
-// -------------------------------------------------------------------------------------------------
-
-void Quadrature::stressStrainPost(size_t elem, size_t k, double V)
-{
-  Vbar += V;
-
-  if ( elem < nhard ) Ebar += hard.energy(eps) * V;
-  else                Ebar += soft.energy(eps) * V;
+  // compute stress
+  Sig.copy( material[e].stress(Eps) + rayleigh.stress(Epsdot) );
 }
 
 // -------------------------------------------------------------------------------------------------
 
-void Quadrature::stressStrainRatePost(size_t elem, size_t k, double V)
+void Material::updated_epsdot(size_t e, size_t k)
 {
+  // local views of the global arrays (speeds up indexing, and increases readability)
+  cppmat::cartesian2d::tensor2s<double> Eps, Epsdot, Sig;
+
+  // pointer to stress/strain
+  Epsdot.map(&epsdot(e,k));
+  Eps   .map(&eps   (e,k));
+  Sig   .map(&sig   (e,k));
+
+  // compute stress
+  Sig.copy( material[e].stress(Eps) + rayleigh.stress(Epsdot) );
 }
+
+// -------------------------------------------------------------------------------------------------
+
+void Material::post()
+{
+#pragma omp parallel
+{
+  // local views of the global arrays (speeds up indexing, and increases readability)
+  cppmat::cartesian2d::tensor2s<double> Eps;
+
+  // loop over all elements / integration points
+  #pragma omp for
+  for ( size_t e = 0 ; e < nelem ; ++e )
+  {
+    for ( size_t k = 0 ; k < nip ; ++k )
+    {
+      // pointer to stress/strain
+      Eps.map(&eps(e,k));
+
+      // compute energy
+      Epot(e,k) = material[e].energy(Eps);
+    }
+  }
+}
+}
+
+// =================================================================================================
+
+using Mesh       = GooseFEM::Mesh::Quad4::Regular;
+using Element    = GooseFEM::Element::Diagonal::SmallStrain::Quad4<Material>;
+using Simulation = GooseFEM::Dynamics::Diagonal::Periodic<Element>;
 
 // =================================================================================================
 
 int main()
 {
   // set simulation parameters
-  double T     = 5000.; // total time
-  double dt    = 1.e-1; // time increment
+  double T     = 60.  ; // total time
+  double dt    = 1.e-2; // time increment
   size_t nx    = 40   ; // number of elements in both directions
   double gamma = .05  ; // displacement step
-  double eta   = 0.1  ; // damping coefficient
-  double alpha = 0.0  ; // background damping
 
   // class which provides the mesh
-  GooseFEM::Mesh::Quad4::Regular mesh(nx,nx,1.);
-  // reference node
+  Mesh mesh(nx,nx,1.);
+  // extract information
   size_t nodeOrigin = mesh.nodeOrigin();
+  size_t nelem      = mesh.nelem();
+  size_t nhard      = nx*nx/4;
 
-  // class which provides the constitutive response at each quadrature point
-  auto  quadrature = std::make_shared<Quadrature>(nx*nx/4,eta);
-
-  // class which provides the response of each element
-  using Elem = GooseFEM::Dynamics::Diagonal::LinearStrain::Quad4<Quadrature>;
-  auto  elem = std::make_shared<Elem>(quadrature);
-
-  // class which provides the system and an increment
-  GooseFEM::Dynamics::Diagonal::Periodic<Elem> sim(
-    elem,
+  // simulation class
+  Simulation sim = Simulation(
+    std::make_unique<Element>(std::make_unique<Material>(nelem,nhard),nelem),
     mesh.coor(),
     mesh.conn(),
     mesh.dofsPeriodic(),
-    dt,
-    alpha
+    dt
   );
 
   // define update in macroscopic deformation gradient
@@ -126,45 +179,33 @@ int main()
   for ( size_t i = 0 ; i < sim.nnode ; ++i )
     for ( size_t j = 0 ; j < sim.ndim ; ++j )
       for ( size_t k = 0 ; k < sim.ndim ; ++k )
-        sim.u(i,j) += dFbar(j,k) * ( sim.x0(i,k) - sim.x0(nodeOrigin,k) );
-
-  // compute the externally applied strain energy
-  double Eext = std::pow(40.,2.) * (.25*100.+.75*1.) * std::pow(.5*gamma,2.);
-  size_t inc;
+        sim.u(i,j) += dFbar(j,k) * ( sim.x(i,k) - sim.x(nodeOrigin,k) );
 
   // output variables
-  ColD Epot(static_cast<int>(T/dt)); Epot.setZero(); // potential energy
+  ColD Epot(static_cast<int>(T/dt)); Epot.setZero();
   ColD Ekin(static_cast<int>(T/dt)); Ekin.setZero();
   ColD t   (static_cast<int>(T/dt)); t   .setZero();
 
   // loop over increments
-  for ( inc = 0 ; inc < static_cast<size_t>(Epot.size()) ; ++inc )
+  for ( size_t inc = 0 ; inc < static_cast<size_t>(Epot.size()) ; ++inc )
   {
     // - compute increment
     sim.velocityVerlet();
 
-    // - post: energy based on nodes
-    // -- store time
+    // - store time
     t(inc) = sim.t;
-    // -- kinetic energy
-    for ( size_t i = 0 ; i < sim.ndof ; ++i )
-      Ekin(inc) += .5 / sim.Minv(i) * std::pow( sim.V(i) , 2. );
-    // -- potential energy
-    quadrature->Ebar = 0.0;
-    quadrature->Vbar = 0.0;
-    sim.post();
-    Epot(inc) = quadrature->Ebar;
 
-    // check stopping criterion
-    if ( inc >= 10 ) if ( Ekin(inc)/Eext < 1.e-6 and Ekin(inc-10)/Eext < 1.e-6 ) break;
+    // - store total kinetic energy
+    for ( size_t i = 0 ; i < sim.ndof ; ++i )
+      Ekin(inc) += .5 * sim.M(i) * std::pow(sim.V(i),2.);
+
+    // - store total potential energy
+    sim.elem->mat->post();
+    Epot(inc) = sim.elem->mat->Epot.average(sim.elem->V) * sim.elem->V.sum();
   }
 
-  Epot.conservativeResize(inc);
-  Ekin.conservativeResize(inc);
-  t   .conservativeResize(inc);
-
   // write to output file
-  H5p::File f = H5p::File("example.hdf5");
+  H5p::File f = H5p::File("example.hdf5","w");
   f.write("/global/Epot",Epot       );
   f.write("/global/Ekin",Ekin       );
   f.write("/global/t"   ,t          );

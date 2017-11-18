@@ -139,7 +139,7 @@ void SemiPeriodic<Element>::velocityVerlet()
   // (2a) estimate new velocities
   // - update velocities (DOFs)
   V.noalias() = V_n + dt * A;
-    // - apply the fixed velocities
+  // - apply the fixed velocities
   for ( size_t i=0; i<nfixed; ++i ) V(fixedDofs(i)) = fixedV(i);
   // - convert to nodal velocities (periodicity implies that several nodes depend on the same DOF)
   for ( size_t i=0; i<nnode*ndim; ++i ) v(i) = V(dofs(i));
@@ -149,7 +149,7 @@ void SemiPeriodic<Element>::velocityVerlet()
   A.noalias() = Minv.cwiseProduct( - F - D.cwiseProduct(V) );
   // - update velocities (DOFs)
   V.noalias() = V_n + ( .5 * dt ) * ( A_n + A );
-    // - apply the fixed velocities
+  // - apply the fixed velocities
   for ( size_t i=0; i<nfixed; ++i ) V(fixedDofs(i)) = fixedV(i);
   // - convert to nodal velocities (periodicity implies that several nodes depend on the same DOF)
   for ( size_t i=0; i<nnode*ndim; ++i ) v(i) = V(dofs(i));
@@ -161,7 +161,7 @@ void SemiPeriodic<Element>::velocityVerlet()
   A.noalias() = Minv.cwiseProduct( - F - D.cwiseProduct(V) );
   // - update velocities (DOFs)
   V.noalias() = V_n + ( .5 * dt ) * ( A_n + A );
-    // - apply the fixed velocities
+  // - apply the fixed velocities
   for ( size_t i=0; i<nfixed; ++i ) V(fixedDofs(i)) = fixedV(i);
   // - convert to nodal velocities (periodicity implies that several nodes depend on the same DOF)
   for ( size_t i=0; i<nnode*ndim; ++i ) v(i) = V(dofs(i));
