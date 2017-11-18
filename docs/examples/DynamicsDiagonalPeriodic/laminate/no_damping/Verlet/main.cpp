@@ -126,7 +126,7 @@ using Simulation = GooseFEM::Dynamics::Diagonal::Periodic<Element>;
 int main()
 {
   // set simulation parameters
-  double T     = 20.  ; // total time
+  double T     = 40.  ; // total time
   double dt    = 1.e-2; // time increment
   size_t nx    = 40   ; // number of elements in both directions
   double gamma = .05  ; // displacement step
