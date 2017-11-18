@@ -11,7 +11,7 @@
 
 #include "DynamicsDiagonalPeriodic.h"
 #include "DynamicsDiagonalSemiPeriodic.h"
-#include "DynamicsDiagonalLinearStrainQuad4.h"
+#include "DynamicsDiagonalSmallStrainQuad4.h"
 
 #include "Mesh.h"
 #include "MeshTri3.h"
