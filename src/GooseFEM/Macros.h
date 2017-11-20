@@ -17,12 +17,8 @@
 #include <iostream>
 #include <iomanip>
 #include <math.h>
-
-#include <Eigen/Dense>
-
-#include <cppmat/tensor.h>
-#include <cppmat/tensor2.h>
-#include <cppmat/tensor3.h>
+#include <Eigen/Eigen>
+#include <cppmat/cppmat.h>
 
 // =================================================================================================
 
@@ -49,6 +45,11 @@ typedef Eigen::Matrix<size_t, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor> M
 typedef Eigen::Matrix<double, Eigen::Dynamic,              1, Eigen::ColMajor> ColD;
 typedef Eigen::Matrix<size_t, Eigen::Dynamic,              1, Eigen::ColMajor> ColS;
 typedef Eigen::Matrix<int   , Eigen::Dynamic,              1, Eigen::ColMajor> ColI;
+
+// -------------------------------------------------------------------------------------------------
+
+// dummy operation that can be use to suppress the "unused parameter" warnings
+#define UNUSED(p) ( (void)(p) )
 
 // -------------------------------------------------------------------------------------------------
 

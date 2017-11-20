@@ -293,7 +293,7 @@ MatS setOrientation ( const MatD &coor, const MatS &conn, int orientation )
   assert( coor.cols() == 2 );
   assert( orientation == -1 || orientation == +1 );
 
-  ColI val = getOrientation( coor, conn );
+  ColI val = getOrientation(coor, conn);
 
   return setOrientation( coor, conn, val, orientation );
 }
@@ -307,7 +307,10 @@ MatS setOrientation ( const MatD &coor, const MatS &conn, const ColI &val, int o
   assert( conn.rows() == val.size() );
   assert( orientation == -1 || orientation == +1 );
 
-  size_t nelem = static_cast<size_t>( conn.rows() );
+  // avoid compiler warning
+  UNUSED(coor);
+
+  size_t nelem = static_cast<size_t>(conn.rows());
   MatS   out   = conn;
 
   for ( size_t ielem = 0 ; ielem < nelem ; ++ielem )
