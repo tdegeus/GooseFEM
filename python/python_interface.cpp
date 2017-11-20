@@ -26,23 +26,27 @@ py::module mMeshQuad4 = mMesh.def_submodule("Quad4", "Linear quadrilateral eleme
 
 // ======================================= GooseFEM/Mesh.h ========================================
 
-mMesh.def("elem2node", &GooseFEM::Mesh::elem2node,
+mMesh.def("elem2node",
+  &GooseFEM::Mesh::elem2node,
   "Elements connect to each node: [ number of elements , element numbers ]",
   py::arg("conn")
 );
 
-mMesh.def("dofs", &GooseFEM::Mesh::dofs,
+mMesh.def("dofs",
+  &GooseFEM::Mesh::dofs,
   "List with DOF-numbers (in sequential order)",
   py::arg("nnode"),
   py::arg("ndim")
 );
 
-mMesh.def("renumber", py::overload_cast<const GooseFEM::MatS&>(&GooseFEM::Mesh::renumber),
+mMesh.def("renumber",
+  py::overload_cast<const GooseFEM::MatS&>(&GooseFEM::Mesh::renumber),
   "Renumber DOF-list to use the lowest possible index",
   py::arg("dofs")
 );
 
-mMesh.def("renumber", py::overload_cast<const GooseFEM::MatS&,const GooseFEM::ColS&,std::string>(&GooseFEM::Mesh::renumber),
+mMesh.def("renumber",
+  py::overload_cast<const GooseFEM::MatS&,const GooseFEM::ColS&,std::string>(&GooseFEM::Mesh::renumber),
   "Renumber DOF-list to begin or end with 'idx'",
   py::arg("dofs"),
   py::arg("idx"),
