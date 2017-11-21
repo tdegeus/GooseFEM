@@ -52,16 +52,16 @@ public:
 // ========================================= MESH ANALYSIS =========================================
 
 // read / set the orientation (-1 / +1) of all triangles
-ColI getOrientation ( const MatD &coor, const MatS &conn                                      );
-MatS setOrientation ( const MatD &coor, const MatS &conn,                  int orientation=-1 );
-MatS setOrientation ( const MatD &coor, const MatS &conn, const ColI &val, int orientation=-1 );
+inline ColI getOrientation ( const MatD &coor, const MatS &conn                                      );
+inline MatS setOrientation ( const MatD &coor, const MatS &conn,                  int orientation=-1 );
+inline MatS setOrientation ( const MatD &coor, const MatS &conn, const ColI &val, int orientation=-1 );
 
 // ======================================= RE-TRIANGULATION ========================================
 
 // simple interface to compute the full re-triangulation; it uses, depending on the input mesh:
 // (1) the minimal evasive "TriUpdate"
 // (2) the more rigorous "TriCompute"
-MatS retriangulate ( const MatD &coor, const MatS &conn, int orientation=-1 );
+inline MatS retriangulate ( const MatD &coor, const MatS &conn, int orientation=-1 );
 
 // -------------------------------------------------------------------------------------------------
 
@@ -102,7 +102,7 @@ public:
 
 // ================================== REGULAR MESH - SOURCE CODE ===================================
 
-Regular::Regular(size_t nx, size_t ny, double h): m_nx(nx), m_ny(ny), m_h(h)
+inline Regular::Regular(size_t nx, size_t ny, double h): m_nx(nx), m_ny(ny), m_h(h)
 {
   assert( m_nx >= 1 );
   assert( m_ny >= 1 );
@@ -113,7 +113,7 @@ Regular::Regular(size_t nx, size_t ny, double h): m_nx(nx), m_ny(ny), m_h(h)
 
 // -------------------------------------------------------------------------------------------------
 
-MatD Regular::coor()
+inline MatD Regular::coor()
 {
   MatD coor( m_nnode , m_ndim );
 
@@ -135,7 +135,7 @@ MatD Regular::coor()
 
 // -------------------------------------------------------------------------------------------------
 
-MatS Regular::conn()
+inline MatS Regular::conn()
 {
   MatS conn( m_nelem , m_nne );
 
@@ -159,7 +159,7 @@ MatS Regular::conn()
 
 // -------------------------------------------------------------------------------------------------
 
-ColS Regular::nodesBottom()
+inline ColS Regular::nodesBottom()
 {
   ColS nodes(m_nx+1);
 
@@ -170,7 +170,7 @@ ColS Regular::nodesBottom()
 
 // -------------------------------------------------------------------------------------------------
 
-ColS Regular::nodesTop()
+inline ColS Regular::nodesTop()
 {
   ColS nodes(m_nx+1);
 
@@ -181,7 +181,7 @@ ColS Regular::nodesTop()
 
 // -------------------------------------------------------------------------------------------------
 
-ColS Regular::nodesLeft()
+inline ColS Regular::nodesLeft()
 {
   ColS nodes(m_ny+1);
 
@@ -192,7 +192,7 @@ ColS Regular::nodesLeft()
 
 // -------------------------------------------------------------------------------------------------
 
-ColS Regular::nodesRight()
+inline ColS Regular::nodesRight()
 {
   ColS nodes(m_ny+1);
 
@@ -203,7 +203,7 @@ ColS Regular::nodesRight()
 
 // -------------------------------------------------------------------------------------------------
 
-MatS Regular::nodesPeriodic()
+inline MatS Regular::nodesPeriodic()
 {
   ColS bot = nodesBottom();
   ColS top = nodesTop   ();
@@ -226,21 +226,21 @@ MatS Regular::nodesPeriodic()
 
 // -------------------------------------------------------------------------------------------------
 
-size_t Regular::nodeOrigin()
+inline size_t Regular::nodeOrigin()
 {
   return 0;
 }
 
 // -------------------------------------------------------------------------------------------------
 
-MatS Regular::dofs()
+inline MatS Regular::dofs()
 {
   return GooseFEM::Mesh::dofs(m_nnode,m_ndim);
 }
 
 // -------------------------------------------------------------------------------------------------
 
-MatS Regular::dofsPeriodic()
+inline MatS Regular::dofsPeriodic()
 {
   // DOF-numbers for each component of each node (sequential)
   MatS out = GooseFEM::Mesh::dofs(m_nnode,m_ndim);
@@ -260,7 +260,7 @@ MatS Regular::dofsPeriodic()
 
 // ================================== MESH ANALYSIS - SOURCE CODE ==================================
 
-ColI getOrientation ( const MatD &coor, const MatS &conn )
+inline ColI getOrientation ( const MatD &coor, const MatS &conn )
 {
   assert( conn.cols() == 3 );
   assert( coor.cols() == 2 );
@@ -287,7 +287,7 @@ ColI getOrientation ( const MatD &coor, const MatS &conn )
 
 // -------------------------------------------------------------------------------------------------
 
-MatS setOrientation ( const MatD &coor, const MatS &conn, int orientation )
+inline MatS setOrientation ( const MatD &coor, const MatS &conn, int orientation )
 {
   assert( conn.cols() == 3 );
   assert( coor.cols() == 2 );
@@ -300,7 +300,7 @@ MatS setOrientation ( const MatD &coor, const MatS &conn, int orientation )
 
 // -------------------------------------------------------------------------------------------------
 
-MatS setOrientation ( const MatD &coor, const MatS &conn, const ColI &val, int orientation )
+inline MatS setOrientation ( const MatD &coor, const MatS &conn, const ColI &val, int orientation )
 {
   assert( conn.cols() == 3 );
   assert( coor.cols() == 2 );
@@ -322,7 +322,7 @@ MatS setOrientation ( const MatD &coor, const MatS &conn, const ColI &val, int o
 
 // ================================ RE-TRIANGULATION - SOURCE CODE =================================
 
-MatS retriangulate ( const MatD &coor, const MatS &conn, int orientation )
+inline MatS retriangulate ( const MatD &coor, const MatS &conn, int orientation )
 {
   // get the orientation of all elements
   ColI dir = getOrientation( coor, conn );
@@ -369,7 +369,7 @@ public:
 
 // -------------------------------------------------------------------------------------------------
 
-bool Edge_cmp( Edge a , Edge b )
+inline bool Edge_cmp( Edge a , Edge b )
 {
   if ( a.n1 == b.n1 and a.n2 == b.n2 )
     return true;
@@ -379,7 +379,7 @@ bool Edge_cmp( Edge a , Edge b )
 
 // -------------------------------------------------------------------------------------------------
 
-bool Edge_sort( Edge a , Edge b )
+inline bool Edge_sort( Edge a , Edge b )
 {
   if ( a.n1 < b.n1 or a.n2 < b.n2 )
     return true;
@@ -389,7 +389,7 @@ bool Edge_sort( Edge a , Edge b )
 
 // =================================================================================================
 
-TriUpdate::TriUpdate(const MatD &coor, const MatS &conn): m_conn(conn), m_coor(coor)
+inline TriUpdate::TriUpdate(const MatD &coor, const MatS &conn): m_conn(conn), m_coor(coor)
 {
   assert( conn.cols() == 3 );
 	assert( coor.cols() == 2 );
@@ -413,7 +413,7 @@ TriUpdate::TriUpdate(const MatD &coor, const MatS &conn): m_conn(conn), m_coor(c
 
 // -------------------------------------------------------------------------------------------------
 
-void TriUpdate::edge()
+inline void TriUpdate::edge()
 {
   m_edge.resize( m_nelem , m_nne );
   m_edge.setConstant( m_nelem ); // signal that nothing has been set
@@ -442,7 +442,7 @@ void TriUpdate::edge()
 
 // -------------------------------------------------------------------------------------------------
 
-void TriUpdate::chedge(size_t edge, size_t old_elem, size_t new_elem)
+inline void TriUpdate::chedge(size_t edge, size_t old_elem, size_t new_elem)
 {
   size_t m;
   size_t neigh = m_edge( old_elem , edge );
@@ -458,7 +458,7 @@ void TriUpdate::chedge(size_t edge, size_t old_elem, size_t new_elem)
 
 // -------------------------------------------------------------------------------------------------
 
-bool TriUpdate::increment()
+inline bool TriUpdate::increment()
 {
   size_t ielem,jelem,iedge,jedge;
   double phi1,phi2;
@@ -547,7 +547,7 @@ bool TriUpdate::increment()
 
 // -------------------------------------------------------------------------------------------------
 
-bool TriUpdate::eval()
+inline bool TriUpdate::eval()
 {
   bool change = false;
 

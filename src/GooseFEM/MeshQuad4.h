@@ -89,7 +89,7 @@ public:
 
 // ===================================== SOURCE CODE : REGULAR =====================================
 
-Regular::Regular(size_t nx, size_t ny, double h): m_nx(nx), m_ny(ny), m_h(h)
+inline Regular::Regular(size_t nx, size_t ny, double h): m_nx(nx), m_ny(ny), m_h(h)
 {
   assert( m_nx >= 1 );
   assert( m_ny >= 1 );
@@ -100,7 +100,7 @@ Regular::Regular(size_t nx, size_t ny, double h): m_nx(nx), m_ny(ny), m_h(h)
 
 // -------------------------------------------------------------------------------------------------
 
-MatD Regular::coor()
+inline MatD Regular::coor()
 {
   MatD coor( m_nnode , m_ndim );
 
@@ -122,7 +122,7 @@ MatD Regular::coor()
 
 // -------------------------------------------------------------------------------------------------
 
-MatS Regular::conn()
+inline MatS Regular::conn()
 {
   MatS conn( m_nelem , m_nne );
 
@@ -143,7 +143,7 @@ MatS Regular::conn()
 
 // -------------------------------------------------------------------------------------------------
 
-ColS Regular::nodesBottom()
+inline ColS Regular::nodesBottom()
 {
   ColS nodes(m_nx+1);
 
@@ -154,7 +154,7 @@ ColS Regular::nodesBottom()
 
 // -------------------------------------------------------------------------------------------------
 
-ColS Regular::nodesTop()
+inline ColS Regular::nodesTop()
 {
   ColS nodes(m_nx+1);
 
@@ -165,7 +165,7 @@ ColS Regular::nodesTop()
 
 // -------------------------------------------------------------------------------------------------
 
-ColS Regular::nodesLeft()
+inline ColS Regular::nodesLeft()
 {
   ColS nodes(m_ny+1);
 
@@ -176,7 +176,7 @@ ColS Regular::nodesLeft()
 
 // -------------------------------------------------------------------------------------------------
 
-ColS Regular::nodesRight()
+inline ColS Regular::nodesRight()
 {
   ColS nodes(m_ny+1);
 
@@ -187,7 +187,7 @@ ColS Regular::nodesRight()
 
 // -------------------------------------------------------------------------------------------------
 
-MatS Regular::nodesPeriodic()
+inline MatS Regular::nodesPeriodic()
 {
   ColS bot = nodesBottom();
   ColS top = nodesTop   ();
@@ -210,21 +210,21 @@ MatS Regular::nodesPeriodic()
 
 // -------------------------------------------------------------------------------------------------
 
-size_t Regular::nodeOrigin()
+inline size_t Regular::nodeOrigin()
 {
   return 0;
 }
 
 // -------------------------------------------------------------------------------------------------
 
-MatS Regular::dofs()
+inline MatS Regular::dofs()
 {
   return GooseFEM::Mesh::dofs(m_nnode,m_ndim);
 }
 
 // -------------------------------------------------------------------------------------------------
 
-MatS Regular::dofsPeriodic()
+inline MatS Regular::dofsPeriodic()
 {
   // DOF-numbers for each component of each node (sequential)
   MatS out = GooseFEM::Mesh::dofs(m_nnode,m_ndim);
@@ -244,7 +244,7 @@ MatS Regular::dofsPeriodic()
 
 // ==================================== SOURCE CODE : FINELAYER ====================================
 
-FineLayer::FineLayer(size_t nx, size_t ny, double h, size_t nfine, size_t nskip)
+inline FineLayer::FineLayer(size_t nx, size_t ny, double h, size_t nfine, size_t nskip)
 {
   assert( nx >= 1 );
   assert( ny >= 1 );
@@ -387,7 +387,7 @@ FineLayer::FineLayer(size_t nx, size_t ny, double h, size_t nfine, size_t nskip)
 
 // -------------------------------------------------------------------------------------------------
 
-size_t FineLayer::shape(size_t i)
+inline size_t FineLayer::shape(size_t i)
 {
   // check the index
   assert( i >= 0 and i < 2 );
@@ -408,7 +408,7 @@ size_t FineLayer::shape(size_t i)
 
 // -------------------------------------------------------------------------------------------------
 
-MatD FineLayer::coor()
+inline MatD FineLayer::coor()
 {
   // allocate output
   MatD out( m_nnode , m_ndim );
@@ -504,7 +504,7 @@ MatD FineLayer::coor()
 
 // // -------------------------------------------------------------------------------------------------
 
-MatS FineLayer::conn()
+inline MatS FineLayer::conn()
 {
   // allocate output
   MatS out( m_nelem , m_nne );
@@ -625,7 +625,7 @@ MatS FineLayer::conn()
 
 // -------------------------------------------------------------------------------------------------
 
-ColS FineLayer::elementsFine()
+inline ColS FineLayer::elementsFine()
 {
   ColS out(m_nx);
 
@@ -638,7 +638,7 @@ ColS FineLayer::elementsFine()
 
 // -------------------------------------------------------------------------------------------------
 
-ColS FineLayer::nodesBottom()
+inline ColS FineLayer::nodesBottom()
 {
   ColS nodes;
 
@@ -652,7 +652,7 @@ ColS FineLayer::nodesBottom()
 
 // -------------------------------------------------------------------------------------------------
 
-ColS FineLayer::nodesTop()
+inline ColS FineLayer::nodesTop()
 {
   ColS nodes;
 
@@ -668,14 +668,14 @@ ColS FineLayer::nodesTop()
 
 // -------------------------------------------------------------------------------------------------
 
-ColS FineLayer::nodesLeft()
+inline ColS FineLayer::nodesLeft()
 {
   return m_startNode;
 }
 
 // -------------------------------------------------------------------------------------------------
 
-ColS FineLayer::nodesRight()
+inline ColS FineLayer::nodesRight()
 {
   size_t N = static_cast<size_t>(m_nh.size());
   ColS   nodes(N+1);
@@ -702,7 +702,7 @@ ColS FineLayer::nodesRight()
 
 // -------------------------------------------------------------------------------------------------
 
-MatS FineLayer::nodesPeriodic()
+inline MatS FineLayer::nodesPeriodic()
 {
   ColS bot = nodesBottom();
   ColS top = nodesTop   ();
@@ -725,21 +725,21 @@ MatS FineLayer::nodesPeriodic()
 
 // -------------------------------------------------------------------------------------------------
 
-size_t FineLayer::nodeOrigin()
+inline size_t FineLayer::nodeOrigin()
 {
   return 0;
 }
 
 // -------------------------------------------------------------------------------------------------
 
-MatS FineLayer::dofs()
+inline MatS FineLayer::dofs()
 {
   return GooseFEM::Mesh::dofs(m_nnode,m_ndim);
 }
 
 // -------------------------------------------------------------------------------------------------
 
-MatS FineLayer::dofsPeriodic()
+inline MatS FineLayer::dofsPeriodic()
 {
   // DOF-numbers for each component of each node (sequential)
   MatS out = GooseFEM::Mesh::dofs(m_nnode,m_ndim);

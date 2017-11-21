@@ -18,7 +18,7 @@ namespace Diagonal {
 
 // =========================================== OVERVIEW ============================================
 
-template <class Element>
+template<class Element>
 class Periodic
 {
 public:
@@ -65,7 +65,7 @@ public:
 // ========================================== SOURCE CODE ==========================================
 
 template<class Element>
-Periodic<Element>::Periodic(
+inline Periodic<Element>::Periodic(
   std::unique_ptr<Element> _elem, const MatD &_x, const MatS &_conn, const MatS &_dofs, double _dt
 )
 {
@@ -111,7 +111,7 @@ Periodic<Element>::Periodic(
 // =================================================================================================
 
 template<class Element>
-void Periodic<Element>::velocityVerlet()
+inline void Periodic<Element>::velocityVerlet()
 {
   // (1) new positions (displacements)
   // - apply update (nodal) : x_{n+1} = x_n + dt * v_n + .5 * dt^2 * a_n"
@@ -166,7 +166,7 @@ void Periodic<Element>::velocityVerlet()
 // =================================================================================================
 
 template<class Element>
-void Periodic<Element>::Verlet()
+inline void Periodic<Element>::Verlet()
 {
   // (1) new nodal positions (displacements)
   // - apply update (nodal) : x_{n+1} = x_n + dt * v_n + .5 * dt^2 * a_n"
@@ -199,7 +199,7 @@ void Periodic<Element>::Verlet()
 // =================================================================================================
 
 template<class Element>
-void Periodic<Element>::updated_x()
+inline void Periodic<Element>::updated_x()
 {
   // set the nodal positions of all elements (in parallel)
   #pragma omp parallel for
@@ -215,7 +215,7 @@ void Periodic<Element>::updated_x()
 // =================================================================================================
 
 template<class Element>
-void Periodic<Element>::updated_u(bool init)
+inline void Periodic<Element>::updated_u(bool init)
 {
   // set the nodal displacements of all elements (in parallel)
   #pragma omp parallel for
@@ -236,7 +236,7 @@ void Periodic<Element>::updated_u(bool init)
 // =================================================================================================
 
 template<class Element>
-void Periodic<Element>::updated_v(bool init)
+inline void Periodic<Element>::updated_v(bool init)
 {
   // set the nodal displacements of all elements (in parallel)
   #pragma omp parallel for
@@ -257,7 +257,7 @@ void Periodic<Element>::updated_v(bool init)
 // =================================================================================================
 
 template<class Element>
-void Periodic<Element>::assemble_M()
+inline void Periodic<Element>::assemble_M()
 {
   // zero-initialize
   M.setZero();
@@ -292,7 +292,7 @@ void Periodic<Element>::assemble_M()
 // =================================================================================================
 
 template<class Element>
-void Periodic<Element>::assemble_D()
+inline void Periodic<Element>::assemble_D()
 {
   // zero-initialize
   D.setZero();
@@ -324,7 +324,7 @@ void Periodic<Element>::assemble_D()
 // =================================================================================================
 
 template<class Element>
-void Periodic<Element>::assemble_F()
+inline void Periodic<Element>::assemble_F()
 {
   // zero-initialize
   F.setZero();

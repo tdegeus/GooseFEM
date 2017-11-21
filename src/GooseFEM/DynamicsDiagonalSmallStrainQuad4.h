@@ -21,7 +21,7 @@ namespace SmallStrain {
 
 // ========================== N.B. most loops are unrolled for efficiency ==========================
 
-template <class Material>
+template<class Material>
 class Quad4
 {
 public:
@@ -56,7 +56,7 @@ public:
 // =================================================================================================
 
 template<class Material>
-Quad4<Material>::Quad4(std::unique_ptr<Material> _mat, size_t _nelem)
+inline Quad4<Material>::Quad4(std::unique_ptr<Material> _mat, size_t _nelem)
 {
   // copy from input
   nelem = _nelem;
@@ -171,7 +171,7 @@ Quad4<Material>::Quad4(std::unique_ptr<Material> _mat, size_t _nelem)
 // =================================================================================================
 
 template<class Material>
-void Quad4<Material>::updated_x()
+inline void Quad4<Material>::updated_x()
 {
 #pragma omp parallel
 {
@@ -278,7 +278,7 @@ void Quad4<Material>::updated_x()
 // =================================================================================================
 
 template<class Material>
-void Quad4<Material>::updated_u()
+inline void Quad4<Material>::updated_u()
 {
 #pragma omp parallel
 {
@@ -345,7 +345,7 @@ void Quad4<Material>::updated_u()
 // =================================================================================================
 
 template<class Material>
-void Quad4<Material>::updated_v()
+inline void Quad4<Material>::updated_v()
 {
 #pragma omp parallel
 {

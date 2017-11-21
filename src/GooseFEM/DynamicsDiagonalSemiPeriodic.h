@@ -18,7 +18,7 @@ namespace Diagonal {
 
 // =========================================== OVERVIEW ============================================
 
-template <class Element>
+template<class Element>
 class SemiPeriodic
 {
 public:
@@ -71,7 +71,7 @@ public:
 // ========================================== SOURCE CODE ==========================================
 
 template<class Element>
-SemiPeriodic<Element>::SemiPeriodic(
+inline SemiPeriodic<Element>::SemiPeriodic(
   std::unique_ptr<Element> _elem, const MatD &_x, const MatS &_conn, const MatS &_dofs,
   const ColS &_fixedDofs, double _dt
 )
@@ -128,7 +128,7 @@ SemiPeriodic<Element>::SemiPeriodic(
 // =================================================================================================
 
 template<class Element>
-void SemiPeriodic<Element>::velocityVerlet()
+inline void SemiPeriodic<Element>::velocityVerlet()
 {
   // (1) new positions (displacements)
   // - apply update (nodal) : x_{n+1} = x_n + dt * v_n + .5 * dt^2 * a_n"
@@ -191,7 +191,7 @@ void SemiPeriodic<Element>::velocityVerlet()
 // =================================================================================================
 
 template<class Element>
-void SemiPeriodic<Element>::Verlet()
+inline void SemiPeriodic<Element>::Verlet()
 {
   // (1) new nodal positions (displacements)
   // - apply update (nodal) : x_{n+1} = x_n + dt * v_n + .5 * dt^2 * a_n"
@@ -228,7 +228,7 @@ void SemiPeriodic<Element>::Verlet()
 // =================================================================================================
 
 template<class Element>
-void SemiPeriodic<Element>::updated_x()
+inline void SemiPeriodic<Element>::updated_x()
 {
   // set the nodal positions of all elements (in parallel)
   #pragma omp parallel for
@@ -244,7 +244,7 @@ void SemiPeriodic<Element>::updated_x()
 // =================================================================================================
 
 template<class Element>
-void SemiPeriodic<Element>::updated_u(bool init)
+inline void SemiPeriodic<Element>::updated_u(bool init)
 {
   // set the nodal displacements of all elements (in parallel)
   #pragma omp parallel for
@@ -265,7 +265,7 @@ void SemiPeriodic<Element>::updated_u(bool init)
 // =================================================================================================
 
 template<class Element>
-void SemiPeriodic<Element>::updated_v(bool init)
+inline void SemiPeriodic<Element>::updated_v(bool init)
 {
   // set the nodal displacements of all elements (in parallel)
   #pragma omp parallel for
@@ -286,7 +286,7 @@ void SemiPeriodic<Element>::updated_v(bool init)
 // =================================================================================================
 
 template<class Element>
-void SemiPeriodic<Element>::assemble_M()
+inline void SemiPeriodic<Element>::assemble_M()
 {
   // zero-initialize
   M.setZero();
@@ -321,7 +321,7 @@ void SemiPeriodic<Element>::assemble_M()
 // =================================================================================================
 
 template<class Element>
-void SemiPeriodic<Element>::assemble_D()
+inline void SemiPeriodic<Element>::assemble_D()
 {
   // zero-initialize
   D.setZero();
@@ -353,7 +353,7 @@ void SemiPeriodic<Element>::assemble_D()
 // =================================================================================================
 
 template<class Element>
-void SemiPeriodic<Element>::assemble_F()
+inline void SemiPeriodic<Element>::assemble_F()
 {
   // zero-initialize
   F.setZero();
