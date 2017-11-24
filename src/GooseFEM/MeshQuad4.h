@@ -324,6 +324,29 @@ inline FineLayer::FineLayer(size_t nx, size_t ny, double h, size_t nfine, size_t
     if ( nsum(N) > ny+1 )
       break;
 
+  // fiddle a little bit to approximate the size as best as possible
+  if ( N > 1 and N < ny )
+  {
+    // - set all sequential steps to last value, make sure not to use a coarsening step
+    if ( n(N-1) % 2 == 0 )
+    {
+      for ( size_t i = N-1 ; i < ny+1 ; ++i ) n   (i) = n   (i-1);
+      for ( size_t i = N-1 ; i < ny+1 ; ++i ) nsum(i) = nsum(i-1) + n(i);
+    }
+    else
+    {
+      for ( size_t i = N   ; i < ny+1 ; ++i ) n   (i) = n   (i-1);
+      for ( size_t i = N   ; i < ny+1 ; ++i ) nsum(i) = nsum(i-1) + n(i);
+    }
+    // - truncate such that the height does not exceed "ny"
+    for ( N = 0 ; N < ny+1 ; ++N )
+      if ( nsum(N) > ny+1 )
+        break;
+    // - check to extend one
+    if ( nsum(N) - ny < ny - nsum(N-1) )
+      ++N;
+  }
+
   // truncate
   n.conservativeResize(N);
 
