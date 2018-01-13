@@ -94,26 +94,26 @@ py::class_<GooseFEM::Mesh::Quad4::FineLayer>(mMeshQuad4, "FineLayer")
     py::arg("nx"),
     py::arg("ny"),
     py::arg("h")=1.,
-    py::arg("nfine")=0,
+    py::arg("nfine")=1,
     py::arg("nskip")=0
   )
 
-  .def("shape"        ,&GooseFEM::Mesh::Quad4::FineLayer::shape        )
-  .def("coor"         ,&GooseFEM::Mesh::Quad4::FineLayer::coor         )
-  .def("conn"         ,&GooseFEM::Mesh::Quad4::FineLayer::conn         )
-  .def("nelem"        ,&GooseFEM::Mesh::Quad4::FineLayer::nelem        )
-  .def("nnode"        ,&GooseFEM::Mesh::Quad4::FineLayer::nnode        )
-  .def("nne"          ,&GooseFEM::Mesh::Quad4::FineLayer::nne          )
-  .def("ndim"         ,&GooseFEM::Mesh::Quad4::FineLayer::ndim         )
-  .def("elementsFine" ,&GooseFEM::Mesh::Quad4::FineLayer::elementsFine )
-  .def("nodesBottom"  ,&GooseFEM::Mesh::Quad4::FineLayer::nodesBottom  )
-  .def("nodesTop"     ,&GooseFEM::Mesh::Quad4::FineLayer::nodesTop     )
-  .def("nodesLeft"    ,&GooseFEM::Mesh::Quad4::FineLayer::nodesLeft    )
-  .def("nodesRight"   ,&GooseFEM::Mesh::Quad4::FineLayer::nodesRight   )
-  .def("nodesPeriodic",&GooseFEM::Mesh::Quad4::FineLayer::nodesPeriodic)
-  .def("nodeOrigin"   ,&GooseFEM::Mesh::Quad4::FineLayer::nodeOrigin   )
-  .def("dofs"         ,&GooseFEM::Mesh::Quad4::FineLayer::dofs         )
-  .def("dofsPeriodic" ,&GooseFEM::Mesh::Quad4::FineLayer::dofsPeriodic )
+  .def("shape"         ,&GooseFEM::Mesh::Quad4::FineLayer::shape         )
+  .def("coor"          ,&GooseFEM::Mesh::Quad4::FineLayer::coor          )
+  .def("conn"          ,&GooseFEM::Mesh::Quad4::FineLayer::conn          )
+  .def("nelem"         ,&GooseFEM::Mesh::Quad4::FineLayer::nelem         )
+  .def("nnode"         ,&GooseFEM::Mesh::Quad4::FineLayer::nnode         )
+  .def("nne"           ,&GooseFEM::Mesh::Quad4::FineLayer::nne           )
+  .def("ndim"          ,&GooseFEM::Mesh::Quad4::FineLayer::ndim          )
+  .def("elementsMiddle",&GooseFEM::Mesh::Quad4::FineLayer::elementsMiddle)
+  .def("nodesBottom"   ,&GooseFEM::Mesh::Quad4::FineLayer::nodesBottom   )
+  .def("nodesTop"      ,&GooseFEM::Mesh::Quad4::FineLayer::nodesTop      )
+  .def("nodesLeft"     ,&GooseFEM::Mesh::Quad4::FineLayer::nodesLeft     )
+  .def("nodesRight"    ,&GooseFEM::Mesh::Quad4::FineLayer::nodesRight    )
+  .def("nodesPeriodic" ,&GooseFEM::Mesh::Quad4::FineLayer::nodesPeriodic )
+  .def("nodeOrigin"    ,&GooseFEM::Mesh::Quad4::FineLayer::nodeOrigin    )
+  .def("dofs"          ,&GooseFEM::Mesh::Quad4::FineLayer::dofs          )
+  .def("dofsPeriodic"  ,&GooseFEM::Mesh::Quad4::FineLayer::dofsPeriodic  )
 
   .def("__repr__",
     [](const GooseFEM::Mesh::Quad4::FineLayer &a){ return "<GooseFEM.Mesh.Quad4.FineLayer>"; }

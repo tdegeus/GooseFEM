@@ -67,7 +67,7 @@ private:
 
 public:
   // mesh with "nx" pixels in horizontal direction, "ny" in vertical direction and "h" the edge size
-  FineLayer(size_t nx, size_t ny, double h=1., size_t nfine=0, size_t nskip=0);
+  FineLayer(size_t nx, size_t ny, double h=1., size_t nfine=1, size_t nskip=0);
 
   size_t nelem();           // number of elements
   size_t nnode();           // number of nodes
@@ -76,7 +76,7 @@ public:
   size_t shape(size_t i);   // actual shape in horizontal and vertical direction
   MatD   coor();            // nodal positions [ nnode , ndim ]
   MatS   conn();            // connectivity    [ nelem , nne  ]
-  ColS   elementsFine();    // elements in the middle, fine, layer
+  ColS   elementsMiddle();  // elements in the middle, fine, layer
   ColS   nodesBottom();     // nodes along the bottom edge
   ColS   nodesTop();        // nodes along the top    edge
   ColS   nodesLeft();       // nodes along the left   edge

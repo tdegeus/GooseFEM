@@ -211,6 +211,12 @@ inline FineLayer::FineLayer(size_t nx, size_t ny, double h, size_t nfine, size_t
   assert( nx >= 1 );
   assert( ny >= 1 );
 
+  // local counters
+  size_t N;
+
+  // fixed dimensions
+  // ----------------
+
   m_nx = nx;
   m_h  = h;
 
@@ -221,67 +227,45 @@ inline FineLayer::FineLayer(size_t nx, size_t ny, double h, size_t nfine, size_t
   if ( ny % 2 == 0 ) ny =  ny   /2;
   else               ny = (ny+1)/2;
 
+  // convert to half the number of fine layer (minimum 1)
+  if ( nfine % 2 == 0 ) nfine =  nfine   /2 + 1;
+  else                  nfine = (nfine+1)/2;
+  if ( nfine < 1      ) nfine = 1;
+
   // check the number of fine layers from the center
   assert( nfine <= ny );
 
   // define arrays to determine to coarsen
-  ColS n   (ny+1); // size of the element (number of times "h")
-  ColS nsum(ny+1); // current size of the mesh in y-direction (in number of times "nsum")
+  ColS n   (ny+1); // size of the element (number of times "h"): even sizes -> coarsen
+  ColS nsum(ny+1); // current 'size' of the mesh in y-direction
 
   // initialize all elements of size "1"
-  size_t next = 1;
   n.setOnes();
 
-  // size of the mesh in y-direction after "i" element
+  // size of the mesh in y-direction after "i" elements
   // - initialize
   nsum(0) = 1;
-  // - compute based on the initially equi-sized elements
+  // - compute based on the current value of "n"
   for ( size_t i = 1 ; i < ny+1 ; ++i )
     nsum(i) = nsum(i-1) + n(i-1);
 
   // loop in vertical direction and check to coarsen; rules:
-  // - the size of the element cannot be greater than the distance
-  // - the size of the element should match the horizontal direction
-  // - skip a certain number of elements
-  size_t min = 1;
-  if ( nfine > min ) min = nfine;
-  for ( size_t i = min ; i < ny+1 ; ++i )
+  // * the size of the element cannot be greater than the distance
+  // * the size of the element should match the horizontal direction
+  // * skip a certain number of layers that have the minimum size "1" (are fine)
+  // - initialize next element size
+  size_t next = 1;
+  // - loop to coarsen
+  for ( size_t i = nfine ; i < ny+1 ; ++i )
   {
-    if ( 3*n(i-1) <= nsum(i-1) and m_nx % ( 3*next ) == 0 )
-    {
-      n   (i) = n   (i-1) * 2;
-      nsum(i) = nsum(i-1) + n(i);
-      next   *= 3;
-    }
-    else
-    {
-      n   (i) = next;
-      nsum(i) = nsum(i-1) + n(i);
-    }
-  }
-
-  // skip the last "nskip" coarsening steps
-  // - counter : number of steps skipped
-  size_t iskip = 0;
-  // - loop to skip
-  for ( size_t i = ny+1 ; i-- > 1 ; )
-  {
-    // -- check -> quit if the number of steps is reached
-    if ( iskip >= nskip )
-      break;
-    // -- if coarsening step found -> remove
-    if ( n(i) % 2 == 0 )
-    {
-      for ( size_t j = i ; j < ny+1 ; ++j ) n(j) = n(i-1);
-      iskip++;
-    }
-  }
-  // - update the height after "i" elements
-  for ( size_t i = 1 ; i < ny+1 ; ++i )
+    // -- set element size, based on whether to coarsen or not
+    if ( 3*n(i-1) <= nsum(i-1) and m_nx % ( 3*next ) == 0 ) { n(i) = next * 2; next *= 3; }
+    else                                                    { n(i) = next;                }
+    // -- compute the total number of elements
     nsum(i) = nsum(i-1) + n(i);
+  }
 
-  // truncate such that the height does not exceed "ny"
-  size_t N;
+  // truncate to size "N" such that the height does not exceed "ny"
   for ( N = 0 ; N < ny+1 ; ++N )
     if ( nsum(N) > ny+1 )
       break;
@@ -290,23 +274,46 @@ inline FineLayer::FineLayer(size_t nx, size_t ny, double h, size_t nfine, size_t
   if ( N > 1 and N < ny )
   {
     // - set all sequential steps to last value, make sure not to use a coarsening step
-    if ( n(N-1) % 2 == 0 )
-    {
-      for ( size_t i = N-1 ; i < ny+1 ; ++i ) n   (i) = n   (i-1);
-      for ( size_t i = N-1 ; i < ny+1 ; ++i ) nsum(i) = nsum(i-1) + n(i);
-    }
-    else
-    {
-      for ( size_t i = N   ; i < ny+1 ; ++i ) n   (i) = n   (i-1);
-      for ( size_t i = N   ; i < ny+1 ; ++i ) nsum(i) = nsum(i-1) + n(i);
-    }
+    if ( n(N-1) % 2 == 0 ) for ( size_t i = N ; i < ny+1 ; ++i ) n(i) = n(i-1)/2*3;
+    else                   for ( size_t i = N ; i < ny+1 ; ++i ) n(i) = n(i-1);
+    // - fix total size
+    for ( size_t i = N ; i < ny+1 ; ++i ) nsum(i) = nsum(i-1) + n(i);
     // - truncate such that the height does not exceed "ny"
-    for ( N = 0 ; N < ny+1 ; ++N )
+    for ( N = 0 ; N < ny ; ++N )
       if ( nsum(N) > ny+1 )
         break;
     // - check to extend one
     if ( nsum(N) - ny < ny - nsum(N-1) )
       ++N;
+  }
+
+  // skip the last "nskip" coarsening steps
+  if ( nskip > 0 )
+  {
+    // - counter : number of steps skipped
+    size_t iskip = 0;
+    // - loop to skip
+    for ( size_t i = N ; i-- > 1 ; )
+    {
+      // -- check -> quit if the number of steps is reached
+      if ( iskip >= nskip ) break;
+      // -- check -> quit if the finest layer has been reached
+      if ( n(i) == 1 ) break;
+      // -- if coarsening step found -> remove
+      if ( n(i) % 2 == 0 )
+      {
+        size_t k = n(i) / 2;
+        for ( size_t j = i ; j < ny+1 ; ++j ) n(j) = k;
+        iskip++;
+      }
+    }
+    // - update the height after "i" elements
+    for ( size_t i = 1 ; i < ny+1 ; ++i )
+      nsum(i) = nsum(i-1) + n(i);
+    // - truncate such that the height does not exceed "ny"
+    for ( N = 0 ; N < ny+1 ; ++N )
+      if ( nsum(N) > ny+1 )
+        break;
   }
 
   // truncate
@@ -636,9 +643,9 @@ inline MatS FineLayer::conn()
   return out;
 }
 
-// ------------------------------- element numbers in the fine layer -------------------------------
+// ------------------------------ element numbers of the middle layer ------------------------------
 
-inline ColS FineLayer::elementsFine()
+inline ColS FineLayer::elementsMiddle()
 {
   ColS out(m_nx);
 
