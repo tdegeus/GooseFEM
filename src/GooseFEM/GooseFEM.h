@@ -18,6 +18,7 @@
 #include "MeshQuad4.h"
 
 #include "Mesh.cpp"
+#include "MeshTri3.cpp"
 #include "MeshQuad4.cpp"
 
 #endif
