@@ -16,9 +16,11 @@
 #include "Mesh.h"
 #include "MeshTri3.h"
 #include "MeshQuad4.h"
+#include "MeshHex8.h"
 
 #include "Mesh.cpp"
 #include "MeshTri3.cpp"
 #include "MeshQuad4.cpp"
+#include "MeshHex8.cpp"
 
 #endif

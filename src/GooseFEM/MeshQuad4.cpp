@@ -21,7 +21,8 @@ namespace Quad4 {
 
 // ------------------------------------------ constructor ------------------------------------------
 
-inline Regular::Regular(size_t nx, size_t ny, double h): m_nx(nx), m_ny(ny), m_h(h)
+inline Regular::Regular(size_t nx, size_t ny, double h):
+m_nx(nx), m_ny(ny), m_h(h)
 {
   assert( m_nx >= 1 );
   assert( m_ny >= 1 );
@@ -62,17 +63,17 @@ inline size_t Regular::ndim()
 
 inline MatD Regular::coor()
 {
-  MatD coor( m_nnode , m_ndim );
+  MatD coor(m_nnode,m_ndim);
 
-  ColD x = ColD::LinSpaced( m_nx+1 , 0.0 , m_h * static_cast<double>(m_nx) );
-  ColD y = ColD::LinSpaced( m_ny+1 , 0.0 , m_h * static_cast<double>(m_ny) );
+  ColD x = ColD::LinSpaced(m_nx+1, 0.0, m_h*static_cast<double>(m_nx));
+  ColD y = ColD::LinSpaced(m_ny+1, 0.0, m_h*static_cast<double>(m_ny));
 
   size_t inode = 0;
 
-  for ( size_t row = 0 ; row < m_ny+1 ; ++row ) {
-    for ( size_t col = 0 ; col < m_nx+1 ; ++col ) {
-      coor(inode,0) = x(col);
-      coor(inode,1) = y(row);
+  for ( size_t iy = 0 ; iy < m_ny+1 ; ++iy ) {
+    for ( size_t ix = 0 ; ix < m_nx+1 ; ++ix ) {
+      coor(inode,0) = x(ix);
+      coor(inode,1) = y(iy);
       ++inode;
     }
   }
@@ -84,16 +85,16 @@ inline MatD Regular::coor()
 
 inline MatS Regular::conn()
 {
-  MatS conn( m_nelem , m_nne );
+  MatS conn(m_nelem,m_nne);
 
   size_t ielem = 0;
 
-  for ( size_t row = 0 ; row < m_ny ; ++row ) {
-    for ( size_t col = 0 ; col < m_nx ; ++col ) {
-      conn(ielem,0) = (row+0)*(m_nx+1)+col+0;
-      conn(ielem,1) = (row+0)*(m_nx+1)+col+1;
-      conn(ielem,3) = (row+1)*(m_nx+1)+col+0;
-      conn(ielem,2) = (row+1)*(m_nx+1)+col+1;
+  for ( size_t iy = 0 ; iy < m_ny ; ++iy ) {
+    for ( size_t ix = 0 ; ix < m_nx ; ++ix ) {
+      conn(ielem,0) = (iy+0)*(m_nx+1) + (ix+0);
+      conn(ielem,1) = (iy+0)*(m_nx+1) + (ix+1);
+      conn(ielem,3) = (iy+1)*(m_nx+1) + (ix+0);
+      conn(ielem,2) = (iy+1)*(m_nx+1) + (ix+1);
       ++ielem;
     }
   }
@@ -103,65 +104,109 @@ inline MatS Regular::conn()
 
 // ------------------------------ node-numbers along the bottom edge -------------------------------
 
-inline ColS Regular::nodesBottom()
+inline ColS Regular::nodesBottomEdge()
 {
   ColS nodes(m_nx+1);
 
-  for ( size_t col = 0 ; col < m_nx+1 ; ++col ) nodes(col) = col;
+  for ( size_t ix = 0 ; ix < m_nx+1 ; ++ix )
+    nodes(ix) = ix;
 
   return nodes;
 }
 
 // -------------------------------- node-numbers along the top edge --------------------------------
 
-inline ColS Regular::nodesTop()
+inline ColS Regular::nodesTopEdge()
 {
   ColS nodes(m_nx+1);
 
-  for ( size_t col = 0 ; col < m_nx+1 ; ++col ) nodes(col) = col+m_ny*(m_nx+1);
+  for ( size_t ix = 0 ; ix < m_nx+1 ; ++ix )
+    nodes(ix) = ix + m_ny*(m_nx+1);
 
   return nodes;
 }
 
 // ----------------------------- node-numbers along the node left edge -----------------------------
 
-inline ColS Regular::nodesLeft()
+inline ColS Regular::nodesLeftEdge()
 {
   ColS nodes(m_ny+1);
 
-  for ( size_t row = 0 ; row < m_ny+1 ; ++row ) nodes(row) = row*(m_nx+1);
+  for ( size_t iy = 0 ; iy < m_ny+1 ; ++iy )
+    nodes(iy) = iy*(m_nx+1);
 
   return nodes;
 }
 
 // ------------------------------- node-numbers along the right edge -------------------------------
 
-inline ColS Regular::nodesRight()
+inline ColS Regular::nodesRightEdge()
 {
   ColS nodes(m_ny+1);
 
-  for ( size_t row = 0 ; row < m_ny+1 ; ++row ) nodes(row) = row*(m_nx+1)+m_nx;
+  for ( size_t iy = 0 ; iy < m_ny+1 ; ++iy )
+    nodes(iy) = iy*(m_nx+1) + m_nx;
 
   return nodes;
 }
+
+// ----------------------------- node-number of the bottom-left corner -----------------------------
+
+inline size_t Regular::nodesBottomLeftCorner()
+{
+  return 0;
+}
+
+// ---------------------------- node-number of the bottom-right corner -----------------------------
+
+inline size_t Regular::nodesBottomRightCorner()
+{
+  return m_nx;
+}
+
+// ------------------------------ node-number of the top-left corner -------------------------------
+
+inline size_t Regular::nodesTopLeftCorner()
+{
+  return m_ny*(m_nx+1);
+}
+
+// ------------------------------ node-number of the top-right corner ------------------------------
+
+inline size_t Regular::nodesTopRightCorner()
+{
+  return (m_ny+1)*(m_nx+1) - 1;
+}
+
+// ----------------------------- node-number of the corners (aliases) ------------------------------
+
+inline size_t Regular::nodesLeftBottomCorner()  { return nodesBottomLeftCorner();  }
+inline size_t Regular::nodesLeftTopCorner()     { return nodesTopLeftCorner();     }
+inline size_t Regular::nodesRightBottomCorner() { return nodesBottomRightCorner(); }
+inline size_t Regular::nodesRightTopCorner()    { return nodesTopRightCorner();    }
 
 // ------------------------------ node-numbers of periodic node-pairs ------------------------------
 
 inline MatS Regular::nodesPeriodic()
 {
-  ColS bot = nodesBottom();
-  ColS top = nodesTop   ();
-  ColS rgt = nodesRight ();
-  ColS lft = nodesLeft  ();
+  // edges
+  ColS bot = nodesBottomEdge();
+  ColS top = nodesTopEdge();
+  ColS rgt = nodesRightEdge();
+  ColS lft = nodesLeftEdge();
 
-  MatS nodes( bot.size()-2 + lft.size()-2 + 3 , 2 );
+  // allocate nodal ties
+  MatS nodes(bot.size()-2 + lft.size()-2 + 3, 2);
 
+  // counter
   size_t i = 0;
 
-  nodes(i,0) = bot(0); nodes(i,1) = bot(bot.size()-1); ++i;
-  nodes(i,0) = bot(0); nodes(i,1) = top(top.size()-1); ++i;
-  nodes(i,0) = bot(0); nodes(i,1) = top(0           ); ++i;
+  // tie all corners to one corner
+  nodes(i,0) = nodesBottomLeftCorner(); nodes(i,1) = nodesBottomRightCorner(); ++i;
+  nodes(i,0) = nodesBottomLeftCorner(); nodes(i,1) = nodesTopRightCorner();    ++i;
+  nodes(i,0) = nodesBottomLeftCorner(); nodes(i,1) = nodesTopLeftCorner();     ++i;
 
+  // tie edges to each other (exclude corners)
   for ( auto j = 1 ; j < bot.size()-1 ; ++j ) { nodes(i,0) = bot(j); nodes(i,1) = top(j); ++i; }
   for ( auto j = 1 ; j < lft.size()-1 ; ++j ) { nodes(i,0) = lft(j); nodes(i,1) = rgt(j); ++i; }
 
@@ -170,9 +215,9 @@ inline MatS Regular::nodesPeriodic()
 
 // ------------------------------ node-number that lies in the origin ------------------------------
 
-inline size_t Regular::nodeOrigin()
+inline size_t Regular::nodesOrigin()
 {
-  return 0;
+  return nodesBottomLeftCorner();
 }
 
 // ------------------------- DOF numbers per node (sequentially numbered) --------------------------
@@ -645,7 +690,7 @@ inline MatS FineLayer::conn()
 
 // ------------------------------ element numbers of the middle layer ------------------------------
 
-inline ColS FineLayer::elementsMiddle()
+inline ColS FineLayer::elementsMiddleLayer()
 {
   ColS out(m_nx);
 
@@ -658,7 +703,7 @@ inline ColS FineLayer::elementsMiddle()
 
 // ------------------------------ node-numbers along the bottom edge -------------------------------
 
-inline ColS FineLayer::nodesBottom()
+inline ColS FineLayer::nodesBottomEdge()
 {
   ColS nodes;
 
@@ -672,7 +717,7 @@ inline ColS FineLayer::nodesBottom()
 
 // -------------------------------- node-numbers along the top edge --------------------------------
 
-inline ColS FineLayer::nodesTop()
+inline ColS FineLayer::nodesTopEdge()
 {
   ColS nodes;
 
@@ -688,14 +733,14 @@ inline ColS FineLayer::nodesTop()
 
 // ----------------------------- node-numbers along the node left edge -----------------------------
 
-inline ColS FineLayer::nodesLeft()
+inline ColS FineLayer::nodesLeftEdge()
 {
   return m_startNode;
 }
 
 // ------------------------------- node-numbers along the right edge -------------------------------
 
-inline ColS FineLayer::nodesRight()
+inline ColS FineLayer::nodesRightEdge()
 {
   size_t N = static_cast<size_t>(m_nh.size());
   ColS   nodes(N+1);
@@ -720,23 +765,71 @@ inline ColS FineLayer::nodesRight()
   return nodes;
 }
 
+// ----------------------------- node-number of the bottom-left corner -----------------------------
+
+inline size_t FineLayer::nodesBottomLeftCorner()
+{
+  ColS nodes = nodesBottomEdge();
+
+  return nodes(0);
+}
+
+// ---------------------------- node-number of the bottom-right corner -----------------------------
+
+inline size_t FineLayer::nodesBottomRightCorner()
+{
+  ColS nodes = nodesBottomEdge();
+
+  return nodes(nodes.size()-1);
+}
+
+// ------------------------------ node-number of the top-left corner -------------------------------
+
+inline size_t FineLayer::nodesTopLeftCorner()
+{
+  ColS nodes = nodesTopEdge();
+
+  return nodes(0);
+}
+
+// ------------------------------ node-number of the top-right corner ------------------------------
+
+inline size_t FineLayer::nodesTopRightCorner()
+{
+  ColS nodes = nodesTopEdge();
+
+  return nodes(nodes.size()-1);
+}
+
+// ----------------------------- node-number of the corners (aliases) ------------------------------
+
+inline size_t FineLayer::nodesLeftBottomCorner()  { return nodesBottomLeftCorner();  }
+inline size_t FineLayer::nodesLeftTopCorner()     { return nodesTopLeftCorner();     }
+inline size_t FineLayer::nodesRightBottomCorner() { return nodesBottomRightCorner(); }
+inline size_t FineLayer::nodesRightTopCorner()    { return nodesTopRightCorner();    }
+
 // ------------------------------ node-numbers of periodic node-pairs ------------------------------
 
 inline MatS FineLayer::nodesPeriodic()
 {
-  ColS bot = nodesBottom();
-  ColS top = nodesTop   ();
-  ColS rgt = nodesRight ();
-  ColS lft = nodesLeft  ();
+  // edges
+  ColS bot = nodesBottomEdge();
+  ColS top = nodesTopEdge();
+  ColS rgt = nodesRightEdge();
+  ColS lft = nodesLeftEdge();
 
-  MatS nodes( bot.size()-2 + lft.size()-2 + 3 , 2 );
+  // allocate nodal ties
+  MatS nodes(bot.size()-2 + lft.size()-2 + 3, 2);
 
+  // counter
   size_t i = 0;
 
-  nodes(i,0) = bot(0); nodes(i,1) = bot(bot.size()-1); ++i;
-  nodes(i,0) = bot(0); nodes(i,1) = top(top.size()-1); ++i;
-  nodes(i,0) = bot(0); nodes(i,1) = top(0           ); ++i;
+  // tie all corners to one corner
+  nodes(i,0) = nodesBottomLeftCorner(); nodes(i,1) = nodesBottomRightCorner(); ++i;
+  nodes(i,0) = nodesBottomLeftCorner(); nodes(i,1) = nodesTopRightCorner();    ++i;
+  nodes(i,0) = nodesBottomLeftCorner(); nodes(i,1) = nodesTopLeftCorner();     ++i;
 
+  // tie edges to each other (exclude corners)
   for ( auto j = 1 ; j < bot.size()-1 ; ++j ) { nodes(i,0) = bot(j); nodes(i,1) = top(j); ++i; }
   for ( auto j = 1 ; j < lft.size()-1 ; ++j ) { nodes(i,0) = lft(j); nodes(i,1) = rgt(j); ++i; }
 
@@ -745,9 +838,9 @@ inline MatS FineLayer::nodesPeriodic()
 
 // ------------------------------ node-number that lies in the origin ------------------------------
 
-inline size_t FineLayer::nodeOrigin()
+inline size_t FineLayer::nodesOrigin()
 {
-  return 0;
+  return nodesBottomLeftCorner();
 }
 
 // ------------------------- DOF numbers per node (sequentially numbered) --------------------------
@@ -784,3 +877,5 @@ inline MatS FineLayer::dofsPeriodic()
 // =================================================================================================
 
 #endif
+
+

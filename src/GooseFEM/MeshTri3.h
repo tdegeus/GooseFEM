@@ -33,21 +33,34 @@ private:
 public:
   // mesh with "nx" pixels in horizontal direction, "ny" in vertical direction and "h" the edge size
   Regular(size_t nx, size_t ny, double h=1.);
-
-  size_t nelem        ();   // number of elements
-  size_t nnode        ();   // number of nodes
-  size_t nne          ();   // number of nodes-per-element
-  size_t ndim         ();   // number of dimensions
-  MatD   coor         ();   // nodal positions [ nnode , ndim ]
-  MatS   conn         ();   // connectivity    [ nelem , nne  ]
-  ColS   nodesBottom  ();   // nodes along the bottom edge
-  ColS   nodesTop     ();   // nodes along the top    edge
-  ColS   nodesLeft    ();   // nodes along the left   edge
-  ColS   nodesRight   ();   // nodes along the right  edge
+  // sizes
+  size_t nelem();           // number of elements
+  size_t nnode();           // number of nodes
+  size_t nne();             // number of nodes-per-element
+  size_t ndim();            // number of dimensions
+  // mesh
+  MatD   coor();            // nodal positions [ nnode , ndim ]
+  MatS   conn();            // connectivity    [ nelem , nne  ]
+  // boundary nodes: edges
+  ColS   nodesBottomEdge(); // nodes along the bottom edge
+  ColS   nodesTopEdge();    // nodes along the top    edge
+  ColS   nodesLeftEdge();   // nodes along the left   edge
+  ColS   nodesRightEdge();  // nodes along the right  edge
+  // boundary nodes: corners
+  size_t nodesBottomLeftCorner();   // bottom - left  corner node
+  size_t nodesBottomRightCorner();  // bottom - right corner node
+  size_t nodesTopLeftCorner();      // top    - left  corner node
+  size_t nodesTopRightCorner();     // top    - right corner node
+  // boundary nodes: corners (aliases)
+  size_t nodesLeftBottomCorner();   // bottom - left  corner node
+  size_t nodesLeftTopCorner();      // top    - left  corner node
+  size_t nodesRightBottomCorner();  // bottom - right corner node
+  size_t nodesRightTopCorner();     // top    - right corner node
+  // periodicity
   MatS   nodesPeriodic();   // periodic node pairs [ : , 2 ]: ( independent , dependent )
-  size_t nodeOrigin   ();   // bottom-left node, to be used as reference for periodicity
-  MatS   dofs         ();   // DOF-numbers for each component of each node (sequential)
-  MatS   dofsPeriodic ();   // DOF-numbers for each component of each node (sequential)
+  size_t nodesOrigin();     // bottom-left node, to be used as reference for periodicity
+  MatS   dofs();            // DOF-numbers for each component of each node (sequential)
+  MatS   dofsPeriodic();    // DOF-numbers for each component of each node (sequential)
 };
 
 // ========================================= MESH ANALYSIS =========================================
@@ -123,8 +136,6 @@ inline bool Edge_sort(Edge a, Edge b); // check if "a" is smaller than "b" in te
 
 // =================================================================================================
 
-} // namespace Tri3
-} // namespace Mesh
-} // namespace GooseFEM
+}}} // namespace ...
 
 #endif
