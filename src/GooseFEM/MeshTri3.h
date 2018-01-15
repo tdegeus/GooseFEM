@@ -57,7 +57,7 @@ public:
   size_t nodesRightBottomCorner();  // bottom - right corner node
   size_t nodesRightTopCorner();     // top    - right corner node
   // periodicity
-  MatS   nodesPeriodic();   // periodic node pairs [ : , 2 ]: ( independent , dependent )
+  MatS   nodesPeriodic();   // periodic node pairs [ : , 2 ]: (independent, dependent)
   size_t nodesOrigin();     // bottom-left node, to be used as reference for periodicity
   MatS   dofs();            // DOF-numbers for each component of each node (sequential)
   MatS   dofsPeriodic();    // DOF-numbers for each component of each node (sequential)

@@ -57,7 +57,7 @@ public:
   size_t nodesRightBottomCorner();  // bottom - right corner node
   size_t nodesRightTopCorner();     // top    - right corner node
   // periodicity
-  MatS   nodesPeriodic();           // periodic node pairs [ : , 2 ]: ( independent , dependent )
+  MatS   nodesPeriodic();           // periodic node pairs [ : , 2 ]: (independent, dependent)
   size_t nodesOrigin();             // bottom-left node, to be used as reference for periodicity
   MatS   dofs();                    // DOF-numbers for each component of each node (sequential)
   MatS   dofsPeriodic();            // DOF-numbers for each component of each node (sequential)
@@ -68,18 +68,18 @@ public:
 class FineLayer
 {
 private:
-  double m_h;          // base size of the element edge (equal in both directions)
-  size_t m_nx;         // number of elements in vertical direction
-  ColS   m_nh;         // element size in vertical direction (number of time "h")
-  ColS   m_startNode;  // start node of each row
-  ColS   m_startElem;  // start element of each row
+  double m_h;          // elementary element size (middle-layer in x-direction has "L = m_nx * m_h")
+  size_t m_nx;         // number of elements in x-direction
+  ColS   m_nh;         // element size in y-direction of each layer
+  ColS   m_startNode;  // start node    of each layer
+  ColS   m_startElem;  // start element of each layer
   size_t m_nelem;      // number of elements
   size_t m_nnode;      // number of nodes
   size_t m_nne=4;      // number of nodes-per-element
   size_t m_ndim=2;     // number of dimensions
 
 public:
-  // mesh with "nx" pixels in horizontal direction, "ny" in vertical direction and "h" the edge size
+  // mesh with "nx*ny" 'pixels' and edge size "h"; the elements in y-direction are coarsened
   FineLayer(size_t nx, size_t ny, double h=1., size_t nfine=1, size_t nskip=0);
   // sizes
   size_t nelem();                   // number of elements
@@ -107,7 +107,7 @@ public:
   size_t nodesRightBottomCorner();  // bottom - right corner node
   size_t nodesRightTopCorner();     // top    - right corner node
   // periodicity
-  MatS   nodesPeriodic();           // periodic node pairs [ : , 2 ]: ( independent , dependent )
+  MatS   nodesPeriodic();           // periodic node pairs [ : , 2 ]: (independent, dependent)
   size_t nodesOrigin();             // bottom-left node, to be used as reference for periodicity
   MatS   dofs();                    // DOF-numbers for each component of each node (sequential)
   MatS   dofsPeriodic();            // DOF-numbers for each component of each node (sequential)

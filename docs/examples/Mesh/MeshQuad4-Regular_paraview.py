@@ -107,3 +107,9 @@ print('nodesPeriodic =')
 print(mesh.nodesPeriodic())
 print('nodesOrigin =')
 print(mesh.nodesOrigin())
+
+# check uniqueness of tied nodes
+ties = mesh.nodesPeriodic()[:,1]
+
+if len(np.unique(ties)) != len(ties):
+  raise IOError('Nodal ties not unique')

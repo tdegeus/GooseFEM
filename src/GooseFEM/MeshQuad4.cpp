@@ -251,19 +251,14 @@ inline MatS Regular::dofsPeriodic()
 
 // ------------------------------------------ constructor ------------------------------------------
 
-inline FineLayer::FineLayer(size_t nx, size_t ny, double h, size_t nfine, size_t nskip)
+inline FineLayer::FineLayer(size_t nx, size_t ny, double h, size_t nfine, size_t nskip):
+m_h(h), m_nx(nx)
 {
   assert( nx >= 1 );
   assert( ny >= 1 );
 
   // local counters
   size_t N;
-
-  // fixed dimensions
-  // ----------------
-
-  m_nx = nx;
-  m_h  = h;
 
   // compute the element size : based on symmetric half
   // --------------------------------------------------
@@ -476,12 +471,12 @@ inline size_t FineLayer::shape(size_t i)
 inline MatD FineLayer::coor()
 {
   // allocate output
-  MatD out( m_nnode , m_ndim );
+  MatD out(m_nnode, m_ndim);
 
   // initialize position in horizontal direction (of the finest nodes)
-  ColD x = ColD::LinSpaced( m_nx+1 , 0.0 , m_h * static_cast<double>(m_nx) );
+  ColD x = ColD::LinSpaced(m_nx+1, 0.0, m_h*static_cast<double>(m_nx));
 
-  // zero-initialize current node and height: loop from top to bottom; number of rows
+  // zero-initialize current node and height: loop from bottom to top; number of rows
   double h     = 0;
   size_t inode = 0;
   size_t N     = static_cast<size_t>(m_nh.size());
