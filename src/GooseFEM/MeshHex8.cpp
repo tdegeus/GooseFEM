@@ -639,38 +639,77 @@ m_h(h), m_nx(nx), m_nz(nz)
   assert( ny >= 1 );
   assert( nz >= 1 );
 
-  m_nx = 9;
-  m_nz = 9;
-
-  m_nh .conservativeResize(9);
-  m_dir.conservativeResize(9);
-
-  m_nh(0) = 3;   m_dir(0) =  0;
-  m_nh(1) = 2;   m_dir(1) = -1;
-  m_nh(2) = 2;   m_dir(2) =  1;
-  m_nh(3) = 1;   m_dir(3) =  0;
-  m_nh(4) = 1;   m_dir(4) =  0;
-  m_nh(5) = 1;   m_dir(5) =  0;
-  m_nh(6) = 2;   m_dir(6) =  1;
-  m_nh(7) = 2;   m_dir(7) = -1;
-  m_nh(8) = 3;   m_dir(8) =  0;
-
+  // TODO: fake data
+  size_t N = 9;
 
   // allocate counters
-  m_startElem.conservativeResize(m_nh.size()  );
-  m_startNode.conservativeResize(m_nh.size()+1);
+  m_nx       .conservativeResize(N  );
+  m_nz       .conservativeResize(N  );
+  m_nhx      .conservativeResize(N  );
+  m_nhy      .conservativeResize(N  );
+  m_nhz      .conservativeResize(N  );
+  m_refine   .conservativeResize(N  );
+  m_startElem.conservativeResize(N  );
+  m_startNode.conservativeResize(N+1);
 
-  size_t N;
+  // TODO: fake data
+  m_Lx = m_h * 6;
+  m_Lz = m_h * 6;
 
-  // compute the dimensions of the mesh
-  // - initialize
+  // TODO: fake data
+  m_nhx(0) = 3;  m_nhz(0) = 3;  m_nhy(0) = 3;  m_refine(0) = -1; m_nx(0) = 2; m_nz(0) = 2;
+  m_nhx(1) = 3;  m_nhz(1) = 3;  m_nhy(1) = 2;  m_refine(1) =  2; m_nx(1) = 2; m_nz(1) = 2;
+  m_nhx(2) = 3;  m_nhz(2) = 1;  m_nhy(2) = 2;  m_refine(2) =  0; m_nx(2) = 2; m_nz(2) = 6;
+  m_nhx(3) = 1;  m_nhz(3) = 1;  m_nhy(3) = 1;  m_refine(3) = -1; m_nx(3) = 6; m_nz(3) = 6;
+  m_nhx(4) = 1;  m_nhz(4) = 1;  m_nhy(4) = 1;  m_refine(4) = -1; m_nx(4) = 6; m_nz(4) = 6;
+  m_nhx(5) = 1;  m_nhz(5) = 1;  m_nhy(5) = 1;  m_refine(5) = -1; m_nx(5) = 6; m_nz(5) = 6;
+  m_nhx(6) = 3;  m_nhz(6) = 1;  m_nhy(6) = 2;  m_refine(6) =  0; m_nx(6) = 2; m_nz(6) = 6;
+  m_nhx(7) = 3;  m_nhz(7) = 3;  m_nhy(7) = 2;  m_refine(7) =  2; m_nx(7) = 2; m_nz(7) = 2;
+  m_nhx(8) = 3;  m_nhz(8) = 3;  m_nhy(8) = 3;  m_refine(8) = -1; m_nx(8) = 2; m_nz(8) = 2;
+
+  // compute mesh dimensions
+  // -----------------------
+
+  // initialize
   m_nnode        = 0;
   m_nelem        = 0;
-  N              = static_cast<size_t>(m_nh.size());
   m_startNode(0) = 0;
 
+  // loop from bottom to middle : elements become finer
+  for ( size_t i = 0 ; i < (N-1)/2 ; ++i )
+  {
+    // - store the first element of the layer
+    m_startElem(i) = m_nelem;
+    // - add the nodes of this layer
+    if      ( m_refine(i) == 0 ) { m_nnode += (3*m_nx(i)+1) * (  m_nz(i)+1); }
+    else if ( m_refine(i) == 2 ) { m_nnode += (  m_nx(i)+1) * (3*m_nz(i)+1); }
+    else                         { m_nnode += (  m_nx(i)+1) * (  m_nz(i)+1); }
+    // - add the elements of this layer
+    if      ( m_refine(i) == 0 ) { m_nelem += 4*m_nx(i) *   m_nz(i); }
+    else if ( m_refine(i) == 2 ) { m_nelem +=   m_nx(i) * 4*m_nz(i); }
+    else                         { m_nelem +=   m_nx(i) *   m_nz(i); }
+    // - store the starting node of the next layer
+    m_startNode(i+1) = m_nnode;
+  }
 
-
+  // loop from middle to top : elements become coarser
+  for ( size_t i = (N-1)/2 ; i < N ; ++i )
+  {
+    // - store the first element of the layer
+    m_startElem(i) = m_nelem;
+    // - add the nodes of this layer
+    if      ( m_refine(i) == 0 ) { m_nnode += (5*m_nx(i)+1) * (  m_nz(i)+1); }
+    else if ( m_refine(i) == 2 ) { m_nnode += (  m_nx(i)+1) * (5*m_nz(i)+1); }
+    else                         { m_nnode += (  m_nx(i)+1) * (  m_nz(i)+1); }
+    // - add the elements of this layer
+    if      ( m_refine(i) == 0 ) { m_nelem += 4*m_nx(i) *   m_nz(i); }
+    else if ( m_refine(i) == 2 ) { m_nelem +=   m_nx(i) * 4*m_nz(i); }
+    else                         { m_nelem +=   m_nx(i) *   m_nz(i); }
+    // - store the starting node of the next layer
+    m_startNode(i+1) = m_nnode;
+  }
+  // - add the top row of nodes
+  m_nnode += (m_nx(N-1)+1) * (m_nz(N-1)+1);
 }
 
 // -------------------------------------- number of elements ---------------------------------------
@@ -707,6 +746,379 @@ inline MatD FineLayer::coor()
 {
   // allocate output
   MatD out(m_nnode, m_ndim);
+
+  // current node, number of element layers
+  size_t inode = 0;
+  size_t N     = static_cast<size_t>(m_nhy.size());
+
+  // y-position of each main node layer (i.e. excluding node layers for refinement/coarsening)
+  // - allocate
+  ColD y(N+1);
+  // - initialize
+  y(0) = 0.0;
+  // - compute
+  for ( size_t iy = 1 ; iy < N+1 ; ++iy )
+    y(iy) = y(iy-1) + m_nhy(iy-1) * m_h;
+
+  // loop over element layers (bottom -> middle) : add bottom layer (+ refinement layer) of nodes
+  // --------------------------------------------------------------------------------------------
+
+  for ( size_t iy = 0 ; ; ++iy )
+  {
+    // get positions along the x- and z-axis
+    ColD x = ColD::LinSpaced(m_nx(iy)+1, 0.0, m_Lx);
+    ColD z = ColD::LinSpaced(m_nz(iy)+1, 0.0, m_Lz);
+
+    // add nodes of the bottom layer of this element
+    for ( size_t iz = 0 ; iz < m_nz(iy)+1 ; ++iz ) {
+      for ( size_t ix = 0 ; ix < m_nx(iy)+1 ; ++ix ) {
+        out(inode,0) = x(ix);
+        out(inode,1) = y(iy);
+        out(inode,2) = z(iz);
+        ++inode;
+      }
+    }
+
+    // stop at middle layer
+    if ( iy == (N-1)/2 )
+      break;
+
+    // add extra nodes of the intermediate layer, for refinement in x-direction
+    if ( m_refine(iy) == 0 )
+    {
+      // - get position offset in x- and y-direction
+      double dx = m_h * static_cast<double>(m_nhx(iy)/3);
+      double dy = m_h * static_cast<double>(m_nhy(iy)/2);
+      // - add nodes of the intermediate layer
+      for ( size_t iz = 0 ; iz < m_nz(iy)+1 ; ++iz ) {
+        for ( size_t ix = 0 ; ix < m_nx(iy) ; ++ix ) {
+          for ( size_t j = 0 ; j < 2 ; ++j ) {
+            out(inode,0) = x(ix) + dx * static_cast<double>(j+1);
+            out(inode,1) = y(iy) + dy;
+            out(inode,2) = z(iz);
+            ++inode;
+          }
+        }
+      }
+    }
+
+    // add extra nodes of the intermediate layer, for refinement in z-direction
+    else if ( m_refine(iy) == 2 )
+    {
+      // - get position offset in y- and z-direction
+      double dz = m_h * static_cast<double>(m_nhz(iy)/3);
+      double dy = m_h * static_cast<double>(m_nhy(iy)/2);
+      // - add nodes of the intermediate layer
+      for ( size_t iz = 0 ; iz < m_nz(iy) ; ++iz ) {
+        for ( size_t j = 0 ; j < 2 ; ++j ) {
+          for ( size_t ix = 0 ; ix < m_nx(iy)+1 ; ++ix ) {
+            out(inode,0) = x(ix);
+            out(inode,1) = y(iy) + dy;
+            out(inode,2) = z(iz) + dz * static_cast<double>(j+1);
+            ++inode;
+          }
+        }
+      }
+    }
+  }
+
+  // loop over element layers (middle -> top) : add (refinement layer +) top layer of nodes
+  // --------------------------------------------------------------------------------------
+
+  for ( size_t iy = (N-1)/2 ; iy < N ; ++iy )
+  {
+    // get positions along the x- and z-axis
+    ColD x = ColD::LinSpaced(m_nx(iy)+1, 0.0, m_Lx);
+    ColD z = ColD::LinSpaced(m_nz(iy)+1, 0.0, m_Lz);
+
+    // add extra nodes of the intermediate layer, for refinement in x-direction
+    if ( m_refine(iy) == 0 )
+    {
+      // - get position offset in x- and y-direction
+      double dx = m_h * static_cast<double>(m_nhx(iy)/3);
+      double dy = m_h * static_cast<double>(m_nhy(iy)/2);
+      // - add nodes of the intermediate layer
+      for ( size_t iz = 0 ; iz < m_nz(iy)+1 ; ++iz ) {
+        for ( size_t ix = 0 ; ix < m_nx(iy) ; ++ix ) {
+          for ( size_t j = 0 ; j < 2 ; ++j ) {
+            out(inode,0) = x(ix) + dx * static_cast<double>(j+1);
+            out(inode,1) = y(iy) + dy;
+            out(inode,2) = z(iz);
+            ++inode;
+          }
+        }
+      }
+    }
+
+    // add extra nodes of the intermediate layer, for refinement in z-direction
+    else if ( m_refine(iy) == 2 )
+    {
+      // - get position offset in y- and z-direction
+      double dz = m_h * static_cast<double>(m_nhz(iy)/3);
+      double dy = m_h * static_cast<double>(m_nhy(iy)/2);
+      // - add nodes of the intermediate layer
+      for ( size_t iz = 0 ; iz < m_nz(iy) ; ++iz ) {
+        for ( size_t j = 0 ; j < 2 ; ++j ) {
+          for ( size_t ix = 0 ; ix < m_nx(iy)+1 ; ++ix ) {
+            out(inode,0) = x(ix);
+            out(inode,1) = y(iy) + dy;
+            out(inode,2) = z(iz) + dz * static_cast<double>(j+1);
+            ++inode;
+          }
+        }
+      }
+    }
+
+    // add nodes of the top layer of this element
+    for ( size_t iz = 0 ; iz < m_nz(iy)+1 ; ++iz ) {
+      for ( size_t ix = 0 ; ix < m_nx(iy)+1 ; ++ix ) {
+        out(inode,0) = x(ix  );
+        out(inode,1) = y(iy+1);
+        out(inode,2) = z(iz  );
+        ++inode;
+      }
+    }
+  }
+
+  return out;
+}
+
+// ---------------------------- connectivity (node-numbers per element) ----------------------------
+
+inline MatS FineLayer::conn()
+{
+  // allocate output
+  MatS out(m_nelem, m_nne);
+
+  // current element, number of element layers, starting nodes of each node layer
+  size_t ielem = 0;
+  size_t N     = static_cast<size_t>(m_nhy.size());
+  size_t bot,mid,top;
+
+  // loop over all element layers
+  for ( size_t iy = 0 ; iy < N ; ++iy )
+  {
+    // - get: starting nodes of bottom and top layer
+    bot = m_startNode(iy  );
+    top = m_startNode(iy+1);
+    // - get: starting nodes of the middle layer (if present)
+    if ( iy <= (N-1)/2 ) mid = m_startNode(iy) + (m_nx(iy  )+1) * (m_nz(iy  )+1);
+    else                 mid = m_startNode(iy) + (m_nx(iy-1)+1) * (m_nz(iy-1)+1);
+
+    // - define connectivity: no coarsening/refinement
+    if ( m_refine(iy) == -1 )
+    {
+      for ( size_t iz = 0 ; iz < m_nz(iy) ; ++iz ) {
+        for ( size_t ix = 0 ; ix < m_nx(iy) ; ++ix ) {
+          out(ielem,0) = bot + (ix  ) + (iz  ) * (m_nx(iy)+1);
+          out(ielem,1) = bot + (ix+1) + (iz  ) * (m_nx(iy)+1);
+          out(ielem,2) = top + (ix+1) + (iz  ) * (m_nx(iy)+1);
+          out(ielem,3) = top + (ix  ) + (iz  ) * (m_nx(iy)+1);
+          out(ielem,4) = bot + (ix  ) + (iz+1) * (m_nx(iy)+1);
+          out(ielem,5) = bot + (ix+1) + (iz+1) * (m_nx(iy)+1);
+          out(ielem,6) = top + (ix+1) + (iz+1) * (m_nx(iy)+1);
+          out(ielem,7) = top + (ix  ) + (iz+1) * (m_nx(iy)+1);
+          ielem++;
+        }
+      }
+    }
+
+    // - define connectivity: refinement along the x-direction (below the middle layer)
+    else if ( m_refine(iy) == 0 and iy <= (N-1)/2 )
+    {
+      for ( size_t iz = 0 ; iz < m_nz(iy) ; ++iz ) {
+        for ( size_t ix = 0 ; ix < m_nx(iy) ; ++ix ) {
+          // -- bottom element
+          out(ielem,0) = bot + (  ix  ) + (iz  ) * (  m_nx(iy)+1);
+          out(ielem,1) = bot + (  ix+1) + (iz  ) * (  m_nx(iy)+1);
+          out(ielem,2) = mid + (2*ix+1) + (iz  ) * (2*m_nx(iy)  );
+          out(ielem,3) = mid + (2*ix  ) + (iz  ) * (2*m_nx(iy)  );
+          out(ielem,4) = bot + (  ix  ) + (iz+1) * (  m_nx(iy)+1);
+          out(ielem,5) = bot + (  ix+1) + (iz+1) * (  m_nx(iy)+1);
+          out(ielem,6) = mid + (2*ix+1) + (iz+1) * (2*m_nx(iy)  );
+          out(ielem,7) = mid + (2*ix  ) + (iz+1) * (2*m_nx(iy)  );
+          ielem++;
+          // -- top-right element
+          out(ielem,0) = bot + (  ix+1) + (iz  ) * (  m_nx(iy)+1);
+          out(ielem,1) = top + (3*ix+3) + (iz  ) * (3*m_nx(iy)+1);
+          out(ielem,2) = top + (3*ix+2) + (iz  ) * (3*m_nx(iy)+1);
+          out(ielem,3) = mid + (2*ix+1) + (iz  ) * (2*m_nx(iy)  );
+          out(ielem,4) = bot + (  ix+1) + (iz+1) * (  m_nx(iy)+1);
+          out(ielem,5) = top + (3*ix+3) + (iz+1) * (3*m_nx(iy)+1);
+          out(ielem,6) = top + (3*ix+2) + (iz+1) * (3*m_nx(iy)+1);
+          out(ielem,7) = mid + (2*ix+1) + (iz+1) * (2*m_nx(iy)  );
+          ielem++;
+          // -- top-center element
+          out(ielem,0) = mid + (2*ix  ) + (iz  ) * (2*m_nx(iy)  );
+          out(ielem,1) = mid + (2*ix+1) + (iz  ) * (2*m_nx(iy)  );
+          out(ielem,2) = top + (3*ix+2) + (iz  ) * (3*m_nx(iy)+1);
+          out(ielem,3) = top + (3*ix+1) + (iz  ) * (3*m_nx(iy)+1);
+          out(ielem,4) = mid + (2*ix  ) + (iz+1) * (2*m_nx(iy)  );
+          out(ielem,5) = mid + (2*ix+1) + (iz+1) * (2*m_nx(iy)  );
+          out(ielem,6) = top + (3*ix+2) + (iz+1) * (3*m_nx(iy)+1);
+          out(ielem,7) = top + (3*ix+1) + (iz+1) * (3*m_nx(iy)+1);
+          ielem++;
+          // -- top-left element
+          out(ielem,0) = bot + (  ix  ) + (iz  ) * (  m_nx(iy)+1);
+          out(ielem,1) = mid + (2*ix  ) + (iz  ) * (2*m_nx(iy)  );
+          out(ielem,2) = top + (3*ix+1) + (iz  ) * (3*m_nx(iy)+1);
+          out(ielem,3) = top + (3*ix  ) + (iz  ) * (3*m_nx(iy)+1);
+          out(ielem,4) = bot + (  ix  ) + (iz+1) * (  m_nx(iy)+1);
+          out(ielem,5) = mid + (2*ix  ) + (iz+1) * (2*m_nx(iy)  );
+          out(ielem,6) = top + (3*ix+1) + (iz+1) * (3*m_nx(iy)+1);
+          out(ielem,7) = top + (3*ix  ) + (iz+1) * (3*m_nx(iy)+1);
+          ielem++;
+        }
+      }
+    }
+
+    // - define connectivity: coarsening along the x-direction (above the middle layer)
+    else if ( m_refine(iy) == 0 and iy > (N-1)/2 )
+    {
+      for ( size_t iz = 0 ; iz < m_nz(iy) ; ++iz ) {
+        for ( size_t ix = 0 ; ix < m_nx(iy) ; ++ix ) {
+          // -- lower-left element
+          out(ielem,0) = bot + (3*ix  ) + (iz  ) * (3*m_nx(iy)+1);
+          out(ielem,1) = bot + (3*ix+1) + (iz  ) * (3*m_nx(iy)+1);
+          out(ielem,2) = mid + (2*ix  ) + (iz  ) * (2*m_nx(iy)  );
+          out(ielem,3) = top + (  ix  ) + (iz  ) * (  m_nx(iy)+1);
+          out(ielem,4) = bot + (3*ix  ) + (iz+1) * (3*m_nx(iy)+1);
+          out(ielem,5) = bot + (3*ix+1) + (iz+1) * (3*m_nx(iy)+1);
+          out(ielem,6) = mid + (2*ix  ) + (iz+1) * (2*m_nx(iy)  );
+          out(ielem,7) = top + (  ix  ) + (iz+1) * (  m_nx(iy)+1);
+          ielem++;
+          // -- lower-center element
+          out(ielem,0) = bot + (3*ix+1) + (iz  ) * (3*m_nx(iy)+1);
+          out(ielem,1) = bot + (3*ix+2) + (iz  ) * (3*m_nx(iy)+1);
+          out(ielem,2) = mid + (2*ix+1) + (iz  ) * (2*m_nx(iy)  );
+          out(ielem,3) = mid + (2*ix  ) + (iz  ) * (2*m_nx(iy)  );
+          out(ielem,4) = bot + (3*ix+1) + (iz+1) * (3*m_nx(iy)+1);
+          out(ielem,5) = bot + (3*ix+2) + (iz+1) * (3*m_nx(iy)+1);
+          out(ielem,6) = mid + (2*ix+1) + (iz+1) * (2*m_nx(iy)  );
+          out(ielem,7) = mid + (2*ix  ) + (iz+1) * (2*m_nx(iy)  );
+          ielem++;
+          // -- lower-right element
+          out(ielem,0) = bot + (3*ix+2) + (iz  ) * (3*m_nx(iy)+1);
+          out(ielem,1) = bot + (3*ix+3) + (iz  ) * (3*m_nx(iy)+1);
+          out(ielem,2) = top + (  ix+1) + (iz  ) * (  m_nx(iy)+1);
+          out(ielem,3) = mid + (2*ix+1) + (iz  ) * (2*m_nx(iy)  );
+          out(ielem,4) = bot + (3*ix+2) + (iz+1) * (3*m_nx(iy)+1);
+          out(ielem,5) = bot + (3*ix+3) + (iz+1) * (3*m_nx(iy)+1);
+          out(ielem,6) = top + (  ix+1) + (iz+1) * (  m_nx(iy)+1);
+          out(ielem,7) = mid + (2*ix+1) + (iz+1) * (2*m_nx(iy)  );
+          ielem++;
+          // -- upper element
+          out(ielem,0) = mid + (2*ix  ) + (iz  ) * (2*m_nx(iy)  );
+          out(ielem,1) = mid + (2*ix+1) + (iz  ) * (2*m_nx(iy)  );
+          out(ielem,2) = top + (  ix+1) + (iz  ) * (  m_nx(iy)+1);
+          out(ielem,3) = top + (  ix  ) + (iz  ) * (  m_nx(iy)+1);
+          out(ielem,4) = mid + (2*ix  ) + (iz+1) * (2*m_nx(iy)  );
+          out(ielem,5) = mid + (2*ix+1) + (iz+1) * (2*m_nx(iy)  );
+          out(ielem,6) = top + (  ix+1) + (iz+1) * (  m_nx(iy)+1);
+          out(ielem,7) = top + (  ix  ) + (iz+1) * (  m_nx(iy)+1);
+          ielem++;
+        }
+      }
+    }
+
+    // - define connectivity: refinement along the z-direction (below the middle layer)
+    else if ( m_refine(iy) == 2 and iy <= (N-1)/2 )
+    {
+      for ( size_t iz = 0 ; iz < m_nz(iy) ; ++iz ) {
+        for ( size_t ix = 0 ; ix < m_nx(iy) ; ++ix ) {
+          // -- bottom element
+          out(ielem,0) = bot + (ix  ) +    iz    * (m_nx(iy)+1);
+          out(ielem,1) = bot + (ix+1) +    iz    * (m_nx(iy)+1);
+          out(ielem,2) = bot + (ix+1) + (  iz+1) * (m_nx(iy)+1);
+          out(ielem,3) = bot + (ix  ) + (  iz+1) * (m_nx(iy)+1);
+          out(ielem,4) = mid + (ix  ) +  2*iz    * (m_nx(iy)+1);
+          out(ielem,5) = mid + (ix+1) +  2*iz    * (m_nx(iy)+1);
+          out(ielem,6) = mid + (ix+1) + (2*iz+1) * (m_nx(iy)+1);
+          out(ielem,7) = mid + (ix  ) + (2*iz+1) * (m_nx(iy)+1);
+          ielem++;
+          // -- top-back element
+          out(ielem,0) = mid + (ix  ) + (2*iz+1) * (m_nx(iy)+1);
+          out(ielem,1) = mid + (ix+1) + (2*iz+1) * (m_nx(iy)+1);
+          out(ielem,2) = top + (ix+1) + (3*iz+2) * (m_nx(iy)+1);
+          out(ielem,3) = top + (ix  ) + (3*iz+2) * (m_nx(iy)+1);
+          out(ielem,4) = bot + (ix  ) + (  iz+1) * (m_nx(iy)+1);
+          out(ielem,5) = bot + (ix+1) + (  iz+1) * (m_nx(iy)+1);
+          out(ielem,6) = top + (ix+1) + (3*iz+3) * (m_nx(iy)+1);
+          out(ielem,7) = top + (ix  ) + (3*iz+3) * (m_nx(iy)+1);
+          ielem++;
+          // -- top-center element
+          out(ielem,0) = mid + (ix  ) + (2*iz  ) * (m_nx(iy)+1);
+          out(ielem,1) = mid + (ix+1) + (2*iz  ) * (m_nx(iy)+1);
+          out(ielem,2) = top + (ix+1) + (3*iz+1) * (m_nx(iy)+1);
+          out(ielem,3) = top + (ix  ) + (3*iz+1) * (m_nx(iy)+1);
+          out(ielem,4) = mid + (ix  ) + (2*iz+1) * (m_nx(iy)+1);
+          out(ielem,5) = mid + (ix+1) + (2*iz+1) * (m_nx(iy)+1);
+          out(ielem,6) = top + (ix+1) + (3*iz+2) * (m_nx(iy)+1);
+          out(ielem,7) = top + (ix  ) + (3*iz+2) * (m_nx(iy)+1);
+          ielem++;
+          // -- top-front element
+          out(ielem,0) = bot + (ix  ) + (  iz  ) * (m_nx(iy)+1);
+          out(ielem,1) = bot + (ix+1) + (  iz  ) * (m_nx(iy)+1);
+          out(ielem,2) = top + (ix+1) + (3*iz  ) * (m_nx(iy)+1);
+          out(ielem,3) = top + (ix  ) + (3*iz  ) * (m_nx(iy)+1);
+          out(ielem,4) = mid + (ix  ) + (2*iz  ) * (m_nx(iy)+1);
+          out(ielem,5) = mid + (ix+1) + (2*iz  ) * (m_nx(iy)+1);
+          out(ielem,6) = top + (ix+1) + (3*iz+1) * (m_nx(iy)+1);
+          out(ielem,7) = top + (ix  ) + (3*iz+1) * (m_nx(iy)+1);
+          ielem++;
+        }
+      }
+    }
+
+    // - define connectivity: coarsening along the z-direction (above the middle layer)
+    else if ( m_refine(iy) == 2 and iy > (N-1)/2 )
+    {
+      for ( size_t iz = 0 ; iz < m_nz(iy) ; ++iz ) {
+        for ( size_t ix = 0 ; ix < m_nx(iy) ; ++ix ) {
+          // -- bottom-front element
+          out(ielem,0) = bot + (ix  ) + (3*iz  ) * (m_nx(iy)+1);
+          out(ielem,1) = bot + (ix+1) + (3*iz  ) * (m_nx(iy)+1);
+          out(ielem,2) = top + (ix+1) + (  iz  ) * (m_nx(iy)+1);
+          out(ielem,3) = top + (ix  ) + (  iz  ) * (m_nx(iy)+1);
+          out(ielem,4) = bot + (ix  ) + (3*iz+1) * (m_nx(iy)+1);
+          out(ielem,5) = bot + (ix+1) + (3*iz+1) * (m_nx(iy)+1);
+          out(ielem,6) = mid + (ix+1) + (2*iz  ) * (m_nx(iy)+1);
+          out(ielem,7) = mid + (ix  ) + (2*iz  ) * (m_nx(iy)+1);
+          ielem++;
+          // -- bottom-center element
+          out(ielem,0) = bot + (ix  ) + (3*iz+1) * (m_nx(iy)+1);
+          out(ielem,1) = bot + (ix+1) + (3*iz+1) * (m_nx(iy)+1);
+          out(ielem,2) = mid + (ix+1) + (2*iz  ) * (m_nx(iy)+1);
+          out(ielem,3) = mid + (ix  ) + (2*iz  ) * (m_nx(iy)+1);
+          out(ielem,4) = bot + (ix  ) + (3*iz+2) * (m_nx(iy)+1);
+          out(ielem,5) = bot + (ix+1) + (3*iz+2) * (m_nx(iy)+1);
+          out(ielem,6) = mid + (ix+1) + (2*iz+1) * (m_nx(iy)+1);
+          out(ielem,7) = mid + (ix  ) + (2*iz+1) * (m_nx(iy)+1);
+          ielem++;
+          // -- bottom-back element
+          out(ielem,0) = bot + (ix  ) + (3*iz+2) * (m_nx(iy)+1);
+          out(ielem,1) = bot + (ix+1) + (3*iz+2) * (m_nx(iy)+1);
+          out(ielem,2) = mid + (ix+1) + (2*iz+1) * (m_nx(iy)+1);
+          out(ielem,3) = mid + (ix  ) + (2*iz+1) * (m_nx(iy)+1);
+          out(ielem,4) = bot + (ix  ) + (3*iz+3) * (m_nx(iy)+1);
+          out(ielem,5) = bot + (ix+1) + (3*iz+3) * (m_nx(iy)+1);
+          out(ielem,6) = top + (ix+1) + (  iz+1) * (m_nx(iy)+1);
+          out(ielem,7) = top + (ix  ) + (  iz+1) * (m_nx(iy)+1);
+          ielem++;
+          // -- top element
+          out(ielem,0) = mid + (ix  ) + (2*iz  ) * (m_nx(iy)+1);
+          out(ielem,1) = mid + (ix+1) + (2*iz  ) * (m_nx(iy)+1);
+          out(ielem,2) = top + (ix+1) + (  iz  ) * (m_nx(iy)+1);
+          out(ielem,3) = top + (ix  ) + (  iz  ) * (m_nx(iy)+1);
+          out(ielem,4) = mid + (ix  ) + (2*iz+1) * (m_nx(iy)+1);
+          out(ielem,5) = mid + (ix+1) + (2*iz+1) * (m_nx(iy)+1);
+          out(ielem,6) = top + (ix+1) + (  iz+1) * (m_nx(iy)+1);
+          out(ielem,7) = top + (ix  ) + (  iz+1) * (m_nx(iy)+1);
+          ielem++;
+        }
+      }
+    }
+  }
 
   return out;
 }

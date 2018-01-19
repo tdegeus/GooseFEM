@@ -133,7 +133,7 @@ public:
   size_t nodesRightBackTopCorner();     // alias, see above: nodesBackTopRightCorner
   size_t nodesRightTopBackCorner();     // alias, see above: nodesBackTopRightCorner
   // periodicity
-  MatS   nodesPeriodic();               // periodic node pairs [ : , 2 ]: (independent, dependent)
+  MatS   nodesPeriodic();               // periodic node pairs [:,2]: (independent, dependent)
   size_t nodesOrigin();                 // front-left node, to be used as reference for periodicity
   MatS   dofs();                        // DOF-numbers for each component of each node (sequential)
   MatS   dofsPeriodic();                // DOF-numbers for each component of each node (sequential)
@@ -144,17 +144,17 @@ public:
 class FineLayer
 {
 private:
-  double m_h;          // elementary element size (middle-layer in x-direction has "L = m_nx * m_h")
-  size_t m_nx;         // number of elements in x-direction
-  size_t m_nz;         // number of elements in z-direction
-  ColS   m_nh;         // element size in y-direction of each layer
-  ColI   m_dir;        // element size in y-direction of each layer
+  double m_h;                 // elementary element edge-size
+  double m_Lx, m_Lz;          // edge-size to the mesh in all directions
+  ColS   m_nx, m_nz;          // number of elements in x- and y-direction
+  ColS   m_nhx, m_nhy, m_nhz; // element size in y-direction of each layer
+  ColI   m_refine;     // refine direction (-1 means not refined, 0 means x-direction, ...)
   ColS   m_startNode;  // start node    of each layer
   ColS   m_startElem;  // start element of each layer
   size_t m_nelem;      // number of elements
   size_t m_nnode;      // number of nodes
   size_t m_nne=8;      // number of nodes-per-element
-  size_t m_ndim=2;     // number of dimensions
+  size_t m_ndim=3;     // number of dimensions
 
 public:
   // mesh with "nx*ny*nz" 'pixels' and edge size "h"; the elements in y-direction are coarsened
@@ -167,7 +167,7 @@ public:
   size_t shape(size_t i);           // actual shape in horizontal and vertical direction
   // mesh
   MatD   coor();                    // nodal positions [ nnode , ndim ]
-  // MatS   conn();                    // connectivity    [ nelem , nne  ]
+  MatS   conn();                    // connectivity    [ nelem , nne  ]
   // // boundary nodes: edges
   // ColS   elementsMiddleLayer();     // elements in the middle, fine, layer
   // ColS   nodesFrontEdge();         // nodes along the front edge

@@ -567,7 +567,7 @@ inline MatD FineLayer::coor()
 inline MatS FineLayer::conn()
 {
   // allocate output
-  MatS out( m_nelem , m_nne );
+  MatS out(m_nelem, m_nne);
 
   // current element, number of rows, beginning nodes
   size_t ielem = 0;
