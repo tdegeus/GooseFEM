@@ -22,9 +22,9 @@ namespace Hex8 {
 class Regular
 {
 private:
-  size_t m_nx;     // number of 'pixels' x-direction (length == "m_nx * m_h")
-  size_t m_ny;     // number of 'pixels' y-direction (length == "m_ny * m_h")
-  size_t m_nz;     // number of 'pixels' z-direction (length == "m_ny * m_h")
+  size_t m_nelx;     // number of 'pixels' x-direction (length == "m_nelx * m_h")
+  size_t m_nely;     // number of 'pixels' y-direction (length == "m_nely * m_h")
+  size_t m_nelz;     // number of 'pixels' z-direction (length == "m_nely * m_h")
   double m_h;      // size of the element edge (equal in both directions)
   size_t m_nelem;  // number of elements
   size_t m_nnode;  // number of nodes
@@ -146,7 +146,7 @@ class FineLayer
 private:
   double m_h;                 // elementary element edge-size
   double m_Lx, m_Lz;          // edge-size to the mesh in all directions
-  ColS   m_nx, m_nz;          // number of elements in x- and y-direction
+  ColS   m_nelx, m_nelz;          // number of elements in x- and y-direction
   ColS   m_nhx, m_nhy, m_nhz; // element size in y-direction of each layer
   ColI   m_refine;     // refine direction (-1 means not refined, 0 means x-direction, ...)
   ColS   m_startNode;  // start node    of each layer
@@ -158,7 +158,7 @@ private:
 
 public:
   // mesh with "nx*ny*nz" 'pixels' and edge size "h"; the elements in y-direction are coarsened
-  FineLayer(size_t nx, size_t ny, size_t nz, double h=1., size_t nfine=1, size_t nskip=0);
+  FineLayer(size_t nx, size_t ny, size_t nz, double h=1., size_t nfine=1);
   // sizes
   size_t nelem();                   // number of elements
   size_t nnode();                   // number of nodes
@@ -190,6 +190,10 @@ public:
   // MatS   dofs();                    // DOF-numbers for each component of each node (sequential)
   // MatS   dofsPeriodic();            // DOF-numbers for each component of each node (sequential)
 };
+
+// =============================== SUPPORT FUNCTION: CUMULATIVE SUM ================================
+
+inline ColS cumsum(const ColS &in);
 
 // =================================================================================================
 

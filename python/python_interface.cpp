@@ -171,20 +171,20 @@ py::class_<GooseFEM::Mesh::Hex8::Regular>(mMeshHex8, "Regular")
 py::class_<GooseFEM::Mesh::Hex8::FineLayer>(mMeshHex8, "FineLayer")
 
   .def(
-    py::init<size_t,size_t,size_t,double,size_t,size_t>(),
+    py::init<size_t,size_t,size_t,double,size_t>(),
     "mesh with nx*ny*nz 'pixels' and edge size h",
     py::arg("nx"),
     py::arg("ny"),
     py::arg("nz"),
     py::arg("h")=1.,
-    py::arg("nfine")=1,
-    py::arg("nskip")=0
+    py::arg("nfine")=1
   )
 
   .def("nelem"                      , &GooseFEM::Mesh::Hex8::FineLayer::nelem                      )
   .def("nnode"                      , &GooseFEM::Mesh::Hex8::FineLayer::nnode                      )
   .def("nne"                        , &GooseFEM::Mesh::Hex8::FineLayer::nne                        )
   .def("ndim"                       , &GooseFEM::Mesh::Hex8::FineLayer::ndim                       )
+  .def("shape"                      , &GooseFEM::Mesh::Hex8::FineLayer::shape                      )
   .def("coor"                       , &GooseFEM::Mesh::Hex8::FineLayer::coor                       )
   .def("conn"                       , &GooseFEM::Mesh::Hex8::FineLayer::conn                       )
   // .def("nodesFront"                 , &GooseFEM::Mesh::Hex8::FineLayer::nodesFront                 )
