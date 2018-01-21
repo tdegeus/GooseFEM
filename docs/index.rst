@@ -29,6 +29,7 @@ GooseFEM documentation
    Mesh.rst
    MeshTri3.rst
    MeshQuad4.rst
+   MeshHex8.rst
    DynamicsDiagonal.rst
    develop.rst
 

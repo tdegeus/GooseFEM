@@ -16,7 +16,7 @@ GooseFEM::Mesh::Quad4
 
 .. code-block:: cpp
 
-  GooseFEM::Mesh::Quad4::Regular(size_t nx, size_t ny, double h=1.);
+  GooseFEM::Mesh::Quad4::Regular(size_t nelx, size_t nely, double h=1.);
 
 Regular mesh of linear quadrilaterals in two-dimensions. The element edges are all of the same size :math:`h` (by default equal to one), optional scaling can be applied afterwards. For example the mesh shown below that consists of 21 x 11 elements. In that image the element numbers are indicated with a color, and likewise for the boundary nodes.
 

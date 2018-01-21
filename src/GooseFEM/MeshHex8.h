@@ -32,8 +32,8 @@ private:
   size_t m_ndim=3; // number of dimensions
 
 public:
-  // mesh with "nx*ny*nz" 'pixels' and edge size "h"
-  Regular(size_t nx, size_t ny, size_t nz, double h=1.);
+  // mesh with "nelx*nely*nelz" 'pixels' and edge size "h"
+  Regular(size_t nelx, size_t nely, size_t nelz, double h=1.);
   // sizes
   size_t nelem();                       // number of elements
   size_t nnode();                       // number of nodes
@@ -43,19 +43,19 @@ public:
   MatD   coor();                        // nodal positions [ nnode , ndim ]
   MatS   conn();                        // connectivity    [ nelem , nne  ]
   // boundary nodes: planes
-  ColS   nodesFront();                  // node-numbers along the front plane
-  ColS   nodesBack();                   // node-numbers along the back    plane
+  ColS   nodesFront();                  // node-numbers along the front  plane
+  ColS   nodesBack();                   // node-numbers along the back   plane
   ColS   nodesLeft();                   // node-numbers along the left   plane
   ColS   nodesRight();                  // node-numbers along the right  plane
-  ColS   nodesBottom();                 // node-numbers along the bottom  plane
-  ColS   nodesTop();                    // node-numbers along the top   plane
+  ColS   nodesBottom();                 // node-numbers along the bottom plane
+  ColS   nodesTop();                    // node-numbers along the top    plane
   // boundary nodes: faces
-  ColS   nodesFrontFace();              // node-numbers along the front face
-  ColS   nodesBackFace();               // node-numbers along the back    face
+  ColS   nodesFrontFace();              // node-numbers along the front  face
+  ColS   nodesBackFace();               // node-numbers along the back   face
   ColS   nodesLeftFace();               // node-numbers along the left   face
   ColS   nodesRightFace();              // node-numbers along the right  face
-  ColS   nodesBottomFace();             // node-numbers along the bottom  face
-  ColS   nodesTopFace();                // node-numbers along the top   face
+  ColS   nodesBottomFace();             // node-numbers along the bottom face
+  ColS   nodesTopFace();                // node-numbers along the top    face
   // boundary nodes: edges
   ColS   nodesFrontBottomEdge();        // node-numbers along the front  - bottom edge
   ColS   nodesFrontTopEdge();           // node-numbers along the front  - top    edge
@@ -134,9 +134,9 @@ public:
   size_t nodesRightTopBackCorner();     // alias, see above: nodesBackTopRightCorner
   // periodicity
   MatS   nodesPeriodic();               // periodic node pairs [:,2]: (independent, dependent)
-  size_t nodesOrigin();                 // front-left node, to be used as reference for periodicity
+  size_t nodesOrigin();                 // front-bottom-left node, used as reference for periodicity
   MatS   dofs();                        // DOF-numbers for each component of each node (sequential)
-  MatS   dofsPeriodic();                // DOF-numbers for each component of each node (sequential)
+  MatS   dofsPeriodic();                // ,, for the case that the periodicity if fully eliminated
 };
 
 // ====================== MESH WITH A FINE LAYER THAT EXPONENTIALLY COARSENS =======================
@@ -144,56 +144,46 @@ public:
 class FineLayer
 {
 private:
-  double m_h;                 // elementary element edge-size
-  double m_Lx, m_Lz;          // edge-size to the mesh in all directions
-  ColS   m_nelx, m_nelz;          // number of elements in x- and y-direction
-  ColS   m_nhx, m_nhy, m_nhz; // element size in y-direction of each layer
-  ColI   m_refine;     // refine direction (-1 means not refined, 0 means x-direction, ...)
-  ColS   m_startNode;  // start node    of each layer
-  ColS   m_startElem;  // start element of each layer
-  size_t m_nelem;      // number of elements
-  size_t m_nnode;      // number of nodes
-  size_t m_nne=8;      // number of nodes-per-element
-  size_t m_ndim=3;     // number of dimensions
+  double m_h;                 // elementary element edge-size (in all directions)
+  double m_Lx, m_Lz;          // mesh size in "x" and "z"
+  ColS   m_nelx, m_nelz;      // number of elements in "x" and "z"             (per el.layer in "y")
+  ColS   m_nnd;               // total number of nodes in the main node layer  (per nd.layer in "y")
+  ColS   m_nhx, m_nhy, m_nhz; // element size in each direction                (per el.layer in "y")
+  ColI   m_refine;            // refine direction (-1: no refine, 0: "x", ...) (per el.layer in "y")
+  ColS   m_startElem;         // start element                                 (per el.layer in "y")
+  ColS   m_startNode;         // start node                                    (per nd.layer in "y")
+  size_t m_nelem;             // number of elements
+  size_t m_nnode;             // number of nodes
+  size_t m_nne=8;             // number of nodes-per-element
+  size_t m_ndim=3;            // number of dimensions
 
 public:
-  // mesh with "nx*ny*nz" 'pixels' and edge size "h"; the elements in y-direction are coarsened
-  FineLayer(size_t nx, size_t ny, size_t nz, double h=1., size_t nfine=1);
+  // mesh with "nelx*nely*nelz" 'pixels' of edge size "h"; elements are coarsened in "y"-direction
+  FineLayer(size_t nelx, size_t nely, size_t nelz, double h=1., size_t nfine=1);
   // sizes
   size_t nelem();                   // number of elements
   size_t nnode();                   // number of nodes
   size_t nne();                     // number of nodes-per-element
   size_t ndim();                    // number of dimensions
-  size_t shape(size_t i);           // actual shape in horizontal and vertical direction
+  size_t shape(size_t i);           // actual shape in a certain direction
   // mesh
-  MatD   coor();                    // nodal positions [ nnode , ndim ]
-  MatS   conn();                    // connectivity    [ nelem , nne  ]
-  // // boundary nodes: edges
-  // ColS   elementsMiddleLayer();     // elements in the middle, fine, layer
-  // ColS   nodesFrontEdge();         // nodes along the front edge
-  // ColS   nodesBackEdge();            // nodes along the back    edge
-  // ColS   nodesLeftEdge();           // nodes along the left   edge
-  // ColS   nodesRightEdge();          // nodes along the right  edge
-  // // boundary nodes: corners
-  // size_t nodesFrontLeftCorner();   // front - left  corner node
-  // size_t nodesFrontRightCorner();  // front - right corner node
-  // size_t nodesBackLeftCorner();      // back    - left  corner node
-  // size_t nodesBackRightCorner();     // back    - right corner node
-  // // boundary nodes: corners (aliases)
-  // size_t nodesLeftFrontCorner();   // front - left  corner node
-  // size_t nodesLeftBackCorner();      // back    - left  corner node
-  // size_t nodesRightFrontCorner();  // front - right corner node
-  // size_t nodesRightBackCorner();     // back    - right corner node
-  // // periodicity
-  // MatS   nodesPeriodic();           // periodic node pairs [ : , 2 ]: ( independent , dependent )
-  // size_t nodesOrigin();             // front-left node, to be used as reference for periodicity
-  // MatS   dofs();                    // DOF-numbers for each component of each node (sequential)
-  // MatS   dofsPeriodic();            // DOF-numbers for each component of each node (sequential)
+  MatD   coor();                    // nodal positions [nnode ,ndim]
+  MatS   conn();                    // connectivity    [nelem ,nne ]
+  // boundary nodes: planes
+  ColS   nodesFront();                  // node-numbers along the front  plane
+  ColS   nodesBack();                   // node-numbers along the back   plane
+  ColS   nodesLeft();                   // node-numbers along the left   plane
+  ColS   nodesRight();                  // node-numbers along the right  plane
+  ColS   nodesBottom();                 // node-numbers along the bottom plane
+  ColS   nodesTop();                    // node-numbers along the top    plane
+  // boundary nodes: faces
+  ColS   nodesFrontFace();              // node-numbers along the front  face
+  ColS   nodesBackFace();               // node-numbers along the back   face
+  ColS   nodesLeftFace();               // node-numbers along the left   face
+  ColS   nodesRightFace();              // node-numbers along the right  face
+  ColS   nodesBottomFace();             // node-numbers along the bottom face
+  ColS   nodesTopFace();                // node-numbers along the top    face
 };
-
-// =============================== SUPPORT FUNCTION: CUMULATIVE SUM ================================
-
-inline ColS cumsum(const ColS &in);
 
 // =================================================================================================
 

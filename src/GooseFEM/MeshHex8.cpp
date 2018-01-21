@@ -21,8 +21,8 @@ namespace Hex8 {
 
 // ------------------------------------------ constructor ------------------------------------------
 
-inline Regular::Regular(size_t nx, size_t ny, size_t nz, double h):
-m_nelx(nx), m_nely(ny), m_nelz(nz), m_h(h)
+inline Regular::Regular(size_t nelx, size_t nely, size_t nelz, double h):
+m_nelx(nelx), m_nely(nely), m_nelz(nelz), m_h(h)
 {
   assert( m_nelx >= 1 );
   assert( m_nely >= 1 );
@@ -634,38 +634,35 @@ inline MatS Regular::dofsPeriodic()
 
 // ------------------------------------------ constructor ------------------------------------------
 
-inline FineLayer::FineLayer(size_t nx, size_t ny, size_t nz, double h, size_t nfine):
-m_h(h), m_nelx(nx), m_nelz(nz)
+inline FineLayer::FineLayer(size_t nelx, size_t nely, size_t nelz, double h, size_t nfine):
+m_h(h), m_nelx(nelx), m_nelz(nelz)
 {
-  assert( nx >= 1 );
-  assert( ny >= 1 );
-  assert( nz >= 1 );
-
-  size_t N;
+  // basic assumptions
+  assert( nelx >= 1 );
+  assert( nely >= 1 );
+  assert( nelz >= 1 );
 
   // store basic info
-  m_Lx = m_h * static_cast<double>(nx);
-  m_Lz = m_h * static_cast<double>(nz);
+  m_Lx = m_h * static_cast<double>(nelx);
+  m_Lz = m_h * static_cast<double>(nelz);
 
   // compute element size in y-direction (use symmetry, compute upper half)
   // ----------------------------------------------------------------------
 
   // temporary variables
   size_t nmin, ntot;
-  ColS nhx(ny), nhy(ny), nhz(ny);
-  ColI refine(ny);
+  ColS nhx(nely), nhy(nely), nhz(nely);
+  ColI refine(nely);
 
-  // convert height to half of the height
-  if ( ny % 2 == 0 ) nmin =  ny   /2;
-  else               nmin = (ny+1)/2;
+  // minimum height in y-direction (half of the height because of symmetry)
+  if ( nely  % 2 == 0 ) nmin  =  nely    /2;
+  else                  nmin  = (nely +1)/2;
 
-  // convert to half the number of fine layer (minimum 1)
+  // minimum number of fine layers in y-direction (minimum 1, middle layer part of this half)
   if ( nfine % 2 == 0 ) nfine =  nfine   /2 + 1;
   else                  nfine = (nfine+1)/2;
   if ( nfine < 1      ) nfine = 1;
-
-  // check the number of fine layers from the center
-  assert( nfine <= nmin );
+  if ( nfine > nmin   ) nfine = nmin;
 
   // initialize to state with only fine elements
   nhx   .setOnes();
@@ -681,41 +678,43 @@ m_h(h), m_nelx(nx), m_nelz(nz)
   {
     // initialize current size in y-direction
     if ( iy == nfine ) ntot = nfine;
+    // check to stop
+    if ( iy >= nely or ntot >= nmin ) { nely = iy; break; }
 
     // rules (1,2) satisfied: coarsen in x-direction (and z-direction)
-    if ( 3*nhy(iy) <= ntot and nx%(3*nhx(iy)) == 0 )
+    if ( 3*nhy(iy) <= ntot and nelx%(3*nhx(iy)) == 0 )
     {
       // - process refinement in x-direction
-      refine     (iy          )  = 0;
-      nhy        (iy          ) *= 2;
-      nhy.segment(iy+1,ny-iy-1) *= 3;
-      nhx.segment(iy  ,ny-iy  ) *= 3;
+      refine     (iy            )  = 0;
+      nhy        (iy            ) *= 2;
+      nhy.segment(iy+1,nely-iy-1) *= 3;
+      nhx.segment(iy  ,nely-iy  ) *= 3;
 
-      // - (a.2) rule (2) satisfied: coarsen in z-direction
-      if ( iy+1 < ny and ntot+nhy(iy) < nmin )
+      // - rule (2) satisfied: coarsen next element layer in z-direction
+      if ( iy+1 < nely and ntot+nhy(iy) < nmin )
       {
-        if ( nz%(3*nhz(iy+1)) == 0 )
+        if ( nelz%(3*nhz(iy+1)) == 0 )
         {
           // - update the number of elements in y-direction
           ntot += nhy(iy);
           // - proceed to next element layer in y-direction
           ++iy;
           // - process refinement in z-direction
-          refine     (iy      )  = 2;
-          nhy        (iy      )  = nhy(iy-1);
-          nhz.segment(iy,ny-iy) *= 3;
+          refine     (iy        )  = 2;
+          nhy        (iy        )  = nhy(iy-1);
+          nhz.segment(iy,nely-iy) *= 3;
         }
       }
     }
 
     // rules (1,2) satisfied: coarse in z-direction
-    else if ( 3*nhy(iy) <= ntot and nz%(3*nhz(iy)) == 0 )
+    else if ( 3*nhy(iy) <= ntot and nelz%(3*nhz(iy)) == 0 )
     {
       // - process refinement in z-direction
-      refine     (iy          )  = 2;
-      nhy        (iy          ) *= 2;
-      nhy.segment(iy+1,ny-iy-1) *= 3;
-      nhz.segment(iy  ,ny-iy  ) *= 3;
+      refine     (iy            )  = 2;
+      nhy        (iy            ) *= 2;
+      nhy.segment(iy+1,nely-iy-1) *= 3;
+      nhz.segment(iy  ,nely-iy  ) *= 3;
     }
 
     // update the number of elements in y-direction
@@ -723,49 +722,58 @@ m_h(h), m_nelx(nx), m_nelz(nz)
     // proceed to next element layer in y-direction
     ++iy;
     // check to stop
-    if ( iy >= ny or ntot >= nmin ) { N = iy; break; }
+    if ( iy >= nely or ntot >= nmin ) { nely = iy; break; }
   }
 
   // symmetrize, compute full information
   // ------------------------------------
 
-  // allocate proper space
-  m_nhx      .conservativeResize(N*2-1);
-  m_nhy      .conservativeResize(N*2-1);
-  m_nhz      .conservativeResize(N*2-1);
-  m_refine   .conservativeResize(N*2-1);
-  m_nelx     .conservativeResize(N*2-1);
-  m_nelz     .conservativeResize(N*2-1);
-  m_startElem.conservativeResize(N*2-1);
-  m_startNode.conservativeResize(N*2  );
+  // allocate mesh constructor parameters
+  m_nhx      .conservativeResize(nely*2-1);
+  m_nhy      .conservativeResize(nely*2-1);
+  m_nhz      .conservativeResize(nely*2-1);
+  m_refine   .conservativeResize(nely*2-1);
+  m_nelx     .conservativeResize(nely*2-1);
+  m_nelz     .conservativeResize(nely*2-1);
+  m_nnd      .conservativeResize(nely*2  );
+  m_startElem.conservativeResize(nely*2-1);
+  m_startNode.conservativeResize(nely*2  );
 
   // fill
   // - lower half
-  for ( size_t iy = 0 ; iy < N ; ++iy )
+  for ( size_t iy = 0 ; iy < nely ; ++iy )
   {
-    m_nhx   (iy) = nhx   (N-iy-1);
-    m_nhy   (iy) = nhy   (N-iy-1);
-    m_nhz   (iy) = nhz   (N-iy-1);
-    m_refine(iy) = refine(N-iy-1);
+    m_nhx   (iy) = nhx   (nely-iy-1);
+    m_nhy   (iy) = nhy   (nely-iy-1);
+    m_nhz   (iy) = nhz   (nely-iy-1);
+    m_refine(iy) = refine(nely-iy-1);
   }
   // - upper half
-  for ( size_t iy = 0 ; iy < N-1 ; ++iy )
+  for ( size_t iy = 0 ; iy < nely-1 ; ++iy )
   {
-    m_nhx   (iy+N) = nhx   (iy+1);
-    m_nhy   (iy+N) = nhy   (iy+1);
-    m_nhz   (iy+N) = nhz   (iy+1);
-    m_refine(iy+N) = refine(iy+1);
+    m_nhx   (iy+nely) = nhx   (iy+1);
+    m_nhy   (iy+nely) = nhy   (iy+1);
+    m_nhz   (iy+nely) = nhz   (iy+1);
+    m_refine(iy+nely) = refine(iy+1);
   }
 
   // update size
-  N = m_nhx.size();
+  nely = m_nhx.size();
 
-  // compute number of elements
-  for ( size_t iy = 0 ; iy < N ; ++iy )
+  // compute the number of elements per element layer in y-direction
+  for ( size_t iy = 0 ; iy < nely ; ++iy )
   {
-    m_nelx(iy) = nx / m_nhx(iy);
-    m_nelz(iy) = nz / m_nhz(iy);
+    m_nelx(iy) = nelx / m_nhx(iy);
+    m_nelz(iy) = nelz / m_nhz(iy);
   }
+
+  // compute the number of nodes per node layer in y-direction
+  // - bottom half
+  for ( size_t iy = 0 ; iy < (nely+1)/2 ; ++iy )
+    m_nnd(iy) = (m_nelx(iy)+1) * (m_nelz(iy)+1);
+  // - top half
+  for ( size_t iy = (nely-1)/2 ; iy < nely ; ++iy )
+    m_nnd(iy+1) = (m_nelx(iy)+1) * (m_nelz(iy)+1);
 
   // compute mesh dimensions
   // -----------------------
@@ -776,7 +784,7 @@ m_h(h), m_nelx(nx), m_nelz(nz)
   m_startNode(0) = 0;
 
   // loop over element layers (bottom -> middle, elements become finer)
-  for ( size_t i = 0 ; i < (N-1)/2 ; ++i )
+  for ( size_t i = 0 ; i < (nely-1)/2 ; ++i )
   {
     // - store the first element of the layer
     m_startElem(i) = m_nelem;
@@ -793,7 +801,7 @@ m_h(h), m_nelx(nx), m_nelz(nz)
   }
 
   // loop over element layers (middle -> top, elements become coarser)
-  for ( size_t i = (N-1)/2 ; i < N ; ++i )
+  for ( size_t i = (nely-1)/2 ; i < nely ; ++i )
   {
     // - store the first element of the layer
     m_startElem(i) = m_nelem;
@@ -809,7 +817,7 @@ m_h(h), m_nelx(nx), m_nelz(nz)
     m_startNode(i+1) = m_nnode;
   }
   // - add the top row of nodes
-  m_nnode += (m_nelx(N-1)+1) * (m_nelz(N-1)+1);
+  m_nnode += (m_nelx(nely-1)+1) * (m_nelz(nely-1)+1);
 }
 
 // -------------------------------------- number of elements ---------------------------------------
@@ -861,15 +869,15 @@ inline MatD FineLayer::coor()
 
   // current node, number of element layers
   size_t inode = 0;
-  size_t N     = static_cast<size_t>(m_nhy.size());
+  size_t nely  = static_cast<size_t>(m_nhy.size());
 
   // y-position of each main node layer (i.e. excluding node layers for refinement/coarsening)
   // - allocate
-  ColD y(N+1);
+  ColD y(nely+1);
   // - initialize
   y(0) = 0.0;
   // - compute
-  for ( size_t iy = 1 ; iy < N+1 ; ++iy )
+  for ( size_t iy = 1 ; iy < nely+1 ; ++iy )
     y(iy) = y(iy-1) + m_nhy(iy-1) * m_h;
 
   // loop over element layers (bottom -> middle) : add bottom layer (+ refinement layer) of nodes
@@ -892,7 +900,7 @@ inline MatD FineLayer::coor()
     }
 
     // stop at middle layer
-    if ( iy == (N-1)/2 )
+    if ( iy == (nely-1)/2 )
       break;
 
     // add extra nodes of the intermediate layer, for refinement in x-direction
@@ -937,7 +945,7 @@ inline MatD FineLayer::coor()
   // loop over element layers (middle -> top) : add (refinement layer +) top layer of nodes
   // --------------------------------------------------------------------------------------
 
-  for ( size_t iy = (N-1)/2 ; iy < N ; ++iy )
+  for ( size_t iy = (nely-1)/2 ; iy < nely ; ++iy )
   {
     // get positions along the x- and z-axis
     ColD x = ColD::LinSpaced(m_nelx(iy)+1, 0.0, m_Lx);
@@ -1004,18 +1012,16 @@ inline MatS FineLayer::conn()
 
   // current element, number of element layers, starting nodes of each node layer
   size_t ielem = 0;
-  size_t N     = static_cast<size_t>(m_nhy.size());
+  size_t nely  = static_cast<size_t>(m_nhy.size());
   size_t bot,mid,top;
 
   // loop over all element layers
-  for ( size_t iy = 0 ; iy < N ; ++iy )
+  for ( size_t iy = 0 ; iy < nely ; ++iy )
   {
-    // - get: starting nodes of bottom and top layer
+    // - get: starting nodes of bottom(, middle) and top layer
     bot = m_startNode(iy  );
+    mid = m_startNode(iy  ) + m_nnd(iy);
     top = m_startNode(iy+1);
-    // - get: starting nodes of the middle layer (if present)
-    if ( iy <= (N-1)/2 ) mid = m_startNode(iy) + (m_nelx(iy  )+1) * (m_nelz(iy  )+1);
-    else                 mid = m_startNode(iy) + (m_nelx(iy-1)+1) * (m_nelz(iy-1)+1);
 
     // - define connectivity: no coarsening/refinement
     if ( m_refine(iy) == -1 )
@@ -1036,7 +1042,7 @@ inline MatS FineLayer::conn()
     }
 
     // - define connectivity: refinement along the x-direction (below the middle layer)
-    else if ( m_refine(iy) == 0 and iy <= (N-1)/2 )
+    else if ( m_refine(iy) == 0 and iy <= (nely-1)/2 )
     {
       for ( size_t iz = 0 ; iz < m_nelz(iy) ; ++iz ) {
         for ( size_t ix = 0 ; ix < m_nelx(iy) ; ++ix ) {
@@ -1085,7 +1091,7 @@ inline MatS FineLayer::conn()
     }
 
     // - define connectivity: coarsening along the x-direction (above the middle layer)
-    else if ( m_refine(iy) == 0 and iy > (N-1)/2 )
+    else if ( m_refine(iy) == 0 and iy > (nely-1)/2 )
     {
       for ( size_t iz = 0 ; iz < m_nelz(iy) ; ++iz ) {
         for ( size_t ix = 0 ; ix < m_nelx(iy) ; ++ix ) {
@@ -1134,7 +1140,7 @@ inline MatS FineLayer::conn()
     }
 
     // - define connectivity: refinement along the z-direction (below the middle layer)
-    else if ( m_refine(iy) == 2 and iy <= (N-1)/2 )
+    else if ( m_refine(iy) == 2 and iy <= (nely-1)/2 )
     {
       for ( size_t iz = 0 ; iz < m_nelz(iy) ; ++iz ) {
         for ( size_t ix = 0 ; ix < m_nelx(iy) ; ++ix ) {
@@ -1183,7 +1189,7 @@ inline MatS FineLayer::conn()
     }
 
     // - define connectivity: coarsening along the z-direction (above the middle layer)
-    else if ( m_refine(iy) == 2 and iy > (N-1)/2 )
+    else if ( m_refine(iy) == 2 and iy > (nely-1)/2 )
     {
       for ( size_t iz = 0 ; iz < m_nelz(iy) ; ++iz ) {
         for ( size_t ix = 0 ; ix < m_nelx(iy) ; ++ix ) {
@@ -1235,18 +1241,627 @@ inline MatS FineLayer::conn()
   return out;
 }
 
-// =============================== SUPPORT FUNCTION: CUMULATIVE SUM ================================
+// ------------------------------ node-numbers along the front plane -------------------------------
 
-inline ColS cumsum(const ColS &in)
+inline ColS FineLayer::nodesFront()
 {
-  ColS out(in.size());
+  // number of element layers in y-direction
+  size_t nely = static_cast<size_t>(m_nhy.size());
 
-  // first item
-  out(0) = in(0);
+  // total number of nodes along this plane
+  // - initialize
+  size_t n = 0;
+  // - bottom half: bottom node layer (+ middle node layer)
+  for ( size_t iy = 0 ; iy < (nely+1)/2 ; ++iy )
+  {
+    if ( m_refine(iy) == 0 ) n += m_nelx(iy) * 3 + 1;
+    else                     n += m_nelx(iy)     + 1;
+  }
+  // - top half: (middle node layer +) top node layer
+  for ( size_t iy = (nely-1)/2 ; iy < nely ; ++iy )
+  {
+    if ( m_refine(iy) == 0 ) n += m_nelx(iy) * 3 + 1;
+    else                     n += m_nelx(iy)     + 1;
+  }
 
-  // cumulative sum
-  for ( auto i = 1 ; i < in.size() ; ++i )
-    out(i) = out(i-1) + in(i-1);
+  // allocate node-list
+  ColS out(n);
+
+  // initialize counter: current index in the node-list "out"
+  size_t j = 0;
+
+  // bottom half: bottom node layer (+ middle node layer)
+  for ( size_t iy = 0 ; iy < (nely+1)/2 ; ++iy )
+  {
+    // -- bottom node layer: all nodes except the edge nodes
+    for ( size_t ix = 0 ; ix < m_nelx(iy)+1 ; ++ix ) {
+      out(j) = m_startNode(iy) + ix;
+      ++j;
+    }
+    // -- all nodes from the refinement layer
+    if ( m_refine(iy) == 0 ) {
+      for ( size_t ix = 0 ; ix < 2*m_nelx(iy) ; ++ix ) {
+        out(j) = m_startNode(iy) + ix + m_nnd(iy);
+        ++j;
+      }
+    }
+  }
+
+  // top half: (middle node layer +) top node layer
+  for ( size_t iy = (nely-1)/2 ; iy < nely ; ++iy )
+  {
+    // -- all nodes from the refinement layer
+    if ( m_refine(iy) == 0 ) {
+      for ( size_t ix = 0 ; ix < 2*m_nelx(iy) ; ++ix ) {
+        out(j) = m_startNode(iy) + ix + m_nnd(iy);
+        ++j;
+      }
+    }
+    // -- top node layer: all nodes except the edge nodes
+    for ( size_t ix = 0 ; ix < m_nelx(iy)+1 ; ++ix ) {
+      out(j) = m_startNode(iy+1) + ix;
+      ++j;
+    }
+  }
+
+  return out;
+}
+
+// ------------------------------- node-numbers along the back plane -------------------------------
+
+inline ColS FineLayer::nodesBack()
+{
+  // number of element layers in y-direction
+  size_t nely = static_cast<size_t>(m_nhy.size());
+
+  // total number of nodes along this plane
+  // - initialize
+  size_t n = 0;
+  // - bottom half: bottom node layer (+ middle node layer)
+  for ( size_t iy = 0 ; iy < (nely+1)/2 ; ++iy )
+  {
+    if ( m_refine(iy) == 0 ) n += m_nelx(iy) * 3 + 1;
+    else                     n += m_nelx(iy)     + 1;
+  }
+  // - top half: (middle node layer +) top node layer
+  for ( size_t iy = (nely-1)/2 ; iy < nely ; ++iy )
+  {
+    if ( m_refine(iy) == 0 ) n += m_nelx(iy) * 3 + 1;
+    else                     n += m_nelx(iy)     + 1;
+  }
+
+  // allocate node-list
+  ColS out(n);
+
+  // initialize counter: current index in the node-list "out"
+  size_t j = 0;
+
+  // bottom half: bottom node layer (+ middle node layer)
+  for ( size_t iy = 0 ; iy < (nely+1)/2 ; ++iy )
+  {
+    // -- bottom node layer: all nodes except the edge nodes
+    for ( size_t ix = 0 ; ix < m_nelx(iy)+1 ; ++ix ) {
+      out(j) = m_startNode(iy) + ix + (m_nelx(iy)+1)*m_nelz(iy);
+      ++j;
+    }
+    // -- all nodes from the refinement layer
+    if ( m_refine(iy) == 0 ) {
+      for ( size_t ix = 0 ; ix < 2*m_nelx(iy) ; ++ix ) {
+        out(j) = m_startNode(iy) + m_nnd(iy) + ix + 2*m_nelx(iy)*m_nelz(iy);
+        ++j;
+      }
+    }
+  }
+
+  // top half: (middle node layer +) top node layer
+  for ( size_t iy = (nely-1)/2 ; iy < nely ; ++iy )
+  {
+    // -- all nodes from the refinement layer
+    if ( m_refine(iy) == 0 ) {
+      for ( size_t ix = 0 ; ix < 2*m_nelx(iy) ; ++ix ) {
+        out(j) = m_startNode(iy) + m_nnd(iy) + ix + 2*m_nelx(iy)*m_nelz(iy);
+        ++j;
+      }
+    }
+    // -- top node layer: all nodes except the edge nodes
+    for ( size_t ix = 0 ; ix < m_nelx(iy)+1 ; ++ix ) {
+      out(j) = m_startNode(iy+1) + ix + (m_nelx(iy)+1)*m_nelz(iy);
+      ++j;
+    }
+  }
+
+  return out;
+}
+
+// ------------------------------- node-numbers along the left plane -------------------------------
+
+inline ColS FineLayer::nodesLeft()
+{
+  // number of element layers in y-direction
+  size_t nely = static_cast<size_t>(m_nhy.size());
+
+  // total number of nodes along this plane
+  // - initialize
+  size_t n = 0;
+  // - bottom half: bottom node layer (+ middle node layer)
+  for ( size_t iy = 0 ; iy < (nely+1)/2 ; ++iy )
+  {
+    if ( m_refine(iy) == 2 ) n += m_nelz(iy) * 3 + 1;
+    else                     n += m_nelz(iy)     + 1;
+  }
+  // - top half: (middle node layer +) top node layer
+  for ( size_t iy = (nely-1)/2 ; iy < nely ; ++iy )
+  {
+    if ( m_refine(iy) == 2 ) n += m_nelz(iy) * 3 + 1;
+    else                     n += m_nelz(iy)     + 1;
+  }
+
+  // allocate node-list
+  ColS out(n);
+
+  // initialize counter: current index in the node-list "out"
+  size_t j = 0;
+
+  // bottom half: bottom node layer (+ middle node layer)
+  for ( size_t iy = 0 ; iy < (nely+1)/2 ; ++iy )
+  {
+    // -- bottom node layer: all nodes except the edge nodes
+    for ( size_t iz = 0 ; iz < m_nelz(iy)+1 ; ++iz ) {
+      out(j) = m_startNode(iy) + iz * (m_nelx(iy)+1);
+      ++j;
+    }
+    // -- all nodes from the refinement layer
+    if ( m_refine(iy) == 2 ) {
+      for ( size_t iz = 0 ; iz < 2*m_nelz(iy) ; ++iz ) {
+        out(j) = m_startNode(iy) + m_nnd(iy) + iz * (m_nelx(iy)+1);
+        ++j;
+      }
+    }
+  }
+
+  // top half: (middle node layer +) top node layer
+  for ( size_t iy = (nely-1)/2 ; iy < nely ; ++iy )
+  {
+    // -- all nodes from the refinement layer
+    if ( m_refine(iy) == 2 ) {
+      for ( size_t iz = 0 ; iz < 2*m_nelz(iy) ; ++iz ) {
+        out(j) = m_startNode(iy) + m_nnd(iy) + iz * (m_nelx(iy)+1);
+        ++j;
+      }
+    }
+    // -- top node layer: all nodes except the edge nodes
+    for ( size_t iz = 0 ; iz < m_nelz(iy)+1 ; ++iz ) {
+      out(j) = m_startNode(iy+1) + iz * (m_nelx(iy)+1);
+      ++j;
+    }
+  }
+
+  return out;
+}
+
+// ------------------------------ node-numbers along the right plane -------------------------------
+
+inline ColS FineLayer::nodesRight()
+{
+  // number of element layers in y-direction
+  size_t nely = static_cast<size_t>(m_nhy.size());
+
+  // total number of nodes along this plane
+  // - initialize
+  size_t n = 0;
+  // - bottom half: bottom node layer (+ middle node layer)
+  for ( size_t iy = 0 ; iy < (nely+1)/2 ; ++iy )
+  {
+    if ( m_refine(iy) == 2 ) n += m_nelz(iy) * 3 + 1;
+    else                     n += m_nelz(iy)     + 1;
+  }
+  // - top half: (middle node layer +) top node layer
+  for ( size_t iy = (nely-1)/2 ; iy < nely ; ++iy )
+  {
+    if ( m_refine(iy) == 2 ) n += m_nelz(iy) * 3 + 1;
+    else                     n += m_nelz(iy)     + 1;
+  }
+
+  // allocate node-list
+  ColS out(n);
+
+  // initialize counter: current index in the node-list "out"
+  size_t j = 0;
+
+  // bottom half: bottom node layer (+ middle node layer)
+  for ( size_t iy = 0 ; iy < (nely+1)/2 ; ++iy )
+  {
+    // -- bottom node layer: all nodes except the edge nodes
+    for ( size_t iz = 0 ; iz < m_nelz(iy)+1 ; ++iz ) {
+      out(j) = m_startNode(iy) + iz * (m_nelx(iy)+1) + m_nelx(iy);
+      ++j;
+    }
+    // -- all nodes from the refinement layer
+    if ( m_refine(iy) == 2 ) {
+      for ( size_t iz = 0 ; iz < 2*m_nelz(iy) ; ++iz ) {
+        out(j) = m_startNode(iy) + m_nnd(iy) + iz * (m_nelx(iy)+1) + m_nelx(iy);
+        ++j;
+      }
+    }
+  }
+
+  // top half: (middle node layer +) top node layer
+  for ( size_t iy = (nely-1)/2 ; iy < nely ; ++iy )
+  {
+    // -- all nodes from the refinement layer
+    if ( m_refine(iy) == 2 ) {
+      for ( size_t iz = 0 ; iz < 2*m_nelz(iy) ; ++iz ) {
+        out(j) = m_startNode(iy) + m_nnd(iy) + iz * (m_nelx(iy)+1) + m_nelx(iy);
+        ++j;
+      }
+    }
+    // -- top node layer: all nodes except the edge nodes
+    for ( size_t iz = 0 ; iz < m_nelz(iy)+1 ; ++iz ) {
+      out(j) = m_startNode(iy+1) + iz * (m_nelx(iy)+1) + m_nelx(iy);
+      ++j;
+    }
+  }
+
+  return out;
+}
+
+// ------------------------------ node-numbers along the bottom plane ------------------------------
+
+inline ColS FineLayer::nodesBottom()
+{
+  // number of element layers in y-direction
+  size_t nely = static_cast<size_t>(m_nhy.size());
+
+  // allocate node list
+  ColS out(m_nnd(nely));
+
+  // counter
+  size_t j = 0;
+
+  // fill node list
+  for ( size_t ix = 0 ; ix < m_nelx(0)+1 ; ++ix ) {
+    for ( size_t iz = 0 ; iz < m_nelz(0)+1 ; ++iz ) {
+      out(j) = m_startNode(0) + ix + iz * (m_nelx(0)+1);
+      ++j;
+    }
+  }
+
+  return out;
+}
+
+// ------------------------------- node-numbers along the top plane --------------------------------
+
+inline ColS FineLayer::nodesTop()
+{
+  // number of element layers in y-direction
+  size_t nely = static_cast<size_t>(m_nhy.size());
+
+  // allocate node list
+  ColS out(m_nnd(nely));
+
+  // counter
+  size_t j = 0;
+
+  // fill node list
+  for ( size_t ix = 0 ; ix < m_nelx(nely-1)+1 ; ++ix ) {
+    for ( size_t iz = 0 ; iz < m_nelz(nely-1)+1 ; ++iz ) {
+      out(j) = m_startNode(nely) + ix + iz * (m_nelx(nely-1)+1);
+      ++j;
+    }
+  }
+
+  return out;
+}
+
+// ------------------------------- node-numbers along the front face -------------------------------
+
+inline ColS FineLayer::nodesFrontFace()
+{
+  // number of element layers in y-direction
+  size_t nely = static_cast<size_t>(m_nhy.size());
+
+  // total number of face nodes
+  // - initialize
+  size_t n = 0;
+  // - bottom half: bottom node layer (+ middle node layer)
+  for ( size_t iy = 1 ; iy < (nely+1)/2 ; ++iy )
+  {
+    if ( m_refine(iy) == 0 ) n += m_nelx(iy) * 3 - 1;
+    else                     n += m_nelx(iy)     - 1;
+  }
+  // - top half: (middle node layer +) top node layer
+  for ( size_t iy = (nely-1)/2 ; iy < nely-1 ; ++iy )
+  {
+    if ( m_refine(iy) == 0 ) n += m_nelx(iy) * 3 - 1;
+    else                     n += m_nelx(iy)     - 1;
+  }
+
+  // allocate node-list
+  ColS out(n);
+
+  // initialize counter: current index in the node-list "out"
+  size_t j = 0;
+
+  // bottom half: bottom node layer (+ middle node layer)
+  for ( size_t iy = 1 ; iy < (nely+1)/2 ; ++iy )
+  {
+    // -- bottom node layer: all nodes except the edge nodes
+    for ( size_t ix = 1 ; ix < m_nelx(iy) ; ++ix ) {
+      out(j) = m_startNode(iy) + ix;
+      ++j;
+    }
+    // -- all nodes from the refinement layer
+    if ( m_refine(iy) == 0 ) {
+      for ( size_t ix = 0 ; ix < 2*m_nelx(iy) ; ++ix ) {
+        out(j) = m_startNode(iy) + ix + m_nnd(iy);
+        ++j;
+      }
+    }
+  }
+
+  // top half: (middle node layer +) top node layer
+  for ( size_t iy = (nely-1)/2 ; iy < nely-1 ; ++iy )
+  {
+    // -- all nodes from the refinement layer
+    if ( m_refine(iy) == 0 ) {
+      for ( size_t ix = 0 ; ix < 2*m_nelx(iy) ; ++ix ) {
+        out(j) = m_startNode(iy) + ix + m_nnd(iy);
+        ++j;
+      }
+    }
+    // -- top node layer: all nodes except the edge nodes
+    for ( size_t ix = 1 ; ix < m_nelx(iy) ; ++ix ) {
+      out(j) = m_startNode(iy+1) + ix;
+      ++j;
+    }
+  }
+
+  return out;
+}
+
+// ------------------------------- node-numbers along the back face --------------------------------
+
+inline ColS FineLayer::nodesBackFace()
+{
+  // number of element layers in y-direction
+  size_t nely = static_cast<size_t>(m_nhy.size());
+
+  // total number of face nodes
+  // - initialize
+  size_t n = 0;
+  // - bottom half: bottom node layer (+ middle node layer)
+  for ( size_t iy = 1 ; iy < (nely+1)/2 ; ++iy )
+  {
+    if ( m_refine(iy) == 0 ) n += m_nelx(iy) * 3 - 1;
+    else                     n += m_nelx(iy)     - 1;
+  }
+  // - top half: (middle node layer +) top node layer
+  for ( size_t iy = (nely-1)/2 ; iy < nely-1 ; ++iy )
+  {
+    if ( m_refine(iy) == 0 ) n += m_nelx(iy) * 3 - 1;
+    else                     n += m_nelx(iy)     - 1;
+  }
+
+  // allocate node-list
+  ColS out(n);
+
+  // initialize counter: current index in the node-list "out"
+  size_t j = 0;
+
+  // bottom half: bottom node layer (+ middle node layer)
+  for ( size_t iy = 1 ; iy < (nely+1)/2 ; ++iy )
+  {
+    // -- bottom node layer: all nodes except the edge nodes
+    for ( size_t ix = 1 ; ix < m_nelx(iy) ; ++ix ) {
+      out(j) = m_startNode(iy) + ix + (m_nelx(iy)+1)*m_nelz(iy);
+      ++j;
+    }
+    // -- all nodes from the refinement layer
+    if ( m_refine(iy) == 0 ) {
+      for ( size_t ix = 0 ; ix < 2*m_nelx(iy) ; ++ix ) {
+        out(j) = m_startNode(iy) + ix + 2*m_nelx(iy)*m_nelz(iy) + m_nnd(iy);
+        ++j;
+      }
+    }
+  }
+
+  // top half: (middle node layer +) top node layer
+  for ( size_t iy = (nely-1)/2 ; iy < nely-1 ; ++iy )
+  {
+    // -- all nodes from the refinement layer
+    if ( m_refine(iy) == 0 ) {
+      for ( size_t ix = 0 ; ix < 2*m_nelx(iy) ; ++ix ) {
+        out(j) = m_startNode(iy) + ix + 2*m_nelx(iy)*m_nelz(iy) + m_nnd(iy);
+        ++j;
+      }
+    }
+    // -- top node layer: all nodes except the edge nodes
+    for ( size_t ix = 1 ; ix < m_nelx(iy) ; ++ix ) {
+      out(j) = m_startNode(iy+1) + ix + (m_nelx(iy)+1)*m_nelz(iy);
+      ++j;
+    }
+  }
+
+  return out;
+}
+
+// ------------------------------- node-numbers along the left face --------------------------------
+
+inline ColS FineLayer::nodesLeftFace()
+{
+  // number of element layers in y-direction
+  size_t nely = static_cast<size_t>(m_nhy.size());
+
+  // total number of nodes along this plane
+  // - initialize
+  size_t n = 0;
+  // - bottom half: bottom node layer (+ middle node layer)
+  for ( size_t iy = 1 ; iy < (nely+1)/2 ; ++iy )
+  {
+    if ( m_refine(iy) == 2 ) n += m_nelz(iy) * 3 - 1;
+    else                     n += m_nelz(iy)     - 1;
+  }
+  // - top half: (middle node layer +) top node layer
+  for ( size_t iy = (nely-1)/2 ; iy < nely-1 ; ++iy )
+  {
+    if ( m_refine(iy) == 2 ) n += m_nelz(iy) * 3 - 1;
+    else                     n += m_nelz(iy)     - 1;
+  }
+
+  // allocate node-list
+  ColS out(n);
+
+  out.setConstant(0);
+
+  // initialize counter: current index in the node-list "out"
+  size_t j = 0;
+
+  // bottom half: bottom node layer (+ middle node layer)
+  for ( size_t iy = 1 ; iy < (nely+1)/2 ; ++iy )
+  {
+    // -- bottom node layer: all nodes except the edge nodes
+    for ( size_t iz = 1 ; iz < m_nelz(iy) ; ++iz ) {
+      out(j) = m_startNode(iy) + iz * (m_nelx(iy)+1);
+      ++j;
+    }
+    // -- all nodes from the refinement layer
+    if ( m_refine(iy) == 2 ) {
+      for ( size_t iz = 0 ; iz < 2*m_nelz(iy) ; ++iz ) {
+        out(j) = m_startNode(iy) + m_nnd(iy) + iz * (m_nelx(iy)+1);
+        ++j;
+      }
+    }
+  }
+
+  // top half: (middle node layer +) top node layer
+  for ( size_t iy = (nely-1)/2 ; iy < nely-1 ; ++iy )
+  {
+    // -- all nodes from the refinement layer
+    if ( m_refine(iy) == 2 ) {
+      for ( size_t iz = 0 ; iz < 2*m_nelz(iy) ; ++iz ) {
+        out(j) = m_startNode(iy) + m_nnd(iy) + iz * (m_nelx(iy)+1);
+        ++j;
+      }
+    }
+    // -- top node layer: all nodes except the edge nodes
+    for ( size_t iz = 1 ; iz < m_nelz(iy) ; ++iz ) {
+      out(j) = m_startNode(iy+1) + iz * (m_nelx(iy)+1);
+      ++j;
+    }
+  }
+
+  return out;
+}
+
+// ------------------------------- node-numbers along the right face -------------------------------
+
+inline ColS FineLayer::nodesRightFace()
+{
+  // number of element layers in y-direction
+  size_t nely = static_cast<size_t>(m_nhy.size());
+
+  // total number of nodes along this plane
+  // - initialize
+  size_t n = 0;
+  // - bottom half: bottom node layer (+ middle node layer)
+  for ( size_t iy = 1 ; iy < (nely+1)/2 ; ++iy )
+  {
+    if ( m_refine(iy) == 2 ) n += m_nelz(iy) * 3 - 1;
+    else                     n += m_nelz(iy)     - 1;
+  }
+  // - top half: (middle node layer +) top node layer
+  for ( size_t iy = (nely-1)/2 ; iy < nely-1 ; ++iy )
+  {
+    if ( m_refine(iy) == 2 ) n += m_nelz(iy) * 3 - 1;
+    else                     n += m_nelz(iy)     - 1;
+  }
+
+  // allocate node-list
+  ColS out(n);
+
+  out.setConstant(0);
+
+  // initialize counter: current index in the node-list "out"
+  size_t j = 0;
+
+  // bottom half: bottom node layer (+ middle node layer)
+  for ( size_t iy = 1 ; iy < (nely+1)/2 ; ++iy )
+  {
+    // -- bottom node layer: all nodes except the edge nodes
+    for ( size_t iz = 1 ; iz < m_nelz(iy) ; ++iz ) {
+      out(j) = m_startNode(iy) + iz * (m_nelx(iy)+1) + m_nelx(iy);
+      ++j;
+    }
+    // -- all nodes from the refinement layer
+    if ( m_refine(iy) == 2 ) {
+      for ( size_t iz = 0 ; iz < 2*m_nelz(iy) ; ++iz ) {
+        out(j) = m_startNode(iy) + m_nnd(iy) + iz * (m_nelx(iy)+1) + m_nelx(iy);
+        ++j;
+      }
+    }
+  }
+
+  // top half: (middle node layer +) top node layer
+  for ( size_t iy = (nely-1)/2 ; iy < nely-1 ; ++iy )
+  {
+    // -- all nodes from the refinement layer
+    if ( m_refine(iy) == 2 ) {
+      for ( size_t iz = 0 ; iz < 2*m_nelz(iy) ; ++iz ) {
+        out(j) = m_startNode(iy) + m_nnd(iy) + iz * (m_nelx(iy)+1) + m_nelx(iy);
+        ++j;
+      }
+    }
+    // -- top node layer: all nodes except the edge nodes
+    for ( size_t iz = 1 ; iz < m_nelz(iy) ; ++iz ) {
+      out(j) = m_startNode(iy+1) + iz * (m_nelx(iy)+1) + m_nelx(iy);
+      ++j;
+    }
+  }
+
+  return out;
+}
+
+// ------------------------------ node-numbers along the bottom face -------------------------------
+
+inline ColS FineLayer::nodesBottomFace()
+{
+  // allocate node list
+  ColS out((m_nelx(0)-1)*(m_nelz(0)-1));
+
+  // counter
+  size_t j = 0;
+
+  // fill node list
+  for ( size_t ix = 1 ; ix < m_nelx(0) ; ++ix ) {
+    for ( size_t iz = 1 ; iz < m_nelz(0) ; ++iz ) {
+      out(j) = m_startNode(0) + ix + iz * (m_nelx(0)+1);
+      ++j;
+    }
+  }
+
+  return out;
+}
+
+// -------------------------------- node-numbers along the top face --------------------------------
+
+inline ColS FineLayer::nodesTopFace()
+{
+  // number of element layers in y-direction
+  size_t nely = static_cast<size_t>(m_nhy.size());
+
+  // allocate node list
+  ColS out((m_nelx(nely-1)-1)*(m_nelz(nely-1)-1));
+
+  // counter
+  size_t j = 0;
+
+  // fill node list
+  for ( size_t ix = 1 ; ix < m_nelx(nely-1) ; ++ix ) {
+    for ( size_t iz = 1 ; iz < m_nelz(nely-1) ; ++iz ) {
+      out(j) = m_startNode(nely) + ix + iz * (m_nelx(nely-1)+1);
+      ++j;
+    }
+  }
 
   return out;
 }
