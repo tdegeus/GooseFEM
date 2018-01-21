@@ -1248,7 +1248,7 @@ inline ColS FineLayer::nodesFront()
   // number of element layers in y-direction
   size_t nely = static_cast<size_t>(m_nhy.size());
 
-  // total number of nodes along this plane
+  // number of boundary nodes
   // - initialize
   size_t n = 0;
   // - bottom half: bottom node layer (+ middle node layer)
@@ -1278,7 +1278,7 @@ inline ColS FineLayer::nodesFront()
       out(j) = m_startNode(iy) + ix;
       ++j;
     }
-    // -- all nodes from the refinement layer
+    // -- refinement layer
     if ( m_refine(iy) == 0 ) {
       for ( size_t ix = 0 ; ix < 2*m_nelx(iy) ; ++ix ) {
         out(j) = m_startNode(iy) + ix + m_nnd(iy);
@@ -1290,14 +1290,14 @@ inline ColS FineLayer::nodesFront()
   // top half: (middle node layer +) top node layer
   for ( size_t iy = (nely-1)/2 ; iy < nely ; ++iy )
   {
-    // -- all nodes from the refinement layer
+    // -- refinement layer
     if ( m_refine(iy) == 0 ) {
       for ( size_t ix = 0 ; ix < 2*m_nelx(iy) ; ++ix ) {
         out(j) = m_startNode(iy) + ix + m_nnd(iy);
         ++j;
       }
     }
-    // -- top node layer: all nodes except the edge nodes
+    // -- top node layer
     for ( size_t ix = 0 ; ix < m_nelx(iy)+1 ; ++ix ) {
       out(j) = m_startNode(iy+1) + ix;
       ++j;
@@ -1314,7 +1314,7 @@ inline ColS FineLayer::nodesBack()
   // number of element layers in y-direction
   size_t nely = static_cast<size_t>(m_nhy.size());
 
-  // total number of nodes along this plane
+  // number of boundary nodes
   // - initialize
   size_t n = 0;
   // - bottom half: bottom node layer (+ middle node layer)
@@ -1344,10 +1344,10 @@ inline ColS FineLayer::nodesBack()
       out(j) = m_startNode(iy) + ix + (m_nelx(iy)+1)*m_nelz(iy);
       ++j;
     }
-    // -- all nodes from the refinement layer
+    // -- refinement layer
     if ( m_refine(iy) == 0 ) {
       for ( size_t ix = 0 ; ix < 2*m_nelx(iy) ; ++ix ) {
-        out(j) = m_startNode(iy) + m_nnd(iy) + ix + 2*m_nelx(iy)*m_nelz(iy);
+        out(j) = m_startNode(iy) + ix + m_nnd(iy) + 2*m_nelx(iy)*m_nelz(iy);
         ++j;
       }
     }
@@ -1356,14 +1356,14 @@ inline ColS FineLayer::nodesBack()
   // top half: (middle node layer +) top node layer
   for ( size_t iy = (nely-1)/2 ; iy < nely ; ++iy )
   {
-    // -- all nodes from the refinement layer
+    // -- refinement layer
     if ( m_refine(iy) == 0 ) {
       for ( size_t ix = 0 ; ix < 2*m_nelx(iy) ; ++ix ) {
-        out(j) = m_startNode(iy) + m_nnd(iy) + ix + 2*m_nelx(iy)*m_nelz(iy);
+        out(j) = m_startNode(iy) + ix + m_nnd(iy) + 2*m_nelx(iy)*m_nelz(iy);
         ++j;
       }
     }
-    // -- top node layer: all nodes except the edge nodes
+    // -- top node layer
     for ( size_t ix = 0 ; ix < m_nelx(iy)+1 ; ++ix ) {
       out(j) = m_startNode(iy+1) + ix + (m_nelx(iy)+1)*m_nelz(iy);
       ++j;
@@ -1380,7 +1380,7 @@ inline ColS FineLayer::nodesLeft()
   // number of element layers in y-direction
   size_t nely = static_cast<size_t>(m_nhy.size());
 
-  // total number of nodes along this plane
+  // number of boundary nodes
   // - initialize
   size_t n = 0;
   // - bottom half: bottom node layer (+ middle node layer)
@@ -1410,10 +1410,10 @@ inline ColS FineLayer::nodesLeft()
       out(j) = m_startNode(iy) + iz * (m_nelx(iy)+1);
       ++j;
     }
-    // -- all nodes from the refinement layer
+    // -- refinement layer
     if ( m_refine(iy) == 2 ) {
       for ( size_t iz = 0 ; iz < 2*m_nelz(iy) ; ++iz ) {
-        out(j) = m_startNode(iy) + m_nnd(iy) + iz * (m_nelx(iy)+1);
+        out(j) = m_startNode(iy) + iz * (m_nelx(iy)+1) + m_nnd(iy);
         ++j;
       }
     }
@@ -1422,14 +1422,14 @@ inline ColS FineLayer::nodesLeft()
   // top half: (middle node layer +) top node layer
   for ( size_t iy = (nely-1)/2 ; iy < nely ; ++iy )
   {
-    // -- all nodes from the refinement layer
+    // -- refinement layer
     if ( m_refine(iy) == 2 ) {
       for ( size_t iz = 0 ; iz < 2*m_nelz(iy) ; ++iz ) {
-        out(j) = m_startNode(iy) + m_nnd(iy) + iz * (m_nelx(iy)+1);
+        out(j) = m_startNode(iy) + iz * (m_nelx(iy)+1) + m_nnd(iy);
         ++j;
       }
     }
-    // -- top node layer: all nodes except the edge nodes
+    // -- top node layer
     for ( size_t iz = 0 ; iz < m_nelz(iy)+1 ; ++iz ) {
       out(j) = m_startNode(iy+1) + iz * (m_nelx(iy)+1);
       ++j;
@@ -1446,7 +1446,7 @@ inline ColS FineLayer::nodesRight()
   // number of element layers in y-direction
   size_t nely = static_cast<size_t>(m_nhy.size());
 
-  // total number of nodes along this plane
+  // number of boundary nodes
   // - initialize
   size_t n = 0;
   // - bottom half: bottom node layer (+ middle node layer)
@@ -1476,7 +1476,7 @@ inline ColS FineLayer::nodesRight()
       out(j) = m_startNode(iy) + iz * (m_nelx(iy)+1) + m_nelx(iy);
       ++j;
     }
-    // -- all nodes from the refinement layer
+    // -- refinement layer
     if ( m_refine(iy) == 2 ) {
       for ( size_t iz = 0 ; iz < 2*m_nelz(iy) ; ++iz ) {
         out(j) = m_startNode(iy) + m_nnd(iy) + iz * (m_nelx(iy)+1) + m_nelx(iy);
@@ -1488,14 +1488,14 @@ inline ColS FineLayer::nodesRight()
   // top half: (middle node layer +) top node layer
   for ( size_t iy = (nely-1)/2 ; iy < nely ; ++iy )
   {
-    // -- all nodes from the refinement layer
+    // -- refinement layer
     if ( m_refine(iy) == 2 ) {
       for ( size_t iz = 0 ; iz < 2*m_nelz(iy) ; ++iz ) {
         out(j) = m_startNode(iy) + m_nnd(iy) + iz * (m_nelx(iy)+1) + m_nelx(iy);
         ++j;
       }
     }
-    // -- top node layer: all nodes except the edge nodes
+    // -- top node layer
     for ( size_t iz = 0 ; iz < m_nelz(iy)+1 ; ++iz ) {
       out(j) = m_startNode(iy+1) + iz * (m_nelx(iy)+1) + m_nelx(iy);
       ++j;
@@ -1560,7 +1560,7 @@ inline ColS FineLayer::nodesFrontFace()
   // number of element layers in y-direction
   size_t nely = static_cast<size_t>(m_nhy.size());
 
-  // total number of face nodes
+  // number of boundary nodes
   // - initialize
   size_t n = 0;
   // - bottom half: bottom node layer (+ middle node layer)
@@ -1590,7 +1590,7 @@ inline ColS FineLayer::nodesFrontFace()
       out(j) = m_startNode(iy) + ix;
       ++j;
     }
-    // -- all nodes from the refinement layer
+    // -- refinement layer
     if ( m_refine(iy) == 0 ) {
       for ( size_t ix = 0 ; ix < 2*m_nelx(iy) ; ++ix ) {
         out(j) = m_startNode(iy) + ix + m_nnd(iy);
@@ -1602,14 +1602,14 @@ inline ColS FineLayer::nodesFrontFace()
   // top half: (middle node layer +) top node layer
   for ( size_t iy = (nely-1)/2 ; iy < nely-1 ; ++iy )
   {
-    // -- all nodes from the refinement layer
+    // -- refinement layer
     if ( m_refine(iy) == 0 ) {
       for ( size_t ix = 0 ; ix < 2*m_nelx(iy) ; ++ix ) {
         out(j) = m_startNode(iy) + ix + m_nnd(iy);
         ++j;
       }
     }
-    // -- top node layer: all nodes except the edge nodes
+    // -- top node layer
     for ( size_t ix = 1 ; ix < m_nelx(iy) ; ++ix ) {
       out(j) = m_startNode(iy+1) + ix;
       ++j;
@@ -1626,7 +1626,7 @@ inline ColS FineLayer::nodesBackFace()
   // number of element layers in y-direction
   size_t nely = static_cast<size_t>(m_nhy.size());
 
-  // total number of face nodes
+  // number of boundary nodes
   // - initialize
   size_t n = 0;
   // - bottom half: bottom node layer (+ middle node layer)
@@ -1656,10 +1656,10 @@ inline ColS FineLayer::nodesBackFace()
       out(j) = m_startNode(iy) + ix + (m_nelx(iy)+1)*m_nelz(iy);
       ++j;
     }
-    // -- all nodes from the refinement layer
+    // -- refinement layer
     if ( m_refine(iy) == 0 ) {
       for ( size_t ix = 0 ; ix < 2*m_nelx(iy) ; ++ix ) {
-        out(j) = m_startNode(iy) + ix + 2*m_nelx(iy)*m_nelz(iy) + m_nnd(iy);
+        out(j) = m_startNode(iy) + ix + m_nnd(iy) + 2*m_nelx(iy)*m_nelz(iy);
         ++j;
       }
     }
@@ -1668,14 +1668,14 @@ inline ColS FineLayer::nodesBackFace()
   // top half: (middle node layer +) top node layer
   for ( size_t iy = (nely-1)/2 ; iy < nely-1 ; ++iy )
   {
-    // -- all nodes from the refinement layer
+    // -- refinement layer
     if ( m_refine(iy) == 0 ) {
       for ( size_t ix = 0 ; ix < 2*m_nelx(iy) ; ++ix ) {
-        out(j) = m_startNode(iy) + ix + 2*m_nelx(iy)*m_nelz(iy) + m_nnd(iy);
+        out(j) = m_startNode(iy) + ix + m_nnd(iy) + 2*m_nelx(iy)*m_nelz(iy);
         ++j;
       }
     }
-    // -- top node layer: all nodes except the edge nodes
+    // -- top node layer
     for ( size_t ix = 1 ; ix < m_nelx(iy) ; ++ix ) {
       out(j) = m_startNode(iy+1) + ix + (m_nelx(iy)+1)*m_nelz(iy);
       ++j;
@@ -1692,7 +1692,7 @@ inline ColS FineLayer::nodesLeftFace()
   // number of element layers in y-direction
   size_t nely = static_cast<size_t>(m_nhy.size());
 
-  // total number of nodes along this plane
+  // number of boundary nodes
   // - initialize
   size_t n = 0;
   // - bottom half: bottom node layer (+ middle node layer)
@@ -1711,8 +1711,6 @@ inline ColS FineLayer::nodesLeftFace()
   // allocate node-list
   ColS out(n);
 
-  out.setConstant(0);
-
   // initialize counter: current index in the node-list "out"
   size_t j = 0;
 
@@ -1724,10 +1722,10 @@ inline ColS FineLayer::nodesLeftFace()
       out(j) = m_startNode(iy) + iz * (m_nelx(iy)+1);
       ++j;
     }
-    // -- all nodes from the refinement layer
+    // -- refinement layer
     if ( m_refine(iy) == 2 ) {
       for ( size_t iz = 0 ; iz < 2*m_nelz(iy) ; ++iz ) {
-        out(j) = m_startNode(iy) + m_nnd(iy) + iz * (m_nelx(iy)+1);
+        out(j) = m_startNode(iy) + iz * (m_nelx(iy)+1) + m_nnd(iy);
         ++j;
       }
     }
@@ -1736,14 +1734,14 @@ inline ColS FineLayer::nodesLeftFace()
   // top half: (middle node layer +) top node layer
   for ( size_t iy = (nely-1)/2 ; iy < nely-1 ; ++iy )
   {
-    // -- all nodes from the refinement layer
+    // -- refinement layer
     if ( m_refine(iy) == 2 ) {
       for ( size_t iz = 0 ; iz < 2*m_nelz(iy) ; ++iz ) {
-        out(j) = m_startNode(iy) + m_nnd(iy) + iz * (m_nelx(iy)+1);
+        out(j) = m_startNode(iy) + iz * (m_nelx(iy)+1) + m_nnd(iy);
         ++j;
       }
     }
-    // -- top node layer: all nodes except the edge nodes
+    // -- top node layer
     for ( size_t iz = 1 ; iz < m_nelz(iy) ; ++iz ) {
       out(j) = m_startNode(iy+1) + iz * (m_nelx(iy)+1);
       ++j;
@@ -1760,7 +1758,7 @@ inline ColS FineLayer::nodesRightFace()
   // number of element layers in y-direction
   size_t nely = static_cast<size_t>(m_nhy.size());
 
-  // total number of nodes along this plane
+  // number of boundary nodes
   // - initialize
   size_t n = 0;
   // - bottom half: bottom node layer (+ middle node layer)
@@ -1779,8 +1777,6 @@ inline ColS FineLayer::nodesRightFace()
   // allocate node-list
   ColS out(n);
 
-  out.setConstant(0);
-
   // initialize counter: current index in the node-list "out"
   size_t j = 0;
 
@@ -1792,7 +1788,7 @@ inline ColS FineLayer::nodesRightFace()
       out(j) = m_startNode(iy) + iz * (m_nelx(iy)+1) + m_nelx(iy);
       ++j;
     }
-    // -- all nodes from the refinement layer
+    // -- refinement layer
     if ( m_refine(iy) == 2 ) {
       for ( size_t iz = 0 ; iz < 2*m_nelz(iy) ; ++iz ) {
         out(j) = m_startNode(iy) + m_nnd(iy) + iz * (m_nelx(iy)+1) + m_nelx(iy);
@@ -1804,14 +1800,14 @@ inline ColS FineLayer::nodesRightFace()
   // top half: (middle node layer +) top node layer
   for ( size_t iy = (nely-1)/2 ; iy < nely-1 ; ++iy )
   {
-    // -- all nodes from the refinement layer
+    // -- refinement layer
     if ( m_refine(iy) == 2 ) {
       for ( size_t iz = 0 ; iz < 2*m_nelz(iy) ; ++iz ) {
         out(j) = m_startNode(iy) + m_nnd(iy) + iz * (m_nelx(iy)+1) + m_nelx(iy);
         ++j;
       }
     }
-    // -- top node layer: all nodes except the edge nodes
+    // -- top node layer
     for ( size_t iz = 1 ; iz < m_nelz(iy) ; ++iz ) {
       out(j) = m_startNode(iy+1) + iz * (m_nelx(iy)+1) + m_nelx(iy);
       ++j;
@@ -2038,10 +2034,6 @@ inline ColS FineLayer::nodesTopRightEdge()
   return out;
 }
 
-
-
-
-
 // ------------------- node-numbers along the front-bottom edge, without corners -------------------
 
 inline ColS FineLayer::nodesFrontBottomOpenEdge()
@@ -2180,7 +2172,7 @@ inline ColS FineLayer::nodesBottomRightOpenEdge()
 {
   ColS out(m_nelz(0)-1);
 
-  for ( size_t iz = 1 ; iz < m_nelz(0)-1 ; ++iz )
+  for ( size_t iz = 1 ; iz < m_nelz(0) ; ++iz )
     out(iz-1) = m_startNode(0) + m_nelx(0) + iz * (m_nelx(0)+1);
 
   return out;
@@ -2194,7 +2186,7 @@ inline ColS FineLayer::nodesTopLeftOpenEdge()
 
   ColS out(m_nelz(nely-1)-1);
 
-  for ( size_t iz = 1 ; iz < m_nelz(nely-1)-1 ; ++iz )
+  for ( size_t iz = 1 ; iz < m_nelz(nely-1) ; ++iz )
     out(iz-1) = m_startNode(nely) + iz * (m_nelx(nely-1)+1);
 
   return out;
@@ -2208,10 +2200,74 @@ inline ColS FineLayer::nodesTopRightOpenEdge()
 
   ColS out(m_nelz(nely-1)-1);
 
-  for ( size_t iz = 1 ; iz < m_nelz(nely-1)-1 ; ++iz )
+  for ( size_t iz = 1 ; iz < m_nelz(nely-1) ; ++iz )
     out(iz-1) = m_startNode(nely) + m_nelx(nely-1) + iz * (m_nelx(nely-1)+1);
 
   return out;
+}
+
+// -------------------------- node-number of the front-bottom-left corner --------------------------
+
+inline size_t FineLayer::nodesFrontBottomLeftCorner()
+{
+  return m_startNode(0);
+}
+
+// -------------------------- node-number of the front-bottom-right corner --------------------------
+
+inline size_t FineLayer::nodesFrontBottomRightCorner()
+{
+  return m_startNode(0) + m_nelx(0);
+}
+
+// -------------------------- node-number of the front-top-left corner ---------------------------
+
+inline size_t FineLayer::nodesFrontTopLeftCorner()
+{
+  size_t nely = static_cast<size_t>(m_nhy.size());
+
+  return m_startNode(nely);
+}
+
+// -------------------------- node-number of the front-top-right corner --------------------------
+
+inline size_t FineLayer::nodesFrontTopRightCorner()
+{
+  size_t nely = static_cast<size_t>(m_nhy.size());
+
+  return m_startNode(nely) + m_nelx(nely-1);
+}
+
+// -------------------------- node-number of the back-bottom-left corner --------------------------
+
+inline size_t FineLayer::nodesBackBottomLeftCorner()
+{
+  return m_startNode(0) + (m_nelx(0)+1)*(m_nelz(0));
+}
+
+// -------------------------- node-number of the back-bottom-right corner --------------------------
+
+inline size_t FineLayer::nodesBackBottomRightCorner()
+{
+  return m_startNode(0) + m_nelx(0) + (m_nelx(0)+1)*(m_nelz(0));
+}
+
+// -------------------------- node-number of the back-top-left corner ---------------------------
+
+inline size_t FineLayer::nodesBackTopLeftCorner()
+{
+  size_t nely = static_cast<size_t>(m_nhy.size());
+
+  return m_startNode(nely) + (m_nelx(nely-1)+1)*(m_nelz(nely-1));
+}
+
+// -------------------------- node-number of the back-top-right corner --------------------------
+
+inline size_t FineLayer::nodesBackTopRightCorner()
+{
+  size_t nely = static_cast<size_t>(m_nhy.size());
+
+  return m_startNode(nely) + m_nelx(nely-1) + (m_nelx(nely-1)+1)*(m_nelz(nely-1));
 }
 
 // =================================================================================================

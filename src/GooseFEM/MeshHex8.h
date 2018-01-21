@@ -223,15 +223,15 @@ public:
   // ColS   nodesRightTopEdge();           // alias, see above: nodesTopRightEdge
   // ColS   nodesRightFrontEdge();         // alias, see above: nodesFrontRightEdge
   // ColS   nodesRightBackEdge();          // alias, see above: nodesBackRightEdge
-  // // boundary nodes: corners
-  // size_t nodesFrontBottomLeftCorner();  // node-number of the front - bottom - left  corner
-  // size_t nodesFrontBottomRightCorner(); // node-number of the front - bottom - right corner
-  // size_t nodesFrontTopLeftCorner();     // node-number of the front - top    - left  corner
-  // size_t nodesFrontTopRightCorner();    // node-number of the front - top    - right corner
-  // size_t nodesBackBottomLeftCorner();   // node-number of the back  - bottom - left  corner
-  // size_t nodesBackBottomRightCorner();  // node-number of the back  - bottom - right corner
-  // size_t nodesBackTopLeftCorner();      // node-number of the back  - top    - left  corner
-  // size_t nodesBackTopRightCorner();     // node-number of the back  - top    - right corner
+  // boundary nodes: corners
+  size_t nodesFrontBottomLeftCorner();  // node-number of the front - bottom - left  corner
+  size_t nodesFrontBottomRightCorner(); // node-number of the front - bottom - right corner
+  size_t nodesFrontTopLeftCorner();     // node-number of the front - top    - left  corner
+  size_t nodesFrontTopRightCorner();    // node-number of the front - top    - right corner
+  size_t nodesBackBottomLeftCorner();   // node-number of the back  - bottom - left  corner
+  size_t nodesBackBottomRightCorner();  // node-number of the back  - bottom - right corner
+  size_t nodesBackTopLeftCorner();      // node-number of the back  - top    - left  corner
+  size_t nodesBackTopRightCorner();     // node-number of the back  - top    - right corner
   // // boundary nodes: corners (aliases)
   // size_t nodesFrontLeftBottomCorner();  // alias, see above: nodesFrontBottomLeftCorner
   // size_t nodesBottomFrontLeftCorner();  // alias, see above: nodesFrontBottomLeftCorner
