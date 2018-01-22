@@ -22,17 +22,17 @@ namespace Hex8 {
 class Regular
 {
 private:
-  size_t m_nelx;     // number of 'pixels' x-direction (length == "m_nelx * m_h")
-  size_t m_nely;     // number of 'pixels' y-direction (length == "m_nely * m_h")
-  size_t m_nelz;     // number of 'pixels' z-direction (length == "m_nely * m_h")
-  double m_h;      // size of the element edge (equal in both directions)
+  double m_h;      // elementary element edge-size (in all directions)
+  size_t m_nelx;   // number of element x-direction (length == "m_nelx * m_h")
+  size_t m_nely;   // number of element y-direction (length == "m_nely * m_h")
+  size_t m_nelz;   // number of element z-direction (length == "m_nely * m_h")
   size_t m_nelem;  // number of elements
   size_t m_nnode;  // number of nodes
   size_t m_nne=8;  // number of nodes-per-element
   size_t m_ndim=3; // number of dimensions
 
 public:
-  // mesh with "nelx*nely*nelz" 'pixels' and edge size "h"
+  // mesh with "nelx*nely*nelz" 'pixels' of edge size "h"
   Regular(size_t nelx, size_t nely, size_t nelz, double h=1.);
   // sizes
   size_t nelem();                       // number of elements
@@ -40,8 +40,8 @@ public:
   size_t nne();                         // number of nodes-per-element
   size_t ndim();                        // number of dimensions
   // mesh
-  MatD   coor();                        // nodal positions [ nnode , ndim ]
-  MatS   conn();                        // connectivity    [ nelem , nne  ]
+  MatD   coor();                        // nodal positions [nnode ,ndim]
+  MatS   conn();                        // connectivity    [nelem ,nne ]
   // boundary nodes: planes
   ColS   nodesFront();                  // node-numbers along the front  plane
   ColS   nodesBack();                   // node-numbers along the back   plane
@@ -82,6 +82,32 @@ public:
   ColS   nodesRightTopEdge();           // alias, see above: nodesTopRightEdge
   ColS   nodesRightFrontEdge();         // alias, see above: nodesFrontRightEdge
   ColS   nodesRightBackEdge();          // alias, see above: nodesBackRightEdge
+  // boundary nodes: edges, without corners
+  ColS   nodesFrontBottomOpenEdge();    // node-numbers along the front  - bottom edge
+  ColS   nodesFrontTopOpenEdge();       // node-numbers along the front  - top    edge
+  ColS   nodesFrontLeftOpenEdge();      // node-numbers along the front  - left   edge
+  ColS   nodesFrontRightOpenEdge();     // node-numbers along the front  - right  edge
+  ColS   nodesBackBottomOpenEdge();     // node-numbers along the back   - bottom edge
+  ColS   nodesBackTopOpenEdge();        // node-numbers along the back   - top    edge
+  ColS   nodesBackLeftOpenEdge();       // node-numbers along the back   - left   edge
+  ColS   nodesBackRightOpenEdge();      // node-numbers along the back   - right  edge
+  ColS   nodesBottomLeftOpenEdge();     // node-numbers along the bottom - left   edge
+  ColS   nodesBottomRightOpenEdge();    // node-numbers along the bottom - right  edge
+  ColS   nodesTopLeftOpenEdge();        // node-numbers along the top    - left   edge
+  ColS   nodesTopRightOpenEdge();       // node-numbers along the top    - right  edge
+  // boundary nodes: edges, without corners (aliases)
+  ColS   nodesBottomFrontOpenEdge();    // alias, see above: nodesFrontBottomOpenEdge
+  ColS   nodesBottomBackOpenEdge();     // alias, see above: nodesBackBottomOpenEdge
+  ColS   nodesTopFrontOpenEdge();       // alias, see above: nodesFrontTopOpenEdge
+  ColS   nodesTopBackOpenEdge();        // alias, see above: nodesBackTopOpenEdge
+  ColS   nodesLeftBottomOpenEdge();     // alias, see above: nodesBottomLeftOpenEdge
+  ColS   nodesLeftFrontOpenEdge();      // alias, see above: nodesFrontLeftOpenEdge
+  ColS   nodesLeftBackOpenEdge();       // alias, see above: nodesBackLeftOpenEdge
+  ColS   nodesLeftTopOpenEdge();        // alias, see above: nodesTopLeftOpenEdge
+  ColS   nodesRightBottomOpenEdge();    // alias, see above: nodesBottomRightOpenEdge
+  ColS   nodesRightTopOpenEdge();       // alias, see above: nodesTopRightOpenEdge
+  ColS   nodesRightFrontOpenEdge();     // alias, see above: nodesFrontRightOpenEdge
+  ColS   nodesRightBackOpenEdge();      // alias, see above: nodesBackRightOpenEdge
   // boundary nodes: corners
   size_t nodesFrontBottomLeftCorner();  // node-number of the front - bottom - left  corner
   size_t nodesFrontBottomRightCorner(); // node-number of the front - bottom - right corner
@@ -161,14 +187,14 @@ public:
   // mesh with "nelx*nely*nelz" 'pixels' of edge size "h"; elements are coarsened in "y"-direction
   FineLayer(size_t nelx, size_t nely, size_t nelz, double h=1., size_t nfine=1);
   // sizes
-  size_t nelem();                   // number of elements
-  size_t nnode();                   // number of nodes
-  size_t nne();                     // number of nodes-per-element
-  size_t ndim();                    // number of dimensions
-  size_t shape(size_t i);           // actual shape in a certain direction
+  size_t nelem();                       // number of elements
+  size_t nnode();                       // number of nodes
+  size_t nne();                         // number of nodes-per-element
+  size_t ndim();                        // number of dimensions
+  size_t shape(size_t i);               // actual shape in a certain direction
   // mesh
-  MatD   coor();                    // nodal positions [nnode ,ndim]
-  MatS   conn();                    // connectivity    [nelem ,nne ]
+  MatD   coor();                        // nodal positions [nnode ,ndim]
+  MatS   conn();                        // connectivity    [nelem ,nne ]
   // boundary nodes: planes
   ColS   nodesFront();                  // node-numbers along the front  plane
   ColS   nodesBack();                   // node-numbers along the back   plane

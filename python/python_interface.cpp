@@ -54,10 +54,10 @@ mMesh.def("renumber",
   py::arg("location")="end"
 );
 
-// ===================================== GooseFEM/MeshHex8.h =====================================
+// ====================================== GooseFEM/MeshHex8.h ======================================
 
 py::class_<GooseFEM::Mesh::Hex8::Regular>(mMeshHex8, "Regular")
-
+  // constructor
   .def(
     py::init<size_t,size_t,size_t,double>(),
     "mesh with nx*ny*nz 'pixels' and edge size h",
@@ -66,25 +66,29 @@ py::class_<GooseFEM::Mesh::Hex8::Regular>(mMeshHex8, "Regular")
     py::arg("nz"),
     py::arg("h")=1.
   )
-
+  // sizes
   .def("nelem"                      , &GooseFEM::Mesh::Hex8::Regular::nelem                      )
   .def("nnode"                      , &GooseFEM::Mesh::Hex8::Regular::nnode                      )
   .def("nne"                        , &GooseFEM::Mesh::Hex8::Regular::nne                        )
   .def("ndim"                       , &GooseFEM::Mesh::Hex8::Regular::ndim                       )
+  // mesh
   .def("coor"                       , &GooseFEM::Mesh::Hex8::Regular::coor                       )
   .def("conn"                       , &GooseFEM::Mesh::Hex8::Regular::conn                       )
+  // boundary nodes: planes
   .def("nodesFront"                 , &GooseFEM::Mesh::Hex8::Regular::nodesFront                 )
   .def("nodesBack"                  , &GooseFEM::Mesh::Hex8::Regular::nodesBack                  )
   .def("nodesLeft"                  , &GooseFEM::Mesh::Hex8::Regular::nodesLeft                  )
   .def("nodesRight"                 , &GooseFEM::Mesh::Hex8::Regular::nodesRight                 )
   .def("nodesBottom"                , &GooseFEM::Mesh::Hex8::Regular::nodesBottom                )
   .def("nodesTop"                   , &GooseFEM::Mesh::Hex8::Regular::nodesTop                   )
+  // boundary nodes: faces
   .def("nodesFrontFace"             , &GooseFEM::Mesh::Hex8::Regular::nodesFrontFace             )
   .def("nodesBackFace"              , &GooseFEM::Mesh::Hex8::Regular::nodesBackFace              )
   .def("nodesLeftFace"              , &GooseFEM::Mesh::Hex8::Regular::nodesLeftFace              )
   .def("nodesRightFace"             , &GooseFEM::Mesh::Hex8::Regular::nodesRightFace             )
   .def("nodesBottomFace"            , &GooseFEM::Mesh::Hex8::Regular::nodesBottomFace            )
   .def("nodesTopFace"               , &GooseFEM::Mesh::Hex8::Regular::nodesTopFace               )
+  // boundary nodes: edges
   .def("nodesFrontBottomEdge"       , &GooseFEM::Mesh::Hex8::Regular::nodesFrontBottomEdge       )
   .def("nodesFrontTopEdge"          , &GooseFEM::Mesh::Hex8::Regular::nodesFrontTopEdge          )
   .def("nodesFrontLeftEdge"         , &GooseFEM::Mesh::Hex8::Regular::nodesFrontLeftEdge         )
@@ -97,6 +101,7 @@ py::class_<GooseFEM::Mesh::Hex8::Regular>(mMeshHex8, "Regular")
   .def("nodesBottomRightEdge"       , &GooseFEM::Mesh::Hex8::Regular::nodesBottomRightEdge       )
   .def("nodesTopLeftEdge"           , &GooseFEM::Mesh::Hex8::Regular::nodesTopLeftEdge           )
   .def("nodesTopRightEdge"          , &GooseFEM::Mesh::Hex8::Regular::nodesTopRightEdge          )
+  // boundary nodes: faces (aliases)
   .def("nodesBottomFrontEdge"       , &GooseFEM::Mesh::Hex8::Regular::nodesBottomFrontEdge       )
   .def("nodesBottomBackEdge"        , &GooseFEM::Mesh::Hex8::Regular::nodesBottomBackEdge        )
   .def("nodesTopFrontEdge"          , &GooseFEM::Mesh::Hex8::Regular::nodesTopFrontEdge          )
@@ -109,6 +114,33 @@ py::class_<GooseFEM::Mesh::Hex8::Regular>(mMeshHex8, "Regular")
   .def("nodesRightTopEdge"          , &GooseFEM::Mesh::Hex8::Regular::nodesRightTopEdge          )
   .def("nodesRightFrontEdge"        , &GooseFEM::Mesh::Hex8::Regular::nodesRightFrontEdge        )
   .def("nodesRightBackEdge"         , &GooseFEM::Mesh::Hex8::Regular::nodesRightBackEdge         )
+  // boundary nodes: edges, without corners
+  .def("nodesFrontBottomOpenEdge"   , &GooseFEM::Mesh::Hex8::Regular::nodesFrontBottomOpenEdge   )
+  .def("nodesFrontTopOpenEdge"      , &GooseFEM::Mesh::Hex8::Regular::nodesFrontTopOpenEdge      )
+  .def("nodesFrontLeftOpenEdge"     , &GooseFEM::Mesh::Hex8::Regular::nodesFrontLeftOpenEdge     )
+  .def("nodesFrontRightOpenEdge"    , &GooseFEM::Mesh::Hex8::Regular::nodesFrontRightOpenEdge    )
+  .def("nodesBackBottomOpenEdge"    , &GooseFEM::Mesh::Hex8::Regular::nodesBackBottomOpenEdge    )
+  .def("nodesBackTopOpenEdge"       , &GooseFEM::Mesh::Hex8::Regular::nodesBackTopOpenEdge       )
+  .def("nodesBackLeftOpenEdge"      , &GooseFEM::Mesh::Hex8::Regular::nodesBackLeftOpenEdge      )
+  .def("nodesBackRightOpenEdge"     , &GooseFEM::Mesh::Hex8::Regular::nodesBackRightOpenEdge     )
+  .def("nodesBottomLeftOpenEdge"    , &GooseFEM::Mesh::Hex8::Regular::nodesBottomLeftOpenEdge    )
+  .def("nodesBottomRightOpenEdge"   , &GooseFEM::Mesh::Hex8::Regular::nodesBottomRightOpenEdge   )
+  .def("nodesTopLeftOpenEdge"       , &GooseFEM::Mesh::Hex8::Regular::nodesTopLeftOpenEdge       )
+  .def("nodesTopRightOpenEdge"      , &GooseFEM::Mesh::Hex8::Regular::nodesTopRightOpenEdge      )
+  // boundary nodes: edges, without corners (aliases)
+  .def("nodesBottomFrontOpenEdge"   , &GooseFEM::Mesh::Hex8::Regular::nodesBottomFrontOpenEdge   )
+  .def("nodesBottomBackOpenEdge"    , &GooseFEM::Mesh::Hex8::Regular::nodesBottomBackOpenEdge    )
+  .def("nodesTopFrontOpenEdge"      , &GooseFEM::Mesh::Hex8::Regular::nodesTopFrontOpenEdge      )
+  .def("nodesTopBackOpenEdge"       , &GooseFEM::Mesh::Hex8::Regular::nodesTopBackOpenEdge       )
+  .def("nodesLeftBottomOpenEdge"    , &GooseFEM::Mesh::Hex8::Regular::nodesLeftBottomOpenEdge    )
+  .def("nodesLeftFrontOpenEdge"     , &GooseFEM::Mesh::Hex8::Regular::nodesLeftFrontOpenEdge     )
+  .def("nodesLeftBackOpenEdge"      , &GooseFEM::Mesh::Hex8::Regular::nodesLeftBackOpenEdge      )
+  .def("nodesLeftTopOpenEdge"       , &GooseFEM::Mesh::Hex8::Regular::nodesLeftTopOpenEdge       )
+  .def("nodesRightBottomOpenEdge"   , &GooseFEM::Mesh::Hex8::Regular::nodesRightBottomOpenEdge   )
+  .def("nodesRightTopOpenEdge"      , &GooseFEM::Mesh::Hex8::Regular::nodesRightTopOpenEdge      )
+  .def("nodesRightFrontOpenEdge"    , &GooseFEM::Mesh::Hex8::Regular::nodesRightFrontOpenEdge    )
+  .def("nodesRightBackOpenEdge"     , &GooseFEM::Mesh::Hex8::Regular::nodesRightBackOpenEdge     )
+  // boundary nodes: corners
   .def("nodesFrontBottomLeftCorner" , &GooseFEM::Mesh::Hex8::Regular::nodesFrontBottomLeftCorner )
   .def("nodesFrontBottomRightCorner", &GooseFEM::Mesh::Hex8::Regular::nodesFrontBottomRightCorner)
   .def("nodesFrontTopLeftCorner"    , &GooseFEM::Mesh::Hex8::Regular::nodesFrontTopLeftCorner    )
@@ -117,6 +149,7 @@ py::class_<GooseFEM::Mesh::Hex8::Regular>(mMeshHex8, "Regular")
   .def("nodesBackBottomRightCorner" , &GooseFEM::Mesh::Hex8::Regular::nodesBackBottomRightCorner )
   .def("nodesBackTopLeftCorner"     , &GooseFEM::Mesh::Hex8::Regular::nodesBackTopLeftCorner     )
   .def("nodesBackTopRightCorner"    , &GooseFEM::Mesh::Hex8::Regular::nodesBackTopRightCorner    )
+  // boundary nodes: corners (aliases)
   .def("nodesFrontLeftBottomCorner" , &GooseFEM::Mesh::Hex8::Regular::nodesFrontLeftBottomCorner )
   .def("nodesBottomFrontLeftCorner" , &GooseFEM::Mesh::Hex8::Regular::nodesBottomFrontLeftCorner )
   .def("nodesBottomLeftFrontCorner" , &GooseFEM::Mesh::Hex8::Regular::nodesBottomLeftFrontCorner )
@@ -157,11 +190,12 @@ py::class_<GooseFEM::Mesh::Hex8::Regular>(mMeshHex8, "Regular")
   .def("nodesTopRightBackCorner"    , &GooseFEM::Mesh::Hex8::Regular::nodesTopRightBackCorner    )
   .def("nodesRightBackTopCorner"    , &GooseFEM::Mesh::Hex8::Regular::nodesRightBackTopCorner    )
   .def("nodesRightTopBackCorner"    , &GooseFEM::Mesh::Hex8::Regular::nodesRightTopBackCorner    )
+  // periodicity
   .def("nodesPeriodic"              , &GooseFEM::Mesh::Hex8::Regular::nodesPeriodic              )
   .def("nodesOrigin"                , &GooseFEM::Mesh::Hex8::Regular::nodesOrigin                )
   .def("dofs"                       , &GooseFEM::Mesh::Hex8::Regular::dofs                       )
   .def("dofsPeriodic"               , &GooseFEM::Mesh::Hex8::Regular::dofsPeriodic               )
-
+  // print to screen
   .def("__repr__",
     [](const GooseFEM::Mesh::Hex8::Regular &a){ return "<GooseFEM.Mesh.Hex8.Regular>"; }
   );

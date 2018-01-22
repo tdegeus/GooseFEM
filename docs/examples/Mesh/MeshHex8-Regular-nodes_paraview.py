@@ -6,7 +6,7 @@ import GooseFEM as gf
 # ====================== create fictitious configuration + store to HDF5-file ======================
 
 # create mesh object
-mesh = gf.Mesh.Hex8.FineLayer(9,17,27)
+mesh = gf.Mesh.Hex8.Regular(6,8,12)
 
 # create node type, based on boundary sets
 # - allocate all as background
@@ -53,7 +53,7 @@ nodesBottom = np.zeros((mesh.nnode()),dtype='int'); nodesBottom[mesh.nodesBottom
 nodesTop    = np.zeros((mesh.nnode()),dtype='int'); nodesTop   [mesh.nodesTop()    ] = 1
 
 # open data file
-f = h5py.File('MeshHex8-FineLayer-nodes_paraview.hdf5','w')
+f = h5py.File('MeshHex8-Regular-nodes_paraview.hdf5','w')
 
 # write particle positions, and a dummy connectivity
 f.create_dataset('/coor'        ,data=mesh.coor()            )
@@ -76,52 +76,52 @@ xmf = '''<?xml version="1.0" ?>
     <Grid Name="Nodes">
       <Topology TopologyType="Polyvertex" NumberOfElements="{nnode:d}" NodesPerElement="1">
         <DataItem Dimensions="{nnode:d} 1" Format="HDF">
-          MeshHex8-FineLayer-nodes_paraview.hdf5:/conn
+          MeshHex8-Regular-nodes_paraview.hdf5:/conn
         </DataItem>
       </Topology>
       <Geometry GeometryType="XYZ">
         <DataItem Dimensions="{nnode:d} 3" Format="HDF">
-          MeshHex8-FineLayer-nodes_paraview.hdf5:/coor
+          MeshHex8-Regular-nodes_paraview.hdf5:/coor
         </DataItem>
       </Geometry>
       <Attribute Name="Node type" AttributeType="Scalar" Center="Node">
          <DataItem Dimensions="{nnode:d}" NumberType="Float" Precision="8" Format="HDF">
-          MeshHex8-FineLayer-nodes_paraview.hdf5:/nodes
+          MeshHex8-Regular-nodes_paraview.hdf5:/nodes
          </DataItem>
       </Attribute>
       <Attribute Name="nodesFront" AttributeType="Scalar" Center="Node">
          <DataItem Dimensions="{nnode:d}" NumberType="Int" Format="HDF">
-          MeshHex8-FineLayer-nodes_paraview.hdf5:/nodesFront
+          MeshHex8-Regular-nodes_paraview.hdf5:/nodesFront
          </DataItem>
       </Attribute>
       <Attribute Name="nodesBack" AttributeType="Scalar" Center="Node">
          <DataItem Dimensions="{nnode:d}" NumberType="Int" Format="HDF">
-          MeshHex8-FineLayer-nodes_paraview.hdf5:/nodesBack
+          MeshHex8-Regular-nodes_paraview.hdf5:/nodesBack
          </DataItem>
       </Attribute>
       <Attribute Name="nodesLeft" AttributeType="Scalar" Center="Node">
          <DataItem Dimensions="{nnode:d}" NumberType="Int" Format="HDF">
-          MeshHex8-FineLayer-nodes_paraview.hdf5:/nodesLeft
+          MeshHex8-Regular-nodes_paraview.hdf5:/nodesLeft
          </DataItem>
       </Attribute>
       <Attribute Name="nodesRight" AttributeType="Scalar" Center="Node">
          <DataItem Dimensions="{nnode:d}" NumberType="Int" Format="HDF">
-          MeshHex8-FineLayer-nodes_paraview.hdf5:/nodesRight
+          MeshHex8-Regular-nodes_paraview.hdf5:/nodesRight
          </DataItem>
       </Attribute>
       <Attribute Name="nodesBottom" AttributeType="Scalar" Center="Node">
          <DataItem Dimensions="{nnode:d}" NumberType="Int" Format="HDF">
-          MeshHex8-FineLayer-nodes_paraview.hdf5:/nodesBottom
+          MeshHex8-Regular-nodes_paraview.hdf5:/nodesBottom
          </DataItem>
       </Attribute>
       <Attribute Name="nodesTop" AttributeType="Scalar" Center="Node">
          <DataItem Dimensions="{nnode:d}" NumberType="Int" Format="HDF">
-          MeshHex8-FineLayer-nodes_paraview.hdf5:/nodesTop
+          MeshHex8-Regular-nodes_paraview.hdf5:/nodesTop
          </DataItem>
       </Attribute>
       <Attribute Name="dofsPeriodic" AttributeType="Scalar" Center="Node">
          <DataItem Dimensions="{nnode:d}" NumberType="Int" Format="HDF">
-          MeshHex8-FineLayer-nodes_paraview.hdf5:/dofsPeriodic
+          MeshHex8-Regular-nodes_paraview.hdf5:/dofsPeriodic
          </DataItem>
       </Attribute>
     </Grid>
@@ -129,6 +129,6 @@ xmf = '''<?xml version="1.0" ?>
 </Xdmf>
 '''
 
-open('MeshHex8-FineLayer-nodes_paraview.xmf','w').write(xmf.format(
+open('MeshHex8-Regular-nodes_paraview.xmf','w').write(xmf.format(
   nnode = mesh.nnode(),
 ))

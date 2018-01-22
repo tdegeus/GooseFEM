@@ -22,7 +22,7 @@ namespace Hex8 {
 // ------------------------------------------ constructor ------------------------------------------
 
 inline Regular::Regular(size_t nelx, size_t nely, size_t nelz, double h):
-m_nelx(nelx), m_nely(nely), m_nelz(nelz), m_h(h)
+m_h(h), m_nelx(nelx), m_nely(nely), m_nelz(nelz)
 {
   assert( m_nelx >= 1 );
   assert( m_nely >= 1 );
@@ -64,7 +64,7 @@ inline size_t Regular::ndim()
 
 inline MatD Regular::coor()
 {
-  MatD coor(m_nnode,m_ndim);
+  MatD out(m_nnode,m_ndim);
 
   ColD x = ColD::LinSpaced(m_nelx+1, 0.0, m_h*static_cast<double>(m_nelx));
   ColD y = ColD::LinSpaced(m_nely+1, 0.0, m_h*static_cast<double>(m_nely));
@@ -75,344 +75,344 @@ inline MatD Regular::coor()
   for ( size_t iz = 0 ; iz < m_nelz+1 ; ++iz ) {
     for ( size_t iy = 0 ; iy < m_nely+1 ; ++iy ) {
       for ( size_t ix = 0 ; ix < m_nelx+1 ; ++ix ) {
-        coor(inode,0) = x(ix);
-        coor(inode,1) = y(iy);
-        coor(inode,2) = z(iz);
+        out(inode,0) = x(ix);
+        out(inode,1) = y(iy);
+        out(inode,2) = z(iz);
         ++inode;
       }
     }
   }
 
-  return coor;
+  return out;
 }
 
 // ---------------------------- connectivity (node-numbers per element) ----------------------------
 
 inline MatS Regular::conn()
 {
-  MatS conn(m_nelem,m_nne);
+  MatS out(m_nelem,m_nne);
 
   size_t ielem = 0;
 
   for ( size_t iz = 0 ; iz < m_nelz ; ++iz ) {
     for ( size_t iy = 0 ; iy < m_nely ; ++iy ) {
       for ( size_t ix = 0 ; ix < m_nelx ; ++ix ) {
-        conn(ielem,0) = (iz+0)*(m_nely+1)*(m_nelx+1) + (iy+0)*(m_nelx+1) + (ix+0);
-        conn(ielem,1) = (iz+0)*(m_nely+1)*(m_nelx+1) + (iy+0)*(m_nelx+1) + (ix+1);
-        conn(ielem,3) = (iz+0)*(m_nely+1)*(m_nelx+1) + (iy+1)*(m_nelx+1) + (ix+0);
-        conn(ielem,2) = (iz+0)*(m_nely+1)*(m_nelx+1) + (iy+1)*(m_nelx+1) + (ix+1);
-        conn(ielem,4) = (iz+1)*(m_nely+1)*(m_nelx+1) + (iy+0)*(m_nelx+1) + (ix+0);
-        conn(ielem,5) = (iz+1)*(m_nely+1)*(m_nelx+1) + (iy+0)*(m_nelx+1) + (ix+1);
-        conn(ielem,7) = (iz+1)*(m_nely+1)*(m_nelx+1) + (iy+1)*(m_nelx+1) + (ix+0);
-        conn(ielem,6) = (iz+1)*(m_nely+1)*(m_nelx+1) + (iy+1)*(m_nelx+1) + (ix+1);
+        out(ielem,0) = (iz+0)*(m_nely+1)*(m_nelx+1) + (iy+0)*(m_nelx+1) + (ix+0);
+        out(ielem,1) = (iz+0)*(m_nely+1)*(m_nelx+1) + (iy+0)*(m_nelx+1) + (ix+1);
+        out(ielem,3) = (iz+0)*(m_nely+1)*(m_nelx+1) + (iy+1)*(m_nelx+1) + (ix+0);
+        out(ielem,2) = (iz+0)*(m_nely+1)*(m_nelx+1) + (iy+1)*(m_nelx+1) + (ix+1);
+        out(ielem,4) = (iz+1)*(m_nely+1)*(m_nelx+1) + (iy+0)*(m_nelx+1) + (ix+0);
+        out(ielem,5) = (iz+1)*(m_nely+1)*(m_nelx+1) + (iy+0)*(m_nelx+1) + (ix+1);
+        out(ielem,7) = (iz+1)*(m_nely+1)*(m_nelx+1) + (iy+1)*(m_nelx+1) + (ix+0);
+        out(ielem,6) = (iz+1)*(m_nely+1)*(m_nelx+1) + (iy+1)*(m_nelx+1) + (ix+1);
         ++ielem;
       }
     }
   }
 
-  return conn;
+  return out;
 }
 
-// ------------------------------ node-numbers along the front plane ------------------------------
+// ------------------------------ node-numbers along the front plane -------------------------------
 
 inline ColS Regular::nodesFront()
 {
-  ColS nodes((m_nelx+1)*(m_nely+1));
+  ColS out((m_nelx+1)*(m_nely+1));
 
   for ( size_t iy = 0 ; iy < m_nely+1 ; ++iy )
     for ( size_t ix = 0 ; ix < m_nelx+1 ; ++ix )
-      nodes(iy*(m_nelx+1)+ix) = iy*(m_nelx+1) + ix;
+      out(iy*(m_nelx+1)+ix) = iy*(m_nelx+1) + ix;
 
-  return nodes;
+  return out;
 }
 
-// ------------------------------- node-numbers along the back plane --------------------------------
+// ------------------------------- node-numbers along the back plane -------------------------------
 
 inline ColS Regular::nodesBack()
 {
-  ColS nodes((m_nelx+1)*(m_nely+1));
+  ColS out((m_nelx+1)*(m_nely+1));
 
   for ( size_t iy = 0 ; iy < m_nely+1 ; ++iy )
     for ( size_t ix = 0 ; ix < m_nelx+1 ; ++ix )
-      nodes(iy*(m_nelx+1)+ix) = iy*(m_nelx+1) + ix + m_nelz*(m_nely+1)*(m_nelx+1);
+      out(iy*(m_nelx+1)+ix) = iy*(m_nelx+1) + ix + m_nelz*(m_nely+1)*(m_nelx+1);
 
-  return nodes;
+  return out;
 }
 
 // ------------------------------- node-numbers along the left plane -------------------------------
 
 inline ColS Regular::nodesLeft()
 {
-  ColS nodes((m_nely+1)*(m_nelz+1));
+  ColS out((m_nely+1)*(m_nelz+1));
 
   for ( size_t iz = 0 ; iz < m_nelz+1 ; ++iz )
     for ( size_t iy = 0 ; iy < m_nely+1 ; ++iy )
-      nodes(iz*(m_nely+1)+iy) = iy*(m_nelx+1) + iz*(m_nelx+1)*(m_nely+1);
+      out(iz*(m_nely+1)+iy) = iy*(m_nelx+1) + iz*(m_nelx+1)*(m_nely+1);
 
-  return nodes;
+  return out;
 }
 
 // ------------------------------ node-numbers along the right plane -------------------------------
 
 inline ColS Regular::nodesRight()
 {
-  ColS nodes((m_nely+1)*(m_nelz+1));
+  ColS out((m_nely+1)*(m_nelz+1));
 
   for ( size_t iz = 0 ; iz < m_nelz+1 ; ++iz )
     for ( size_t iy = 0 ; iy < m_nely+1 ; ++iy )
-      nodes(iz*(m_nely+1)+iy) = iy*(m_nelx+1) + iz*(m_nelx+1)*(m_nely+1) + m_nelx;
+      out(iz*(m_nely+1)+iy) = iy*(m_nelx+1) + iz*(m_nelx+1)*(m_nely+1) + m_nelx;
 
-  return nodes;
+  return out;
 }
 
-// ------------------------------ node-numbers along the bottom plane -------------------------------
+// ------------------------------ node-numbers along the bottom plane ------------------------------
 
 inline ColS Regular::nodesBottom()
 {
-  ColS nodes((m_nelx+1)*(m_nelz+1));
+  ColS out((m_nelx+1)*(m_nelz+1));
 
   for ( size_t iz = 0 ; iz < m_nelz+1 ; ++iz )
     for ( size_t ix = 0 ; ix < m_nelx+1 ; ++ix )
-      nodes(iz*(m_nelx+1)+ix) = ix + iz*(m_nelx+1)*(m_nely+1);
+      out(iz*(m_nelx+1)+ix) = ix + iz*(m_nelx+1)*(m_nely+1);
 
-  return nodes;
+  return out;
 }
 
-// ------------------------------- node-numbers along the top plane -------------------------------
+// ------------------------------- node-numbers along the top plane --------------------------------
 
 inline ColS Regular::nodesTop()
 {
-  ColS nodes((m_nelx+1)*(m_nelz+1));
+  ColS out((m_nelx+1)*(m_nelz+1));
 
   for ( size_t iz = 0 ; iz < m_nelz+1 ; ++iz )
     for ( size_t ix = 0 ; ix < m_nelx+1 ; ++ix )
-      nodes(iz*(m_nelx+1)+ix) = ix + m_nely*(m_nelx+1) + iz*(m_nelx+1)*(m_nely+1);
+      out(iz*(m_nelx+1)+ix) = ix + m_nely*(m_nelx+1) + iz*(m_nelx+1)*(m_nely+1);
 
-  return nodes;
+  return out;
 }
 
-// ------------------------------ node-numbers along the front face -------------------------------
+// ------------------------------- node-numbers along the front face -------------------------------
 
 inline ColS Regular::nodesFrontFace()
 {
-  ColS nodes((m_nelx-1)*(m_nely-1));
+  ColS out((m_nelx-1)*(m_nely-1));
 
   for ( size_t iy = 1 ; iy < m_nely ; ++iy )
     for ( size_t ix = 1 ; ix < m_nelx ; ++ix )
-      nodes((iy-1)*(m_nelx-1)+(ix-1)) = iy*(m_nelx+1) + ix;
+      out((iy-1)*(m_nelx-1)+(ix-1)) = iy*(m_nelx+1) + ix;
 
-  return nodes;
+  return out;
 }
 
-// -------------------------------- node-numbers along the back face --------------------------------
+// ------------------------------- node-numbers along the back face --------------------------------
 
 inline ColS Regular::nodesBackFace()
 {
-  ColS nodes((m_nelx-1)*(m_nely-1));
+  ColS out((m_nelx-1)*(m_nely-1));
 
   for ( size_t iy = 1 ; iy < m_nely ; ++iy ) {
     for ( size_t ix = 1 ; ix < m_nelx ; ++ix ) {
-      nodes((iy-1)*(m_nelx-1)+(ix-1)) = iy*(m_nelx+1) + ix + m_nelz*(m_nely+1)*(m_nelx+1);
+      out((iy-1)*(m_nelx-1)+(ix-1)) = iy*(m_nelx+1) + ix + m_nelz*(m_nely+1)*(m_nelx+1);
     }
   }
 
-  return nodes;
+  return out;
 }
 
 // ------------------------------- node-numbers along the left face --------------------------------
 
 inline ColS Regular::nodesLeftFace()
 {
-  ColS nodes((m_nely-1)*(m_nelz-1));
+  ColS out((m_nely-1)*(m_nelz-1));
 
   for ( size_t iz = 1 ; iz < m_nelz ; ++iz )
     for ( size_t iy = 1 ; iy < m_nely ; ++iy )
-      nodes((iz-1)*(m_nely-1)+(iy-1)) = iy*(m_nelx+1) + iz*(m_nelx+1)*(m_nely+1);
+      out((iz-1)*(m_nely-1)+(iy-1)) = iy*(m_nelx+1) + iz*(m_nelx+1)*(m_nely+1);
 
-  return nodes;
+  return out;
 }
 
 // ------------------------------- node-numbers along the right face -------------------------------
 
 inline ColS Regular::nodesRightFace()
 {
-  ColS nodes((m_nely-1)*(m_nelz-1));
+  ColS out((m_nely-1)*(m_nelz-1));
 
   for ( size_t iz = 1 ; iz < m_nelz ; ++iz )
     for ( size_t iy = 1 ; iy < m_nely ; ++iy )
-      nodes((iz-1)*(m_nely-1)+(iy-1)) = iy*(m_nelx+1) + iz*(m_nelx+1)*(m_nely+1) + m_nelx;
+      out((iz-1)*(m_nely-1)+(iy-1)) = iy*(m_nelx+1) + iz*(m_nelx+1)*(m_nely+1) + m_nelx;
 
-  return nodes;
+  return out;
 }
 
-// ------------------------------- node-numbers along the bottom face -------------------------------
+// ------------------------------ node-numbers along the bottom face -------------------------------
 
 inline ColS Regular::nodesBottomFace()
 {
-  ColS nodes((m_nelx-1)*(m_nelz-1));
+  ColS out((m_nelx-1)*(m_nelz-1));
 
   for ( size_t iz = 1 ; iz < m_nelz ; ++iz )
     for ( size_t ix = 1 ; ix < m_nelx ; ++ix )
-      nodes((iz-1)*(m_nelx-1)+(ix-1)) = ix + iz*(m_nelx+1)*(m_nely+1);
+      out((iz-1)*(m_nelx-1)+(ix-1)) = ix + iz*(m_nelx+1)*(m_nely+1);
 
-  return nodes;
+  return out;
 }
 
-// ------------------------------- node-numbers along the top face --------------------------------
+// -------------------------------- node-numbers along the top face --------------------------------
 
 inline ColS Regular::nodesTopFace()
 {
-  ColS nodes((m_nelx-1)*(m_nelz-1));
+  ColS out((m_nelx-1)*(m_nelz-1));
 
   for ( size_t iz = 1 ; iz < m_nelz ; ++iz )
     for ( size_t ix = 1 ; ix < m_nelx ; ++ix )
-      nodes((iz-1)*(m_nelx-1)+(ix-1)) = ix + m_nely*(m_nelx+1) + iz*(m_nelx+1)*(m_nely+1);
+      out((iz-1)*(m_nelx-1)+(ix-1)) = ix + m_nely*(m_nelx+1) + iz*(m_nelx+1)*(m_nely+1);
 
-  return nodes;
+  return out;
 }
 
 // --------------------------- node-numbers along the front-bottom edge ----------------------------
 
 inline ColS Regular::nodesFrontBottomEdge()
 {
-  ColS nodes(m_nelx+1);
+  ColS out(m_nelx+1);
 
   for ( size_t ix = 0 ; ix < m_nelx+1 ; ++ix )
-    nodes(ix) = ix;
+    out(ix) = ix;
 
-  return nodes;
+  return out;
 }
 
-// ---------------------------- node-numbers along the front-top edge ----------------------------
+// ----------------------------- node-numbers along the front-top edge -----------------------------
 
 inline ColS Regular::nodesFrontTopEdge()
 {
-  ColS nodes(m_nelx+1);
+  ColS out(m_nelx+1);
 
   for ( size_t ix = 0 ; ix < m_nelx+1 ; ++ix )
-    nodes(ix) = m_nely*(m_nelx+1) + ix;
+    out(ix) = m_nely*(m_nelx+1) + ix;
 
-  return nodes;
+  return out;
 }
 
-// ---------------------------- node-numbers along the front-left edge ----------------------------
+// ---------------------------- node-numbers along the front-left edge -----------------------------
 
 inline ColS Regular::nodesFrontLeftEdge()
 {
-  ColS nodes(m_nely+1);
+  ColS out(m_nely+1);
 
   for ( size_t iy = 0 ; iy < m_nely+1 ; ++iy )
-    nodes(iy) = iy*(m_nelx+1);
+    out(iy) = iy*(m_nelx+1);
 
-  return nodes;
+  return out;
 }
 
-// --------------------------- node-numbers along the front-right edge ----------------------------
+// ---------------------------- node-numbers along the front-right edge ----------------------------
 
 inline ColS Regular::nodesFrontRightEdge()
 {
-  ColS nodes(m_nely+1);
+  ColS out(m_nely+1);
 
   for ( size_t iy = 0 ; iy < m_nely+1 ; ++iy )
-    nodes(iy) = iy*(m_nelx+1) + m_nelx;
+    out(iy) = iy*(m_nelx+1) + m_nelx;
 
-  return nodes;
+  return out;
 }
 
-// ----------------------------- node-numbers along the back-bottom edge -----------------------------
+// ---------------------------- node-numbers along the back-bottom edge ----------------------------
 
 inline ColS Regular::nodesBackBottomEdge()
 {
-  ColS nodes(m_nelx+1);
+  ColS out(m_nelx+1);
 
   for ( size_t ix = 0 ; ix < m_nelx+1 ; ++ix )
-    nodes(ix) = ix + m_nelz*(m_nely+1)*(m_nelx+1);
+    out(ix) = ix + m_nelz*(m_nely+1)*(m_nelx+1);
 
-  return nodes;
+  return out;
 }
 
 // ----------------------------- node-numbers along the back-top edge ------------------------------
 
 inline ColS Regular::nodesBackTopEdge()
 {
-  ColS nodes(m_nelx+1);
+  ColS out(m_nelx+1);
 
   for ( size_t ix = 0 ; ix < m_nelx+1 ; ++ix )
-    nodes(ix) = m_nely*(m_nelx+1) + ix + m_nelz*(m_nely+1)*(m_nelx+1);
+    out(ix) = m_nely*(m_nelx+1) + ix + m_nelz*(m_nely+1)*(m_nelx+1);
 
-  return nodes;
+  return out;
 }
 
-// ----------------------------- node-numbers along the back-left edge ------------------------------
+// ----------------------------- node-numbers along the back-left edge -----------------------------
 
 inline ColS Regular::nodesBackLeftEdge()
 {
-  ColS nodes(m_nely+1);
+  ColS out(m_nely+1);
 
   for ( size_t iy = 0 ; iy < m_nely+1 ; ++iy )
-    nodes(iy) = iy*(m_nelx+1) + m_nelz*(m_nelx+1)*(m_nely+1);
+    out(iy) = iy*(m_nelx+1) + m_nelz*(m_nelx+1)*(m_nely+1);
 
-  return nodes;
+  return out;
 }
 
-// ----------------------------- node-numbers along the back-right edge -----------------------------
+// ---------------------------- node-numbers along the back-right edge -----------------------------
 
 inline ColS Regular::nodesBackRightEdge()
 {
-  ColS nodes(m_nely+1);
+  ColS out(m_nely+1);
 
-    for ( size_t iy = 0 ; iy < m_nely+1 ; ++iy )
-      nodes(iy) = iy*(m_nelx+1) + m_nelz*(m_nelx+1)*(m_nely+1) + m_nelx;
+  for ( size_t iy = 0 ; iy < m_nely+1 ; ++iy )
+    out(iy) = iy*(m_nelx+1) + m_nelz*(m_nelx+1)*(m_nely+1) + m_nelx;
 
-  return nodes;
+  return out;
 }
 
-// ---------------------------- node-numbers along the bottom-left edge -----------------------------
+// ---------------------------- node-numbers along the bottom-left edge ----------------------------
 
 inline ColS Regular::nodesBottomLeftEdge()
 {
-  ColS nodes(m_nelz+1);
+  ColS out(m_nelz+1);
 
   for ( size_t iz = 0 ; iz < m_nelz+1 ; ++iz )
-    nodes(iz) = iz*(m_nelx+1)*(m_nely+1);
+    out(iz) = iz*(m_nelx+1)*(m_nely+1);
 
-  return nodes;
+  return out;
 }
 
-// ---------------------------- node-numbers along the bottom-right edge ----------------------------
+// --------------------------- node-numbers along the bottom-right edge ----------------------------
 
 inline ColS Regular::nodesBottomRightEdge()
 {
-  ColS nodes(m_nelz+1);
+  ColS out(m_nelz+1);
 
   for ( size_t iz = 0 ; iz < m_nelz+1 ; ++iz )
-    nodes(iz) = iz*(m_nelx+1)*(m_nely+1) + m_nelx;
+    out(iz) = iz*(m_nelx+1)*(m_nely+1) + m_nelx;
 
-  return nodes;
+  return out;
 }
 
-// -------------------------- node-numbers along the node top-left edge ---------------------------
+// ----------------------------- node-numbers along the top-left edge ------------------------------
 
 inline ColS Regular::nodesTopLeftEdge()
 {
-  ColS nodes(m_nelz+1);
+  ColS out(m_nelz+1);
 
   for ( size_t iz = 0 ; iz < m_nelz+1 ; ++iz )
-    nodes(iz) = m_nely*(m_nelx+1) + iz*(m_nelx+1)*(m_nely+1);
+    out(iz) = m_nely*(m_nelx+1) + iz*(m_nelx+1)*(m_nely+1);
 
-  return nodes;
+  return out;
 }
 
-// ---------------------------- node-numbers along the top-right edge -----------------------------
+// ----------------------------- node-numbers along the top-right edge -----------------------------
 
 inline ColS Regular::nodesTopRightEdge()
 {
-  ColS nodes(m_nelz+1);
+  ColS out(m_nelz+1);
 
   for ( size_t iz = 0 ; iz < m_nelz+1 ; ++iz )
-    nodes(iz) = m_nely*(m_nelx+1) + iz*(m_nelx+1)*(m_nely+1) + m_nelx;
+    out(iz) = m_nely*(m_nelx+1) + iz*(m_nelx+1)*(m_nely+1) + m_nelx;
 
-  return nodes;
+  return out;
 }
 
 // -------------------------------------------- aliases --------------------------------------------
@@ -430,6 +430,165 @@ inline ColS Regular::nodesRightTopEdge()    { return nodesTopRightEdge();    }
 inline ColS Regular::nodesRightFrontEdge()  { return nodesFrontRightEdge();  }
 inline ColS Regular::nodesRightBackEdge()   { return nodesBackRightEdge();   }
 
+// ------------------- node-numbers along the front-bottom edge, without corners -------------------
+
+inline ColS Regular::nodesFrontBottomOpenEdge()
+{
+  ColS out(m_nelx-1);
+
+  for ( size_t ix = 1 ; ix < m_nelx ; ++ix )
+    out(ix-1) = ix;
+
+  return out;
+}
+
+// -------------------- node-numbers along the front-top edge, without corners ---------------------
+
+inline ColS Regular::nodesFrontTopOpenEdge()
+{
+  ColS out(m_nelx-1);
+
+  for ( size_t ix = 1 ; ix < m_nelx ; ++ix )
+    out(ix-1) = m_nely*(m_nelx+1) + ix;
+
+  return out;
+}
+
+// -------------------- node-numbers along the front-left edge, without corners --------------------
+
+inline ColS Regular::nodesFrontLeftOpenEdge()
+{
+  ColS out(m_nely-1);
+
+  for ( size_t iy = 1 ; iy < m_nely ; ++iy )
+    out(iy-1) = iy*(m_nelx+1);
+
+  return out;
+}
+
+// ------------------- node-numbers along the front-right edge, without corners --------------------
+
+inline ColS Regular::nodesFrontRightOpenEdge()
+{
+  ColS out(m_nely-1);
+
+  for ( size_t iy = 1 ; iy < m_nely ; ++iy )
+    out(iy-1) = iy*(m_nelx+1) + m_nelx;
+
+  return out;
+}
+
+// ------------------- node-numbers along the back-bottom edge, without corners --------------------
+
+inline ColS Regular::nodesBackBottomOpenEdge()
+{
+  ColS out(m_nelx-1);
+
+  for ( size_t ix = 1 ; ix < m_nelx ; ++ix )
+    out(ix-1) = ix + m_nelz*(m_nely+1)*(m_nelx+1);
+
+  return out;
+}
+
+// --------------------- node-numbers along the back-top edge, without corners ---------------------
+
+inline ColS Regular::nodesBackTopOpenEdge()
+{
+  ColS out(m_nelx-1);
+
+  for ( size_t ix = 1 ; ix < m_nelx ; ++ix )
+    out(ix-1) = m_nely*(m_nelx+1) + ix + m_nelz*(m_nely+1)*(m_nelx+1);
+
+  return out;
+}
+
+// -------------------- node-numbers along the back-left edge, without corners ---------------------
+
+inline ColS Regular::nodesBackLeftOpenEdge()
+{
+  ColS out(m_nely-1);
+
+  for ( size_t iy = 1 ; iy < m_nely ; ++iy )
+    out(iy-1) = iy*(m_nelx+1) + m_nelz*(m_nelx+1)*(m_nely+1);
+
+  return out;
+}
+
+// -------------------- node-numbers along the back-right edge, without corners --------------------
+
+inline ColS Regular::nodesBackRightOpenEdge()
+{
+  ColS out(m_nely-1);
+
+  for ( size_t iy = 1 ; iy < m_nely ; ++iy )
+    out(iy-1) = iy*(m_nelx+1) + m_nelz*(m_nelx+1)*(m_nely+1) + m_nelx;
+
+  return out;
+}
+
+// ------------------- node-numbers along the bottom-left edge, without corners --------------------
+
+inline ColS Regular::nodesBottomLeftOpenEdge()
+{
+  ColS out(m_nelz-1);
+
+  for ( size_t iz = 1 ; iz < m_nelz ; ++iz )
+    out(iz-1) = iz*(m_nelx+1)*(m_nely+1);
+
+  return out;
+}
+
+// ------------------- node-numbers along the bottom-right edge, without corners -------------------
+
+inline ColS Regular::nodesBottomRightOpenEdge()
+{
+  ColS out(m_nelz-1);
+
+  for ( size_t iz = 1 ; iz < m_nelz ; ++iz )
+    out(iz-1) = iz*(m_nelx+1)*(m_nely+1) + m_nelx;
+
+  return out;
+}
+
+// --------------------- node-numbers along the top-left edge, without corners ---------------------
+
+inline ColS Regular::nodesTopLeftOpenEdge()
+{
+  ColS out(m_nelz-1);
+
+  for ( size_t iz = 1 ; iz < m_nelz ; ++iz )
+    out(iz-1) = m_nely*(m_nelx+1) + iz*(m_nelx+1)*(m_nely+1);
+
+  return out;
+}
+
+// -------------------- node-numbers along the top-right edge, without corners ---------------------
+
+inline ColS Regular::nodesTopRightOpenEdge()
+{
+  ColS out(m_nelz-1);
+
+  for ( size_t iz = 1 ; iz < m_nelz ; ++iz )
+    out(iz-1) = m_nely*(m_nelx+1) + iz*(m_nelx+1)*(m_nely+1) + m_nelx;
+
+  return out;
+}
+
+// -------------------------------------------- aliases --------------------------------------------
+
+inline ColS Regular::nodesBottomFrontOpenEdge() { return nodesFrontBottomOpenEdge(); }
+inline ColS Regular::nodesBottomBackOpenEdge()  { return nodesBackBottomOpenEdge();  }
+inline ColS Regular::nodesTopFrontOpenEdge()    { return nodesFrontTopOpenEdge();    }
+inline ColS Regular::nodesTopBackOpenEdge()     { return nodesBackTopOpenEdge();     }
+inline ColS Regular::nodesLeftBottomOpenEdge()  { return nodesBottomLeftOpenEdge();  }
+inline ColS Regular::nodesLeftFrontOpenEdge()   { return nodesFrontLeftOpenEdge();   }
+inline ColS Regular::nodesLeftBackOpenEdge()    { return nodesBackLeftOpenEdge();    }
+inline ColS Regular::nodesLeftTopOpenEdge()     { return nodesTopLeftOpenEdge();     }
+inline ColS Regular::nodesRightBottomOpenEdge() { return nodesBottomRightOpenEdge(); }
+inline ColS Regular::nodesRightTopOpenEdge()    { return nodesTopRightOpenEdge();    }
+inline ColS Regular::nodesRightFrontOpenEdge()  { return nodesFrontRightOpenEdge();  }
+inline ColS Regular::nodesRightBackOpenEdge()   { return nodesBackRightOpenEdge();   }
+
 // -------------------------- node-number of the front-bottom-left corner --------------------------
 
 inline size_t Regular::nodesFrontBottomLeftCorner()
@@ -437,28 +596,28 @@ inline size_t Regular::nodesFrontBottomLeftCorner()
   return 0;
 }
 
-// -------------------------- node-number of the front-bottom-right corner --------------------------
+// ------------------------- node-number of the front-bottom-right corner --------------------------
 
 inline size_t Regular::nodesFrontBottomRightCorner()
 {
   return m_nelx;
 }
 
-// -------------------------- node-number of the front-top-left corner ---------------------------
+// --------------------------- node-number of the front-top-left corner ----------------------------
 
 inline size_t Regular::nodesFrontTopLeftCorner()
 {
   return m_nely*(m_nelx+1);
 }
 
-// -------------------------- node-number of the front-top-right corner --------------------------
+// --------------------------- node-number of the front-top-right corner ---------------------------
 
 inline size_t Regular::nodesFrontTopRightCorner()
 {
   return m_nely*(m_nelx+1) + m_nelx;
 }
 
-// -------------------------- node-number of the back-bottom-left corner --------------------------
+// -------------------------- node-number of the back-bottom-left corner ---------------------------
 
 inline size_t Regular::nodesBackBottomLeftCorner()
 {
@@ -472,14 +631,14 @@ inline size_t Regular::nodesBackBottomRightCorner()
   return m_nelx + m_nelz*(m_nely+1)*(m_nelx+1);
 }
 
-// -------------------------- node-number of the back-top-left corner ---------------------------
+// ---------------------------- node-number of the back-top-left corner ----------------------------
 
 inline size_t Regular::nodesBackTopLeftCorner()
 {
   return m_nely*(m_nelx+1) + m_nelz*(m_nely+1)*(m_nelx+1);
 }
 
-// -------------------------- node-number of the back-top-right corner --------------------------
+// --------------------------- node-number of the back-top-right corner ----------------------------
 
 inline size_t Regular::nodesBackTopRightCorner()
 {
@@ -542,56 +701,56 @@ inline MatS Regular::nodesPeriodic()
   ColS top = nodesTopFace();
 
   // edges
-  ColS froBot = nodesFrontBottomEdge();
-  ColS froTop = nodesFrontTopEdge();
-  ColS froLft = nodesFrontLeftEdge();
-  ColS froRgt = nodesFrontRightEdge();
-  ColS bckBot = nodesBackBottomEdge();
-  ColS bckTop = nodesBackTopEdge();
-  ColS bckLft = nodesBackLeftEdge();
-  ColS bckRgt = nodesBackRightEdge();
-  ColS botLft = nodesBottomLeftEdge();
-  ColS botRgt = nodesBottomRightEdge();
-  ColS topLft = nodesTopLeftEdge();
-  ColS topRgt = nodesTopRightEdge();
+  ColS froBot = nodesFrontBottomOpenEdge();
+  ColS froTop = nodesFrontTopOpenEdge();
+  ColS froLft = nodesFrontLeftOpenEdge();
+  ColS froRgt = nodesFrontRightOpenEdge();
+  ColS bckBot = nodesBackBottomOpenEdge();
+  ColS bckTop = nodesBackTopOpenEdge();
+  ColS bckLft = nodesBackLeftOpenEdge();
+  ColS bckRgt = nodesBackRightOpenEdge();
+  ColS botLft = nodesBottomLeftOpenEdge();
+  ColS botRgt = nodesBottomRightOpenEdge();
+  ColS topLft = nodesTopLeftOpenEdge();
+  ColS topRgt = nodesTopRightOpenEdge();
 
   // allocate nodal ties
   // - number of tying per category
   size_t tface = fro.size() + lft.size() + bot.size();
-  size_t tedge = 3*(froBot.size()-2) + 3*(froLft.size()-2) + 3*(botLft.size()-2);
+  size_t tedge = 3*froBot.size() + 3*froLft.size() + 3*botLft.size();
   size_t tnode = 7;
   // - allocate
-  MatS nodes(tface+tedge+tnode, 2);
+  MatS out(tface+tedge+tnode, 2);
 
   // counter
   size_t i = 0;
 
   // tie all corners to one corner
-  nodes(i,0) = nodesFrontBottomLeftCorner(); nodes(i,1) = nodesFrontBottomRightCorner(); ++i;
-  nodes(i,0) = nodesFrontBottomLeftCorner(); nodes(i,1) = nodesBackBottomRightCorner();  ++i;
-  nodes(i,0) = nodesFrontBottomLeftCorner(); nodes(i,1) = nodesBackBottomLeftCorner();   ++i;
-  nodes(i,0) = nodesFrontBottomLeftCorner(); nodes(i,1) = nodesFrontTopLeftCorner();     ++i;
-  nodes(i,0) = nodesFrontBottomLeftCorner(); nodes(i,1) = nodesFrontTopRightCorner();    ++i;
-  nodes(i,0) = nodesFrontBottomLeftCorner(); nodes(i,1) = nodesBackTopRightCorner();     ++i;
-  nodes(i,0) = nodesFrontBottomLeftCorner(); nodes(i,1) = nodesBackTopLeftCorner();      ++i;
+  out(i,0) = nodesFrontBottomLeftCorner(); out(i,1) = nodesFrontBottomRightCorner(); ++i;
+  out(i,0) = nodesFrontBottomLeftCorner(); out(i,1) = nodesBackBottomRightCorner();  ++i;
+  out(i,0) = nodesFrontBottomLeftCorner(); out(i,1) = nodesBackBottomLeftCorner();   ++i;
+  out(i,0) = nodesFrontBottomLeftCorner(); out(i,1) = nodesFrontTopLeftCorner();     ++i;
+  out(i,0) = nodesFrontBottomLeftCorner(); out(i,1) = nodesFrontTopRightCorner();    ++i;
+  out(i,0) = nodesFrontBottomLeftCorner(); out(i,1) = nodesBackTopRightCorner();     ++i;
+  out(i,0) = nodesFrontBottomLeftCorner(); out(i,1) = nodesBackTopLeftCorner();      ++i;
 
   // tie all corresponding edges to each other (exclude corners)
-  for ( auto j=1; j<froBot.size()-1; ++j ) { nodes(i,0) = froBot(j); nodes(i,1) = bckBot(j); ++i; }
-  for ( auto j=1; j<froBot.size()-1; ++j ) { nodes(i,0) = froBot(j); nodes(i,1) = bckTop(j); ++i; }
-  for ( auto j=1; j<froBot.size()-1; ++j ) { nodes(i,0) = froBot(j); nodes(i,1) = froTop(j); ++i; }
-  for ( auto j=1; j<botLft.size()-1; ++j ) { nodes(i,0) = botLft(j); nodes(i,1) = botRgt(j); ++i; }
-  for ( auto j=1; j<botLft.size()-1; ++j ) { nodes(i,0) = botLft(j); nodes(i,1) = topRgt(j); ++i; }
-  for ( auto j=1; j<botLft.size()-1; ++j ) { nodes(i,0) = botLft(j); nodes(i,1) = topLft(j); ++i; }
-  for ( auto j=1; j<froLft.size()-1; ++j ) { nodes(i,0) = froLft(j); nodes(i,1) = froRgt(j); ++i; }
-  for ( auto j=1; j<froLft.size()-1; ++j ) { nodes(i,0) = froLft(j); nodes(i,1) = bckRgt(j); ++i; }
-  for ( auto j=1; j<froLft.size()-1; ++j ) { nodes(i,0) = froLft(j); nodes(i,1) = bckLft(j); ++i; }
+  for ( auto j = 0 ; j<froBot.size() ; ++j ){ out(i,0) = froBot(j); out(i,1) = bckBot(j); ++i; }
+  for ( auto j = 0 ; j<froBot.size() ; ++j ){ out(i,0) = froBot(j); out(i,1) = bckTop(j); ++i; }
+  for ( auto j = 0 ; j<froBot.size() ; ++j ){ out(i,0) = froBot(j); out(i,1) = froTop(j); ++i; }
+  for ( auto j = 0 ; j<botLft.size() ; ++j ){ out(i,0) = botLft(j); out(i,1) = botRgt(j); ++i; }
+  for ( auto j = 0 ; j<botLft.size() ; ++j ){ out(i,0) = botLft(j); out(i,1) = topRgt(j); ++i; }
+  for ( auto j = 0 ; j<botLft.size() ; ++j ){ out(i,0) = botLft(j); out(i,1) = topLft(j); ++i; }
+  for ( auto j = 0 ; j<froLft.size() ; ++j ){ out(i,0) = froLft(j); out(i,1) = froRgt(j); ++i; }
+  for ( auto j = 0 ; j<froLft.size() ; ++j ){ out(i,0) = froLft(j); out(i,1) = bckRgt(j); ++i; }
+  for ( auto j = 0 ; j<froLft.size() ; ++j ){ out(i,0) = froLft(j); out(i,1) = bckLft(j); ++i; }
 
   // tie faces to each-other
-  for ( auto j = 0 ; j < fro.size() ; ++j ) { nodes(i,0) = fro(j); nodes(i,1) = bck(j); ++i; }
-  for ( auto j = 0 ; j < lft.size() ; ++j ) { nodes(i,0) = lft(j); nodes(i,1) = rgt(j); ++i; }
-  for ( auto j = 0 ; j < bot.size() ; ++j ) { nodes(i,0) = bot(j); nodes(i,1) = top(j); ++i; }
+  for ( auto j = 0 ; j<fro.size()    ; ++j ){ out(i,0) = fro(j);    out(i,1) = bck(j);    ++i; }
+  for ( auto j = 0 ; j<lft.size()    ; ++j ){ out(i,0) = lft(j);    out(i,1) = rgt(j);    ++i; }
+  for ( auto j = 0 ; j<bot.size()    ; ++j ){ out(i,0) = bot(j);    out(i,1) = top(j);    ++i; }
 
-  return nodes;
+  return out;
 }
 
 // ------------------------------ node-number that lies in the origin ------------------------------
@@ -2241,14 +2400,14 @@ inline size_t FineLayer::nodesFrontBottomLeftCorner()
   return m_startNode(0);
 }
 
-// -------------------------- node-number of the front-bottom-right corner --------------------------
+// ------------------------- node-number of the front-bottom-right corner --------------------------
 
 inline size_t FineLayer::nodesFrontBottomRightCorner()
 {
   return m_startNode(0) + m_nelx(0);
 }
 
-// -------------------------- node-number of the front-top-left corner ---------------------------
+// --------------------------- node-number of the front-top-left corner ----------------------------
 
 inline size_t FineLayer::nodesFrontTopLeftCorner()
 {
@@ -2257,7 +2416,7 @@ inline size_t FineLayer::nodesFrontTopLeftCorner()
   return m_startNode(nely);
 }
 
-// -------------------------- node-number of the front-top-right corner --------------------------
+// --------------------------- node-number of the front-top-right corner ---------------------------
 
 inline size_t FineLayer::nodesFrontTopRightCorner()
 {
@@ -2266,7 +2425,7 @@ inline size_t FineLayer::nodesFrontTopRightCorner()
   return m_startNode(nely) + m_nelx(nely-1);
 }
 
-// -------------------------- node-number of the back-bottom-left corner --------------------------
+// -------------------------- node-number of the back-bottom-left corner ---------------------------
 
 inline size_t FineLayer::nodesBackBottomLeftCorner()
 {
@@ -2280,7 +2439,7 @@ inline size_t FineLayer::nodesBackBottomRightCorner()
   return m_startNode(0) + m_nelx(0) + (m_nelx(0)+1)*(m_nelz(0));
 }
 
-// -------------------------- node-number of the back-top-left corner ---------------------------
+// ---------------------------- node-number of the back-top-left corner ----------------------------
 
 inline size_t FineLayer::nodesBackTopLeftCorner()
 {
@@ -2289,7 +2448,7 @@ inline size_t FineLayer::nodesBackTopLeftCorner()
   return m_startNode(nely) + (m_nelx(nely-1)+1)*(m_nelz(nely-1));
 }
 
-// -------------------------- node-number of the back-top-right corner --------------------------
+// --------------------------- node-number of the back-top-right corner ----------------------------
 
 inline size_t FineLayer::nodesBackTopRightCorner()
 {
@@ -2373,37 +2532,37 @@ inline MatS FineLayer::nodesPeriodic()
   size_t tedge = 3*froBot.size() + 3*froLft.size() + 3*botLft.size();
   size_t tnode = 7;
   // - allocate
-  MatS nodes(tface+tedge+tnode, 2);
+  MatS out(tface+tedge+tnode, 2);
 
   // counter
   size_t i = 0;
 
   // tie all corners to one corner
-  nodes(i,0) = nodesFrontBottomLeftCorner(); nodes(i,1) = nodesFrontBottomRightCorner(); ++i;
-  nodes(i,0) = nodesFrontBottomLeftCorner(); nodes(i,1) = nodesBackBottomRightCorner();  ++i;
-  nodes(i,0) = nodesFrontBottomLeftCorner(); nodes(i,1) = nodesBackBottomLeftCorner();   ++i;
-  nodes(i,0) = nodesFrontBottomLeftCorner(); nodes(i,1) = nodesFrontTopLeftCorner();     ++i;
-  nodes(i,0) = nodesFrontBottomLeftCorner(); nodes(i,1) = nodesFrontTopRightCorner();    ++i;
-  nodes(i,0) = nodesFrontBottomLeftCorner(); nodes(i,1) = nodesBackTopRightCorner();     ++i;
-  nodes(i,0) = nodesFrontBottomLeftCorner(); nodes(i,1) = nodesBackTopLeftCorner();      ++i;
+  out(i,0) = nodesFrontBottomLeftCorner(); out(i,1) = nodesFrontBottomRightCorner(); ++i;
+  out(i,0) = nodesFrontBottomLeftCorner(); out(i,1) = nodesBackBottomRightCorner();  ++i;
+  out(i,0) = nodesFrontBottomLeftCorner(); out(i,1) = nodesBackBottomLeftCorner();   ++i;
+  out(i,0) = nodesFrontBottomLeftCorner(); out(i,1) = nodesFrontTopLeftCorner();     ++i;
+  out(i,0) = nodesFrontBottomLeftCorner(); out(i,1) = nodesFrontTopRightCorner();    ++i;
+  out(i,0) = nodesFrontBottomLeftCorner(); out(i,1) = nodesBackTopRightCorner();     ++i;
+  out(i,0) = nodesFrontBottomLeftCorner(); out(i,1) = nodesBackTopLeftCorner();      ++i;
 
   // tie all corresponding edges to each other (exclude corners)
-  for ( auto j = 0 ; j<froBot.size() ; ++j ){ nodes(i,0) = froBot(j); nodes(i,1) = bckBot(j); ++i; }
-  for ( auto j = 0 ; j<froBot.size() ; ++j ){ nodes(i,0) = froBot(j); nodes(i,1) = bckTop(j); ++i; }
-  for ( auto j = 0 ; j<froBot.size() ; ++j ){ nodes(i,0) = froBot(j); nodes(i,1) = froTop(j); ++i; }
-  for ( auto j = 0 ; j<botLft.size() ; ++j ){ nodes(i,0) = botLft(j); nodes(i,1) = botRgt(j); ++i; }
-  for ( auto j = 0 ; j<botLft.size() ; ++j ){ nodes(i,0) = botLft(j); nodes(i,1) = topRgt(j); ++i; }
-  for ( auto j = 0 ; j<botLft.size() ; ++j ){ nodes(i,0) = botLft(j); nodes(i,1) = topLft(j); ++i; }
-  for ( auto j = 0 ; j<froLft.size() ; ++j ){ nodes(i,0) = froLft(j); nodes(i,1) = froRgt(j); ++i; }
-  for ( auto j = 0 ; j<froLft.size() ; ++j ){ nodes(i,0) = froLft(j); nodes(i,1) = bckRgt(j); ++i; }
-  for ( auto j = 0 ; j<froLft.size() ; ++j ){ nodes(i,0) = froLft(j); nodes(i,1) = bckLft(j); ++i; }
+  for ( auto j = 0 ; j<froBot.size() ; ++j ){ out(i,0) = froBot(j); out(i,1) = bckBot(j); ++i; }
+  for ( auto j = 0 ; j<froBot.size() ; ++j ){ out(i,0) = froBot(j); out(i,1) = bckTop(j); ++i; }
+  for ( auto j = 0 ; j<froBot.size() ; ++j ){ out(i,0) = froBot(j); out(i,1) = froTop(j); ++i; }
+  for ( auto j = 0 ; j<botLft.size() ; ++j ){ out(i,0) = botLft(j); out(i,1) = botRgt(j); ++i; }
+  for ( auto j = 0 ; j<botLft.size() ; ++j ){ out(i,0) = botLft(j); out(i,1) = topRgt(j); ++i; }
+  for ( auto j = 0 ; j<botLft.size() ; ++j ){ out(i,0) = botLft(j); out(i,1) = topLft(j); ++i; }
+  for ( auto j = 0 ; j<froLft.size() ; ++j ){ out(i,0) = froLft(j); out(i,1) = froRgt(j); ++i; }
+  for ( auto j = 0 ; j<froLft.size() ; ++j ){ out(i,0) = froLft(j); out(i,1) = bckRgt(j); ++i; }
+  for ( auto j = 0 ; j<froLft.size() ; ++j ){ out(i,0) = froLft(j); out(i,1) = bckLft(j); ++i; }
 
   // tie faces to each-other
-  for ( auto j = 0 ; j<fro.size()    ; ++j ){ nodes(i,0) = fro(j);    nodes(i,1) = bck(j);    ++i; }
-  for ( auto j = 0 ; j<lft.size()    ; ++j ){ nodes(i,0) = lft(j);    nodes(i,1) = rgt(j);    ++i; }
-  for ( auto j = 0 ; j<bot.size()    ; ++j ){ nodes(i,0) = bot(j);    nodes(i,1) = top(j);    ++i; }
+  for ( auto j = 0 ; j<fro.size()    ; ++j ){ out(i,0) = fro(j);    out(i,1) = bck(j);    ++i; }
+  for ( auto j = 0 ; j<lft.size()    ; ++j ){ out(i,0) = lft(j);    out(i,1) = rgt(j);    ++i; }
+  for ( auto j = 0 ; j<bot.size()    ; ++j ){ out(i,0) = bot(j);    out(i,1) = top(j);    ++i; }
 
-  return nodes;
+  return out;
 }
 
 // ------------------------------ node-number that lies in the origin ------------------------------
