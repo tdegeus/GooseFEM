@@ -198,18 +198,18 @@ public:
   ColS   nodesTopRightEdge();           // node-numbers along the top    - right  edge
 
   // boundary nodes: edges
-  ColS   nodesFrontBottomOpenEdge();        // node-numbers along the front  - bottom edge
-  ColS   nodesFrontTopOpenEdge();           // node-numbers along the front  - top    edge
-  ColS   nodesFrontLeftOpenEdge();          // node-numbers along the front  - left   edge
-  ColS   nodesFrontRightOpenEdge();         // node-numbers along the front  - right  edge
-  ColS   nodesBackBottomOpenEdge();         // node-numbers along the back   - bottom edge
-  ColS   nodesBackTopOpenEdge();            // node-numbers along the back   - top    edge
-  ColS   nodesBackLeftOpenEdge();           // node-numbers along the back   - left   edge
-  ColS   nodesBackRightOpenEdge();          // node-numbers along the back   - right  edge
-  ColS   nodesBottomLeftOpenEdge();         // node-numbers along the bottom - left   edge
-  ColS   nodesBottomRightOpenEdge();        // node-numbers along the bottom - right  edge
-  ColS   nodesTopLeftOpenEdge();            // node-numbers along the top    - left   edge
-  ColS   nodesTopRightOpenEdge();           // node-numbers along the top    - right  edge
+  ColS   nodesFrontBottomOpenEdge();    // node-numbers along the front  - bottom edge
+  ColS   nodesFrontTopOpenEdge();       // node-numbers along the front  - top    edge
+  ColS   nodesFrontLeftOpenEdge();      // node-numbers along the front  - left   edge
+  ColS   nodesFrontRightOpenEdge();     // node-numbers along the front  - right  edge
+  ColS   nodesBackBottomOpenEdge();     // node-numbers along the back   - bottom edge
+  ColS   nodesBackTopOpenEdge();        // node-numbers along the back   - top    edge
+  ColS   nodesBackLeftOpenEdge();       // node-numbers along the back   - left   edge
+  ColS   nodesBackRightOpenEdge();      // node-numbers along the back   - right  edge
+  ColS   nodesBottomLeftOpenEdge();     // node-numbers along the bottom - left   edge
+  ColS   nodesBottomRightOpenEdge();    // node-numbers along the bottom - right  edge
+  ColS   nodesTopLeftOpenEdge();        // node-numbers along the top    - left   edge
+  ColS   nodesTopRightOpenEdge();       // node-numbers along the top    - right  edge
   // // boundary nodes: edges (aliases)
   // ColS   nodesBottomFrontEdge();        // alias, see above: nodesFrontBottomEdge
   // ColS   nodesBottomBackEdge();         // alias, see above: nodesBackBottomEdge
