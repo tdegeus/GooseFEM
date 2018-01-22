@@ -418,17 +418,17 @@ inline ColS Regular::nodesTopRightEdge()
 // -------------------------------------------- aliases --------------------------------------------
 
 inline ColS Regular::nodesBottomFrontEdge() { return nodesFrontBottomEdge(); }
-inline ColS Regular::nodesBottomBackEdge()    { return nodesBackBottomEdge();    }
-inline ColS Regular::nodesTopFrontEdge()  { return nodesFrontTopEdge();  }
+inline ColS Regular::nodesBottomBackEdge()  { return nodesBackBottomEdge();  }
+inline ColS Regular::nodesTopFrontEdge()    { return nodesFrontTopEdge();    }
 inline ColS Regular::nodesTopBackEdge()     { return nodesBackTopEdge();     }
-inline ColS Regular::nodesLeftBottomEdge()   { return nodesBottomLeftEdge();   }
-inline ColS Regular::nodesLeftFrontEdge()  { return nodesFrontLeftEdge();  }
-inline ColS Regular::nodesLeftBackEdge()     { return nodesBackLeftEdge();     }
-inline ColS Regular::nodesLeftTopEdge()    { return nodesTopLeftEdge();    }
-inline ColS Regular::nodesRightBottomEdge()  { return nodesBottomRightEdge();  }
-inline ColS Regular::nodesRightTopEdge()   { return nodesTopRightEdge();   }
-inline ColS Regular::nodesRightFrontEdge() { return nodesFrontRightEdge(); }
-inline ColS Regular::nodesRightBackEdge()    { return nodesBackRightEdge();    }
+inline ColS Regular::nodesLeftBottomEdge()  { return nodesBottomLeftEdge();  }
+inline ColS Regular::nodesLeftFrontEdge()   { return nodesFrontLeftEdge();   }
+inline ColS Regular::nodesLeftBackEdge()    { return nodesBackLeftEdge();    }
+inline ColS Regular::nodesLeftTopEdge()     { return nodesTopLeftEdge();     }
+inline ColS Regular::nodesRightBottomEdge() { return nodesBottomRightEdge(); }
+inline ColS Regular::nodesRightTopEdge()    { return nodesTopRightEdge();    }
+inline ColS Regular::nodesRightFrontEdge()  { return nodesFrontRightEdge();  }
+inline ColS Regular::nodesRightBackEdge()   { return nodesBackRightEdge();   }
 
 // -------------------------- node-number of the front-bottom-left corner --------------------------
 
@@ -488,46 +488,46 @@ inline size_t Regular::nodesBackTopRightCorner()
 
 // -------------------------------------------- aliases --------------------------------------------
 
-inline size_t Regular::nodesFrontLeftBottomCorner()  { return nodesFrontBottomLeftCorner();  }
-inline size_t Regular::nodesBottomFrontLeftCorner()  { return nodesFrontBottomLeftCorner();  }
-inline size_t Regular::nodesBottomLeftFrontCorner()  { return nodesFrontBottomLeftCorner();  }
-inline size_t Regular::nodesLeftFrontBottomCorner()  { return nodesFrontBottomLeftCorner();  }
-inline size_t Regular::nodesLeftBottomFrontCorner()  { return nodesFrontBottomLeftCorner();  }
-inline size_t Regular::nodesFrontRightBottomCorner() { return nodesFrontBottomRightCorner(); }
-inline size_t Regular::nodesBottomFrontRightCorner() { return nodesFrontBottomRightCorner(); }
-inline size_t Regular::nodesBottomRightFrontCorner() { return nodesFrontBottomRightCorner(); }
-inline size_t Regular::nodesRightFrontBottomCorner() { return nodesFrontBottomRightCorner(); }
-inline size_t Regular::nodesRightBottomFrontCorner() { return nodesFrontBottomRightCorner(); }
-inline size_t Regular::nodesFrontLeftTopCorner()   { return nodesFrontTopLeftCorner();   }
-inline size_t Regular::nodesTopFrontLeftCorner()   { return nodesFrontTopLeftCorner();   }
-inline size_t Regular::nodesTopLeftFrontCorner()   { return nodesFrontTopLeftCorner();   }
-inline size_t Regular::nodesLeftFrontTopCorner()   { return nodesFrontTopLeftCorner();   }
-inline size_t Regular::nodesLeftTopFrontCorner()   { return nodesFrontTopLeftCorner();   }
-inline size_t Regular::nodesFrontRightTopCorner()  { return nodesFrontTopRightCorner();  }
-inline size_t Regular::nodesTopFrontRightCorner()  { return nodesFrontTopRightCorner();  }
-inline size_t Regular::nodesTopRightFrontCorner()  { return nodesFrontTopRightCorner();  }
-inline size_t Regular::nodesRightFrontTopCorner()  { return nodesFrontTopRightCorner();  }
-inline size_t Regular::nodesRightTopFrontCorner()  { return nodesFrontTopRightCorner();  }
-inline size_t Regular::nodesBackLeftBottomCorner()     { return nodesBackBottomLeftCorner();     }
-inline size_t Regular::nodesBottomBackLeftCorner()     { return nodesBackBottomLeftCorner();     }
-inline size_t Regular::nodesBottomLeftBackCorner()     { return nodesBackBottomLeftCorner();     }
-inline size_t Regular::nodesLeftBackBottomCorner()     { return nodesBackBottomLeftCorner();     }
-inline size_t Regular::nodesLeftBottomBackCorner()     { return nodesBackBottomLeftCorner();     }
-inline size_t Regular::nodesBackRightBottomCorner()    { return nodesBackBottomRightCorner();    }
-inline size_t Regular::nodesBottomBackRightCorner()    { return nodesBackBottomRightCorner();    }
-inline size_t Regular::nodesBottomRightBackCorner()    { return nodesBackBottomRightCorner();    }
-inline size_t Regular::nodesRightBackBottomCorner()    { return nodesBackBottomRightCorner();    }
-inline size_t Regular::nodesRightBottomBackCorner()    { return nodesBackBottomRightCorner();    }
-inline size_t Regular::nodesBackLeftTopCorner()      { return nodesBackTopLeftCorner();      }
-inline size_t Regular::nodesTopBackLeftCorner()      { return nodesBackTopLeftCorner();      }
-inline size_t Regular::nodesTopLeftBackCorner()      { return nodesBackTopLeftCorner();      }
-inline size_t Regular::nodesLeftBackTopCorner()      { return nodesBackTopLeftCorner();      }
-inline size_t Regular::nodesLeftTopBackCorner()      { return nodesBackTopLeftCorner();      }
-inline size_t Regular::nodesBackRightTopCorner()     { return nodesBackTopRightCorner();     }
-inline size_t Regular::nodesTopBackRightCorner()     { return nodesBackTopRightCorner();     }
-inline size_t Regular::nodesTopRightBackCorner()     { return nodesBackTopRightCorner();     }
-inline size_t Regular::nodesRightBackTopCorner()     { return nodesBackTopRightCorner();     }
-inline size_t Regular::nodesRightTopBackCorner()     { return nodesBackTopRightCorner();     }
+inline size_t Regular::nodesFrontLeftBottomCorner()   { return nodesFrontBottomLeftCorner();  }
+inline size_t Regular::nodesBottomFrontLeftCorner()   { return nodesFrontBottomLeftCorner();  }
+inline size_t Regular::nodesBottomLeftFrontCorner()   { return nodesFrontBottomLeftCorner();  }
+inline size_t Regular::nodesLeftFrontBottomCorner()   { return nodesFrontBottomLeftCorner();  }
+inline size_t Regular::nodesLeftBottomFrontCorner()   { return nodesFrontBottomLeftCorner();  }
+inline size_t Regular::nodesFrontRightBottomCorner()  { return nodesFrontBottomRightCorner(); }
+inline size_t Regular::nodesBottomFrontRightCorner()  { return nodesFrontBottomRightCorner(); }
+inline size_t Regular::nodesBottomRightFrontCorner()  { return nodesFrontBottomRightCorner(); }
+inline size_t Regular::nodesRightFrontBottomCorner()  { return nodesFrontBottomRightCorner(); }
+inline size_t Regular::nodesRightBottomFrontCorner()  { return nodesFrontBottomRightCorner(); }
+inline size_t Regular::nodesFrontLeftTopCorner()      { return nodesFrontTopLeftCorner();     }
+inline size_t Regular::nodesTopFrontLeftCorner()      { return nodesFrontTopLeftCorner();     }
+inline size_t Regular::nodesTopLeftFrontCorner()      { return nodesFrontTopLeftCorner();     }
+inline size_t Regular::nodesLeftFrontTopCorner()      { return nodesFrontTopLeftCorner();     }
+inline size_t Regular::nodesLeftTopFrontCorner()      { return nodesFrontTopLeftCorner();     }
+inline size_t Regular::nodesFrontRightTopCorner()     { return nodesFrontTopRightCorner();    }
+inline size_t Regular::nodesTopFrontRightCorner()     { return nodesFrontTopRightCorner();    }
+inline size_t Regular::nodesTopRightFrontCorner()     { return nodesFrontTopRightCorner();    }
+inline size_t Regular::nodesRightFrontTopCorner()     { return nodesFrontTopRightCorner();    }
+inline size_t Regular::nodesRightTopFrontCorner()     { return nodesFrontTopRightCorner();    }
+inline size_t Regular::nodesBackLeftBottomCorner()    { return nodesBackBottomLeftCorner();   }
+inline size_t Regular::nodesBottomBackLeftCorner()    { return nodesBackBottomLeftCorner();   }
+inline size_t Regular::nodesBottomLeftBackCorner()    { return nodesBackBottomLeftCorner();   }
+inline size_t Regular::nodesLeftBackBottomCorner()    { return nodesBackBottomLeftCorner();   }
+inline size_t Regular::nodesLeftBottomBackCorner()    { return nodesBackBottomLeftCorner();   }
+inline size_t Regular::nodesBackRightBottomCorner()   { return nodesBackBottomRightCorner();  }
+inline size_t Regular::nodesBottomBackRightCorner()   { return nodesBackBottomRightCorner();  }
+inline size_t Regular::nodesBottomRightBackCorner()   { return nodesBackBottomRightCorner();  }
+inline size_t Regular::nodesRightBackBottomCorner()   { return nodesBackBottomRightCorner();  }
+inline size_t Regular::nodesRightBottomBackCorner()   { return nodesBackBottomRightCorner();  }
+inline size_t Regular::nodesBackLeftTopCorner()       { return nodesBackTopLeftCorner();      }
+inline size_t Regular::nodesTopBackLeftCorner()       { return nodesBackTopLeftCorner();      }
+inline size_t Regular::nodesTopLeftBackCorner()       { return nodesBackTopLeftCorner();      }
+inline size_t Regular::nodesLeftBackTopCorner()       { return nodesBackTopLeftCorner();      }
+inline size_t Regular::nodesLeftTopBackCorner()       { return nodesBackTopLeftCorner();      }
+inline size_t Regular::nodesBackRightTopCorner()      { return nodesBackTopRightCorner();     }
+inline size_t Regular::nodesTopBackRightCorner()      { return nodesBackTopRightCorner();     }
+inline size_t Regular::nodesTopRightBackCorner()      { return nodesBackTopRightCorner();     }
+inline size_t Regular::nodesRightBackTopCorner()      { return nodesBackTopRightCorner();     }
+inline size_t Regular::nodesRightTopBackCorner()      { return nodesBackTopRightCorner();     }
 
 // ------------------------------ node-numbers of periodic node-pairs ------------------------------
 
@@ -627,8 +627,6 @@ inline MatS Regular::dofsPeriodic()
   // renumber "out" to be sequential
   return GooseFEM::Mesh::renumber(out);
 }
-
-
 
 // ==================================== CLASS - FINELAYER MESH =====================================
 
@@ -2034,6 +2032,21 @@ inline ColS FineLayer::nodesTopRightEdge()
   return out;
 }
 
+// -------------------------------------------- aliases --------------------------------------------
+
+inline ColS FineLayer::nodesBottomFrontEdge() { return nodesFrontBottomEdge(); }
+inline ColS FineLayer::nodesBottomBackEdge()  { return nodesBackBottomEdge();  }
+inline ColS FineLayer::nodesTopFrontEdge()    { return nodesFrontTopEdge();    }
+inline ColS FineLayer::nodesTopBackEdge()     { return nodesBackTopEdge();     }
+inline ColS FineLayer::nodesLeftBottomEdge()  { return nodesBottomLeftEdge();  }
+inline ColS FineLayer::nodesLeftFrontEdge()   { return nodesFrontLeftEdge();   }
+inline ColS FineLayer::nodesLeftBackEdge()    { return nodesBackLeftEdge();    }
+inline ColS FineLayer::nodesLeftTopEdge()     { return nodesTopLeftEdge();     }
+inline ColS FineLayer::nodesRightBottomEdge() { return nodesBottomRightEdge(); }
+inline ColS FineLayer::nodesRightTopEdge()    { return nodesTopRightEdge();    }
+inline ColS FineLayer::nodesRightFrontEdge()  { return nodesFrontRightEdge();  }
+inline ColS FineLayer::nodesRightBackEdge()   { return nodesBackRightEdge();   }
+
 // ------------------- node-numbers along the front-bottom edge, without corners -------------------
 
 inline ColS FineLayer::nodesFrontBottomOpenEdge()
@@ -2206,6 +2219,21 @@ inline ColS FineLayer::nodesTopRightOpenEdge()
   return out;
 }
 
+// -------------------------------------------- aliases --------------------------------------------
+
+inline ColS FineLayer::nodesBottomFrontOpenEdge() { return nodesFrontBottomOpenEdge(); }
+inline ColS FineLayer::nodesBottomBackOpenEdge()  { return nodesBackBottomOpenEdge();  }
+inline ColS FineLayer::nodesTopFrontOpenEdge()    { return nodesFrontTopOpenEdge();    }
+inline ColS FineLayer::nodesTopBackOpenEdge()     { return nodesBackTopOpenEdge();     }
+inline ColS FineLayer::nodesLeftBottomOpenEdge()  { return nodesBottomLeftOpenEdge();  }
+inline ColS FineLayer::nodesLeftFrontOpenEdge()   { return nodesFrontLeftOpenEdge();   }
+inline ColS FineLayer::nodesLeftBackOpenEdge()    { return nodesBackLeftOpenEdge();    }
+inline ColS FineLayer::nodesLeftTopOpenEdge()     { return nodesTopLeftOpenEdge();     }
+inline ColS FineLayer::nodesRightBottomOpenEdge() { return nodesBottomRightOpenEdge(); }
+inline ColS FineLayer::nodesRightTopOpenEdge()    { return nodesTopRightOpenEdge();    }
+inline ColS FineLayer::nodesRightFrontOpenEdge()  { return nodesFrontRightOpenEdge();  }
+inline ColS FineLayer::nodesRightBackOpenEdge()   { return nodesBackRightOpenEdge();   }
+
 // -------------------------- node-number of the front-bottom-left corner --------------------------
 
 inline size_t FineLayer::nodesFrontBottomLeftCorner()
@@ -2268,6 +2296,148 @@ inline size_t FineLayer::nodesBackTopRightCorner()
   size_t nely = static_cast<size_t>(m_nhy.size());
 
   return m_startNode(nely) + m_nelx(nely-1) + (m_nelx(nely-1)+1)*(m_nelz(nely-1));
+}
+
+// -------------------------------------------- aliases --------------------------------------------
+
+inline size_t FineLayer::nodesFrontLeftBottomCorner()   { return nodesFrontBottomLeftCorner();  }
+inline size_t FineLayer::nodesBottomFrontLeftCorner()   { return nodesFrontBottomLeftCorner();  }
+inline size_t FineLayer::nodesBottomLeftFrontCorner()   { return nodesFrontBottomLeftCorner();  }
+inline size_t FineLayer::nodesLeftFrontBottomCorner()   { return nodesFrontBottomLeftCorner();  }
+inline size_t FineLayer::nodesLeftBottomFrontCorner()   { return nodesFrontBottomLeftCorner();  }
+inline size_t FineLayer::nodesFrontRightBottomCorner()  { return nodesFrontBottomRightCorner(); }
+inline size_t FineLayer::nodesBottomFrontRightCorner()  { return nodesFrontBottomRightCorner(); }
+inline size_t FineLayer::nodesBottomRightFrontCorner()  { return nodesFrontBottomRightCorner(); }
+inline size_t FineLayer::nodesRightFrontBottomCorner()  { return nodesFrontBottomRightCorner(); }
+inline size_t FineLayer::nodesRightBottomFrontCorner()  { return nodesFrontBottomRightCorner(); }
+inline size_t FineLayer::nodesFrontLeftTopCorner()      { return nodesFrontTopLeftCorner();     }
+inline size_t FineLayer::nodesTopFrontLeftCorner()      { return nodesFrontTopLeftCorner();     }
+inline size_t FineLayer::nodesTopLeftFrontCorner()      { return nodesFrontTopLeftCorner();     }
+inline size_t FineLayer::nodesLeftFrontTopCorner()      { return nodesFrontTopLeftCorner();     }
+inline size_t FineLayer::nodesLeftTopFrontCorner()      { return nodesFrontTopLeftCorner();     }
+inline size_t FineLayer::nodesFrontRightTopCorner()     { return nodesFrontTopRightCorner();    }
+inline size_t FineLayer::nodesTopFrontRightCorner()     { return nodesFrontTopRightCorner();    }
+inline size_t FineLayer::nodesTopRightFrontCorner()     { return nodesFrontTopRightCorner();    }
+inline size_t FineLayer::nodesRightFrontTopCorner()     { return nodesFrontTopRightCorner();    }
+inline size_t FineLayer::nodesRightTopFrontCorner()     { return nodesFrontTopRightCorner();    }
+inline size_t FineLayer::nodesBackLeftBottomCorner()    { return nodesBackBottomLeftCorner();   }
+inline size_t FineLayer::nodesBottomBackLeftCorner()    { return nodesBackBottomLeftCorner();   }
+inline size_t FineLayer::nodesBottomLeftBackCorner()    { return nodesBackBottomLeftCorner();   }
+inline size_t FineLayer::nodesLeftBackBottomCorner()    { return nodesBackBottomLeftCorner();   }
+inline size_t FineLayer::nodesLeftBottomBackCorner()    { return nodesBackBottomLeftCorner();   }
+inline size_t FineLayer::nodesBackRightBottomCorner()   { return nodesBackBottomRightCorner();  }
+inline size_t FineLayer::nodesBottomBackRightCorner()   { return nodesBackBottomRightCorner();  }
+inline size_t FineLayer::nodesBottomRightBackCorner()   { return nodesBackBottomRightCorner();  }
+inline size_t FineLayer::nodesRightBackBottomCorner()   { return nodesBackBottomRightCorner();  }
+inline size_t FineLayer::nodesRightBottomBackCorner()   { return nodesBackBottomRightCorner();  }
+inline size_t FineLayer::nodesBackLeftTopCorner()       { return nodesBackTopLeftCorner();      }
+inline size_t FineLayer::nodesTopBackLeftCorner()       { return nodesBackTopLeftCorner();      }
+inline size_t FineLayer::nodesTopLeftBackCorner()       { return nodesBackTopLeftCorner();      }
+inline size_t FineLayer::nodesLeftBackTopCorner()       { return nodesBackTopLeftCorner();      }
+inline size_t FineLayer::nodesLeftTopBackCorner()       { return nodesBackTopLeftCorner();      }
+inline size_t FineLayer::nodesBackRightTopCorner()      { return nodesBackTopRightCorner();     }
+inline size_t FineLayer::nodesTopBackRightCorner()      { return nodesBackTopRightCorner();     }
+inline size_t FineLayer::nodesTopRightBackCorner()      { return nodesBackTopRightCorner();     }
+inline size_t FineLayer::nodesRightBackTopCorner()      { return nodesBackTopRightCorner();     }
+inline size_t FineLayer::nodesRightTopBackCorner()      { return nodesBackTopRightCorner();     }
+
+// ------------------------------ node-numbers of periodic node-pairs ------------------------------
+
+inline MatS FineLayer::nodesPeriodic()
+{
+  // faces
+  ColS fro = nodesFrontFace();
+  ColS bck = nodesBackFace();
+  ColS lft = nodesLeftFace();
+  ColS rgt = nodesRightFace();
+  ColS bot = nodesBottomFace();
+  ColS top = nodesTopFace();
+
+  // edges
+  ColS froBot = nodesFrontBottomOpenEdge();
+  ColS froTop = nodesFrontTopOpenEdge();
+  ColS froLft = nodesFrontLeftOpenEdge();
+  ColS froRgt = nodesFrontRightOpenEdge();
+  ColS bckBot = nodesBackBottomOpenEdge();
+  ColS bckTop = nodesBackTopOpenEdge();
+  ColS bckLft = nodesBackLeftOpenEdge();
+  ColS bckRgt = nodesBackRightOpenEdge();
+  ColS botLft = nodesBottomLeftOpenEdge();
+  ColS botRgt = nodesBottomRightOpenEdge();
+  ColS topLft = nodesTopLeftOpenEdge();
+  ColS topRgt = nodesTopRightOpenEdge();
+
+  // allocate nodal ties
+  // - number of tying per category
+  size_t tface = fro.size() + lft.size() + bot.size();
+  size_t tedge = 3*froBot.size() + 3*froLft.size() + 3*botLft.size();
+  size_t tnode = 7;
+  // - allocate
+  MatS nodes(tface+tedge+tnode, 2);
+
+  // counter
+  size_t i = 0;
+
+  // tie all corners to one corner
+  nodes(i,0) = nodesFrontBottomLeftCorner(); nodes(i,1) = nodesFrontBottomRightCorner(); ++i;
+  nodes(i,0) = nodesFrontBottomLeftCorner(); nodes(i,1) = nodesBackBottomRightCorner();  ++i;
+  nodes(i,0) = nodesFrontBottomLeftCorner(); nodes(i,1) = nodesBackBottomLeftCorner();   ++i;
+  nodes(i,0) = nodesFrontBottomLeftCorner(); nodes(i,1) = nodesFrontTopLeftCorner();     ++i;
+  nodes(i,0) = nodesFrontBottomLeftCorner(); nodes(i,1) = nodesFrontTopRightCorner();    ++i;
+  nodes(i,0) = nodesFrontBottomLeftCorner(); nodes(i,1) = nodesBackTopRightCorner();     ++i;
+  nodes(i,0) = nodesFrontBottomLeftCorner(); nodes(i,1) = nodesBackTopLeftCorner();      ++i;
+
+  // tie all corresponding edges to each other (exclude corners)
+  for ( auto j = 0 ; j<froBot.size() ; ++j ){ nodes(i,0) = froBot(j); nodes(i,1) = bckBot(j); ++i; }
+  for ( auto j = 0 ; j<froBot.size() ; ++j ){ nodes(i,0) = froBot(j); nodes(i,1) = bckTop(j); ++i; }
+  for ( auto j = 0 ; j<froBot.size() ; ++j ){ nodes(i,0) = froBot(j); nodes(i,1) = froTop(j); ++i; }
+  for ( auto j = 0 ; j<botLft.size() ; ++j ){ nodes(i,0) = botLft(j); nodes(i,1) = botRgt(j); ++i; }
+  for ( auto j = 0 ; j<botLft.size() ; ++j ){ nodes(i,0) = botLft(j); nodes(i,1) = topRgt(j); ++i; }
+  for ( auto j = 0 ; j<botLft.size() ; ++j ){ nodes(i,0) = botLft(j); nodes(i,1) = topLft(j); ++i; }
+  for ( auto j = 0 ; j<froLft.size() ; ++j ){ nodes(i,0) = froLft(j); nodes(i,1) = froRgt(j); ++i; }
+  for ( auto j = 0 ; j<froLft.size() ; ++j ){ nodes(i,0) = froLft(j); nodes(i,1) = bckRgt(j); ++i; }
+  for ( auto j = 0 ; j<froLft.size() ; ++j ){ nodes(i,0) = froLft(j); nodes(i,1) = bckLft(j); ++i; }
+
+  // tie faces to each-other
+  for ( auto j = 0 ; j<fro.size()    ; ++j ){ nodes(i,0) = fro(j);    nodes(i,1) = bck(j);    ++i; }
+  for ( auto j = 0 ; j<lft.size()    ; ++j ){ nodes(i,0) = lft(j);    nodes(i,1) = rgt(j);    ++i; }
+  for ( auto j = 0 ; j<bot.size()    ; ++j ){ nodes(i,0) = bot(j);    nodes(i,1) = top(j);    ++i; }
+
+  return nodes;
+}
+
+// ------------------------------ node-number that lies in the origin ------------------------------
+
+inline size_t FineLayer::nodesOrigin()
+{
+  return nodesFrontBottomLeftCorner();
+}
+
+// ------------------------- DOF numbers per node (sequentially numbered) --------------------------
+
+inline MatS FineLayer::dofs()
+{
+  return GooseFEM::Mesh::dofs(m_nnode,m_ndim);
+}
+
+// ------------------------ DOP-numbers with periodic dependencies removed -------------------------
+
+inline MatS FineLayer::dofsPeriodic()
+{
+  // DOF-numbers for each component of each node (sequential)
+  MatS out = GooseFEM::Mesh::dofs(m_nnode,m_ndim);
+
+  // periodic node-pairs
+  MatS   nodePer = nodesPeriodic();
+  size_t nper    = static_cast<size_t>(nodePer.rows());
+
+  // eliminate 'dependent' DOFs; renumber "out" to be sequential for the remaining DOFs
+  for ( size_t i = 0 ; i < nper ; ++i )
+    for ( size_t j = 0 ; j < m_ndim ; ++j )
+      out(nodePer(i,1),j) = out(nodePer(i,0),j);
+
+  // renumber "out" to be sequential
+  return GooseFEM::Mesh::renumber(out);
 }
 
 // =================================================================================================

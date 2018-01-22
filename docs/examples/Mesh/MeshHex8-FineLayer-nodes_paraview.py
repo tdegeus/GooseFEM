@@ -41,13 +41,17 @@ nodes[mesh.nodesBackBottomRightCorner() ] = 5.0
 nodes[mesh.nodesBackTopLeftCorner()     ] = 5.0
 nodes[mesh.nodesBackTopRightCorner()    ] = 5.0
 
+# DOFs after eliminating periodicity
+dofsPeriodic = mesh.dofsPeriodic()[:,0]
+
 # open data file
 f = h5py.File('MeshHex8-FineLayer-nodes_paraview.hdf5','w')
 
 # write particle positions, and a dummy connectivity
-f.create_dataset('/coor' ,data=mesh.coor()            )
-f.create_dataset('/nodes',data=nodes                  )
-f.create_dataset('/conn' ,data=np.arange(mesh.nnode()))
+f.create_dataset('/coor'        ,data=mesh.coor()            )
+f.create_dataset('/nodes'       ,data=nodes                  )
+f.create_dataset('/dofsPeriodic',data=dofsPeriodic           )
+f.create_dataset('/conn'        ,data=np.arange(mesh.nnode()))
 
 # ======================================== write XDMF-file =========================================
 
@@ -69,6 +73,11 @@ xmf = '''<?xml version="1.0" ?>
       <Attribute Name="Node type" AttributeType="Scalar" Center="Node">
          <DataItem Dimensions="{nnode:d}" NumberType="Float" Precision="8" Format="HDF">
           MeshHex8-FineLayer-nodes_paraview.hdf5:/nodes
+         </DataItem>
+      </Attribute>
+      <Attribute Name="dofsPeriodic" AttributeType="Scalar" Center="Node">
+         <DataItem Dimensions="{nnode:d}" NumberType="Int" Format="HDF">
+          MeshHex8-FineLayer-nodes_paraview.hdf5:/dofsPeriodic
          </DataItem>
       </Attribute>
     </Grid>
