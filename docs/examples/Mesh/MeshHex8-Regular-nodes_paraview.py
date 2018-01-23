@@ -61,7 +61,7 @@ dofsPeriodic = mesh.dofsPeriodic()[:,0]
 # open data file
 f = h5py.File('MeshHex8-Regular-nodes_paraview.hdf5','w')
 
-# write particle positions, and a dummy connectivity
+# write nodal positions, and a dummy connectivity
 f.create_dataset('/coor'                       ,data=mesh.coor()                )
 f.create_dataset('/conn'                       ,data=np.arange(mesh.nnode())    )
 f.create_dataset('/nodesFront'                 ,data=nodesFront                 )
@@ -112,6 +112,7 @@ f.create_dataset('/dofsPeriodic'               ,data=dofsPeriodic               
 
 # ======================================== write XDMF-file =========================================
 
+# basic file-format
 xmf = '''<?xml version="1.0" ?>
 <!DOCTYPE Xdmf SYSTEM "Xdmf.dtd" []>
 <Xdmf Version="2.0">
@@ -357,6 +358,7 @@ xmf = '''<?xml version="1.0" ?>
 </Xdmf>
 '''
 
+# write to file, fill mesh dimensions
 open('MeshHex8-Regular-nodes_paraview.xmf','w').write(xmf.format(
   nnode = mesh.nnode(),
 ))

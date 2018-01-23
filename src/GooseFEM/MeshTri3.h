@@ -22,45 +22,50 @@ namespace Tri3 {
 class Regular
 {
 private:
-  size_t m_nx;              // number of 'pixels' horizontal direction (length == "m_nx * m_h")
-  size_t m_ny;              // number of 'pixels' vertical direction   (length == "m_ny * m_h")
-  double m_h;               // size of the element edge (equal in both directions)
-  size_t m_nelem;           // number of elements
-  size_t m_nnode;           // number of nodes
-  size_t m_nne=3;           // number of nodes-per-element
-  size_t m_ndim=2;          // number of dimensions
+  double m_h;      // elementary element edge-size (in both directions)
+  size_t m_nelx;   // number of elements in x-direction (length == "m_nelx * m_h")
+  size_t m_nely;   // number of elements in y-direction (length == "m_nely * m_h")
+  size_t m_nelem;  // number of elements
+  size_t m_nnode;  // number of nodes
+  size_t m_nne=3;  // number of nodes-per-element
+  size_t m_ndim=2; // number of dimensions
 
 public:
-  // mesh with "nx" pixels in horizontal direction, "ny" in vertical direction and "h" the edge size
-  Regular(size_t nx, size_t ny, double h=1.);
+  // mesh with "2*nelx*nely" 'elements' of edge size "h"
+  Regular(size_t nelx, size_t nely, double h=1.);
   // sizes
-  size_t nelem();           // number of elements
-  size_t nnode();           // number of nodes
-  size_t nne();             // number of nodes-per-element
-  size_t ndim();            // number of dimensions
+  size_t nelem();                   // number of elements
+  size_t nnode();                   // number of nodes
+  size_t nne();                     // number of nodes-per-element
+  size_t ndim();                    // number of dimensions
   // mesh
-  MatD   coor();            // nodal positions [ nnode , ndim ]
-  MatS   conn();            // connectivity    [ nelem , nne  ]
+  MatD   coor();                    // nodal positions [nnode ,ndim]
+  MatS   conn();                    // connectivity    [nelem ,nne ]
   // boundary nodes: edges
-  ColS   nodesBottomEdge(); // nodes along the bottom edge
-  ColS   nodesTopEdge();    // nodes along the top    edge
-  ColS   nodesLeftEdge();   // nodes along the left   edge
-  ColS   nodesRightEdge();  // nodes along the right  edge
+  ColS   nodesBottomEdge();         // node-numbers along the bottom edge
+  ColS   nodesTopEdge();            // node-numbers along the top    edge
+  ColS   nodesLeftEdge();           // node-numbers along the left   edge
+  ColS   nodesRightEdge();          // node-numbers along the right  edge
+  // boundary nodes: edges, without corners
+  ColS   nodesBottomOpenEdge();     // node-numbers along the bottom edge
+  ColS   nodesTopOpenEdge();        // node-numbers along the top    edge
+  ColS   nodesLeftOpenEdge();       // node-numbers along the left   edge
+  ColS   nodesRightOpenEdge();      // node-numbers along the right  edge
   // boundary nodes: corners
-  size_t nodesBottomLeftCorner();   // bottom - left  corner node
-  size_t nodesBottomRightCorner();  // bottom - right corner node
-  size_t nodesTopLeftCorner();      // top    - left  corner node
-  size_t nodesTopRightCorner();     // top    - right corner node
+  size_t nodesBottomLeftCorner();   // node-number of the bottom - left  corner
+  size_t nodesBottomRightCorner();  // node-number of the bottom - right corner
+  size_t nodesTopLeftCorner();      // node-number of the top    - left  corner
+  size_t nodesTopRightCorner();     // node-number of the top    - right corner
   // boundary nodes: corners (aliases)
-  size_t nodesLeftBottomCorner();   // bottom - left  corner node
-  size_t nodesLeftTopCorner();      // top    - left  corner node
-  size_t nodesRightBottomCorner();  // bottom - right corner node
-  size_t nodesRightTopCorner();     // top    - right corner node
+  size_t nodesLeftBottomCorner();   // alias, see above: nodesBottomLeftCorner
+  size_t nodesLeftTopCorner();      // alias, see above: nodesBottomRightCorner
+  size_t nodesRightBottomCorner();  // alias, see above: nodesTopLeftCorner
+  size_t nodesRightTopCorner();     // alias, see above: nodesTopRightCorner
   // periodicity
-  MatS   nodesPeriodic();   // periodic node pairs [:,2]: (independent, dependent)
-  size_t nodesOrigin();     // bottom-left node, to be used as reference for periodicity
-  MatS   dofs();            // DOF-numbers for each component of each node (sequential)
-  MatS   dofsPeriodic();    // DOF-numbers for each component of each node (sequential)
+  MatS   nodesPeriodic();           // periodic node pairs [:,2]: (independent, dependent)
+  size_t nodesOrigin();             // bottom-left node, used as reference for periodicity
+  MatS   dofs();                    // DOF-numbers for each component of each node (sequential)
+  MatS   dofsPeriodic();            // ,, for the case that the periodicity if fully eliminated
 };
 
 // ========================================= MESH ANALYSIS =========================================

@@ -11,12 +11,18 @@ mesh = gf.Mesh.Hex8.FineLayer(9,17,27)
 # open data file
 f = h5py.File('MeshHex8-FineLayer_paraview.hdf5','w')
 
-# write particle positions, and a dummy connectivity
-f.create_dataset('/coor',data=mesh.coor())
-f.create_dataset('/conn',data=mesh.conn())
+# element set
+elementsMiddleLayer = np.zeros((mesh.nelem()),dtype='int')
+elementsMiddleLayer[mesh.elementsMiddleLayer()] = 1
+
+# write nodal coordinates and connectivity
+f.create_dataset('/coor'               ,data=mesh.coor()        )
+f.create_dataset('/conn'               ,data=mesh.conn()        )
+f.create_dataset('/elementsMiddleLayer',data=elementsMiddleLayer)
 
 # ======================================== write XDMF-file =========================================
 
+# basic file-format
 xmf = '''<?xml version="1.0" ?>
 <!DOCTYPE Xdmf SYSTEM "Xdmf.dtd" []>
 <Xdmf Version="2.0">
@@ -32,11 +38,17 @@ xmf = '''<?xml version="1.0" ?>
           MeshHex8-FineLayer_paraview.hdf5:/coor
         </DataItem>
       </Geometry>
+      <Attribute Name="elementsMiddleLayer" AttributeType="Scalar" Center="Cell">
+        <DataItem Dimensions="{nelem:d}" NumberType="Int" Format="HDF">
+          MeshHex8-FineLayer_paraview.hdf5:/elementsMiddleLayer
+        </DataItem>
+      </Attribute>
       </Grid>
   </Domain>
 </Xdmf>
 '''
 
+# write to file, fill mesh dimensions
 open('MeshHex8-FineLayer_paraview.xmf','w').write(xmf.format(
   nnode = mesh.nnode(),
   nelem = mesh.nelem(),

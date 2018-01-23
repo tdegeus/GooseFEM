@@ -11,12 +11,13 @@ mesh = gf.Mesh.Hex8.Regular(6,8,12)
 # open data file
 f = h5py.File('MeshHex8-Regular_paraview.hdf5','w')
 
-# write particle positions, and a dummy connectivity
+# write nodal coordinates and connectivity
 f.create_dataset('/coor',data=mesh.coor())
 f.create_dataset('/conn',data=mesh.conn())
 
 # ======================================== write XDMF-file =========================================
 
+# basic file-format
 xmf = '''<?xml version="1.0" ?>
 <!DOCTYPE Xdmf SYSTEM "Xdmf.dtd" []>
 <Xdmf Version="2.0">
@@ -37,6 +38,7 @@ xmf = '''<?xml version="1.0" ?>
 </Xdmf>
 '''
 
+# write to file, fill mesh dimensions
 open('MeshHex8-Regular_paraview.xmf','w').write(xmf.format(
   nnode = mesh.nnode(),
   nelem = mesh.nelem(),

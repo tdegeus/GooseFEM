@@ -21,13 +21,14 @@ namespace Tri3 {
 
 // ------------------------------------------ constructor ------------------------------------------
 
-inline Regular::Regular(size_t nx, size_t ny, double h): m_nx(nx), m_ny(ny), m_h(h)
+inline Regular::Regular(size_t nelx, size_t nely, double h):
+m_h(h), m_nelx(nelx), m_nely(nely)
 {
-  assert( m_nx >= 1 );
-  assert( m_ny >= 1 );
+  assert( m_nelx >= 1 );
+  assert( m_nely >= 1 );
 
-  m_nnode = (m_nx+1) * (m_ny+1)    ;
-  m_nelem =  m_nx    *  m_ny    * 2;
+  m_nnode = (m_nelx+1) * (m_nely+1)    ;
+  m_nelem =  m_nelx    *  m_nely    * 2;
 }
 
 // -------------------------------------- number of elements ---------------------------------------
@@ -62,94 +63,142 @@ inline size_t Regular::ndim()
 
 inline MatD Regular::coor()
 {
-  MatD coor( m_nnode , m_ndim );
+  MatD out(m_nnode , m_ndim);
 
-  ColD x = ColD::LinSpaced( m_nx+1 , 0.0 , m_h * static_cast<double>(m_nx) );
-  ColD y = ColD::LinSpaced( m_ny+1 , 0.0 , m_h * static_cast<double>(m_ny) );
+  ColD x = ColD::LinSpaced( m_nelx+1 , 0.0 , m_h * static_cast<double>(m_nelx) );
+  ColD y = ColD::LinSpaced( m_nely+1 , 0.0 , m_h * static_cast<double>(m_nely) );
 
   size_t inode = 0;
 
-  for ( size_t iy = 0 ; iy < m_ny+1 ; ++iy ) {
-    for ( size_t ix = 0 ; ix < m_nx+1 ; ++ix ) {
-      coor(inode,0) = x(ix);
-      coor(inode,1) = y(iy);
+  for ( size_t iy = 0 ; iy < m_nely+1 ; ++iy ) {
+    for ( size_t ix = 0 ; ix < m_nelx+1 ; ++ix ) {
+      out(inode,0) = x(ix);
+      out(inode,1) = y(iy);
       ++inode;
     }
   }
 
-  return coor;
+  return out;
 }
 
 // ---------------------------- connectivity (node-numbers per element) ----------------------------
 
 inline MatS Regular::conn()
 {
-  MatS conn( m_nelem , m_nne );
+  MatS out(m_nelem , m_nne);
 
   size_t ielem = 0;
 
-  for ( size_t iy = 0 ; iy < m_ny ; ++iy ) {
-    for ( size_t ix = 0 ; ix < m_nx ; ++ix ) {
-      conn(ielem,0) = (iy+0)*(m_nx+1) + (ix+0);
-      conn(ielem,1) = (iy+0)*(m_nx+1) + (ix+1);
-      conn(ielem,2) = (iy+1)*(m_nx+1) + (ix+0);
+  for ( size_t iy = 0 ; iy < m_nely ; ++iy ) {
+    for ( size_t ix = 0 ; ix < m_nelx ; ++ix ) {
+      out(ielem,0) = (iy  )*(m_nelx+1) + (ix  );
+      out(ielem,1) = (iy  )*(m_nelx+1) + (ix+1);
+      out(ielem,2) = (iy+1)*(m_nelx+1) + (ix  );
       ++ielem;
-      conn(ielem,0) = (iy+0)*(m_nx+1) + (ix+1);
-      conn(ielem,1) = (iy+1)*(m_nx+1) + (ix+1);
-      conn(ielem,2) = (iy+1)*(m_nx+1) + (ix+0);
+      out(ielem,0) = (iy  )*(m_nelx+1) + (ix+1);
+      out(ielem,1) = (iy+1)*(m_nelx+1) + (ix+1);
+      out(ielem,2) = (iy+1)*(m_nelx+1) + (ix  );
       ++ielem;
     }
   }
 
-  return conn;
+  return out;
 }
 
 // ------------------------------ node-numbers along the bottom edge -------------------------------
 
 inline ColS Regular::nodesBottomEdge()
 {
-  ColS nodes(m_nx+1);
+  ColS out(m_nelx+1);
 
-  for ( size_t ix = 0 ; ix < m_nx+1 ; ++ix )
-    nodes(ix) = ix;
+  for ( size_t ix = 0 ; ix < m_nelx+1 ; ++ix )
+    out(ix) = ix;
 
-  return nodes;
+  return out;
 }
 
 // -------------------------------- node-numbers along the top edge --------------------------------
 
 inline ColS Regular::nodesTopEdge()
 {
-  ColS nodes(m_nx+1);
+  ColS out(m_nelx+1);
 
-  for ( size_t ix = 0 ; ix < m_nx+1 ; ++ix )
-    nodes(ix) = ix + m_ny*(m_nx+1);
+  for ( size_t ix = 0 ; ix < m_nelx+1 ; ++ix )
+    out(ix) = ix + m_nely*(m_nelx+1);
 
-  return nodes;
+  return out;
 }
 
-// ----------------------------- node-numbers along the node left edge -----------------------------
+// ------------------------------- node-numbers along the left edge --------------------------------
 
 inline ColS Regular::nodesLeftEdge()
 {
-  ColS nodes(m_ny+1);
+  ColS out(m_nely+1);
 
-  for ( size_t iy = 0 ; iy < m_ny+1 ; ++iy )
-    nodes(iy) = iy*(m_nx+1);
+  for ( size_t iy = 0 ; iy < m_nely+1 ; ++iy )
+    out(iy) = iy*(m_nelx+1);
 
-  return nodes;
+  return out;
 }
 
 // ------------------------------- node-numbers along the right edge -------------------------------
 
 inline ColS Regular::nodesRightEdge()
 {
-  ColS nodes(m_ny+1);
+  ColS out(m_nely+1);
 
-  for ( size_t iy = 0 ; iy < m_ny+1 ; ++iy )
-    nodes(iy) = iy*(m_nx+1) + m_nx;
+  for ( size_t iy = 0 ; iy < m_nely+1 ; ++iy )
+    out(iy) = iy*(m_nelx+1) + m_nelx;
 
-  return nodes;
+  return out;
+}
+
+// ---------------------- node-numbers along the bottom edge, without corners ----------------------
+
+inline ColS Regular::nodesBottomOpenEdge()
+{
+  ColS out(m_nelx-1);
+
+  for ( size_t ix = 1 ; ix < m_nelx ; ++ix )
+    out(ix-1) = ix;
+
+  return out;
+}
+
+// ----------------------- node-numbers along the top edge, without corners ------------------------
+
+inline ColS Regular::nodesTopOpenEdge()
+{
+  ColS out(m_nelx-1);
+
+  for ( size_t ix = 1 ; ix < m_nelx ; ++ix )
+    out(ix-1) = ix + m_nely*(m_nelx+1);
+
+  return out;
+}
+
+// ----------------------- node-numbers along the left edge, without corners -----------------------
+
+inline ColS Regular::nodesLeftOpenEdge()
+{
+  ColS out(m_nely-1);
+
+  for ( size_t iy = 1 ; iy < m_nely ; ++iy )
+    out(iy-1) = iy*(m_nelx+1);
+
+  return out;
+}
+
+// ---------------------- node-numbers along the right edge, without corners -----------------------
+
+inline ColS Regular::nodesRightOpenEdge()
+{
+  ColS out(m_nely-1);
+
+  for ( size_t iy = 1 ; iy < m_nely ; ++iy )
+    out(iy-1) = iy*(m_nelx+1) + m_nelx;
+
+  return out;
 }
 
 // ----------------------------- node-number of the bottom-left corner -----------------------------
@@ -163,21 +212,21 @@ inline size_t Regular::nodesBottomLeftCorner()
 
 inline size_t Regular::nodesBottomRightCorner()
 {
-  return m_nx;
+  return m_nelx;
 }
 
 // ------------------------------ node-number of the top-left corner -------------------------------
 
 inline size_t Regular::nodesTopLeftCorner()
 {
-  return m_ny*(m_nx+1);
+  return m_nely*(m_nelx+1);
 }
 
 // ------------------------------ node-number of the top-right corner ------------------------------
 
 inline size_t Regular::nodesTopRightCorner()
 {
-  return (m_ny+1)*(m_nx+1) - 1;
+  return m_nely*(m_nelx+1) + m_nelx;
 }
 
 // ----------------------------- node-number of the corners (aliases) ------------------------------
@@ -191,28 +240,32 @@ inline size_t Regular::nodesRightTopCorner()    { return nodesTopRightCorner(); 
 
 inline MatS Regular::nodesPeriodic()
 {
-  // edges
-  ColS bot = nodesBottomEdge();
-  ColS top = nodesTopEdge();
-  ColS rgt = nodesRightEdge();
-  ColS lft = nodesLeftEdge();
+  // edges (without corners)
+  ColS bot = nodesBottomOpenEdge();
+  ColS top = nodesTopOpenEdge();
+  ColS lft = nodesLeftOpenEdge();
+  ColS rgt = nodesRightOpenEdge();
 
   // allocate nodal ties
-  MatS nodes(bot.size()-2 + lft.size()-2 + 3, 2);
+  // - number of tying per category
+  size_t tedge = bot.size() + lft.size();
+  size_t tnode = 3;
+  // - allocate
+  MatS out(tedge+tnode, 2);
 
   // counter
   size_t i = 0;
 
   // tie all corners to one corner
-  nodes(i,0) = nodesBottomLeftCorner(); nodes(i,1) = nodesBottomRightCorner(); ++i;
-  nodes(i,0) = nodesBottomLeftCorner(); nodes(i,1) = nodesTopRightCorner();    ++i;
-  nodes(i,0) = nodesBottomLeftCorner(); nodes(i,1) = nodesTopLeftCorner();     ++i;
+  out(i,0) = nodesBottomLeftCorner(); out(i,1) = nodesBottomRightCorner(); ++i;
+  out(i,0) = nodesBottomLeftCorner(); out(i,1) = nodesTopRightCorner();    ++i;
+  out(i,0) = nodesBottomLeftCorner(); out(i,1) = nodesTopLeftCorner();     ++i;
 
-  // tie edges to each other (exclude corners)
-  for ( auto j = 1 ; j < bot.size()-1 ; ++j ) { nodes(i,0) = bot(j); nodes(i,1) = top(j); ++i; }
-  for ( auto j = 1 ; j < lft.size()-1 ; ++j ) { nodes(i,0) = lft(j); nodes(i,1) = rgt(j); ++i; }
+  // tie all corresponding edges to each other
+  for ( auto j = 0 ; j<bot.size() ; ++j ){ out(i,0) = bot(j); out(i,1) = top(j); ++i; }
+  for ( auto j = 0 ; j<lft.size() ; ++j ){ out(i,0) = lft(j); out(i,1) = rgt(j); ++i; }
 
-  return nodes;
+  return out;
 }
 
 // ------------------------------ node-number that lies in the origin ------------------------------

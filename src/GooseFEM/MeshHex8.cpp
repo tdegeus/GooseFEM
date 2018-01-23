@@ -97,14 +97,14 @@ inline MatS Regular::conn()
   for ( size_t iz = 0 ; iz < m_nelz ; ++iz ) {
     for ( size_t iy = 0 ; iy < m_nely ; ++iy ) {
       for ( size_t ix = 0 ; ix < m_nelx ; ++ix ) {
-        out(ielem,0) = (iz+0)*(m_nely+1)*(m_nelx+1) + (iy+0)*(m_nelx+1) + (ix+0);
-        out(ielem,1) = (iz+0)*(m_nely+1)*(m_nelx+1) + (iy+0)*(m_nelx+1) + (ix+1);
-        out(ielem,3) = (iz+0)*(m_nely+1)*(m_nelx+1) + (iy+1)*(m_nelx+1) + (ix+0);
-        out(ielem,2) = (iz+0)*(m_nely+1)*(m_nelx+1) + (iy+1)*(m_nelx+1) + (ix+1);
-        out(ielem,4) = (iz+1)*(m_nely+1)*(m_nelx+1) + (iy+0)*(m_nelx+1) + (ix+0);
-        out(ielem,5) = (iz+1)*(m_nely+1)*(m_nelx+1) + (iy+0)*(m_nelx+1) + (ix+1);
-        out(ielem,7) = (iz+1)*(m_nely+1)*(m_nelx+1) + (iy+1)*(m_nelx+1) + (ix+0);
-        out(ielem,6) = (iz+1)*(m_nely+1)*(m_nelx+1) + (iy+1)*(m_nelx+1) + (ix+1);
+        out(ielem,0) = (iy  )*(m_nelx+1) + (ix  ) + (iz  )*(m_nely+1)*(m_nelx+1);
+        out(ielem,1) = (iy  )*(m_nelx+1) + (ix+1) + (iz  )*(m_nely+1)*(m_nelx+1);
+        out(ielem,3) = (iy+1)*(m_nelx+1) + (ix  ) + (iz  )*(m_nely+1)*(m_nelx+1);
+        out(ielem,2) = (iy+1)*(m_nelx+1) + (ix+1) + (iz  )*(m_nely+1)*(m_nelx+1);
+        out(ielem,4) = (iy  )*(m_nelx+1) + (ix  ) + (iz+1)*(m_nely+1)*(m_nelx+1);
+        out(ielem,5) = (iy  )*(m_nelx+1) + (ix+1) + (iz+1)*(m_nely+1)*(m_nelx+1);
+        out(ielem,7) = (iy+1)*(m_nelx+1) + (ix  ) + (iz+1)*(m_nely+1)*(m_nelx+1);
+        out(ielem,6) = (iy+1)*(m_nelx+1) + (ix+1) + (iz+1)*(m_nely+1)*(m_nelx+1);
         ++ielem;
       }
     }
@@ -290,7 +290,7 @@ inline ColS Regular::nodesFrontTopEdge()
   ColS out(m_nelx+1);
 
   for ( size_t ix = 0 ; ix < m_nelx+1 ; ++ix )
-    out(ix) = m_nely*(m_nelx+1) + ix;
+    out(ix) = ix + m_nely*(m_nelx+1);
 
   return out;
 }
@@ -449,7 +449,7 @@ inline ColS Regular::nodesFrontTopOpenEdge()
   ColS out(m_nelx-1);
 
   for ( size_t ix = 1 ; ix < m_nelx ; ++ix )
-    out(ix-1) = m_nely*(m_nelx+1) + ix;
+    out(ix-1) = ix + m_nely*(m_nelx+1);
 
   return out;
 }
@@ -1394,6 +1394,23 @@ inline MatS FineLayer::conn()
       }
     }
   }
+
+  return out;
+}
+
+// ------------------------------ element numbers of the middle layer ------------------------------
+
+inline ColS FineLayer::elementsMiddleLayer()
+{
+  // number of element layers in y-direction, the index of the middle layer
+  size_t nely = static_cast<size_t>(m_nhy.size());
+  size_t iy   = (nely-1)/2;
+
+  ColS out(m_nelx(iy)*m_nelz(iy));
+
+  for ( size_t ix = 0 ; ix < m_nelx(iy) ; ++ix )
+    for ( size_t iz = 0 ; iz < m_nelz(iy) ; ++iz )
+      out(ix+iz*m_nelx(iy)) = m_startElem(iy) + ix + iz*m_nelx(iy);
 
   return out;
 }

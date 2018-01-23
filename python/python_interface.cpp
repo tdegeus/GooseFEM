@@ -222,6 +222,8 @@ py::class_<GooseFEM::Mesh::Hex8::FineLayer>(mMeshHex8, "FineLayer")
   // mesh
   .def("coor"                       , &GooseFEM::Mesh::Hex8::FineLayer::coor                       )
   .def("conn"                       , &GooseFEM::Mesh::Hex8::FineLayer::conn                       )
+  // element sets
+  .def("elementsMiddleLayer"        , &GooseFEM::Mesh::Hex8::FineLayer::elementsMiddleLayer        )
   // boundary nodes: planes
   .def("nodesFront"                 , &GooseFEM::Mesh::Hex8::FineLayer::nodesFront                 )
   .def("nodesBack"                  , &GooseFEM::Mesh::Hex8::FineLayer::nodesBack                  )
@@ -370,6 +372,10 @@ py::class_<GooseFEM::Mesh::Quad4::Regular>(mMeshQuad4, "Regular")
   .def("nodesTopEdge"          , &GooseFEM::Mesh::Quad4::Regular::nodesTopEdge          )
   .def("nodesLeftEdge"         , &GooseFEM::Mesh::Quad4::Regular::nodesLeftEdge         )
   .def("nodesRightEdge"        , &GooseFEM::Mesh::Quad4::Regular::nodesRightEdge        )
+  .def("nodesBottomOpenEdge"   , &GooseFEM::Mesh::Quad4::Regular::nodesBottomOpenEdge   )
+  .def("nodesTopOpenEdge"      , &GooseFEM::Mesh::Quad4::Regular::nodesTopOpenEdge      )
+  .def("nodesLeftOpenEdge"     , &GooseFEM::Mesh::Quad4::Regular::nodesLeftOpenEdge     )
+  .def("nodesRightOpenEdge"    , &GooseFEM::Mesh::Quad4::Regular::nodesRightOpenEdge    )
   .def("nodesBottomLeftCorner" , &GooseFEM::Mesh::Quad4::Regular::nodesBottomLeftCorner )
   .def("nodesBottomRightCorner", &GooseFEM::Mesh::Quad4::Regular::nodesBottomRightCorner)
   .def("nodesTopLeftCorner"    , &GooseFEM::Mesh::Quad4::Regular::nodesTopLeftCorner    )
@@ -392,13 +398,12 @@ py::class_<GooseFEM::Mesh::Quad4::Regular>(mMeshQuad4, "Regular")
 py::class_<GooseFEM::Mesh::Quad4::FineLayer>(mMeshQuad4, "FineLayer")
 
   .def(
-    py::init<size_t,size_t,double,size_t,size_t>(),
+    py::init<size_t,size_t,double,size_t>(),
     "FineLayer mesh: 'nx' pixels in horizontal direction (length 'Lx'), idem in vertical direction",
     py::arg("nx"),
     py::arg("ny"),
     py::arg("h")=1.,
-    py::arg("nfine")=1,
-    py::arg("nskip")=0
+    py::arg("nfine")=1
   )
 
   .def("shape"                 , &GooseFEM::Mesh::Quad4::FineLayer::shape                 )
@@ -413,6 +418,10 @@ py::class_<GooseFEM::Mesh::Quad4::FineLayer>(mMeshQuad4, "FineLayer")
   .def("nodesTopEdge"          , &GooseFEM::Mesh::Quad4::FineLayer::nodesTopEdge          )
   .def("nodesLeftEdge"         , &GooseFEM::Mesh::Quad4::FineLayer::nodesLeftEdge         )
   .def("nodesRightEdge"        , &GooseFEM::Mesh::Quad4::FineLayer::nodesRightEdge        )
+  .def("nodesBottomOpenEdge"   , &GooseFEM::Mesh::Quad4::FineLayer::nodesBottomOpenEdge   )
+  .def("nodesTopOpenEdge"      , &GooseFEM::Mesh::Quad4::FineLayer::nodesTopOpenEdge      )
+  .def("nodesLeftOpenEdge"     , &GooseFEM::Mesh::Quad4::FineLayer::nodesLeftOpenEdge     )
+  .def("nodesRightOpenEdge"    , &GooseFEM::Mesh::Quad4::FineLayer::nodesRightOpenEdge    )
   .def("nodesBottomLeftCorner" , &GooseFEM::Mesh::Quad4::FineLayer::nodesBottomLeftCorner )
   .def("nodesBottomRightCorner", &GooseFEM::Mesh::Quad4::FineLayer::nodesBottomRightCorner)
   .def("nodesTopLeftCorner"    , &GooseFEM::Mesh::Quad4::FineLayer::nodesTopLeftCorner    )
@@ -452,6 +461,10 @@ py::class_<GooseFEM::Mesh::Tri3::Regular>(mMeshTri3, "Regular")
   .def("nodesTopEdge"          , &GooseFEM::Mesh::Tri3::Regular::nodesTopEdge          )
   .def("nodesLeftEdge"         , &GooseFEM::Mesh::Tri3::Regular::nodesLeftEdge         )
   .def("nodesRightEdge"        , &GooseFEM::Mesh::Tri3::Regular::nodesRightEdge        )
+  .def("nodesBottomOpenEdge"   , &GooseFEM::Mesh::Tri3::Regular::nodesBottomOpenEdge   )
+  .def("nodesTopOpenEdge"      , &GooseFEM::Mesh::Tri3::Regular::nodesTopOpenEdge      )
+  .def("nodesLeftOpenEdge"     , &GooseFEM::Mesh::Tri3::Regular::nodesLeftOpenEdge     )
+  .def("nodesRightOpenEdge"    , &GooseFEM::Mesh::Tri3::Regular::nodesRightOpenEdge    )
   .def("nodesBottomLeftCorner" , &GooseFEM::Mesh::Tri3::Regular::nodesBottomLeftCorner )
   .def("nodesBottomRightCorner", &GooseFEM::Mesh::Tri3::Regular::nodesBottomRightCorner)
   .def("nodesTopLeftCorner"    , &GooseFEM::Mesh::Tri3::Regular::nodesTopLeftCorner    )

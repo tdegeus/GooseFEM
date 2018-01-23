@@ -23,16 +23,16 @@ class Regular
 {
 private:
   double m_h;      // elementary element edge-size (in all directions)
-  size_t m_nelx;   // number of element x-direction (length == "m_nelx * m_h")
-  size_t m_nely;   // number of element y-direction (length == "m_nely * m_h")
-  size_t m_nelz;   // number of element z-direction (length == "m_nely * m_h")
+  size_t m_nelx;   // number of elements in x-direction (length == "m_nelx * m_h")
+  size_t m_nely;   // number of elements in y-direction (length == "m_nely * m_h")
+  size_t m_nelz;   // number of elements in z-direction (length == "m_nely * m_h")
   size_t m_nelem;  // number of elements
   size_t m_nnode;  // number of nodes
   size_t m_nne=8;  // number of nodes-per-element
   size_t m_ndim=3; // number of dimensions
 
 public:
-  // mesh with "nelx*nely*nelz" 'pixels' of edge size "h"
+  // mesh with "nelx*nely*nelz" 'elements' of edge size "h"
   Regular(size_t nelx, size_t nely, size_t nelz, double h=1.);
   // sizes
   size_t nelem();                       // number of elements
@@ -175,7 +175,7 @@ private:
   ColS   m_nelx, m_nelz;      // number of elements in "x" and "z"             (per el.layer in "y")
   ColS   m_nnd;               // total number of nodes in the main node layer  (per nd.layer in "y")
   ColS   m_nhx, m_nhy, m_nhz; // element size in each direction                (per el.layer in "y")
-  ColI   m_refine;            // refine direction (-1: no refine, 0: "x", ...) (per el.layer in "y")
+  ColI   m_refine;            // refine direction (-1:no refine, 0:"x", 2:"z") (per el.layer in "y")
   ColS   m_startElem;         // start element                                 (per el.layer in "y")
   ColS   m_startNode;         // start node                                    (per nd.layer in "y")
   size_t m_nelem;             // number of elements
@@ -184,7 +184,7 @@ private:
   size_t m_ndim=3;            // number of dimensions
 
 public:
-  // mesh with "nelx*nely*nelz" 'pixels' of edge size "h"; elements are coarsened in "y"-direction
+  // mesh with "nelx*nely*nelz" elements of edge size "h"; elements are coarsened in "y"-direction
   FineLayer(size_t nelx, size_t nely, size_t nelz, double h=1., size_t nfine=1);
   // sizes
   size_t nelem();                       // number of elements
@@ -195,6 +195,8 @@ public:
   // mesh
   MatD   coor();                        // nodal positions [nnode ,ndim]
   MatS   conn();                        // connectivity    [nelem ,nne ]
+  // element sets
+  ColS   elementsMiddleLayer();         // elements in the middle, fine, layer
   // boundary nodes: planes
   ColS   nodesFront();                  // node-numbers along the front  plane
   ColS   nodesBack();                   // node-numbers along the back   plane
