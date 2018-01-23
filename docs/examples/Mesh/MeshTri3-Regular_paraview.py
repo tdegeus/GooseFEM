@@ -18,7 +18,7 @@ f.create_dataset('/conn',data=mesh.conn())
 # ======================================== write XDMF-file =========================================
 
 # basic file-format
-xmf = '''<?xml version="1.0" ?>
+xdmf = '''<?xml version="1.0" ?>
 <!DOCTYPE Xdmf SYSTEM "Xdmf.dtd" []>
 <Xdmf Version="2.0">
   <Domain>
@@ -39,7 +39,7 @@ xmf = '''<?xml version="1.0" ?>
 '''
 
 # write to file, fill mesh dimensions
-open('MeshTri3-Regular_paraview.xmf','w').write(xmf.format(
+open('MeshTri3-Regular_paraview.xdmf','w').write(xdmf.format(
   nnode = mesh.nnode(),
   nelem = mesh.nelem(),
   nne   = mesh.nne(),

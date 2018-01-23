@@ -49,7 +49,7 @@ f.create_dataset('/dofsPeriodic'          ,data=dofsPeriodic           )
 # ======================================== write XDMF-file =========================================
 
 # basic file-format
-xmf = '''<?xml version="1.0" ?>
+xdmf = '''<?xml version="1.0" ?>
 <!DOCTYPE Xdmf SYSTEM "Xdmf.dtd" []>
 <Xdmf Version="2.0">
   <Domain>
@@ -135,6 +135,6 @@ xmf = '''<?xml version="1.0" ?>
 '''
 
 # write to file, fill mesh dimensions
-open('MeshQuad4-FineLayer-nodes_paraview.xmf','w').write(xmf.format(
+open('MeshQuad4-FineLayer-nodes_paraview.xdmf','w').write(xdmf.format(
   nnode = mesh.nnode(),
 ))

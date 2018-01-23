@@ -839,7 +839,7 @@ m_h(h), m_nelx(nelx), m_nelz(nelz)
     if ( iy >= nely or ntot >= nmin ) { nely = iy; break; }
 
     // rules (1,2) satisfied: coarsen in x-direction (and z-direction)
-    if ( 3*nhy(iy) <= ntot and nelx%(3*nhx(iy)) == 0 )
+    if ( 3*nhy(iy) <= ntot and nelx%(3*nhx(iy)) == 0 and ntot+nhy(iy) < nmin )
     {
       // - process refinement in x-direction
       refine     (iy            )  = 0;
@@ -848,7 +848,7 @@ m_h(h), m_nelx(nelx), m_nelz(nelz)
       nhx.segment(iy  ,nely-iy  ) *= 3;
 
       // - rule (2) satisfied: coarsen next element layer in z-direction
-      if ( iy+1 < nely and ntot+nhy(iy) < nmin )
+      if ( iy+1 < nely and ntot+2*nhy(iy) < nmin )
       {
         if ( nelz%(3*nhz(iy+1)) == 0 )
         {
@@ -865,7 +865,7 @@ m_h(h), m_nelx(nelx), m_nelz(nelz)
     }
 
     // rules (1,2) satisfied: coarse in z-direction
-    else if ( 3*nhy(iy) <= ntot and nelz%(3*nhz(iy)) == 0 )
+    else if ( 3*nhy(iy) <= ntot and nelz%(3*nhz(iy)) == 0 and ntot+nhy(iy) < nmin )
     {
       // - process refinement in z-direction
       refine     (iy            )  = 2;

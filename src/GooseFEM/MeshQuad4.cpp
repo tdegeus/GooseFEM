@@ -348,7 +348,7 @@ m_h(h), m_nelx(nelx)
     if ( iy >= nely or ntot >= nmin ) { nely = iy; break; }
 
     // rules (1,2) satisfied: coarsen in x-direction
-    if ( 3*nhy(iy) <= ntot and nelx%(3*nhx(iy)) == 0 )
+    if ( 3*nhy(iy) <= ntot and nelx%(3*nhx(iy)) == 0 and ntot+nhy(iy) < nmin )
     {
       refine     (iy            )  = 0;
       nhy        (iy            ) *= 2;
