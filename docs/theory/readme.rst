@@ -8,7 +8,7 @@ Finite Element Method
   :depth: 2
   :backlinks: top
 
-In the sequel the theory of the Finite Element is discussed in a compact way. This discussion is by no means comprehensive. Therefore one is invited to dive in more complete textbooks. The key contribution of this reader is that it is supported by many examples that can be easily extended and customized into efficient, production ready code. To this end, the examples are in C++14, and are specifically written such that they are mostly 'what you see is what you get'. The entire structure is in the main-file, and not hidden somewhere in a library. To simplify your life we do use several libraries, each of which however only with a dedicated task, which can be understood, used, and checked independently of the Finite Element Method or any specific application. More specifically we use:
+In the sequel the theory of the Finite Element is discussed in a compact way. This discussion is by no means comprehensive. Therefore one is invited to dive in more complete textbooks. The key contribution of this reader is that it is supported by many examples that can be easily extended and customized into efficient, production-ready code. To this end, the examples are in C++14, and are specifically written such that they are mostly 'what you see is what you get'. The entire structure is in the main-file, and not hidden somewhere in a library. To simplify your life we do use several libraries, each of which, however, only with a dedicated task, which can be understood, used, and checked independently of the Finite Element Method or any specific application. More specifically we use:
 
 
 *   `GooseMaterial <https://github.com/tdegeus/GooseMaterial>`_
@@ -18,7 +18,7 @@ In the sequel the theory of the Finite Element is discussed in a compact way. Th
 
 *   `cppmat <https://github.com/tdegeus/cppmat>`_
 
-    Provides tensor classes and operations. (The amount of tensor-operations is limited in the main program, and even non-standard, but this library is crucial to compute the material response implemented in `GooseMaterial <https://github.com/tdegeus/GooseMaterial>`_.)
+    Provides tensor classes and operations. (The number of tensor operations are limited in the main program, and even non-standard, but this library is crucial to compute the material response implemented in `GooseMaterial <https://github.com/tdegeus/GooseMaterial>`_.)
 
 
 *   `Eigen3 <http://eigen.tuxfamily.org/index.php?title=Main_Page>`_
@@ -43,7 +43,7 @@ Statics
 The conceptual idea
 -------------------
 
-We begin our discussion by considering a static, solid mechanics, problem. Loosely speaking the the goal is to find a deformation map, :math:`\vec{x} = \varphi(\vec{X},t)`, that maps a body :math:`\Omega_0` to a deformed state :math:`\Omega` that satisfies equilibrium and the boundary conditions applied on :math:`\Gamma`.
+We begin our discussion by considering a static, solid mechanics, problem. Loosely speaking the goal is to find a deformation map, :math:`\vec{x} = \varphi(\vec{X},t)`, that maps a body :math:`\Omega_0` to a deformed state :math:`\Omega` that satisfies equilibrium and the boundary conditions applied on :math:`\Gamma`.
 
 .. image:: problem.svg
   :width: 550px
@@ -145,7 +145,7 @@ where :math:`\vec{\phi}` are test functions. For reasons that become obvious bel
 
     C = \bm{A} : \bm{B} = A_{ij} B_{ji}
 
-The right-hand-side of this equation can be reduced to an area integral by employing Gauss' divergence theorem. The result reads
+The right-hand side of this equation can be reduced to an area integral by employing Gauss's divergence theorem. The result reads
 
 .. math::
 
@@ -166,7 +166,7 @@ The right-hand-side of this equation can be reduced to an area integral by emplo
 
 .. note::
 
-  Gauss' divergence theorem states that
+  Gauss's divergence theorem states that
 
   .. math::
 
@@ -281,7 +281,7 @@ with:
 Iterative solution -- small strain
 ----------------------------------
 
-A commonly used strategy to solve the non-linear system, is the iterative Newton-Raphson scheme (see inset below). The idea is thereby to formulate an initial guess for the solution, determine possible residual forces, and use these forces to come to a better guess for the solution. This is continued until the solution has been found, i.e. when the residual vanishes.
+A commonly used strategy to solve the non-linear system is the iterative Newton-Raphson scheme (see inset below). The idea is thereby to formulate an initial guess for the solution, determine possible residual forces, and use these forces to come to a better guess for the solution. This is continued until the solution has been found, i.e. when the residual vanishes.
 
 This solution technique is discussed here in the context of small deformations, while it is later generalized. Assuming the deformations to be small allows us to assume that :math:`\Omega = \Omega_0`, and thus that :math:`\nabla = \nabla_0`. Also we define a strain tensor
 
@@ -398,7 +398,7 @@ and
 
   *   :ref:`fem_examples_small-strain_linear_dense`
 
-      We slowly work up to an iterative scheme starting from a linear problem, written however in such a way that the step towards a non-linear problem is small.
+      We slowly work up to an iterative scheme starting from a linear problem, written, however, in such a way that the step towards a non-linear problem is small.
 
   *   :ref:`fem_examples_small-strain_nonlinear_dense`
 
@@ -457,7 +457,7 @@ and
 
     x_{(i+1)} = x_{(i)} + \delta x
 
-  And check if we are have reached our solution within a certain accuracy :math:`\epsilon`:
+  And check if we have reached our solution within a certain accuracy :math:`\epsilon`:
 
   .. math::
 
@@ -477,7 +477,7 @@ Dynamics
 Momentum balance
 ----------------
 
-We continue with our balance equation and add inertia an damping to it:
+We continue with our balance equation and add inertia and damping to it:
 
 .. math::
 
@@ -511,7 +511,7 @@ We can generalize this as follows (which will also simplify our proceedings belo
 
     \bm{\sigma}_{\eta} = \eta\; \vec{\nabla} \dot{\vec{x}}
 
-  But, we can now use also other expressions. For example the damping equivalent of linear elasticity:
+  But, we can now also use other expressions. For example, the damping equivalent of linear elasticity:
 
   .. math::
 
@@ -685,7 +685,7 @@ whereby we have introduced:
 
 .. note::
 
-  In many problems it make sense to assume the mass matrix constant, as any change of volume results in an equivalent change of the density, i.e.
+  In many problems it makes sense to assume the mass matrix constant, as any change of volume results in an equivalent change of the density, i.e.
 
   .. math::
 
@@ -772,7 +772,7 @@ Velocity Verlet with damping
 Shape functions
 ===============
 
-In the Finite Element Method a geometry is discretized using nodes. The nodes are grouped in elements which define the domain :math:`\Omega^h_0`. The crux of the method is that nodal quantities, for example :math:`\vec{u}_i`, are extrapolated throughout the discretized domain :math:`\Omega^h_0` using shape functions :math:`N_i (\vec{X})`. Each shape function is globally supported, however in such a way that :math:`N_i (\vec{X}) \neq 0` only in the elements containing node :math:`i`. It is furthermore imposed that :math:`N_i (\vec{X}_j) = \delta_{ij}`, i.e. it is one in the node :math:`i`, and zero in all other nodes.
+In the Finite Element Method a geometry is discretized using nodes. The nodes are grouped in elements which define the domain :math:`\Omega^h_0`. The crux of the method is that nodal quantities, for example :math:`\vec{u}_i`, are extrapolated throughout the discretized domain :math:`\Omega^h_0` using shape functions :math:`N_i (\vec{X})`. Each shape function is globally supported, however, in such a way that :math:`N_i (\vec{X}) \neq 0` only in the elements containing node :math:`i`. It is, furthermore, imposed that :math:`N_i (\vec{X}_j) = \delta_{ij}`, i.e. it is one in the node :math:`i`, and zero in all other nodes.
 
 For a one-dimensional problem comprising four linear elements and five nodes the shape functions are sketched below (whereby the node numbers are in color, while the element numbers are in black, in between the nodes).
 
@@ -839,7 +839,7 @@ The mapping between the generic domain :math:`Q` and the physical domain :math:`
 
   \vec{x} ( \vec{\xi} ) = \big[\, \underline{N}^{e} \,\big]^\mathsf{T} \underline{x}^e
 
-where the column :math:`\underline{x}^e` contains the real position vectors of the element nodes. In order to perform the quadrature on :math:`Q` we must map also the gradient operator:
+where the column :math:`\underline{x}^e` contains the real position vectors of the element nodes. In order to perform the quadrature on :math:`Q` we must also map the gradient operator:
 
 .. math::
 
