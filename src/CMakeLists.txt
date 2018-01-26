@@ -54,8 +54,13 @@ set(GOOSEFEM_HEADERS
   GooseFEM/GooseFEM.h
   GooseFEM/Macros.h
   GooseFEM/Mesh.h
+  GooseFEM/Mesh.cpp
   GooseFEM/MeshQuad4.h
+  GooseFEM/MeshQuad4.cpp
+  GooseFEM/MeshHex8.h
+  GooseFEM/MeshHex8.cpp
   GooseFEM/MeshTri3.h
+  GooseFEM/MeshTri3.cpp
 )
 
 # Disable pkg-config for native Windows builds

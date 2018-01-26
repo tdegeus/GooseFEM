@@ -570,7 +570,7 @@ inline bool TriUpdate::increment()
 
 // ------------------------------------------ constructor ------------------------------------------
 
-Edge::Edge(size_t i, size_t j, size_t el, size_t ed, bool sort):
+inline Edge::Edge(size_t i, size_t j, size_t el, size_t ed, bool sort):
 n1(i), n2(j), elem(el), edge(ed)
 {
   if ( sort && n1>n2 )

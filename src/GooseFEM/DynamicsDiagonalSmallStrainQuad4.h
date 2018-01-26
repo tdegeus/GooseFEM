@@ -33,7 +33,7 @@ public:
   std::unique_ptr<Material> mat;
 
   // matrices to store the element data
-  cppmat::matrix<double> x, u, v, f, M, D, dNx, dNxi, w, V, dNxi_n, w_n, V_n;
+  cppmat::matrix<double> x, u, v, f, M, D, dNx, dNxi, w, vol, dNxi_n, w_n, vol_n;
 
   // dimensions
   size_t nelem, nip=4, nne=4, ndim=2;
@@ -51,6 +51,12 @@ public:
   void updated_x();
   void updated_u();
   void updated_v();
+
+  // return volume average stress and strain
+  cppmat::cartesian2d::tensor2s<double> mean_eps(size_t e);   // of element "e"
+  cppmat::cartesian2d::tensor2s<double> mean_sig(size_t e);   // of element "e"
+  cppmat::cartesian2d::tensor2s<double> mean_eps();           // of all elements
+  cppmat::cartesian2d::tensor2s<double> mean_sig();           // of all elements
 };
 
 // =================================================================================================
@@ -74,8 +80,8 @@ inline Quad4<Material>::Quad4(std::unique_ptr<Material> _mat, size_t _nelem)
   // -
   dNx   .resize({nelem,nip,nne,ndim});
   // -
-  V     .resize({nelem,nip});
-  V_n   .resize({nelem,nne});
+  vol   .resize({nelem,nip});
+  vol_n .resize({nelem,nne});
   // -
   dNxi  .resize({nip,nne,ndim});
   dNxi_n.resize({nne,nne,ndim});
@@ -181,7 +187,7 @@ inline void Quad4<Material>::updated_x()
   // local views of the global arrays (speeds up indexing, and increases readability)
   cppmat::tiny::matrix2<double,8,8> M_, D_;
   cppmat::tiny::matrix2<double,4,2> dNxi_, dNx_, x_;
-  cppmat::tiny::vector <double,4>   w_, V_;
+  cppmat::tiny::vector <double,4>   w_, vol_;
 
   // loop over all elements (in parallel)
   #pragma omp for
@@ -194,10 +200,10 @@ inline void Quad4<Material>::updated_x()
     // ----------------
 
     // pointer to element mass/damping matrix, nodal volume, and integration weight
-    M_.map(&M  (e));
-    D_.map(&D  (e));
-    V_.map(&V_n(e));
-    w_.map(&w_n(0));
+    M_  .map(&M    (e));
+    D_  .map(&D    (e));
+    vol_.map(&vol_n(e));
+    w_  .map(&w_n  (0));
 
     // loop over nodes, i.e. the integration points
     for ( size_t k = 0 ; k < nne ; ++k )
@@ -216,25 +222,25 @@ inline void Quad4<Material>::updated_x()
       Jdet_ = J_.det();
 
       // - integration point volume
-      V_(k) = w_(k) * Jdet_;
+      vol_(k) = w_(k) * Jdet_;
 
       // - assemble element mass matrix
-      //   M(m+i,n+i) += N(m) * rho * V * N(n);
-      M_(k*2  ,k*2  ) = mat->rho(e,k) * V_(k);
-      M_(k*2+1,k*2+1) = mat->rho(e,k) * V_(k);
+      //   M(m+i,n+i) += N(m) * rho * vol * N(n);
+      M_(k*2  ,k*2  ) = mat->rho(e,k) * vol_(k);
+      M_(k*2+1,k*2+1) = mat->rho(e,k) * vol_(k);
 
       // - assemble element non-Galilean damping matrix
-      //   D(m+i,n+i) += N(m) * alpha * V * N(n);
-      D_(k*2  ,k*2  ) = mat->alpha(e,k) * V_(k);
-      D_(k*2+1,k*2+1) = mat->alpha(e,k) * V_(k);
+      //   D(m+i,n+i) += N(m) * alpha * vol * N(n);
+      D_(k*2  ,k*2  ) = mat->alpha(e,k) * vol_(k);
+      D_(k*2+1,k*2+1) = mat->alpha(e,k) * vol_(k);
     }
 
     // Gaussian quadrature
     // -------------------
 
     // pointer to element integration volume and weight
-    V_.map(&V(e));
-    w_.map(&w(0));
+    vol_.map(&vol(e));
+    w_  .map(&w  (0));
 
     // loop over Gauss points
     for ( size_t k = 0 ; k < nip ; ++k )
@@ -255,7 +261,7 @@ inline void Quad4<Material>::updated_x()
       Jinv_ = J_.inv();
 
       // - integration point volume
-      V_(k) = w_(k) * Jdet_;
+      vol_(k) = w_(k) * Jdet_;
 
       // - shape function gradients (global coordinates)
       //   dNx(m,i) += Jinv(i,j) * dNxi(m,j)
@@ -287,16 +293,16 @@ inline void Quad4<Material>::updated_u()
   cppmat::cartesian2d::tensor2s<double> eps_, sig_;
   // local views of the global arrays (speeds up indexing, and increases readability)
   cppmat::tiny::matrix2<double,4,2> dNx_, u_, f_;
-  cppmat::tiny::vector <double,4>   V_;
+  cppmat::tiny::vector <double,4>   vol_;
 
   // loop over all elements (in parallel)
   #pragma omp for
   for ( size_t e = 0 ; e < nelem ; ++e )
   {
     // pointer to element forces, displacements, and integration volume
-    f_.map(&f(e));
-    u_.map(&u(e));
-    V_.map(&V(e));
+    f_  .map(&f  (e));
+    u_  .map(&u  (e));
+    vol_.map(&vol(e));
 
     // zero initialize forces
     f_.setZero();
@@ -326,11 +332,11 @@ inline void Quad4<Material>::updated_u()
       mat->updated_eps(e,k);
 
       // - assemble to element force
-      //   f(m,j) += dNx(m,i) * sig(i,j) * V;
+      //   f(m,j) += dNx(m,i) * sig(i,j) * vol;
       for ( size_t m = 0 ; m < nne ; ++m )
       {
-        f_(m,0) += dNx_(m,0) * sig_(0,0) * V_(k) + dNx_(m,1) * sig_(1,0) * V_(k);
-        f_(m,1) += dNx_(m,0) * sig_(0,1) * V_(k) + dNx_(m,1) * sig_(1,1) * V_(k);
+        f_(m,0) += dNx_(m,0) * sig_(0,0) * vol_(k) + dNx_(m,1) * sig_(1,0) * vol_(k);
+        f_(m,1) += dNx_(m,0) * sig_(0,1) * vol_(k) + dNx_(m,1) * sig_(1,1) * vol_(k);
       }
     }
   }
@@ -354,16 +360,16 @@ inline void Quad4<Material>::updated_v()
   cppmat::cartesian2d::tensor2s<double> epsdot_, sig_;
   // local views of the global arrays (speeds up indexing, and increases readability)
   cppmat::tiny::matrix2<double,4,2> dNx_, v_, f_;
-  cppmat::tiny::vector <double,4>   V_;
+  cppmat::tiny::vector <double,4>   vol_;
 
   // loop over all elements (in parallel)
   #pragma omp for
   for ( size_t e = 0 ; e < nelem ; ++e )
   {
     // pointer to element forces, displacements, and integration volume
-    f_.map(&f(e));
-    v_.map(&v(e));
-    V_.map(&V(e));
+    f_  .map(&f  (e));
+    v_  .map(&v  (e));
+    vol_.map(&vol(e));
 
     // zero initialize forces
     f_.setZero();
@@ -393,11 +399,11 @@ inline void Quad4<Material>::updated_v()
       mat->updated_epsdot(e,k);
 
       // - assemble to element force
-      //   f(m,j) += dNdx(m,i) * sig(i,j) * V;
+      //   f(m,j) += dNdx(m,i) * sig(i,j) * vol;
       for ( size_t m = 0 ; m < nne ; ++m )
       {
-        f_(m,0) += dNx_(m,0) * sig_(0,0) * V_(k) + dNx_(m,1) * sig_(1,0) * V_(k);
-        f_(m,1) += dNx_(m,0) * sig_(0,1) * V_(k) + dNx_(m,1) * sig_(1,1) * V_(k);
+        f_(m,0) += dNx_(m,0) * sig_(0,0) * vol_(k) + dNx_(m,1) * sig_(1,0) * vol_(k);
+        f_(m,1) += dNx_(m,0) * sig_(0,1) * vol_(k) + dNx_(m,1) * sig_(1,1) * vol_(k);
       }
     }
   }
@@ -407,6 +413,122 @@ inline void Quad4<Material>::updated_v()
   changed_M = false;
   changed_D = false;
 }
+}
+
+// =================================================================================================
+
+template<class Material>
+inline cppmat::cartesian2d::tensor2s<double> Quad4<Material>::mean_eps(size_t e)
+{
+  cppmat::cartesian2d::tensor2s<double> eps_, tot_eps_(0.0);
+  cppmat::tiny::vector <double,4> vol_;
+  double tot_vol_ = 0.0;
+
+  // pointer to integration volume
+  vol_.map(&vol(e));
+
+  // loop over all integration points in element "e"
+  for ( size_t k = 0 ; k < nip ; ++k )
+  {
+    // - pointer to strain tensor (stored symmetric)
+    eps_.map(&mat->eps(e,k));
+
+    // - add to average
+    tot_eps_ += vol_(k) * eps_;
+    tot_vol_ += vol_(k);
+  }
+
+  // return volume average
+  return ( tot_eps_ / tot_vol_ );
+}
+
+// =================================================================================================
+
+template<class Material>
+inline cppmat::cartesian2d::tensor2s<double> Quad4<Material>::mean_sig(size_t e)
+{
+  cppmat::cartesian2d::tensor2s<double> sig_, tot_sig_(0.0);
+  cppmat::tiny::vector <double,4> vol_;
+  double tot_vol_ = 0.0;
+
+  // pointer to integration volume
+  vol_.map(&vol(e));
+
+  // loop over all integration points in element "e"
+  for ( size_t k = 0 ; k < nip ; ++k )
+  {
+    // - pointer to strain tensor (stored symmetric)
+    sig_.map(&mat->sig(e,k));
+
+    // - add to average
+    tot_sig_ += vol_(k) * sig_;
+    tot_vol_ += vol_(k);
+  }
+
+  // return volume average
+  return ( tot_sig_ / tot_vol_ );
+}
+
+// =================================================================================================
+
+template<class Material>
+inline cppmat::cartesian2d::tensor2s<double> Quad4<Material>::mean_eps()
+{
+  cppmat::cartesian2d::tensor2s<double> eps_, tot_eps_(0.0);
+  cppmat::tiny::vector <double,4> vol_;
+  double tot_vol_ = 0.0;
+
+  // loop over all elements (in parallel)
+  for ( size_t e = 0 ; e < nelem ; ++e )
+  {
+    // pointer to integration volume
+    vol_.map(&vol(e));
+
+    // loop over all integration points in element "e"
+    for ( size_t k = 0 ; k < nip ; ++k )
+    {
+      // - pointer to strain tensor (stored symmetric)
+      eps_.map(&mat->eps(e,k));
+
+      // - add to average
+      tot_eps_ += vol_(k) * eps_;
+      tot_vol_ += vol_(k);
+    }
+  }
+
+  // return volume average
+  return ( tot_eps_ / tot_vol_ );
+}
+
+// =================================================================================================
+
+template<class Material>
+inline cppmat::cartesian2d::tensor2s<double> Quad4<Material>::mean_sig()
+{
+  cppmat::cartesian2d::tensor2s<double> sig_, tot_sig_(0.0);
+  cppmat::tiny::vector <double,4> vol_;
+  double tot_vol_ = 0.0;
+
+  // loop over all elements (in parallel)
+  for ( size_t e = 0 ; e < nelem ; ++e )
+  {
+    // pointer to integration volume
+    vol_.map(&vol(e));
+
+    // loop over all integration points in element "e"
+    for ( size_t k = 0 ; k < nip ; ++k )
+    {
+      // - pointer to strain tensor (stored symmetric)
+      sig_.map(&mat->sig(e,k));
+
+      // - add to average
+      tot_sig_ += vol_(k) * sig_;
+      tot_vol_ += vol_(k);
+    }
+  }
+
+  // return volume average
+  return ( tot_sig_ / tot_vol_ );
 }
 
 // =================================================================================================
