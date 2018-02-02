@@ -3,15 +3,11 @@
 GooseFEM::Dynamics::Diagonal
 ****************************
 
-.. note::
+[:download:`source: DynamicsDiagonalPeriodic.h <../src/GooseFEM/DynamicsDiagonalPeriodic.h>`, :download:`source: DynamicsDiagonalPeriodic.cpp <../src/GooseFEM/DynamicsDiagonalPeriodic.cpp>`]
 
-  Source:
+[:download:`source: DynamicsDiagonalSemiPeriodic.h <../src/GooseFEM/DynamicsDiagonalSemiPeriodic.h>`]
 
-  .. code-block:: cpp
-
-    #include <GooseFEM/DynamicsDiagonalPeriodic.h>
-    #include <GooseFEM/DynamicsDiagonalSemiPeriodic.h>
-    #include <GooseFEM/DynamicsDiagonalLinearStrainQuad4.h>
+[:download:`source: DynamicsDiagonalSmallStrainQuad4.h <../src/GooseFEM/DynamicsDiagonalSmallStrainQuad4.h>`]
 
 Overview
 ========
@@ -23,9 +19,12 @@ The philosophy is to provide some structure to efficiently run a finite element 
 
 *   **Discretized system** (``GooseFEM::Dynamics::Diagonal::Periodic``, ``GooseFEM::Dynamics::Diagonal::SemiPeriodic``).
 
-    Defines the discretized system, and assembles the (inverse) mass matrix, the displacement dependent forces, and the velocity dependent forces from element arrays that are provided by the element definition.
+    *   Defines the discretized system.
+    *   Computes the strain and the strain-rate, and writes them to the *element definition*.
+    *   Assembles the diagonal (inverse) mass matrix, the displacement dependent forces, and the velocity dependent forces from the *element definition*.
+    *   Provides time integrators.
 
-*   **Element definition** (``GooseFEM::Dynamics::Diagonal::LinearStrain::Qaud4``)
+*   **Element definition** (``GooseFEM::Dynamics::Diagonal::SmallStrain::Qaud4``)
 
     Provides the element arrays by performing numerical quadrature. At the integration point the constitutive response is probed from the quadrature point definition.
 
@@ -45,7 +44,7 @@ A simple example is:
   #include <Eigen/Eigen>
   #include <cppmat/cppmat.h>
   #include <GooseFEM/GooseFEM.h>
-  #include <GooseMaterial/AmorphousSolid/LinearStrain/Elastic/Cartesian2d.h>
+  #include <GooseMaterial/AmorphousSolid/SmallStrain/Elastic/Cartesian2d.h>
 
   // -------------------------------------------------------------------
 
@@ -56,7 +55,7 @@ A simple example is:
   using     T2   = cppmat::cartesian2d::tensor2 <double>;
   using     T2s  = cppmat::cartesian2d::tensor2s<double>;
 
-  namespace GM   = GooseMaterial::AmorphousSolid::LinearStrain::Elastic::Cartesian2d;
+  namespace GM   = GooseMaterial::AmorphousSolid::SmallStrain::Elastic::Cartesian2d;
 
   // ===================================================================
 
@@ -133,7 +132,7 @@ A simple example is:
     auto  quadrature = std::make_shared<Quadrature>(40*40/4);
 
     // class which provides the response of each element
-    using Elem = GooseFEM::Dynamics::Diagonal::LinearStrain::Quad4<Quadrature>;
+    using Elem = GooseFEM::Dynamics::Diagonal::SmallStrain::Quad4<Quadrature>;
     auto  elem = std::make_shared<Elem>(quadrature);
 
     // class which provides the system and an increment
@@ -249,7 +248,7 @@ Signature
 
 From this it is clear that:
 
-*   ``GooseFEM::Dynamics::Diagonal::Periodic`` requires the following minimal signature from ``GooseFEM::Dynamics::Diagonal::LinearStrain::Qaud4``:
+*   ``GooseFEM::Dynamics::Diagonal::Periodic`` requires the following minimal signature from ``GooseFEM::Dynamics::Diagonal::SmallStrain::Qaud4``:
 
     .. code-block:: cpp
 
@@ -266,7 +265,7 @@ From this it is clear that:
         void post     (size_t elem); // post-process                    <- quad->stressStrain(Rate)
       }
 
-*   ``GooseFEM::Dynamics::Diagonal::LinearStrain::Qaud4`` requires the minimal signature from ``Quadrature``
+*   ``GooseFEM::Dynamics::Diagonal::SmallStrain::Qaud4`` requires the minimal signature from ``Quadrature``
 
     .. code-block:: cpp
 
