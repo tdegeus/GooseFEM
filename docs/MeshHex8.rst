@@ -3,9 +3,7 @@
 GooseFEM::Mesh::Hex8
 ********************
 
-[:download:`source: MeshHex8.h <../src/GooseFEM/MeshHex8.h>`]
-
-[:download:`source: MeshHex8.cpp <../src/GooseFEM/MeshHex8.cpp>`]
+[:download:`source: MeshHex8.h <../src/GooseFEM/MeshHex8.h>`, :download:`source: MeshHex8.cpp <../src/GooseFEM/MeshHex8.cpp>`]
 
 Naming convention
 =================

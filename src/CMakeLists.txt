@@ -5,7 +5,7 @@ cmake_minimum_required(VERSION 3.0)
 project(GooseFEM)
 
 # automatically parse the version number
-file(READ "${CMAKE_CURRENT_SOURCE_DIR}/GooseFEM/Macros.h" _goosefem_version_header)
+file(READ "${CMAKE_CURRENT_SOURCE_DIR}/GooseFEM/GooseFEM.h" _goosefem_version_header)
 string(REGEX MATCH "define[ \t]+GOOSEFEM_WORLD_VERSION[ \t]+([0-9]+)" _goosefem_world_version_match "${_goosefem_version_header}")
 set(GOOSEFEM_WORLD_VERSION "${CMAKE_MATCH_1}")
 string(REGEX MATCH "define[ \t]+GOOSEFEM_MAJOR_VERSION[ \t]+([0-9]+)" _goosefem_major_version_match "${_goosefem_version_header}")
@@ -48,19 +48,17 @@ set(PKGCONFIG_INSTALL_DIR
 
 # list all header files
 set(GOOSEFEM_HEADERS
-  GooseFEM/DynamicsDiagonalSmallStrainQuad4.h
-  GooseFEM/DynamicsDiagonalSemiPeriodic.h
-  GooseFEM/DynamicsDiagonalPeriodic.h
   GooseFEM/GooseFEM.h
-  GooseFEM/Macros.h
   GooseFEM/Mesh.h
   GooseFEM/Mesh.cpp
+  GooseFEM/MeshTri3.h
+  GooseFEM/MeshTri3.cpp
   GooseFEM/MeshQuad4.h
   GooseFEM/MeshQuad4.cpp
   GooseFEM/MeshHex8.h
   GooseFEM/MeshHex8.cpp
-  GooseFEM/MeshTri3.h
-  GooseFEM/MeshTri3.cpp
+  GooseFEM/DynamicsDiagonal.h
+  GooseFEM/DynamicsDiagonal.cpp
 )
 
 # Disable pkg-config for native Windows builds

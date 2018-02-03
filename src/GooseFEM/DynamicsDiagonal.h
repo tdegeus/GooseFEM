@@ -117,6 +117,8 @@ public:
 
 // ======================================== Element - Quad4 ========================================
 
+namespace SmallStrain {
+
 template<class Material>
 class Quad4
 {
@@ -154,6 +156,8 @@ public:
   cppmat::cartesian2d::tensor2s<double> mean_eps();           // of all elements
   cppmat::cartesian2d::tensor2s<double> mean_sig();           // of all elements
 };
+
+} // namespace ...
 
 // =================================================================================================
 

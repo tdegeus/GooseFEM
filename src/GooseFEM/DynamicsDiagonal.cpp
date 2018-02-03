@@ -39,8 +39,8 @@ inline Periodic<Element>::Periodic(
   ndof  = dofs.maxCoeff()+1;
 
   // basic checks (mostly the user is 'trusted')
-  assert( dofs.size() == nnode * ndim );
-  assert( ndof        <  nnode * ndim );
+  assert( static_cast<size_t>(dofs.size()) == nnode * ndim );
+  assert(                     ndof         <  nnode * ndim );
 
   // allocate and zero-initialize nodal quantities
   u.conservativeResize(nnode,ndim); u.setZero();
@@ -624,6 +624,10 @@ inline void SemiPeriodic<Element>::assemble_F()
 
 // ======================================== Element - Quad4 ========================================
 
+namespace SmallStrain {
+
+// -------------------------------------------------------------------------------------------------
+
 template<class Material>
 inline Quad4<Material>::Quad4(std::unique_ptr<Material> _mat, size_t _nelem)
 {
@@ -1093,6 +1097,10 @@ inline cppmat::cartesian2d::tensor2s<double> Quad4<Material>::mean_sig()
   // return volume average
   return ( tot_sig_ / tot_vol_ );
 }
+
+// -------------------------------------------------------------------------------------------------
+
+} // namespace ...
 
 // =================================================================================================
 

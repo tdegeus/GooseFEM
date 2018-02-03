@@ -7,6 +7,7 @@
 
 // -------------------------------------------------------------------------------------------------
 
+// introduce aliases
 using ColD = GooseFEM::ColD;
 using T2   = cppmat::cartesian2d::tensor2<double>;
 using Mat  = GooseMaterial::AmorphousSolid::LinearStrain::Elastic::Cartesian2d::Material;
@@ -20,26 +21,32 @@ public:
   // class variables
   // ---------------
 
-  // strain/stress, parameters, output variables
-  cppmat::matrix<double> eps, epsdot, sig, rho, alpha, Epot;
+  // strain(-rate), stress, mass density, background damping [mandatory]
+  cppmat::matrix<double> eps, epsdot, sig, rho, alpha;
 
-  // dimensions
+  // mesh dimensions
   size_t nelem, nne=4, ndim=2, nip=4;
 
-  // constitutive response
+  // constitutive response [customize]
   std::vector<Mat> material;
+
+  // damping [customize]
+  Mat rayleigh;
 
   // class functions
   // ---------------
 
-  // constructor
+  // constructor [customize]
   Material(size_t nelem, size_t nhard);
 
-  // compute stress for one integration point
+  // compute stress for a certain element "e" and integration point "k" [mandatory]
   void updated_eps   (size_t e, size_t k);
-  void updated_epsdot(size_t e, size_t k){};
+  void updated_epsdot(size_t e, size_t k);
 
-  // compute post variables
+  // post process variables / functions [customize]
+  // - potential energy
+  cppmat::matrix<double> Epot;
+  // - compute potential energy
   void post();
 };
 
@@ -47,19 +54,24 @@ public:
 
 Material::Material(size_t _nelem, size_t _nhard)
 {
-  // copy from input
+  // copy from input [customize]
   nelem = _nelem;
 
-  // allocate symmetric tensors and scalars of each integration point
-  eps .resize({nelem,nip,3});
-  sig .resize({nelem,nip,3});
-  Epot.resize({nelem,nip  });
+  // allocate symmetric tensors and scalars per element, per integration point [mandatory]
+  eps   .resize({nelem,nip,3});
+  epsdot.resize({nelem,nip,3});
+  sig   .resize({nelem,nip,3});
+  rho   .resize({nelem,nne  });
+  alpha .resize({nelem,nne  });
 
-  // allocate and set density and non-Galilean damping coefficient of each nodal integration point
-  rho  .resize({nelem,nne}); rho  .setConstant(1.);
-  alpha.resize({nelem,nne}); alpha.setConstant(0.);
+  // set mass-density and background damping [customize]
+  rho  .setConstant(1.0);
+  alpha.setConstant(0.2);
 
-  // constitutive response per element
+  // post variables [customize]
+  Epot.resize({nelem,nip});
+
+  // constitutive response per element (per integration post) [customize]
   for ( size_t e = 0 ; e < nelem ; ++e )
   {
     if ( e < _nhard )
@@ -73,6 +85,9 @@ Material::Material(size_t _nelem, size_t _nhard)
       material.push_back(mat);
     }
   }
+
+  // homogeneous damping [customize]
+  rayleigh = Mat(10.,.1);
 }
 
 // -------------------------------------------------------------------------------------------------
@@ -80,14 +95,35 @@ Material::Material(size_t _nelem, size_t _nhard)
 void Material::updated_eps(size_t e, size_t k)
 {
   // local views of the global arrays (speeds up indexing, and increases readability)
-  cppmat::cartesian2d::tensor2s<double> Eps, Sig;
+  cppmat::cartesian2d::tensor2s<double> Epsdot, Eps, Sig;
 
-  // pointer to stress/strain
-  Eps.map(&eps(e,k));
-  Sig.map(&sig(e,k));
+  // point to correct position in matrix of tensors
+  Epsdot.map(&epsdot(e,k));
+  Eps   .map(&eps   (e,k));
 
   // compute stress
-  Sig.copy( material[e].stress(Eps) );
+  Sig = material[e].stress(Eps) + rayleigh.stress(Epsdot);
+
+  // copy to matrix of tensors
+  std::copy(Sig.begin(), Sig.end(), &sig(e,k));
+}
+
+// -------------------------------------------------------------------------------------------------
+
+void Material::updated_epsdot(size_t e, size_t k)
+{
+  // local views of the global arrays (speeds up indexing, and increases readability)
+  cppmat::cartesian2d::tensor2s<double> Eps, Epsdot, Sig;
+
+  // point to correct position in matrix of tensors
+  Epsdot.map(&epsdot(e,k));
+  Eps   .map(&eps   (e,k));
+
+  // compute stress
+  Sig = material[e].stress(Eps) + rayleigh.stress(Epsdot);
+  
+  // copy to matrix of tensors
+  std::copy(Sig.begin(), Sig.end(), &sig(e,k));
 }
 
 // -------------------------------------------------------------------------------------------------
@@ -105,7 +141,7 @@ void Material::post()
   {
     for ( size_t k = 0 ; k < nip ; ++k )
     {
-      // pointer to stress/strain
+      // point to correct position in matrix of tensors
       Eps.map(&eps(e,k));
 
       // compute energy
@@ -117,8 +153,9 @@ void Material::post()
 
 // =================================================================================================
 
+// introduce aliases
 using Mesh       = GooseFEM::Mesh::Quad4::Regular;
-using Element    = GooseFEM::Element::Diagonal::SmallStrain::Quad4<Material>;
+using Element    = GooseFEM::Dynamics::Diagonal::SmallStrain::Quad4<Material>;
 using Simulation = GooseFEM::Dynamics::Diagonal::Periodic<Element>;
 
 // =================================================================================================
@@ -134,7 +171,7 @@ int main()
   // class which provides the mesh
   Mesh mesh(nx,nx,1.);
   // extract information
-  size_t nodeOrigin = mesh.nodeOrigin();
+  size_t nodeOrigin = mesh.nodesOrigin();
   size_t nelem      = mesh.nelem();
   size_t nhard      = nx*nx/4;
 
@@ -166,7 +203,7 @@ int main()
   for ( size_t inc = 0 ; inc < static_cast<size_t>(Epot.size()) ; ++inc )
   {
     // - compute increment
-    sim.Verlet();
+    sim.velocityVerlet();
 
     // - store time
     t(inc) = sim.t;
@@ -177,7 +214,7 @@ int main()
 
     // - store total potential energy
     sim.elem->mat->post();
-    Epot(inc) = sim.elem->mat->Epot.average(sim.elem->V) * sim.elem->V.sum();
+    Epot(inc) = sim.elem->mat->Epot.average(sim.elem->vol) * sim.elem->vol.sum();
   }
 
   // write to output file
