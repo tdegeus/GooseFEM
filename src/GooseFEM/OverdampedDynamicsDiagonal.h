@@ -4,17 +4,17 @@
 
 ================================================================================================= */
 
-#ifndef GOOSEFEM_DYNAMICS_DIAGONAL_H
-#define GOOSEFEM_DYNAMICS_DIAGONAL_H
+#ifndef GOOSEFEM_OVERDAMPEDDYNAMICS_DIAGONAL_H
+#define GOOSEFEM_OVERDAMPEDDYNAMICS_DIAGONAL_H
 
 // -------------------------------------------------------------------------------------------------
 
 #include "GooseFEM.h"
 
-// ================================= GooseFEM::Dynamics::Diagonal ==================================
+// ============================ GooseFEM::OverdampedDynamics::Diagonal =============================
 
 namespace GooseFEM {
-namespace Dynamics {
+namespace OverdampedDynamics {
 namespace Diagonal {
 
 // ===================================== Simulation - Periodic =====================================
@@ -30,13 +30,13 @@ public:
   // element/quadrature/material definition
   std::unique_ptr<Element> elem;
 
-  // mesh: nodal position/displacement/velocity/acceleration, DOF-numbers, connectivity, dimensions
+  // mesh: nodal position/displacement/velocity, DOF-numbers, connectivity, dimensions
   size_t nnode, nelem, nne, ndim, ndof;
   MatS   conn, dofs;
-  MatD   x, u, v, a;
+  MatD   x, u, v;
 
-  // linear system: columns (also "M" and "D" which are diagonal)
-  ColD   M, Minv, D, F, V, V_n, A, A_n;
+  // linear system: columns (also "D" which is diagonal)
+  ColD   D, Dinv, F, V;
 
   // time integration
   double dt, t=0.0;
@@ -53,13 +53,10 @@ public:
   // functions
   // ---------
 
-  void velocityVerlet();           // one time step of the time integrator
-  void Verlet();                   // one time step of the time integrator (no velocity dependence)
-  void ground();                   // ground the system: set A = V = 0 (also for their history)
+  void forwardEuler();             // one time step of the time integrator
   void updated_x();                // process update in "x"
   void updated_u(bool init=false); // process update in "u", if init all possible updates are made
   void updated_v(bool init=false); // process update in "v", if init all possible updates are made
-  void assemble_M();               // assemble the mass matrix from the element mass matrices
   void assemble_D();               // assemble the damping matrix from the element damping matrices
   void assemble_F();               // assemble the force from the element forces
 };
@@ -77,18 +74,18 @@ public:
   // element/quadrature/material definition
   std::unique_ptr<Element> elem;
 
-  // mesh: nodal position/displacement/velocity/acceleration, DOF-numbers, connectivity, dimensions
+  // mesh: nodal position/displacement/velocity, DOF-numbers, connectivity, dimensions
   size_t nnode, nelem, nne, ndim, ndof;
   MatS   conn, dofs;
-  MatD   x, u, v, a;
+  MatD   x, u, v;
 
-  // fixed DOFs: prescribed velocity/acceleration, DOF-numbers, dimensions
+  // fixed DOFs: prescribed velocity, DOF-numbers, dimensions
   size_t nfixed;
   ColS   fixedDofs;
-  ColD   fixedV, fixedA;
+  ColD   fixedV;
 
-  // linear system: columns (also "M" and "D" which are diagonal)
-  ColD   M, Minv, D, F, V, V_n, A, A_n;
+  // linear system: columns (also "D" which is diagonal)
+  ColD   D, Dinv, F, V;
 
   // time integration
   double dt, t=0.0;
@@ -106,13 +103,10 @@ public:
   // functions
   // ---------
 
-  void velocityVerlet();           // one time step of the time integrator
-  void Verlet();                   // one time step of the time integrator (no velocity dependence)
-  void ground();                   // ground the system: set A = V = 0 (also for their history)
+  void forwardEuler();             // one time step of the time integrator
   void updated_x();                // process update in "x"
   void updated_u(bool init=false); // process update in "u", if init all possible updates are made
   void updated_v(bool init=false); // process update in "v", if init all possible updates are made
-  void assemble_M();               // assemble the mass matrix from the element mass matrices
   void assemble_D();               // assemble the damping matrix from the element damping matrices
   void assemble_F();               // assemble the force from the element forces
 };
@@ -133,13 +127,13 @@ public:
   std::unique_ptr<Material> mat;
 
   // matrices to store the element data
-  cppmat::matrix<double> x, u, v, f, M, D, dNx, dNxi, w, vol, dNxi_n, w_n, vol_n;
+  cppmat::matrix<double> x, u, v, f, D, dNx, dNxi, w, vol, dNxi_n, w_n, vol_n;
 
   // dimensions
   size_t nelem, nip=4, nne=4, ndim=2;
 
   // signals for solvers
-  bool changed_f=false, changed_M=true, changed_D=true;
+  bool changed_f=false, changed_D=true;
 
   // class functions
   // ---------------

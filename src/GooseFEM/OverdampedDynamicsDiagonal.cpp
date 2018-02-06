@@ -4,17 +4,17 @@
 
 ================================================================================================= */
 
-#ifndef GOOSEFEM_DYNAMICS_DIAGONAL_CPP
-#define GOOSEFEM_DYNAMICS_DIAGONAL_CPP
+#ifndef GOOSEFEM_OVERDAMPEDDYNAMICS_DIAGONAL_CPP
+#define GOOSEFEM_OVERDAMPEDDYNAMICS_DIAGONAL_CPP
 
 // -------------------------------------------------------------------------------------------------
 
-#include "DynamicsDiagonal.h"
+#include "OverdampedDynamicsDiagonal.h"
 
-// ================================= GooseFEM::Dynamics::Diagonal ==================================
+// ============================ GooseFEM::OverdampedDynamics::Diagonal =============================
 
 namespace GooseFEM {
-namespace Dynamics {
+namespace OverdampedDynamics {
 namespace Diagonal {
 
 // ===================================== Simulation - Periodic =====================================
@@ -39,17 +39,12 @@ inline Periodic<Element>::Periodic(
   // allocate and zero-initialize nodal quantities
   u.conservativeResize(nnode,ndim); u.setZero();
   v.conservativeResize(nnode,ndim); v.setZero();
-  a.conservativeResize(nnode,ndim); a.setZero();
 
   // allocate and zero-initialize linear system (DOFs)
-  Minv.conservativeResize(ndof);
-  M   .conservativeResize(ndof);
   D   .conservativeResize(ndof);
+  Dinv.conservativeResize(ndof);
   F   .conservativeResize(ndof);
   V   .conservativeResize(ndof);
-  V_n .conservativeResize(ndof); V_n .setZero();
-  A   .conservativeResize(ndof);
-  A_n .conservativeResize(ndof); A_n .setZero();
 
   // initialize all fields
   updated_x();
@@ -60,107 +55,23 @@ inline Periodic<Element>::Periodic(
 // -------------------------------------------------------------------------------------------------
 
 template<class Element>
-inline void Periodic<Element>::velocityVerlet()
+inline void Periodic<Element>::forwardEuler()
 {
-  // (1) new positions (displacements)
-  // - apply update (nodal) : x_{n+1} = x_n + dt * v_n + .5 * dt^2 * a_n"
-  u += dt * v + ( .5 * std::pow(dt,2.) ) * a;
-  // - process update in displacements
+  // (1) compute the velocities
+  // - solve for velocities (DOFs)
+  V.noalias() = Dinv.cwiseProduct( - F );
+  // - convert to nodal velocities (periodicity implies that several nodes depend on the same DOF)
+  for ( size_t i=0; i<nnode*ndim; ++i ) v(i) = V(dofs(i));
+
+  // (2) update positions
+  u += dt * v;
+
+  // process update in displacements and velocities
   updated_u();
-
-  // (2a) estimate new velocities
-  // - update velocities (DOFs)
-  V.noalias() = V_n + dt * A;
-  // - convert to nodal velocities (periodicity implies that several nodes depend on the same DOF)
-  for ( size_t i=0; i<nnode*ndim; ++i ) v(i) = V(dofs(i));
-  // - process update in velocities
-  updated_v();
-  // - solve for accelerations (DOFs)
-  A.noalias() = Minv.cwiseProduct( - F - D.cwiseProduct(V) );
-  // - update velocities (DOFs)
-  V.noalias() = V_n + ( .5 * dt ) * ( A_n + A );
-  // - convert to nodal velocities (periodicity implies that several nodes depend on the same DOF)
-  for ( size_t i=0; i<nnode*ndim; ++i ) v(i) = V(dofs(i));
-  // - process update in velocities
   updated_v();
 
-  // (2b) new velocities
-  // - solve for accelerations (DOFs)
-  A.noalias() = Minv.cwiseProduct( - F - D.cwiseProduct(V) );
-  // - update velocities (DOFs)
-  V.noalias() = V_n + ( .5 * dt ) * ( A_n + A );
-  // - convert to nodal velocities (periodicity implies that several nodes depend on the same DOF)
-  for ( size_t i=0; i<nnode*ndim; ++i ) v(i) = V(dofs(i));
-  // - process update in velocities
-  updated_v();
-
-  // (3) new accelerations
-  // - solve for accelerations (DOFs)
-  A.noalias() = Minv.cwiseProduct( - F - D.cwiseProduct(V) );
-  // - convert to nodal acceleration (periodicity implies that several nodes depend on the same DOF)
-  for ( size_t i=0; i<nnode*ndim; ++i ) a(i) = A(dofs(i));
-
-  // store history
-  A_n = A;  // accelerations (DOFs)
-  V_n = V;  // velocities    (DOFs)
-  t  += dt; // current time
-
-  // N.B. at this point:
-  // "a" == "A" == "A_n"  ->  new nodal accelerations, their DOF equivalents, and a 'back-up'
-  // "v" ==        "V_n"  ->  new nodal velocities,                           and a 'back-up'
-  // "u"                  ->  new nodal displacements
-  // The forces "F" correspond to this state of the system
-}
-
-// -------------------------------------------------------------------------------------------------
-
-template<class Element>
-inline void Periodic<Element>::Verlet()
-{
-  // (1) new nodal positions (displacements)
-  // - apply update (nodal) : x_{n+1} = x_n + dt * v_n + .5 * dt^2 * a_n"
-  u += dt * v + ( .5 * std::pow(dt,2.) ) * a;
-  // - process update in displacements
-  updated_u();
-  // - solve for accelerations (DOFs)
-  A.noalias() = Minv.cwiseProduct( - F );
-  // - convert to nodal acceleration (periodicity implies that several nodes depend on the same DOF)
-  for ( size_t i=0; i<nnode*ndim; ++i ) a(i) = A(dofs(i));
-
-  // (2) propagate velocities
-  // - update velocities (DOFs)
-  V.noalias() = V_n + ( .5 * dt ) * ( A_n + A );
-  // - convert to nodal velocities (periodicity implies that several nodes depend on the same DOF)
-  for ( size_t i=0; i<nnode*ndim; ++i ) v(i) = V(dofs(i));
-
-  // store history
-  A_n = A;  // accelerations (DOFs)
-  V_n = V;  // velocities    (DOFs)
-  t  += dt; // current time
-
-  // N.B. at this point:
-  // "a" == "A" == "A_n"  ->  new nodal accelerations, their DOF equivalents, and a 'back-up'
-  // "v" ==        "V_n"  ->  new nodal velocities,                           and a 'back-up'
-  // "u"                  ->  new nodal displacements
-  // The forces "F" correspond to this state of the system
-}
-
-// -------------------------------------------------------------------------------------------------
-
-template<class Element>
-inline void Periodic<Element>::ground()
-{
-  // set accelerations and velocities zero (DOFs)
-  A.setZero();
-  V.setZero();
-
-  // convert to nodal velocity/acceleration (several nodes may depend on the same DOF)
-  for ( size_t i=0; i<nnode*ndim; ++i ) a(i) = A(dofs(i));
-  for ( size_t i=0; i<nnode*ndim; ++i ) v(i) = V(dofs(i));
-
-  // store history
-  A_n = A;  // accelerations (DOFs)
-  V_n = V;  // velocities    (DOFs)
+  // update time
+  t += dt;
 }
 
 // -------------------------------------------------------------------------------------------------
@@ -195,7 +106,6 @@ inline void Periodic<Element>::updated_u(bool init)
   elem->updated_u();
 
   // update
-  if ( elem->changed_M or init ) assemble_M();
   if ( elem->changed_D or init ) assemble_D();
   if ( elem->changed_f or init ) assemble_F();
 }
@@ -216,44 +126,8 @@ inline void Periodic<Element>::updated_v(bool init)
   elem->updated_v();
 
   // update
-  if ( elem->changed_M or init ) assemble_M();
   if ( elem->changed_D or init ) assemble_D();
   if ( elem->changed_f or init ) assemble_F();
-}
-
-// -------------------------------------------------------------------------------------------------
-
-template<class Element>
-inline void Periodic<Element>::assemble_M()
-{
-  // zero-initialize
-  M.setZero();
-
-  // temporarily disable parallelization by Eigen
-  Eigen::setNbThreads(1);
-  // assemble
-  #pragma omp parallel
-  {
-    // - mass matrix, per thread
-    ColD M_(ndof);
-    M_.setZero();
-
-    // - assemble diagonal mass matrix, per thread
-    #pragma omp for
-    for ( size_t e = 0 ; e < nelem ; ++e )
-      for ( size_t m = 0 ; m < nne ; ++m )
-        for ( size_t i = 0 ; i < ndim ; ++i )
-          M_(dofs(conn(e,m),i)) += elem->M(e,m*ndim+i,m*ndim+i);
-
-    // - reduce "M_" per thread to total "M"
-    #pragma omp critical
-      M += M_;
-  }
-  // automatic parallelization by Eigen
-  Eigen::setNbThreads(0);
-
-  // compute inverse of the mass matrix
-  Minv = M.cwiseInverse();
 }
 
 // -------------------------------------------------------------------------------------------------
@@ -286,6 +160,9 @@ inline void Periodic<Element>::assemble_D()
   }
   // automatic parallelization by Eigen
   Eigen::setNbThreads(0);
+
+  // compute inverse
+  Dinv = D.cwiseInverse();
 }
 
 // -------------------------------------------------------------------------------------------------
@@ -348,21 +225,15 @@ inline SemiPeriodic<Element>::SemiPeriodic(
   // allocate and zero-initialize nodal quantities
   u.conservativeResize(nnode,ndim); u.setZero();
   v.conservativeResize(nnode,ndim); v.setZero();
-  a.conservativeResize(nnode,ndim); a.setZero();
 
   // allocate and zero-initialize linear system (DOFs)
-  Minv.conservativeResize(ndof);
-  M   .conservativeResize(ndof);
   D   .conservativeResize(ndof);
+  Dinv.conservativeResize(ndof);
   F   .conservativeResize(ndof);
   V   .conservativeResize(ndof);
-  V_n .conservativeResize(ndof); V_n .setZero();
-  A   .conservativeResize(ndof);
-  A_n .conservativeResize(ndof); A_n .setZero();
 
-  // fixed DOFs : default zero velocity and acceleration
+  // fixed DOFs : default zero velocity
   fixedV.conservativeResize(nfixed); fixedV.setZero();
-  fixedA.conservativeResize(nfixed); fixedA.setZero();
 
   // initialize all fields
   updated_x();
@@ -373,119 +244,23 @@ inline SemiPeriodic<Element>::SemiPeriodic(
 // -------------------------------------------------------------------------------------------------
 
 template<class Element>
-inline void SemiPeriodic<Element>::velocityVerlet()
+inline void SemiPeriodic<Element>::forwardEuler()
 {
-  // (1) new positions (displacements)
-  // - apply update (nodal) : x_{n+1} = x_n + dt * v_n + .5 * dt^2 * a_n"
-  u += dt * v + ( .5 * std::pow(dt,2.) ) * a;
-  // - process update in displacements
+  // (1) compute the velocities
+  // - solve for velocities (DOFs)
+  V.noalias() = Dinv.cwiseProduct( - F );
+  // - convert to nodal velocities (periodicity implies that several nodes depend on the same DOF)
+  for ( size_t i=0; i<nnode*ndim; ++i ) v(i) = V(dofs(i));
+
+  // (2) update positions
+  u += dt * v;
+
+  // process update in displacements and velocities
   updated_u();
-
-  // (2a) estimate new velocities
-  // - update velocities (DOFs)
-  V.noalias() = V_n + dt * A;
-  // - apply the fixed velocities
-  for ( size_t i=0; i<nfixed; ++i ) V(fixedDofs(i)) = fixedV(i);
-  // - convert to nodal velocities (periodicity implies that several nodes depend on the same DOF)
-  for ( size_t i=0; i<nnode*ndim; ++i ) v(i) = V(dofs(i));
-  // - process update in velocities
-  updated_v();
-  // - solve for accelerations (DOFs)
-  A.noalias() = Minv.cwiseProduct( - F - D.cwiseProduct(V) );
-  // - update velocities (DOFs)
-  V.noalias() = V_n + ( .5 * dt ) * ( A_n + A );
-  // - apply the fixed velocities
-  for ( size_t i=0; i<nfixed; ++i ) V(fixedDofs(i)) = fixedV(i);
-  // - convert to nodal velocities (periodicity implies that several nodes depend on the same DOF)
-  for ( size_t i=0; i<nnode*ndim; ++i ) v(i) = V(dofs(i));
-  // - process update in velocities
   updated_v();
 
-  // (2b) new velocities
-  // - solve for accelerations (DOFs)
-  A.noalias() = Minv.cwiseProduct( - F - D.cwiseProduct(V) );
-  // - update velocities (DOFs)
-  V.noalias() = V_n + ( .5 * dt ) * ( A_n + A );
-  // - apply the fixed velocities
-  for ( size_t i=0; i<nfixed; ++i ) V(fixedDofs(i)) = fixedV(i);
-  // - convert to nodal velocities (periodicity implies that several nodes depend on the same DOF)
-  for ( size_t i=0; i<nnode*ndim; ++i ) v(i) = V(dofs(i));
-  // - process update in velocities
-  updated_v();
-
-  // (3) new accelerations
-  // - solve for accelerations (DOFs)
-  A.noalias() = Minv.cwiseProduct( - F - D.cwiseProduct(V) );
-  // - apply the fixed accelerations
-  for ( size_t i=0; i<nfixed; ++i ) A(fixedDofs(i)) = fixedA(i);
-  // - convert to nodal acceleration (periodicity implies that several nodes depend on the same DOF)
-  for ( size_t i=0; i<nnode*ndim; ++i ) a(i) = A(dofs(i));
-
-  // store history
-  A_n = A;  // accelerations (DOFs)
-  V_n = V;  // velocities    (DOFs)
-  t  += dt; // current time
-
-  // N.B. at this point:
-  // "a" == "A" == "A_n"  ->  new nodal accelerations, their DOF equivalents, and a 'back-up'
-  // "v" ==        "V_n"  ->  new nodal velocities,                           and a 'back-up'
-  // "u"                  ->  new nodal displacements
-  // The forces "F" correspond to this state of the system
-}
-
-// -------------------------------------------------------------------------------------------------
-
-template<class Element>
-inline void SemiPeriodic<Element>::Verlet()
-{
-  // (1) new nodal positions (displacements)
-  // - apply update (nodal) : x_{n+1} = x_n + dt * v_n + .5 * dt^2 * a_n"
-  u += dt * v + ( .5 * std::pow(dt,2.) ) * a;
-  // - process update in displacements
-  updated_u();
-  // - solve for accelerations (DOFs)
-  A.noalias() = Minv.cwiseProduct( - F );
-  // - apply the fixed accelerations
-  for ( size_t i=0; i<nfixed; ++i ) A(fixedDofs(i)) = fixedA(i);
-  // - convert to nodal acceleration (periodicity implies that several nodes depend on the same DOF)
-  for ( size_t i=0; i<nnode*ndim; ++i ) a(i) = A(dofs(i));
-
-  // (2) propagate velocities
-  // - update velocities (DOFs)
-  V.noalias() = V_n + ( .5 * dt ) * ( A_n + A );
-  // - apply the fixed velocities
-  for ( size_t i=0; i<nfixed; ++i ) V(fixedDofs(i)) = fixedV(i);
-  // - convert to nodal velocities (periodicity implies that several nodes depend on the same DOF)
-  for ( size_t i=0; i<nnode*ndim; ++i ) v(i) = V(dofs(i));
-
-  // store history
-  A_n = A;  // accelerations (DOFs)
-  V_n = V;  // velocities    (DOFs)
-  t  += dt; // current time
-
-  // N.B. at this point:
-  // "a" == "A" == "A_n"  ->  new nodal accelerations, their DOF equivalents, and a 'back-up'
-  // "v" ==        "V_n"  ->  new nodal velocities,                           and a 'back-up'
-  // "u"                  ->  new nodal displacements
-  // The forces "F" correspond to this state of the system
-}
-
-// -------------------------------------------------------------------------------------------------
-
-template<class Element>
-inline void SemiPeriodic<Element>::ground()
-{
-  // set accelerations and velocities zero (DOFs)
-  A.setZero();
-  V.setZero();
-
-  // convert to nodal velocity/acceleration (several nodes may depend on the same DOF)
-  for ( size_t i=0; i<nnode*ndim; ++i ) a(i) = A(dofs(i));
-  for ( size_t i=0; i<nnode*ndim; ++i ) v(i) = V(dofs(i));
-
-  // store history
-  A_n = A;  // accelerations (DOFs)
-  V_n = V;  // velocities    (DOFs)
+  // update time
+  t += dt;
 }
 
 // -------------------------------------------------------------------------------------------------
@@ -520,7 +295,6 @@ inline void SemiPeriodic<Element>::updated_u(bool init)
   elem->updated_u();
 
   // update
-  if ( elem->changed_M or init ) assemble_M();
   if ( elem->changed_D or init ) assemble_D();
   if ( elem->changed_f or init ) assemble_F();
 }
@@ -541,44 +315,8 @@ inline void SemiPeriodic<Element>::updated_v(bool init)
   elem->updated_v();
 
   // update
-  if ( elem->changed_M or init ) assemble_M();
   if ( elem->changed_D or init ) assemble_D();
   if ( elem->changed_f or init ) assemble_F();
-}
-
-// -------------------------------------------------------------------------------------------------
-
-template<class Element>
-inline void SemiPeriodic<Element>::assemble_M()
-{
-  // zero-initialize
-  M.setZero();
-
-  // temporarily disable parallelization by Eigen
-  Eigen::setNbThreads(1);
-  // assemble
-  #pragma omp parallel
-  {
-    // - mass matrix, per thread
-    ColD M_(ndof);
-    M_.setZero();
-
-    // - assemble diagonal mass matrix, per thread
-    #pragma omp for
-    for ( size_t e = 0 ; e < nelem ; ++e )
-      for ( size_t m = 0 ; m < nne ; ++m )
-        for ( size_t i = 0 ; i < ndim ; ++i )
-          M_(dofs(conn(e,m),i)) += elem->M(e,m*ndim+i,m*ndim+i);
-
-    // - reduce "M_" per thread to total "M"
-    #pragma omp critical
-      M += M_;
-  }
-  // automatic parallelization by Eigen
-  Eigen::setNbThreads(0);
-
-  // compute inverse of the mass matrix
-  Minv = M.cwiseInverse();
 }
 
 // -------------------------------------------------------------------------------------------------
@@ -611,6 +349,9 @@ inline void SemiPeriodic<Element>::assemble_D()
   }
   // automatic parallelization by Eigen
   Eigen::setNbThreads(0);
+
+  // compute inverse
+  Dinv = D.cwiseInverse();
 }
 
 // -------------------------------------------------------------------------------------------------
@@ -665,7 +406,6 @@ inline Quad4<Material>::Quad4(std::unique_ptr<Material> _mat, size_t _nelem)
   v     .resize({nelem,nne,ndim});
   f     .resize({nelem,nne,ndim});
   // -
-  M     .resize({nelem,nne*ndim,nne*ndim});
   D     .resize({nelem,nne*ndim,nne*ndim});
   // -
   dNx   .resize({nelem,nip,nne,ndim});
@@ -680,7 +420,6 @@ inline Quad4<Material>::Quad4(std::unique_ptr<Material> _mat, size_t _nelem)
   w_n   .resize({nne});
 
   // zero initialize matrices (only diagonal is written, no new zero-initialization necessary)
-  M.setZero();
   D.setZero();
 
   // shape function gradient at all Gauss points, in local coordinates
@@ -789,8 +528,7 @@ inline void Quad4<Material>::updated_x()
     // nodal quadrature
     // ----------------
 
-    // pointer to element mass/damping matrix, nodal volume, and integration weight
-    M_  .map(&M    (e));
+    // pointer to element damping matrix, nodal volume, and integration weight
     D_  .map(&D    (e));
     vol_.map(&vol_n(e));
     w_  .map(&w_n  (0));
@@ -813,11 +551,6 @@ inline void Quad4<Material>::updated_x()
 
       // - integration point volume
       vol_(k) = w_(k) * Jdet_;
-
-      // - assemble element mass matrix
-      //   M(m+i,n+i) += N(m) * rho * vol * N(n);
-      M_(k*2  ,k*2  ) = mat->rho(e,k) * vol_(k);
-      M_(k*2+1,k*2+1) = mat->rho(e,k) * vol_(k);
 
       // - assemble element non-Galilean damping matrix
       //   D(m+i,n+i) += N(m) * alpha * vol * N(n);
@@ -865,7 +598,6 @@ inline void Quad4<Material>::updated_x()
 
   // set signals
   changed_f = false;
-  changed_M = true;
   changed_D = true;
 
 } // #pragma omp parallel
@@ -933,7 +665,6 @@ inline void Quad4<Material>::updated_u()
 
   // set signals
   changed_f = true;
-  changed_M = false;
   changed_D = false;
 }
 }
@@ -943,66 +674,8 @@ inline void Quad4<Material>::updated_u()
 template<class Material>
 inline void Quad4<Material>::updated_v()
 {
-#pragma omp parallel
-{
-  // intermediate quantities
-  cppmat::cartesian2d::tensor2 <double> gradv_;
-  cppmat::cartesian2d::tensor2s<double> epsdot_, sig_;
-  // local views of the global arrays (speeds up indexing, and increases readability)
-  cppmat::tiny::matrix2<double,4,2> dNx_, v_, f_;
-  cppmat::tiny::vector <double,4>   vol_;
-
-  // loop over all elements (in parallel)
-  #pragma omp for
-  for ( size_t e = 0 ; e < nelem ; ++e )
-  {
-    // pointer to element forces, displacements, and integration volume
-    f_  .map(&f  (e));
-    v_  .map(&v  (e));
-    vol_.map(&vol(e));
-
-    // zero initialize forces
-    f_.setZero();
-
-    // loop over all integration points in element "e"
-    for ( size_t k = 0 ; k < nip ; ++k )
-    {
-      // - pointer to the shape function gradients, strain-rate and stress tensor (stored symmetric)
-      dNx_   .map(&dNx        (e,k));
-      epsdot_.map(&mat->epsdot(e,k));
-      sig_   .map(&mat->sig   (e,k));
-
-      // - displacement gradient
-      //   gradv_(i,j) += dNx(m,i) * ue(m,j)
-      gradv_(0,0) = dNx_(0,0)*v_(0,0) + dNx_(1,0)*v_(1,0) + dNx_(2,0)*v_(2,0) + dNx_(3,0)*v_(3,0);
-      gradv_(0,1) = dNx_(0,0)*v_(0,1) + dNx_(1,0)*v_(1,1) + dNx_(2,0)*v_(2,1) + dNx_(3,0)*v_(3,1);
-      gradv_(1,0) = dNx_(0,1)*v_(0,0) + dNx_(1,1)*v_(1,0) + dNx_(2,1)*v_(2,0) + dNx_(3,1)*v_(3,0);
-      gradv_(1,1) = dNx_(0,1)*v_(0,1) + dNx_(1,1)*v_(1,1) + dNx_(2,1)*v_(2,1) + dNx_(3,1)*v_(3,1);
-
-      // - strain (stored symmetric)
-      //   epsdot(i,j) = .5 * ( gradv_(i,j) + gradv_(j,i) )
-      epsdot_(0,0) =        gradv_(0,0);
-      epsdot_(0,1) = .5 * ( gradv_(0,1) + gradv_(1,0) );
-      epsdot_(1,1) =        gradv_(1,1);
-
-      // - constitutive response
-      mat->updated_epsdot(e,k);
-
-      // - assemble to element force
-      //   f(m,j) += dNdx(m,i) * sig(i,j) * vol;
-      for ( size_t m = 0 ; m < nne ; ++m )
-      {
-        f_(m,0) += dNx_(m,0) * sig_(0,0) * vol_(k) + dNx_(m,1) * sig_(1,0) * vol_(k);
-        f_(m,1) += dNx_(m,0) * sig_(0,1) * vol_(k) + dNx_(m,1) * sig_(1,1) * vol_(k);
-      }
-    }
-  }
-
-  // set signals
   changed_f = true;
-  changed_M = false;
   changed_D = false;
-}
 }
 
 // =================================================================================================

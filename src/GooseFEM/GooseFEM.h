@@ -62,12 +62,14 @@ namespace GooseFEM
 #include "MeshQuad4.h"
 #include "MeshHex8.h"
 #include "DynamicsDiagonal.h"
+#include "OverdampedDynamicsDiagonal.h"
 
 #include "Mesh.cpp"
 #include "MeshTri3.cpp"
 #include "MeshQuad4.cpp"
 #include "MeshHex8.cpp"
 #include "DynamicsDiagonal.cpp"
+#include "OverdampedDynamicsDiagonal.cpp"
 
 // =================================================================================================
 

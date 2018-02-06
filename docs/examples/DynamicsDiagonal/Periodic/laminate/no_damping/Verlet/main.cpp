@@ -175,6 +175,9 @@ int main()
       for ( size_t k = 0 ; k < sim.ndim ; ++k )
         sim.u(i,j) += dFbar(j,k) * ( sim.x(i,k) - sim.x(nodeOrigin,k) );
 
+  // process updates for displacement dependent variables
+  sim.updated_u();
+
   // output variables
   ColD Epot(static_cast<int>(T/dt)); Epot.setZero();
   ColD Ekin(static_cast<int>(T/dt)); Ekin.setZero();

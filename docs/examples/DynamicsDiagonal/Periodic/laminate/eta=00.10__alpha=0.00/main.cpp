@@ -121,7 +121,7 @@ void Material::updated_epsdot(size_t e, size_t k)
 
   // compute stress
   Sig = material[e].stress(Eps) + rayleigh.stress(Epsdot);
-  
+
   // copy to matrix of tensors
   std::copy(Sig.begin(), Sig.end(), &sig(e,k));
 }
@@ -193,6 +193,9 @@ int main()
     for ( size_t j = 0 ; j < sim.ndim ; ++j )
       for ( size_t k = 0 ; k < sim.ndim ; ++k )
         sim.u(i,j) += dFbar(j,k) * ( sim.x(i,k) - sim.x(nodeOrigin,k) );
+
+  // process updates for displacement dependent variables
+  sim.updated_u();
 
   // output variables
   ColD Epot(static_cast<int>(T/dt)); Epot.setZero();

@@ -59,6 +59,8 @@ set(GOOSEFEM_HEADERS
   GooseFEM/MeshHex8.cpp
   GooseFEM/DynamicsDiagonal.h
   GooseFEM/DynamicsDiagonal.cpp
+  GooseFEM/OverdampedDynamicsDiagonal.h
+  GooseFEM/OverdampedDynamicsDiagonal.cpp
 )
 
 # Disable pkg-config for native Windows builds

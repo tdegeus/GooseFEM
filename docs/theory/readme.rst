@@ -477,7 +477,213 @@ Dynamics
 Momentum balance
 ----------------
 
-We continue with our balance equation and add inertia and damping to it:
+Weak form
+^^^^^^^^^
+
+We continue with our balance equation and add inertia to it:
+
+.. math::
+
+  \rho\, \ddot{\vec{x}}
+  =
+  \vec{\nabla} \cdot
+  \bm{\sigma}(\vec{x})
+  \qquad
+  \vec{x} \in \Omega
+
+where :math:`\rho` is the mass density, and second time derivative of the position :math:`\vec{x}` is the acceleration :math:`\vec{a} = \ddot{\vec{x}}`. Note that this function is the continuum equivalent of :math:`\vec{f} = m \vec{a}`.
+
+Like before, we will solve this equation in a weak sense
+
+.. math::
+
+  \int\limits_\Omega
+    \rho(\vec{x})\; \vec{\phi}(\vec{X}) \cdot \ddot{\vec{x}} \;
+  \mathrm{d}\Omega
+  =
+  \int\limits_\Omega
+    \vec{\phi}(\vec{X})
+    \cdot
+    \Big[\,
+      \vec{\nabla}
+      \cdot
+      \bm{\sigma}(\vec{x})
+    \,\Big] \;
+  \mathrm{d}\Omega
+  \qquad
+  \forall \; \vec{\phi}(\vec{X}) \in \mathbb{R}^d
+
+Integration by parts results in
+
+.. math::
+
+  \int\limits_\Omega
+    \rho(\vec{x})\; \vec{\phi}(\vec{X}) \cdot \ddot{\vec{x}} \;
+  \mathrm{d}\Omega
+  =
+  \int\limits_\Gamma
+    \vec{\phi}(\vec{X}) \cdot \vec{t}(\vec{x}) \;
+  \mathrm{d}\Gamma
+  -
+  \int\limits_\Omega
+    \big[\, \vec{\nabla} \vec{\phi}(\vec{X}) \,\big]
+    :
+    \bm{\sigma}(\vec{x}) \;
+  \mathrm{d}\Omega
+  \qquad
+  \forall \; \vec{\phi}(\vec{X}) \in \mathbb{R}^d
+
+Which we will discretize as before:
+
+.. math::
+
+  \underline{\vec{\phi}}^\mathsf{T} \cdot
+  \int\limits_\Omega
+    \rho(\vec{x})\; \underline{N}(\vec{X})\; \underline{N}^\mathsf{T}(\vec{X}) \;
+  \mathrm{d}\Omega \;
+  \underline{\ddot{\vec{x}}}
+  =
+  \underline{\vec{\phi}}^\mathsf{T} \cdot
+  \int\limits_\Gamma
+    \underline{N}(\vec{X})\; \vec{t}(\vec{x}) \;
+  \mathrm{d}\Gamma
+  -
+  \underline{\vec{\phi}}^\mathsf{T} \cdot
+  \int\limits_\Omega
+    \big[\, \vec{\nabla} \underline{N}(\vec{X}) \,\big]
+    :
+    \bm{\sigma}(\vec{x}) \;
+  \mathrm{d}\Omega
+  \qquad
+  \forall \; \underline{\vec{\phi}} \in \mathbb{R}^d_n
+
+Which is independent of the test functions, hence:
+
+.. math::
+
+  \underbrace{
+    \int\limits_\Omega
+      \rho(\vec{x})\; \underline{N}(\vec{X})\; \underline{N}^\mathsf{T}(\vec{X}) \;
+    \mathrm{d}\Omega
+  }_{\underline{\underline{M}}(\vec{x})} \;
+  \underline{\ddot{\vec{x}}}
+  =
+  \underbrace{
+    \int\limits_\Gamma
+      \underline{N}(\vec{X})\; \vec{t}(\vec{x}) \;
+    \mathrm{d}\Gamma
+  }_{\underline{\vec{t}}(\vec{x})}
+  -
+  \underbrace{
+    \int\limits_\Omega
+      \big[\, \vec{\nabla} \underline{N}(\vec{X}) \,\big]
+      :
+      \bm{\sigma}(\vec{x}) \;
+    \mathrm{d}\Omega
+  }_{\underline{\vec{f}}(\vec{x})}
+
+Which we can denote as follows
+
+.. math::
+
+  \underline{\underline{M}}(\vec{x})\; \underline{\ddot{\vec{x}}}
+  =
+  \underline{\vec{t}}(\vec{x})
+  -
+  \underline{\vec{f}}(\vec{x})
+
+Where :math:`\underline{\underline{M}}(\vec{x})` is the *mass matrix*, :math:`\underline{\vec{t}}(\vec{x})` are the *boundary tractions*, and :math:`\underline{\vec{f}}(\vec{x})` are the *internal forces*.
+
+.. note::
+
+  For problems where the local volume is conversed (either weakly to incompressible elasticity, or strongly by adding an incompressibility constraint) it make makes sense to assume the mass matrix constant, as any change of volume results in an equivalent change of the density. In that case
+
+  .. math::
+
+    \int\limits_{\Omega}
+      \rho(\vec{x})
+    \;\mathrm{d}\Omega
+    =
+    \int\limits_{\Omega_0}
+      \rho(\vec{X})
+    \;\mathrm{d}\Omega_0
+
+  Which results in:
+
+  .. math::
+
+    \underline{\underline{M}}(\vec{X})
+    =
+    \int\limits_{\Omega_0}
+      \rho(\vec{X})\; \underline{N}(\vec{X})\; \underline{N}^\mathsf{T}(\vec{X}) \;
+    \mathrm{d}\Omega_0
+    =
+    \mathrm{constant}
+
+.. note::
+
+  To enhance computational efficiency, it may be a good option concentrate the mass to point masses on the nodes. This has to strong advantage that the mass matrix becomes diagonal. Consequently, instead of solving a linear system one just has to just do :math:`n_\mathrm{dof}` decoupled inversions (where :math:`n_\mathrm{dof}` is the number of degrees-of-freedom).
+
+  See: :ref:`fem_examples_dynamic_diagonal-mass`.
+
+Time discretization
+^^^^^^^^^^^^^^^^^^^
+
+To solve the second order differential equation in time, one typically also discretizes time, however with some finite difference based scheme. To simplify notation below to following notation is used: for the velocity :math:`\vec{v} = \dot{\vec{x}}`, and for the acceleration :math:`\vec{a} = \ddot{\vec{x}}`.
+
+Verlet
+""""""
+
+1.  Compute the velocity on a dummy time grid:
+
+    .. math::
+
+      \vec{v}_{n+1/2} = \vec{v}_{n-1/2} + \Delta_t \; a_n
+
+    Note that this involves solving for :math:`a_n`.
+
+2.  Update the positions
+
+    .. math::
+
+      x_{n+1} = x_n + \Delta_t v_{n + 1/2}
+
+Note that an important feature is that is time reversible.
+
+Damping
+-------
+
+The equations such as presented in the previous section can lead to indefinite oscillations. For example when the constitutive response, hidden in :math:`\bm{\sigma}(\vec{x})`, is elasticity, there is no form of dissipation. In the absence of numerical inaccuracies this corresponds to elastic waves that travel through the system indefinitely.
+
+To avoid this one needs to add damping to the system. Two types of damping are considered:
+
+*   Viscosity:
+
+    .. math::
+
+      \rho\, \ddot{\vec{x}}
+      =
+      \vec{\nabla} \cdot
+      \bm{\sigma}(\vec{x})
+      \textcolor{red}{+ \vec{\nabla} \cdot \bm{\sigma}_\eta (\vec{x})}
+      \qquad
+      \vec{x} \in \Omega
+
+
+
+
+We continue with our balance equation and add inertia to it:
+
+.. math::
+
+  \rho\, \ddot{\vec{x}}
+  =
+  \vec{\nabla} \cdot
+  \bm{\sigma}(\vec{x})
+  \qquad
+  \vec{x} \in \Omega
+
+where :math:`\rho` is the mass density. This function is the continuum equivalent of :math:`\vec{f} = m \vec{a}`.
 
 .. math::
 

@@ -21,17 +21,14 @@ public:
   // class variables
   // ---------------
 
-  // strain(-rate), stress, mass density, background damping [mandatory]
-  cppmat::matrix<double> eps, epsdot, sig, rho, alpha;
+  // strain(-rate), stress, background damping [mandatory]
+  cppmat::matrix<double> eps, sig, alpha;
 
   // mesh dimensions
   size_t nelem, nne=4, ndim=2, nip=4;
 
   // constitutive response [customize]
   std::vector<Mat> material;
-
-  // damping [customize]
-  Mat rayleigh;
 
   // class functions
   // ---------------
@@ -40,8 +37,7 @@ public:
   Material(size_t nelem, size_t nhard);
 
   // compute stress for a certain element "e" and integration point "k" [mandatory]
-  void updated_eps   (size_t e, size_t k);
-  void updated_epsdot(size_t e, size_t k);
+  void updated_eps(size_t e, size_t k);
 
   // post process variables / functions [customize]
   // - potential energy
@@ -59,13 +55,10 @@ Material::Material(size_t _nelem, size_t _nhard)
 
   // allocate symmetric tensors and scalars per element, per integration point [mandatory]
   eps   .resize({nelem,nip,3});
-  epsdot.resize({nelem,nip,3});
   sig   .resize({nelem,nip,3});
-  rho   .resize({nelem,nne  });
   alpha .resize({nelem,nne  });
 
   // set mass-density and background damping [customize]
-  rho  .setConstant(1.0);
   alpha.setConstant(0.2);
 
   // post variables [customize]
@@ -85,9 +78,6 @@ Material::Material(size_t _nelem, size_t _nhard)
       material.push_back(mat);
     }
   }
-
-  // homogeneous damping [customize]
-  rayleigh = Mat(10.,.1);
 }
 
 // -------------------------------------------------------------------------------------------------
@@ -95,32 +85,13 @@ Material::Material(size_t _nelem, size_t _nhard)
 void Material::updated_eps(size_t e, size_t k)
 {
   // local views of the global arrays (speeds up indexing, and increases readability)
-  cppmat::cartesian2d::tensor2s<double> Epsdot, Eps, Sig;
+  cppmat::cartesian2d::tensor2s<double> Eps, Sig;
 
   // point to correct position in matrix of tensors
-  Epsdot.map(&epsdot(e,k));
-  Eps   .map(&eps   (e,k));
+  Eps.map(&eps(e,k));
 
   // compute stress
-  Sig = material[e].stress(Eps) + rayleigh.stress(Epsdot);
-
-  // copy to matrix of tensors
-  std::copy(Sig.begin(), Sig.end(), &sig(e,k));
-}
-
-// -------------------------------------------------------------------------------------------------
-
-void Material::updated_epsdot(size_t e, size_t k)
-{
-  // local views of the global arrays (speeds up indexing, and increases readability)
-  cppmat::cartesian2d::tensor2s<double> Eps, Epsdot, Sig;
-
-  // point to correct position in matrix of tensors
-  Epsdot.map(&epsdot(e,k));
-  Eps   .map(&eps   (e,k));
-
-  // compute stress
-  Sig = material[e].stress(Eps) + rayleigh.stress(Epsdot);
+  Sig = material[e].stress(Eps);
 
   // copy to matrix of tensors
   std::copy(Sig.begin(), Sig.end(), &sig(e,k));
@@ -155,8 +126,8 @@ void Material::post()
 
 // introduce aliases
 using Mesh       = GooseFEM::Mesh::Quad4::Regular;
-using Element    = GooseFEM::Dynamics::Diagonal::SmallStrain::Quad4<Material>;
-using Simulation = GooseFEM::Dynamics::Diagonal::Periodic<Element>;
+using Element    = GooseFEM::OverdampedDynamics::Diagonal::SmallStrain::Quad4<Material>;
+using Simulation = GooseFEM::OverdampedDynamics::Diagonal::Periodic<Element>;
 
 // =================================================================================================
 
@@ -164,9 +135,13 @@ int main()
 {
   // set simulation parameters
   double T     = 60.  ; // total time
-  double dt    = 1.e-2; // time increment
+  double dt    = 1.e-3; // time increment
   size_t nx    = 40   ; // number of elements in both directions
   double gamma = .05  ; // displacement step
+
+  // damping and mass-density (to allow conversion)
+  double alpha = 0.2;
+  double rho   = 1.0;
 
   // class which provides the mesh
   Mesh mesh(nx,nx,1.);
@@ -202,18 +177,21 @@ int main()
   ColD Ekin(static_cast<int>(T/dt)); Ekin.setZero();
   ColD t   (static_cast<int>(T/dt)); t   .setZero();
 
+  // mass matrix
+  ColD M = rho/alpha * sim.D;
+
   // loop over increments
   for ( size_t inc = 0 ; inc < static_cast<size_t>(Epot.size()) ; ++inc )
   {
     // - compute increment
-    sim.velocityVerlet();
+    sim.forwardEuler();
 
     // - store time
     t(inc) = sim.t;
 
     // - store total kinetic energy
     for ( size_t i = 0 ; i < sim.ndof ; ++i )
-      Ekin(inc) += .5 * sim.M(i) * std::pow(sim.V(i),2.);
+      Ekin(inc) += .5 * M(i) * std::pow(sim.V(i),2.);
 
     // - store total potential energy
     sim.elem->mat->post();

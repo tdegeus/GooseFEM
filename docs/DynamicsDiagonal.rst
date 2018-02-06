@@ -33,7 +33,7 @@ Example
 
 A simple example is:
 
-[:download:`source: examples/DynamicsDiagonalPeriodic/laminate/no_damping/Verlet/main.cpp <examples/DynamicsDiagonalPeriodic/laminate/no_damping/Verlet/main.cpp>`]
+[:download:`source: examples/DynamicsDiagonal/Periodic/laminate/no_damping/Verlet/main.cpp <examples/DynamicsDiagonal/Periodic/laminate/no_damping/Verlet/main.cpp>`]
 
 .. code-block:: cpp
 
