@@ -37,8 +37,9 @@ inline Periodic<Element>::Periodic(
   assert(                     ndof         <  nnode * ndim );
 
   // allocate and zero-initialize nodal quantities
-  u.conservativeResize(nnode,ndim); u.setZero();
-  v.conservativeResize(nnode,ndim); v.setZero();
+  u  .conservativeResize(nnode,ndim); u  .setZero();
+  u_n.conservativeResize(nnode,ndim); u_n.setZero();
+  v  .conservativeResize(nnode,ndim); v  .setZero();
 
   // allocate and zero-initialize linear system (DOFs)
   D   .conservativeResize(ndof);
@@ -67,6 +68,40 @@ inline void Periodic<Element>::forwardEuler()
   u += dt * v;
 
   // process update in displacements and velocities
+  updated_u();
+  updated_v();
+
+  // update time
+  t += dt;
+}
+
+// -------------------------------------------------------------------------------------------------
+
+template<class Element>
+inline void Periodic<Element>::midpoint()
+{
+  // back-up history
+  u_n = u;
+
+  // (1) compute trial state
+  // - solve for trial velocities (DOFs)
+  V.noalias() = Dinv.cwiseProduct( - F );
+  // - convert to nodal velocities (periodicity implies that several nodes depend on the same DOF)
+  for ( size_t i=0; i<nnode*ndim; ++i ) v(i) = V(dofs(i));
+  // - update to trial positions
+  u = u_n + 0.5 * dt * v;
+  // - process update in displacements and velocities
+  updated_u();
+  updated_v();
+
+  // (2) compute actual state
+  // - solve for velocities (DOFs)
+  V.noalias() = Dinv.cwiseProduct( - F );
+  // - convert to nodal velocities (periodicity implies that several nodes depend on the same DOF)
+  for ( size_t i=0; i<nnode*ndim; ++i ) v(i) = V(dofs(i));
+  // - update to trial positions
+  u = u_n + dt * v;
+  // - process update in displacements and velocities
   updated_u();
   updated_v();
 
@@ -223,8 +258,9 @@ inline SemiPeriodic<Element>::SemiPeriodic(
   #endif
 
   // allocate and zero-initialize nodal quantities
-  u.conservativeResize(nnode,ndim); u.setZero();
-  v.conservativeResize(nnode,ndim); v.setZero();
+  u  .conservativeResize(nnode,ndim); u  .setZero();
+  u_n.conservativeResize(nnode,ndim); u_n.setZero();
+  v  .conservativeResize(nnode,ndim); v  .setZero();
 
   // allocate and zero-initialize linear system (DOFs)
   D   .conservativeResize(ndof);
@@ -249,6 +285,8 @@ inline void SemiPeriodic<Element>::forwardEuler()
   // (1) compute the velocities
   // - solve for velocities (DOFs)
   V.noalias() = Dinv.cwiseProduct( - F );
+  // - apply the fixed velocities
+  for ( size_t i=0; i<nfixed; ++i ) V(fixedDofs(i)) = fixedV(i);
   // - convert to nodal velocities (periodicity implies that several nodes depend on the same DOF)
   for ( size_t i=0; i<nnode*ndim; ++i ) v(i) = V(dofs(i));
 
@@ -256,6 +294,44 @@ inline void SemiPeriodic<Element>::forwardEuler()
   u += dt * v;
 
   // process update in displacements and velocities
+  updated_u();
+  updated_v();
+
+  // update time
+  t += dt;
+}
+
+// -------------------------------------------------------------------------------------------------
+
+template<class Element>
+inline void SemiPeriodic<Element>::midpoint()
+{
+  // back-up history
+  u_n = u;
+
+  // (1) compute trial state
+  // - solve for trial velocities (DOFs)
+  V.noalias() = Dinv.cwiseProduct( - F );
+  // - apply the fixed velocities
+  for ( size_t i=0; i<nfixed; ++i ) V(fixedDofs(i)) = fixedV(i);
+  // - convert to nodal velocities (periodicity implies that several nodes depend on the same DOF)
+  for ( size_t i=0; i<nnode*ndim; ++i ) v(i) = V(dofs(i));
+  // - update to trial positions
+  u = u_n + 0.5 * dt * v;
+  // - process update in displacements and velocities
+  updated_u();
+  updated_v();
+
+  // (2) compute actual state
+  // - solve for velocities (DOFs)
+  V.noalias() = Dinv.cwiseProduct( - F );
+  // - apply the fixed velocities
+  for ( size_t i=0; i<nfixed; ++i ) V(fixedDofs(i)) = fixedV(i);
+  // - convert to nodal velocities (periodicity implies that several nodes depend on the same DOF)
+  for ( size_t i=0; i<nnode*ndim; ++i ) v(i) = V(dofs(i));
+  // - update to trial positions
+  u = u_n + dt * v;
+  // - process update in displacements and velocities
   updated_u();
   updated_v();
 

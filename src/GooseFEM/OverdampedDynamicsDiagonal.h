@@ -33,7 +33,7 @@ public:
   // mesh: nodal position/displacement/velocity, DOF-numbers, connectivity, dimensions
   size_t nnode, nelem, nne, ndim, ndof;
   MatS   conn, dofs;
-  MatD   x, u, v;
+  MatD   x, u, u_n, v;
 
   // linear system: columns (also "D" which is diagonal)
   ColD   D, Dinv, F, V;
@@ -54,6 +54,7 @@ public:
   // ---------
 
   void forwardEuler();             // one time step of the time integrator
+  void midpoint();                 // one time step of the time integrator
   void updated_x();                // process update in "x"
   void updated_u(bool init=false); // process update in "u", if init all possible updates are made
   void updated_v(bool init=false); // process update in "v", if init all possible updates are made
@@ -77,7 +78,7 @@ public:
   // mesh: nodal position/displacement/velocity, DOF-numbers, connectivity, dimensions
   size_t nnode, nelem, nne, ndim, ndof;
   MatS   conn, dofs;
-  MatD   x, u, v;
+  MatD   x, u, u_n, v;
 
   // fixed DOFs: prescribed velocity, DOF-numbers, dimensions
   size_t nfixed;
@@ -104,6 +105,7 @@ public:
   // ---------
 
   void forwardEuler();             // one time step of the time integrator
+  void midpoint();                 // one time step of the time integrator
   void updated_x();                // process update in "x"
   void updated_u(bool init=false); // process update in "u", if init all possible updates are made
   void updated_v(bool init=false); // process update in "v", if init all possible updates are made

@@ -184,7 +184,7 @@ int main()
   for ( size_t inc = 0 ; inc < static_cast<size_t>(Epot.size()) ; ++inc )
   {
     // - compute increment
-    sim.forwardEuler();
+    sim.midpoint();
 
     // - store time
     t(inc) = sim.t;
