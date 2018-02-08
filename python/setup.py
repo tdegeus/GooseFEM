@@ -11,7 +11,7 @@ import setuptools
 import pybind11
 import cppmat
 
-header = open('../src/GooseFEM/Macros.h','r').read()
+header = open('../src/GooseFEM/GooseFEM.h','r').read()
 world  = re.split('(.*)(\#define GOOSEFEM_WORLD_VERSION\ )([0-9]+)(.*)',header)[3]
 major  = re.split('(.*)(\#define GOOSEFEM_MAJOR_VERSION\ )([0-9]+)(.*)',header)[3]
 minor  = re.split('(.*)(\#define GOOSEFEM_MINOR_VERSION\ )([0-9]+)(.*)',header)[3]
