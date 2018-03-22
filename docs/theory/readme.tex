@@ -1,5 +1,5 @@
 %!TEX program = xelatex
-\documentclass[garamond,namecite]{goose-article}
+\documentclass[times,namecite]{goose-article}
 
 \usepackage{lipsum,verbatim,mdframed}
 
@@ -21,12 +21,786 @@
 \hypersetup{pdfauthor={T.W.J. de Geus}}
 
 \header{%
-  goose-article
+  The Finite Element Method, T.W.J.\ de Geus
 }
 
 \begin{document}
 
 \maketitle
+
+\begin{abstract}
+The theory of the Finite Element Method is discussed in a compact way such that it supports the GooseFEM implementation. It is supported by many examples that can be easily extended and customized into efficient, production-ready code. This discussion is by no means comprehensive and one is invited to dive in more complete textbooks.
+\end{abstract}
+
+\tableofcontents
+
+\section{Statics}
+
+\subsection{The basic concept}
+
+The discussion starts by considering a static, solid mechanics, problem. Loosely speaking the goal is to find a deformation map, $\vec{x} = \varphi(\vec{X},t)$, that maps a body $\Omega_0$ to a deformed state $\Omega$ that satisfies equilibrium and the boundary conditions applied on $\Gamma$. This is illustrated in Fig.~\ref{fig:problem}, whereby it is emphasized that the body can be subjected to two kinds of boundary conditions:
+\begin{itemize}
+  \item \emph{Essential} or \emph{Dirichlet} boundary conditions on $\Gamma_p$, whereby the displacements are prescribed.
+  \item \emph{Natural} or \emph{Neumann} boundary conditions on $\Gamma_u$, whereby the tractions are prescribed. Note that traction-free natural boundary conditions are also perfectly acceptable.
+\end{itemize}
+
+\begin{figure}[htp]
+  \centering
+  \includegraphics[width=.5\textwidth]{figures/problem.pdf}
+  \caption{Generic problem definition}
+  \label{fig:problem}
+\end{figure}
+
+In practice, one is not looking for the map $\vec{x} = \varphi(\vec{X},t)$, but for the deformation gradient $\bm{F}$,  or in fact for a displacement field $\vec{u} = \vec{x} - \vec{X}$. To make things a bit more explicit, the deformation gradient is defined as follows:
+\begin{equation}
+  \vec{x} = \bm{F} \cdot \vec{X}
+\end{equation}
+hence
+\begin{equation}
+  \bm{F}
+  =
+  \frac{\partial \varphi}{\partial \vec{X}}
+  =
+  \big( \vec{\nabla}_0 \, \vec{x} \big)^T
+  =
+  \bm{I} + \big( \vec{\nabla}_0 \, \vec{u} \big)^T
+\end{equation}
+
+\subsection{Momentum balance}
+
+The momentum balance reads
+\begin{equation}
+\label{eq:static:momentum}
+  \vec{\nabla} \cdot \bm{\sigma}(\vec{x}) = \vec{0}
+  \qquad
+  \vec{x} \in \Omega
+\end{equation}
+where $\bm{\sigma}$ is the Cauchy stress which depends on the new position $\vec{x}$ and thus on the displacement $\vec{u}$. It has been assumed that all actions are instantaneous (no inertia) and, for simplicity, that there are no body forces. Loosely speaking the interpretation of this equation is that \emph{the sum of all forces vanishes} everywhere in the domain $\Omega$.
+
+The crux of the Finite Element Method is that this non-linear differential equation is solved in a weak sense. I.e.
+\begin{equation}
+\label{eq:static:int}
+  \int\limits_\Omega
+    \vec{\phi}(\vec{X}) \cdot \big[\, \vec{\nabla} \cdot \bm{\sigma}(\vec{x}) \,\big] \;
+  \mathrm{d}\Omega
+  =
+  0
+  \qquad
+  \forall \; \vec{\phi}(\vec{X}) \in \mathbb{R}^d
+\end{equation}
+where $\vec{\phi}$ are test functions. For reasons that become obvious below, integration by parts is applied, which results in
+\begin{equation}
+\label{eq:static:weak}
+  \int\limits_\Omega
+    \big[\, \vec{\nabla} \vec{\phi}(\vec{X}) \,\big] : \bm{\sigma}(\vec{x}) \;
+  \mathrm{d}\Omega
+  =
+  \int\limits_\Omega
+    \vec{\nabla}
+    \cdot
+    \big[\, \vec{\phi}(\vec{X}) \cdot \bm{\sigma}(\vec{x}) \,\big] \;
+  \mathrm{d}\Omega
+  \qquad
+  \forall \; \vec{\phi}(\vec{X}) \in \mathbb{R}^d
+\end{equation}
+In going from Eq.~\eqref{eq:static:int} to Eq.~\eqref{eq:static:weak}, use has been made of the following chain rule
+\begin{equation}
+  \vec{\nabla} \cdot \big[\, \vec{\phi} \cdot \bm{\sigma}^T \,\big]
+  =
+  \big[\, \vec{\nabla} \vec{\phi} \,\big] : \bm{\sigma}^T
+  +
+  \vec{\phi} \cdot \big[\, \vec{\nabla} \cdot \bm{\sigma} \,\big]
+\end{equation}
+together with the symmetry of the Cauchy stress
+\begin{equation}
+  \bm{\sigma} = \bm{\sigma}^T
+\end{equation}
+
+The right-hand side of this equation can be reduced to an area integral by employing Gauss's divergence theorem:
+\begin{equation}
+  \int\limits_\Omega \vec{\nabla} \cdot \vec{a}(\vec{x}) \; \mathrm{d}\Omega
+  =
+  \int\limits_\Gamma \vec{n}(\vec{x}) \cdot \vec{a}(\vec{x}) \; \mathrm{d}\Gamma
+\end{equation}
+where $\vec{n}$ is the normal along the surface $\Gamma$. The result reads
+\begin{equation}
+  \int\limits_\Omega
+    \big[\, \vec{\nabla} \vec{\phi}(\vec{X}) \,\big] : \bm{\sigma}(\vec{x}) \;
+  \mathrm{d}\Omega
+  =
+  \int\limits_\Gamma
+    \vec{\phi}(\vec{X}) \cdot
+    \underbrace{
+      \vec{n}(\vec{x}) \cdot \bm{\sigma}(\vec{x})
+    }_{
+      \vec{t}(\vec{x})
+    } \;
+  \mathrm{d}\Gamma
+  \qquad
+  \forall \; \vec{\phi}(\vec{X}) \in \mathbb{R}^d
+\end{equation}
+
+\subsection{Discretization}
+
+The problem is now discretized using $n$ \emph{nodes} that are connected through \emph{elements}, which define the discretized domain $\Omega^h_0$. Shape functions $N_i(\vec{X})$ are used to extrapolate the nodal quantities throughout the domain $\Omega^h_0$ (and $\Omega^h$), as follows:
+
+\begin{equation}
+  \vec{x}(\vec{X},t)
+  \approx
+  \vec{x}^h(\vec{X},t)
+  =
+  \sum_{i=1}^{n} N_i (\vec{X}) \; \vec{x}_i (t)
+  =
+  \underline{N}^\mathsf{T} (\vec{X}) \; \underline{\vec{x}} (t)
+\end{equation}
+
+Following standard Galerkin
+
+\begin{equation}
+  \vec{\phi}(\vec{X})
+  \approx
+  \vec{\phi}^h(\vec{X})
+  =
+  \sum_{i=1}^{n} N_i (\vec{X}) \; \vec{\phi}_i
+  =
+  \underline{N}^\mathsf{T} (\vec{X}) \; \underline{\vec{\phi}}
+\end{equation}
+Applied to the problem sketch from Fig.~\ref{fig:problem}, a discretization might look like Fig.~\ref{fig:problem:discretized}. The nodes are clearly marked as circles. The lines connecting the nodes clearly mark the elements which are in this case three-node linear triangles.
+
+\begin{figure}[htp]
+  \centering
+  \includegraphics[width=.25\textwidth]{figures/problem-discretized.pdf}
+  \caption{Example of a discretization of the problem in Fig.~\ref{fig:problem} using Finite Elements (linear triangles in this case).}
+  \label{fig:problem:discretized}
+\end{figure}
+
+Applied to the balance equation the following is obtained
+\begin{equation}
+  \underline{\vec{\phi}}^\mathsf{T} \cdot
+  \int\limits_{\Omega^h}
+    \big[\, \vec{\nabla} \underline{N}(\vec{X}) \,\big]
+    \cdot
+    \bm{\sigma}(\vec{x}) \;
+  \mathrm{d}\Omega
+  =
+  \underline{\vec{\phi}}^\mathsf{T} \cdot
+  \int\limits_{\Gamma^h}
+    \underline{N}(\vec{X}) \cdot
+    \vec{t}(\vec{x}) \;
+  \mathrm{d}\Gamma
+  \qquad
+  \forall \; \underline{\vec{\phi}} \in \mathbb{R}^d_n
+\end{equation}
+from which the dependency on $\underline{\vec{\phi}}$ can be dropped:
+\begin{equation}
+  \int\limits_{\Omega^h}
+    \big[\, \vec{\nabla} \underline{N}(\vec{X}) \,\big]
+    \cdot
+    \bm{\sigma}(\vec{x}) \;
+  \mathrm{d}\Omega
+  =
+  \int\limits_{\Gamma^h}
+    \underline{N}(\vec{X}) \cdot
+    \vec{t}(\vec{x}) \;
+  \mathrm{d}\Gamma
+\end{equation}
+This corresponds to (non-linear) set of nodal balance equations:
+\begin{equation}
+  \underline{\vec{f}}(\vec{x})
+  =
+  \underline{\vec{t}}(\vec{x})
+\end{equation}
+with:
+\begin{itemize}
+  \item \emph{Internal forces}
+  \begin{equation}
+    \underline{\vec{f}}(\vec{x})
+    =
+    \int\limits_{\Omega^h}
+      \big[\, \vec{\nabla} \underline{N}(\vec{X}) \,\big]
+      \cdot
+      \bm{\sigma}(\vec{x}) \;
+    \mathrm{d}\Omega
+  \end{equation}
+  \item \emph{Boundary tractions}
+  \begin{equation}
+    \underline{\vec{t}}(\vec{x})
+    =
+    \int\limits_{\Gamma^h}
+      \underline{N}(\vec{X}) \cdot
+      \vec{t}(\vec{x}) \;
+    \mathrm{d}\Gamma
+  \end{equation}
+  Note that this term is zero in the interior of the domain, i.e. in $\Omega^h \bigcap \Gamma^h$, while it can be zero or non-zero in $\Gamma^h$ depending on the problem details.
+\end{itemize}
+
+\subsection{Iterative solution -- small strain}
+
+A commonly used strategy to solve the non-linear system is the iterative Newton-Raphson scheme (see Appendix~\ref{sec:newton-raphson}). The idea is thereby to formulate an initial guess for the solution, determine possible residual forces, and use these forces to come to a better guess for the solution. This is continued until the solution has been found, i.e. when the residual vanishes.
+
+This solution technique is discussed here in the context of small deformations. Assuming the deformations (and therefore rotations) to be small leads to the assumption that $\Omega = \Omega_0$, and thus that $\nabla = \nabla_0$. In this context one typically uses the linear strain tensor
+\begin{equation}
+  \bm{\varepsilon}
+  =
+  \tfrac{1}{2} \left[ \nabla_0 \vec{u} + \big[\, \nabla_0 \vec{u} \,\big]^T \right]
+  =
+  \mathbb{I}_s : \big[\, \nabla_0 \vec{u} \,\big]
+\end{equation}
+Furthermore, some non-linear relationship between the strain and the stress is used below for illustration purposes, i.e.\
+\begin{equation}
+  \bm{\sigma} = \bm{\sigma} \big( \bm{\varepsilon} \big)
+\end{equation}
+To further simplify the discussion, the boundary tractions are assumed to be some known constant for all boundary nodes.
+
+The nodal equilibrium equations now read
+\begin{equation}
+\label{eq:static:eq-non-lin}
+  \underline{\vec{r}}(\vec{x})
+  =
+  \underline{\vec{t}}
+  -
+  \underline{\vec{f}}(\vec{x})
+  =
+  \underline{\vec{0}}
+\end{equation}
+with
+\begin{equation}
+  \underline{\vec{f}}(\vec{x})
+  =
+  \int\limits_{\Omega^h_0}
+    \big[\, \vec{\nabla}_0 \underline{N}(\vec{X}) \,\big]
+    \cdot
+    \bm{\sigma}(\vec{x}) \;
+  \mathrm{d}\Omega
+\end{equation}
+
+The position $\vec{x}$ is now iteratively updated starting from some initial guess, i.e.
+\begin{equation}
+  \vec{x}_{(i+1)} = \vec{x}_{(i)} + \delta \vec{x}
+\end{equation}
+Written using the displacement field
+\begin{equation}
+  \vec{x}_{(i+1)} = \vec{X} + \vec{u}_{(i)} + \delta \vec{u}
+\end{equation}
+from which it is obvious that $\delta \vec{x} = \delta \vec{u}$. This update, $\delta \vec{u}$, follows from the linearization of Eq.~\eqref{eq:static:eq-non-lin}. The results of which is
+\begin{equation}
+  \int\limits_{\Omega^h_0}
+    \big[\, \vec{\nabla}_0 \underline{N}(\vec{X}) \,\big]
+    \cdot
+    \mathbb{K}\big(\vec{x}_{(i)}\big)
+    \cdot
+    \big[\, \vec{\nabla}_0 \underline{N}(\vec{X}) \,\big]^\mathsf{T} \;
+  \mathrm{d}\Omega
+  \cdot \delta \underline{\vec{u}}
+  =
+  \underline{\vec{t}}
+  -
+  \int\limits_{\Omega^h_0}
+    \big[\, \vec{\nabla}_0 \underline{N}(\vec{X}) \,\big]
+    \cdot
+    \bm{\sigma}\big(\vec{x}_{(i)}\big) \;
+  \mathrm{d}\Omega
+\end{equation}
+where
+\begin{equation}
+  \mathbb{K}\big(\vec{x}_{(i)}\big)
+  =
+  \left. \frac{\partial \bm{\sigma}}{\partial \bm{\varepsilon}} \right|_{\vec{x}_{(i)}}
+  :
+  \mathbb{I}_s
+\end{equation}
+is the \emph{constitutive tangent operator}.
+
+In a shorter notation, the iterative update reads:
+\begin{equation}
+  \underline{\underline{\bm{K}}}_{(i)} \cdot \delta \underline{\vec{u}}
+  =
+  \underline{\vec{t}}
+  -
+  \underline{\vec{f}}_{(i)}
+\end{equation}
+with
+\begin{equation}
+  \underline{\underline{\bm{K}}}_{(i)}
+  =
+  \int\limits_{\Omega^h_0}
+    \big[\, \vec{\nabla}_0 \underline{N} \,\big]
+    \cdot
+    \mathbb{K}\big(\vec{x}_{(i)}\big)
+    \cdot
+    \big[\, \vec{\nabla}_0 \underline{N} \,\big]^\mathsf{T} \;
+  \mathrm{d}\Omega
+\end{equation}
+and
+\begin{equation}
+  \underline{\vec{f}}_{(i)}
+  =
+  \int\limits_{\Omega^h_0}
+    \big[\, \vec{\nabla}_0 \underline{N} \,\big]
+    \cdot
+    \bm{\sigma}\big(\vec{x}_{(i)}\big) \;
+  \mathrm{d}\Omega
+\end{equation}
+
+\section{Dynamics}
+
+\subsection{Momentum balance}
+
+The next step is to add inertia to the balance of momentum in Eq.~\eqref{eq:static:momentum}:
+\begin{equation}
+  \rho\, \ddot{\vec{x}}
+  =
+  \vec{\nabla} \cdot
+  \bm{\sigma}(\vec{x})
+  \qquad
+  \vec{x} \in \Omega
+\end{equation}
+where $\rho$ is the mass density, and second time derivative of the position $\vec{x}$ is the acceleration $\vec{a} = \ddot{\vec{x}}$. Note that this function is the continuum equivalent of $\vec{f} = m \vec{a}$.
+
+Like before, this equation is solved in a weak sense
+\begin{equation}
+  \int\limits_\Omega
+    \rho(\vec{x})\; \vec{\phi}(\vec{X}) \cdot \ddot{\vec{x}} \;
+  \mathrm{d}\Omega
+  =
+  \int\limits_\Omega
+    \vec{\phi}(\vec{X})
+    \cdot
+    \Big[\,
+      \vec{\nabla}
+      \cdot
+      \bm{\sigma}(\vec{x})
+    \,\Big] \;
+  \mathrm{d}\Omega
+  \qquad
+  \forall \; \vec{\phi}(\vec{X}) \in \mathbb{R}^d
+\end{equation}
+Integration by parts results in
+\begin{equation}
+  \int\limits_\Omega
+    \rho(\vec{x})\; \vec{\phi}(\vec{X}) \cdot \ddot{\vec{x}} \;
+  \mathrm{d}\Omega
+  =
+  \int\limits_\Gamma
+    \vec{\phi}(\vec{X}) \cdot \vec{t}(\vec{x}) \;
+  \mathrm{d}\Gamma
+  -
+  \int\limits_\Omega
+    \big[\, \vec{\nabla} \vec{\phi}(\vec{X}) \,\big]
+    :
+    \bm{\sigma}(\vec{x}) \;
+  \mathrm{d}\Omega
+  \qquad
+  \forall \; \vec{\phi}(\vec{X}) \in \mathbb{R}^d
+\end{equation}
+which is discretized as before:
+\begin{equation}
+  \underline{\vec{\phi}}^\mathsf{T} \cdot
+  \int\limits_\Omega
+    \rho(\vec{x})\; \underline{N}(\vec{X})\; \underline{N}^\mathsf{T}(\vec{X}) \;
+  \mathrm{d}\Omega \;
+  \underline{\ddot{\vec{x}}}
+  =
+  \underline{\vec{\phi}}^\mathsf{T} \cdot
+  \int\limits_\Gamma
+    \underline{N}(\vec{X})\; \vec{t}(\vec{x}) \;
+  \mathrm{d}\Gamma
+  -
+  \underline{\vec{\phi}}^\mathsf{T} \cdot
+  \int\limits_\Omega
+    \big[\, \vec{\nabla} \underline{N}(\vec{X}) \,\big]
+    :
+    \bm{\sigma}(\vec{x}) \;
+  \mathrm{d}\Omega
+  \qquad
+  \forall \; \underline{\vec{\phi}} \in \mathbb{R}^d_n
+\end{equation}
+This is independent of the test functions, hence:
+\begin{equation}
+  \underbrace{
+    \int\limits_\Omega
+      \rho(\vec{x})\; \underline{N}(\vec{X})\; \underline{N}^\mathsf{T}(\vec{X}) \;
+    \mathrm{d}\Omega
+  }_{\underline{\underline{M}}(\vec{x})} \;
+  \underline{\ddot{\vec{x}}}
+  =
+  \underbrace{
+    \int\limits_\Gamma
+      \underline{N}(\vec{X})\; \vec{t}(\vec{x}) \;
+    \mathrm{d}\Gamma
+  }_{\underline{\vec{t}}(\vec{x})}
+  -
+  \underbrace{
+    \int\limits_\Omega
+      \big[\, \vec{\nabla} \underline{N}(\vec{X}) \,\big]
+      :
+      \bm{\sigma}(\vec{x}) \;
+    \mathrm{d}\Omega
+  }_{\underline{\vec{f}}(\vec{x})}
+\end{equation}
+This is denoted as follows
+\begin{equation}
+  \underline{\underline{M}}(\vec{x})\; \underline{\ddot{\vec{x}}}
+  =
+  \underline{\vec{t}}(\vec{x})
+  -
+  \underline{\vec{f}}(\vec{x})
+\end{equation}
+Where $\underline{\underline{M}}(\vec{x})$ is the \emph{mass matrix}, $\underline{\vec{t}}(\vec{x})$ are the \emph{boundary tractions}, and $\underline{\vec{f}}(\vec{x})$ are the \emph{internal forces}.
+
+\subsection{Time discretization}
+\label{eq:dynamics:time}
+
+To solve the second order differential equation in time, one typically also discretizes time, however, with some finite difference based scheme. To simplify notation, the following notation is used: for the velocity $\vec{v} = \dot{\vec{x}}$, and for the acceleration $\vec{a} = \ddot{\vec{x}}$.
+
+\subsubsection{Verlet}
+
+\begin{enumerate}
+  \item Compute the velocity on a dummy time grid:
+  \begin{equation}
+    \vec{v}_{n+1/2} = \vec{v}_{n-1/2} + \Delta_t \; a_n
+  \end{equation}
+  Note that this involves solving for $a_n$.
+  \item Update the positions
+  \begin{equation}
+    x_{n+1} = x_n + \Delta_t v_{n + 1/2}
+  \end{equation}
+\end{enumerate}
+
+Note that an important feature is that it is time reversible.
+
+\subsection{Approximations}
+
+For problems where the local volume is conversed (either weakly to incompressible elasticity, or strongly by adding an incompressibility constraint) it makes sense to assume the mass matrix constant, as any change of volume results in an equivalent change of the density. In that case
+\begin{equation}
+  \int\limits_{\Omega}
+    \rho(\vec{x})
+  \;\mathrm{d}\Omega
+  =
+  \int\limits_{\Omega_0}
+    \rho(\vec{X})
+  \;\mathrm{d}\Omega_0
+\end{equation}
+Which results in:
+\begin{equation}
+  \underline{\underline{M}}(\vec{X})
+  =
+  \int\limits_{\Omega_0}
+    \rho(\vec{X})\; \underline{N}(\vec{X})\; \underline{N}^\mathsf{T}(\vec{X}) \;
+  \mathrm{d}\Omega_0
+  =
+  \mathrm{constant}
+\end{equation}
+
+To enhance computational efficiency, it may be a good option concentrate the mass to point masses on the nodes. This has to strong advantage that the mass matrix becomes diagonal, known as the \emph{lumped mass matrix}. Consequently, instead of solving a linear system one just has to just do $n_\mathrm{dof}$ decoupled inversions (where $n_\mathrm{dof}$ is the number of degrees-of-freedom).
+
+\subsection{Damping}
+
+The equations such as presented in the previous section can lead to indefinite oscillations. For example, when the constitutive response, hidden in $\bm{\sigma}(\vec{x})$, is elasticity, there is no form of dissipation. In the absence of numerical inaccuracies this corresponds to elastic waves that travel through the system indefinitely.
+
+To avoid this one needs to add damping to the system. Two types of damping are considered:
+
+\begin{itemize}
+  \item Viscosity:
+  \begin{equation}
+    \rho\, \ddot{\vec{x}}
+    =
+    \vec{\nabla} \cdot
+    \bm{\sigma}(\vec{x})
+    + \vec{\nabla} \cdot \bm{\sigma}_\eta (\vec{x})
+    \qquad
+    \vec{x} \in \Omega
+  \end{equation}
+  \item ??
+\end{itemize}
+
+\subsection{Time discretization for damped systems}
+
+The simplified notation from Eq.~\ref{eq:dynamics:time} is again used.
+
+\subsubsection{Velocity Verlet}
+
+\begin{enumerate}
+  \item Compute the position at $t_{n+1} = t_{n} + \Delta_t$:
+  \begin{equation}
+    \vec{x}_{n+1}
+    =
+    \vec{x}_{n} + \Delta_t \vec{v}_{n} + \tfrac{1}{2} \Delta_t^2 \vec{a}_{n}
+  \end{equation}
+  \item Estimate the velocity at $t_{n+1} = t_{n} + \Delta_t$:
+  \begin{equation}
+    \hat{\vec{v}}_{n+1}
+    =
+    \vec{v}_{n}
+    +
+    \tfrac{1}{2} \Delta_t \Big[\,
+      \vec{a}_{n} + \vec{a} ( \vec{x}_{n+1} , \vec{v}_{n} + \Delta_t \vec{a}_{n} , t_{n+1} ) \,
+    \Big]
+  \end{equation}
+  \item Correct $\hat{\vec{v}}_{n+1}$:
+  \begin{equation}
+    \vec{v}_{n+1}
+    =
+    \vec{v}_{n}
+    +
+    \tfrac{1}{2} \Delta_t \Big[\,
+      \vec{a}_{n} + \vec{a} ( \vec{x}_{n+1} , \hat{\vec{v}}_{n+1} , t_{n+1} ) \,
+    \Big]
+  \end{equation}
+\end{enumerate}
+
+
+
+\appendix
+
+\section{Nomenclature}
+
+Divergence
+\begin{equation}
+  \vec{\nabla} \cdot \bm{\sigma} = \frac{ \partial \sigma_{ij} }{ \partial x_i }
+\end{equation}
+
+Double tensor contraction
+\begin{equation}
+  C = \bm{A} : \bm{B} = A_{ij} B_{ji}
+\end{equation}
+
+\section{Shape functions}
+
+In the Finite Element Method a geometry is discretized using nodes. The nodes are grouped in elements which define the domain $\Omega^h_0$. The crux of the method is that nodal quantities, for example $\vec{u}_i$, are interpolated throughout the discretized domain $\Omega^h_0$ using shape functions $N_i (\vec{X})$. The shape functions are polynomials that spanned by the nodes, such that they constitute a partition of unity and satisfy $N_i (\vec{X}_j) = \delta_{ij}$, i.e. it is one in the node $i$, and zero in all other nodes. This implies that, while each shape function is globally supported, $N_i (\vec{X}) \neq 0$ only in the elements containing node $i$. For all other elements it is zero (even in between the nodes). This again implies that $\partial N_i / \partial \vec{X}$ is discontinuous across element boundaries.
+
+For a one-dimensional problem comprising four linear elements and five nodes the shape functions are sketched in Fig.~\ref{fig:shape:1d-domain}. To emphasize the global support of each shape function the shape function of node 2 is isolated in Fig.~\ref{fig:shape:1d-domain-2}. As can be seen, node 2 is only non-zero in elements 1 and 2, while it is zero everywhere else. To evaluate for example $f_2$, the internal force one node 2, the integration can be limited to these two elements:
+\begin{equation}
+  f_2
+  =
+  \int\limits_{\Omega^{(1)}}
+    \frac{\mathrm{d} N^{(1)}_2}{\mathrm{d} x} \;
+    \sigma (x) \;
+  \mathrm{d}\Omega
+  +
+  \int\limits_{\Omega^{(2)}}
+    \frac{\mathrm{d} N^{(2)}_2}{\mathrm{d} x} \;
+    \sigma (x) \;
+  \mathrm{d}\Omega
+\end{equation}
+
+\begin{figure}[htp]
+  \centering
+  \captionsetup[subfigure]{justification=centering}
+  \begin{minipage}[t]{.5\textwidth}
+    \centering
+    \includegraphics[width=1.\textwidth]{figures/shape-functions-1d.pdf}
+    \subcaption{All shape functions $N_i(x)$, each with different color.}
+    \label{fig:shape:1d-domain}
+  \end{minipage}
+  \\
+  \begin{minipage}[t]{.5\textwidth}
+    \centering
+    \includegraphics[width=1.\textwidth]{figures/shape-functions-1d-node-2.pdf}
+    \subcaption{Isolated shape function $N_2(x)$.}
+    \label{fig:shape:1d-domain-2}
+  \end{minipage}
+  \caption{(a) Shape functions for a one-dimensional domain discretized using four two node, linear, element. (b) Isolated shape functions for node 2. The node numbers are displayed using a unique color, while the element numbers are shown in black in a different font, in between the nodes.}
+  \label{fig:shape:1d-domain:fig}
+\end{figure}
+
+By now it should be clear that the above allows us assemble $\underline{f}$ element-by-element. For the example in Fig.~\ref{fig:shape:1d-domain:fig} this is graphically shown in Fig.~\ref{fig:shape:1d-domain:assembly}.
+
+\begin{figure}[htp]
+  \centering
+  \captionsetup[subfigure]{justification=centering}
+  \begin{minipage}[t]{.5\textwidth}
+    \centering
+    \includegraphics[width=1.\textwidth]{figures/shape-functions-1d-element-0.pdf}
+  \end{minipage}
+  \\
+  $+$
+  \\
+  \begin{minipage}[t]{.5\textwidth}
+    \centering
+    \includegraphics[width=1.\textwidth]{figures/shape-functions-1d-element-1.pdf}
+  \end{minipage}
+  \\
+  $+$
+  \\
+  \begin{minipage}[t]{.5\textwidth}
+    \centering
+    \includegraphics[width=1.\textwidth]{figures/shape-functions-1d-element-2.pdf}
+  \end{minipage}
+  \\
+  $+$
+  \\
+  \begin{minipage}[t]{.5\textwidth}
+    \centering
+    \includegraphics[width=1.\textwidth]{figures/shape-functions-1d-element-3.pdf}
+  \end{minipage}
+  \caption{Element-by-element assembly of the problem in Fig.~\ref{fig:shape:1d-domain:fig}.}
+  \label{fig:shape:1d-domain:assembly}
+\end{figure}
+
+
+where the indices show that the \emph{shape functions} are evaluated compared to some generic element definition.
+
+\section{Iso-parametric transformation and quadrature}
+
+A very important concept in the Finite Element Method is the iso-parametric transformation. It allows an arbitrarily shaped element with volume $\Omega^e$ to be mapped onto a generic \emph{iso-parametric element} of constant volume $Q$, see Fig.~\ref{fig:isoparametric}. Using this mapping it is easy to perform interpolation and numerical quadrature using a generic implementation.
+
+\begin{figure}[htp]
+  \centering
+  \includegraphics[width=.5\textwidth]{figures/isoparametric-transform.pdf}
+  \caption{Iso-parameteric transformation for a four node, bi-linear, quadrilateral element.}
+  \label{fig:isoparametric}
+\end{figure}
+
+The mapping between the generic domain $Q$ and the physical domain $\Omega^e$ is as follows
+\begin{equation}
+\label{eq:isoparametric:coordinate}
+  \vec{x} ( \vec{\xi} ) = \big[\, \underline{N}^{e} \,\big]^\mathsf{T} \underline{x}^e
+\end{equation}
+where the column $\underline{x}^e$ contains the position vectors of the element nodes in the actual coordinates (i.e.\ spanning $\Omega^e$). In order to perform the quadrature on $Q$ we must also map the gradient operator:
+\begin{equation}
+  \vec{\nabla}_{\xi}\,
+  =
+  \vec{e}_i \frac{\partial}{\partial \xi_i}
+  =
+  \vec{e}_i \frac{\partial x_j(\vec{\xi})}{\partial \xi_i} \frac{\partial}{\partial x_j}
+  =
+  \vec{e}_i \frac{\partial x_j(\vec{\xi})}{\partial \xi_i} \vec{e}_j \cdot \vec{e}_k \frac{\partial}{\partial x_k}
+  =
+  \big[\, \vec{\nabla}_{\xi}\, \vec{x}(\vec{\xi}) \,\big] \cdot \vec{\nabla}
+  =
+  \bm{J}(\vec{\xi}) \cdot \vec{\nabla}
+\end{equation}
+from which the inverse relationship trivially follows
+\begin{equation}
+  \vec{\nabla} = \bm{J}^{-1}(\vec{\xi}) \cdot \vec{\nabla}_{\xi}\,
+\end{equation}
+where $\bm{J}$ is the Jacobian which can be obtained from the gradient of the shape functions with respect to the iso-parametric coordinates and the nodal coordinates in the actual coordinates through Eq.~\eqref{eq:isoparametric:coordinate}:
+\begin{equation}
+  \bm{J}(\vec{\xi})
+  =
+  \vec{\nabla}_{\xi}\, \vec{x}(\vec{\xi})
+  =
+  \big[\, \vec{\nabla}_{\xi}\, \underline{N}^{e} \,\big]^\mathsf{T} \; \underline{x}^e
+\end{equation}
+
+The gradient of the shape functions with respect to the actual coordinates can now be computed though
+\begin{equation}
+  \vec{\nabla} \underline{N}^{e}
+  =
+  \bm{J}^{-1}(\vec{\xi}) \cdot  \big[\, \vec{\nabla}_{\xi}\, \underline{N}^{e} \,\big]
+\end{equation}
+Furthermore, the mapping between the real and the master volume is equal to
+\begin{align}
+  \mathrm{d} \Omega
+  &=
+  \mathrm{d} \vec{x}_0 \times \mathrm{d} \vec{x}_1 \cdot \mathrm{d} \vec{x}_2
+  =
+  \left[ \mathrm{d} \vec{x}_0 \cdot \bm{J}(\vec{\xi}) \right] \times
+  \left[ \mathrm{d} \vec{x}_1 \cdot \bm{J}(\vec{\xi}) \right] \cdot
+  \left[ \mathrm{d} \vec{x}_2 \cdot \bm{J}(\vec{\xi}) \right]
+  =
+  \det \big( \bm{J}(\vec{\xi}) \big)\,
+  \mathrm{d} \vec{\xi}_0 \times \mathrm{d} \vec{\xi}_1 \cdot \mathrm{d} \vec{\xi}_2
+  \\
+  &=
+  \det \big( \bm{J}(\vec{\xi}) \big)\, \mathrm{d} Q
+\end{align}
+Numerical quadrature can be formulated (exactly) on the master element. It corresponds to taking the weighted sum of the integrand evaluated at specific \emph{quadrature points} (or \emph{integration points}).
+
+The practical implications, for example for the internal force, are as follows:
+\begin{align}
+  \underline{\vec{f}^e}
+  &=
+  \int\limits_{\Omega^e}
+    \big[\, \vec{\nabla} \underline{N} \,\big]
+    \cdot
+    \bm{\sigma}(\vec{x}) \;
+  \mathrm{d}\Omega
+  =
+  \int\limits_{Q}
+    \big[\, \vec{\nabla} \underline{N} \,\big]
+    \cdot
+    \bm{\sigma}(\vec{x}) \;
+    \det \big( \bm{J}(\vec{\xi}) \big) \;
+  \mathrm{d}Q
+  \\
+  &=
+  \sum_{k}^{n_k}
+  w_k
+  \big[\, \vec{\nabla} \underline{N} \,\big]_{\vec{\xi} = \vec{\xi}_k}
+  \cdot
+  \bm{\sigma}\big(\vec{x}(\vec{\xi}_k)\big) \;
+  \det \big( \bm{J}(\vec{\xi}_k) \big) \;
+\end{align}
+
+\subsection*{Total Lagrange}
+
+To obtain
+\begin{equation}
+ \vec{X}(\vec{\xi}),\, \vec{\nabla}_0,\,\, \text{and}\, \int\limits_{\Omega_0} . \;\mathrm{d}\Omega
+\end{equation}
+simply replace $\underline{x}^e$ with $\underline{X}^e$ in Eq.~\eqref{eq:isoparametric:coordinate}. For this reason the same element implementation can be used in small strain and finite strain (total Lagrange and updated Lagrange), by providing either $\underline{X}^e$ or $\underline{X}^e + \underline{u}^e$ as input.
+
+
+\section{Newton-Raphson in one dimension}
+\label{sec:newton-raphson}
+
+The objective is to find $x$ such that
+\begin{equation}
+  r(x) = 0
+\end{equation}
+An initial guess is made for $x$ which is (hopefully) iteratively improved. This iterative value is denoted using $x_{(i)}$. It is updated by making use of the following Taylor expansion
+\begin{equation}
+  r \big( x_{(i+1)} \big)
+  =
+  r \big( x_{(i)} \big)
+  +
+  \left. \frac{\mathrm{d} r}{\mathrm{d} x} \right|_{x = x_{(i)}} \delta x
+  +
+  \mathcal{O} \big( \delta x^2 \big)
+  \approx
+  0
+\end{equation}
+where
+\begin{equation}
+  \delta x = x_{(i+1)} - x_{(i)}
+\end{equation}
+The value of $\delta x$ can be obtained by neglecting higher order terms:
+\begin{equation}
+  r \big( x_{(i)} \big)
+  +
+  \left. \frac{\mathrm{d} r}{\mathrm{d} x} \right|_{x = x_{(i)}} \delta x
+  =
+  0
+\end{equation}
+From which it follows that
+\begin{equation}
+  \delta x
+  =
+  - \left[ \left. \frac{\mathrm{d} r}{\mathrm{d} x} \right|_{x = x_{(i)}} \right]^{-1}
+  r \big( x_{(i)} \big)
+\end{equation}
+Thereafter, the improved `guess' of the solution is
+\begin{equation}
+  x_{(i+1)} = x_{(i)} + \delta x
+\end{equation}
+These steps are then repeated, until the solution has been reached within a certain accuracy $\epsilon$:
+\begin{equation}
+  \left| r \big( x_{(i+1)} \big) \right| < \epsilon
+\end{equation}
+
+The iterative scheme is well understood from the illustration in Fig.~\ref{fig:newton-raphson}.
+
+\begin{figure}[htp]
+  \centering
+  \includegraphics[width=.3\textwidth]{figures/newton-raphson.pdf}
+  \caption{Schematic of the Newton-Raphson iterations in a one-dimensional problem.}
+  \label{fig:newton-raphson}
+\end{figure}
+
+
+
 
 
 % \bibliography{example_refs}
