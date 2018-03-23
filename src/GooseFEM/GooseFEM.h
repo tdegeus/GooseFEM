@@ -18,6 +18,7 @@
 #include <memory>
 #include <iostream>
 #include <iomanip>
+#include <numeric>
 #include <math.h>
 #include <Eigen/Eigen>
 #include <cppmat/cppmat.h>
@@ -26,7 +27,7 @@
 
 #define GOOSEFEM_WORLD_VERSION 0
 #define GOOSEFEM_MAJOR_VERSION 0
-#define GOOSEFEM_MINOR_VERSION 7
+#define GOOSEFEM_MINOR_VERSION 8
 
 #define GOOSEFEM_VERSION_AT_LEAST(x,y,z) \
   (GOOSEFEM_WORLD_VERSION>x || (GOOSEFEM_WORLD_VERSION>=x && \
@@ -53,6 +54,9 @@ namespace GooseFEM
   typedef Eigen::Matrix<double, Eigen::Dynamic,              1, Eigen::ColMajor> ColD;
   typedef Eigen::Matrix<size_t, Eigen::Dynamic,              1, Eigen::ColMajor> ColS;
   typedef Eigen::Matrix<int   , Eigen::Dynamic,              1, Eigen::ColMajor> ColI;
+
+  typedef Eigen::SparseMatrix<double,Eigen::RowMajor> SpMatD;
+  typedef Eigen::SparseMatrix<size_t,Eigen::RowMajor> SpMatS;
 }
 
 // =================================================================================================

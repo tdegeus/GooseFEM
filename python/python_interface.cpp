@@ -40,14 +40,18 @@ mMesh.def("dofs",
   py::arg("ndim")
 );
 
+using renumber = GooseFEM::MatS(const GooseFEM::MatS &);
+
 mMesh.def("renumber",
-  py::overload_cast<const GooseFEM::MatS&>(&GooseFEM::Mesh::renumber),
+  py::overload_cast<const GooseFEM::MatS &>((renumber*)&GooseFEM::Mesh::renumber),
   "Renumber DOF-list to use the lowest possible index",
   py::arg("dofs")
 );
 
-mMesh.def("renumber",
-  py::overload_cast<const GooseFEM::MatS&,const GooseFEM::ColS&,std::string>(&GooseFEM::Mesh::renumber),
+using reorder = GooseFEM::MatS(const GooseFEM::MatS &, const GooseFEM::ColS&, std::string);
+
+mMesh.def("reorder",
+  py::overload_cast<const GooseFEM::MatS&,const GooseFEM::ColS&,std::string>((reorder*)&GooseFEM::Mesh::reorder),
   "Renumber DOF-list to begin or end with 'idx'",
   py::arg("dofs"),
   py::arg("idx"),
