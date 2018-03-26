@@ -11,13 +11,13 @@
 
 #include "Mesh.h"
 
-// ===================================== GooseFEM::Mesh::Tri3 =====================================
+// ===================================== GooseFEM::Mesh::Tri3 ======================================
 
 namespace GooseFEM {
 namespace Mesh {
 namespace Tri3 {
 
-// ========================================== REGULAR MESH =========================================
+// ------------------------------------------ regular mesh -----------------------------------------
 
 class Regular
 {
@@ -68,19 +68,25 @@ public:
   MatS   dofsPeriodic();            // ,, for the case that the periodicity if fully eliminated
 };
 
-// ========================================= MESH ANALYSIS =========================================
+// ----------------------------------------- mesh analysis -----------------------------------------
 
 // read / set the orientation (-1 / +1) of all triangles
 inline ColI getOrientation(const MatD &coor, const MatS &conn                                     );
 inline MatS setOrientation(const MatD &coor, const MatS &conn,                  int orientation=-1);
 inline MatS setOrientation(const MatD &coor, const MatS &conn, const ColI &val, int orientation=-1);
 
-// ======================================= RE-TRIANGULATION ========================================
+// --------------------------------------- re-triangulation ----------------------------------------
 
 // simple interface to compute the full re-triangulation; it uses, depending on the input mesh:
 // (1) the minimal evasive "TriUpdate"
 // (2) the more rigorous "TriCompute"
 inline MatS retriangulate(const MatD &coor, const MatS &conn, int orientation=-1);
+
+
+
+// ================================= GooseFEM::Mesh::Tri3::Private =================================
+
+namespace Private {
 
 // ------------------------- support class - update existing triangulation -------------------------
 
@@ -119,7 +125,7 @@ public:
   MatS ch_node  () { return m_node; };  // return nodes   involved in last element change
 };
 
-// ================================ SUPPORT CLASS - EDGE DEFINITION ================================
+// -------------------------------- support class - edge definition --------------------------------
 
 // support class to allow the storage of a list of edges
 class Edge {
@@ -139,7 +145,11 @@ public:
 inline bool Edge_cmp (Edge a, Edge b); // check equality
 inline bool Edge_sort(Edge a, Edge b); // check if "a" is smaller than "b" in terms of node-numbers
 
-// =================================================================================================
+// -------------------------------------------------------------------------------------------------
+
+} // namespace Private
+
+// -------------------------------------------------------------------------------------------------
 
 }}} // namespace ...
 

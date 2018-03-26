@@ -3,16 +3,14 @@
 GooseFEM::Mesh::Quad4
 *********************
 
-.. note::
-
-  Source:
-
-  .. code-block:: cpp
-
-    #include <GooseFEM/MeshQuad4.h>
+[:download:`GooseFEM/MeshQuad4.h <../src/GooseFEM/MeshQuad4.h>`, :download:`GooseFEM/MeshQuad4.cpp <../src/GooseFEM/MeshQuad4.cpp>`]
 
 ``GooseFEM::Mesh::Quad4::Regular``
 ==================================
+
+.. todo::
+
+  Update
 
 .. code-block:: cpp
 
@@ -57,6 +55,10 @@ Methods:
 
 ``GooseFEM::Mesh::Quad4::FineLayer``
 ====================================
+
+.. todo::
+
+  Update
 
 Regular mesh with a fine layer of quadrilateral elements, and coarser elements above and below.
 

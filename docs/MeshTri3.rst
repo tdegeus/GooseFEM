@@ -3,11 +3,49 @@
 GooseFEM::Mesh::Tri3
 ********************
 
-.. note::
+[:download:`GooseFEM/MeshTri3.h <../src/GooseFEM/MeshTri3.h>`, :download:`GooseFEM/MeshTri3.cpp <../src/GooseFEM/MeshTri3.cpp>`]
 
-  Source:
+``GooseFEM::Mesh::Tri3::Regular``
+=================================
 
-  .. code-block:: cpp
+.. todo::
 
-    #include <GooseFEM/MeshTri3.h>
+  Finish.
 
+
+``GooseFEM::Mesh::Tri3::getOrientation``
+========================================
+
+.. todo::
+
+  Finish.
+
+
+``GooseFEM::Mesh::Tri3::setOrientation``
+========================================
+
+.. todo::
+
+  Finish.
+
+``GooseFEM::Mesh::Tri3::retriangulate``
+========================================
+
+.. todo::
+
+  Finish.
+
+``GooseFEM::Mesh::Tri3::TriUpdate``
+===================================
+
+.. todo::
+
+  Finish.
+
+
+``GooseFEM::Mesh::Tri3::Edge``
+==============================
+
+.. todo::
+
+  Finish.

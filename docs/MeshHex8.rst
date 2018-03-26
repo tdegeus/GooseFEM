@@ -3,10 +3,14 @@
 GooseFEM::Mesh::Hex8
 ********************
 
-[:download:`source: MeshHex8.h <../src/GooseFEM/MeshHex8.h>`, :download:`source: MeshHex8.cpp <../src/GooseFEM/MeshHex8.cpp>`]
+[:download:`MeshHex8.h <../src/GooseFEM/MeshHex8.h>`, :download:`MeshHex8.cpp <../src/GooseFEM/MeshHex8.cpp>`]
 
 Naming convention
 =================
+
+.. todo::
+
+  Update
 
 The following naming convention is used:
 
@@ -31,6 +35,17 @@ The edges and corners follow from the intersections, i.e.
 ``GooseFEM::Mesh::Hex8::Regular``
 =================================
 
+.. todo::
+
+  Update
+
+
+``GooseFEM::Mesh::Hex8::FineLayer``
+===================================
+
+.. todo::
+
+  Update
 
 
 .. .. code-block:: cpp

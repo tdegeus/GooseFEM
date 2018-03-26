@@ -26,6 +26,7 @@ GooseFEM documentation
    :maxdepth: 1
 
    compile.rst
+   overview.rst
    Mesh.rst
    MeshTri3.rst
    MeshQuad4.rst

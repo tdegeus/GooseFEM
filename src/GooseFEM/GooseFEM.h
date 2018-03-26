@@ -46,17 +46,21 @@
 
 // =================================================================================================
 
-// alias Eigen types
+// alias types
 namespace GooseFEM
 {
+  // - alias Eigen dense matrices
   typedef Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor> MatD;
   typedef Eigen::Matrix<size_t, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor> MatS;
   typedef Eigen::Matrix<double, Eigen::Dynamic,              1, Eigen::ColMajor> ColD;
   typedef Eigen::Matrix<size_t, Eigen::Dynamic,              1, Eigen::ColMajor> ColS;
   typedef Eigen::Matrix<int   , Eigen::Dynamic,              1, Eigen::ColMajor> ColI;
-
+  // - alias Eigen sparse matrices
   typedef Eigen::SparseMatrix<double,Eigen::RowMajor> SpMatD;
   typedef Eigen::SparseMatrix<size_t,Eigen::RowMajor> SpMatS;
+  // - alias cppmat matrices
+  typedef cppmat::matrix<double> ArrD;
+  typedef cppmat::matrix<size_t> ArrS;
 }
 
 // =================================================================================================
@@ -65,6 +69,8 @@ namespace GooseFEM
 #include "MeshTri3.h"
 #include "MeshQuad4.h"
 #include "MeshHex8.h"
+#include "Element.h"
+#include "ElementQuad4.h"
 #include "DynamicsDiagonal.h"
 #include "OverdampedDynamicsDiagonal.h"
 
@@ -72,6 +78,8 @@ namespace GooseFEM
 #include "MeshTri3.cpp"
 #include "MeshQuad4.cpp"
 #include "MeshHex8.cpp"
+#include "Element.cpp"
+#include "ElementQuad4.cpp"
 #include "DynamicsDiagonal.cpp"
 #include "OverdampedDynamicsDiagonal.cpp"
 

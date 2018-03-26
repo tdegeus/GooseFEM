@@ -11,13 +11,11 @@
 
 #include "MeshTri3.h"
 
-// ===================================== GooseFEM::Mesh::Tri3 =====================================
+// ===================================== GooseFEM::Mesh::Tri3 ======================================
 
 namespace GooseFEM {
 namespace Mesh {
 namespace Tri3 {
-
-// ===================================== CLASS - REGULAR MESH ======================================
 
 // ------------------------------------------ constructor ------------------------------------------
 
@@ -302,8 +300,6 @@ inline MatS Regular::dofsPeriodic()
   return GooseFEM::Mesh::renumber(out);
 }
 
-// ========================================= MESH ANALYSIS =========================================
-
 // ------------------------------ get the orientation of each element ------------------------------
 
 inline ColI getOrientation(const MatD &coor, const MatS &conn)
@@ -366,14 +362,14 @@ inline MatS setOrientation(const MatD &coor, const MatS &conn, const ColI &val, 
   return out;
 }
 
-// ===================================== RE-TRIANGULATION API ======================================
+// ------------------------------------- re-triangulation API --------------------------------------
 
 inline MatS retriangulate(const MatD &coor, const MatS &conn, int orientation)
 {
   // get the orientation of all elements
-  ColI dir = getOrientation( coor, conn );
+  ColI dir = getOrientation(coor, conn);
   // check the orientation
-  bool eq  = std::abs( dir.sum() ) == conn.rows();
+  bool eq  = std::abs(dir.sum()) == conn.rows();
 
   // new connectivity
   MatS out;
@@ -382,7 +378,7 @@ inline MatS retriangulate(const MatD &coor, const MatS &conn, int orientation)
   // - use "TriUpdate"
   if ( eq )
   {
-    TriUpdate obj(coor,conn);
+    Private::TriUpdate obj(coor,conn);
     obj.eval();
     out = obj.conn();
   }
@@ -395,7 +391,9 @@ inline MatS retriangulate(const MatD &coor, const MatS &conn, int orientation)
   return setOrientation(coor,out,orientation);
 }
 
-// ================ RE-TRIANGULATION SUPPORT CLASS - UPDATE EXISTING TRIANGULATION =================
+// ================================= GooseFEM::Mesh::Tri3::Private =================================
+
+namespace Private {
 
 // ------------------------------------------ constructor ------------------------------------------
 
@@ -425,14 +423,14 @@ inline TriUpdate::TriUpdate(const MatD &coor, const MatS &conn): m_conn(conn), m
 
 inline void TriUpdate::edge()
 {
-  m_edge.resize( m_nelem , m_nne );
-  m_edge.setConstant( m_nelem ); // signal that nothing has been set
+  m_edge.resize(m_nelem , m_nne);
+  m_edge.setConstant(m_nelem); // signal that nothing has been set
 
   std::vector<size_t> idx = {0,1,2}; // lists to convert connectivity -> edges
   std::vector<size_t> jdx = {1,2,0}; // lists to convert connectivity -> edges
 
   std::vector<Edge> edge;
-  edge.reserve( m_nelem*idx.size() );
+  edge.reserve(m_nelem*idx.size());
 
   for ( size_t e = 0 ; e < m_nelem ; ++e )
     for ( size_t i = 0 ; i < m_nne ; ++i )
@@ -455,7 +453,7 @@ inline void TriUpdate::edge()
 inline void TriUpdate::chedge(size_t edge, size_t old_elem, size_t new_elem)
 {
   size_t m;
-  size_t neigh = m_edge( old_elem , edge );
+  size_t neigh = m_edge(old_elem , edge);
 
   if ( neigh >= m_nelem ) return;
 
@@ -566,8 +564,6 @@ inline bool TriUpdate::increment()
   return false;
 }
 
-// ================================ SUPPORT CLASS - EDGE DEFINITION ================================
-
 // ------------------------------------------ constructor ------------------------------------------
 
 inline Edge::Edge(size_t i, size_t j, size_t el, size_t ed, bool sort):
@@ -597,7 +593,11 @@ inline bool Edge_sort(Edge a, Edge b)
   return false;
 }
 
-// =================================================================================================
+// -------------------------------------------------------------------------------------------------
+
+} // namespace Private
+
+// -------------------------------------------------------------------------------------------------
 
 }}} // namespace ...
 

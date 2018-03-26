@@ -3,13 +3,7 @@
 GooseFEM::Mesh
 **************
 
-.. note::
-
-  Source:
-
-  .. code-block:: cpp
-
-    #include <GooseFEM/Mesh.h>
+[:download:`GooseFEM/Mesh.h <../src/GooseFEM/Mesh.h>`, :download:`GooseFEM/Mesh.cpp <../src/GooseFEM/Mesh.cpp>`]
 
 ``GooseFEM::Mesh::dofs``
 ========================
@@ -104,8 +98,6 @@ Implies that ``dofs`` is renumbered such that 0 becomes the one-before-last inde
     0 & 1 \\
     2 & 3
   \end{bmatrix}
-
-Consider also [:download:`source: figures/Mesh/reorder.cpp <figures/Mesh/reorder.cpp>`]
 
 .. note:: Generic interface
 

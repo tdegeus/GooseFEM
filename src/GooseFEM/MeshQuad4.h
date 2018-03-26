@@ -17,7 +17,7 @@ namespace GooseFEM {
 namespace Mesh {
 namespace Quad4 {
 
-// ========================================== REGULAR MESH =========================================
+// ----------------------------------------- regular mesh ------------------------------------------
 
 class Regular
 {
@@ -68,7 +68,7 @@ public:
   MatS   dofsPeriodic();            // ,, for the case that the periodicity if fully eliminated
 };
 
-// ====================== MESH WITH A FINE LAYER THAT EXPONENTIALLY COARSENS =======================
+// ---------------------- mesh with a fine layer that exponentially coarsens -----------------------
 
 class FineLayer
 {
@@ -127,7 +127,7 @@ public:
   MatS   dofsPeriodic();            // ,, for the case that the periodicity if fully eliminated
 };
 
-// =================================================================================================
+// -------------------------------------------------------------------------------------------------
 
 }}} // namespace ...
 

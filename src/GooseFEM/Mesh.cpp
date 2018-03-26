@@ -16,7 +16,7 @@
 namespace GooseFEM {
 namespace Mesh {
 
-// ========================================= LIST OF DOFS ==========================================
+// ----------------------------------------- list of DOFs ------------------------------------------
 
 inline MatS dofs(size_t nnode, size_t ndim)
 {
@@ -27,9 +27,7 @@ inline MatS dofs(size_t nnode, size_t ndim)
   return dofs;
 }
 
-// ================================== RENUMBER TO LOWEST POSSIBLE ==================================
-
-// --------------------------------------------- core ----------------------------------------------
+// ---------------------------------- renumber to lowest possible ----------------------------------
 
 template<class InputIterator, class OutputIterator>
 inline void renumber(
@@ -56,7 +54,7 @@ inline void renumber(
   for ( auto i = 0; i < N; ++i ) *(result+i) = index[*(first+i)];
 };
 
-// ------------------------------------------- interface -------------------------------------------
+// ------------------------------------- renumber - interface --------------------------------------
 
 inline MatS renumber(const MatS &in)
 {
@@ -67,9 +65,7 @@ inline MatS renumber(const MatS &in)
   return out;
 }
 
-// ============================================ REORDER ============================================
-
-// --------------------------------------------- core ----------------------------------------------
+// ------------------------- reorder certain indices to the beginning/end --------------------------
 
 template<class InputIterator, class OutputIterator, class IndexIterator>
 inline void reorder(
@@ -114,7 +110,7 @@ inline void reorder(
   for ( auto i = 0; i < N; ++i ) *(result+i) = index[*(first+i)];
 };
 
-// ------------------------------------------- interface -------------------------------------------
+// -------------------------------------- reorder - interface --------------------------------------
 
 inline MatS reorder(const MatS &in, const ColS &idx, std::string loc)
 {
@@ -125,7 +121,7 @@ inline MatS reorder(const MatS &in, const ColS &idx, std::string loc)
   return out;
 }
 
-// ============================ LIST OF ELEMENTS CONNECTED TO EACH NODE ============================
+// ---------------------------- list of elements connected to each node ----------------------------
 
 inline SpMatS elem2node(const MatS &conn)
 {
@@ -166,10 +162,10 @@ inline SpMatS elem2node(const MatS &conn)
   return mat;
 }
 
-// =================================================================================================
+// -------------------------------------------------------------------------------------------------
 
 }} // namespace ...
 
-// -------------------------------------------------------------------------------------------------
+// =================================================================================================
 
 #endif

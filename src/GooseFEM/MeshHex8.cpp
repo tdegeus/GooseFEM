@@ -17,8 +17,6 @@ namespace GooseFEM {
 namespace Mesh {
 namespace Hex8 {
 
-// ===================================== CLASS - REGULAR MESH ======================================
-
 // ------------------------------------------ constructor ------------------------------------------
 
 inline Regular::Regular(size_t nelx, size_t nely, size_t nelz, double h):
@@ -786,8 +784,6 @@ inline MatS Regular::dofsPeriodic()
   // renumber "out" to be sequential
   return GooseFEM::Mesh::renumber(out);
 }
-
-// ==================================== CLASS - FINELAYER MESH =====================================
 
 // ------------------------------------------ constructor ------------------------------------------
 
@@ -2616,7 +2612,7 @@ inline MatS FineLayer::dofsPeriodic()
   return GooseFEM::Mesh::renumber(out);
 }
 
-// =================================================================================================
+// -------------------------------------------------------------------------------------------------
 
 }}} // namespace ...
 

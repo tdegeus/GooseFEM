@@ -3,7 +3,7 @@
 GooseFEM::Dynamics::Diagonal
 ****************************
 
-[:download:`source: DynamicsDiagonal.h <../src/GooseFEM/DynamicsDiagonal.h>`, :download:`source: DynamicsDiagonal.cpp <../src/GooseFEM/DynamicsDiagonal.cpp>`]
+[:download:`DynamicsDiagonal.h <../src/GooseFEM/DynamicsDiagonal.h>`, :download:`DynamicsDiagonal.cpp <../src/GooseFEM/DynamicsDiagonal.cpp>`]
 
 Overview
 ========
@@ -33,7 +33,7 @@ Example
 
 A simple example is:
 
-[:download:`source: examples/DynamicsDiagonal/Periodic/laminate/no_damping/Verlet/main.cpp <examples/DynamicsDiagonal/Periodic/laminate/no_damping/Verlet/main.cpp>`]
+[:download:`examples/DynamicsDiagonal/Periodic/laminate/no_damping/Verlet/main.cpp <examples/DynamicsDiagonal/Periodic/laminate/no_damping/Verlet/main.cpp>`]
 
 .. code-block:: cpp
 
