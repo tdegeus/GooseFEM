@@ -17,24 +17,42 @@ namespace GooseFEM {
 namespace Element {
 namespace Quad4 {
 
-// --------------------------------------- Gauss integration ---------------------------------------
+// ================================ GooseFEM::Element::Quad4::Gauss ================================
 
-class Gauss
+namespace Gauss {
+size_t nip();         // number of integration points
+ArrD   coordinates(); // integration point coordinates (local coordinates)
+ArrD   weights();     // integration point weights
+}
+
+// ================================ GooseFEM::Element::Quad4::Nodal ================================
+
+namespace Nodal {
+size_t nip();         // number of integration points
+ArrD   coordinates(); // integration point coordinates (local coordinates)
+ArrD   weights();     // integration point weights
+}
+
+// =================================================================================================
+
+// ------------------------------------------ quadrature -------------------------------------------
+
+class Quadrature
 {
 private:
 
   // dimensions
   size_t m_nelem;               // number of elements
+  size_t m_nip;                 // number of integration positions
   static const size_t m_nne=4;  // number of nodes per element
   static const size_t m_ndim=2; // number of dimensions
-  static const size_t m_nip=4;  // number of integration positions
-
   // data arrays
   ArrD   m_x;    // element vector with nodal positions [nelem, nne, ndim]
   ArrD   m_w;    // weight of each integration point [nip]
   ArrD   m_xi;   // local coordinate of each integration point [nip, ndim]
-  ArrD   m_dNxi; // shape function gradients wrt local coordinate [nip, nne, ndim]
-  ArrD   m_dNx;  // shape function gradients wrt global coordinate [nelem, nip, nne, ndim]
+  ArrD   m_N;    // shape functions w.r.t. local coordinate [nip, nne]
+  ArrD   m_dNxi; // shape function gradients w.r.t. local coordinate [nip, nne, ndim]
+  ArrD   m_dNx;  // shape function gradients w.r.t. global coordinate [nelem, nip, nne, ndim]
   ArrD   m_vol;  // integration point volume [nelem, nip]
 
 private:
@@ -44,8 +62,8 @@ private:
 
 public:
 
-  // constructor
-  Gauss(const ArrD &x);
+  // constructor, integration point coordinates and weights are optional (default: Gauss)
+  Quadrature(const ArrD &x, const ArrD &xi=ArrD(), const ArrD &w=ArrD());
 
   // update the element vectors with nodal positions
   // (the shape of "x" should match the earlier definition)
@@ -57,61 +75,53 @@ public:
   size_t ndim();
   size_t nip();
 
-  // dyadic product "out(i,j) = dNdx(m,i) * inp(m,j)"
-  // - allow template (allows modification of tensor storage)
-  template<class T>
-  ArrD gradN_vector(const ArrD &vector);
-  // - default template: "cppmat::cartesian2d::tensor2<double>"
-  ArrD gradN_vector(const ArrD &vector);
+  // dyadic product "out(i,j) += dNdx(m,i) * inp(m,j)", its transpose, and its symmetric part
+  //
+  // input : [nelem, nne, ndim]
+  // output: [nelem, nip, #tensor-components]
+  //
+  // - allow template (allows customization of tensor storage)
+  template<class T> ArrD gradN_vector   (const ArrD &vector);
+  template<class T> ArrD gradN_vector_T (const ArrD &vector);
+  template<class T> ArrD symGradN_vector(const ArrD &vector);
+  // - default template with cppmat::cartesian2d::...<double>
+  ArrD gradN_vector   (const ArrD &vector); // tensor2  : #tensor-components = ndim*ndim
+  ArrD gradN_vector_T (const ArrD &vector); // tensor2  : #tensor-components = ndim*ndim
+  ArrD symGradN_vector(const ArrD &vector); // tensor2s : #tensor-components = (ndim+1)*ndim/2
 
-  // dyadic product "out(j,i) = dNdx(m,i) * inp(m,j)"
-  // - allow template (allows modification of tensor storage)
-  template<class T>
-  ArrD vector_GradN(const ArrD &vector);
-  // - default template: "cppmat::cartesian2d::tensor2<double>"
-  ArrD vector_GradN(const ArrD &vector);
+  // integral of the scalar product "out(m*ndim+i,n*ndim+i) += N(m) * scalar * N(n) * dV"
+  // for all dimensions "i"
+  //
+  // input : [nelem, nip]
+  // output: [nelem, nne*ndim, nne*ndim]
+  //
+  ArrD int_N_scalar_NT_dV(const ArrD &scalar);
 
-  // symmetric dyadic product "out(i,j) = dNdx(m,i) * inp(m,j)"
-  // (the output is symmetrized)
-  // - allow template (allows modification of tensor storage)
-  template<class T>
-  ArrD symGradN_vector(const ArrD &vector);
-  // - default template: "cppmat::cartesian2d::tensor2s<double>"
-  ArrD symGradN_vector(const ArrD &vector);
+  // integral of the dot product "out(m,j) += dNdx(m,i) * inp(i,j) * dV"
+  //
+  // input : [nelem, nip, #tensor-components]
+  // output: [nelem, nne, ndim]
+  //
+  // - allow template (allows customization of tensor storage)
+  template<class T> ArrD int_gradN_dot_tensor2_dV(const ArrD &tensor);
+  // - default template with cppmat::cartesian2d::...<double>
+  ArrD int_gradN_dot_tensor2_dV (const ArrD &tensor); // tensor2 / tensor2s (automatic selection)
+  ArrD int_gradN_dot_tensor2s_dV(const ArrD &tensor); // tensor2s
 
-  // dot product "out(m,j) = dNdx(m,i) * inp(i,j)"
-  // - allow template (allows modification of tensor storage)
-  template<class T>
-  ArrD gradN_dot_tensor2(const ArrD &tensor);
-  // - infer template from input, may be:
-  //   "cppmat::cartesian2d::tensor2<double>" or "cppmat::cartesian2d::tensor2s<double>"
-  ArrD gradN_dot_tensor2 (const ArrD &tensor);
-  // - default template: "cppmat::cartesian2d::tensor2s<double>"
-  ArrD gradN_dot_tensor2s(const ArrD &tensor);
+  // integral of a tensor (a.k.a. volume average)
+  //
+  // input : [nelem, nip, #tensor-components]
+  // output: [#tensor-components]
+  //
+  // - allow template (allows customization of tensor storage)
+  template<class T> T int_tensor2_dV(const ArrD &inp);
+  template<class T> T int_tensor2_dV(const ArrD &inp, size_t e);
+  // - default template with cppmat::cartesian2d::...<double>
+  cppmat::cartesian2d::tensor2 <double> int_tensor2_dV (const ArrD &inp);           // tensor2
+  cppmat::cartesian2d::tensor2s<double> int_tensor2s_dV(const ArrD &inp);           // tensor2s
+  cppmat::cartesian2d::tensor2 <double> int_tensor2_dV (const ArrD &inp, size_t e); // tensor2
+  cppmat::cartesian2d::tensor2s<double> int_tensor2s_dV(const ArrD &inp, size_t e); // tensor2s
 
-  // dot product "out(m,j) = dNdx(m,i) * inp(i,j) * dV"
-  // - allow template (allows modification of tensor storage)
-  template<class T>
-  ArrD gradN_dot_tensor2_dV(const ArrD &tensor);
-  // - infer template from input, may be:
-  //   "cppmat::cartesian2d::tensor2<double>" or "cppmat::cartesian2d::tensor2s<double>"
-  ArrD gradN_dot_tensor2_dV(const ArrD &tensor);
-
-  // compute volume averaged tensor of an element
-  // (has to be templated with the proper cppmat-tensor)
-  template<class T>
-  T average_tensor2(const ArrD &inp, size_t e);
-
-  cppmat::cartesian2d::tensor2 <double> average_tensor2 (const ArrD &inp, size_t e);
-  cppmat::cartesian2d::tensor2s<double> average_tensor2s(const ArrD &inp, size_t e);
-
-  // compute volume averaged tensor of all elements
-  // (has to be templated with the proper cppmat-tensor)
-  template<class T>
-  T average_tensor2(const ArrD &inp);
-
-  cppmat::cartesian2d::tensor2 <double> average_tensor2 (const ArrD &inp);
-  cppmat::cartesian2d::tensor2s<double> average_tensor2s(const ArrD &inp);
 };
 
 // -------------------------------------------------------------------------------------------------
