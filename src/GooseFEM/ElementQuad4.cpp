@@ -155,7 +155,7 @@ inline Quadrature::Quadrature(const ArrD &x, const ArrD &xi, const ArrD &w)
   assert( m_w .size()   == m_nip  ); // number of integration points
 
   // allocate arrays
-  // - shape functions in local coordinates
+  // - shape functions
   m_N.resize({m_nip,m_nne});
   // - shape function gradients in local coordinates
   m_dNxi.resize({m_nip,m_nne,m_ndim});
@@ -164,7 +164,7 @@ inline Quadrature::Quadrature(const ArrD &x, const ArrD &xi, const ArrD &w)
   // - integration point volume
   m_vol.resize({m_nelem,m_nip});
 
-  // shape functions in local coordinates
+  // shape functions
   for ( auto k = 0 ; k < m_nip ; ++k )
   {
     m_N(k,0) = .25 * (1.-m_xi(k,0)) * (1.-m_xi(k,1));
@@ -176,10 +176,10 @@ inline Quadrature::Quadrature(const ArrD &x, const ArrD &xi, const ArrD &w)
   // shape function gradients in local coordinates
   for ( auto k = 0 ; k < m_nip ; ++k )
   {
-    m_dNxi(k,0,0) = -.25*(1.-m_xi(k,1)); m_dNxi(k,0,1) = -.25*(1.-m_xi(k,0));
-    m_dNxi(k,1,0) = +.25*(1.-m_xi(k,1)); m_dNxi(k,1,1) = -.25*(1.+m_xi(k,0));
-    m_dNxi(k,2,0) = +.25*(1.+m_xi(k,1)); m_dNxi(k,2,1) = +.25*(1.+m_xi(k,0));
-    m_dNxi(k,3,0) = -.25*(1.+m_xi(k,1)); m_dNxi(k,3,1) = +.25*(1.-m_xi(k,0));
+    m_dNxi(k,0,0) = -.25*(1.-m_xi(k,1));    m_dNxi(k,0,1) = -.25*(1.-m_xi(k,0));
+    m_dNxi(k,1,0) = +.25*(1.-m_xi(k,1));    m_dNxi(k,1,1) = -.25*(1.+m_xi(k,0));
+    m_dNxi(k,2,0) = +.25*(1.+m_xi(k,1));    m_dNxi(k,2,1) = +.25*(1.+m_xi(k,0));
+    m_dNxi(k,3,0) = -.25*(1.+m_xi(k,1));    m_dNxi(k,3,1) = +.25*(1.-m_xi(k,0));
   }
 
   // compute the shape function gradients, based on "x"
@@ -239,7 +239,7 @@ inline void Quadrature::compute_dN()
   #pragma omp parallel
   {
     // intermediate quantities and local views
-    double Jdet, *w, *vol;
+    double Jdet, w, *vol;
     cppmat::tiny::matrix2<double,m_nne,m_ndim> dNxi, dNx, x;
     cppmat::cartesian2d::tensor2<double> J, Jinv;
 
@@ -257,7 +257,7 @@ inline void Quadrature::compute_dN()
         dNxi.map(&m_dNxi(  k)); // shape function gradients (local  coordinates)
         dNx .map(&m_dNx (e,k)); // shape function gradients (global coordinates)
         vol =    &m_vol (e,k);  // volume
-        w   =    &m_w   (  k);  // weight factor
+        w   =     m_w   (  k);  // weight factor
 
         // - Jacobian (loops unrolled for efficiency)
         //   J(i,j) += dNxi(m,i) * xe(m,j)
@@ -271,7 +271,7 @@ inline void Quadrature::compute_dN()
         Jinv = J.inv();
 
         // - integration point volume
-        (*vol) = (*w) * Jdet;
+        (*vol) = w * Jdet;
 
         // - shape function gradients wrt global coordinates (loops partly unrolled for efficiency)
         //   dNx(m,i) += Jinv(i,j) * dNxi(m,j)
@@ -488,9 +488,9 @@ inline ArrD Quadrature::int_N_scalar_NT_dV(const ArrD &inp)
       for ( auto k = 0 ; k < m_nip ; ++k )
       {
         // - alias
-        N.map(&m_N(k));   // shape functions
-        vol = m_vol(e,k); // integration point volume
-        rho = inp  (e,k); // integration point scalar (e.g. density)
+        N.map(&m_N (  k)); // shape functions
+        vol = m_vol(e,k);  // integration point volume
+        rho = inp  (e,k);  // integration point scalar (e.g. density)
 
         // - evaluate scalar product, for all dimensions, and assemble
         //   M(m*ndim+i,n*ndim+i) += N(m) * scalar * N(n) * dV
@@ -550,7 +550,7 @@ inline ArrD Quadrature::int_gradN_dot_tensor2_dV(const ArrD &inp)
         // - alias
         dNx.map (&m_dNx(e,k)); // shape function gradients (global coordinates)
         sig.copy(&inp  (e,k)); // integration point tensor (e.g. stress)
-        vol = m_vol(e,k);      // integration point volume
+        vol = m_vol    (e,k);  // integration point volume
 
         // - evaluate dot product, and assemble (loops partly unrolled for efficiency)
         //   f(m,j) += dNdx(m,i) * sig(i,j) * dV;
@@ -595,7 +595,7 @@ inline T Quadrature::int_tensor2_dV(const ArrD &inp, size_t e)
   {
     // - alias
     sig.copy(&inp(e,k)); // integration point tensor (e.g. stress)
-    vol = m_vol(e,k);    // integration point volume
+    vol  =  m_vol(e,k);  // integration point volume
 
     // - add to average
     SIG += vol * sig;
@@ -638,7 +638,7 @@ inline T Quadrature::int_tensor2_dV(const ArrD &inp)
     {
       // - alias
       sig.copy(&inp(e,k)); // integration point tensor (e.g. stress)
-      vol = m_vol(e,k);    // integration point volume
+      vol  =  m_vol(e,k);  // integration point volume
 
       // - add to average
       SIG += vol * sig;
@@ -675,16 +675,12 @@ inline ArrD Quadrature::symGradN_vector(const ArrD &inp)
 
 inline ArrD Quadrature::int_gradN_dot_tensor2_dV(const ArrD &inp)
 {
-  // check input
   assert( inp.ndim() == 3 ); // shape: [nelem, nip, #tensor-components]
 
-  // general tensor
   if ( inp.shape(2) == m_ndim*m_ndim )
     return int_gradN_dot_tensor2_dV<cppmat::cartesian2d::tensor2<double>>(inp);
-  // symmetric tensor
   else if ( inp.shape(2) == (m_ndim+1)*m_ndim/2 )
     return int_gradN_dot_tensor2_dV<cppmat::cartesian2d::tensor2s<double>>(inp);
-  // unknown input
   else
     throw std::runtime_error("assert: inp.shape(2) == 4 or inp.shape(2) == 3");
 }
