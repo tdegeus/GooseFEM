@@ -74,51 +74,51 @@ public:
   size_t ndim();
   size_t nip();
 
-  // dyadic product "out(i,j) += dNdx(m,i) * inp(m,j)", its transpose, and its symmetric part
+  // dyadic product "qtensor(i,j) += dNdx(m,i) * elemvec(m,j)", its transpose and its symmetric part
   //
-  // input : [nelem, nne, ndim]
-  // output: [nelem, nip, #tensor-components]
-  //
-  // - allow template (e.g. 'cppmat::cartesian2d::tensor2<double>')
-  template<class T> ArrD gradN_vector   (const ArrD &vector);
-  template<class T> ArrD gradN_vector_T (const ArrD &vector);
-  template<class T> ArrD symGradN_vector(const ArrD &vector);
-  // - default template with cppmat::cartesian2d::...<double>
-  ArrD gradN_vector   (const ArrD &vector); // tensor2  : #tensor-components = ndim*ndim
-  ArrD gradN_vector_T (const ArrD &vector); // tensor2  : #tensor-components = ndim*ndim
-  ArrD symGradN_vector(const ArrD &vector); // tensor2s : #tensor-components = (ndim+1)*ndim/2
-
-  // integral of the scalar product "out(m*ndim+i,n*ndim+i) += N(m) * scalar * N(n) * dV"
-  //
-  // input : [nelem, nip]
-  // output: [nelem, nne*ndim, nne*ndim]
-  //
-  ArrD int_N_scalar_NT_dV(const ArrD &scalar);
-
-  // integral of the dot product "out(m,j) += dNdx(m,i) * inp(i,j) * dV"
-  //
-  // input : [nelem, nip, #tensor-components]
-  // output: [nelem, nne, ndim]
+  // input : element vector            -  [nelem, nne, ndim]
+  // output: integration point tensor  -  [nelem, nip, #tensor-components]
   //
   // - allow template (e.g. 'cppmat::cartesian2d::tensor2<double>')
-  template<class T> ArrD int_gradN_dot_tensor2_dV(const ArrD &tensor);
+  template<class T> ArrD gradN_vector   (const ArrD &elemvec);
+  template<class T> ArrD gradN_vector_T (const ArrD &elemvec);
+  template<class T> ArrD symGradN_vector(const ArrD &elemvec);
   // - default template with cppmat::cartesian2d::...<double>
-  ArrD int_gradN_dot_tensor2_dV (const ArrD &tensor); // tensor2 / tensor2s (automatic selection)
-  ArrD int_gradN_dot_tensor2s_dV(const ArrD &tensor); // tensor2s
+  ArrD gradN_vector   (const ArrD &elemvec); // tensor2  : #tensor-components = ndim*ndim
+  ArrD gradN_vector_T (const ArrD &elemvec); // tensor2  : #tensor-components = ndim*ndim
+  ArrD symGradN_vector(const ArrD &elemvec); // tensor2s : #tensor-components = (ndim+1)*ndim/2
 
-  // integral of a tensor "out(i,j) += inp(i,j) * dV" (a.k.a. volume average)
+  // integral of the scalar product "elemmat(m*ndim+i,n*ndim+i) += N(m) * qscalar * N(n) * dV"
   //
-  // input : [nelem, nip, #tensor-components]
-  // output: [#tensor-components]
+  // input : integration point scalar  -  [nelem, nip]
+  // output: element matrix            -  [nelem, nne*ndim, nne*ndim]
+  //
+  ArrD int_N_scalar_NT_dV(const ArrD &qscalar);
+
+  // integral of the dot product "elemvec(m,j) += dNdx(m,i) * qtensor(i,j) * dV"
+  //
+  // input : integration point tensor  -  [nelem, nip, #tensor-components]
+  // output: element vector            -  [nelem, nne, ndim]
   //
   // - allow template (e.g. 'cppmat::cartesian2d::tensor2<double>')
-  template<class T> T int_tensor2_dV(const ArrD &inp);
-  template<class T> T int_tensor2_dV(const ArrD &inp, size_t e);
+  template<class T> ArrD int_gradN_dot_tensor2_dV(const ArrD &qtensor);
   // - default template with cppmat::cartesian2d::...<double>
-  cppmat::cartesian2d::tensor2 <double> int_tensor2_dV (const ArrD &inp);           // tensor2
-  cppmat::cartesian2d::tensor2s<double> int_tensor2s_dV(const ArrD &inp);           // tensor2s
-  cppmat::cartesian2d::tensor2 <double> int_tensor2_dV (const ArrD &inp, size_t e); // tensor2
-  cppmat::cartesian2d::tensor2s<double> int_tensor2s_dV(const ArrD &inp, size_t e); // tensor2s
+  ArrD int_gradN_dot_tensor2_dV (const ArrD &qtensor); // tensor2 / tensor2s (automatic selection)
+  ArrD int_gradN_dot_tensor2s_dV(const ArrD &qtensor); // tensor2s
+
+  // integral of a tensor "tensor(i,j) += qtensor(i,j) * dV" (a.k.a. volume average)
+  //
+  // input : integration point tensor  -  [nelem, nip, #tensor-components]
+  // output: (element) tensor          -  [#tensor-components]
+  //
+  // - allow template (e.g. 'cppmat::cartesian2d::tensor2<double>')
+  template<class T> T int_tensor2_dV(const ArrD &qtensor);
+  template<class T> T int_tensor2_dV(const ArrD &qtensor, size_t e);
+  // - default template with cppmat::cartesian2d::...<double>
+  cppmat::cartesian2d::tensor2 <double> int_tensor2_dV (const ArrD &qtensor);           // tensor2
+  cppmat::cartesian2d::tensor2s<double> int_tensor2s_dV(const ArrD &qtensor);           // tensor2s
+  cppmat::cartesian2d::tensor2 <double> int_tensor2_dV (const ArrD &qtensor, size_t e); // tensor2
+  cppmat::cartesian2d::tensor2s<double> int_tensor2s_dV(const ArrD &qtensor, size_t e); // tensor2s
 
 };
 

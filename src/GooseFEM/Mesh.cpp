@@ -73,6 +73,14 @@ inline void reorder(
   const IndexIterator first_index, const IndexIterator last_index, std::string location
 )
 {
+  // check uniqueness of input
+  #ifndef NDEBUG
+  std::vector<size_t> iip(last_index-first_index);
+  std::copy(first_index, last_index, iip.begin());
+  std::sort(iip.begin(), iip.end());
+  assert( std::unique(iip.begin(), iip.end()) == iip.end() );
+  #endif
+
   // size of input and the the renumber list
   auto N = last - first;
   auto M = (*std::max_element(first, last)) + 1;
@@ -89,6 +97,8 @@ inline void reorder(
   #endif
   // remove indices whose new index will be fixed
   for ( auto it = first_index; it != last_index; ++it ) inList[*it] = 0;
+  // find number of entries
+  size_t nnu = std::accumulate(inList.begin(), inList.end(), 0);
 
   // new indices: cumulative sum of presence list
   std::partial_sum(inList.begin(), inList.end(), index.begin());
@@ -102,7 +112,7 @@ inline void reorder(
   size_t offset;
   // - set offset
   if ( location == "begin" ) offset = 0;
-  else                       offset = N - (last_index - first_index);
+  else                       offset = nnu;
   // - apply
   for ( auto it = first_index; it != last_index; ++it ) { index[*it] = offset; ++offset; }
 

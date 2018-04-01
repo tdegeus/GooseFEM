@@ -35,7 +35,7 @@ ext_modules = [
 
 setup(
   name             = 'GooseFEM',
-  description      = 'Finite element meshes',
+  description      = 'Finite element meshes, quadrature, and assembly tools',
   long_description = desc,
   version          = __version__,
   license          = 'GPLv3',

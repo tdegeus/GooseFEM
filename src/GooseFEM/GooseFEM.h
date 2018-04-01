@@ -19,6 +19,7 @@
 #include <iostream>
 #include <iomanip>
 #include <numeric>
+#include <algorithm>
 #include <math.h>
 #include <Eigen/Eigen>
 #include <cppmat/cppmat.h>
@@ -71,8 +72,8 @@ namespace GooseFEM
 #include "MeshHex8.h"
 #include "Element.h"
 #include "ElementQuad4.h"
-#include "DynamicsDiagonal.h"
-#include "OverdampedDynamicsDiagonal.h"
+#include "Vector.h"
+#include "MatrixDiagonal.h"
 
 #include "Mesh.cpp"
 #include "MeshTri3.cpp"
@@ -80,6 +81,12 @@ namespace GooseFEM
 #include "MeshHex8.cpp"
 #include "Element.cpp"
 #include "ElementQuad4.cpp"
+#include "Vector.cpp"
+#include "MatrixDiagonal.cpp"
+
+
+#include "DynamicsDiagonal.h"
+#include "OverdampedDynamicsDiagonal.h"
 #include "DynamicsDiagonal.cpp"
 #include "OverdampedDynamicsDiagonal.cpp"
 

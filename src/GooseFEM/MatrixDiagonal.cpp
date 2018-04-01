@@ -4,29 +4,22 @@
 
 ================================================================================================= */
 
-#ifndef GOOSEFEM_ELEMENT_H
-#define GOOSEFEM_ELEMENT_H
+#ifndef GOOSEFEM_MATRIXDIAGONAL_CPP
+#define GOOSEFEM_MATRIXDIAGONAL_CPP
 
 // -------------------------------------------------------------------------------------------------
 
-#include "GooseFEM.h"
+#include "MatrixDiagonal.h"
 
-// ======================================= GooseFEM::Element =======================================
+// =========================================== GooseFEM ============================================
 
 namespace GooseFEM {
-namespace Element {
 
 // -------------------------------------------------------------------------------------------------
 
-// convert nodal vector [nnode, ndim] to corresponding element vector [nelem, nne, ndim]
-ArrD asElementVector(const MatS &conn, const MatD &nodevec);
-
-// assemble element vector [nelem, nne, ndim] to corresponding nodal vector [nnode, ndim]
-MatD assembleElementVector(const MatS &conn, const ArrD &elemvec);
-
 // -------------------------------------------------------------------------------------------------
 
-}} // namespace ...
+} // namespace ...
 
 // =================================================================================================
 

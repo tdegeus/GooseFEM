@@ -4,28 +4,111 @@
 
 ================================================================================================= */
 
+#include <Eigen/Eigen>
+#include <cppmat/cppmat.h>
+
 #include <pybind11/pybind11.h>
 #include <pybind11/eigen.h>
-#include <Eigen/Dense>
+
+#include <cppmat/pybind11.h>
 
 #include "../src/GooseFEM/GooseFEM.h"
 
-// alias for short-hand notation below
 namespace py = pybind11;
+
+typedef GooseFEM::ColD ColD;
+typedef GooseFEM::MatD MatD;
+typedef GooseFEM::ArrD ArrD;
+
+typedef const GooseFEM::ColD cColD;
+typedef const GooseFEM::MatD cMatD;
+typedef const GooseFEM::ArrD cArrD;
+
+// =================================================================================================
 
 PYBIND11_MODULE(GooseFEM, m) {
 
 // =================================================================================================
 
+// set doc-string
 m.doc() = "Some simple finite element meshes and operations";
 
-// define submodules "mXXX"
-py::module mMesh       = m    .def_submodule("Mesh"  , "Generic mesh routines"                  );
-py::module mMeshTri3   = mMesh.def_submodule("Tri3"  , "Linear triangular elements (2D)"        );
-py::module mMeshQuad4  = mMesh.def_submodule("Quad4" , "Linear quadrilateral elements (2D)"     );
-py::module mMeshHex8   = mMesh.def_submodule("Hex8"  , "Linear hexahedron (brick) elements (3D)");
+// ================================= GooseFEM - GooseFEM/Vector.h ==================================
 
-// ======================================= GooseFEM/Mesh.h ========================================
+py::class_<GooseFEM::Vector>(m, "Vector")
+  // constructor
+  .def(
+    py::init<const GooseFEM::MatS &, const GooseFEM::MatS &, const GooseFEM::ColS &>(),
+    "Class to switch between DOF/nodal/element views of vectors",
+    py::arg("conn"),
+    py::arg("dofs"),
+    py::arg("iip")=GooseFEM::ColS()
+  )
+  // dimensions
+  .def("nelem", &GooseFEM::Vector::nelem)
+  .def("nne"  , &GooseFEM::Vector::nne  )
+  .def("nnode", &GooseFEM::Vector::nnode)
+  .def("ndim" , &GooseFEM::Vector::ndim )
+  .def("ndof" , &GooseFEM::Vector::ndof )
+  .def("nnu"  , &GooseFEM::Vector::nnu  )
+  .def("nnp"  , &GooseFEM::Vector::nnp  )
+  // DOF lists
+  .def("iiu", &GooseFEM::Vector::iiu)
+  .def("iip", &GooseFEM::Vector::iip)
+  // convert
+  .def("asDofs"    , py::overload_cast<cColD&,cColD&>(&GooseFEM::Vector::asDofs    ))
+  .def("asDofs"    , py::overload_cast<cMatD&       >(&GooseFEM::Vector::asDofs    ))
+  .def("asDofs"    , py::overload_cast<cArrD&       >(&GooseFEM::Vector::asDofs    ))
+  .def("asDofs_u"  , py::overload_cast<cMatD&       >(&GooseFEM::Vector::asDofs_u  ))
+  .def("asDofs_u"  , py::overload_cast<cArrD&       >(&GooseFEM::Vector::asDofs_u  ))
+  .def("asDofs_p"  , py::overload_cast<cMatD&       >(&GooseFEM::Vector::asDofs_p  ))
+  .def("asDofs_p"  , py::overload_cast<cArrD&       >(&GooseFEM::Vector::asDofs_p  ))
+  .def("asNode"    , py::overload_cast<cColD&       >(&GooseFEM::Vector::asNode    ))
+  .def("asNode"    , py::overload_cast<cColD&,cColD&>(&GooseFEM::Vector::asNode    ))
+  .def("asNode"    , py::overload_cast<cArrD&       >(&GooseFEM::Vector::asNode    ))
+  .def("asElement" , py::overload_cast<cColD&       >(&GooseFEM::Vector::asElement ))
+  .def("asElement" , py::overload_cast<cColD&,cColD&>(&GooseFEM::Vector::asElement ))
+  .def("asElement" , py::overload_cast<cMatD&       >(&GooseFEM::Vector::asElement ))
+  // assemble
+  .def("assembleDofs"  , py::overload_cast<cMatD&>(&GooseFEM::Vector::assembleDofs  ))
+  .def("assembleDofs"  , py::overload_cast<cArrD&>(&GooseFEM::Vector::assembleDofs  ))
+  .def("assembleDofs_u", py::overload_cast<cMatD&>(&GooseFEM::Vector::assembleDofs_u))
+  .def("assembleDofs_u", py::overload_cast<cArrD&>(&GooseFEM::Vector::assembleDofs_u))
+  .def("assembleDofs_p", py::overload_cast<cMatD&>(&GooseFEM::Vector::assembleDofs_p))
+  .def("assembleDofs_p", py::overload_cast<cArrD&>(&GooseFEM::Vector::assembleDofs_p))
+  .def("assembleNode"  , py::overload_cast<cArrD&>(&GooseFEM::Vector::assembleNode  ))
+  // print to screen
+  .def("__repr__",
+    [](const GooseFEM::Vector &a){ return "<GooseFEM.Vector>"; }
+  );
+
+// ============================ GooseFEM::Element - GooseFEM/Element.h =============================
+
+py::module mElement = m.def_submodule("Element", "Generic element routines");
+
+// -------------------------------------------------------------------------------------------------
+
+mElement.def("asElementVector",
+  &GooseFEM::Element::asElementVector,
+  "convert nodal vector [nnode, ndim] to corresponding element vector [nelem, nne, ndim]",
+  py::arg("conn"),
+  py::arg("nodevec")
+);
+
+// -------------------------------------------------------------------------------------------------
+
+mElement.def("assembleElementVector",
+  &GooseFEM::Element::assembleElementVector,
+  "assemble element vector [nelem, nne, ndim] to corresponding nodal vector [nnode, ndim]",
+  py::arg("conn"),
+  py::arg("elemvec")
+);
+
+// =============================== GooseFEM::Mesh - GooseFEM/Mesh.h ================================
+
+py::module mMesh = m.def_submodule("Mesh", "Generic mesh routines");
+
+// -------------------------------------------------------------------------------------------------
 
 mMesh.def("elem2node",
   &GooseFEM::Mesh::elem2node,
@@ -33,12 +116,16 @@ mMesh.def("elem2node",
   py::arg("conn")
 );
 
+// -------------------------------------------------------------------------------------------------
+
 mMesh.def("dofs",
   &GooseFEM::Mesh::dofs,
   "List with DOF-numbers (in sequential order)",
   py::arg("nnode"),
   py::arg("ndim")
 );
+
+// -------------------------------------------------------------------------------------------------
 
 using renumber = GooseFEM::MatS(const GooseFEM::MatS &);
 
@@ -48,17 +135,24 @@ mMesh.def("renumber",
   py::arg("dofs")
 );
 
+// -------------------------------------------------------------------------------------------------
+
 using reorder = GooseFEM::MatS(const GooseFEM::MatS &, const GooseFEM::ColS&, std::string);
 
 mMesh.def("reorder",
-  py::overload_cast<const GooseFEM::MatS&,const GooseFEM::ColS&,std::string>((reorder*)&GooseFEM::Mesh::reorder),
+  py::overload_cast<const GooseFEM::MatS&,const GooseFEM::ColS&,std::string>(
+    (reorder*)&GooseFEM::Mesh::reorder),
   "Renumber DOF-list to begin or end with 'idx'",
   py::arg("dofs"),
   py::arg("idx"),
   py::arg("location")="end"
 );
 
-// ====================================== GooseFEM/MeshHex8.h ======================================
+// ========================== GooseFEM::Mesh::Hex8 - GooseFEM/MeshHex8.h ===========================
+
+py::module mMeshHex8 = mMesh.def_submodule("Hex8", "Linear hexahedron (brick) elements (3D)");
+
+// -------------------------------------------------------------------------------------------------
 
 py::class_<GooseFEM::Mesh::Hex8::Regular>(mMeshHex8, "Regular")
   // constructor
@@ -354,7 +448,11 @@ py::class_<GooseFEM::Mesh::Hex8::FineLayer>(mMeshHex8, "FineLayer")
     [](const GooseFEM::Mesh::Hex8::FineLayer &a){ return "<GooseFEM.Mesh.Hex8.FineLayer>"; }
   );
 
-// ===================================== GooseFEM/MeshQuad4.h =====================================
+// ========================= GooseFEM::Mesh::Quad4 - GooseFEM/MeshQuad4.h ==========================
+
+py::module mMeshQuad4 = mMesh.def_submodule("Quad4", "Linear quadrilateral elements (2D)");
+
+// -------------------------------------------------------------------------------------------------
 
 py::class_<GooseFEM::Mesh::Quad4::Regular>(mMeshQuad4, "Regular")
 
@@ -443,7 +541,11 @@ py::class_<GooseFEM::Mesh::Quad4::FineLayer>(mMeshQuad4, "FineLayer")
     [](const GooseFEM::Mesh::Quad4::FineLayer &a){ return "<GooseFEM.Mesh.Quad4.FineLayer>"; }
   );
 
-// ===================================== GooseFEM/MeshTri3.h ======================================
+// ========================== GooseFEM::Mesh::Tri3 - GooseFEM/MeshTri3.h ===========================
+
+py::module mMeshTri3 = mMesh.def_submodule("Tri3" , "Linear triangular elements (2D)");
+
+// -------------------------------------------------------------------------------------------------
 
 py::class_<GooseFEM::Mesh::Tri3::Regular>(mMeshTri3, "Regular")
 
