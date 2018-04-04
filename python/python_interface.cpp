@@ -56,27 +56,27 @@ py::class_<GooseFEM::Vector>(m, "Vector")
   .def("iiu", &GooseFEM::Vector::iiu)
   .def("iip", &GooseFEM::Vector::iip)
   // convert
-  .def("asDofs"    , py::overload_cast<cColD&,cColD&>(&GooseFEM::Vector::asDofs    ))
-  .def("asDofs"    , py::overload_cast<cMatD&       >(&GooseFEM::Vector::asDofs    ))
-  .def("asDofs"    , py::overload_cast<cArrD&       >(&GooseFEM::Vector::asDofs    ))
-  .def("asDofs_u"  , py::overload_cast<cMatD&       >(&GooseFEM::Vector::asDofs_u  ))
-  .def("asDofs_u"  , py::overload_cast<cArrD&       >(&GooseFEM::Vector::asDofs_u  ))
-  .def("asDofs_p"  , py::overload_cast<cMatD&       >(&GooseFEM::Vector::asDofs_p  ))
-  .def("asDofs_p"  , py::overload_cast<cArrD&       >(&GooseFEM::Vector::asDofs_p  ))
-  .def("asNode"    , py::overload_cast<cColD&       >(&GooseFEM::Vector::asNode    ))
-  .def("asNode"    , py::overload_cast<cColD&,cColD&>(&GooseFEM::Vector::asNode    ))
-  .def("asNode"    , py::overload_cast<cArrD&       >(&GooseFEM::Vector::asNode    ))
-  .def("asElement" , py::overload_cast<cColD&       >(&GooseFEM::Vector::asElement ))
-  .def("asElement" , py::overload_cast<cColD&,cColD&>(&GooseFEM::Vector::asElement ))
-  .def("asElement" , py::overload_cast<cMatD&       >(&GooseFEM::Vector::asElement ))
+  .def("asDofs"    , py::overload_cast<cColD&,cColD&>(&GooseFEM::Vector::asDofs    , py::const_))
+  .def("asDofs"    , py::overload_cast<cMatD&       >(&GooseFEM::Vector::asDofs    , py::const_))
+  .def("asDofs"    , py::overload_cast<cArrD&       >(&GooseFEM::Vector::asDofs    , py::const_))
+  .def("asDofs_u"  , py::overload_cast<cMatD&       >(&GooseFEM::Vector::asDofs_u  , py::const_))
+  .def("asDofs_u"  , py::overload_cast<cArrD&       >(&GooseFEM::Vector::asDofs_u  , py::const_))
+  .def("asDofs_p"  , py::overload_cast<cMatD&       >(&GooseFEM::Vector::asDofs_p  , py::const_))
+  .def("asDofs_p"  , py::overload_cast<cArrD&       >(&GooseFEM::Vector::asDofs_p  , py::const_))
+  .def("asNode"    , py::overload_cast<cColD&       >(&GooseFEM::Vector::asNode    , py::const_))
+  .def("asNode"    , py::overload_cast<cColD&,cColD&>(&GooseFEM::Vector::asNode    , py::const_))
+  .def("asNode"    , py::overload_cast<cArrD&       >(&GooseFEM::Vector::asNode    , py::const_))
+  .def("asElement" , py::overload_cast<cColD&       >(&GooseFEM::Vector::asElement , py::const_))
+  .def("asElement" , py::overload_cast<cColD&,cColD&>(&GooseFEM::Vector::asElement , py::const_))
+  .def("asElement" , py::overload_cast<cMatD&       >(&GooseFEM::Vector::asElement , py::const_))
   // assemble
-  .def("assembleDofs"  , py::overload_cast<cMatD&>(&GooseFEM::Vector::assembleDofs  ))
-  .def("assembleDofs"  , py::overload_cast<cArrD&>(&GooseFEM::Vector::assembleDofs  ))
-  .def("assembleDofs_u", py::overload_cast<cMatD&>(&GooseFEM::Vector::assembleDofs_u))
-  .def("assembleDofs_u", py::overload_cast<cArrD&>(&GooseFEM::Vector::assembleDofs_u))
-  .def("assembleDofs_p", py::overload_cast<cMatD&>(&GooseFEM::Vector::assembleDofs_p))
-  .def("assembleDofs_p", py::overload_cast<cArrD&>(&GooseFEM::Vector::assembleDofs_p))
-  .def("assembleNode"  , py::overload_cast<cArrD&>(&GooseFEM::Vector::assembleNode  ))
+  .def("assembleDofs"  , py::overload_cast<cMatD&>(&GooseFEM::Vector::assembleDofs  , py::const_))
+  .def("assembleDofs"  , py::overload_cast<cArrD&>(&GooseFEM::Vector::assembleDofs  , py::const_))
+  .def("assembleDofs_u", py::overload_cast<cMatD&>(&GooseFEM::Vector::assembleDofs_u, py::const_))
+  .def("assembleDofs_u", py::overload_cast<cArrD&>(&GooseFEM::Vector::assembleDofs_u, py::const_))
+  .def("assembleDofs_p", py::overload_cast<cMatD&>(&GooseFEM::Vector::assembleDofs_p, py::const_))
+  .def("assembleDofs_p", py::overload_cast<cArrD&>(&GooseFEM::Vector::assembleDofs_p, py::const_))
+  .def("assembleNode"  , py::overload_cast<cArrD&>(&GooseFEM::Vector::assembleNode  , py::const_))
   // print to screen
   .def("__repr__",
     [](const GooseFEM::Vector &a){ return "<GooseFEM.Vector>"; }
@@ -90,7 +90,7 @@ py::module mElement = m.def_submodule("Element", "Generic element routines");
 
 mElement.def("asElementVector",
   &GooseFEM::Element::asElementVector,
-  "convert nodal vector [nnode, ndim] to corresponding element vector [nelem, nne, ndim]",
+  "convert nodal vector [nnode, ndim] to nodal vector stored per element [nelem, nne, ndim]",
   py::arg("conn"),
   py::arg("nodevec")
 );
@@ -98,8 +98,8 @@ mElement.def("asElementVector",
 // -------------------------------------------------------------------------------------------------
 
 mElement.def("assembleElementVector",
-  &GooseFEM::Element::assembleElementVector,
-  "assemble element vector [nelem, nne, ndim] to corresponding nodal vector [nnode, ndim]",
+  &GooseFEM::Element::assembleNodeVector,
+  "assemble nodal vector stored per element [nelem, nne, ndim] to nodal vector [nnode, ndim]",
   py::arg("conn"),
   py::arg("elemvec")
 );

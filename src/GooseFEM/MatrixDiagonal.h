@@ -88,14 +88,17 @@ public:
 
   // get the right-hand-side of prescribed DOFs: [nnu], [nnp] -> [nnp]
   // ("u_u" is useless as all cross-terms are zero, it is here for aesthetics)
+  // TODO write function
   ColD rhs_p(const ColD &u_u, const ColD &u_p) const;
 
   // return (sub-)matrix as diagonal matrix (column)
+  // TODO write function
   ColD asDiagonal   () const; // [ndpf]
   ColD asDiagonal_uu() const; // [nnu]
   ColD asDiagonal_pp() const; // [nnp]
 
   // return (sub-)matrix as sparse matrix
+  // TODO write function
   SpMatD asSparse   () const; // [ndof,ndof]
   SpMatD asSparse_uu() const; // [nnu ,nnu ]
   SpMatD asSparse_up() const; // [nnu ,nnp ]
@@ -103,6 +106,7 @@ public:
   SpMatD asSparse_pp() const; // [nnp ,nnp ]
 
   // return (sub-)matrix as dense matrix
+  // TODO write function
   MatD asDense   () const; // [ndof,ndof]
   MatD asDense_uu() const; // [nnu ,nnu ]
   MatD asDense_up() const; // [nnu ,nnp ]

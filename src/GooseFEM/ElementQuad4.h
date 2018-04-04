@@ -69,8 +69,10 @@ public:
   //    "qscalar"  -  integration point scalar          -  ArrD  -  [nelem, nip]
   //
   // alias:
-  //    T2  = cppmat::cartesian2d::tensor2<double>   -  #tensor-components = 4
-  //    T2s = cppmat::cartesian2d::tensor2s<double>  -  #tensor-components = 3
+  //    T2   = cppmat::cartesian2d::tensor2<double>         -  #tensor-components = 4
+  //    T2s  = cppmat::cartesian2d::tensor2s<double>        -  #tensor-components = 3
+  //    vT2  = cppmat::view::cartesian2d::tensor2<double>   -  #tensor-components = 4
+  //    vT2s = cppmat::view::cartesian2d::tensor2s<double>  -  #tensor-components = 3
 
   // constructor: integration point coordinates and weights are optional (default: Gauss)
   Quadrature(const ArrD &x, const ArrD &xi=ArrD(), const ArrD &w=ArrD());
@@ -85,24 +87,24 @@ public:
   size_t nip()   const; // number of integration points
 
   // dyadic product "qtensor(i,j) += dNdx(m,i) * elemvec(m,j)", its transpose and its symmetric part
-  // - allow template (e.g. T2)
+  // - allow template (e.g. vT2)
   template<class T> ArrD gradN_vector   (const ArrD &elemvec) const;
   template<class T> ArrD gradN_vector_T (const ArrD &elemvec) const;
   template<class T> ArrD symGradN_vector(const ArrD &elemvec) const;
   // - default template with:
-  ArrD gradN_vector   (const ArrD &elemvec) const; // T2
-  ArrD gradN_vector_T (const ArrD &elemvec) const; // T2
-  ArrD symGradN_vector(const ArrD &elemvec) const; // T2s
+  ArrD gradN_vector   (const ArrD &elemvec) const; // vT2
+  ArrD gradN_vector_T (const ArrD &elemvec) const; // vT2
+  ArrD symGradN_vector(const ArrD &elemvec) const; // vT2s
 
   // integral of the scalar product "elemmat(m*ndim+i,n*ndim+i) += N(m) * qscalar * N(n) * dV"
   ArrD int_N_scalar_NT_dV(const ArrD &qscalar) const;
 
   // integral of the dot product "elemvec(m,j) += dNdx(m,i) * qtensor(i,j) * dV"
-  // - allow template (e.g. T2)
+  // - allow template (e.g. vT2)
   template<class T> ArrD int_gradN_dot_tensor2_dV(const ArrD &qtensor) const;
   // - default template with:
-  ArrD int_gradN_dot_tensor2_dV (const ArrD &qtensor) const; // T2 / T2s (automatic selection)
-  ArrD int_gradN_dot_tensor2s_dV(const ArrD &qtensor) const; // T2s
+  ArrD int_gradN_dot_tensor2_dV (const ArrD &qtensor) const; // vT2 / vT2s (automatic selection)
+  ArrD int_gradN_dot_tensor2s_dV(const ArrD &qtensor) const; // vT2s
 
   // integral of a tensor "tensor(i,j) += qtensor(i,j) * dV" (a.k.a. volume average)
   // - allow template (e.g. T2)
