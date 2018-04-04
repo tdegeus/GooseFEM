@@ -188,28 +188,28 @@ inline Quadrature::Quadrature(const ArrD &x, const ArrD &xi, const ArrD &w)
 
 // -------------------------------------- number of elements ---------------------------------------
 
-inline size_t Quadrature::nelem()
+inline size_t Quadrature::nelem() const
 {
   return m_nelem;
 }
 
 // ---------------------------------- number of nodes per element ----------------------------------
 
-inline size_t Quadrature::nne()
+inline size_t Quadrature::nne() const
 {
   return m_nne;
 }
 
 // ------------------------------------- number of dimensions --------------------------------------
 
-inline size_t Quadrature::ndim()
+inline size_t Quadrature::ndim() const
 {
   return m_ndim;
 }
 
 // --------------------------------- number of integration points ----------------------------------
 
-inline size_t Quadrature::nip()
+inline size_t Quadrature::nip() const
 {
   return m_nip;
 }
@@ -288,7 +288,7 @@ inline void Quadrature::compute_dN()
 // ------------------- dyadic product "qtensor(i,j) = dNdx(m,i) * elemvec(m,j)" --------------------
 
 template<class T>
-inline ArrD Quadrature::gradN_vector(const ArrD &elemvec)
+inline ArrD Quadrature::gradN_vector(const ArrD &elemvec) const
 {
   // check input
   assert( elemvec.ndim()   == 3       ); // shape: [nelem, nne, ndim]
@@ -318,14 +318,14 @@ inline ArrD Quadrature::gradN_vector(const ArrD &elemvec)
     for ( size_t e = 0 ; e < m_nelem ; ++e )
     {
       // alias
-      u.map(&elemvec(e)); // element vector (e.g. nodal displacements)
+      u.copy(&elemvec(e)); // element vector (e.g. nodal displacements)
 
       // loop over all integration points in element "e"
       for ( size_t k = 0 ; k < m_nip ; ++k )
       {
         // - alias
-        dNx  .map(&m_dNx  (e,k)); // shape function gradients (global coordinates)
-        gradu.map(&qtensor(e,k)); // integration point tensor (e.g. deformation gradient)
+        dNx  .copy(&m_dNx  (e,k)); // shape function gradients (global coordinates)
+        gradu.map (&qtensor(e,k)); // integration point tensor (e.g. deformation gradient)
 
         // - evaluate dyadic product (loops unrolled for efficiency)
         //   gradu(i,j) += dNx(m,i) * ue(m,j)
@@ -343,7 +343,7 @@ inline ArrD Quadrature::gradN_vector(const ArrD &elemvec)
 // ---------------------------------- transpose of "GradN_vector" ----------------------------------
 
 template<class T>
-inline ArrD Quadrature::gradN_vector_T(const ArrD &elemvec)
+inline ArrD Quadrature::gradN_vector_T(const ArrD &elemvec) const
 {
   // check input
   assert( elemvec.ndim()   == 3       ); // shape: [nelem, nne, ndim]
@@ -373,14 +373,14 @@ inline ArrD Quadrature::gradN_vector_T(const ArrD &elemvec)
     for ( size_t e = 0 ; e < m_nelem ; ++e )
     {
       // alias
-      u.map(&elemvec(e)); // element vector (e.g. nodal displacements)
+      u.copy(&elemvec(e)); // element vector (e.g. nodal displacements)
 
       // loop over all integration points in element "e"
       for ( size_t k = 0 ; k < m_nip ; ++k )
       {
         // - alias
-        dNx  .map(&m_dNx  (e,k)); // shape function gradients (global coordinates)
-        gradu.map(&qtensor(e,k)); // integration point tensor (e.g. deformation gradient)
+        dNx  .copy(&m_dNx  (e,k)); // shape function gradients (global coordinates)
+        gradu.map (&qtensor(e,k)); // integration point tensor (e.g. deformation gradient)
 
         // - evaluate dyadic product (loops unrolled for efficiency)
         //   gradu(j,i) += dNx(m,i) * ue(m,j)
@@ -398,7 +398,7 @@ inline ArrD Quadrature::gradN_vector_T(const ArrD &elemvec)
 // ------------------------------- symmetric part of "GradN_vector" --------------------------------
 
 template<class T>
-inline ArrD Quadrature::symGradN_vector(const ArrD &elemvec)
+inline ArrD Quadrature::symGradN_vector(const ArrD &elemvec) const
 {
   // check input
   assert( elemvec.ndim()   == 3       ); // shape: [nelem, nne, ndim]
@@ -429,14 +429,14 @@ inline ArrD Quadrature::symGradN_vector(const ArrD &elemvec)
     for ( size_t e = 0 ; e < m_nelem ; ++e )
     {
       // alias
-      u.map(&elemvec(e)); // element vector (e.g. nodal displacements)
+      u.copy(&elemvec(e)); // element vector (e.g. nodal displacements)
 
       // loop over all integration points in element "e"
       for ( size_t k = 0 ; k < m_nip ; ++k )
       {
         // - alias
-        dNx.map(&m_dNx  (e,k)); // shape function gradients (global coordinates)
-        eps.map(&qtensor(e,k)); // integration point tensor (e.g. strain)
+        dNx.copy(&m_dNx  (e,k)); // shape function gradients (global coordinates)
+        eps.map (&qtensor(e,k)); // integration point tensor (e.g. strain)
 
         // - evaluate dyadic product (loops unrolled for efficiency)
         //   gradu(i,j) += dNx(m,i) * ue(m,j)
@@ -460,7 +460,7 @@ inline ArrD Quadrature::symGradN_vector(const ArrD &elemvec)
 
 // ------- scalar product "elemmat(m*ndim+i,n*ndim+i) = N(m) * qscalar * N(n)"; for all "i" --------
 
-inline ArrD Quadrature::int_N_scalar_NT_dV(const ArrD &qscalar)
+inline ArrD Quadrature::int_N_scalar_NT_dV(const ArrD &qscalar) const
 {
   // check input
   assert( qscalar.ndim()   == 2          ); // shape: [nelem, nip]
@@ -491,7 +491,7 @@ inline ArrD Quadrature::int_N_scalar_NT_dV(const ArrD &qscalar)
       for ( size_t k = 0 ; k < m_nip ; ++k )
       {
         // - alias
-        N.map(&m_N   (  k)); // shape functions
+        N.copy(&m_N   (  k)); // shape functions
         vol = m_vol  (e,k);  // integration point volume
         rho = qscalar(e,k);  // integration point scalar (e.g. density)
 
@@ -513,7 +513,7 @@ inline ArrD Quadrature::int_N_scalar_NT_dV(const ArrD &qscalar)
 // ------------ integral of dot product "elemvec(m,j) += dNdx(m,i) * qtensor(i,j) * dV" ------------
 
 template<class T>
-inline ArrD Quadrature::int_gradN_dot_tensor2_dV(const ArrD &qtensor)
+inline ArrD Quadrature::int_gradN_dot_tensor2_dV(const ArrD &qtensor) const
 {
   #ifndef NDEBUG
   // dummy variable
@@ -551,7 +551,7 @@ inline ArrD Quadrature::int_gradN_dot_tensor2_dV(const ArrD &qtensor)
       for ( size_t k = 0 ; k < m_nip ; ++k )
       {
         // - alias
-        dNx.map (&m_dNx  (e,k)); // shape function gradients (global coordinates)
+        dNx.copy(&m_dNx  (e,k)); // shape function gradients (global coordinates)
         sig.copy(&qtensor(e,k)); // integration point tensor (e.g. stress)
         vol = m_vol      (e,k);  // integration point volume
 
@@ -572,7 +572,7 @@ inline ArrD Quadrature::int_gradN_dot_tensor2_dV(const ArrD &qtensor)
 // -------------------------- element integral of tensor (volume average) --------------------------
 
 template<class T>
-inline T Quadrature::int_tensor2_dV(const ArrD &qtensor, size_t e)
+inline T Quadrature::int_tensor2_dV(const ArrD &qtensor, size_t e) const
 {
   #ifndef NDEBUG
   // dummy variable
@@ -612,7 +612,7 @@ inline T Quadrature::int_tensor2_dV(const ArrD &qtensor, size_t e)
 // ------------------------------ integral of tensor (volume average) ------------------------------
 
 template<class T>
-inline T Quadrature::int_tensor2_dV(const ArrD &qtensor)
+inline T Quadrature::int_tensor2_dV(const ArrD &qtensor) const
 {
   #ifndef NDEBUG
   // dummy variable
@@ -655,28 +655,28 @@ inline T Quadrature::int_tensor2_dV(const ArrD &qtensor)
 
 // ---------------------- wrappers with default storage (no template needed) -----------------------
 
-inline ArrD Quadrature::gradN_vector(const ArrD &elemvec)
+inline ArrD Quadrature::gradN_vector(const ArrD &elemvec) const
 {
   return gradN_vector<cppmat::cartesian2d::tensor2<double>>(elemvec);
 }
 
 // -------------------------------------------------------------------------------------------------
 
-inline ArrD Quadrature::gradN_vector_T(const ArrD &elemvec)
+inline ArrD Quadrature::gradN_vector_T(const ArrD &elemvec) const
 {
   return gradN_vector_T<cppmat::cartesian2d::tensor2<double>>(elemvec);
 }
 
 // -------------------------------------------------------------------------------------------------
 
-inline ArrD Quadrature::symGradN_vector(const ArrD &elemvec)
+inline ArrD Quadrature::symGradN_vector(const ArrD &elemvec) const
 {
   return symGradN_vector<cppmat::cartesian2d::tensor2s<double>>(elemvec);
 }
 
 // -------------------------------------------------------------------------------------------------
 
-inline ArrD Quadrature::int_gradN_dot_tensor2_dV(const ArrD &qtensor)
+inline ArrD Quadrature::int_gradN_dot_tensor2_dV(const ArrD &qtensor) const
 {
   assert( qtensor.ndim() == 3 ); // shape: [nelem, nip, #tensor-components]
 
@@ -690,7 +690,7 @@ inline ArrD Quadrature::int_gradN_dot_tensor2_dV(const ArrD &qtensor)
 
 // -------------------------------------------------------------------------------------------------
 
-inline ArrD Quadrature::int_gradN_dot_tensor2s_dV(const ArrD &qtensor)
+inline ArrD Quadrature::int_gradN_dot_tensor2s_dV(const ArrD &qtensor) const
 {
   return int_gradN_dot_tensor2_dV<cppmat::cartesian2d::tensor2s<double>>(qtensor);
 }
@@ -698,7 +698,7 @@ inline ArrD Quadrature::int_gradN_dot_tensor2s_dV(const ArrD &qtensor)
 // -------------------------------------------------------------------------------------------------
 
 inline cppmat::cartesian2d::tensor2<double> Quadrature::int_tensor2_dV(
-  const ArrD &qtensor, size_t e)
+  const ArrD &qtensor, size_t e) const
 {
   return int_tensor2_dV<cppmat::cartesian2d::tensor2<double>>(qtensor,e);
 }
@@ -706,14 +706,14 @@ inline cppmat::cartesian2d::tensor2<double> Quadrature::int_tensor2_dV(
 // -------------------------------------------------------------------------------------------------
 
 inline cppmat::cartesian2d::tensor2s<double> Quadrature::int_tensor2s_dV(
-  const ArrD &qtensor, size_t e)
+  const ArrD &qtensor, size_t e) const
 {
   return int_tensor2_dV<cppmat::cartesian2d::tensor2s<double>>(qtensor,e);
 }
 
 // -------------------------------------------------------------------------------------------------
 
-inline cppmat::cartesian2d::tensor2<double> Quadrature::int_tensor2_dV(const ArrD &qtensor)
+inline cppmat::cartesian2d::tensor2<double> Quadrature::int_tensor2_dV(const ArrD &qtensor) const
 {
   return int_tensor2_dV<cppmat::cartesian2d::tensor2<double>>(qtensor);
 }
@@ -721,7 +721,7 @@ inline cppmat::cartesian2d::tensor2<double> Quadrature::int_tensor2_dV(const Arr
 
 // -------------------------------------------------------------------------------------------------
 
-inline cppmat::cartesian2d::tensor2s<double> Quadrature::int_tensor2s_dV(const ArrD &qtensor)
+inline cppmat::cartesian2d::tensor2s<double> Quadrature::int_tensor2s_dV(const ArrD &qtensor) const
 {
   return int_tensor2_dV<cppmat::cartesian2d::tensor2s<double>>(qtensor);
 }

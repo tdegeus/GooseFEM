@@ -34,38 +34,38 @@ public:
   // mesh with "2*nelx*nely" 'elements' of edge size "h"
   Regular(size_t nelx, size_t nely, double h=1.);
   // sizes
-  size_t nelem();                   // number of elements
-  size_t nnode();                   // number of nodes
-  size_t nne();                     // number of nodes-per-element
-  size_t ndim();                    // number of dimensions
+  size_t nelem() const;                   // number of elements
+  size_t nnode() const;                   // number of nodes
+  size_t nne() const;                     // number of nodes-per-element
+  size_t ndim() const;                    // number of dimensions
   // mesh
-  MatD   coor();                    // nodal positions [nnode ,ndim]
-  MatS   conn();                    // connectivity    [nelem ,nne ]
+  MatD   coor() const;                    // nodal positions [nnode ,ndim]
+  MatS   conn() const;                    // connectivity    [nelem ,nne ]
   // boundary nodes: edges
-  ColS   nodesBottomEdge();         // node-numbers along the bottom edge
-  ColS   nodesTopEdge();            // node-numbers along the top    edge
-  ColS   nodesLeftEdge();           // node-numbers along the left   edge
-  ColS   nodesRightEdge();          // node-numbers along the right  edge
+  ColS   nodesBottomEdge() const;         // node-numbers along the bottom edge
+  ColS   nodesTopEdge() const;            // node-numbers along the top    edge
+  ColS   nodesLeftEdge() const;           // node-numbers along the left   edge
+  ColS   nodesRightEdge() const;          // node-numbers along the right  edge
   // boundary nodes: edges, without corners
-  ColS   nodesBottomOpenEdge();     // node-numbers along the bottom edge
-  ColS   nodesTopOpenEdge();        // node-numbers along the top    edge
-  ColS   nodesLeftOpenEdge();       // node-numbers along the left   edge
-  ColS   nodesRightOpenEdge();      // node-numbers along the right  edge
+  ColS   nodesBottomOpenEdge() const;     // node-numbers along the bottom edge
+  ColS   nodesTopOpenEdge() const;        // node-numbers along the top    edge
+  ColS   nodesLeftOpenEdge() const;       // node-numbers along the left   edge
+  ColS   nodesRightOpenEdge() const;      // node-numbers along the right  edge
   // boundary nodes: corners
-  size_t nodesBottomLeftCorner();   // node-number of the bottom - left  corner
-  size_t nodesBottomRightCorner();  // node-number of the bottom - right corner
-  size_t nodesTopLeftCorner();      // node-number of the top    - left  corner
-  size_t nodesTopRightCorner();     // node-number of the top    - right corner
+  size_t nodesBottomLeftCorner() const;   // node-number of the bottom - left  corner
+  size_t nodesBottomRightCorner() const;  // node-number of the bottom - right corner
+  size_t nodesTopLeftCorner() const;      // node-number of the top    - left  corner
+  size_t nodesTopRightCorner() const;     // node-number of the top    - right corner
   // boundary nodes: corners (aliases)
-  size_t nodesLeftBottomCorner();   // alias, see above: nodesBottomLeftCorner
-  size_t nodesLeftTopCorner();      // alias, see above: nodesBottomRightCorner
-  size_t nodesRightBottomCorner();  // alias, see above: nodesTopLeftCorner
-  size_t nodesRightTopCorner();     // alias, see above: nodesTopRightCorner
+  size_t nodesLeftBottomCorner() const;   // alias, see above: nodesBottomLeftCorner
+  size_t nodesLeftTopCorner() const;      // alias, see above: nodesBottomRightCorner
+  size_t nodesRightBottomCorner() const;  // alias, see above: nodesTopLeftCorner
+  size_t nodesRightTopCorner() const;     // alias, see above: nodesTopRightCorner
   // periodicity
-  MatS   nodesPeriodic();           // periodic node pairs [:,2]: (independent, dependent)
-  size_t nodesOrigin();             // bottom-left node, used as reference for periodicity
-  MatS   dofs();                    // DOF-numbers for each component of each node (sequential)
-  MatS   dofsPeriodic();            // ,, for the case that the periodicity if fully eliminated
+  MatS   nodesPeriodic() const; // periodic node pairs [:,2]: (independent, dependent)
+  size_t nodesOrigin() const;   // bottom-left node, used as reference for periodicity
+  MatS   dofs() const;          // DOF-numbers for each component of each node (sequential)
+  MatS   dofsPeriodic() const;  // ,, for the case that the periodicity if fully eliminated
 };
 
 // ----------------------------------------- mesh analysis -----------------------------------------
@@ -81,7 +81,6 @@ inline MatS setOrientation(const MatD &coor, const MatS &conn, const ColI &val, 
 // (1) the minimal evasive "TriUpdate"
 // (2) the more rigorous "TriCompute"
 inline MatS retriangulate(const MatD &coor, const MatS &conn, int orientation=-1);
-
 
 
 // ================================= GooseFEM::Mesh::Tri3::Private =================================

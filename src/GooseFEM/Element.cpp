@@ -40,7 +40,7 @@ ArrD asElementVector(const MatS &conn, const MatD &nodevec)
 
 // -------------------------------------------------------------------------------------------------
 
-MatD assembleElementVector(const MatS &conn, const ArrD &elemvec)
+MatD assembleNodeVector(const MatS &conn, const ArrD &elemvec)
 {
   // check input
   assert( elemvec.ndim() == 3 ); // nodal vector stored per element [nelem, nne, ndim]

@@ -31,35 +31,35 @@ m_h(h), m_nelx(nelx), m_nely(nely)
 
 // -------------------------------------- number of elements ---------------------------------------
 
-inline size_t Regular::nelem()
+inline size_t Regular::nelem() const
 {
   return m_nelem;
 }
 
 // ---------------------------------------- number of nodes ----------------------------------------
 
-inline size_t Regular::nnode()
+inline size_t Regular::nnode() const
 {
   return m_nnode;
 }
 
 // ---------------------------------- number of nodes per element ----------------------------------
 
-inline size_t Regular::nne()
+inline size_t Regular::nne() const
 {
   return m_nne;
 }
 
 // ------------------------------------- number of dimensions --------------------------------------
 
-inline size_t Regular::ndim()
+inline size_t Regular::ndim() const
 {
   return m_ndim;
 }
 
 // --------------------------------- coordinates (nodal positions) ---------------------------------
 
-inline MatD Regular::coor()
+inline MatD Regular::coor() const
 {
   MatD out(m_nnode , m_ndim);
 
@@ -81,7 +81,7 @@ inline MatD Regular::coor()
 
 // ---------------------------- connectivity (node-numbers per element) ----------------------------
 
-inline MatS Regular::conn()
+inline MatS Regular::conn() const
 {
   MatS out(m_nelem , m_nne);
 
@@ -105,7 +105,7 @@ inline MatS Regular::conn()
 
 // ------------------------------ node-numbers along the bottom edge -------------------------------
 
-inline ColS Regular::nodesBottomEdge()
+inline ColS Regular::nodesBottomEdge() const
 {
   ColS out(m_nelx+1);
 
@@ -117,7 +117,7 @@ inline ColS Regular::nodesBottomEdge()
 
 // -------------------------------- node-numbers along the top edge --------------------------------
 
-inline ColS Regular::nodesTopEdge()
+inline ColS Regular::nodesTopEdge() const
 {
   ColS out(m_nelx+1);
 
@@ -129,7 +129,7 @@ inline ColS Regular::nodesTopEdge()
 
 // ------------------------------- node-numbers along the left edge --------------------------------
 
-inline ColS Regular::nodesLeftEdge()
+inline ColS Regular::nodesLeftEdge() const
 {
   ColS out(m_nely+1);
 
@@ -141,7 +141,7 @@ inline ColS Regular::nodesLeftEdge()
 
 // ------------------------------- node-numbers along the right edge -------------------------------
 
-inline ColS Regular::nodesRightEdge()
+inline ColS Regular::nodesRightEdge() const
 {
   ColS out(m_nely+1);
 
@@ -153,7 +153,7 @@ inline ColS Regular::nodesRightEdge()
 
 // ---------------------- node-numbers along the bottom edge, without corners ----------------------
 
-inline ColS Regular::nodesBottomOpenEdge()
+inline ColS Regular::nodesBottomOpenEdge() const
 {
   ColS out(m_nelx-1);
 
@@ -165,7 +165,7 @@ inline ColS Regular::nodesBottomOpenEdge()
 
 // ----------------------- node-numbers along the top edge, without corners ------------------------
 
-inline ColS Regular::nodesTopOpenEdge()
+inline ColS Regular::nodesTopOpenEdge() const
 {
   ColS out(m_nelx-1);
 
@@ -177,7 +177,7 @@ inline ColS Regular::nodesTopOpenEdge()
 
 // ----------------------- node-numbers along the left edge, without corners -----------------------
 
-inline ColS Regular::nodesLeftOpenEdge()
+inline ColS Regular::nodesLeftOpenEdge() const
 {
   ColS out(m_nely-1);
 
@@ -189,7 +189,7 @@ inline ColS Regular::nodesLeftOpenEdge()
 
 // ---------------------- node-numbers along the right edge, without corners -----------------------
 
-inline ColS Regular::nodesRightOpenEdge()
+inline ColS Regular::nodesRightOpenEdge() const
 {
   ColS out(m_nely-1);
 
@@ -201,42 +201,42 @@ inline ColS Regular::nodesRightOpenEdge()
 
 // ----------------------------- node-number of the bottom-left corner -----------------------------
 
-inline size_t Regular::nodesBottomLeftCorner()
+inline size_t Regular::nodesBottomLeftCorner() const
 {
   return 0;
 }
 
 // ---------------------------- node-number of the bottom-right corner -----------------------------
 
-inline size_t Regular::nodesBottomRightCorner()
+inline size_t Regular::nodesBottomRightCorner() const
 {
   return m_nelx;
 }
 
 // ------------------------------ node-number of the top-left corner -------------------------------
 
-inline size_t Regular::nodesTopLeftCorner()
+inline size_t Regular::nodesTopLeftCorner() const
 {
   return m_nely*(m_nelx+1);
 }
 
 // ------------------------------ node-number of the top-right corner ------------------------------
 
-inline size_t Regular::nodesTopRightCorner()
+inline size_t Regular::nodesTopRightCorner() const
 {
   return m_nely*(m_nelx+1) + m_nelx;
 }
 
 // ----------------------------- node-number of the corners (aliases) ------------------------------
 
-inline size_t Regular::nodesLeftBottomCorner()  { return nodesBottomLeftCorner();  }
-inline size_t Regular::nodesLeftTopCorner()     { return nodesTopLeftCorner();     }
-inline size_t Regular::nodesRightBottomCorner() { return nodesBottomRightCorner(); }
-inline size_t Regular::nodesRightTopCorner()    { return nodesTopRightCorner();    }
+inline size_t Regular::nodesLeftBottomCorner()  const { return nodesBottomLeftCorner();  }
+inline size_t Regular::nodesLeftTopCorner()     const { return nodesTopLeftCorner();     }
+inline size_t Regular::nodesRightBottomCorner() const { return nodesBottomRightCorner(); }
+inline size_t Regular::nodesRightTopCorner()    const { return nodesTopRightCorner();    }
 
 // ------------------------------ node-numbers of periodic node-pairs ------------------------------
 
-inline MatS Regular::nodesPeriodic()
+inline MatS Regular::nodesPeriodic() const
 {
   // edges (without corners)
   ColS bot = nodesBottomOpenEdge();
@@ -268,21 +268,21 @@ inline MatS Regular::nodesPeriodic()
 
 // ------------------------------ node-number that lies in the origin ------------------------------
 
-inline size_t Regular::nodesOrigin()
+inline size_t Regular::nodesOrigin() const
 {
   return nodesBottomLeftCorner();
 }
 
 // ------------------------- DOF numbers per node (sequentially numbered) --------------------------
 
-inline MatS Regular::dofs()
+inline MatS Regular::dofs() const
 {
   return GooseFEM::Mesh::dofs(m_nnode,m_ndim);
 }
 
 // ------------------------ DOP-numbers with periodic dependencies removed -------------------------
 
-inline MatS Regular::dofsPeriodic()
+inline MatS Regular::dofsPeriodic() const
 {
   // DOF-numbers for each component of each node (sequential)
   MatS out = GooseFEM::Mesh::dofs(m_nnode,m_ndim);

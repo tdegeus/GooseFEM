@@ -32,35 +32,35 @@ m_h(h), m_nelx(nelx), m_nely(nely), m_nelz(nelz)
 
 // -------------------------------------- number of elements ---------------------------------------
 
-inline size_t Regular::nelem()
+inline size_t Regular::nelem() const
 {
   return m_nelem;
 }
 
 // ---------------------------------------- number of nodes ----------------------------------------
 
-inline size_t Regular::nnode()
+inline size_t Regular::nnode() const
 {
   return m_nnode;
 }
 
 // ---------------------------------- number of nodes per element ----------------------------------
 
-inline size_t Regular::nne()
+inline size_t Regular::nne() const
 {
   return m_nne;
 }
 
 // ------------------------------------- number of dimensions --------------------------------------
 
-inline size_t Regular::ndim()
+inline size_t Regular::ndim() const
 {
   return m_ndim;
 }
 
 // --------------------------------- coordinates (nodal positions) ---------------------------------
 
-inline MatD Regular::coor()
+inline MatD Regular::coor() const
 {
   MatD out(m_nnode,m_ndim);
 
@@ -86,7 +86,7 @@ inline MatD Regular::coor()
 
 // ---------------------------- connectivity (node-numbers per element) ----------------------------
 
-inline MatS Regular::conn()
+inline MatS Regular::conn() const
 {
   MatS out(m_nelem,m_nne);
 
@@ -113,7 +113,7 @@ inline MatS Regular::conn()
 
 // ------------------------------ node-numbers along the front plane -------------------------------
 
-inline ColS Regular::nodesFront()
+inline ColS Regular::nodesFront() const
 {
   ColS out((m_nelx+1)*(m_nely+1));
 
@@ -126,7 +126,7 @@ inline ColS Regular::nodesFront()
 
 // ------------------------------- node-numbers along the back plane -------------------------------
 
-inline ColS Regular::nodesBack()
+inline ColS Regular::nodesBack() const
 {
   ColS out((m_nelx+1)*(m_nely+1));
 
@@ -139,7 +139,7 @@ inline ColS Regular::nodesBack()
 
 // ------------------------------- node-numbers along the left plane -------------------------------
 
-inline ColS Regular::nodesLeft()
+inline ColS Regular::nodesLeft() const
 {
   ColS out((m_nely+1)*(m_nelz+1));
 
@@ -152,7 +152,7 @@ inline ColS Regular::nodesLeft()
 
 // ------------------------------ node-numbers along the right plane -------------------------------
 
-inline ColS Regular::nodesRight()
+inline ColS Regular::nodesRight() const
 {
   ColS out((m_nely+1)*(m_nelz+1));
 
@@ -165,7 +165,7 @@ inline ColS Regular::nodesRight()
 
 // ------------------------------ node-numbers along the bottom plane ------------------------------
 
-inline ColS Regular::nodesBottom()
+inline ColS Regular::nodesBottom() const
 {
   ColS out((m_nelx+1)*(m_nelz+1));
 
@@ -178,7 +178,7 @@ inline ColS Regular::nodesBottom()
 
 // ------------------------------- node-numbers along the top plane --------------------------------
 
-inline ColS Regular::nodesTop()
+inline ColS Regular::nodesTop() const
 {
   ColS out((m_nelx+1)*(m_nelz+1));
 
@@ -191,7 +191,7 @@ inline ColS Regular::nodesTop()
 
 // ------------------------------- node-numbers along the front face -------------------------------
 
-inline ColS Regular::nodesFrontFace()
+inline ColS Regular::nodesFrontFace() const
 {
   ColS out((m_nelx-1)*(m_nely-1));
 
@@ -204,7 +204,7 @@ inline ColS Regular::nodesFrontFace()
 
 // ------------------------------- node-numbers along the back face --------------------------------
 
-inline ColS Regular::nodesBackFace()
+inline ColS Regular::nodesBackFace() const
 {
   ColS out((m_nelx-1)*(m_nely-1));
 
@@ -219,7 +219,7 @@ inline ColS Regular::nodesBackFace()
 
 // ------------------------------- node-numbers along the left face --------------------------------
 
-inline ColS Regular::nodesLeftFace()
+inline ColS Regular::nodesLeftFace() const
 {
   ColS out((m_nely-1)*(m_nelz-1));
 
@@ -232,7 +232,7 @@ inline ColS Regular::nodesLeftFace()
 
 // ------------------------------- node-numbers along the right face -------------------------------
 
-inline ColS Regular::nodesRightFace()
+inline ColS Regular::nodesRightFace() const
 {
   ColS out((m_nely-1)*(m_nelz-1));
 
@@ -245,7 +245,7 @@ inline ColS Regular::nodesRightFace()
 
 // ------------------------------ node-numbers along the bottom face -------------------------------
 
-inline ColS Regular::nodesBottomFace()
+inline ColS Regular::nodesBottomFace() const
 {
   ColS out((m_nelx-1)*(m_nelz-1));
 
@@ -258,7 +258,7 @@ inline ColS Regular::nodesBottomFace()
 
 // -------------------------------- node-numbers along the top face --------------------------------
 
-inline ColS Regular::nodesTopFace()
+inline ColS Regular::nodesTopFace() const
 {
   ColS out((m_nelx-1)*(m_nelz-1));
 
@@ -271,7 +271,7 @@ inline ColS Regular::nodesTopFace()
 
 // --------------------------- node-numbers along the front-bottom edge ----------------------------
 
-inline ColS Regular::nodesFrontBottomEdge()
+inline ColS Regular::nodesFrontBottomEdge() const
 {
   ColS out(m_nelx+1);
 
@@ -283,7 +283,7 @@ inline ColS Regular::nodesFrontBottomEdge()
 
 // ----------------------------- node-numbers along the front-top edge -----------------------------
 
-inline ColS Regular::nodesFrontTopEdge()
+inline ColS Regular::nodesFrontTopEdge() const
 {
   ColS out(m_nelx+1);
 
@@ -295,7 +295,7 @@ inline ColS Regular::nodesFrontTopEdge()
 
 // ---------------------------- node-numbers along the front-left edge -----------------------------
 
-inline ColS Regular::nodesFrontLeftEdge()
+inline ColS Regular::nodesFrontLeftEdge() const
 {
   ColS out(m_nely+1);
 
@@ -307,7 +307,7 @@ inline ColS Regular::nodesFrontLeftEdge()
 
 // ---------------------------- node-numbers along the front-right edge ----------------------------
 
-inline ColS Regular::nodesFrontRightEdge()
+inline ColS Regular::nodesFrontRightEdge() const
 {
   ColS out(m_nely+1);
 
@@ -319,7 +319,7 @@ inline ColS Regular::nodesFrontRightEdge()
 
 // ---------------------------- node-numbers along the back-bottom edge ----------------------------
 
-inline ColS Regular::nodesBackBottomEdge()
+inline ColS Regular::nodesBackBottomEdge() const
 {
   ColS out(m_nelx+1);
 
@@ -331,7 +331,7 @@ inline ColS Regular::nodesBackBottomEdge()
 
 // ----------------------------- node-numbers along the back-top edge ------------------------------
 
-inline ColS Regular::nodesBackTopEdge()
+inline ColS Regular::nodesBackTopEdge() const
 {
   ColS out(m_nelx+1);
 
@@ -343,7 +343,7 @@ inline ColS Regular::nodesBackTopEdge()
 
 // ----------------------------- node-numbers along the back-left edge -----------------------------
 
-inline ColS Regular::nodesBackLeftEdge()
+inline ColS Regular::nodesBackLeftEdge() const
 {
   ColS out(m_nely+1);
 
@@ -355,7 +355,7 @@ inline ColS Regular::nodesBackLeftEdge()
 
 // ---------------------------- node-numbers along the back-right edge -----------------------------
 
-inline ColS Regular::nodesBackRightEdge()
+inline ColS Regular::nodesBackRightEdge() const
 {
   ColS out(m_nely+1);
 
@@ -367,7 +367,7 @@ inline ColS Regular::nodesBackRightEdge()
 
 // ---------------------------- node-numbers along the bottom-left edge ----------------------------
 
-inline ColS Regular::nodesBottomLeftEdge()
+inline ColS Regular::nodesBottomLeftEdge() const
 {
   ColS out(m_nelz+1);
 
@@ -379,7 +379,7 @@ inline ColS Regular::nodesBottomLeftEdge()
 
 // --------------------------- node-numbers along the bottom-right edge ----------------------------
 
-inline ColS Regular::nodesBottomRightEdge()
+inline ColS Regular::nodesBottomRightEdge() const
 {
   ColS out(m_nelz+1);
 
@@ -391,7 +391,7 @@ inline ColS Regular::nodesBottomRightEdge()
 
 // ----------------------------- node-numbers along the top-left edge ------------------------------
 
-inline ColS Regular::nodesTopLeftEdge()
+inline ColS Regular::nodesTopLeftEdge() const
 {
   ColS out(m_nelz+1);
 
@@ -403,7 +403,7 @@ inline ColS Regular::nodesTopLeftEdge()
 
 // ----------------------------- node-numbers along the top-right edge -----------------------------
 
-inline ColS Regular::nodesTopRightEdge()
+inline ColS Regular::nodesTopRightEdge() const
 {
   ColS out(m_nelz+1);
 
@@ -415,22 +415,22 @@ inline ColS Regular::nodesTopRightEdge()
 
 // -------------------------------------------- aliases --------------------------------------------
 
-inline ColS Regular::nodesBottomFrontEdge() { return nodesFrontBottomEdge(); }
-inline ColS Regular::nodesBottomBackEdge()  { return nodesBackBottomEdge();  }
-inline ColS Regular::nodesTopFrontEdge()    { return nodesFrontTopEdge();    }
-inline ColS Regular::nodesTopBackEdge()     { return nodesBackTopEdge();     }
-inline ColS Regular::nodesLeftBottomEdge()  { return nodesBottomLeftEdge();  }
-inline ColS Regular::nodesLeftFrontEdge()   { return nodesFrontLeftEdge();   }
-inline ColS Regular::nodesLeftBackEdge()    { return nodesBackLeftEdge();    }
-inline ColS Regular::nodesLeftTopEdge()     { return nodesTopLeftEdge();     }
-inline ColS Regular::nodesRightBottomEdge() { return nodesBottomRightEdge(); }
-inline ColS Regular::nodesRightTopEdge()    { return nodesTopRightEdge();    }
-inline ColS Regular::nodesRightFrontEdge()  { return nodesFrontRightEdge();  }
-inline ColS Regular::nodesRightBackEdge()   { return nodesBackRightEdge();   }
+inline ColS Regular::nodesBottomFrontEdge() const { return nodesFrontBottomEdge(); }
+inline ColS Regular::nodesBottomBackEdge()  const { return nodesBackBottomEdge();  }
+inline ColS Regular::nodesTopFrontEdge()    const { return nodesFrontTopEdge();    }
+inline ColS Regular::nodesTopBackEdge()     const { return nodesBackTopEdge();     }
+inline ColS Regular::nodesLeftBottomEdge()  const { return nodesBottomLeftEdge();  }
+inline ColS Regular::nodesLeftFrontEdge()   const { return nodesFrontLeftEdge();   }
+inline ColS Regular::nodesLeftBackEdge()    const { return nodesBackLeftEdge();    }
+inline ColS Regular::nodesLeftTopEdge()     const { return nodesTopLeftEdge();     }
+inline ColS Regular::nodesRightBottomEdge() const { return nodesBottomRightEdge(); }
+inline ColS Regular::nodesRightTopEdge()    const { return nodesTopRightEdge();    }
+inline ColS Regular::nodesRightFrontEdge()  const { return nodesFrontRightEdge();  }
+inline ColS Regular::nodesRightBackEdge()   const { return nodesBackRightEdge();   }
 
 // ------------------- node-numbers along the front-bottom edge, without corners -------------------
 
-inline ColS Regular::nodesFrontBottomOpenEdge()
+inline ColS Regular::nodesFrontBottomOpenEdge() const
 {
   ColS out(m_nelx-1);
 
@@ -442,7 +442,7 @@ inline ColS Regular::nodesFrontBottomOpenEdge()
 
 // -------------------- node-numbers along the front-top edge, without corners ---------------------
 
-inline ColS Regular::nodesFrontTopOpenEdge()
+inline ColS Regular::nodesFrontTopOpenEdge() const
 {
   ColS out(m_nelx-1);
 
@@ -454,7 +454,7 @@ inline ColS Regular::nodesFrontTopOpenEdge()
 
 // -------------------- node-numbers along the front-left edge, without corners --------------------
 
-inline ColS Regular::nodesFrontLeftOpenEdge()
+inline ColS Regular::nodesFrontLeftOpenEdge() const
 {
   ColS out(m_nely-1);
 
@@ -466,7 +466,7 @@ inline ColS Regular::nodesFrontLeftOpenEdge()
 
 // ------------------- node-numbers along the front-right edge, without corners --------------------
 
-inline ColS Regular::nodesFrontRightOpenEdge()
+inline ColS Regular::nodesFrontRightOpenEdge() const
 {
   ColS out(m_nely-1);
 
@@ -478,7 +478,7 @@ inline ColS Regular::nodesFrontRightOpenEdge()
 
 // ------------------- node-numbers along the back-bottom edge, without corners --------------------
 
-inline ColS Regular::nodesBackBottomOpenEdge()
+inline ColS Regular::nodesBackBottomOpenEdge() const
 {
   ColS out(m_nelx-1);
 
@@ -490,7 +490,7 @@ inline ColS Regular::nodesBackBottomOpenEdge()
 
 // --------------------- node-numbers along the back-top edge, without corners ---------------------
 
-inline ColS Regular::nodesBackTopOpenEdge()
+inline ColS Regular::nodesBackTopOpenEdge() const
 {
   ColS out(m_nelx-1);
 
@@ -502,7 +502,7 @@ inline ColS Regular::nodesBackTopOpenEdge()
 
 // -------------------- node-numbers along the back-left edge, without corners ---------------------
 
-inline ColS Regular::nodesBackLeftOpenEdge()
+inline ColS Regular::nodesBackLeftOpenEdge() const
 {
   ColS out(m_nely-1);
 
@@ -514,7 +514,7 @@ inline ColS Regular::nodesBackLeftOpenEdge()
 
 // -------------------- node-numbers along the back-right edge, without corners --------------------
 
-inline ColS Regular::nodesBackRightOpenEdge()
+inline ColS Regular::nodesBackRightOpenEdge() const
 {
   ColS out(m_nely-1);
 
@@ -526,7 +526,7 @@ inline ColS Regular::nodesBackRightOpenEdge()
 
 // ------------------- node-numbers along the bottom-left edge, without corners --------------------
 
-inline ColS Regular::nodesBottomLeftOpenEdge()
+inline ColS Regular::nodesBottomLeftOpenEdge() const
 {
   ColS out(m_nelz-1);
 
@@ -538,7 +538,7 @@ inline ColS Regular::nodesBottomLeftOpenEdge()
 
 // ------------------- node-numbers along the bottom-right edge, without corners -------------------
 
-inline ColS Regular::nodesBottomRightOpenEdge()
+inline ColS Regular::nodesBottomRightOpenEdge() const
 {
   ColS out(m_nelz-1);
 
@@ -550,7 +550,7 @@ inline ColS Regular::nodesBottomRightOpenEdge()
 
 // --------------------- node-numbers along the top-left edge, without corners ---------------------
 
-inline ColS Regular::nodesTopLeftOpenEdge()
+inline ColS Regular::nodesTopLeftOpenEdge() const
 {
   ColS out(m_nelz-1);
 
@@ -562,7 +562,7 @@ inline ColS Regular::nodesTopLeftOpenEdge()
 
 // -------------------- node-numbers along the top-right edge, without corners ---------------------
 
-inline ColS Regular::nodesTopRightOpenEdge()
+inline ColS Regular::nodesTopRightOpenEdge() const
 {
   ColS out(m_nelz-1);
 
@@ -574,121 +574,121 @@ inline ColS Regular::nodesTopRightOpenEdge()
 
 // -------------------------------------------- aliases --------------------------------------------
 
-inline ColS Regular::nodesBottomFrontOpenEdge() { return nodesFrontBottomOpenEdge(); }
-inline ColS Regular::nodesBottomBackOpenEdge()  { return nodesBackBottomOpenEdge();  }
-inline ColS Regular::nodesTopFrontOpenEdge()    { return nodesFrontTopOpenEdge();    }
-inline ColS Regular::nodesTopBackOpenEdge()     { return nodesBackTopOpenEdge();     }
-inline ColS Regular::nodesLeftBottomOpenEdge()  { return nodesBottomLeftOpenEdge();  }
-inline ColS Regular::nodesLeftFrontOpenEdge()   { return nodesFrontLeftOpenEdge();   }
-inline ColS Regular::nodesLeftBackOpenEdge()    { return nodesBackLeftOpenEdge();    }
-inline ColS Regular::nodesLeftTopOpenEdge()     { return nodesTopLeftOpenEdge();     }
-inline ColS Regular::nodesRightBottomOpenEdge() { return nodesBottomRightOpenEdge(); }
-inline ColS Regular::nodesRightTopOpenEdge()    { return nodesTopRightOpenEdge();    }
-inline ColS Regular::nodesRightFrontOpenEdge()  { return nodesFrontRightOpenEdge();  }
-inline ColS Regular::nodesRightBackOpenEdge()   { return nodesBackRightOpenEdge();   }
+inline ColS Regular::nodesBottomFrontOpenEdge() const { return nodesFrontBottomOpenEdge(); }
+inline ColS Regular::nodesBottomBackOpenEdge()  const { return nodesBackBottomOpenEdge();  }
+inline ColS Regular::nodesTopFrontOpenEdge()    const { return nodesFrontTopOpenEdge();    }
+inline ColS Regular::nodesTopBackOpenEdge()     const { return nodesBackTopOpenEdge();     }
+inline ColS Regular::nodesLeftBottomOpenEdge()  const { return nodesBottomLeftOpenEdge();  }
+inline ColS Regular::nodesLeftFrontOpenEdge()   const { return nodesFrontLeftOpenEdge();   }
+inline ColS Regular::nodesLeftBackOpenEdge()    const { return nodesBackLeftOpenEdge();    }
+inline ColS Regular::nodesLeftTopOpenEdge()     const { return nodesTopLeftOpenEdge();     }
+inline ColS Regular::nodesRightBottomOpenEdge() const { return nodesBottomRightOpenEdge(); }
+inline ColS Regular::nodesRightTopOpenEdge()    const { return nodesTopRightOpenEdge();    }
+inline ColS Regular::nodesRightFrontOpenEdge()  const { return nodesFrontRightOpenEdge();  }
+inline ColS Regular::nodesRightBackOpenEdge()   const { return nodesBackRightOpenEdge();   }
 
 // -------------------------- node-number of the front-bottom-left corner --------------------------
 
-inline size_t Regular::nodesFrontBottomLeftCorner()
+inline size_t Regular::nodesFrontBottomLeftCorner() const
 {
   return 0;
 }
 
 // ------------------------- node-number of the front-bottom-right corner --------------------------
 
-inline size_t Regular::nodesFrontBottomRightCorner()
+inline size_t Regular::nodesFrontBottomRightCorner() const
 {
   return m_nelx;
 }
 
 // --------------------------- node-number of the front-top-left corner ----------------------------
 
-inline size_t Regular::nodesFrontTopLeftCorner()
+inline size_t Regular::nodesFrontTopLeftCorner() const
 {
   return m_nely*(m_nelx+1);
 }
 
 // --------------------------- node-number of the front-top-right corner ---------------------------
 
-inline size_t Regular::nodesFrontTopRightCorner()
+inline size_t Regular::nodesFrontTopRightCorner() const
 {
   return m_nely*(m_nelx+1) + m_nelx;
 }
 
 // -------------------------- node-number of the back-bottom-left corner ---------------------------
 
-inline size_t Regular::nodesBackBottomLeftCorner()
+inline size_t Regular::nodesBackBottomLeftCorner() const
 {
   return m_nelz*(m_nely+1)*(m_nelx+1);
 }
 
 // -------------------------- node-number of the back-bottom-right corner --------------------------
 
-inline size_t Regular::nodesBackBottomRightCorner()
+inline size_t Regular::nodesBackBottomRightCorner() const
 {
   return m_nelx + m_nelz*(m_nely+1)*(m_nelx+1);
 }
 
 // ---------------------------- node-number of the back-top-left corner ----------------------------
 
-inline size_t Regular::nodesBackTopLeftCorner()
+inline size_t Regular::nodesBackTopLeftCorner() const
 {
   return m_nely*(m_nelx+1) + m_nelz*(m_nely+1)*(m_nelx+1);
 }
 
 // --------------------------- node-number of the back-top-right corner ----------------------------
 
-inline size_t Regular::nodesBackTopRightCorner()
+inline size_t Regular::nodesBackTopRightCorner() const
 {
   return m_nely*(m_nelx+1) + m_nelx + m_nelz*(m_nely+1)*(m_nelx+1);
 }
 
 // -------------------------------------------- aliases --------------------------------------------
 
-inline size_t Regular::nodesFrontLeftBottomCorner()   { return nodesFrontBottomLeftCorner();  }
-inline size_t Regular::nodesBottomFrontLeftCorner()   { return nodesFrontBottomLeftCorner();  }
-inline size_t Regular::nodesBottomLeftFrontCorner()   { return nodesFrontBottomLeftCorner();  }
-inline size_t Regular::nodesLeftFrontBottomCorner()   { return nodesFrontBottomLeftCorner();  }
-inline size_t Regular::nodesLeftBottomFrontCorner()   { return nodesFrontBottomLeftCorner();  }
-inline size_t Regular::nodesFrontRightBottomCorner()  { return nodesFrontBottomRightCorner(); }
-inline size_t Regular::nodesBottomFrontRightCorner()  { return nodesFrontBottomRightCorner(); }
-inline size_t Regular::nodesBottomRightFrontCorner()  { return nodesFrontBottomRightCorner(); }
-inline size_t Regular::nodesRightFrontBottomCorner()  { return nodesFrontBottomRightCorner(); }
-inline size_t Regular::nodesRightBottomFrontCorner()  { return nodesFrontBottomRightCorner(); }
-inline size_t Regular::nodesFrontLeftTopCorner()      { return nodesFrontTopLeftCorner();     }
-inline size_t Regular::nodesTopFrontLeftCorner()      { return nodesFrontTopLeftCorner();     }
-inline size_t Regular::nodesTopLeftFrontCorner()      { return nodesFrontTopLeftCorner();     }
-inline size_t Regular::nodesLeftFrontTopCorner()      { return nodesFrontTopLeftCorner();     }
-inline size_t Regular::nodesLeftTopFrontCorner()      { return nodesFrontTopLeftCorner();     }
-inline size_t Regular::nodesFrontRightTopCorner()     { return nodesFrontTopRightCorner();    }
-inline size_t Regular::nodesTopFrontRightCorner()     { return nodesFrontTopRightCorner();    }
-inline size_t Regular::nodesTopRightFrontCorner()     { return nodesFrontTopRightCorner();    }
-inline size_t Regular::nodesRightFrontTopCorner()     { return nodesFrontTopRightCorner();    }
-inline size_t Regular::nodesRightTopFrontCorner()     { return nodesFrontTopRightCorner();    }
-inline size_t Regular::nodesBackLeftBottomCorner()    { return nodesBackBottomLeftCorner();   }
-inline size_t Regular::nodesBottomBackLeftCorner()    { return nodesBackBottomLeftCorner();   }
-inline size_t Regular::nodesBottomLeftBackCorner()    { return nodesBackBottomLeftCorner();   }
-inline size_t Regular::nodesLeftBackBottomCorner()    { return nodesBackBottomLeftCorner();   }
-inline size_t Regular::nodesLeftBottomBackCorner()    { return nodesBackBottomLeftCorner();   }
-inline size_t Regular::nodesBackRightBottomCorner()   { return nodesBackBottomRightCorner();  }
-inline size_t Regular::nodesBottomBackRightCorner()   { return nodesBackBottomRightCorner();  }
-inline size_t Regular::nodesBottomRightBackCorner()   { return nodesBackBottomRightCorner();  }
-inline size_t Regular::nodesRightBackBottomCorner()   { return nodesBackBottomRightCorner();  }
-inline size_t Regular::nodesRightBottomBackCorner()   { return nodesBackBottomRightCorner();  }
-inline size_t Regular::nodesBackLeftTopCorner()       { return nodesBackTopLeftCorner();      }
-inline size_t Regular::nodesTopBackLeftCorner()       { return nodesBackTopLeftCorner();      }
-inline size_t Regular::nodesTopLeftBackCorner()       { return nodesBackTopLeftCorner();      }
-inline size_t Regular::nodesLeftBackTopCorner()       { return nodesBackTopLeftCorner();      }
-inline size_t Regular::nodesLeftTopBackCorner()       { return nodesBackTopLeftCorner();      }
-inline size_t Regular::nodesBackRightTopCorner()      { return nodesBackTopRightCorner();     }
-inline size_t Regular::nodesTopBackRightCorner()      { return nodesBackTopRightCorner();     }
-inline size_t Regular::nodesTopRightBackCorner()      { return nodesBackTopRightCorner();     }
-inline size_t Regular::nodesRightBackTopCorner()      { return nodesBackTopRightCorner();     }
-inline size_t Regular::nodesRightTopBackCorner()      { return nodesBackTopRightCorner();     }
+inline size_t Regular::nodesFrontLeftBottomCorner() const { return nodesFrontBottomLeftCorner();  }
+inline size_t Regular::nodesBottomFrontLeftCorner() const { return nodesFrontBottomLeftCorner();  }
+inline size_t Regular::nodesBottomLeftFrontCorner() const { return nodesFrontBottomLeftCorner();  }
+inline size_t Regular::nodesLeftFrontBottomCorner() const { return nodesFrontBottomLeftCorner();  }
+inline size_t Regular::nodesLeftBottomFrontCorner() const { return nodesFrontBottomLeftCorner();  }
+inline size_t Regular::nodesFrontRightBottomCorner()const { return nodesFrontBottomRightCorner(); }
+inline size_t Regular::nodesBottomFrontRightCorner()const { return nodesFrontBottomRightCorner(); }
+inline size_t Regular::nodesBottomRightFrontCorner()const { return nodesFrontBottomRightCorner(); }
+inline size_t Regular::nodesRightFrontBottomCorner()const { return nodesFrontBottomRightCorner(); }
+inline size_t Regular::nodesRightBottomFrontCorner()const { return nodesFrontBottomRightCorner(); }
+inline size_t Regular::nodesFrontLeftTopCorner()    const { return nodesFrontTopLeftCorner();     }
+inline size_t Regular::nodesTopFrontLeftCorner()    const { return nodesFrontTopLeftCorner();     }
+inline size_t Regular::nodesTopLeftFrontCorner()    const { return nodesFrontTopLeftCorner();     }
+inline size_t Regular::nodesLeftFrontTopCorner()    const { return nodesFrontTopLeftCorner();     }
+inline size_t Regular::nodesLeftTopFrontCorner()    const { return nodesFrontTopLeftCorner();     }
+inline size_t Regular::nodesFrontRightTopCorner()   const { return nodesFrontTopRightCorner();    }
+inline size_t Regular::nodesTopFrontRightCorner()   const { return nodesFrontTopRightCorner();    }
+inline size_t Regular::nodesTopRightFrontCorner()   const { return nodesFrontTopRightCorner();    }
+inline size_t Regular::nodesRightFrontTopCorner()   const { return nodesFrontTopRightCorner();    }
+inline size_t Regular::nodesRightTopFrontCorner()   const { return nodesFrontTopRightCorner();    }
+inline size_t Regular::nodesBackLeftBottomCorner()  const { return nodesBackBottomLeftCorner();   }
+inline size_t Regular::nodesBottomBackLeftCorner()  const { return nodesBackBottomLeftCorner();   }
+inline size_t Regular::nodesBottomLeftBackCorner()  const { return nodesBackBottomLeftCorner();   }
+inline size_t Regular::nodesLeftBackBottomCorner()  const { return nodesBackBottomLeftCorner();   }
+inline size_t Regular::nodesLeftBottomBackCorner()  const { return nodesBackBottomLeftCorner();   }
+inline size_t Regular::nodesBackRightBottomCorner() const { return nodesBackBottomRightCorner();  }
+inline size_t Regular::nodesBottomBackRightCorner() const { return nodesBackBottomRightCorner();  }
+inline size_t Regular::nodesBottomRightBackCorner() const { return nodesBackBottomRightCorner();  }
+inline size_t Regular::nodesRightBackBottomCorner() const { return nodesBackBottomRightCorner();  }
+inline size_t Regular::nodesRightBottomBackCorner() const { return nodesBackBottomRightCorner();  }
+inline size_t Regular::nodesBackLeftTopCorner()     const { return nodesBackTopLeftCorner();      }
+inline size_t Regular::nodesTopBackLeftCorner()     const { return nodesBackTopLeftCorner();      }
+inline size_t Regular::nodesTopLeftBackCorner()     const { return nodesBackTopLeftCorner();      }
+inline size_t Regular::nodesLeftBackTopCorner()     const { return nodesBackTopLeftCorner();      }
+inline size_t Regular::nodesLeftTopBackCorner()     const { return nodesBackTopLeftCorner();      }
+inline size_t Regular::nodesBackRightTopCorner()    const { return nodesBackTopRightCorner();     }
+inline size_t Regular::nodesTopBackRightCorner()    const { return nodesBackTopRightCorner();     }
+inline size_t Regular::nodesTopRightBackCorner()    const { return nodesBackTopRightCorner();     }
+inline size_t Regular::nodesRightBackTopCorner()    const { return nodesBackTopRightCorner();     }
+inline size_t Regular::nodesRightTopBackCorner()    const { return nodesBackTopRightCorner();     }
 
 // ------------------------------ node-numbers of periodic node-pairs ------------------------------
 
-inline MatS Regular::nodesPeriodic()
+inline MatS Regular::nodesPeriodic() const
 {
   // faces
   ColS fro = nodesFrontFace();
@@ -753,21 +753,21 @@ inline MatS Regular::nodesPeriodic()
 
 // ------------------------------ node-number that lies in the origin ------------------------------
 
-inline size_t Regular::nodesOrigin()
+inline size_t Regular::nodesOrigin() const
 {
   return nodesFrontBottomLeftCorner();
 }
 
 // ------------------------- DOF numbers per node (sequentially numbered) --------------------------
 
-inline MatS Regular::dofs()
+inline MatS Regular::dofs() const
 {
   return GooseFEM::Mesh::dofs(m_nnode,m_ndim);
 }
 
 // ------------------------ DOP-numbers with periodic dependencies removed -------------------------
 
-inline MatS Regular::dofsPeriodic()
+inline MatS Regular::dofsPeriodic() const
 {
   // DOF-numbers for each component of each node (sequential)
   MatS out = GooseFEM::Mesh::dofs(m_nnode,m_ndim);
@@ -975,35 +975,35 @@ m_h(h), m_nelx(nelx), m_nelz(nelz)
 
 // -------------------------------------- number of elements ---------------------------------------
 
-inline size_t FineLayer::nelem()
+inline size_t FineLayer::nelem() const
 {
   return m_nelem;
 }
 
 // ---------------------------------------- number of nodes ----------------------------------------
 
-inline size_t FineLayer::nnode()
+inline size_t FineLayer::nnode() const
 {
   return m_nnode;
 }
 
 // ---------------------------------- number of nodes per element ----------------------------------
 
-inline size_t FineLayer::nne()
+inline size_t FineLayer::nne() const
 {
   return m_nne;
 }
 
 // ------------------------------------- number of dimensions --------------------------------------
 
-inline size_t FineLayer::ndim()
+inline size_t FineLayer::ndim() const
 {
   return m_ndim;
 }
 
 // ---------------------------- actual number of nodes in one direction ----------------------------
 
-inline size_t FineLayer::shape(size_t i)
+inline size_t FineLayer::shape(size_t i) const
 {
   assert( i >= 0 and i <= 2 );
 
@@ -1015,7 +1015,7 @@ inline size_t FineLayer::shape(size_t i)
 
 // --------------------------------- coordinates (nodal positions) ---------------------------------
 
-inline MatD FineLayer::coor()
+inline MatD FineLayer::coor() const
 {
   // allocate output
   MatD out(m_nnode, m_ndim);
@@ -1158,7 +1158,7 @@ inline MatD FineLayer::coor()
 
 // ---------------------------- connectivity (node-numbers per element) ----------------------------
 
-inline MatS FineLayer::conn()
+inline MatS FineLayer::conn() const
 {
   // allocate output
   MatS out(m_nelem, m_nne);
@@ -1396,7 +1396,7 @@ inline MatS FineLayer::conn()
 
 // ------------------------------ element numbers of the middle layer ------------------------------
 
-inline ColS FineLayer::elementsMiddleLayer()
+inline ColS FineLayer::elementsMiddleLayer() const
 {
   // number of element layers in y-direction, the index of the middle layer
   size_t nely = static_cast<size_t>(m_nhy.size());
@@ -1413,7 +1413,7 @@ inline ColS FineLayer::elementsMiddleLayer()
 
 // ------------------------------ node-numbers along the front plane -------------------------------
 
-inline ColS FineLayer::nodesFront()
+inline ColS FineLayer::nodesFront() const
 {
   // number of element layers in y-direction
   size_t nely = static_cast<size_t>(m_nhy.size());
@@ -1479,7 +1479,7 @@ inline ColS FineLayer::nodesFront()
 
 // ------------------------------- node-numbers along the back plane -------------------------------
 
-inline ColS FineLayer::nodesBack()
+inline ColS FineLayer::nodesBack() const
 {
   // number of element layers in y-direction
   size_t nely = static_cast<size_t>(m_nhy.size());
@@ -1545,7 +1545,7 @@ inline ColS FineLayer::nodesBack()
 
 // ------------------------------- node-numbers along the left plane -------------------------------
 
-inline ColS FineLayer::nodesLeft()
+inline ColS FineLayer::nodesLeft() const
 {
   // number of element layers in y-direction
   size_t nely = static_cast<size_t>(m_nhy.size());
@@ -1611,7 +1611,7 @@ inline ColS FineLayer::nodesLeft()
 
 // ------------------------------ node-numbers along the right plane -------------------------------
 
-inline ColS FineLayer::nodesRight()
+inline ColS FineLayer::nodesRight() const
 {
   // number of element layers in y-direction
   size_t nely = static_cast<size_t>(m_nhy.size());
@@ -1677,7 +1677,7 @@ inline ColS FineLayer::nodesRight()
 
 // ------------------------------ node-numbers along the bottom plane ------------------------------
 
-inline ColS FineLayer::nodesBottom()
+inline ColS FineLayer::nodesBottom() const
 {
   // number of element layers in y-direction
   size_t nely = static_cast<size_t>(m_nhy.size());
@@ -1701,7 +1701,7 @@ inline ColS FineLayer::nodesBottom()
 
 // ------------------------------- node-numbers along the top plane --------------------------------
 
-inline ColS FineLayer::nodesTop()
+inline ColS FineLayer::nodesTop() const
 {
   // number of element layers in y-direction
   size_t nely = static_cast<size_t>(m_nhy.size());
@@ -1725,7 +1725,7 @@ inline ColS FineLayer::nodesTop()
 
 // ------------------------------- node-numbers along the front face -------------------------------
 
-inline ColS FineLayer::nodesFrontFace()
+inline ColS FineLayer::nodesFrontFace() const
 {
   // number of element layers in y-direction
   size_t nely = static_cast<size_t>(m_nhy.size());
@@ -1791,7 +1791,7 @@ inline ColS FineLayer::nodesFrontFace()
 
 // ------------------------------- node-numbers along the back face --------------------------------
 
-inline ColS FineLayer::nodesBackFace()
+inline ColS FineLayer::nodesBackFace() const
 {
   // number of element layers in y-direction
   size_t nely = static_cast<size_t>(m_nhy.size());
@@ -1857,7 +1857,7 @@ inline ColS FineLayer::nodesBackFace()
 
 // ------------------------------- node-numbers along the left face --------------------------------
 
-inline ColS FineLayer::nodesLeftFace()
+inline ColS FineLayer::nodesLeftFace() const
 {
   // number of element layers in y-direction
   size_t nely = static_cast<size_t>(m_nhy.size());
@@ -1923,7 +1923,7 @@ inline ColS FineLayer::nodesLeftFace()
 
 // ------------------------------- node-numbers along the right face -------------------------------
 
-inline ColS FineLayer::nodesRightFace()
+inline ColS FineLayer::nodesRightFace() const
 {
   // number of element layers in y-direction
   size_t nely = static_cast<size_t>(m_nhy.size());
@@ -1989,7 +1989,7 @@ inline ColS FineLayer::nodesRightFace()
 
 // ------------------------------ node-numbers along the bottom face -------------------------------
 
-inline ColS FineLayer::nodesBottomFace()
+inline ColS FineLayer::nodesBottomFace() const
 {
   // allocate node list
   ColS out((m_nelx(0)-1)*(m_nelz(0)-1));
@@ -2010,7 +2010,7 @@ inline ColS FineLayer::nodesBottomFace()
 
 // -------------------------------- node-numbers along the top face --------------------------------
 
-inline ColS FineLayer::nodesTopFace()
+inline ColS FineLayer::nodesTopFace() const
 {
   // number of element layers in y-direction
   size_t nely = static_cast<size_t>(m_nhy.size());
@@ -2034,7 +2034,7 @@ inline ColS FineLayer::nodesTopFace()
 
 // --------------------------- node-numbers along the front-bottom edge ----------------------------
 
-inline ColS FineLayer::nodesFrontBottomEdge()
+inline ColS FineLayer::nodesFrontBottomEdge() const
 {
   ColS out(m_nelx(0)+1);
 
@@ -2046,7 +2046,7 @@ inline ColS FineLayer::nodesFrontBottomEdge()
 
 // ----------------------------- node-numbers along the front-top edge -----------------------------
 
-inline ColS FineLayer::nodesFrontTopEdge()
+inline ColS FineLayer::nodesFrontTopEdge() const
 {
   size_t nely = static_cast<size_t>(m_nhy.size());
 
@@ -2060,7 +2060,7 @@ inline ColS FineLayer::nodesFrontTopEdge()
 
 // ---------------------------- node-numbers along the front-left edge -----------------------------
 
-inline ColS FineLayer::nodesFrontLeftEdge()
+inline ColS FineLayer::nodesFrontLeftEdge() const
 {
   size_t nely = static_cast<size_t>(m_nhy.size());
 
@@ -2077,7 +2077,7 @@ inline ColS FineLayer::nodesFrontLeftEdge()
 
 // ---------------------------- node-numbers along the front-right edge ----------------------------
 
-inline ColS FineLayer::nodesFrontRightEdge()
+inline ColS FineLayer::nodesFrontRightEdge() const
 {
   size_t nely = static_cast<size_t>(m_nhy.size());
 
@@ -2094,7 +2094,7 @@ inline ColS FineLayer::nodesFrontRightEdge()
 
 // ---------------------------- node-numbers along the back-bottom edge ----------------------------
 
-inline ColS FineLayer::nodesBackBottomEdge()
+inline ColS FineLayer::nodesBackBottomEdge() const
 {
   ColS out(m_nelx(0)+1);
 
@@ -2106,7 +2106,7 @@ inline ColS FineLayer::nodesBackBottomEdge()
 
 // ----------------------------- node-numbers along the back-top edge ------------------------------
 
-inline ColS FineLayer::nodesBackTopEdge()
+inline ColS FineLayer::nodesBackTopEdge() const
 {
   size_t nely = static_cast<size_t>(m_nhy.size());
 
@@ -2120,7 +2120,7 @@ inline ColS FineLayer::nodesBackTopEdge()
 
 // ----------------------------- node-numbers along the back-left edge -----------------------------
 
-inline ColS FineLayer::nodesBackLeftEdge()
+inline ColS FineLayer::nodesBackLeftEdge() const
 {
   size_t nely = static_cast<size_t>(m_nhy.size());
 
@@ -2137,7 +2137,7 @@ inline ColS FineLayer::nodesBackLeftEdge()
 
 // ---------------------------- node-numbers along the back-right edge -----------------------------
 
-inline ColS FineLayer::nodesBackRightEdge()
+inline ColS FineLayer::nodesBackRightEdge() const
 {
   size_t nely = static_cast<size_t>(m_nhy.size());
 
@@ -2154,7 +2154,7 @@ inline ColS FineLayer::nodesBackRightEdge()
 
 // ---------------------------- node-numbers along the bottom-left edge ----------------------------
 
-inline ColS FineLayer::nodesBottomLeftEdge()
+inline ColS FineLayer::nodesBottomLeftEdge() const
 {
   ColS out(m_nelz(0)+1);
 
@@ -2166,7 +2166,7 @@ inline ColS FineLayer::nodesBottomLeftEdge()
 
 // --------------------------- node-numbers along the bottom-right edge ----------------------------
 
-inline ColS FineLayer::nodesBottomRightEdge()
+inline ColS FineLayer::nodesBottomRightEdge() const
 {
   ColS out(m_nelz(0)+1);
 
@@ -2178,7 +2178,7 @@ inline ColS FineLayer::nodesBottomRightEdge()
 
 // ----------------------------- node-numbers along the top-left edge ------------------------------
 
-inline ColS FineLayer::nodesTopLeftEdge()
+inline ColS FineLayer::nodesTopLeftEdge() const
 {
   size_t nely = static_cast<size_t>(m_nhy.size());
 
@@ -2192,7 +2192,7 @@ inline ColS FineLayer::nodesTopLeftEdge()
 
 // ----------------------------- node-numbers along the top-right edge -----------------------------
 
-inline ColS FineLayer::nodesTopRightEdge()
+inline ColS FineLayer::nodesTopRightEdge() const
 {
   size_t nely = static_cast<size_t>(m_nhy.size());
 
@@ -2206,22 +2206,22 @@ inline ColS FineLayer::nodesTopRightEdge()
 
 // -------------------------------------------- aliases --------------------------------------------
 
-inline ColS FineLayer::nodesBottomFrontEdge() { return nodesFrontBottomEdge(); }
-inline ColS FineLayer::nodesBottomBackEdge()  { return nodesBackBottomEdge();  }
-inline ColS FineLayer::nodesTopFrontEdge()    { return nodesFrontTopEdge();    }
-inline ColS FineLayer::nodesTopBackEdge()     { return nodesBackTopEdge();     }
-inline ColS FineLayer::nodesLeftBottomEdge()  { return nodesBottomLeftEdge();  }
-inline ColS FineLayer::nodesLeftFrontEdge()   { return nodesFrontLeftEdge();   }
-inline ColS FineLayer::nodesLeftBackEdge()    { return nodesBackLeftEdge();    }
-inline ColS FineLayer::nodesLeftTopEdge()     { return nodesTopLeftEdge();     }
-inline ColS FineLayer::nodesRightBottomEdge() { return nodesBottomRightEdge(); }
-inline ColS FineLayer::nodesRightTopEdge()    { return nodesTopRightEdge();    }
-inline ColS FineLayer::nodesRightFrontEdge()  { return nodesFrontRightEdge();  }
-inline ColS FineLayer::nodesRightBackEdge()   { return nodesBackRightEdge();   }
+inline ColS FineLayer::nodesBottomFrontEdge() const { return nodesFrontBottomEdge(); }
+inline ColS FineLayer::nodesBottomBackEdge()  const { return nodesBackBottomEdge();  }
+inline ColS FineLayer::nodesTopFrontEdge()    const { return nodesFrontTopEdge();    }
+inline ColS FineLayer::nodesTopBackEdge()     const { return nodesBackTopEdge();     }
+inline ColS FineLayer::nodesLeftBottomEdge()  const { return nodesBottomLeftEdge();  }
+inline ColS FineLayer::nodesLeftFrontEdge()   const { return nodesFrontLeftEdge();   }
+inline ColS FineLayer::nodesLeftBackEdge()    const { return nodesBackLeftEdge();    }
+inline ColS FineLayer::nodesLeftTopEdge()     const { return nodesTopLeftEdge();     }
+inline ColS FineLayer::nodesRightBottomEdge() const { return nodesBottomRightEdge(); }
+inline ColS FineLayer::nodesRightTopEdge()    const { return nodesTopRightEdge();    }
+inline ColS FineLayer::nodesRightFrontEdge()  const { return nodesFrontRightEdge();  }
+inline ColS FineLayer::nodesRightBackEdge()   const { return nodesBackRightEdge();   }
 
 // ------------------- node-numbers along the front-bottom edge, without corners -------------------
 
-inline ColS FineLayer::nodesFrontBottomOpenEdge()
+inline ColS FineLayer::nodesFrontBottomOpenEdge() const
 {
   ColS out(m_nelx(0)-1);
 
@@ -2233,7 +2233,7 @@ inline ColS FineLayer::nodesFrontBottomOpenEdge()
 
 // -------------------- node-numbers along the front-top edge, without corners ---------------------
 
-inline ColS FineLayer::nodesFrontTopOpenEdge()
+inline ColS FineLayer::nodesFrontTopOpenEdge() const
 {
   size_t nely = static_cast<size_t>(m_nhy.size());
 
@@ -2247,7 +2247,7 @@ inline ColS FineLayer::nodesFrontTopOpenEdge()
 
 // -------------------- node-numbers along the front-left edge, without corners --------------------
 
-inline ColS FineLayer::nodesFrontLeftOpenEdge()
+inline ColS FineLayer::nodesFrontLeftOpenEdge() const
 {
   size_t nely = static_cast<size_t>(m_nhy.size());
 
@@ -2264,7 +2264,7 @@ inline ColS FineLayer::nodesFrontLeftOpenEdge()
 
 // ------------------- node-numbers along the front-right edge, without corners --------------------
 
-inline ColS FineLayer::nodesFrontRightOpenEdge()
+inline ColS FineLayer::nodesFrontRightOpenEdge() const
 {
   size_t nely = static_cast<size_t>(m_nhy.size());
 
@@ -2281,7 +2281,7 @@ inline ColS FineLayer::nodesFrontRightOpenEdge()
 
 // ------------------- node-numbers along the back-bottom edge, without corners --------------------
 
-inline ColS FineLayer::nodesBackBottomOpenEdge()
+inline ColS FineLayer::nodesBackBottomOpenEdge() const
 {
   ColS out(m_nelx(0)-1);
 
@@ -2293,7 +2293,7 @@ inline ColS FineLayer::nodesBackBottomOpenEdge()
 
 // --------------------- node-numbers along the back-top edge, without corners ---------------------
 
-inline ColS FineLayer::nodesBackTopOpenEdge()
+inline ColS FineLayer::nodesBackTopOpenEdge() const
 {
   size_t nely = static_cast<size_t>(m_nhy.size());
 
@@ -2307,7 +2307,7 @@ inline ColS FineLayer::nodesBackTopOpenEdge()
 
 // -------------------- node-numbers along the back-left edge, without corners ---------------------
 
-inline ColS FineLayer::nodesBackLeftOpenEdge()
+inline ColS FineLayer::nodesBackLeftOpenEdge() const
 {
   size_t nely = static_cast<size_t>(m_nhy.size());
 
@@ -2324,7 +2324,7 @@ inline ColS FineLayer::nodesBackLeftOpenEdge()
 
 // -------------------- node-numbers along the back-right edge, without corners --------------------
 
-inline ColS FineLayer::nodesBackRightOpenEdge()
+inline ColS FineLayer::nodesBackRightOpenEdge() const
 {
   size_t nely = static_cast<size_t>(m_nhy.size());
 
@@ -2341,7 +2341,7 @@ inline ColS FineLayer::nodesBackRightOpenEdge()
 
 // ------------------- node-numbers along the bottom-left edge, without corners --------------------
 
-inline ColS FineLayer::nodesBottomLeftOpenEdge()
+inline ColS FineLayer::nodesBottomLeftOpenEdge() const
 {
   ColS out(m_nelz(0)-1);
 
@@ -2353,7 +2353,7 @@ inline ColS FineLayer::nodesBottomLeftOpenEdge()
 
 // ------------------- node-numbers along the bottom-right edge, without corners -------------------
 
-inline ColS FineLayer::nodesBottomRightOpenEdge()
+inline ColS FineLayer::nodesBottomRightOpenEdge() const
 {
   ColS out(m_nelz(0)-1);
 
@@ -2365,7 +2365,7 @@ inline ColS FineLayer::nodesBottomRightOpenEdge()
 
 // --------------------- node-numbers along the top-left edge, without corners ---------------------
 
-inline ColS FineLayer::nodesTopLeftOpenEdge()
+inline ColS FineLayer::nodesTopLeftOpenEdge() const
 {
   size_t nely = static_cast<size_t>(m_nhy.size());
 
@@ -2379,7 +2379,7 @@ inline ColS FineLayer::nodesTopLeftOpenEdge()
 
 // -------------------- node-numbers along the top-right edge, without corners ---------------------
 
-inline ColS FineLayer::nodesTopRightOpenEdge()
+inline ColS FineLayer::nodesTopRightOpenEdge() const
 {
   size_t nely = static_cast<size_t>(m_nhy.size());
 
@@ -2393,36 +2393,36 @@ inline ColS FineLayer::nodesTopRightOpenEdge()
 
 // -------------------------------------------- aliases --------------------------------------------
 
-inline ColS FineLayer::nodesBottomFrontOpenEdge() { return nodesFrontBottomOpenEdge(); }
-inline ColS FineLayer::nodesBottomBackOpenEdge()  { return nodesBackBottomOpenEdge();  }
-inline ColS FineLayer::nodesTopFrontOpenEdge()    { return nodesFrontTopOpenEdge();    }
-inline ColS FineLayer::nodesTopBackOpenEdge()     { return nodesBackTopOpenEdge();     }
-inline ColS FineLayer::nodesLeftBottomOpenEdge()  { return nodesBottomLeftOpenEdge();  }
-inline ColS FineLayer::nodesLeftFrontOpenEdge()   { return nodesFrontLeftOpenEdge();   }
-inline ColS FineLayer::nodesLeftBackOpenEdge()    { return nodesBackLeftOpenEdge();    }
-inline ColS FineLayer::nodesLeftTopOpenEdge()     { return nodesTopLeftOpenEdge();     }
-inline ColS FineLayer::nodesRightBottomOpenEdge() { return nodesBottomRightOpenEdge(); }
-inline ColS FineLayer::nodesRightTopOpenEdge()    { return nodesTopRightOpenEdge();    }
-inline ColS FineLayer::nodesRightFrontOpenEdge()  { return nodesFrontRightOpenEdge();  }
-inline ColS FineLayer::nodesRightBackOpenEdge()   { return nodesBackRightOpenEdge();   }
+inline ColS FineLayer::nodesBottomFrontOpenEdge() const { return nodesFrontBottomOpenEdge(); }
+inline ColS FineLayer::nodesBottomBackOpenEdge() const  { return nodesBackBottomOpenEdge();  }
+inline ColS FineLayer::nodesTopFrontOpenEdge() const    { return nodesFrontTopOpenEdge();    }
+inline ColS FineLayer::nodesTopBackOpenEdge() const     { return nodesBackTopOpenEdge();     }
+inline ColS FineLayer::nodesLeftBottomOpenEdge() const  { return nodesBottomLeftOpenEdge();  }
+inline ColS FineLayer::nodesLeftFrontOpenEdge() const   { return nodesFrontLeftOpenEdge();   }
+inline ColS FineLayer::nodesLeftBackOpenEdge() const    { return nodesBackLeftOpenEdge();    }
+inline ColS FineLayer::nodesLeftTopOpenEdge() const     { return nodesTopLeftOpenEdge();     }
+inline ColS FineLayer::nodesRightBottomOpenEdge() const { return nodesBottomRightOpenEdge(); }
+inline ColS FineLayer::nodesRightTopOpenEdge() const    { return nodesTopRightOpenEdge();    }
+inline ColS FineLayer::nodesRightFrontOpenEdge() const  { return nodesFrontRightOpenEdge();  }
+inline ColS FineLayer::nodesRightBackOpenEdge() const   { return nodesBackRightOpenEdge();   }
 
 // -------------------------- node-number of the front-bottom-left corner --------------------------
 
-inline size_t FineLayer::nodesFrontBottomLeftCorner()
+inline size_t FineLayer::nodesFrontBottomLeftCorner() const
 {
   return m_startNode(0);
 }
 
 // ------------------------- node-number of the front-bottom-right corner --------------------------
 
-inline size_t FineLayer::nodesFrontBottomRightCorner()
+inline size_t FineLayer::nodesFrontBottomRightCorner() const
 {
   return m_startNode(0) + m_nelx(0);
 }
 
 // --------------------------- node-number of the front-top-left corner ----------------------------
 
-inline size_t FineLayer::nodesFrontTopLeftCorner()
+inline size_t FineLayer::nodesFrontTopLeftCorner() const
 {
   size_t nely = static_cast<size_t>(m_nhy.size());
 
@@ -2431,7 +2431,7 @@ inline size_t FineLayer::nodesFrontTopLeftCorner()
 
 // --------------------------- node-number of the front-top-right corner ---------------------------
 
-inline size_t FineLayer::nodesFrontTopRightCorner()
+inline size_t FineLayer::nodesFrontTopRightCorner() const
 {
   size_t nely = static_cast<size_t>(m_nhy.size());
 
@@ -2440,21 +2440,21 @@ inline size_t FineLayer::nodesFrontTopRightCorner()
 
 // -------------------------- node-number of the back-bottom-left corner ---------------------------
 
-inline size_t FineLayer::nodesBackBottomLeftCorner()
+inline size_t FineLayer::nodesBackBottomLeftCorner() const
 {
   return m_startNode(0) + (m_nelx(0)+1)*(m_nelz(0));
 }
 
 // -------------------------- node-number of the back-bottom-right corner --------------------------
 
-inline size_t FineLayer::nodesBackBottomRightCorner()
+inline size_t FineLayer::nodesBackBottomRightCorner() const
 {
   return m_startNode(0) + m_nelx(0) + (m_nelx(0)+1)*(m_nelz(0));
 }
 
 // ---------------------------- node-number of the back-top-left corner ----------------------------
 
-inline size_t FineLayer::nodesBackTopLeftCorner()
+inline size_t FineLayer::nodesBackTopLeftCorner() const
 {
   size_t nely = static_cast<size_t>(m_nhy.size());
 
@@ -2463,7 +2463,7 @@ inline size_t FineLayer::nodesBackTopLeftCorner()
 
 // --------------------------- node-number of the back-top-right corner ----------------------------
 
-inline size_t FineLayer::nodesBackTopRightCorner()
+inline size_t FineLayer::nodesBackTopRightCorner() const
 {
   size_t nely = static_cast<size_t>(m_nhy.size());
 
@@ -2472,50 +2472,50 @@ inline size_t FineLayer::nodesBackTopRightCorner()
 
 // -------------------------------------------- aliases --------------------------------------------
 
-inline size_t FineLayer::nodesFrontLeftBottomCorner()   { return nodesFrontBottomLeftCorner();  }
-inline size_t FineLayer::nodesBottomFrontLeftCorner()   { return nodesFrontBottomLeftCorner();  }
-inline size_t FineLayer::nodesBottomLeftFrontCorner()   { return nodesFrontBottomLeftCorner();  }
-inline size_t FineLayer::nodesLeftFrontBottomCorner()   { return nodesFrontBottomLeftCorner();  }
-inline size_t FineLayer::nodesLeftBottomFrontCorner()   { return nodesFrontBottomLeftCorner();  }
-inline size_t FineLayer::nodesFrontRightBottomCorner()  { return nodesFrontBottomRightCorner(); }
-inline size_t FineLayer::nodesBottomFrontRightCorner()  { return nodesFrontBottomRightCorner(); }
-inline size_t FineLayer::nodesBottomRightFrontCorner()  { return nodesFrontBottomRightCorner(); }
-inline size_t FineLayer::nodesRightFrontBottomCorner()  { return nodesFrontBottomRightCorner(); }
-inline size_t FineLayer::nodesRightBottomFrontCorner()  { return nodesFrontBottomRightCorner(); }
-inline size_t FineLayer::nodesFrontLeftTopCorner()      { return nodesFrontTopLeftCorner();     }
-inline size_t FineLayer::nodesTopFrontLeftCorner()      { return nodesFrontTopLeftCorner();     }
-inline size_t FineLayer::nodesTopLeftFrontCorner()      { return nodesFrontTopLeftCorner();     }
-inline size_t FineLayer::nodesLeftFrontTopCorner()      { return nodesFrontTopLeftCorner();     }
-inline size_t FineLayer::nodesLeftTopFrontCorner()      { return nodesFrontTopLeftCorner();     }
-inline size_t FineLayer::nodesFrontRightTopCorner()     { return nodesFrontTopRightCorner();    }
-inline size_t FineLayer::nodesTopFrontRightCorner()     { return nodesFrontTopRightCorner();    }
-inline size_t FineLayer::nodesTopRightFrontCorner()     { return nodesFrontTopRightCorner();    }
-inline size_t FineLayer::nodesRightFrontTopCorner()     { return nodesFrontTopRightCorner();    }
-inline size_t FineLayer::nodesRightTopFrontCorner()     { return nodesFrontTopRightCorner();    }
-inline size_t FineLayer::nodesBackLeftBottomCorner()    { return nodesBackBottomLeftCorner();   }
-inline size_t FineLayer::nodesBottomBackLeftCorner()    { return nodesBackBottomLeftCorner();   }
-inline size_t FineLayer::nodesBottomLeftBackCorner()    { return nodesBackBottomLeftCorner();   }
-inline size_t FineLayer::nodesLeftBackBottomCorner()    { return nodesBackBottomLeftCorner();   }
-inline size_t FineLayer::nodesLeftBottomBackCorner()    { return nodesBackBottomLeftCorner();   }
-inline size_t FineLayer::nodesBackRightBottomCorner()   { return nodesBackBottomRightCorner();  }
-inline size_t FineLayer::nodesBottomBackRightCorner()   { return nodesBackBottomRightCorner();  }
-inline size_t FineLayer::nodesBottomRightBackCorner()   { return nodesBackBottomRightCorner();  }
-inline size_t FineLayer::nodesRightBackBottomCorner()   { return nodesBackBottomRightCorner();  }
-inline size_t FineLayer::nodesRightBottomBackCorner()   { return nodesBackBottomRightCorner();  }
-inline size_t FineLayer::nodesBackLeftTopCorner()       { return nodesBackTopLeftCorner();      }
-inline size_t FineLayer::nodesTopBackLeftCorner()       { return nodesBackTopLeftCorner();      }
-inline size_t FineLayer::nodesTopLeftBackCorner()       { return nodesBackTopLeftCorner();      }
-inline size_t FineLayer::nodesLeftBackTopCorner()       { return nodesBackTopLeftCorner();      }
-inline size_t FineLayer::nodesLeftTopBackCorner()       { return nodesBackTopLeftCorner();      }
-inline size_t FineLayer::nodesBackRightTopCorner()      { return nodesBackTopRightCorner();     }
-inline size_t FineLayer::nodesTopBackRightCorner()      { return nodesBackTopRightCorner();     }
-inline size_t FineLayer::nodesTopRightBackCorner()      { return nodesBackTopRightCorner();     }
-inline size_t FineLayer::nodesRightBackTopCorner()      { return nodesBackTopRightCorner();     }
-inline size_t FineLayer::nodesRightTopBackCorner()      { return nodesBackTopRightCorner();     }
+inline size_t FineLayer::nodesFrontLeftBottomCorner() const   { return nodesFrontBottomLeftCorner();  }
+inline size_t FineLayer::nodesBottomFrontLeftCorner() const   { return nodesFrontBottomLeftCorner();  }
+inline size_t FineLayer::nodesBottomLeftFrontCorner() const   { return nodesFrontBottomLeftCorner();  }
+inline size_t FineLayer::nodesLeftFrontBottomCorner() const   { return nodesFrontBottomLeftCorner();  }
+inline size_t FineLayer::nodesLeftBottomFrontCorner() const   { return nodesFrontBottomLeftCorner();  }
+inline size_t FineLayer::nodesFrontRightBottomCorner() const  { return nodesFrontBottomRightCorner(); }
+inline size_t FineLayer::nodesBottomFrontRightCorner() const  { return nodesFrontBottomRightCorner(); }
+inline size_t FineLayer::nodesBottomRightFrontCorner() const  { return nodesFrontBottomRightCorner(); }
+inline size_t FineLayer::nodesRightFrontBottomCorner() const  { return nodesFrontBottomRightCorner(); }
+inline size_t FineLayer::nodesRightBottomFrontCorner() const  { return nodesFrontBottomRightCorner(); }
+inline size_t FineLayer::nodesFrontLeftTopCorner() const      { return nodesFrontTopLeftCorner();     }
+inline size_t FineLayer::nodesTopFrontLeftCorner() const      { return nodesFrontTopLeftCorner();     }
+inline size_t FineLayer::nodesTopLeftFrontCorner() const      { return nodesFrontTopLeftCorner();     }
+inline size_t FineLayer::nodesLeftFrontTopCorner() const      { return nodesFrontTopLeftCorner();     }
+inline size_t FineLayer::nodesLeftTopFrontCorner() const      { return nodesFrontTopLeftCorner();     }
+inline size_t FineLayer::nodesFrontRightTopCorner() const     { return nodesFrontTopRightCorner();    }
+inline size_t FineLayer::nodesTopFrontRightCorner() const     { return nodesFrontTopRightCorner();    }
+inline size_t FineLayer::nodesTopRightFrontCorner() const     { return nodesFrontTopRightCorner();    }
+inline size_t FineLayer::nodesRightFrontTopCorner() const     { return nodesFrontTopRightCorner();    }
+inline size_t FineLayer::nodesRightTopFrontCorner() const     { return nodesFrontTopRightCorner();    }
+inline size_t FineLayer::nodesBackLeftBottomCorner() const    { return nodesBackBottomLeftCorner();   }
+inline size_t FineLayer::nodesBottomBackLeftCorner() const    { return nodesBackBottomLeftCorner();   }
+inline size_t FineLayer::nodesBottomLeftBackCorner() const    { return nodesBackBottomLeftCorner();   }
+inline size_t FineLayer::nodesLeftBackBottomCorner() const    { return nodesBackBottomLeftCorner();   }
+inline size_t FineLayer::nodesLeftBottomBackCorner() const    { return nodesBackBottomLeftCorner();   }
+inline size_t FineLayer::nodesBackRightBottomCorner() const   { return nodesBackBottomRightCorner();  }
+inline size_t FineLayer::nodesBottomBackRightCorner() const   { return nodesBackBottomRightCorner();  }
+inline size_t FineLayer::nodesBottomRightBackCorner() const   { return nodesBackBottomRightCorner();  }
+inline size_t FineLayer::nodesRightBackBottomCorner() const   { return nodesBackBottomRightCorner();  }
+inline size_t FineLayer::nodesRightBottomBackCorner() const   { return nodesBackBottomRightCorner();  }
+inline size_t FineLayer::nodesBackLeftTopCorner() const       { return nodesBackTopLeftCorner();      }
+inline size_t FineLayer::nodesTopBackLeftCorner() const       { return nodesBackTopLeftCorner();      }
+inline size_t FineLayer::nodesTopLeftBackCorner() const       { return nodesBackTopLeftCorner();      }
+inline size_t FineLayer::nodesLeftBackTopCorner() const       { return nodesBackTopLeftCorner();      }
+inline size_t FineLayer::nodesLeftTopBackCorner() const       { return nodesBackTopLeftCorner();      }
+inline size_t FineLayer::nodesBackRightTopCorner() const      { return nodesBackTopRightCorner();     }
+inline size_t FineLayer::nodesTopBackRightCorner() const      { return nodesBackTopRightCorner();     }
+inline size_t FineLayer::nodesTopRightBackCorner() const      { return nodesBackTopRightCorner();     }
+inline size_t FineLayer::nodesRightBackTopCorner() const      { return nodesBackTopRightCorner();     }
+inline size_t FineLayer::nodesRightTopBackCorner() const      { return nodesBackTopRightCorner();     }
 
 // ------------------------------ node-numbers of periodic node-pairs ------------------------------
 
-inline MatS FineLayer::nodesPeriodic()
+inline MatS FineLayer::nodesPeriodic() const
 {
   // faces
   ColS fro = nodesFrontFace();
@@ -2580,21 +2580,21 @@ inline MatS FineLayer::nodesPeriodic()
 
 // ------------------------------ node-number that lies in the origin ------------------------------
 
-inline size_t FineLayer::nodesOrigin()
+inline size_t FineLayer::nodesOrigin() const
 {
   return nodesFrontBottomLeftCorner();
 }
 
 // ------------------------- DOF numbers per node (sequentially numbered) --------------------------
 
-inline MatS FineLayer::dofs()
+inline MatS FineLayer::dofs() const
 {
   return GooseFEM::Mesh::dofs(m_nnode,m_ndim);
 }
 
 // ------------------------ DOP-numbers with periodic dependencies removed -------------------------
 
-inline MatS FineLayer::dofsPeriodic()
+inline MatS FineLayer::dofsPeriodic() const
 {
   // DOF-numbers for each component of each node (sequential)
   MatS out = GooseFEM::Mesh::dofs(m_nnode,m_ndim);

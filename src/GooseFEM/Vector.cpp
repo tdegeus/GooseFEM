@@ -29,18 +29,19 @@ m_conn(conn), m_dofs(dofs), m_iip(iip)
   m_nnp   = static_cast<size_t>(m_iip .size());
   m_nnu   = m_ndof - m_nnp;
 
-  // check consistency; TODO make more complete
+  // check consistency
+  // TODO: make more complete: it is also assumed that DOFs and iiu/iip have no missing numbers
   assert( m_conn.maxCoeff() + 1 == m_nnode );
   assert( m_ndof <= m_nnode * m_ndim );
 
   // reorder DOFs such that they can be used for partitioning; renumber such that
   //   "iiu" -> beginning
   //   "iip" -> end
-  // while the order is otherwise retained
-  // this array can be used to assemble to/from partitioned arrays, and to determine the type of DOF
+  // (otherwise preserving the order)
+  // this array can be used to assemble to/from partitioned arrays
   m_part = Mesh::reorder(m_dofs, m_iip, "end");
 
-  // extract numbers of the unknown DOFs
+  // extract unknown DOFs
   // - allocate
   m_iiu.conservativeResize(m_nnu);
   // - set
@@ -53,70 +54,70 @@ m_conn(conn), m_dofs(dofs), m_iip(iip)
 
 // -------------------------------------- number of elements ---------------------------------------
 
-inline size_t Vector::nelem()
+inline size_t Vector::nelem() const
 {
   return m_nelem;
 }
 
 // ---------------------------------- number of nodes per element ----------------------------------
 
-inline size_t Vector::nne()
+inline size_t Vector::nne() const
 {
   return m_nne;
 }
 
 // ---------------------------------------- number of nodes ----------------------------------------
 
-inline size_t Vector::nnode()
+inline size_t Vector::nnode() const
 {
   return m_nnode;
 }
 
 // ------------------------------------- number of dimensions --------------------------------------
 
-inline size_t Vector::ndim()
+inline size_t Vector::ndim() const
 {
   return m_ndim;
 }
 
 // ---------------------------------------- number of DOFs -----------------------------------------
 
-inline size_t Vector::ndof()
+inline size_t Vector::ndof() const
 {
   return m_ndof;
 }
 
 // ------------------------------------ number of unknown DOFs -------------------------------------
 
-inline size_t Vector::nnu()
+inline size_t Vector::nnu() const
 {
   return m_nnu;
 }
 
 // ----------------------------------- number of prescribed DOFs -----------------------------------
 
-inline size_t Vector::nnp()
+inline size_t Vector::nnp() const
 {
   return m_nnp;
 }
 
 // -------------------------------------- return unknown DOFs --------------------------------------
 
-inline ColS Vector::iiu()
+inline ColS Vector::iiu() const
 {
   return m_iiu;
 }
 
 // ------------------------------------ return prescribed DOFs -------------------------------------
 
-inline ColS Vector::iip()
+inline ColS Vector::iip() const
 {
   return m_iip;
 }
 
 // --------------------------------------- dofval -> dofval ----------------------------------------
 
-inline ColD Vector::asDofs(const ColD &dofval_u, const ColD &dofval_p)
+inline ColD Vector::asDofs(const ColD &dofval_u, const ColD &dofval_p) const
 {
   // check input
   assert( static_cast<size_t>(dofval_u.size()) == m_nnu );
@@ -136,7 +137,7 @@ inline ColD Vector::asDofs(const ColD &dofval_u, const ColD &dofval_p)
 
 // --------------------------------------- nodevec -> dofval ---------------------------------------
 
-inline ColD Vector::asDofs(const MatD &nodevec)
+inline ColD Vector::asDofs(const MatD &nodevec) const
 {
   // check input
   assert( static_cast<size_t>(nodevec.rows()) == m_nnode );
@@ -156,7 +157,7 @@ inline ColD Vector::asDofs(const MatD &nodevec)
 
 // --------------------------------------- nodevec -> dofval ---------------------------------------
 
-inline ColD Vector::asDofs_u(const MatD &nodevec)
+inline ColD Vector::asDofs_u(const MatD &nodevec) const
 {
   // check input
   assert( static_cast<size_t>(nodevec.rows()) == m_nnode );
@@ -177,7 +178,7 @@ inline ColD Vector::asDofs_u(const MatD &nodevec)
 
 // --------------------------------------- nodevec -> dofval ---------------------------------------
 
-inline ColD Vector::asDofs_p(const MatD &nodevec)
+inline ColD Vector::asDofs_p(const MatD &nodevec) const
 {
   // check input
   assert( static_cast<size_t>(nodevec.rows()) == m_nnode );
@@ -198,7 +199,7 @@ inline ColD Vector::asDofs_p(const MatD &nodevec)
 
 // --------------------------------------- elemvec -> dofval ---------------------------------------
 
-inline ColD Vector::asDofs(const ArrD &elemvec)
+inline ColD Vector::asDofs(const ArrD &elemvec) const
 {
   // check input
   assert( elemvec.ndim()   == 3       );
@@ -221,7 +222,7 @@ inline ColD Vector::asDofs(const ArrD &elemvec)
 
 // --------------------------------------- elemvec -> dofval ---------------------------------------
 
-inline ColD Vector::asDofs_u(const ArrD &elemvec)
+inline ColD Vector::asDofs_u(const ArrD &elemvec) const
 {
   // check input
   assert( elemvec.ndim()   == 3       );
@@ -245,7 +246,7 @@ inline ColD Vector::asDofs_u(const ArrD &elemvec)
 
 // --------------------------------------- elemvec -> dofval ---------------------------------------
 
-inline ColD Vector::asDofs_p(const ArrD &elemvec)
+inline ColD Vector::asDofs_p(const ArrD &elemvec) const
 {
   // check input
   assert( elemvec.ndim()   == 3       );
@@ -269,7 +270,7 @@ inline ColD Vector::asDofs_p(const ArrD &elemvec)
 
 // --------------------------------------- dofval -> nodevec ---------------------------------------
 
-inline MatD Vector::asNode(const ColD &dofval)
+inline MatD Vector::asNode(const ColD &dofval) const
 {
   // check input
   assert( dofval.size() == m_ndof );
@@ -288,7 +289,7 @@ inline MatD Vector::asNode(const ColD &dofval)
 
 // --------------------------------------- dofval -> nodevec ---------------------------------------
 
-inline MatD Vector::asNode(const ColD &dofval_u, const ColD &dofval_p)
+inline MatD Vector::asNode(const ColD &dofval_u, const ColD &dofval_p) const
 {
   // check input
   assert( dofval_u.size() == m_nnu );
@@ -313,7 +314,7 @@ inline MatD Vector::asNode(const ColD &dofval_u, const ColD &dofval_p)
 
 // --------------------------------------- elemvec -> nodevec ---------------------------------------
 
-inline MatD Vector::asNode(const ArrD &elemvec)
+inline MatD Vector::asNode(const ArrD &elemvec) const
 {
   // check input
   assert( elemvec.ndim()   == 3       );
@@ -336,7 +337,7 @@ inline MatD Vector::asNode(const ArrD &elemvec)
 
 // --------------------------------------- dofval -> elemvec ---------------------------------------
 
-inline ArrD Vector::asElement(const ColD &dofval)
+inline ArrD Vector::asElement(const ColD &dofval) const
 {
   // check input
   assert( static_cast<size_t>(dofval.size()) == m_ndof );
@@ -356,7 +357,7 @@ inline ArrD Vector::asElement(const ColD &dofval)
 
 // --------------------------------------- dofval -> elemvec ---------------------------------------
 
-inline ArrD Vector::asElement(const ColD &dofval_u, const ColD &dofval_p)
+inline ArrD Vector::asElement(const ColD &dofval_u, const ColD &dofval_p) const
 {
   // check input
   assert( static_cast<size_t>(dofval_u.size()) == m_nnu );
@@ -383,7 +384,7 @@ inline ArrD Vector::asElement(const ColD &dofval_u, const ColD &dofval_p)
 
 // -------------------------------------- nodevec -> elemvec ---------------------------------------
 
-inline ArrD Vector::asElement(const MatD &nodevec)
+inline ArrD Vector::asElement(const MatD &nodevec) const
 {
   // check input
   assert( static_cast<size_t>(nodevec.rows()) == m_nnode );
@@ -404,7 +405,7 @@ inline ArrD Vector::asElement(const MatD &nodevec)
 
 // --------------------------------------- nodevec -> dofval ---------------------------------------
 
-inline ColD Vector::assembleDofs(const MatD &nodevec)
+inline ColD Vector::assembleDofs(const MatD &nodevec) const
 {
   // check input
   assert( static_cast<size_t>(nodevec.rows()) == m_nnode );
@@ -447,7 +448,7 @@ inline ColD Vector::assembleDofs(const MatD &nodevec)
 
 // --------------------------------------- nodevec -> dofval ---------------------------------------
 
-inline ColD Vector::assembleDofs_u(const MatD &nodevec)
+inline ColD Vector::assembleDofs_u(const MatD &nodevec) const
 {
   // check input
   assert( static_cast<size_t>(nodevec.rows()) == m_nnode );
@@ -491,7 +492,7 @@ inline ColD Vector::assembleDofs_u(const MatD &nodevec)
 
 // --------------------------------------- nodevec -> dofval ---------------------------------------
 
-inline ColD Vector::assembleDofs_p(const MatD &nodevec)
+inline ColD Vector::assembleDofs_p(const MatD &nodevec) const
 {
   // check input
   assert( static_cast<size_t>(nodevec.rows()) == m_nnode );
@@ -535,7 +536,7 @@ inline ColD Vector::assembleDofs_p(const MatD &nodevec)
 
 // --------------------------------------- elemvec -> dofval ---------------------------------------
 
-inline ColD Vector::assembleDofs(const ArrD &elemvec)
+inline ColD Vector::assembleDofs(const ArrD &elemvec) const
 {
   // check input
   assert( elemvec.ndim()   == 3       );
@@ -581,7 +582,7 @@ inline ColD Vector::assembleDofs(const ArrD &elemvec)
 
 // --------------------------------------- elemvec -> dofval ---------------------------------------
 
-inline ColD Vector::assembleDofs_u(const ArrD &elemvec)
+inline ColD Vector::assembleDofs_u(const ArrD &elemvec) const
 {
   // check input
   assert( elemvec.ndim()   == 3       );
@@ -628,7 +629,7 @@ inline ColD Vector::assembleDofs_u(const ArrD &elemvec)
 
 // --------------------------------------- elemvec -> dofval ---------------------------------------
 
-inline ColD Vector::assembleDofs_p(const ArrD &elemvec)
+inline ColD Vector::assembleDofs_p(const ArrD &elemvec) const
 {
   // check input
   assert( elemvec.ndim()   == 3       );
@@ -675,7 +676,7 @@ inline ColD Vector::assembleDofs_p(const ArrD &elemvec)
 
 // --------------------------------------- elemvec -> nodevec ---------------------------------------
 
-inline MatD Vector::assembleNode(const ArrD &elemvec)
+inline MatD Vector::assembleNode(const ArrD &elemvec) const
 {
   // check input
   assert( elemvec.ndim()   == 3       );

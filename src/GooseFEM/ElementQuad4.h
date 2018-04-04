@@ -43,15 +43,15 @@ private:
 
   // dimensions
   size_t m_nelem;               // number of elements
-  size_t m_nip;                 // number of integration positions
+  size_t m_nip;                 // number of integration points
   static const size_t m_nne=4;  // number of nodes per element
   static const size_t m_ndim=2; // number of dimensions
   // data arrays
-  ArrD   m_x;    // element vector with nodal positions [nelem, nne, ndim]
+  ArrD   m_x;    // nodal positions stored per element [nelem, nne, ndim]
   ArrD   m_w;    // weight of each integration point [nip]
   ArrD   m_xi;   // local coordinate of each integration point [nip, ndim]
-  ArrD   m_N;    // shape functions w.r.t. local coordinate [nip, nne]
-  ArrD   m_dNxi; // shape function gradients w.r.t. local coordinate [nip, nne, ndim]
+  ArrD   m_N;    // shape functions [nip, nne]
+  ArrD   m_dNxi; // shape function gradients w.r.t. local  coordinate [nip, nne, ndim]
   ArrD   m_dNx;  // shape function gradients w.r.t. global coordinate [nelem, nip, nne, ndim]
   ArrD   m_vol;  // integration point volume [nelem, nip]
 
@@ -62,63 +62,57 @@ private:
 
 public:
 
-  // constructor, integration point coordinates and weights are optional (default: Gauss)
+  // notation:
+  //    "elemmat"  -  matrices stored per element       -  ArrD  -  [nelem, nne*ndim, nne*ndim]
+  //    "elemvec"  -  nodal vectors stored per element  -  ArrD  -  [nelem, nne, ndim]
+  //    "qtensor"  -  integration point tensor          -  ArrD  -  [nelem, nip, #tensor-components]
+  //    "qscalar"  -  integration point scalar          -  ArrD  -  [nelem, nip]
+  //
+  // alias:
+  //    T2  = cppmat::cartesian2d::tensor2<double>   -  #tensor-components = 4
+  //    T2s = cppmat::cartesian2d::tensor2s<double>  -  #tensor-components = 3
+
+  // constructor: integration point coordinates and weights are optional (default: Gauss)
   Quadrature(const ArrD &x, const ArrD &xi=ArrD(), const ArrD &w=ArrD());
 
   // update the nodal positions (shape of "x" should match the earlier definition)
   void update_x(const ArrD &x);
 
   // return dimensions
-  size_t nelem();
-  size_t nne();
-  size_t ndim();
-  size_t nip();
+  size_t nelem() const; // number of elements
+  size_t nne()   const; // number of nodes per element
+  size_t ndim()  const; // number of dimension
+  size_t nip()   const; // number of integration points
 
   // dyadic product "qtensor(i,j) += dNdx(m,i) * elemvec(m,j)", its transpose and its symmetric part
-  //
-  // input : element vector            -  [nelem, nne, ndim]
-  // output: integration point tensor  -  [nelem, nip, #tensor-components]
-  //
-  // - allow template (e.g. 'cppmat::cartesian2d::tensor2<double>')
-  template<class T> ArrD gradN_vector   (const ArrD &elemvec);
-  template<class T> ArrD gradN_vector_T (const ArrD &elemvec);
-  template<class T> ArrD symGradN_vector(const ArrD &elemvec);
-  // - default template with cppmat::cartesian2d::...<double>
-  ArrD gradN_vector   (const ArrD &elemvec); // tensor2  : #tensor-components = ndim*ndim
-  ArrD gradN_vector_T (const ArrD &elemvec); // tensor2  : #tensor-components = ndim*ndim
-  ArrD symGradN_vector(const ArrD &elemvec); // tensor2s : #tensor-components = (ndim+1)*ndim/2
+  // - allow template (e.g. T2)
+  template<class T> ArrD gradN_vector   (const ArrD &elemvec) const;
+  template<class T> ArrD gradN_vector_T (const ArrD &elemvec) const;
+  template<class T> ArrD symGradN_vector(const ArrD &elemvec) const;
+  // - default template with:
+  ArrD gradN_vector   (const ArrD &elemvec) const; // T2
+  ArrD gradN_vector_T (const ArrD &elemvec) const; // T2
+  ArrD symGradN_vector(const ArrD &elemvec) const; // T2s
 
   // integral of the scalar product "elemmat(m*ndim+i,n*ndim+i) += N(m) * qscalar * N(n) * dV"
-  //
-  // input : integration point scalar  -  [nelem, nip]
-  // output: element matrix            -  [nelem, nne*ndim, nne*ndim]
-  //
-  ArrD int_N_scalar_NT_dV(const ArrD &qscalar);
+  ArrD int_N_scalar_NT_dV(const ArrD &qscalar) const;
 
   // integral of the dot product "elemvec(m,j) += dNdx(m,i) * qtensor(i,j) * dV"
-  //
-  // input : integration point tensor  -  [nelem, nip, #tensor-components]
-  // output: element vector            -  [nelem, nne, ndim]
-  //
-  // - allow template (e.g. 'cppmat::cartesian2d::tensor2<double>')
-  template<class T> ArrD int_gradN_dot_tensor2_dV(const ArrD &qtensor);
-  // - default template with cppmat::cartesian2d::...<double>
-  ArrD int_gradN_dot_tensor2_dV (const ArrD &qtensor); // tensor2 / tensor2s (automatic selection)
-  ArrD int_gradN_dot_tensor2s_dV(const ArrD &qtensor); // tensor2s
+  // - allow template (e.g. T2)
+  template<class T> ArrD int_gradN_dot_tensor2_dV(const ArrD &qtensor) const;
+  // - default template with:
+  ArrD int_gradN_dot_tensor2_dV (const ArrD &qtensor) const; // T2 / T2s (automatic selection)
+  ArrD int_gradN_dot_tensor2s_dV(const ArrD &qtensor) const; // T2s
 
   // integral of a tensor "tensor(i,j) += qtensor(i,j) * dV" (a.k.a. volume average)
-  //
-  // input : integration point tensor  -  [nelem, nip, #tensor-components]
-  // output: (element) tensor          -  [#tensor-components]
-  //
-  // - allow template (e.g. 'cppmat::cartesian2d::tensor2<double>')
-  template<class T> T int_tensor2_dV(const ArrD &qtensor);
-  template<class T> T int_tensor2_dV(const ArrD &qtensor, size_t e);
-  // - default template with cppmat::cartesian2d::...<double>
-  cppmat::cartesian2d::tensor2 <double> int_tensor2_dV (const ArrD &qtensor);           // tensor2
-  cppmat::cartesian2d::tensor2s<double> int_tensor2s_dV(const ArrD &qtensor);           // tensor2s
-  cppmat::cartesian2d::tensor2 <double> int_tensor2_dV (const ArrD &qtensor, size_t e); // tensor2
-  cppmat::cartesian2d::tensor2s<double> int_tensor2s_dV(const ArrD &qtensor, size_t e); // tensor2s
+  // - allow template (e.g. T2)
+  template<class T> T int_tensor2_dV(const ArrD &qtensor) const;
+  template<class T> T int_tensor2_dV(const ArrD &qtensor, size_t e) const;
+  // - default template with:
+  cppmat::cartesian2d::tensor2 <double> int_tensor2_dV (const ArrD &qtensor) const;           // T2
+  cppmat::cartesian2d::tensor2s<double> int_tensor2s_dV(const ArrD &qtensor) const;           // T2s
+  cppmat::cartesian2d::tensor2 <double> int_tensor2_dV (const ArrD &qtensor, size_t e) const; // T2
+  cppmat::cartesian2d::tensor2s<double> int_tensor2s_dV(const ArrD &qtensor, size_t e) const; // T2s
 
 };
 

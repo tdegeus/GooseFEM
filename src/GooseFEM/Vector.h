@@ -20,67 +20,71 @@ namespace GooseFEM {
 class Vector
 {
 private:
-  MatS   m_conn;
-  MatS   m_dofs;
-  MatS   m_part;
-  ColS   m_iip;
-  ColS   m_iiu;
 
-  size_t m_nelem;
-  size_t m_nne;
-  size_t m_nnode;
-  size_t m_ndim;
-  size_t m_ndof;
-  size_t m_nnu;
-  size_t m_nnp;
+  // information
+  MatS m_conn; // connectivity                               [nelem, nne ]
+  MatS m_dofs; // DOF-numbers per node                       [nnode, ndim]
+  MatS m_part; // DOF-numbers per node, after partitioning   [nnode, ndim]
+  ColS m_iiu;  // DOF-numbers that are unknown               [nnu]
+  ColS m_iip;  // DOF-numbers that are prescribed            [nnp]
+
+  // dimensions
+  size_t m_nelem; // number of elements
+  size_t m_nne;   // number of nodes per element
+  size_t m_nnode; // number of nodes
+  size_t m_ndim;  // number of dimensions
+  size_t m_ndof;  // number of DOFs
+  size_t m_nnu;   // number of unknown DOFs
+  size_t m_nnp;   // number of prescribed DOFs
 
 public:
+
+  // notation:
+  //    "nodevec"   -  nodal vectors                     -  MatD  -  [nnode, ndim]
+  //    "elemvec"   -  nodal vectors stored per element  -  ArrD  -  [nelem, nne, ndim]
+  //    "dofval"    -  DOF values                        -  ColD  -  [ndof]
+  //    "dofval_u"  -  DOF values (Unknown)              -  ColD  -  [nnu]
+  //    "dofval_p"  -  DOF values (Prescribed)           -  ColD  -  [nnp]
+
   // constructor
   Vector(const MatS &conn, const MatS &dofs, const ColS &iip=ColS());
 
-  // return dimensions
-  size_t nelem();
-  size_t nne();
-  size_t nnode();
-  size_t ndim();
-  size_t ndof();
-  size_t nnu();
-  size_t nnp();
+  // dimensions
+  size_t nelem() const; // number of elements
+  size_t nne()   const; // number of nodes per element
+  size_t nnode() const; // number of nodes
+  size_t ndim()  const; // number of dimensions
+  size_t ndof()  const; // number of DOFs
+  size_t nnu()   const; // number of unknown DOFs
+  size_t nnp()   const; // number of prescribed DOFs
 
-  // return DOF lists
-  ColS iiu(); // unknown    DOFs
-  ColS iip(); // prescribed DOFs
+  // DOF lists
+  ColS iiu() const; // unknown    DOFs
+  ColS iip() const; // prescribed DOFs
 
-  // convert vectors; the following notation is used (unique overload from matrix-type):
-  //
-  // "nodevec"  -  nodal vectors                     -  MatD  -  [nnode, ndim]
-  // "elemvec"  -  nodal vectors stored per element  -  ArrD  -  [nelem, nne, ndim]
-  // "dofval"   -  DOF values                        -  ColD  -  [ndof]
-  // "dofvalU"  -  DOF values (Unknown)              -  ColD  -  [nnu]
-  // "dofvalP"  -  DOF values (Prescribed)           -  ColD  -  [nnp]
-  //
-  ColD asDofs   (const ColD &dofvalU, const ColD &dofvalP); // "dofval"   ->  "dofval"
-  ColD asDofs   (const MatD &nodevec                     ); // "nodevec"  ->  "dofval"
-  ColD asDofs   (const ArrD &elemvec                     ); // "elemvec"  ->  "dofval"
-  ColD asDofs_u (const MatD &nodevec                     ); // "nodevec"  ->  "dofvalU"
-  ColD asDofs_u (const ArrD &elemvec                     ); // "elemvec"  ->  "dofvalU"
-  ColD asDofs_p (const MatD &nodevec                     ); // "nodevec"  ->  "dofvalP"
-  ColD asDofs_p (const ArrD &elemvec                     ); // "elemvec"  ->  "dofvalP"
-  MatD asNode   (const ColD &dofval                      ); // "dofval"   ->  "nodevec"
-  MatD asNode   (const ColD &dofvalU, const ColD &dofvalP); // "dofval"   ->  "nodevec"
-  MatD asNode   (const ArrD &elemvec                     ); // "elemvec"  ->  "nodevec"
-  ArrD asElement(const ColD &dofval                      ); // "dofval"   ->  "elemvec"
-  ArrD asElement(const ColD &dofvalU, const ColD &dofvalP); // "dofval"   ->  "elemvec"
-  ArrD asElement(const MatD &nodevec                     ); // "nodevec"  ->  "elemvec"
+  // convert vectors
+  ColD asDofs   (const ColD &dofval_u, const ColD &dofval_p) const; // "dofval"   ->  "dofval"
+  ColD asDofs   (const MatD &nodevec                       ) const; // "nodevec"  ->  "dofval"
+  ColD asDofs   (const ArrD &elemvec                       ) const; // "elemvec"  ->  "dofval"
+  ColD asDofs_u (const MatD &nodevec                       ) const; // "nodevec"  ->  "dofval_u"
+  ColD asDofs_u (const ArrD &elemvec                       ) const; // "elemvec"  ->  "dofval_u"
+  ColD asDofs_p (const MatD &nodevec                       ) const; // "nodevec"  ->  "dofval_p"
+  ColD asDofs_p (const ArrD &elemvec                       ) const; // "elemvec"  ->  "dofval_p"
+  MatD asNode   (const ColD &dofval                        ) const; // "dofval"   ->  "nodevec"
+  MatD asNode   (const ColD &dofval_u, const ColD &dofval_p) const; // "dofval"   ->  "nodevec"
+  MatD asNode   (const ArrD &elemvec                       ) const; // "elemvec"  ->  "nodevec"
+  ArrD asElement(const ColD &dofval                        ) const; // "dofval"   ->  "elemvec"
+  ArrD asElement(const ColD &dofval_u, const ColD &dofval_p) const; // "dofval"   ->  "elemvec"
+  ArrD asElement(const MatD &nodevec                       ) const; // "nodevec"  ->  "elemvec"
 
   // assemble vectors (see notation and overload above)
-  ColD assembleDofs  (const MatD &nodevec); // "nodevec"  ->  "dofval"
-  ColD assembleDofs  (const ArrD &elemvec); // "elemvec"  ->  "dofval"
-  ColD assembleDofs_u(const MatD &nodevec); // "nodevec"  ->  "dofval"
-  ColD assembleDofs_u(const ArrD &elemvec); // "elemvec"  ->  "dofval"
-  ColD assembleDofs_p(const MatD &nodevec); // "nodevec"  ->  "dofval"
-  ColD assembleDofs_p(const ArrD &elemvec); // "elemvec"  ->  "dofval"
-  MatD assembleNode  (const ArrD &elemvec); // "elemvec"  ->  "nodevec"
+  ColD assembleDofs  (const MatD &nodevec) const; // "nodevec"  ->  "dofval"
+  ColD assembleDofs  (const ArrD &elemvec) const; // "elemvec"  ->  "dofval"
+  ColD assembleDofs_u(const MatD &nodevec) const; // "nodevec"  ->  "dofval"
+  ColD assembleDofs_u(const ArrD &elemvec) const; // "elemvec"  ->  "dofval"
+  ColD assembleDofs_p(const MatD &nodevec) const; // "nodevec"  ->  "dofval"
+  ColD assembleDofs_p(const ArrD &elemvec) const; // "elemvec"  ->  "dofval"
+  MatD assembleNode  (const ArrD &elemvec) const; // "elemvec"  ->  "nodevec"
 
 };
 
