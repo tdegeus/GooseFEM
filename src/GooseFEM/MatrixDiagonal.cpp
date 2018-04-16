@@ -284,6 +284,28 @@ inline void DiagonalMatrix::assemble(const ArrD &elemmat)
 
 // ------------------------------------- solve: Mat * u = rhs --------------------------------------
 
+inline ColD DiagonalMatrix::solve(const ColD &rhs, const ColD &u_p) const
+{
+  // suppress warning
+  UNUSED(u_p);
+
+  // check input
+  assert( m_init == true );
+  assert( static_cast<size_t>(u_p.size()) == m_nnp );
+  assert( static_cast<size_t>(rhs.size()) == m_ndof);
+
+  // solve
+  ColD u = m_inv.cwiseProduct(rhs);
+
+  // set prescribed DOFs
+  for ( size_t i = 0 ; i < m_nnp ; ++i )
+    u(m_iip(i)) = u_p(i);
+
+  return u;
+}
+
+// ------------------------------------- solve: Mat * u = rhs --------------------------------------
+
 inline ColD DiagonalMatrix::solve_u(const ColD &rhs_u, const ColD &u_p) const
 {
   // suppress warning
@@ -303,28 +325,6 @@ inline ColD DiagonalMatrix::solve_u(const ColD &rhs_u, const ColD &u_p) const
     u_u(i) = m_inv(m_iiu(i)) * rhs_u(i);
 
   return u_u;
-}
-
-// ------------------------------------- solve: Mat * u = rhs --------------------------------------
-
-inline ColD DiagonalMatrix::solve(const ColD &rhs, const ColD &u_p) const
-{
-  // suppress warning
-  UNUSED(u_p);
-
-  // check input
-  assert( m_init == true );
-  assert( static_cast<size_t>(u_p.size()) == m_nnp );
-  assert( static_cast<size_t>(rhs.size()) == m_ndof);
-
-  // solve
-  ColD u = m_inv.cwiseProduct(rhs);
-
-  // set prescribed DOFs
-  for ( size_t i = 0 ; i < m_nnp ; ++i )
-    u(m_iip(i)) = u_p(i);
-
-  return u;
 }
 
 // ----------------------------------- return as diagonal matrix -----------------------------------

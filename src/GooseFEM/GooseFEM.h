@@ -86,10 +86,10 @@ namespace GooseFEM
 #include "MatrixDiagonal.cpp"
 
 
-#include "DynamicsDiagonal.h"
-#include "OverdampedDynamicsDiagonal.h"
-#include "DynamicsDiagonal.cpp"
-#include "OverdampedDynamicsDiagonal.cpp"
+// #include "DynamicsDiagonal.h"
+// #include "OverdampedDynamicsDiagonal.h"
+// #include "DynamicsDiagonal.cpp"
+// #include "OverdampedDynamicsDiagonal.cpp"
 
 // =================================================================================================
 

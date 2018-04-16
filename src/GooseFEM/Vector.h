@@ -62,29 +62,29 @@ public:
   ColS iiu() const; // unknown    DOFs
   ColS iip() const; // prescribed DOFs
 
-  // convert vectors
-  ColD asDofs   (const ColD &dofval_u, const ColD &dofval_p) const; // "dofval"   ->  "dofval"
-  ColD asDofs   (const MatD &nodevec                       ) const; // "nodevec"  ->  "dofval"
-  ColD asDofs   (const ArrD &elemvec                       ) const; // "elemvec"  ->  "dofval"
-  ColD asDofs_u (const MatD &nodevec                       ) const; // "nodevec"  ->  "dofval_u"
-  ColD asDofs_u (const ArrD &elemvec                       ) const; // "elemvec"  ->  "dofval_u"
-  ColD asDofs_p (const MatD &nodevec                       ) const; // "nodevec"  ->  "dofval_p"
-  ColD asDofs_p (const ArrD &elemvec                       ) const; // "elemvec"  ->  "dofval_p"
-  MatD asNode   (const ColD &dofval                        ) const; // "dofval"   ->  "nodevec"
-  MatD asNode   (const ColD &dofval_u, const ColD &dofval_p) const; // "dofval"   ->  "nodevec"
-  MatD asNode   (const ArrD &elemvec                       ) const; // "elemvec"  ->  "nodevec"
-  ArrD asElement(const ColD &dofval                        ) const; // "dofval"   ->  "elemvec"
-  ArrD asElement(const ColD &dofval_u, const ColD &dofval_p) const; // "dofval"   ->  "elemvec"
-  ArrD asElement(const MatD &nodevec                       ) const; // "nodevec"  ->  "elemvec"
+  // convert vectors (overwrite entries that occur more that once)
+  ColD asDofs   (const ColD &dofval_u, const ColD &dofval_p) const;
+  ColD asDofs   (const MatD &nodevec                       ) const;
+  ColD asDofs   (const ArrD &elemvec                       ) const;
+  ColD asDofs_u (const MatD &nodevec                       ) const;
+  ColD asDofs_u (const ArrD &elemvec                       ) const;
+  ColD asDofs_p (const MatD &nodevec                       ) const;
+  ColD asDofs_p (const ArrD &elemvec                       ) const;
+  MatD asNode   (const ColD &dofval                        ) const;
+  MatD asNode   (const ColD &dofval_u, const ColD &dofval_p) const;
+  MatD asNode   (const ArrD &elemvec                       ) const;
+  ArrD asElement(const ColD &dofval                        ) const;
+  ArrD asElement(const ColD &dofval_u, const ColD &dofval_p) const;
+  ArrD asElement(const MatD &nodevec                       ) const;
 
-  // assemble vectors (see notation and overload above)
-  ColD assembleDofs  (const MatD &nodevec) const; // "nodevec"  ->  "dofval"
-  ColD assembleDofs  (const ArrD &elemvec) const; // "elemvec"  ->  "dofval"
-  ColD assembleDofs_u(const MatD &nodevec) const; // "nodevec"  ->  "dofval"
-  ColD assembleDofs_u(const ArrD &elemvec) const; // "elemvec"  ->  "dofval"
-  ColD assembleDofs_p(const MatD &nodevec) const; // "nodevec"  ->  "dofval"
-  ColD assembleDofs_p(const ArrD &elemvec) const; // "elemvec"  ->  "dofval"
-  MatD assembleNode  (const ArrD &elemvec) const; // "elemvec"  ->  "nodevec"
+  // assemble vectors (adds entries that occur more that once)
+  ColD assembleDofs  (const MatD &nodevec) const;
+  ColD assembleDofs  (const ArrD &elemvec) const;
+  ColD assembleDofs_u(const MatD &nodevec) const;
+  ColD assembleDofs_u(const ArrD &elemvec) const;
+  ColD assembleDofs_p(const MatD &nodevec) const;
+  ColD assembleDofs_p(const ArrD &elemvec) const;
+  MatD assembleNode  (const ArrD &elemvec) const;
 
 };
 
