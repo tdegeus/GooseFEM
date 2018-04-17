@@ -18,7 +18,7 @@ namespace Element {
 
 // -------------------------------------------------------------------------------------------------
 
-ArrD asElementVector(const MatS &conn, const MatD &nodevec)
+inline ArrD asElementVector(const MatS &conn, const MatD &nodevec)
 {
   // extract dimensions
   size_t nelem = static_cast<size_t>(conn   .rows());
@@ -40,7 +40,7 @@ ArrD asElementVector(const MatS &conn, const MatD &nodevec)
 
 // -------------------------------------------------------------------------------------------------
 
-MatD assembleNodeVector(const MatS &conn, const ArrD &elemvec)
+inline MatD assembleNodeVector(const MatS &conn, const ArrD &elemvec)
 {
   // check input
   assert( elemvec.ndim() == 3 ); // nodal vector stored per element [nelem, nne, ndim]

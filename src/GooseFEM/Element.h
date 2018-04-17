@@ -19,10 +19,10 @@ namespace Element {
 // -------------------------------------------------------------------------------------------------
 
 // convert nodal vector [nnode, ndim] to nodal vector stored per element [nelem, nne, ndim]
-ArrD asElementVector(const MatS &conn, const MatD &nodevec);
+inline ArrD asElementVector(const MatS &conn, const MatD &nodevec);
 
 // assemble nodal vector stored per element [nelem, nne, ndim] to nodal vector [nnode, ndim]
-MatD assembleNodeVector(const MatS &conn, const ArrD &elemvec);
+inline MatD assembleNodeVector(const MatS &conn, const ArrD &elemvec);
 
 // -------------------------------------------------------------------------------------------------
 

@@ -20,17 +20,17 @@ namespace Quad4 {
 // ================================ GooseFEM::Element::Quad4::Gauss ================================
 
 namespace Gauss {
-size_t nip();         // number of integration points
-ArrD   coordinates(); // integration point coordinates (local coordinates)
-ArrD   weights();     // integration point weights
+inline size_t nip();         // number of integration points
+inline ArrD   coordinates(); // integration point coordinates (local coordinates)
+inline ArrD   weights();     // integration point weights
 }
 
 // ================================ GooseFEM::Element::Quad4::Nodal ================================
 
 namespace Nodal {
-size_t nip();         // number of integration points
-ArrD   coordinates(); // integration point coordinates (local coordinates)
-ArrD   weights();     // integration point weights
+inline size_t nip();         // number of integration points
+inline ArrD   coordinates(); // integration point coordinates (local coordinates)
+inline ArrD   weights();     // integration point weights
 }
 
 // =================================================================================================

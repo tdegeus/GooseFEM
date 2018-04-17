@@ -17,7 +17,7 @@ namespace GooseFEM {
 
 // ------------------------------------------ constructor ------------------------------------------
 
-inline DiagonalMatrix::DiagonalMatrix(const MatS &conn, const MatS &dofs, const ColS &iip) :
+inline MatrixDiagonal::MatrixDiagonal(const MatS &conn, const MatS &dofs, const ColS &iip) :
 m_conn(conn), m_dofs(dofs), m_iip(iip)
 {
   // extract mesh dimensions
@@ -52,87 +52,139 @@ m_conn(conn), m_dofs(dofs), m_iip(iip)
         m_iiu(m_part(n,i)) = m_dofs(n,i);
 
   // allocate matrix and its inverse
-  m_mat.conservativeResize(m_ndof);
-  m_inv.conservativeResize(m_ndof);
+  m_data.conservativeResize(m_ndof);
+  m_inv .conservativeResize(m_ndof);
+}
+
+// ---------------------------------------- index operator -----------------------------------------
+
+inline double& MatrixDiagonal::operator[](size_t i)
+{
+  m_change = true;
+
+  return m_data[i];
+}
+
+// ---------------------------------------- index operator -----------------------------------------
+
+inline const double& MatrixDiagonal::operator[](size_t i) const
+{
+  return m_data[i];
+}
+
+// ---------------------------------------- index operator -----------------------------------------
+
+inline double& MatrixDiagonal::operator()(size_t a)
+{
+  m_change = true;
+
+  return m_data[a];
+}
+
+// ---------------------------------------- index operator -----------------------------------------
+
+inline const double& MatrixDiagonal::operator()(size_t a) const
+{
+  return m_data[a];
+}
+
+// ---------------------------------------- index operator -----------------------------------------
+
+inline double& MatrixDiagonal::operator()(size_t a, size_t b)
+{
+  assert( a == b );
+
+  m_change = true;
+
+  return m_data[a];
+}
+
+// ---------------------------------------- index operator -----------------------------------------
+
+inline const double& MatrixDiagonal::operator()(size_t a, size_t b) const
+{
+  assert( a == b );
+
+  return m_data[a];
 }
 
 // -------------------------------------- number of elements ---------------------------------------
 
-inline size_t DiagonalMatrix::nelem() const
+inline size_t MatrixDiagonal::nelem() const
 {
   return m_nelem;
 }
 
 // ---------------------------------- number of nodes per element ----------------------------------
 
-inline size_t DiagonalMatrix::nne() const
+inline size_t MatrixDiagonal::nne() const
 {
   return m_nne;
 }
 
 // ---------------------------------------- number of nodes ----------------------------------------
 
-inline size_t DiagonalMatrix::nnode() const
+inline size_t MatrixDiagonal::nnode() const
 {
   return m_nnode;
 }
 
 // ------------------------------------- number of dimensions --------------------------------------
 
-inline size_t DiagonalMatrix::ndim() const
+inline size_t MatrixDiagonal::ndim() const
 {
   return m_ndim;
 }
 
 // ---------------------------------------- number of DOFs -----------------------------------------
 
-inline size_t DiagonalMatrix::ndof() const
+inline size_t MatrixDiagonal::ndof() const
 {
   return m_ndof;
 }
 
 // ------------------------------------ number of unknown DOFs -------------------------------------
 
-inline size_t DiagonalMatrix::nnu() const
+inline size_t MatrixDiagonal::nnu() const
 {
   return m_nnu;
 }
 
 // ----------------------------------- number of prescribed DOFs -----------------------------------
 
-inline size_t DiagonalMatrix::nnp() const
+inline size_t MatrixDiagonal::nnp() const
 {
   return m_nnp;
 }
 
 // -------------------------------------- return unknown DOFs --------------------------------------
 
-inline ColS DiagonalMatrix::iiu() const
+inline ColS MatrixDiagonal::iiu() const
 {
   return m_iiu;
 }
 
 // ------------------------------------ return prescribed DOFs -------------------------------------
 
-inline ColS DiagonalMatrix::iip() const
+inline ColS MatrixDiagonal::iip() const
 {
   return m_iip;
 }
 
 // --------------------------------------- c_i = A_ij * b_j ----------------------------------------
 
-inline ColD DiagonalMatrix::dot(const ColD &b) const
+inline ColD MatrixDiagonal::dot(const ColD &b) const
 {
   // check input
   assert( static_cast<size_t>(b.size()) == m_ndof );
 
   // compute product
-  return m_mat.cwiseProduct(b);
+  return m_data.cwiseProduct(b);
 }
 
 // --------------------------------------- c_i = A_ij * b_j ----------------------------------------
 
-inline ColD DiagonalMatrix::dot_u(const ColD &b) const
+inline ColD MatrixDiagonal::dot_u(const ColD &b) const
 {
   // check input
   assert( static_cast<size_t>(b.size()) == m_ndof );
@@ -143,14 +195,14 @@ inline ColD DiagonalMatrix::dot_u(const ColD &b) const
   // compute product
   #pragma omp parallel for
   for ( size_t i = 0 ; i < m_nnu ; ++i )
-    c_u(i) = m_mat(m_iiu(i)) * b(m_iiu(i));
+    c_u(i) = m_data(m_iiu(i)) * b(m_iiu(i));
 
   return c_u;
 }
 
 // --------------------------------------- c_i = A_ij * b_j ----------------------------------------
 
-inline ColD DiagonalMatrix::dot_u(const ColD &b_u, const ColD &b_p) const
+inline ColD MatrixDiagonal::dot_u(const ColD &b_u, const ColD &b_p) const
 {
   // suppress warning
   UNUSED(b_p);
@@ -165,14 +217,14 @@ inline ColD DiagonalMatrix::dot_u(const ColD &b_u, const ColD &b_p) const
   // compute product
   #pragma omp parallel for
   for ( size_t i = 0 ; i < m_nnu ; ++i )
-    c_u(i) = m_mat(m_iiu(i)) * b_u(i);
+    c_u(i) = m_data(m_iiu(i)) * b_u(i);
 
   return c_u;
 }
 
 // --------------------------------------- c_i = A_ij * b_j ----------------------------------------
 
-inline ColD DiagonalMatrix::dot_p(const ColD &b) const
+inline ColD MatrixDiagonal::dot_p(const ColD &b) const
 {
   // check input
   assert( static_cast<size_t>(b.size()) == m_ndof );
@@ -183,14 +235,14 @@ inline ColD DiagonalMatrix::dot_p(const ColD &b) const
   // compute product
   #pragma omp parallel for
   for ( size_t i = 0 ; i < m_nnp ; ++i )
-    c_p(i) = m_mat(m_iip(i)) * b(m_iip(i));
+    c_p(i) = m_data(m_iip(i)) * b(m_iip(i));
 
   return c_p;
 }
 
 // --------------------------------------- c_i = A_ij * b_j ----------------------------------------
 
-inline ColD DiagonalMatrix::dot_p(const ColD &b_u, const ColD &b_p) const
+inline ColD MatrixDiagonal::dot_p(const ColD &b_u, const ColD &b_p) const
 {
   // suppress warning
   UNUSED(b_u);
@@ -205,14 +257,14 @@ inline ColD DiagonalMatrix::dot_p(const ColD &b_u, const ColD &b_p) const
   // compute product
   #pragma omp parallel for
   for ( size_t i = 0 ; i < m_nnp ; ++i )
-    c_p(i) = m_mat(m_iip(i)) * b_p(i);
+    c_p(i) = m_data(m_iip(i)) * b_p(i);
 
   return c_p;
 }
 
 // ------------------------ check structure of matrices stored per element -------------------------
 
-inline void DiagonalMatrix::check_diagonal(const ArrD &elemmat) const
+inline void MatrixDiagonal::check_diagonal(const ArrD &elemmat) const
 {
   // check input
   assert( elemmat.ndim()   == 3            );
@@ -237,7 +289,7 @@ inline void DiagonalMatrix::check_diagonal(const ArrD &elemmat) const
 
 // ----------------------------- assemble matrices stored per element ------------------------------
 
-inline void DiagonalMatrix::assemble(const ArrD &elemmat)
+inline void MatrixDiagonal::assemble(const ArrD &elemmat)
 {
   // check input
   assert( elemmat.ndim()   == 3            );
@@ -246,7 +298,7 @@ inline void DiagonalMatrix::assemble(const ArrD &elemmat)
   assert( elemmat.shape(2) == m_nne*m_ndim );
 
   // zero-initialize matrix
-  m_mat.setZero();
+  m_data.setZero();
 
   // temporarily disable parallelization by Eigen
   Eigen::setNbThreads(1);
@@ -269,30 +321,32 @@ inline void DiagonalMatrix::assemble(const ArrD &elemmat)
 
     // - reduce: combine result obtained on the different threads
     #pragma omp critical
-      m_mat += t_mat;
+      m_data += t_mat;
   }
 
   // reset automatic parallelization by Eigen
   Eigen::setNbThreads(0);
 
-  // compute the inverse, to solve (elsewhere)
-  m_inv = m_mat.cwiseInverse();
-
-  // checks
-  m_init = true;
+  // signal change
+  m_change = true;
 }
 
 // ------------------------------------- solve: Mat * u = rhs --------------------------------------
 
-inline ColD DiagonalMatrix::solve(const ColD &rhs, const ColD &u_p) const
+inline ColD MatrixDiagonal::solve(const ColD &rhs, const ColD &u_p)
 {
   // suppress warning
   UNUSED(u_p);
 
   // check input
-  assert( m_init == true );
   assert( static_cast<size_t>(u_p.size()) == m_nnp );
   assert( static_cast<size_t>(rhs.size()) == m_ndof);
+
+  // invert if needed
+  if ( m_change ) m_inv = m_data.cwiseInverse();
+
+  // reset signal
+  m_change = false;
 
   // solve
   ColD u = m_inv.cwiseProduct(rhs);
@@ -306,15 +360,20 @@ inline ColD DiagonalMatrix::solve(const ColD &rhs, const ColD &u_p) const
 
 // ------------------------------------- solve: Mat * u = rhs --------------------------------------
 
-inline ColD DiagonalMatrix::solve_u(const ColD &rhs_u, const ColD &u_p) const
+inline ColD MatrixDiagonal::solve_u(const ColD &rhs_u, const ColD &u_p)
 {
   // suppress warning
   UNUSED(u_p);
 
   // check input
-  assert( m_init == true );
   assert( static_cast<size_t>(u_p  .size()) == m_nnp );
   assert( static_cast<size_t>(rhs_u.size()) == m_nnu );
+
+  // invert if needed
+  if ( m_change ) m_inv = m_data.cwiseInverse();
+
+  // reset signal
+  m_change = false;
 
   // allocate output
   ColD u_u(m_nnu);
@@ -329,14 +388,14 @@ inline ColD DiagonalMatrix::solve_u(const ColD &rhs_u, const ColD &u_p) const
 
 // ----------------------------------- return as diagonal matrix -----------------------------------
 
-inline ColD DiagonalMatrix::asDiagonal() const
+inline ColD MatrixDiagonal::asDiagonal() const
 {
-  return m_mat;
+  return m_data;
 }
 
 // --------------------------------------- c_i = A_ij * b_j ----------------------------------------
 
-inline ColD operator* (const DiagonalMatrix &A, const ColD &b)
+inline ColD operator* (const MatrixDiagonal &A, const ColD &b)
 {
   return A.dot(b);
 }

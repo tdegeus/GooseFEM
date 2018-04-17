@@ -90,7 +90,7 @@ py::class_<GooseFEM::Vector>(m, "Vector")
 
 // ============================= GooseFEM - GooseFEM/MatrixDiagonal.h ==============================
 
-py::class_<GooseFEM::DiagonalMatrix>(m, "DiagonalMatrix")
+py::class_<GooseFEM::MatrixDiagonal>(m, "MatrixDiagonal")
   // constructor
   .def(
     py::init<cMatS &, cMatS &, cColS &>(),
@@ -100,48 +100,48 @@ py::class_<GooseFEM::DiagonalMatrix>(m, "DiagonalMatrix")
     py::arg("iip")=GooseFEM::ColS()
   )
   // methods
-  .def("nelem", &M::DiagonalMatrix::nelem)
-  .def("nne"  , &M::DiagonalMatrix::nne  )
-  .def("nnode", &M::DiagonalMatrix::nnode)
-  .def("ndim" , &M::DiagonalMatrix::ndim )
-  .def("ndof" , &M::DiagonalMatrix::ndof )
-  .def("nnu"  , &M::DiagonalMatrix::nnu  )
-  .def("nnp"  , &M::DiagonalMatrix::nnp  )
+  .def("nelem", &M::MatrixDiagonal::nelem)
+  .def("nne"  , &M::MatrixDiagonal::nne  )
+  .def("nnode", &M::MatrixDiagonal::nnode)
+  .def("ndim" , &M::MatrixDiagonal::ndim )
+  .def("ndof" , &M::MatrixDiagonal::ndof )
+  .def("nnu"  , &M::MatrixDiagonal::nnu  )
+  .def("nnp"  , &M::MatrixDiagonal::nnp  )
   // -
-  .def("iiu"  , &M::DiagonalMatrix::iiu  )
-  .def("iip"  , &M::DiagonalMatrix::iip  )
+  .def("iiu"  , &M::MatrixDiagonal::iiu  )
+  .def("iip"  , &M::MatrixDiagonal::iip  )
   // -
-  .def("dot"  ,                                  &M::DiagonalMatrix::dot               )
-  .def("dot_u", py::overload_cast<cColD&       >(&M::DiagonalMatrix::dot_u, py::const_))
-  .def("dot_u", py::overload_cast<cColD&,cColD&>(&M::DiagonalMatrix::dot_u, py::const_))
-  .def("dot_p", py::overload_cast<cColD&       >(&M::DiagonalMatrix::dot_p, py::const_))
-  .def("dot_p", py::overload_cast<cColD&,cColD&>(&M::DiagonalMatrix::dot_p, py::const_))
+  .def("dot"  ,                                  &M::MatrixDiagonal::dot               )
+  .def("dot_u", py::overload_cast<cColD&       >(&M::MatrixDiagonal::dot_u, py::const_))
+  .def("dot_u", py::overload_cast<cColD&,cColD&>(&M::MatrixDiagonal::dot_u, py::const_))
+  .def("dot_p", py::overload_cast<cColD&       >(&M::MatrixDiagonal::dot_p, py::const_))
+  .def("dot_p", py::overload_cast<cColD&,cColD&>(&M::MatrixDiagonal::dot_p, py::const_))
   // -
-  .def("check_diagonal", &M::DiagonalMatrix::check_diagonal)
-  .def("assemble"      , &M::DiagonalMatrix::assemble      )
-  // .def("set"           , &M::DiagonalMatrix::set           )
-  // .def("set_uu"        , &M::DiagonalMatrix::set_uu        )
-  // .def("set_pp"        , &M::DiagonalMatrix::set_pp        )
-  .def("solve"         , &M::DiagonalMatrix::solve         )
-  .def("solve_u"       , &M::DiagonalMatrix::solve_u       )
-  // .def("rhs_p"         , &M::DiagonalMatrix::rhs_p         )
-  .def("asDiagonal"    , &M::DiagonalMatrix::asDiagonal    )
-  // .def("asDiagonal_uu" , &M::DiagonalMatrix::asDiagonal_uu )
-  // .def("asDiagonal_pp" , &M::DiagonalMatrix::asDiagonal_pp )
-  // .def("asSparse"      , &M::DiagonalMatrix::asSparse      )
-  // .def("asSparse_uu"   , &M::DiagonalMatrix::asSparse_uu   )
-  // .def("asSparse_up"   , &M::DiagonalMatrix::asSparse_up   )
-  // .def("asSparse_pu"   , &M::DiagonalMatrix::asSparse_pu   )
-  // .def("asSparse_pp"   , &M::DiagonalMatrix::asSparse_pp   )
-  // .def("asDense"       , &M::DiagonalMatrix::asDense       )
-  // .def("asDense_uu"    , &M::DiagonalMatrix::asDense_uu    )
-  // .def("asDense_up"    , &M::DiagonalMatrix::asDense_up    )
-  // .def("asDense_pu"    , &M::DiagonalMatrix::asDense_pu    )
-  // .def("asDense_pp"    , &M::DiagonalMatrix::asDense_pp    )
+  .def("check_diagonal", &M::MatrixDiagonal::check_diagonal)
+  .def("assemble"      , &M::MatrixDiagonal::assemble      )
+  // .def("set"           , &M::MatrixDiagonal::set           )
+  // .def("set_uu"        , &M::MatrixDiagonal::set_uu        )
+  // .def("set_pp"        , &M::MatrixDiagonal::set_pp        )
+  .def("solve"         , &M::MatrixDiagonal::solve, "Solve", py::arg("rhs"), py::arg("u_p")=ColD())
+  .def("solve_u"       , &M::MatrixDiagonal::solve_u       )
+  // .def("rhs_p"         , &M::MatrixDiagonal::rhs_p         )
+  .def("asDiagonal"    , &M::MatrixDiagonal::asDiagonal    )
+  // .def("asDiagonal_uu" , &M::MatrixDiagonal::asDiagonal_uu )
+  // .def("asDiagonal_pp" , &M::MatrixDiagonal::asDiagonal_pp )
+  // .def("asSparse"      , &M::MatrixDiagonal::asSparse      )
+  // .def("asSparse_uu"   , &M::MatrixDiagonal::asSparse_uu   )
+  // .def("asSparse_up"   , &M::MatrixDiagonal::asSparse_up   )
+  // .def("asSparse_pu"   , &M::MatrixDiagonal::asSparse_pu   )
+  // .def("asSparse_pp"   , &M::MatrixDiagonal::asSparse_pp   )
+  // .def("asDense"       , &M::MatrixDiagonal::asDense       )
+  // .def("asDense_uu"    , &M::MatrixDiagonal::asDense_uu    )
+  // .def("asDense_up"    , &M::MatrixDiagonal::asDense_up    )
+  // .def("asDense_pu"    , &M::MatrixDiagonal::asDense_pu    )
+  // .def("asDense_pp"    , &M::MatrixDiagonal::asDense_pp    )
 
   // print to screen
   .def("__repr__",
-    [](const GooseFEM::DiagonalMatrix &a){ return "<GooseFEM.DiagonalMatrix>"; }
+    [](const GooseFEM::MatrixDiagonal &a){ return "<GooseFEM.MatrixDiagonal>"; }
   );
 
 // ============================ GooseFEM::Element - GooseFEM/Element.h =============================

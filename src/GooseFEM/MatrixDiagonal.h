@@ -17,13 +17,14 @@ namespace GooseFEM {
 
 // -------------------------------------------------------------------------------------------------
 
-class DiagonalMatrix
+class MatrixDiagonal
 {
 private:
 
   // data
-  ColD m_mat; // the diagonal matrix (not-partitioned)
-  ColD m_inv; // inverse of "m_mat", can be re-used to solve different right-hand-sides
+  ColD m_data;          // the diagonal matrix (not-partitioned)
+  ColD m_inv;           // inverse of "m_data", can be re-used to solve different right-hand-sides
+  bool m_change=false;  // signal changes to data compare to the last inverse
 
   // information
   MatS m_conn; // connectivity                               [nelem, nne ]
@@ -41,13 +42,20 @@ private:
   size_t m_nnu;   // number of unknown DOFs
   size_t m_nnp;   // number of prescribed DOFs
 
-  // checks
-  bool m_init=false; // "true" only if the matrix has been assembled at least once
-
 public:
 
   // constructor
-  DiagonalMatrix(const MatS &conn, const MatS &dofs, const ColS &iip=ColS());
+  MatrixDiagonal(const MatS &conn, const MatS &dofs, const ColS &iip=ColS());
+
+  // index operators: access plain storage
+  double&       operator[](size_t i);
+  const double& operator[](size_t i) const;
+
+  // index operators: access using matrix indices
+  double&       operator()(size_t a);
+  const double& operator()(size_t a) const;
+  double&       operator()(size_t a, size_t b);
+  const double& operator()(size_t a, size_t b) const;
 
   // dimensions
   size_t nelem() const; // number of elements
@@ -83,8 +91,8 @@ public:
 
   // solve
   // ("u_p" is useless as all cross-terms are zero, it is here for aesthetics)
-  ColD solve  (const ColD &rhs, const ColD &u_p=ColS()) const; // [ndof] -> [ndof]
-  ColD solve_u(const ColD &rhs, const ColD &u_p=ColS()) const; // [nnu]  -> [nnu]
+  ColD solve  (const ColD &rhs  , const ColD &u_p=ColD()); // [ndof] -> [ndof]
+  ColD solve_u(const ColD &rhs_u, const ColD &u_p=ColD()); // [nnu]  -> [nnu]
 
   // get the right-hand-side of prescribed DOFs: [nnu], [nnp] -> [nnp]
   // ("u_u" is useless as all cross-terms are zero, it is here for aesthetics)
@@ -114,7 +122,7 @@ public:
 // -------------------------------------------------------------------------------------------------
 
 // matrix/column product: '[ndof,ndof]' * [ndof] -> [ndof]
-inline ColD operator* (const DiagonalMatrix &A, const ColD &b);
+inline ColD operator* (const MatrixDiagonal &A, const ColD &b);
 
 // -------------------------------------------------------------------------------------------------
 

@@ -273,7 +273,7 @@ inline ColD Vector::asDofs_p(const ArrD &elemvec) const
 inline MatD Vector::asNode(const ColD &dofval) const
 {
   // check input
-  assert( dofval.size() == m_ndof );
+  assert( static_cast<size_t>(dofval.size()) == m_ndof );
 
   // allocate output
   MatD nodevec(m_nnode, m_ndim);
@@ -292,8 +292,8 @@ inline MatD Vector::asNode(const ColD &dofval) const
 inline MatD Vector::asNode(const ColD &dofval_u, const ColD &dofval_p) const
 {
   // check input
-  assert( dofval_u.size() == m_nnu );
-  assert( dofval_p.size() == m_nnp );
+  assert( static_cast<size_t>(dofval_u.size()) == m_nnu );
+  assert( static_cast<size_t>(dofval_p.size()) == m_nnp );
 
   // allocate output
   MatD nodevec(m_nnode, m_ndim);

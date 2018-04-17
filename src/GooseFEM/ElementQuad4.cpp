@@ -23,14 +23,14 @@ namespace Gauss {
 
 // --------------------------------- number of integration points ----------------------------------
 
-size_t nip()
+inline size_t nip()
 {
   return 4;
 }
 
 // ----------------------- integration point coordinates (local coordinates) -----------------------
 
-ArrD coordinates()
+inline ArrD coordinates()
 {
   size_t nip  = 4;
   size_t ndim = 2;
@@ -47,7 +47,7 @@ ArrD coordinates()
 
 // ----------------------------------- integration point weights -----------------------------------
 
-ArrD weights()
+inline ArrD weights()
 {
   size_t nip = 4;
 
@@ -71,14 +71,14 @@ namespace Nodal {
 
 // --------------------------------- number of integration points ----------------------------------
 
-size_t nip()
+inline size_t nip()
 {
   return 4;
 }
 
 // ----------------------- integration point coordinates (local coordinates) -----------------------
 
-ArrD coordinates()
+inline ArrD coordinates()
 {
   size_t nip  = 4;
   size_t ndim = 2;
@@ -95,7 +95,7 @@ ArrD coordinates()
 
 // ----------------------------------- integration point weights -----------------------------------
 
-ArrD weights()
+inline ArrD weights()
 {
   size_t nip = 4;
 
