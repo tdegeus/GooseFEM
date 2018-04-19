@@ -86,6 +86,10 @@ public:
   size_t ndim()  const; // number of dimension
   size_t nip()   const; // number of integration points
 
+  // return integration volume (per tensor-component)
+  ArrD dV() const;
+  ArrD dV(size_t ncomp) const;
+
   // dyadic product "qtensor(i,j) += dNdx(m,i) * elemvec(m,j)", its transpose and its symmetric part
   // - allow template (e.g. vT2)
   template<class T> ArrD gradN_vector   (const ArrD &elemvec) const;
@@ -105,16 +109,6 @@ public:
   // - default template with:
   ArrD int_gradN_dot_tensor2_dV (const ArrD &qtensor) const; // vT2 / vT2s (automatic selection)
   ArrD int_gradN_dot_tensor2s_dV(const ArrD &qtensor) const; // vT2s
-
-  // integral of a tensor "tensor(i,j) += qtensor(i,j) * dV" (a.k.a. volume average)
-  // - allow template (e.g. T2)
-  template<class T> T int_tensor2_dV(const ArrD &qtensor) const;
-  template<class T> T int_tensor2_dV(const ArrD &qtensor, size_t e) const;
-  // - default template with:
-  cppmat::cartesian2d::tensor2 <double> int_tensor2_dV (const ArrD &qtensor) const;           // T2
-  cppmat::cartesian2d::tensor2s<double> int_tensor2s_dV(const ArrD &qtensor) const;           // T2s
-  cppmat::cartesian2d::tensor2 <double> int_tensor2_dV (const ArrD &qtensor, size_t e) const; // T2
-  cppmat::cartesian2d::tensor2s<double> int_tensor2s_dV(const ArrD &qtensor, size_t e) const; // T2s
 
 };
 

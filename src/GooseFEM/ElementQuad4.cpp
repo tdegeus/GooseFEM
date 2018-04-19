@@ -186,6 +186,28 @@ inline Quadrature::Quadrature(const ArrD &x, const ArrD &xi, const ArrD &w)
   compute_dN();
 }
 
+// -------------------------------------- integration volume ---------------------------------------
+
+inline ArrD Quadrature::dV() const
+{
+  return m_vol;
+}
+
+// ---------------------------- integration volume per tensor-component ----------------------------
+
+inline ArrD Quadrature::dV(size_t ncomp) const
+{
+  ArrD out({m_nelem, m_nip, ncomp});
+
+  #pragma omp parallel for
+  for ( size_t e = 0 ; e < m_nelem ; ++e )
+    for ( size_t k = 0 ; k < m_nip ; ++k )
+      for ( size_t i = 0 ; i < ncomp ; ++i )
+        out(e,k,i) = m_vol(e,k);
+
+  return out;
+}
+
 // -------------------------------------- number of elements ---------------------------------------
 
 inline size_t Quadrature::nelem() const
@@ -577,94 +599,6 @@ inline ArrD Quadrature::int_gradN_dot_tensor2_dV(const ArrD &qtensor) const
   return elemvec;
 }
 
-// -------------------------- element integral of tensor (volume average) --------------------------
-
-template<class T>
-inline T Quadrature::int_tensor2_dV(const ArrD &qtensor, size_t e) const
-{
-  #ifndef NDEBUG
-  // dummy variable
-  T dummytensor;
-
-  // check input
-  assert( qtensor.ndim()   == 3                  ); // shape: [nelem, nip, #tensor-components]
-  assert( qtensor.shape(0) == m_nelem            ); // number of elements
-  assert( qtensor.shape(1) == m_nip              ); // number of integration points
-  assert( qtensor.shape(2) == dummytensor.size() ); // tensor dimensions
-  #endif
-
-  // intermediate quantities and local views
-  double vol, VOL;
-  T sig, SIG;
-
-  // zero-initialize
-  SIG.setZero();
-  VOL = 0.0;
-
-  // loop over all integration points in element "e"
-  for ( size_t k = 0 ; k < m_nip ; ++k )
-  {
-    // - alias integration point volume
-    vol = m_vol(e,k);
-
-    // - copy integration point tensor (e.g. stress)
-    std::copy(qtensor.item(e,k), qtensor.item(e,k)+sig.size(), sig.begin());
-
-    // - add to average
-    SIG += vol * sig;
-    VOL += vol;
-  }
-
-  // return volume average
-  return SIG / VOL;
-}
-
-// ------------------------------ integral of tensor (volume average) ------------------------------
-
-template<class T>
-inline T Quadrature::int_tensor2_dV(const ArrD &qtensor) const
-{
-  #ifndef NDEBUG
-  // dummy variable
-  T tmp;
-
-  // check input
-  assert( qtensor.ndim()   == 3          ); // shape: [nelem, nip, #tensor-components]
-  assert( qtensor.shape(0) == m_nelem    ); // number of elements
-  assert( qtensor.shape(1) == m_nip      ); // number of integration points
-  assert( qtensor.shape(2) == tmp.size() ); // tensor dimensions
-  #endif
-
-  // intermediate quantities and local views
-  double vol, VOL;
-  T sig, SIG;
-
-  // zero-initialize
-  SIG.setZero();
-  VOL = 0.0;
-
-  // loop over all elements
-  for ( size_t e = 0 ; e < m_nelem ; ++e )
-  {
-    // loop over all integration points in element "e"
-    for ( size_t k = 0 ; k < m_nip ; ++k )
-    {
-      // - alias integration point volume
-      vol = m_vol(e,k);
-
-      // - copy integration point tensor (e.g. stress)
-      std::copy(qtensor.item(e,k), qtensor.item(e,k)+sig.size(), sig.begin());
-
-      // - add to average
-      SIG += vol * sig;
-      VOL += vol;
-    }
-  }
-
-  // return volume average
-  return SIG / VOL;
-}
-
 // ---------------------- wrappers with default storage (no template needed) -----------------------
 
 inline ArrD Quadrature::gradN_vector(const ArrD &elemvec) const
@@ -705,37 +639,6 @@ inline ArrD Quadrature::int_gradN_dot_tensor2_dV(const ArrD &qtensor) const
 inline ArrD Quadrature::int_gradN_dot_tensor2s_dV(const ArrD &qtensor) const
 {
   return int_gradN_dot_tensor2_dV<cppmat::view::cartesian2d::tensor2s<double>>(qtensor);
-}
-
-// -------------------------------------------------------------------------------------------------
-
-inline cppmat::cartesian2d::tensor2<double> Quadrature::int_tensor2_dV(
-  const ArrD &qtensor, size_t e) const
-{
-  return int_tensor2_dV<cppmat::cartesian2d::tensor2<double>>(qtensor,e);
-}
-
-// -------------------------------------------------------------------------------------------------
-
-inline cppmat::cartesian2d::tensor2s<double> Quadrature::int_tensor2s_dV(
-  const ArrD &qtensor, size_t e) const
-{
-  return int_tensor2_dV<cppmat::cartesian2d::tensor2s<double>>(qtensor,e);
-}
-
-// -------------------------------------------------------------------------------------------------
-
-inline cppmat::cartesian2d::tensor2<double> Quadrature::int_tensor2_dV(const ArrD &qtensor) const
-{
-  return int_tensor2_dV<cppmat::cartesian2d::tensor2<double>>(qtensor);
-}
-
-
-// -------------------------------------------------------------------------------------------------
-
-inline cppmat::cartesian2d::tensor2s<double> Quadrature::int_tensor2s_dV(const ArrD &qtensor) const
-{
-  return int_tensor2_dV<cppmat::cartesian2d::tensor2s<double>>(qtensor);
 }
 
 // -------------------------------------------------------------------------------------------------

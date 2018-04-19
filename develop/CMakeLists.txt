@@ -49,4 +49,5 @@ add_executable(${PROJECT_NAME}
   main.cpp
   Vector.cpp
   MatrixDiagonal.cpp
+  ElementQuad4.cpp
 )
