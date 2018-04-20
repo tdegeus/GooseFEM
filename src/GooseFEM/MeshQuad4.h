@@ -35,9 +35,10 @@ public:
   Regular(size_t nelx, size_t nely, double h=1.);
   // sizes
   size_t nelem() const;                   // number of elements
-  size_t nnode() const;                   // number of nodes
   size_t nne() const;                     // number of nodes-per-element
   size_t ndim() const;                    // number of dimensions
+  size_t nnode() const;                   // number of nodes
+  size_t nnodePeriodic() const;           // number of nodes, after elimination of periodicity
   // mesh
   MatD   coor() const;                    // nodal positions [nnode ,ndim]
   MatS   conn() const;                    // connectivity    [nelem ,nne ]

@@ -36,13 +36,6 @@ inline size_t Regular::nelem() const
   return m_nelem;
 }
 
-// ---------------------------------------- number of nodes ----------------------------------------
-
-inline size_t Regular::nnode() const
-{
-  return m_nnode;
-}
-
 // ---------------------------------- number of nodes per element ----------------------------------
 
 inline size_t Regular::nne() const
@@ -55,6 +48,22 @@ inline size_t Regular::nne() const
 inline size_t Regular::ndim() const
 {
   return m_ndim;
+}
+
+
+// ---------------------------------------- number of nodes ----------------------------------------
+
+inline size_t Regular::nnode() const
+{
+  return m_nnode;
+}
+
+
+// ------------------------ number of nodes, after eliminating periodicity -------------------------
+
+inline size_t Regular::nnodePeriodic() const
+{
+  return (m_nelx+1) * (m_nely+1) - (m_nely+1) - (m_nelx);
 }
 
 // --------------------------------- coordinates (nodal positions) ---------------------------------

@@ -75,6 +75,7 @@ namespace GooseFEM
 #include "ElementQuad4.h"
 #include "Vector.h"
 #include "MatrixDiagonal.h"
+#include "Iterate.h"
 
 #include "Mesh.cpp"
 #include "MeshTri3.cpp"
@@ -84,6 +85,7 @@ namespace GooseFEM
 #include "ElementQuad4.cpp"
 #include "Vector.cpp"
 #include "MatrixDiagonal.cpp"
+#include "Iterate.cpp"
 
 
 // #include "DynamicsDiagonal.h"

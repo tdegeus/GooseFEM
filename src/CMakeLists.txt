@@ -18,6 +18,8 @@ set(headers
   GooseFEM/Vector.h
   GooseFEM/MatrixDiagonal.cpp
   GooseFEM/MatrixDiagonal.h
+  GooseFEM/Iterate.cpp
+  GooseFEM/Iterate.h
   GooseFEM/Element.cpp
   GooseFEM/Element.h
   GooseFEM/ElementQuad4.cpp
