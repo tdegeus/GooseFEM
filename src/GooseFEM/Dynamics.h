@@ -53,6 +53,9 @@ public:
 // -------------------------------------------------------------------------------------------------
 
 // evaluate one time step
+inline void Verlet(Geometry &geometry, double dt);
+
+// evaluate one time step
 inline void velocityVerlet(Geometry &geometry, double dt);
 
 // iterate until all nodes have come to a rest

@@ -18,44 +18,71 @@ namespace Dynamics {
 
 // -------------------------------------------------------------------------------------------------
 
-inline void velocityVerlet(Geometry &g, double dt)
+inline void Verlet(Geometry &g, double dt)
 {
-  // local variables and history
+  // history
+
   ColD V;
   ColD A;
   ColD V_n = g.dofs_v();
   ColD A_n = g.dofs_a();
 
-  // (1) new positions
+  // new displacement
+
   g.set_u( g.u() + dt * g.v() + 0.5 * std::pow(dt,2.) * g.a() );
 
-  // (2a) estimate new velocity
-  // - new velocity
-  V = V_n + dt * A_n;
-  // - update particles
-  g.set_v(V);
-  // - solve for accelerations
-  A = g.solve();
-  // - new velocity
-  V = V_n + .5 * dt * ( A_n + A );
-  // - update particles
-  g.set_v(V);
+  // new acceleration
 
-  // (2b) new velocity
-  // - solve for accelerations
   A = g.solve();
-  // - new velocity
-  V = V_n + .5 * dt * ( A_n + A );
-  // - update particles
-  g.set_v(V);
 
-  // (3) new accelerations
-  // - solve for accelerations
+  g.set_a( A );
+
+  // new velocity
+
+  g.set_v( V_n + .5 * dt * ( A_n + A ) );
+
+  // finalize
+
+  g.timestep(dt);
+}
+
+// -------------------------------------------------------------------------------------------------
+
+inline void velocityVerlet(Geometry &g, double dt)
+{
+  // history
+
+  ColD V;
+  ColD A;
+  ColD V_n = g.dofs_v();
+  ColD A_n = g.dofs_a();
+
+  // new displacement
+
+  g.set_u( g.u() + dt * g.v() + 0.5 * std::pow(dt,2.) * g.a() );
+
+  // estimate new velocity
+
+  g.set_v( V_n + dt * A_n );
+
   A = g.solve();
-  // - update particles
+
+  g.set_v( V_n + .5 * dt * ( A_n + A ) );
+
+  // new velocity
+
+  A = g.solve();
+
+  g.set_v( V_n + .5 * dt * ( A_n + A ) );
+
+  // new acceleration
+
+  A = g.solve();
+
   g.set_a(A);
 
-  // process time-step
+  // finalize
+
   g.timestep(dt);
 }
 
