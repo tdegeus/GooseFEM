@@ -19,18 +19,18 @@ TEST_CASE("GooseFEM::Iterate", "Iterate.h")
 
 SECTION( "StopList" )
 {
-  GooseFEM::Iterate::StopList stop(1.e-3, 5);
+  GooseFEM::Iterate::StopList stop(5);
 
-  REQUIRE( stop.stop(5.e+0) == false );
-  REQUIRE( stop.stop(5.e+1) == false );
-  REQUIRE( stop.stop(5.e-1) == false );
-  REQUIRE( stop.stop(5.e-2) == false );
-  REQUIRE( stop.stop(5.e-3) == false );
-  REQUIRE( stop.stop(5.e-4) == false );
-  REQUIRE( stop.stop(5.e-4) == false );
-  REQUIRE( stop.stop(5.e-4) == false );
-  REQUIRE( stop.stop(5.e-4) == false );
-  REQUIRE( stop.stop(5.e-4) == true  );
+  REQUIRE( stop.stop(5.e+0, 1.e-3) == false );
+  REQUIRE( stop.stop(5.e+1, 1.e-3) == false );
+  REQUIRE( stop.stop(5.e-1, 1.e-3) == false );
+  REQUIRE( stop.stop(5.e-2, 1.e-3) == false );
+  REQUIRE( stop.stop(5.e-3, 1.e-3) == false );
+  REQUIRE( stop.stop(5.e-4, 1.e-3) == false );
+  REQUIRE( stop.stop(5.e-4, 1.e-3) == false );
+  REQUIRE( stop.stop(5.e-4, 1.e-3) == false );
+  REQUIRE( stop.stop(5.e-4, 1.e-3) == false );
+  REQUIRE( stop.stop(5.e-4, 1.e-3) == true  );
 }
 
 // =================================================================================================

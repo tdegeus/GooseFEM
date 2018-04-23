@@ -30,7 +30,6 @@ m_conn(conn), m_dofs(dofs), m_iip(iip)
   m_nnu   = m_ndof - m_nnp;
 
   // check consistency
-  // TODO: make more complete: it is also assumed that DOFs and iiu/iip have no missing numbers
   assert( m_conn.maxCoeff() + 1 == m_nnode );
   assert( m_ndof <= m_nnode * m_ndim );
 
@@ -123,8 +122,8 @@ inline ColD Vector::asDofs(const ColD &dofval_u, const ColD &dofval_p) const
   assert( static_cast<size_t>(dofval_u.size()) == m_nnu );
   assert( static_cast<size_t>(dofval_p.size()) == m_nnp );
 
-  // allocate output
-  ColD dofval(m_ndof);
+  // zero-initialize output
+  ColD dofval = ColD::Zero(m_ndof);
 
   // apply conversion
   #pragma omp parallel for
@@ -143,8 +142,8 @@ inline ColD Vector::asDofs(const MatD &nodevec) const
   assert( static_cast<size_t>(nodevec.rows()) == m_nnode );
   assert( static_cast<size_t>(nodevec.cols()) == m_ndim  );
 
-  // allocate output
-  ColD dofval(m_ndof);
+  // zero-initialize output
+  ColD dofval = ColD::Zero(m_ndof);
 
   // apply conversion
   #pragma omp for
@@ -163,8 +162,8 @@ inline ColD Vector::asDofs_u(const MatD &nodevec) const
   assert( static_cast<size_t>(nodevec.rows()) == m_nnode );
   assert( static_cast<size_t>(nodevec.cols()) == m_ndim  );
 
-  // allocate output
-  ColD dofval(m_nnu);
+  // zero-initialize output
+  ColD dofval = ColD::Zero(m_nnu);
 
   // apply conversion
   #pragma omp for
@@ -184,8 +183,8 @@ inline ColD Vector::asDofs_p(const MatD &nodevec) const
   assert( static_cast<size_t>(nodevec.rows()) == m_nnode );
   assert( static_cast<size_t>(nodevec.cols()) == m_ndim  );
 
-  // allocate output
-  ColD dofval(m_nnp);
+  // zero-initialize output
+  ColD dofval = ColD::Zero(m_nnp);
 
   // apply conversion
   #pragma omp for
@@ -207,8 +206,8 @@ inline ColD Vector::asDofs(const ArrD &elemvec) const
   assert( elemvec.shape(1) == m_nne   );
   assert( elemvec.shape(2) == m_ndim  );
 
-  // allocate output
-  ColD dofval(m_ndof);
+  // zero-initialize output
+  ColD dofval = ColD::Zero(m_ndof);
 
   // apply conversion
   #pragma omp for
@@ -230,8 +229,8 @@ inline ColD Vector::asDofs_u(const ArrD &elemvec) const
   assert( elemvec.shape(1) == m_nne   );
   assert( elemvec.shape(2) == m_ndim  );
 
-  // allocate output
-  ColD dofval(m_nnu);
+  // zero-initialize output
+  ColD dofval = ColD::Zero(m_nnu);
 
   // apply conversion
   #pragma omp for
@@ -254,8 +253,8 @@ inline ColD Vector::asDofs_p(const ArrD &elemvec) const
   assert( elemvec.shape(1) == m_nne   );
   assert( elemvec.shape(2) == m_ndim  );
 
-  // allocate output
-  ColD dofval(m_nnp);
+  // zero-initialize output
+  ColD dofval = ColD::Zero(m_nnp);
 
   // apply conversion
   #pragma omp for
@@ -275,8 +274,8 @@ inline MatD Vector::asNode(const ColD &dofval) const
   // check input
   assert( static_cast<size_t>(dofval.size()) == m_ndof );
 
-  // allocate output
-  MatD nodevec(m_nnode, m_ndim);
+  // zero-initialize output
+  MatD nodevec = MatD::Zero(m_nnode, m_ndim);
 
   // apply conversion
   #pragma omp for
@@ -295,8 +294,8 @@ inline MatD Vector::asNode(const ColD &dofval_u, const ColD &dofval_p) const
   assert( static_cast<size_t>(dofval_u.size()) == m_nnu );
   assert( static_cast<size_t>(dofval_p.size()) == m_nnp );
 
-  // allocate output
-  MatD nodevec(m_nnode, m_ndim);
+  // zero-initialize output
+  MatD nodevec = MatD::Zero(m_nnode, m_ndim);
 
   // apply conversion
   #pragma omp for
@@ -322,8 +321,8 @@ inline MatD Vector::asNode(const ArrD &elemvec) const
   assert( elemvec.shape(1) == m_nne   );
   assert( elemvec.shape(2) == m_ndim  );
 
-  // allocate output
-  MatD nodevec(m_nnode, m_ndim);
+  // zero-initialize output
+  MatD nodevec = MatD::Zero(m_nnode, m_ndim);
 
   // apply conversion
   #pragma omp for
@@ -342,8 +341,8 @@ inline ArrD Vector::asElement(const ColD &dofval) const
   // check input
   assert( static_cast<size_t>(dofval.size()) == m_ndof );
 
-  // allocate output: nodal vectors stored per element
-  ArrD elemvec({m_nelem, m_nne, m_ndim});
+  // zero-initialize output: nodal vectors stored per element
+  ArrD elemvec = ArrD::Zero({m_nelem, m_nne, m_ndim});
 
   // read from nodal vectors
   #pragma omp parallel for
@@ -363,8 +362,8 @@ inline ArrD Vector::asElement(const ColD &dofval_u, const ColD &dofval_p) const
   assert( static_cast<size_t>(dofval_u.size()) == m_nnu );
   assert( static_cast<size_t>(dofval_p.size()) == m_nnp );
 
-  // allocate output: nodal vectors stored per element
-  ArrD elemvec({m_nelem, m_nne, m_ndim});
+  // zero-initialize output: nodal vectors stored per element
+  ArrD elemvec = ArrD::Zero({m_nelem, m_nne, m_ndim});
 
   // read from nodal vectors
   #pragma omp parallel for
@@ -390,8 +389,8 @@ inline ArrD Vector::asElement(const MatD &nodevec) const
   assert( static_cast<size_t>(nodevec.rows()) == m_nnode );
   assert( static_cast<size_t>(nodevec.cols()) == m_ndim  );
 
-  // allocate output: nodal vectors stored per element
-  ArrD elemvec({m_nelem, m_nne, m_ndim});
+  // zero-initialize output: nodal vectors stored per element
+  ArrD elemvec = ArrD::Zero({m_nelem, m_nne, m_ndim});
 
   // read from nodal vectors
   #pragma omp parallel for
@@ -411,31 +410,25 @@ inline ColD Vector::assembleDofs(const MatD &nodevec) const
   assert( static_cast<size_t>(nodevec.rows()) == m_nnode );
   assert( static_cast<size_t>(nodevec.cols()) == m_ndim  );
 
-  // allocate output
-  ColD dofval(m_ndof);
-
   // zero-initialize output
-  dofval.setZero();
+  ColD dofval = ColD::Zero(m_ndof);
 
   // temporarily disable parallelization by Eigen
   Eigen::setNbThreads(1);
 
-  // start threads
+  // start threads (all variables declared in this scope are local to each thread)
   #pragma omp parallel
   {
-    // - per thread; allocate output
-    ColD t_dofval(m_ndof);
+    // zero-initialize output
+    ColD t_dofval = ColD::Zero(m_ndof);
 
-    // - per thread; zero-initialize output
-    t_dofval.setZero();
-
-    // - per thread; assemble
+    // assemble
     #pragma omp for
     for ( size_t n = 0 ; n < m_nnode ; ++n )
       for ( size_t i = 0 ; i < m_ndim ; ++i )
         t_dofval(m_dofs(n,i)) += nodevec(n,i);
 
-    // - reduce: combine result obtained on the different threads
+    // reduce: combine result obtained on the different threads
     #pragma omp critical
       dofval += t_dofval;
   }
@@ -454,32 +447,26 @@ inline ColD Vector::assembleDofs_u(const MatD &nodevec) const
   assert( static_cast<size_t>(nodevec.rows()) == m_nnode );
   assert( static_cast<size_t>(nodevec.cols()) == m_ndim  );
 
-  // allocate output
-  ColD dofval(m_nnu);
-
   // zero-initialize output
-  dofval.setZero();
+  ColD dofval = ColD::Zero(m_nnu);
 
   // temporarily disable parallelization by Eigen
   Eigen::setNbThreads(1);
 
-  // start threads
+  // start threads (all variables declared in this scope are local to each thread)
   #pragma omp parallel
   {
-    // - per thread; allocate output
-    ColD t_dofval(m_nnu);
+    // zero-initialize output
+    ColD t_dofval = ColD::Zero(m_nnu);
 
-    // - per thread; zero-initialize output
-    t_dofval.setZero();
-
-    // - per thread; assemble
+    // assemble
     #pragma omp for
     for ( size_t n = 0 ; n < m_nnode ; ++n )
       for ( size_t i = 0 ; i < m_ndim ; ++i )
         if ( m_part(n,i) < m_nnu )
           t_dofval(m_part(n,i)) += nodevec(n,i);
 
-    // - reduce: combine result obtained on the different threads
+    // reduce: combine result obtained on the different threads
     #pragma omp critical
       dofval += t_dofval;
   }
@@ -498,32 +485,26 @@ inline ColD Vector::assembleDofs_p(const MatD &nodevec) const
   assert( static_cast<size_t>(nodevec.rows()) == m_nnode );
   assert( static_cast<size_t>(nodevec.cols()) == m_ndim  );
 
-  // allocate output
-  ColD dofval(m_nnp);
-
   // zero-initialize output
-  dofval.setZero();
+  ColD dofval = ColD::Zero(m_nnp);
 
   // temporarily disable parallelization by Eigen
   Eigen::setNbThreads(1);
 
-  // start threads
+  // start threads (all variables declared in this scope are local to each thread)
   #pragma omp parallel
   {
-    // - per thread; allocate output
-    ColD t_dofval(m_nnp);
+    // zero-initialize output
+    ColD t_dofval = ColD::Zero(m_nnp);
 
-    // - per thread; zero-initialize output
-    t_dofval.setZero();
-
-    // - per thread; assemble
+    // assemble
     #pragma omp for
     for ( size_t n = 0 ; n < m_nnode ; ++n )
       for ( size_t i = 0 ; i < m_ndim ; ++i )
         if ( m_part(n,i) >= m_nnu )
           t_dofval(m_part(n,i)-m_nnu) += nodevec(n,i);
 
-    // - reduce: combine result obtained on the different threads
+    // reduce: combine result obtained on the different threads
     #pragma omp critical
       dofval += t_dofval;
   }
@@ -544,32 +525,26 @@ inline ColD Vector::assembleDofs(const ArrD &elemvec) const
   assert( elemvec.shape(1) == m_nne   );
   assert( elemvec.shape(2) == m_ndim  );
 
-  // allocate output
-  ColD dofval(m_ndof);
-
   // zero-initialize output
-  dofval.setZero();
+  ColD dofval = ColD::Zero(m_ndof);
 
   // temporarily disable parallelization by Eigen
   Eigen::setNbThreads(1);
 
-  // start threads
+  // start threads (all variables declared in this scope are local to each thread)
   #pragma omp parallel
   {
-    // - per thread; allocate output
-    ColD t_dofval(m_ndof);
+    // zero-initialize output
+    ColD t_dofval = ColD::Zero(m_ndof);
 
-    // - per thread; zero-initialize output
-    t_dofval.setZero();
-
-    // - per thread; assemble
+    // assemble
     #pragma omp for
     for ( size_t e = 0 ; e < m_nelem ; ++e )
       for ( size_t m = 0 ; m < m_nne ; ++m )
         for ( size_t i = 0 ; i < m_ndim ; ++i )
           t_dofval(m_dofs(m_conn(e,m),i)) += elemvec(e,m,i);
 
-    // - reduce: combine result obtained on the different threads
+    // reduce: combine result obtained on the different threads
     #pragma omp critical
       dofval += t_dofval;
   }
@@ -590,25 +565,19 @@ inline ColD Vector::assembleDofs_u(const ArrD &elemvec) const
   assert( elemvec.shape(1) == m_nne   );
   assert( elemvec.shape(2) == m_ndim  );
 
-  // allocate output
-  ColD dofval(m_nnu);
-
   // zero-initialize output
-  dofval.setZero();
+  ColD dofval = ColD::Zero(m_nnu);
 
   // temporarily disable parallelization by Eigen
   Eigen::setNbThreads(1);
 
-  // start threads
+  // start threads (all variables declared in this scope are local to each thread)
   #pragma omp parallel
   {
-    // - per thread; allocate output
-    ColD t_dofval(m_nnu);
+    // zero-initialize output
+    ColD t_dofval = ColD::Zero(m_nnu);
 
-    // - per thread; zero-initialize output
-    t_dofval.setZero();
-
-    // - per thread; assemble
+    // assemble
     #pragma omp for
     for ( size_t e = 0 ; e < m_nelem ; ++e )
       for ( size_t m = 0 ; m < m_nne ; ++m )
@@ -616,7 +585,7 @@ inline ColD Vector::assembleDofs_u(const ArrD &elemvec) const
           if ( m_part(m_conn(e,m),i) < m_nnu )
             t_dofval(m_dofs(m_conn(e,m),i)) += elemvec(e,m,i);
 
-    // - reduce: combine result obtained on the different threads
+    // reduce: combine result obtained on the different threads
     #pragma omp critical
       dofval += t_dofval;
   }
@@ -637,25 +606,19 @@ inline ColD Vector::assembleDofs_p(const ArrD &elemvec) const
   assert( elemvec.shape(1) == m_nne   );
   assert( elemvec.shape(2) == m_ndim  );
 
-  // allocate output
-  ColD dofval(m_nnp);
-
   // zero-initialize output
-  dofval.setZero();
+  ColD dofval = ColD::Zero(m_nnp);
 
   // temporarily disable parallelization by Eigen
   Eigen::setNbThreads(1);
 
-  // start threads
+  // start threads (all variables declared in this scope are local to each thread)
   #pragma omp parallel
   {
-    // - per thread; allocate output
-    ColD t_dofval(m_nnp);
+    // zero-initialize output
+    ColD t_dofval = ColD::Zero(m_nnp);
 
-    // - per thread; zero-initialize output
-    t_dofval.setZero();
-
-    // - per thread; assemble
+    // assemble
     #pragma omp for
     for ( size_t e = 0 ; e < m_nelem ; ++e )
       for ( size_t m = 0 ; m < m_nne ; ++m )
@@ -663,7 +626,7 @@ inline ColD Vector::assembleDofs_p(const ArrD &elemvec) const
           if ( m_part(m_conn(e,m),i) >= m_nnu )
             t_dofval(m_dofs(m_conn(e,m),i)-m_nnu) += elemvec(e,m,i);
 
-    // - reduce: combine result obtained on the different threads
+    // reduce: combine result obtained on the different threads
     #pragma omp critical
       dofval += t_dofval;
   }
@@ -684,32 +647,26 @@ inline MatD Vector::assembleNode(const ArrD &elemvec) const
   assert( elemvec.shape(1) == m_nne   );
   assert( elemvec.shape(2) == m_ndim  );
 
-  // allocate output
-  MatD nodevec(m_nnode, m_ndim);
-
   // zero-initialize output
-  nodevec.setZero();
+  MatD nodevec = MatD::Zero(m_nnode, m_ndim);
 
   // temporarily disable parallelization by Eigen
   Eigen::setNbThreads(1);
 
-  // start threads
+  // start threads (all variables declared in this scope are local to each thread)
   #pragma omp parallel
   {
-    // - per thread; allocate output
-    MatD t_nodevec(m_nnode, m_ndim);
+    // zero-initialize output
+    MatD t_nodevec = MatD::Zero(m_nnode, m_ndim);
 
-    // - per thread; zero-initialize output
-    t_nodevec.setZero();
-
-    // - per thread; assemble
+    // assemble
     #pragma omp for
     for ( size_t e = 0 ; e < m_nelem ; ++e )
       for ( size_t m = 0 ; m < m_nne ; ++m )
         for ( size_t i = 0 ; i < m_ndim ; ++i )
           t_nodevec(m_conn(e,m),i) += elemvec(e,m,i);
 
-    // - reduce: combine result obtained on the different threads
+    // reduce: combine result obtained on the different threads
     #pragma omp critical
       nodevec += t_nodevec;
   }

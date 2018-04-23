@@ -14,16 +14,6 @@ project(GooseFEM)
 # list of header files
 set(headers
   GooseFEM/GooseFEM.h
-  GooseFEM/Vector.cpp
-  GooseFEM/Vector.h
-  GooseFEM/MatrixDiagonal.cpp
-  GooseFEM/MatrixDiagonal.h
-  GooseFEM/Iterate.cpp
-  GooseFEM/Iterate.h
-  GooseFEM/Element.cpp
-  GooseFEM/Element.h
-  GooseFEM/ElementQuad4.cpp
-  GooseFEM/ElementQuad4.h
   GooseFEM/Mesh.cpp
   GooseFEM/Mesh.h
   GooseFEM/MeshTri3.cpp
@@ -32,6 +22,18 @@ set(headers
   GooseFEM/MeshQuad4.h
   GooseFEM/MeshHex8.cpp
   GooseFEM/MeshHex8.h
+  GooseFEM/Element.cpp
+  GooseFEM/Element.h
+  GooseFEM/ElementQuad4.cpp
+  GooseFEM/ElementQuad4.h
+  GooseFEM/Vector.cpp
+  GooseFEM/Vector.h
+  GooseFEM/MatrixDiagonal.cpp
+  GooseFEM/MatrixDiagonal.h
+  GooseFEM/Iterate.cpp
+  GooseFEM/Iterate.h
+  GooseFEM/Dynamics.cpp
+  GooseFEM/Dynamics.h
 )
 
 # options

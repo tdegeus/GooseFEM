@@ -25,17 +25,17 @@ private:
   // list with residuals
   std::vector<double> m_res;
 
-  // stopping criterion
-  double m_norm;
-
 public:
 
   // constructors
-  StopList(){};
-  StopList(double norm, size_t n=1);
+  StopList(size_t n=1);
 
-  // update list of norms, return true if all norms are below the tolerance
-  bool stop(double res);
+  // reset all residuals to infinity (and change the number of residuals to check)
+  void reset();
+  void reset(size_t n);
+
+  // update list of residuals, return true if all residuals are below the tolerance
+  bool stop(double res, double tol);
 
 };
 

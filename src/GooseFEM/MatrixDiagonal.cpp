@@ -30,7 +30,6 @@ m_conn(conn), m_dofs(dofs), m_iip(iip)
   m_nnu   = m_ndof - m_nnp;
 
   // check consistency
-  // TODO: make more complete: it is also assumed that DOFs and iiu/iip have no missing numbers
   assert( m_conn.maxCoeff() + 1 == m_nnode );
   assert( m_ndof <= m_nnode * m_ndim );
 
@@ -303,23 +302,20 @@ inline void MatrixDiagonal::assemble(const ArrD &elemmat)
   // temporarily disable parallelization by Eigen
   Eigen::setNbThreads(1);
 
-  // start threads
+  // start threads (all variables declared in this scope are local to each thread)
   #pragma omp parallel
   {
-    // - per thread; allocate matrix
-    ColD t_mat(m_ndof);
+    // zero-initialize matrix
+    ColD t_mat = ColD::Zero(m_ndof);
 
-    // - per thread; zero-initialize matrix
-    t_mat.setZero();
-
-    // - per thread; assemble
+    // assemble
     #pragma omp for
     for ( size_t e = 0 ; e < m_nelem ; ++e )
       for ( size_t m = 0 ; m < m_nne ; ++m )
         for ( size_t i = 0 ; i < m_ndim ; ++i )
           t_mat(m_dofs(m_conn(e,m),i)) += elemmat(e,m*m_ndim+i,m*m_ndim+i);
 
-    // - reduce: combine result obtained on the different threads
+    // reduce: combine result obtained on the different threads
     #pragma omp critical
       m_data += t_mat;
   }
@@ -339,8 +335,8 @@ inline ColD MatrixDiagonal::solve(const ColD &rhs, const ColD &u_p)
   UNUSED(u_p);
 
   // check input
-  assert( static_cast<size_t>(u_p.size()) == m_nnp );
-  assert( static_cast<size_t>(rhs.size()) == m_ndof);
+  assert( static_cast<size_t>(u_p.size()) == m_nnp  );
+  assert( static_cast<size_t>(rhs.size()) == m_ndof );
 
   // invert if needed
   if ( m_change ) m_inv = m_data.cwiseInverse();

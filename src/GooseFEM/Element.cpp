@@ -26,7 +26,7 @@ inline ArrD asElementVector(const MatS &conn, const MatD &nodevec)
   size_t ndim  = static_cast<size_t>(nodevec.cols());
 
   // allocate output: nodal vectors stored per element
-  ArrD elemvec({nelem, nne, ndim});
+  ArrD elemvec = ArrD::Zero({nelem, nne, ndim});
 
   // read from nodal vectors
   #pragma omp parallel for
@@ -55,32 +55,26 @@ inline MatD assembleNodeVector(const MatS &conn, const ArrD &elemvec)
   assert( elemvec.shape(0) == nelem );
   assert( elemvec.shape(1) == nne   );
 
-  // allocate output: nodal vectors
-  MatD nodevec(nnode, ndim);
-
-  // zero-initialize output
-  nodevec.setZero();
+  // zero-initialize output: nodal vectors
+  MatD nodevec = MatD::Zero(nnode, ndim);
 
   // temporarily disable parallelization by Eigen
   Eigen::setNbThreads(1);
 
-  // start threads
+  // start threads (all variables declared in this scope are local to each thread)
   #pragma omp parallel
   {
-    // - per thread; allocate output: nodal vectors
-    MatD t_nodevec(nnode, ndim);
+    // zero-initialize output: nodal vectors
+    MatD t_nodevec = MatD::Zero(nnode, ndim);
 
-    // - per thread; zero-initialize output
-    t_nodevec.setZero();
-
-    // - per thread; assemble from nodal vectors stored per element
+    // assemble from nodal vectors stored per element
     #pragma omp for
     for ( size_t e = 0 ; e < nelem ; ++e )
       for ( size_t m = 0 ; m < nne ; ++m )
         for ( size_t i = 0 ; i < ndim ; ++i )
           t_nodevec(conn(e,m),i) += elemvec(e,m,i);
 
-    // - reduce: combine result obtained on the different threads
+    // reduce: combine result obtained on the different threads
     #pragma omp critical
       nodevec += t_nodevec;
   }

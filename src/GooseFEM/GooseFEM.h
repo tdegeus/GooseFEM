@@ -76,6 +76,7 @@ namespace GooseFEM
 #include "Vector.h"
 #include "MatrixDiagonal.h"
 #include "Iterate.h"
+#include "Dynamics.h"
 
 #include "Mesh.cpp"
 #include "MeshTri3.cpp"
@@ -86,12 +87,7 @@ namespace GooseFEM
 #include "Vector.cpp"
 #include "MatrixDiagonal.cpp"
 #include "Iterate.cpp"
-
-
-// #include "DynamicsDiagonal.h"
-// #include "OverdampedDynamicsDiagonal.h"
-// #include "DynamicsDiagonal.cpp"
-// #include "OverdampedDynamicsDiagonal.cpp"
+#include "Dynamics.cpp"
 
 // =================================================================================================
 

@@ -10,6 +10,8 @@
 
 #define EQ(a,b) REQUIRE_THAT( (a), Catch::WithinAbs((b), 1.e-12) );
 
+using T2s = cppmat::cartesian2d::tensor2s<double>;
+
 // =================================================================================================
 
 TEST_CASE("GooseFEM::ElementQuad4", "ElementQuad4.h")
@@ -105,7 +107,7 @@ SECTION( "symGradN_vector" )
   // - check all components
   for ( size_t e = 0 ; e < mesh.nelem() ; ++e ) {
     for ( size_t k = 0 ; k < quad.nip() ; ++k ) {
-      Eps.map(&eps(e,k));
+      Eps.setMap(&eps(e,k));
       for ( size_t i = 0 ; i < Eps.ndim() ; ++i )
         for ( size_t j = 0 ; j < Eps.ndim() ; ++j )
           EQ( Eps(i,j), EPS(i,j) );
@@ -114,7 +116,7 @@ SECTION( "symGradN_vector" )
 
   // check macroscopic tensor
   // - convert to tensor object
-  cppmat::cartesian2d::tensor2s<double> Epsbar(epsbar.begin(), epsbar.end());
+  T2s Epsbar = T2s::Copy(epsbar.begin(), epsbar.end());
   // - check all components
   for ( size_t i = 0 ; i < Epsbar.ndim() ; ++i )
     for ( size_t j = 0 ; j < Epsbar.ndim() ; ++j )
