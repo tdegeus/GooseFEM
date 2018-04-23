@@ -27,7 +27,7 @@ inline void velocityVerlet(Geometry &g, double dt)
   ColD A_n = g.dofs_a();
 
   // (1) new positions
-  g.set_x( g.x() + dt * g.v() + 0.5 * std::pow(dt,2.) * g.a() );
+  g.set_u( g.u() + dt * g.v() + 0.5 * std::pow(dt,2.) * g.a() );
 
   // (2a) estimate new velocity
   // - new velocity

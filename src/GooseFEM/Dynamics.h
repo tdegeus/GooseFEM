@@ -33,7 +33,7 @@ public:
   virtual void timestep(double dt) { UNUSED(dt); return; };
 
   // return nodal vectors [nnode, ndim]
-  virtual MatD x() const { return MatD(); };
+  virtual MatD u() const { return MatD(); };
   virtual MatD v() const { return MatD(); };
   virtual MatD a() const { return MatD(); };
 
@@ -42,7 +42,7 @@ public:
   virtual ColD dofs_a() const { return ColD(); };
 
   // overwrite nodal vectors [nnode, ndim]
-  virtual void set_x(const MatD &pvector) { UNUSED(pvector); return; };
+  virtual void set_u(const MatD &nodevec) { UNUSED(nodevec); return; };
 
   // overwrite nodal vectors, reconstructed from DOF values [ndof]
   virtual void set_v(const ColD &dofval) { UNUSED(dofval); return; };
