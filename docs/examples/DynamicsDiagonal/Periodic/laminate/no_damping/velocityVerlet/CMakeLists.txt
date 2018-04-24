@@ -55,9 +55,9 @@ include_directories(${CPPMAT_INCLUDE_DIRS})
 # - GooseFEM
 pkg_check_modules(GOOSEFEM REQUIRED GooseFEM)
 include_directories(${GOOSEFEM_INCLUDE_DIRS})
-# - GooseMaterial
-pkg_check_modules(GOOSEMATERIAL REQUIRED GooseMaterial)
-include_directories(${GOOSEMATERIAL_INCLUDE_DIRS})
+# - ElastoPlasticQPot
+pkg_check_modules(ELASTOPLASTICQPOT REQUIRED ElastoPlasticQPot)
+include_directories(${ELASTOPLASTICQPOT_INCLUDE_DIRS})
 # - HDF5pp
 pkg_check_modules(HDF5PP REQUIRED HDF5pp)
 include_directories(${HDF5PP_INCLUDE_DIRS})
