@@ -47,6 +47,7 @@ public:
   //    "dofval_p"  -  DOF values (Prescribed)           -  ColD  -  [nnp]
 
   // constructor
+  Vector(){};
   Vector(const MatS &conn, const MatS &dofs, const ColS &iip=ColS());
 
   // dimensions

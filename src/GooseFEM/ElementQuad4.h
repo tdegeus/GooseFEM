@@ -20,17 +20,17 @@ namespace Quad4 {
 // ================================ GooseFEM::Element::Quad4::Gauss ================================
 
 namespace Gauss {
-inline size_t nip();         // number of integration points
-inline ArrD   coordinates(); // integration point coordinates (local coordinates)
-inline ArrD   weights();     // integration point weights
+inline size_t nip(); // number of integration points
+inline ArrD   xi();  // integration point coordinates (local coordinates)
+inline ArrD   w();   // integration point weights
 }
 
 // ================================ GooseFEM::Element::Quad4::Nodal ================================
 
 namespace Nodal {
-inline size_t nip();         // number of integration points
-inline ArrD   coordinates(); // integration point coordinates (local coordinates)
-inline ArrD   weights();     // integration point weights
+inline size_t nip(); // number of integration points
+inline ArrD   xi();  // integration point coordinates (local coordinates)
+inline ArrD   w();   // integration point weights
 }
 
 // =================================================================================================
@@ -78,6 +78,7 @@ public:
   //    vT2s = cppmat::view::cartesian2d::tensor2s<double>  -  #tensor-components = 3
 
   // constructor: integration point coordinates and weights are optional (default: Gauss)
+  Quadrature(){};
   Quadrature(const ArrD &x, const ArrD &xi=ArrD(), const ArrD &w=ArrD());
 
   // update the nodal positions (shape of "x" should match the earlier definition)

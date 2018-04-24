@@ -30,7 +30,7 @@ inline size_t nip()
 
 // ----------------------- integration point coordinates (local coordinates) -----------------------
 
-inline ArrD coordinates()
+inline ArrD xi()
 {
   size_t nip  = 4;
   size_t ndim = 2;
@@ -47,7 +47,7 @@ inline ArrD coordinates()
 
 // ----------------------------------- integration point weights -----------------------------------
 
-inline ArrD weights()
+inline ArrD w()
 {
   size_t nip = 4;
 
@@ -78,7 +78,7 @@ inline size_t nip()
 
 // ----------------------- integration point coordinates (local coordinates) -----------------------
 
-inline ArrD coordinates()
+inline ArrD xi()
 {
   size_t nip  = 4;
   size_t ndim = 2;
@@ -95,7 +95,7 @@ inline ArrD coordinates()
 
 // ----------------------------------- integration point weights -----------------------------------
 
-inline ArrD weights()
+inline ArrD w()
 {
   size_t nip = 4;
 
@@ -133,8 +133,8 @@ inline Quadrature::Quadrature(const ArrD &x, const ArrD &xi, const ArrD &w)
   if ( m_w.size() == 0 and m_xi.size() == 0 )
   {
     m_nip = Gauss::nip();
-    m_xi  = Gauss::coordinates();
-    m_w   = Gauss::weights();
+    m_xi  = Gauss::xi();
+    m_w   = Gauss::w();
   }
   // - input
   else if ( m_w.size() > 0 and m_xi.size() > 0 )
@@ -248,7 +248,7 @@ inline void Quadrature::update_x(const ArrD &x)
   assert( x.size()   == m_x.size() ); // total number of components (redundant)
 
   // update positions
-  std::copy(x.begin(), x.end(), m_x.begin());
+  m_x.setCopy(x.begin(), x.end());
 
   // update the shape function gradients for the new "x"
   compute_dN();

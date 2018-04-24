@@ -45,6 +45,7 @@ private:
 public:
 
   // constructor
+  MatrixDiagonal(){};
   MatrixDiagonal(const MatS &conn, const MatS &dofs, const ColS &iip=ColS());
 
   // index operators: access plain storage

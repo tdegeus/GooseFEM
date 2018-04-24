@@ -2,144 +2,183 @@
 #include <Eigen/Eigen>
 #include <cppmat/cppmat.h>
 #include <GooseFEM/GooseFEM.h>
-#include <GooseMaterial/GooseMaterial.h>
+#include <ElastoPlasticQPot/ElastoPlasticQPot.h>
 #include <HDF5pp.h>
 
 // -------------------------------------------------------------------------------------------------
 
-// introduce aliases
-using ColD = GooseFEM::ColD;
-using T2   = cppmat::cartesian2d::tensor2<double>;
-using Mat  = GooseMaterial::AmorphousSolid::LinearStrain::Elastic::Cartesian2d::Material;
+namespace GF   = GooseFEM;
+namespace Elem = GooseFEM::Element::Quad4;
+namespace Mat  = ElastoPlasticQPot::Cartesian2d;
 
-// =================================================================================================
+using T2 = cppmat::cartesian2d::tensor2<double>;
 
-class Material
+// -------------------------------------------------------------------------------------------------
+
+class Geometry : public GooseFEM::Dynamics::Geometry
 {
+private:
+
+  // dimensions
+  size_t m_nnode;
+  size_t m_ndim;
+  size_t m_nelem;
+  size_t m_nne;
+  size_t m_nip;
+
+  // mesh
+  GF::MatS m_conn;
+  GF::MatD m_coor;
+  GF::MatD m_u;
+  GF::MatD m_v;
+  GF::MatD m_a;
+
+  // vector-definition: transform nodal vectors <-> DOF values
+  GF::Vector m_vec;
+
+  // mass matrix (diagonal)
+  GF::MatrixDiagonal m_M;
+
+  // numerical quadrature
+  Elem::Quadrature m_quad;
+
+  // material definition
+  Mat::Matrix m_mat;
+
 public:
 
-  // class variables
-  // ---------------
+  // constructor
+  Geometry(size_t nx);
 
-  // strain(-rate), stress, mass density, background damping [mandatory]
-  cppmat::matrix<double> eps, epsdot, sig, rho, alpha;
+  // apply update in macroscopic deformation gradient
+  void add_dFbar(const T2 &dFbar);
 
-  // mesh dimensions
-  size_t nelem, nne=4, ndim=2, nip=4;
+  // compute total kinetic and potential energy
+  double Ekin() const;
+  double Epot() const;
 
-  // constitutive response [customize]
-  std::vector<Mat> material;
+  // return mesh
+  GF::MatS conn() const { return m_conn; }
+  GF::MatD coor() const { return m_coor; }
 
-  // class functions
-  // ---------------
+  // return nodal vectors
+  GF::MatD u() const { return m_u; }
+  GF::MatD v() const { return m_v; }
+  GF::MatD a() const { return m_a; }
 
-  // constructor [customize]
-  Material(size_t nelem, size_t nhard);
+  // return DOF values
+  GF::ColD dofs_v() const { return m_vec.asDofs(m_v); }
+  GF::ColD dofs_a() const { return m_vec.asDofs(m_a); }
 
-  // compute stress for a certain element "e" and integration point "k" [mandatory]
-  void updated_eps   (size_t e, size_t k);
-  void updated_epsdot(size_t e, size_t k);
+  // overwrite nodal vectors
+  void set_u(const GF::MatD &nodevec) { m_u = nodevec; };
 
-  // post process variables / functions [customize]
-  // - potential energy
-  cppmat::matrix<double> Epot;
-  // - compute potential energy
-  void post();
+  // overwrite nodal vectors, reconstructed from DOF values
+  void set_v(const GF::ColD &dofval) { m_v = m_vec.asNode(dofval); };
+  void set_a(const GF::ColD &dofval) { m_a = m_vec.asNode(dofval); };
+
+  // solve for DOF-accelerations
+  GF::ColD solve();
 };
 
 // -------------------------------------------------------------------------------------------------
 
-Material::Material(size_t _nelem, size_t _nhard)
+inline Geometry::Geometry(size_t nx)
 {
-  // copy from input [customize]
-  nelem = _nelem;
+  // get mesh
+  GF::Mesh::Quad4::Regular mesh(nx,nx,1.);
 
-  // allocate symmetric tensors and scalars per element, per integration point [mandatory]
-  eps   .resize({nelem,nip,3});
-  epsdot.resize({nelem,nip,3});
-  sig   .resize({nelem,nip,3});
-  rho   .resize({nelem,nne  });
-  alpha .resize({nelem,nne  });
+  // vector-definition
+  m_vec   = GF::Vector(mesh.conn(), mesh.dofsPeriodic());
 
-  // set mass-density and background damping [customize]
-  rho  .setConstant(1.0);
-  alpha.setConstant(0.0);
+  // quadrature
+  m_quad  = Elem::Quadrature(m_vec.asElement(mesh.coor()));
 
-  // post variables [customize]
-  Epot.resize({nelem,nip});
+  // dimensions, connectivity, and coordinates
+  m_nnode = mesh.nnode();
+  m_ndim  = mesh.ndim();
+  m_nelem = mesh.nelem();
+  m_nne   = mesh.nne();
+  m_nip   = m_quad.nip();
+  m_conn  = mesh.conn();
+  m_coor  = mesh.coor();
 
-  // constitutive response per element (per integration post) [customize]
-  for ( size_t e = 0 ; e < nelem ; ++e )
-  {
-    if ( e < _nhard )
-    {
-      Mat mat = Mat(100.,10.);
-      material.push_back(mat);
-    }
-    else
-    {
-      Mat mat = Mat(100.,1.);
-      material.push_back(mat);
-    }
-  }
+  // zero-initialize displacement, velocity, acceleration
+  m_u = GF::MatD::Zero(m_nnode, m_ndim);
+  m_v = GF::MatD::Zero(m_nnode, m_ndim);
+  m_a = GF::MatD::Zero(m_nnode, m_ndim);
+
+  // material definition
+  // - allocate
+  m_mat = Mat::Matrix({m_nelem, m_nip});
+  // - phase indicators
+  cppmat::matrix<size_t> Ihard = cppmat::matrix<size_t>::Zero({m_nelem, m_nip});
+  cppmat::matrix<size_t> Isoft = cppmat::matrix<size_t>::Ones({m_nelem, m_nip});
+  // - set hard indicator
+  for ( size_t e = 0 ; e < nx*nx/4 ; ++e )
+    for ( size_t k = 0 ; k < m_nip ; ++k )
+      Ihard(e,k) = 1;
+  // - set soft indicator
+  Isoft -= Ihard;
+  // - set material definition
+  m_mat.setElastic(Ihard, 100., 10.);
+  m_mat.setElastic(Isoft, 100.,  1.);
+  // - check that all points have been set (not strictly needed)
+  m_mat.check();
+
+  // mass matrix
+  // - nodal quadrature
+  Elem::Quadrature q(m_vec.asElement(m_coor), Elem::Nodal::xi(), Elem::Nodal::w());
+  // - set density
+  GF::ArrD rho = GF::ArrD::Constant({m_nelem, m_nip}, 1.0);
+  // - allocate mass matrix
+  m_M = GF::MatrixDiagonal(m_conn, mesh.dofsPeriodic());
+  // - compute (constant hereafter)
+  m_M.assemble( q.int_N_scalar_NT_dV(rho) );
 }
 
 // -------------------------------------------------------------------------------------------------
 
-void Material::updated_eps(size_t e, size_t k)
+inline GF::ColD Geometry::solve()
 {
-  // local views of the global arrays (speeds up indexing, and increases readability)
-  cppmat::cartesian2d::tensor2s<double> Eps, Sig;
+  GF::ArrD Eps = m_quad.symGradN_vector( m_vec.asElement(m_u) );
+  GF::ArrD Sig = m_mat.stress(Eps);
+  GF::ColD F   = m_vec.assembleDofs( m_quad.int_gradN_dot_tensor2_dV(Sig) );
 
-  // point to correct position in matrix of tensors
-  Eps.map(&eps(e,k));
-
-  // compute stress
-  Sig = material[e].stress(Eps);
-
-  // copy to matrix of tensors
-  std::copy(Sig.begin(), Sig.end(), &sig(e,k));
+  return m_M.solve( -F );
 }
 
 // -------------------------------------------------------------------------------------------------
 
-void Material::updated_epsdot(size_t e, size_t k)
+inline void Geometry::add_dFbar(const T2 &dFbar)
 {
+  for ( size_t i = 0 ; i < m_nnode ; ++i )
+    for ( size_t j = 0 ; j < m_ndim ; ++j )
+      for ( size_t k = 0 ; k < m_ndim ; ++k )
+        m_u(i,j) += dFbar(j,k) * ( m_coor(i,k) - m_coor(0,k) );
 }
 
 // -------------------------------------------------------------------------------------------------
 
-void Material::post()
+inline double Geometry::Ekin() const
 {
-#pragma omp parallel
-{
-  // local views of the global arrays (speeds up indexing, and increases readability)
-  cppmat::cartesian2d::tensor2s<double> Eps;
+  GF::ColD V = m_vec.asDofs(m_v);
+  GF::ColD M = m_M.asDiagonal();
 
-  // loop over all elements / integration points
-  #pragma omp for
-  for ( size_t e = 0 ; e < nelem ; ++e )
-  {
-    for ( size_t k = 0 ; k < nip ; ++k )
-    {
-      // point to correct position in matrix of tensors
-      Eps.map(&eps(e,k));
-
-      // compute energy
-      Epot(e,k) = material[e].energy(Eps);
-    }
-  }
-}
+  return 0.5 * M.dot(V.cwiseProduct(V));
 }
 
-// =================================================================================================
+// -------------------------------------------------------------------------------------------------
 
-// introduce aliases
-using Mesh       = GooseFEM::Mesh::Quad4::Regular;
-using Element    = GooseFEM::Dynamics::Diagonal::SmallStrain::Quad4<Material>;
-using Simulation = GooseFEM::Dynamics::Diagonal::Periodic<Element>;
+inline double Geometry::Epot() const
+{
+  GF::ArrD Eps = m_quad.symGradN_vector( m_vec.asElement(m_u) );
+  GF::ArrD E   = m_mat.energy(Eps);
 
-// =================================================================================================
+  return E.average(m_quad.dV(),false);
+}
+
+// -------------------------------------------------------------------------------------------------
 
 int main()
 {
@@ -149,66 +188,41 @@ int main()
   size_t nx    = 40   ; // number of elements in both directions
   double gamma = .05  ; // displacement step
 
-  // class which provides the mesh
-  Mesh mesh(nx,nx,1.);
-  // extract information
-  size_t nodeOrigin = mesh.nodesOrigin();
-  size_t nelem      = mesh.nelem();
-  size_t nhard      = nx*nx/4;
-
-  // simulation class
-  Simulation sim = Simulation(
-    std::make_unique<Element>(std::make_unique<Material>(nelem,nhard),nelem),
-    mesh.coor(),
-    mesh.conn(),
-    mesh.dofsPeriodic(),
-    dt
-  );
+  // define geometry
+  Geometry geometry(nx);
 
   // define update in macroscopic deformation gradient
-  T2 dFbar(0.);
+  T2 dFbar = T2::Zero();
   dFbar(0,1) = gamma;
 
-  // update the displacement according to the macroscopic deformation gradient update
-  for ( size_t i = 0 ; i < sim.nnode ; ++i )
-    for ( size_t j = 0 ; j < sim.ndim ; ++j )
-      for ( size_t k = 0 ; k < sim.ndim ; ++k )
-        sim.u(i,j) += dFbar(j,k) * ( sim.x(i,k) - sim.x(nodeOrigin,k) );
-
-  // process updates for displacement dependent variables
-  sim.updated_u();
+  // update displacement
+  geometry.add_dFbar(dFbar);
 
   // output variables
-  ColD Epot(static_cast<int>(T/dt)); Epot.setZero();
-  ColD Ekin(static_cast<int>(T/dt)); Ekin.setZero();
-  ColD t   (static_cast<int>(T/dt)); t   .setZero();
+  GF::ColD Epot(static_cast<int>(T/dt)); Epot.setZero();
+  GF::ColD Ekin(static_cast<int>(T/dt)); Ekin.setZero();
+  GF::ColD t   (static_cast<int>(T/dt)); t   .setZero();
 
   // loop over increments
   for ( size_t inc = 0 ; inc < static_cast<size_t>(Epot.size()) ; ++inc )
   {
     // - compute increment
-    sim.Verlet();
+    GF::Dynamics::Verlet(geometry, dt);
 
-    // - store time
-    t(inc) = sim.t;
-
-    // - store total kinetic energy
-    for ( size_t i = 0 ; i < sim.ndof ; ++i )
-      Ekin(inc) += .5 * sim.M(i) * std::pow(sim.V(i),2.);
-
-    // - store total potential energy
-    sim.elem->mat->post();
-    Epot(inc) = sim.elem->mat->Epot.average(sim.elem->vol) * sim.elem->vol.sum();
+    // - store output
+    t   (inc) = static_cast<double>(inc) * dt;
+    Ekin(inc) = geometry.Ekin();
+    Epot(inc) = geometry.Epot();
   }
 
   // write to output file
   H5p::File f = H5p::File("example.hdf5","w");
-  f.write("/global/Epot",Epot       );
-  f.write("/global/Ekin",Ekin       );
-  f.write("/global/t"   ,t          );
-  f.write("/mesh/coor"  ,mesh.coor());
-  f.write("/mesh/conn"  ,mesh.conn());
-  f.write("/mesh/disp"  ,sim.u      );
+  f.write("/global/Epot",Epot           );
+  f.write("/global/Ekin",Ekin           );
+  f.write("/global/t"   ,t              );
+  f.write("/mesh/conn"  ,geometry.conn());
+  f.write("/mesh/coor"  ,geometry.coor());
+  f.write("/mesh/disp"  ,geometry.u()   );
 
   return 0;
 }

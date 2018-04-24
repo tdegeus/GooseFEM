@@ -23,7 +23,7 @@ class Geometry
 public:
 
   // solve for DOF-accelerations [ndof]
-  virtual ColD solve() const { return ColD(); };
+  virtual ColD solve() { return ColD(); };
 
   // reset residuals, check for convergence
   virtual void reset()          { return;       }

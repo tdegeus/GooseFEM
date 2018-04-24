@@ -93,6 +93,8 @@ inline double& MatrixDiagonal::operator()(size_t a, size_t b)
 {
   assert( a == b );
 
+  UNUSED(b);
+
   m_change = true;
 
   return m_data[a];
@@ -103,6 +105,8 @@ inline double& MatrixDiagonal::operator()(size_t a, size_t b)
 inline const double& MatrixDiagonal::operator()(size_t a, size_t b) const
 {
   assert( a == b );
+
+  UNUSED(b);
 
   return m_data[a];
 }
