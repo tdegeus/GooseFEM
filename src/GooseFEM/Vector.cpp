@@ -299,12 +299,10 @@ inline MatD Vector::asNode(const ColD &dofval_u, const ColD &dofval_p) const
 
   // apply conversion
   #pragma omp for
-  {
-    for ( size_t n = 0 ; n < m_nnode ; ++n ) {
-      for ( size_t i = 0 ; i < m_ndim ; ++i ) {
-        if ( m_part(n,i) < m_nnu ) nodevec(n,i) = dofval_u(m_part(n,i)      );
-        else                       nodevec(n,i) = dofval_p(m_part(n,i)-m_nnu);
-      }
+  for ( size_t n = 0 ; n < m_nnode ; ++n ) {
+    for ( size_t i = 0 ; i < m_ndim ; ++i ) {
+      if ( m_part(n,i) < m_nnu ) nodevec(n,i) = dofval_u(m_part(n,i)      );
+      else                       nodevec(n,i) = dofval_p(m_part(n,i)-m_nnu);
     }
   }
 
@@ -367,13 +365,11 @@ inline ArrD Vector::asElement(const ColD &dofval_u, const ColD &dofval_p) const
 
   // read from nodal vectors
   #pragma omp parallel for
-  {
-    for ( size_t e = 0 ; e < m_nelem ; ++e ) {
-      for ( size_t m = 0 ; m < m_nne ; ++m ) {
-        for ( size_t i = 0 ; i < m_ndim ; ++i ) {
-          if ( m_part(m_conn(e,m),i)<m_nnu ) elemvec(e,m,i) = dofval_u(m_part(m_conn(e,m),i)      );
-          else                               elemvec(e,m,i) = dofval_p(m_part(m_conn(e,m),i)-m_nnu);
-        }
+  for ( size_t e = 0 ; e < m_nelem ; ++e ) {
+    for ( size_t m = 0 ; m < m_nne ; ++m ) {
+      for ( size_t i = 0 ; i < m_ndim ; ++i ) {
+        if ( m_part(m_conn(e,m),i)<m_nnu ) elemvec(e,m,i) = dofval_u(m_part(m_conn(e,m),i)      );
+        else                               elemvec(e,m,i) = dofval_p(m_part(m_conn(e,m),i)-m_nnu);
       }
     }
   }

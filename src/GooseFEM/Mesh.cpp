@@ -52,7 +52,7 @@ inline void renumber(
 
   // apply renumbering
   for ( auto i = 0; i < N; ++i ) *(result+i) = index[*(first+i)];
-};
+}
 
 // ------------------------------------- renumber - interface --------------------------------------
 
@@ -118,7 +118,7 @@ inline void reorder(
 
   // apply renumbering
   for ( auto i = 0; i < N; ++i ) *(result+i) = index[*(first+i)];
-};
+}
 
 // -------------------------------------- reorder - interface --------------------------------------
 
