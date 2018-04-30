@@ -8,44 +8,46 @@ include(GNUInstallDirs)
 # project settings
 # ----------------
 
-# define project information
+# name
 project(GooseFEM)
 
-# list of header files
+# file that contains the version information
+set(parse_version src/${PROJECT_NAME}/${PROJECT_NAME}.h)
+
+# header files
 set(headers
-  GooseFEM/GooseFEM.h
-  GooseFEM/Mesh.cpp
-  GooseFEM/Mesh.h
-  GooseFEM/MeshTri3.cpp
-  GooseFEM/MeshTri3.h
-  GooseFEM/MeshQuad4.cpp
-  GooseFEM/MeshQuad4.h
-  GooseFEM/MeshHex8.cpp
-  GooseFEM/MeshHex8.h
-  GooseFEM/Element.cpp
-  GooseFEM/Element.h
-  GooseFEM/ElementQuad4.cpp
-  GooseFEM/ElementQuad4.h
-  GooseFEM/Vector.cpp
-  GooseFEM/Vector.h
-  GooseFEM/MatrixDiagonal.cpp
-  GooseFEM/MatrixDiagonal.h
-  GooseFEM/Iterate.cpp
-  GooseFEM/Iterate.h
-  GooseFEM/Dynamics.cpp
-  GooseFEM/Dynamics.h
+  src/GooseFEM/GooseFEM.h
+  src/GooseFEM/Mesh.cpp
+  src/GooseFEM/Mesh.h
+  src/GooseFEM/MeshTri3.cpp
+  src/GooseFEM/MeshTri3.h
+  src/GooseFEM/MeshQuad4.cpp
+  src/GooseFEM/MeshQuad4.h
+  src/GooseFEM/MeshHex8.cpp
+  src/GooseFEM/MeshHex8.h
+  src/GooseFEM/Element.cpp
+  src/GooseFEM/Element.h
+  src/GooseFEM/ElementQuad4.cpp
+  src/GooseFEM/ElementQuad4.h
+  src/GooseFEM/Vector.cpp
+  src/GooseFEM/Vector.h
+  src/GooseFEM/MatrixDiagonal.cpp
+  src/GooseFEM/MatrixDiagonal.h
+  src/GooseFEM/Iterate.cpp
+  src/GooseFEM/Iterate.h
+  src/GooseFEM/Dynamics.cpp
+  src/GooseFEM/Dynamics.h
 )
 
-# options
-# -------
-
-# set options
-option(PKGCONFIG "Build pkg-config ${PROJECT_NAME}.pc file" ON)
-
-# disable pkg-config for native Windows builds
-if(WIN32 OR CMAKE_HOST_SYSTEM_NAME MATCHES Windows)
-  option(PKGCONFIG "Build pkg-config ${PROJECT_NAME}.pc file" OFF)
-endif()
+# automatically parse the version number
+file(READ "${parse_version}" version)
+string(REGEX MATCH "define[ \t]+GOOSEFEM_WORLD_VERSION[ \t]+([0-9]+)" _ "${version}")
+set(world_version "${CMAKE_MATCH_1}")
+string(REGEX MATCH "define[ \t]+GOOSEFEM_MAJOR_VERSION[ \t]+([0-9]+)" _ "${version}")
+set(major_version "${CMAKE_MATCH_1}")
+string(REGEX MATCH "define[ \t]+GOOSEFEM_MINOR_VERSION[ \t]+([0-9]+)" _ "${version}")
+set(minor_version "${CMAKE_MATCH_1}")
+set(GOOSEFEM_VERSION_NUMBER ${world_version}.${major_version}.${minor_version})
 
 # paths
 # -----
@@ -55,19 +57,19 @@ set(GOOSEFEM_INCLUDE_DIR     "${CMAKE_INSTALL_PREFIX}/${INCLUDE_INSTALL_DIR}")
 set(INCLUDE_INSTALL_DIR      "${CMAKE_INSTALL_INCLUDEDIR}/${PROJECT_NAME}")
 set(CMAKEPACKAGE_INSTALL_DIR "${CMAKE_INSTALL_DATADIR}/${PROJECT_NAME}")
 set(PKGCONFIG_INSTALL_DIR    "${CMAKE_INSTALL_DATADIR}/pkgconfig")
+set(fcmake                   "${PROJECT_NAME}Config.cmake")
+set(fpkg                     "${PROJECT_NAME}.pc")
 
-# version
+# options
 # -------
 
-# automatically parse the version number
-file(READ "${CMAKE_CURRENT_SOURCE_DIR}/${PROJECT_NAME}/${PROJECT_NAME}.h" version)
-string(REGEX MATCH "define[ \t]+GOOSEFEM_WORLD_VERSION[ \t]+([0-9]+)" _ "${version}")
-set(world_version "${CMAKE_MATCH_1}")
-string(REGEX MATCH "define[ \t]+GOOSEFEM_MAJOR_VERSION[ \t]+([0-9]+)" _ "${version}")
-set(major_version "${CMAKE_MATCH_1}")
-string(REGEX MATCH "define[ \t]+GOOSEFEM_MINOR_VERSION[ \t]+([0-9]+)" _ "${version}")
-set(minor_version "${CMAKE_MATCH_1}")
-set(GOOSEFEM_VERSION_NUMBER ${world_version}.${major_version}.${minor_version})
+# configure pkg-config (default: on)
+option(PKGCONFIG "Build pkg-config ${fpkg} file" ON)
+
+# disable pkg-config for native Windows builds
+if(WIN32 OR CMAKE_HOST_SYSTEM_NAME MATCHES Windows)
+  option(PKGCONFIG "Build pkg-config ${fpkg} file" OFF)
+endif()
 
 # C++ standard
 # ------------
@@ -94,23 +96,15 @@ configure_package_config_file(
 
 # pkg-config
 if(PKGCONFIG)
-  configure_file(${PROJECT_NAME}.pc.in ${PROJECT_NAME}.pc @ONLY)
-  install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}.pc DESTINATION ${PKGCONFIG_INSTALL_DIR})
+  configure_file(${fpkg}.in ${fpkg} @ONLY)
+  install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${fpkg} DESTINATION ${PKGCONFIG_INSTALL_DIR})
 endif()
 
 # CMake
-install(FILES
-  ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}Config.cmake
-  DESTINATION
-  ${CMAKEPACKAGE_INSTALL_DIR}
-)
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${fcmake} DESTINATION ${CMAKEPACKAGE_INSTALL_DIR})
 
-# headers
-install(FILES
-  ${CMAKE_CURRENT_SOURCE_DIR}/${headers}
-  DESTINATION
-  ${INCLUDE_INSTALL_DIR}/${PROJECT_NAME}
-)
+# header files
+install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/${headers} DESTINATION ${INCLUDE_INSTALL_DIR})
 
 # print information to screen
 # ---------------------------

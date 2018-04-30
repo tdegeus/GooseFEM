@@ -31,8 +31,8 @@ SECTION( "int_N_scalar_NT_dV" )
   // element definition, with nodal quadrature
   GooseFEM::Element::Quad4::Quadrature quad(
     vec.asElement(mesh.coor()),
-    GooseFEM::Element::Quad4::Nodal::coordinates(),
-    GooseFEM::Element::Quad4::Nodal::weights()
+    GooseFEM::Element::Quad4::Nodal::xi(),
+    GooseFEM::Element::Quad4::Nodal::w()
   );
 
   // scalar per quadrature point (e.g. mass-density "rho")

@@ -6,4 +6,4 @@ Description: Several Finite Element simulation, and some simple meshes and opera
 Requires:
 Version: @GOOSEFEM_VERSION_NUMBER@
 Libs:
-Cflags: -I${prefix}/@INCLUDE_INSTALL_DIR@
+Cflags: -I${prefix}/@GOOSEFEM_INCLUDE_DIR@

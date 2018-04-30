@@ -61,8 +61,8 @@ namespace GooseFEM
   typedef Eigen::SparseMatrix<double,Eigen::RowMajor> SpMatD;
   typedef Eigen::SparseMatrix<size_t,Eigen::RowMajor> SpMatS;
   // - alias cppmat matrices
-  typedef cppmat::matrix<double> ArrD;
-  typedef cppmat::matrix<size_t> ArrS;
+  typedef cppmat::array<double> ArrD;
+  typedef cppmat::array<size_t> ArrS;
 }
 
 // =================================================================================================
