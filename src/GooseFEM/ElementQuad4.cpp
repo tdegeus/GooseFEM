@@ -262,8 +262,8 @@ inline void Quadrature::compute_dN()
   {
     // intermediate quantities and local views
     double Jdet, w, vol;
-    cppmat::tiny::matrix<double,m_nne,m_ndim> dNx;
-    cppmat::view::matrix<double,m_nne,m_ndim> dNxi, x;
+    cppmat::tiny::matrix<double,4,2> dNx;
+    cppmat::view::matrix<double,4,2> dNxi, x;
     cppmat::cartesian2d::tensor2<double> J, Jinv;
 
     // loop over all elements (in parallel)
@@ -335,7 +335,7 @@ inline ArrD Quadrature::gradN_vector(const ArrD &elemvec) const
   {
     // intermediate quantities and local views
     T gradu;
-    cppmat::view::matrix<double,m_nne,m_ndim> dNx, u;
+    cppmat::view::matrix<double,4,2> dNx, u;
 
     // loop over all elements (in parallel)
     #pragma omp for
@@ -388,7 +388,7 @@ inline ArrD Quadrature::gradN_vector_T(const ArrD &elemvec) const
   {
     // intermediate quantities and local views
     T gradu;
-    cppmat::view::matrix<double,m_nne,m_ndim> dNx, u;
+    cppmat::view::matrix<double,4,2> dNx, u;
 
     // loop over all elements (in parallel)
     #pragma omp for
@@ -442,7 +442,7 @@ inline ArrD Quadrature::symGradN_vector(const ArrD &elemvec) const
     // intermediate quantities and local views
     T eps;
     cppmat::cartesian2d::tensor2<double> gradu;
-    cppmat::view::matrix<double,m_nne,m_ndim> dNx, u;
+    cppmat::view::matrix<double,4,2> dNx, u;
 
     // loop over all elements (in parallel)
     #pragma omp for
@@ -495,8 +495,8 @@ inline ArrD Quadrature::int_N_scalar_NT_dV(const ArrD &qscalar) const
   #pragma omp parallel
   {
     // intermediate quantities and local views
-    cppmat::tiny::matrix<double,m_nne*m_ndim,m_nne*m_ndim> M;
-    cppmat::view::vector<double,m_nne> N;
+    cppmat::tiny::matrix<double,8,8> M;
+    cppmat::view::vector<double,4> N;
     double rho, vol;
 
     // loop over all elements (in parallel)
@@ -556,8 +556,8 @@ inline ArrD Quadrature::int_gradN_dot_tensor2_dV(const ArrD &qtensor) const
   #pragma omp parallel
   {
     // intermediate quantities and local views
-    cppmat::view::matrix<double,m_nne,m_ndim> dNx;
-    cppmat::tiny::matrix<double,m_nne,m_ndim> f;
+    cppmat::view::matrix<double,4,2> dNx;
+    cppmat::tiny::matrix<double,4,2> f;
     double vol;
     T sig;
 
