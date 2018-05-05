@@ -46,8 +46,8 @@ private:
   size_t m_nip;   // number of integration points
 
   // dimensions (fixed for this element type)
-  size_t m_nne=4;  // number of nodes per element
-  size_t m_ndim=2; // number of dimensions
+  static const size_t m_nne=4;  // number of nodes per element
+  static const size_t m_ndim=2; // number of dimensions
 
   // data arrays
   ArrD m_x;    // nodal positions stored per element [nelem, nne, ndim]
