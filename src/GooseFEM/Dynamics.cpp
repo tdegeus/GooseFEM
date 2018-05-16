@@ -29,21 +29,17 @@ inline void Verlet(Geometry &g, double dt)
 
   // new displacement
 
-  g.set_u( g.u() + dt * g.v() + 0.5 * std::pow(dt,2.) * g.a() );
+  g.set_u(MatD( g.u() + dt * g.v() + 0.5 * std::pow(dt,2.) * g.a() ));
 
   // new acceleration
 
-  A = g.solve();
+  A = g.solve_A();
 
-  g.set_a( A );
+  g.set_a(ColD( A ));
 
   // new velocity
 
-  g.set_v( V_n + .5 * dt * ( A_n + A ) );
-
-  // finalize
-
-  g.timestep(dt);
+  g.set_v(ColD( V_n + .5 * dt * ( A_n + A ) ));
 }
 
 // -------------------------------------------------------------------------------------------------
@@ -59,53 +55,37 @@ inline void velocityVerlet(Geometry &g, double dt)
 
   // new displacement
 
-  g.set_u( g.u() + dt * g.v() + 0.5 * std::pow(dt,2.) * g.a() );
+  g.set_u(MatD( g.u() + dt * g.v() + 0.5 * std::pow(dt,2.) * g.a() ));
 
   // estimate new velocity
 
-  g.set_v( V_n + dt * A_n );
+  g.set_v(ColD( V_n + dt * A_n ));
 
-  A = g.solve();
+  A = g.solve_A();
 
-  g.set_v( V_n + .5 * dt * ( A_n + A ) );
+  g.set_v(ColD( V_n + .5 * dt * ( A_n + A ) ));
 
   // new velocity
 
-  A = g.solve();
+  A = g.solve_A();
 
-  g.set_v( V_n + .5 * dt * ( A_n + A ) );
+  g.set_v(ColD( V_n + .5 * dt * ( A_n + A ) ));
 
   // new acceleration
 
-  A = g.solve();
+  A = g.solve_A();
 
-  g.set_a(A);
-
-  // finalize
-
-  g.timestep(dt);
+  g.set_a(ColD( A ));
 }
 
 // -------------------------------------------------------------------------------------------------
 
-inline size_t quasiStaticVelocityVerlet(Geometry &g, double dt, double tol)
+namespace Overdamped
 {
-  // reset residuals
-  g.reset();
-
-  // zero-initialize iteration counter
-  size_t iiter = 0;
-
-  // loop until convergence
-  while ( true )
-  {
-    // - update iteration counter
-    iiter++;
-    // - time-step
-    velocityVerlet(g,dt);
-    // - check for convergence
-    if ( g.stop(tol) ) return iiter;
-  }
+inline void forwardEuler(Geometry &g, double dt)
+{
+  g.set_u(ColD( g.dofs_u() + dt * g.solve_V() ));
+}
 }
 
 // -------------------------------------------------------------------------------------------------

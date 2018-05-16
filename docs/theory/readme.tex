@@ -4,7 +4,7 @@
 \usepackage{lipsum,verbatim,mdframed}
 
 \title{%
-  The Finite Element Method -- some basic theory
+  The Finite Element Method in Continuum Mechanics
 }
 
 \author{T.W.J.~de~Geus}
@@ -21,7 +21,7 @@
 \hypersetup{pdfauthor={T.W.J. de Geus}}
 
 \header{%
-  The Finite Element Method, T.W.J.\ de Geus
+  The Finite Element Method in Continuum Mechanics, T.W.J.\ de Geus
 }
 
 \begin{document}
@@ -29,9 +29,10 @@
 \maketitle
 
 \begin{abstract}
-The theory of the Finite Element Method is discussed in a compact way such that it supports the GooseFEM implementation. It is supported by many examples that can be easily extended and customized into efficient, production-ready code. This discussion is by no means comprehensive and one is invited to dive in more complete textbooks.
+The theory of the Finite Element Method in Continuum Mechanics is discussed in a compact way. This discussion is by no means comprehensive and one is invited to dive in more complete textbooks, but also to get one's hands dirty by implementing some (simple) examples.
 \end{abstract}
 
+\setcounter{tocdepth}{2}
 \tableofcontents
 
 \section{Statics}
@@ -81,27 +82,27 @@ The crux of the Finite Element Method is that this non-linear differential equat
 \begin{equation}
 \label{eq:static:int}
   \int\limits_\Omega
-    \vec{\phi}(\vec{X}) \cdot \big[\, \vec{\nabla} \cdot \bm{\sigma}(\vec{x}) \,\big] \;
+    \vec{\phi}(\vec{x}) \cdot \big[\, \vec{\nabla} \cdot \bm{\sigma}(\vec{x}) \,\big] \;
   \mathrm{d}\Omega
   =
   0
   \qquad
-  \forall \; \vec{\phi}(\vec{X}) \in \mathbb{R}^d
+  \forall \; \vec{\phi}(\vec{x}) \in \mathbb{R}^d
 \end{equation}
 where $\vec{\phi}$ are test functions. For reasons that become obvious below, integration by parts is applied, which results in
 \begin{equation}
 \label{eq:static:weak}
   \int\limits_\Omega
-    \big[\, \vec{\nabla} \vec{\phi}(\vec{X}) \,\big] : \bm{\sigma}(\vec{x}) \;
+    \big[\, \vec{\nabla} \vec{\phi}(\vec{x}) \,\big] : \bm{\sigma}(\vec{x}) \;
   \mathrm{d}\Omega
   =
   \int\limits_\Omega
     \vec{\nabla}
     \cdot
-    \big[\, \vec{\phi}(\vec{X}) \cdot \bm{\sigma}(\vec{x}) \,\big] \;
+    \big[\, \vec{\phi}(\vec{x}) \cdot \bm{\sigma}(\vec{x}) \,\big] \;
   \mathrm{d}\Omega
   \qquad
-  \forall \; \vec{\phi}(\vec{X}) \in \mathbb{R}^d
+  \forall \; \vec{\phi}(\vec{x}) \in \mathbb{R}^d
 \end{equation}
 In going from Eq.~\eqref{eq:static:int} to Eq.~\eqref{eq:static:weak}, use has been made of the following chain rule
 \begin{equation}
@@ -125,11 +126,11 @@ The right-hand side of this equation can be reduced to an area integral by emplo
 where $\vec{n}$ is the normal along the surface $\Gamma$. The result reads
 \begin{equation}
   \int\limits_\Omega
-    \big[\, \vec{\nabla} \vec{\phi}(\vec{X}) \,\big] : \bm{\sigma}(\vec{x}) \;
+    \big[\, \vec{\nabla} \vec{\phi}(\vec{x}) \,\big] : \bm{\sigma}(\vec{x}) \;
   \mathrm{d}\Omega
   =
   \int\limits_\Gamma
-    \vec{\phi}(\vec{X}) \cdot
+    \vec{\phi}(\vec{x}) \cdot
     \underbrace{
       \vec{n}(\vec{x}) \cdot \bm{\sigma}(\vec{x})
     }_{
@@ -137,33 +138,30 @@ where $\vec{n}$ is the normal along the surface $\Gamma$. The result reads
     } \;
   \mathrm{d}\Gamma
   \qquad
-  \forall \; \vec{\phi}(\vec{X}) \in \mathbb{R}^d
+  \forall \; \vec{\phi}(\vec{x}) \in \mathbb{R}^d
 \end{equation}
 
 \subsection{Discretization}
 
-The problem is now discretized using $n$ \emph{nodes} that are connected through \emph{elements}, which define the discretized domain $\Omega^h_0$. Shape functions $N_i(\vec{X})$ are used to extrapolate the nodal quantities throughout the domain $\Omega^h_0$ (and $\Omega^h$), as follows:
-
+The problem is now discretized using $n$ \emph{nodes} that are connected through \emph{elements}, which define the discretized domain $\Omega^h_0$. Shape functions $N_i(\vec{x})$ are used to extrapolate the nodal quantities throughout the domain $\Omega^h_0$ (and $\Omega^h$). For example the displacement field $\vec{u}(\vec{x})$
 \begin{equation}
-  \vec{x}(\vec{X},t)
+  \vec{u}(\vec{x},t)
   \approx
-  \vec{x}^h(\vec{X},t)
+  \vec{u}^h(\vec{x},t)
   =
-  \sum_{i=1}^{n} N_i (\vec{X}) \; \vec{x}_i (t)
+  \sum_{i=1}^{n} N_i (\vec{x}) \; \vec{u}_i (t)
   =
-  \underline{N}^\mathsf{T} (\vec{X}) \; \underline{\vec{x}} (t)
+  \underline{N}^\mathsf{T} (\vec{x}) \; \underline{\vec{x}} (t)
 \end{equation}
-
-Following standard Galerkin
-
+whereby we will not further consider the time dependence (denoted with $t$) for now. Following standard Galerkin the test functions are interpolated in the same way, i.e.\
 \begin{equation}
-  \vec{\phi}(\vec{X})
+  \vec{\phi}(\vec{x})
   \approx
-  \vec{\phi}^h(\vec{X})
+  \vec{\phi}^h(\vec{x})
   =
-  \sum_{i=1}^{n} N_i (\vec{X}) \; \vec{\phi}_i
+  \sum_{i=1}^{n} N_i (\vec{x}) \; \vec{\phi}_i
   =
-  \underline{N}^\mathsf{T} (\vec{X}) \; \underline{\vec{\phi}}
+  \underline{N}^\mathsf{T} (\vec{x}) \; \underline{\vec{\phi}}
 \end{equation}
 Applied to the problem sketch from Fig.~\ref{fig:problem}, a discretization might look like Fig.~\ref{fig:problem:discretized}. The nodes are clearly marked as circles. The lines connecting the nodes clearly mark the elements which are in this case three-node linear triangles.
 
@@ -178,14 +176,14 @@ Applied to the balance equation the following is obtained
 \begin{equation}
   \underline{\vec{\phi}}^\mathsf{T} \cdot
   \int\limits_{\Omega^h}
-    \big[\, \vec{\nabla} \underline{N}(\vec{X}) \,\big]
+    \big[\, \vec{\nabla} \underline{N}(\vec{x}) \,\big]
     \cdot
     \bm{\sigma}(\vec{x}) \;
   \mathrm{d}\Omega
   =
   \underline{\vec{\phi}}^\mathsf{T} \cdot
   \int\limits_{\Gamma^h}
-    \underline{N}(\vec{X}) \cdot
+    \underline{N}(\vec{x}) \cdot
     \vec{t}(\vec{x}) \;
   \mathrm{d}\Gamma
   \qquad
@@ -194,44 +192,44 @@ Applied to the balance equation the following is obtained
 from which the dependency on $\underline{\vec{\phi}}$ can be dropped:
 \begin{equation}
   \int\limits_{\Omega^h}
-    \big[\, \vec{\nabla} \underline{N}(\vec{X}) \,\big]
+    \big[\, \vec{\nabla} \underline{N}(\vec{x}) \,\big]
     \cdot
     \bm{\sigma}(\vec{x}) \;
   \mathrm{d}\Omega
   =
   \int\limits_{\Gamma^h}
-    \underline{N}(\vec{X}) \cdot
+    \underline{N}(\vec{x}) \cdot
     \vec{t}(\vec{x}) \;
   \mathrm{d}\Gamma
 \end{equation}
-This corresponds to (non-linear) set of nodal balance equations:
+This corresponds to a (non-linear) set of nodal balance equations:
 \begin{equation}
-  \underline{\vec{f}}(\vec{x})
+  \underline{\vec{f}}^\mathrm{int}(\vec{x})
   =
-  \underline{\vec{t}}(\vec{x})
+  \underline{\vec{f}}^\mathrm{ext}(\vec{x})
 \end{equation}
 with:
 \begin{itemize}
   \item \emph{Internal forces}
   \begin{equation}
-    \underline{\vec{f}}(\vec{x})
+    \underline{\vec{f}}^\mathrm{int}(\vec{x})
     =
     \int\limits_{\Omega^h}
-      \big[\, \vec{\nabla} \underline{N}(\vec{X}) \,\big]
+      \big[\, \vec{\nabla} \underline{N}(\vec{x}) \,\big]
       \cdot
       \bm{\sigma}(\vec{x}) \;
     \mathrm{d}\Omega
   \end{equation}
-  \item \emph{Boundary tractions}
+  \item \emph{External forces}
   \begin{equation}
-    \underline{\vec{t}}(\vec{x})
+    \underline{\vec{f}}^\mathrm{ext}(\vec{x})
     =
     \int\limits_{\Gamma^h}
-      \underline{N}(\vec{X}) \cdot
+      \underline{N}(\vec{x}) \cdot
       \vec{t}(\vec{x}) \;
     \mathrm{d}\Gamma
   \end{equation}
-  Note that this term is zero in the interior of the domain, i.e. in $\Omega^h \bigcap \Gamma^h$, while it can be zero or non-zero in $\Gamma^h$ depending on the problem details.
+  Note that this term is zero in the interior of the domain, i.e. in $\Omega^h \bigcap \Gamma^h$, while it can be zero or non-zero in $\Gamma^h$ depending on the problem details. Most often it following completely from the boundary conditions of the boundary value problem that we set out to solve.
 \end{itemize}
 
 \subsection{Iterative solution -- small strain}
@@ -246,66 +244,62 @@ This solution technique is discussed here in the context of small deformations. 
   =
   \mathbb{I}_s : \big[\, \nabla_0 \vec{u} \,\big]
 \end{equation}
-Furthermore, some non-linear relationship between the strain and the stress is used below for illustration purposes, i.e.\
+and some (non-linear) relationship between it and the stress as follows
 \begin{equation}
   \bm{\sigma} = \bm{\sigma} \big( \bm{\varepsilon} \big)
 \end{equation}
-To further simplify the discussion, the boundary tractions are assumed to be some known constant for all boundary nodes.
+To further simplify the discussion, the boundary tractions are assumed to be some displacement independent quantity, which is \textit{a-priori} known for all relevant boundary nodes.
 
-The nodal equilibrium equations now read
+The nodal equilibrium equations now reads
 \begin{equation}
 \label{eq:static:eq-non-lin}
-  \underline{\vec{r}}(\vec{x})
+  \underline{\vec{r}}(\vec{X}, \vec{u})
   =
-  \underline{\vec{t}}
+  \underline{\vec{f}}^\mathrm{ext}(\vec{X})
   -
-  \underline{\vec{f}}(\vec{x})
+  \underline{\vec{f}}^\mathrm{int}(\vec{X}, \vec{u})
   =
   \underline{\vec{0}}
 \end{equation}
 with
 \begin{equation}
-  \underline{\vec{f}}(\vec{x})
+  \underline{\vec{f}}^\mathrm{int}(\vec{X}, \vec{u})
   =
   \int\limits_{\Omega^h_0}
     \big[\, \vec{\nabla}_0 \underline{N}(\vec{X}) \,\big]
     \cdot
-    \bm{\sigma}(\vec{x}) \;
-  \mathrm{d}\Omega
+    \bm{\sigma}(\vec{X}, \vec{u}) \;
+  \mathrm{d}\Omega_0
 \end{equation}
 
-The position $\vec{x}$ is now iteratively updated starting from some initial guess, i.e.
+The displacement field $\vec{u}$ is now iteratively updated starting from some initial guess, i.e.
 \begin{equation}
-  \vec{x}_{(i+1)} = \vec{x}_{(i)} + \delta \vec{x}
+  \vec{u}_{(i+1)} = \vec{u}_{(i)} + \delta \vec{u}
 \end{equation}
-Written using the displacement field
-\begin{equation}
-  \vec{x}_{(i+1)} = \vec{X} + \vec{u}_{(i)} + \delta \vec{u}
-\end{equation}
-from which it is obvious that $\delta \vec{x} = \delta \vec{u}$. This update, $\delta \vec{u}$, follows from the linearization of Eq.~\eqref{eq:static:eq-non-lin}. The results of which is
+The update, $\delta \vec{u}$, follows from the linearization of Eq.~\eqref{eq:static:eq-non-lin}. The results of which is
 \begin{equation}
   \int\limits_{\Omega^h_0}
     \big[\, \vec{\nabla}_0 \underline{N}(\vec{X}) \,\big]
     \cdot
-    \mathbb{K}\big(\vec{x}_{(i)}\big)
+    \mathbb{K}\big(\vec{X},\vec{u}_{(i)}\big)
     \cdot
     \big[\, \vec{\nabla}_0 \underline{N}(\vec{X}) \,\big]^\mathsf{T} \;
-  \mathrm{d}\Omega
+  \mathrm{d}\Omega_0
   \cdot \delta \underline{\vec{u}}
   =
-  \underline{\vec{t}}
+  \underline{\vec{f}}^\mathrm{ext}(\vec{X})
   -
   \int\limits_{\Omega^h_0}
     \big[\, \vec{\nabla}_0 \underline{N}(\vec{X}) \,\big]
     \cdot
-    \bm{\sigma}\big(\vec{x}_{(i)}\big) \;
-  \mathrm{d}\Omega
+    \bm{\sigma}\big(\vec{X},\vec{u}_{(i)}\big) \;
+  \mathrm{d}\Omega_0
 \end{equation}
-where
+where, at each position $\vec{X}$,
 \begin{equation}
-  \mathbb{K}\big(\vec{x}_{(i)}\big)
+  \mathbb{K}\big(\vec{u}_{(i)}\big)
   =
-  \left. \frac{\partial \bm{\sigma}}{\partial \bm{\varepsilon}} \right|_{\vec{x}_{(i)}}
+  \left. \frac{\partial \bm{\sigma}}{\partial \bm{\varepsilon}} \right|_{\vec{u}_{(i)}}
   :
   \mathbb{I}_s
 \end{equation}
@@ -315,31 +309,31 @@ In a shorter notation, the iterative update reads:
 \begin{equation}
   \underline{\underline{\bm{K}}}_{(i)} \cdot \delta \underline{\vec{u}}
   =
-  \underline{\vec{t}}
+  \underline{\vec{f}}^\mathrm{ext}
   -
-  \underline{\vec{f}}_{(i)}
+  \underline{\vec{f}}^\mathrm{int}_{(i)}
 \end{equation}
 with
 \begin{equation}
   \underline{\underline{\bm{K}}}_{(i)}
   =
   \int\limits_{\Omega^h_0}
-    \big[\, \vec{\nabla}_0 \underline{N} \,\big]
+    \big[\, \vec{\nabla}_0 \underline{N}(\vec{X}) \,\big]
     \cdot
-    \mathbb{K}\big(\vec{x}_{(i)}\big)
+    \mathbb{K}\big(\vec{X}, \vec{u}_{(i)}\big)
     \cdot
-    \big[\, \vec{\nabla}_0 \underline{N} \,\big]^\mathsf{T} \;
-  \mathrm{d}\Omega
+    \big[\, \vec{\nabla}_0 \underline{N}(\vec{X}) \,\big]^\mathsf{T} \;
+  \mathrm{d}\Omega_0
 \end{equation}
 and
 \begin{equation}
-  \underline{\vec{f}}_{(i)}
+  \underline{\vec{f}}^\mathrm{int}_{(i)}
   =
   \int\limits_{\Omega^h_0}
-    \big[\, \vec{\nabla}_0 \underline{N} \,\big]
+    \big[\, \vec{\nabla}_0 \underline{N}(\vec{X}) \,\big]
     \cdot
-    \bm{\sigma}\big(\vec{x}_{(i)}\big) \;
-  \mathrm{d}\Omega
+    \bm{\sigma}\big(\vec{X}, \vec{u}_{(i)}\big) \;
+  \mathrm{d}\Omega_0
 \end{equation}
 
 \section{Dynamics}
@@ -348,23 +342,23 @@ and
 
 The next step is to add inertia to the balance of momentum in Eq.~\eqref{eq:static:momentum}:
 \begin{equation}
-  \rho\, \ddot{\vec{x}}
+  \rho\, \vec{a}
   =
   \vec{\nabla} \cdot
   \bm{\sigma}(\vec{x})
   \qquad
   \vec{x} \in \Omega
 \end{equation}
-where $\rho$ is the mass density, and second time derivative of the position $\vec{x}$ is the acceleration $\vec{a} = \ddot{\vec{x}}$. Note that this function is the continuum equivalent of $\vec{f} = m \vec{a}$.
+where $\rho$ is the mass density, and second time derivative of the position $\vec{x}$ is the acceleration $\vec{a} = \ddot{\vec{u}} = \ddot{\vec{x}}$. Note that this function is the continuum equivalent of $\vec{f} = m \vec{a}$.
 
 Like before, this equation is solved in a weak sense
 \begin{equation}
   \int\limits_\Omega
-    \rho(\vec{x})\; \vec{\phi}(\vec{X}) \cdot \ddot{\vec{x}} \;
+    \rho(\vec{x})\; \vec{\phi}(\vec{x}) \cdot \vec{a} \;
   \mathrm{d}\Omega
   =
   \int\limits_\Omega
-    \vec{\phi}(\vec{X})
+    \vec{\phi}(\vec{x})
     \cdot
     \Big[\,
       \vec{\nabla}
@@ -373,42 +367,42 @@ Like before, this equation is solved in a weak sense
     \,\Big] \;
   \mathrm{d}\Omega
   \qquad
-  \forall \; \vec{\phi}(\vec{X}) \in \mathbb{R}^d
+  \forall \; \vec{\phi}(\vec{x}) \in \mathbb{R}^d
 \end{equation}
 Integration by parts results in
 \begin{equation}
   \int\limits_\Omega
-    \rho(\vec{x})\; \vec{\phi}(\vec{X}) \cdot \ddot{\vec{x}} \;
+    \rho(\vec{x})\; \vec{\phi}(\vec{x}) \cdot \vec{a} \;
   \mathrm{d}\Omega
   =
   \int\limits_\Gamma
-    \vec{\phi}(\vec{X}) \cdot \vec{t}(\vec{x}) \;
+    \vec{\phi}(\vec{x}) \cdot \vec{t}(\vec{x}) \;
   \mathrm{d}\Gamma
   -
   \int\limits_\Omega
-    \big[\, \vec{\nabla} \vec{\phi}(\vec{X}) \,\big]
+    \big[\, \vec{\nabla} \vec{\phi}(\vec{x}) \,\big]
     :
     \bm{\sigma}(\vec{x}) \;
   \mathrm{d}\Omega
   \qquad
-  \forall \; \vec{\phi}(\vec{X}) \in \mathbb{R}^d
+  \forall \; \vec{\phi}(\vec{x}) \in \mathbb{R}^d
 \end{equation}
 which is discretized as before:
 \begin{equation}
   \underline{\vec{\phi}}^\mathsf{T} \cdot
   \int\limits_\Omega
-    \rho(\vec{x})\; \underline{N}(\vec{X})\; \underline{N}^\mathsf{T}(\vec{X}) \;
+    \rho(\vec{x})\; \underline{N}(\vec{x})\; \underline{N}^\mathsf{T}(\vec{x}) \;
   \mathrm{d}\Omega \;
-  \underline{\ddot{\vec{x}}}
+  \underline{\vec{a}}
   =
   \underline{\vec{\phi}}^\mathsf{T} \cdot
   \int\limits_\Gamma
-    \underline{N}(\vec{X})\; \vec{t}(\vec{x}) \;
+    \underline{N}(\vec{x})\; \vec{t}(\vec{x}) \;
   \mathrm{d}\Gamma
   -
   \underline{\vec{\phi}}^\mathsf{T} \cdot
   \int\limits_\Omega
-    \big[\, \vec{\nabla} \underline{N}(\vec{X}) \,\big]
+    \big[\, \vec{\nabla} \underline{N}(\vec{x}) \,\big]
     :
     \bm{\sigma}(\vec{x}) \;
   \mathrm{d}\Omega
@@ -417,61 +411,95 @@ which is discretized as before:
 \end{equation}
 This is independent of the test functions, hence:
 \begin{equation}
+\label{eq:dynamics:system}
   \underbrace{
     \int\limits_\Omega
-      \rho(\vec{x})\; \underline{N}(\vec{X})\; \underline{N}^\mathsf{T}(\vec{X}) \;
+      \rho(\vec{x})\; \underline{N}(\vec{x})\; \underline{N}^\mathsf{T}(\vec{x}) \;
     \mathrm{d}\Omega
   }_{\underline{\underline{M}}(\vec{x})} \;
-  \underline{\ddot{\vec{x}}}
+  \underline{\vec{a}}
   =
   \underbrace{
     \int\limits_\Gamma
-      \underline{N}(\vec{X})\; \vec{t}(\vec{x}) \;
+      \underline{N}(\vec{x})\; \vec{t}(\vec{x}) \;
     \mathrm{d}\Gamma
-  }_{\underline{\vec{t}}(\vec{x})}
+  }_{\underline{\vec{f}}^\mathrm{ext}(\vec{x})}
   -
   \underbrace{
     \int\limits_\Omega
-      \big[\, \vec{\nabla} \underline{N}(\vec{X}) \,\big]
+      \big[\, \vec{\nabla} \underline{N}(\vec{x}) \,\big]
       :
       \bm{\sigma}(\vec{x}) \;
     \mathrm{d}\Omega
-  }_{\underline{\vec{f}}(\vec{x})}
+  }_{\underline{\vec{f}}^\mathrm{int}(\vec{x})}
 \end{equation}
 This is denoted as follows
 \begin{equation}
-  \underline{\underline{M}}(\vec{x})\; \underline{\ddot{\vec{x}}}
+  \underline{\underline{M}}(\vec{x})\; \underline{\vec{a}}
   =
-  \underline{\vec{t}}(\vec{x})
+  \underline{\vec{f}}^\mathrm{ext}(\vec{x})
   -
-  \underline{\vec{f}}(\vec{x})
+  \underline{\vec{f}}^\mathrm{int}(\vec{x})
 \end{equation}
-Where $\underline{\underline{M}}(\vec{x})$ is the \emph{mass matrix}, $\underline{\vec{t}}(\vec{x})$ are the \emph{boundary tractions}, and $\underline{\vec{f}}(\vec{x})$ are the \emph{internal forces}.
+Where $\underline{\underline{M}}(\vec{x})$ is the \emph{mass matrix}, $\underline{\vec{f}}^\mathrm{ext}(\vec{x})$ are the \emph{external forces}, and $\underline{\vec{f}}^\mathrm{int}(\vec{x})$ are the \emph{internal forces}.
 
 \subsection{Time discretization}
 \label{eq:dynamics:time}
 
-To solve the second order differential equation in time, one typically also discretizes time, however, with some finite difference based scheme. To simplify notation, the following notation is used: for the velocity $\vec{v} = \dot{\vec{x}}$, and for the acceleration $\vec{a} = \ddot{\vec{x}}$.
+To solve the second order differential equation in time, one typically also discretizes time with some finite difference based scheme. For this we also need to distinguish the velocity field $\vec{v} = \dot{\vec{u}} = \dot{\vec{x}}$.
 
 \subsubsection{Verlet}
+
+In the case that the forces are velocity independent one can use the Velocity Verlet scheme, in which energy is conserved, i.e.\ it is reversible in time. The scheme reads are follows:
 
 \begin{enumerate}
   \item Compute the velocity on a dummy time grid:
   \begin{equation}
-    \vec{v}_{n+1/2} = \vec{v}_{n-1/2} + \Delta_t \; a_n
+    \vec{v}_{n+1/2} = \vec{v}_{n-1/2} + \Delta_t \; \vec{a}_n
   \end{equation}
-  Note that this involves solving for $a_n$.
+  Note that this involves solving Eq.~\eqref{eq:dynamics:system} for $\vec{a}_n$. From this it is directly obvious why the forces need to be velocity independent.
   \item Update the positions
   \begin{equation}
-    x_{n+1} = x_n + \Delta_t v_{n + 1/2}
+    \vec{u}_{n+1} = \vec{u}_n + \Delta_t \;\vec{a} \vec{v}_{n + 1/2}
   \end{equation}
 \end{enumerate}
 
-Note that an important feature is that it is time reversible.
+\subsubsection{Velocity Verlet}
+
+In the case that the forces are dependent on the velocity (i.e.\ when there is damping) the previous scheme cannot be used anymore. An additional approximation has to be made in this case. Note that this is not very problematic as energy is in no case conserved. The resulting scheme reads:
+
+\begin{enumerate}
+  \item Compute the position at $t_{n+1} = t_{n} + \Delta_t$:
+  \begin{equation}
+    \vec{u}_{n+1}
+    =
+    \vec{u}_{n} + \Delta_t \vec{v}_{n} + \tfrac{1}{2} \Delta_t^2 \vec{a}_{n}
+  \end{equation}
+  \item Estimate the velocity at $t_{n+1} = t_{n} + \Delta_t$ (involves solving Eq.~\eqref{eq:dynamics:system}):
+  \begin{equation}
+    \hat{\vec{v}}_{n+1}
+    =
+    \vec{v}_{n}
+    +
+    \tfrac{1}{2} \Delta_t \Big[\,
+      \vec{a}_{n} + \vec{a} ( \vec{u}_{n+1} , \vec{v}_{n} + \Delta_t \vec{a}_{n} , t_{n+1} ) \,
+    \Big]
+  \end{equation}
+  \item Correct $\hat{\vec{v}}_{n+1}$ (involves solving Eq.~\eqref{eq:dynamics:system}):
+  \begin{equation}
+    \vec{v}_{n+1}
+    =
+    \vec{v}_{n}
+    +
+    \tfrac{1}{2} \Delta_t \Big[\,
+      \vec{a}_{n} + \vec{a} ( \vec{u}_{n+1} , \hat{\vec{v}}_{n+1} , t_{n+1} ) \,
+    \Big]
+  \end{equation}
+\end{enumerate}
 
 \subsection{Approximations}
 
-For problems where the local volume is conversed (either weakly to incompressible elasticity, or strongly by adding an incompressibility constraint) it makes sense to assume the mass matrix constant, as any change of volume results in an equivalent change of the density. In that case
+For problems where the local volume is conversed (either weakly through slightly compressible elasticity, or strongly by adding an incompressibility constraint) it makes sense to assume the mass matrix constant, as any change of volume results in an equivalent change of the density. In that case
 \begin{equation}
   \int\limits_{\Omega}
     \rho(\vec{x})
@@ -483,7 +511,7 @@ For problems where the local volume is conversed (either weakly to incompressibl
 \end{equation}
 Which results in:
 \begin{equation}
-  \underline{\underline{M}}(\vec{X})
+  \underline{\underline{M}}(\vec{x})
   =
   \int\limits_{\Omega_0}
     \rho(\vec{X})\; \underline{N}(\vec{X})\; \underline{N}^\mathsf{T}(\vec{X}) \;
@@ -492,82 +520,46 @@ Which results in:
   \mathrm{constant}
 \end{equation}
 
-To enhance computational efficiency, it may be a good option concentrate the mass to point masses on the nodes. This has to strong advantage that the mass matrix becomes diagonal, known as the \emph{lumped mass matrix}. Consequently, instead of solving a linear system one just has to just do $n_\mathrm{dof}$ decoupled inversions (where $n_\mathrm{dof}$ is the number of degrees-of-freedom).
-
-\subsection{Damping}
-
-The equations such as presented in the previous section can lead to indefinite oscillations. For example, when the constitutive response, hidden in $\bm{\sigma}(\vec{x})$, is elasticity, there is no form of dissipation. In the absence of numerical inaccuracies this corresponds to elastic waves that travel through the system indefinitely.
-
-To avoid this one needs to add damping to the system. Two types of damping are considered:
-
-\begin{itemize}
-  \item Viscosity:
-  \begin{equation}
-    \rho\, \ddot{\vec{x}}
-    =
-    \vec{\nabla} \cdot
-    \bm{\sigma}(\vec{x})
-    + \vec{\nabla} \cdot \bm{\sigma}_\eta (\vec{x})
-    \qquad
-    \vec{x} \in \Omega
-  \end{equation}
-  \item ??
-\end{itemize}
-
-\subsection{Time discretization for damped systems}
-
-The simplified notation from Eq.~\ref{eq:dynamics:time} is again used.
-
-\subsubsection{Velocity Verlet}
-
-\begin{enumerate}
-  \item Compute the position at $t_{n+1} = t_{n} + \Delta_t$:
-  \begin{equation}
-    \vec{x}_{n+1}
-    =
-    \vec{x}_{n} + \Delta_t \vec{v}_{n} + \tfrac{1}{2} \Delta_t^2 \vec{a}_{n}
-  \end{equation}
-  \item Estimate the velocity at $t_{n+1} = t_{n} + \Delta_t$:
-  \begin{equation}
-    \hat{\vec{v}}_{n+1}
-    =
-    \vec{v}_{n}
-    +
-    \tfrac{1}{2} \Delta_t \Big[\,
-      \vec{a}_{n} + \vec{a} ( \vec{x}_{n+1} , \vec{v}_{n} + \Delta_t \vec{a}_{n} , t_{n+1} ) \,
-    \Big]
-  \end{equation}
-  \item Correct $\hat{\vec{v}}_{n+1}$:
-  \begin{equation}
-    \vec{v}_{n+1}
-    =
-    \vec{v}_{n}
-    +
-    \tfrac{1}{2} \Delta_t \Big[\,
-      \vec{a}_{n} + \vec{a} ( \vec{x}_{n+1} , \hat{\vec{v}}_{n+1} , t_{n+1} ) \,
-    \Big]
-  \end{equation}
-\end{enumerate}
-
-
+To enhance computational efficiency, it may be a good option concentrate the mass to point masses on the nodes. This has to strong advantage that the mass matrix becomes diagonal, known as the \emph{lumped mass matrix}. Consequently, instead of solving a linear system one just has to solve fully independent equations.
 
 \appendix
 
 \section{Nomenclature}
 
-Divergence
-\begin{equation}
-  \vec{\nabla} \cdot \bm{\sigma} = \frac{ \partial \sigma_{ij} }{ \partial x_i }
-\end{equation}
-
-Double tensor contraction
-\begin{equation}
-  C = \bm{A} : \bm{B} = A_{ij} B_{ji}
-\end{equation}
+\begin{itemize}
+  \item Vector
+  \begin{equation}
+    \vec{u} = \sum\limits_i u_i \vec{e}_i
+  \end{equation}
+  for example for Cartesian coordinates
+  \begin{equation}
+    \vec{u} = u_x \vec{e}_x + u_y \vec{e}_y + u_z \vec{e}_z
+  \end{equation}
+  %
+  \item Second-order tensor
+  \begin{equation}
+    \bm{A} = \sum\limits_i \sum\limits_j A_{ij} \vec{e}_i \vec{e}_j
+  \end{equation}
+  %
+  \item Fourth-order tensor
+  \begin{equation}
+    \mathbb{A} = \sum\limits_i \sum\limits_j \sum\limits_k \sum\limits_l A_{ijkl} \vec{e}_i \vec{e}_j \vec{e}_k \vec{e}_l
+  \end{equation}
+  %
+  \item Divergence
+  \begin{equation}
+    \vec{\nabla} \cdot \bm{\sigma} = \frac{ \partial \sigma_{ij} }{ \partial x_i }
+  \end{equation}
+  %
+  \item Double tensor contraction
+  \begin{equation}
+    C = \bm{A} : \bm{B} = A_{ij} B_{ji}
+  \end{equation}
+\end{itemize}
 
 \section{Shape functions}
 
-In the Finite Element Method a geometry is discretized using nodes. The nodes are grouped in elements which define the domain $\Omega^h_0$. The crux of the method is that nodal quantities, for example $\vec{u}_i$, are interpolated throughout the discretized domain $\Omega^h_0$ using shape functions $N_i (\vec{X})$. The shape functions are polynomials that spanned by the nodes, such that they constitute a partition of unity and satisfy $N_i (\vec{X}_j) = \delta_{ij}$, i.e. it is one in the node $i$, and zero in all other nodes. This implies that, while each shape function is globally supported, $N_i (\vec{X}) \neq 0$ only in the elements containing node $i$. For all other elements it is zero (even in between the nodes). This again implies that $\partial N_i / \partial \vec{X}$ is discontinuous across element boundaries.
+In the Finite Element Method a geometry is discretized using nodes. The nodes are grouped in elements which define the domain $\Omega^h$. The crux of the method is that nodal quantities, for example $\vec{u}_i$, are interpolated throughout the discretized domain $\Omega^h$ using shape functions $N_i (\vec{x})$. The shape functions are polynomials that spanned by the nodes, such that they constitute a partition of unity and satisfy $N_i (\vec{x}_j) = \delta_{ij}$, i.e. it is one in the node $i$, and zero in all other nodes. This implies that, while each shape function is globally supported, $N_i (\vec{x}) \neq 0$ only in the elements containing node $i$. For all other elements it is zero (even in between the nodes). This again implies that $\partial N_i / \partial \vec{x}$ is discontinuous across element boundaries.
 
 For a one-dimensional problem comprising four linear elements and five nodes the shape functions are sketched in Fig.~\ref{fig:shape:1d-domain}. To emphasize the global support of each shape function the shape function of node 2 is isolated in Fig.~\ref{fig:shape:1d-domain-2}. As can be seen, node 2 is only non-zero in elements 1 and 2, while it is zero everywhere else. To evaluate for example $f_2$, the internal force one node 2, the integration can be limited to these two elements:
 \begin{equation}
@@ -576,12 +568,12 @@ For a one-dimensional problem comprising four linear elements and five nodes the
   \int\limits_{\Omega^{(1)}}
     \frac{\mathrm{d} N^{(1)}_2}{\mathrm{d} x} \;
     \sigma (x) \;
-  \mathrm{d}\Omega
+  \mathrm{d}\Omega^{(1)}
   +
   \int\limits_{\Omega^{(2)}}
     \frac{\mathrm{d} N^{(2)}_2}{\mathrm{d} x} \;
     \sigma (x) \;
-  \mathrm{d}\Omega
+  \mathrm{d}\Omega^{(2)}
 \end{equation}
 
 \begin{figure}[htp]
@@ -590,7 +582,7 @@ For a one-dimensional problem comprising four linear elements and five nodes the
   \begin{minipage}[t]{.5\textwidth}
     \centering
     \includegraphics[width=1.\textwidth]{figures/shape-functions-1d.pdf}
-    \subcaption{All shape functions $N_i(x)$, each with different color.}
+    \subcaption{All shape functions $N_i(x)$, each with a different color.}
     \label{fig:shape:1d-domain}
   \end{minipage}
   \\
@@ -738,7 +730,7 @@ The practical implications, for example for the internal force, are as follows:
 
 To obtain
 \begin{equation}
- \vec{X}(\vec{\xi}),\, \vec{\nabla}_0,\,\, \text{and}\, \int\limits_{\Omega_0} . \;\mathrm{d}\Omega
+ \vec{x}(\vec{\xi}),\, \vec{\nabla}_0,\,\, \text{and}\, \int\limits_{\Omega_0} . \;\mathrm{d}\Omega
 \end{equation}
 simply replace $\underline{x}^e$ with $\underline{X}^e$ in Eq.~\eqref{eq:isoparametric:coordinate}. For this reason the same element implementation can be used in small strain and finite strain (total Lagrange and updated Lagrange), by providing either $\underline{X}^e$ or $\underline{X}^e + \underline{u}^e$ as input.
 

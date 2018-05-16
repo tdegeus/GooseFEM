@@ -16,21 +16,15 @@
 namespace GooseFEM {
 namespace Dynamics {
 
-// -------------------------------------------------------------------------------------------------
+// ------------------------------------------ dummy class ------------------------------------------
 
 class Geometry
 {
 public:
 
   // solve for DOF-accelerations [ndof]
-  virtual ColD solve() { return ColD(); };
-
-  // reset residuals, check for convergence
-  virtual void reset()          { return;       }
-  virtual bool stop(double tol) { UNUSED(tol); return false; };
-
-  // process time-step
-  virtual void timestep(double dt) { UNUSED(dt); return; };
+  virtual ColD solve_A() { return ColD(); };
+  virtual ColD solve_V() { return ColD(); };
 
   // return nodal vectors [nnode, ndim]
   virtual MatD u() const { return MatD(); };
@@ -38,6 +32,7 @@ public:
   virtual MatD a() const { return MatD(); };
 
   // return DOF values [ndof]
+  virtual ColD dofs_u() const { return ColD(); };
   virtual ColD dofs_v() const { return ColD(); };
   virtual ColD dofs_a() const { return ColD(); };
 
@@ -45,21 +40,20 @@ public:
   virtual void set_u(const MatD &nodevec) { UNUSED(nodevec); return; };
 
   // overwrite nodal vectors, reconstructed from DOF values [ndof]
+  virtual void set_u(const ColD &dofval) { UNUSED(dofval); return; };
   virtual void set_v(const ColD &dofval) { UNUSED(dofval); return; };
   virtual void set_a(const ColD &dofval) { UNUSED(dofval); return; };
 
 };
 
-// -------------------------------------------------------------------------------------------------
+// ------------------------------------ evaluate one time step -------------------------------------
 
-// evaluate one time step
-inline void Verlet(Geometry &geometry, double dt);
-
-// evaluate one time step
+inline void Verlet        (Geometry &geometry, double dt);
 inline void velocityVerlet(Geometry &geometry, double dt);
 
-// iterate until all nodes have come to a rest
-inline size_t quasiStaticVelocityVerlet(Geometry &geometry, double dt, double tol);
+namespace Overdamped {
+inline void forwardEuler  (Geometry &geometry, double dt);
+}
 
 // -------------------------------------------------------------------------------------------------
 
