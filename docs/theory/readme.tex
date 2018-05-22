@@ -1,7 +1,7 @@
 %!TEX program = xelatex
 \documentclass[times,namecite]{goose-article}
 
-\usepackage{lipsum,verbatim,mdframed}
+\usepackage{lipsum,verbatim,mdframed,array}
 
 \title{%
   The Finite Element Method in Continuum Mechanics
@@ -125,6 +125,7 @@ The right-hand side of this equation can be reduced to an area integral by emplo
 \end{equation}
 where $\vec{n}$ is the normal along the surface $\Gamma$. The result reads
 \begin{equation}
+\label{eq:static:weak:final}
   \int\limits_\Omega
     \big[\, \vec{\nabla} \vec{\phi}(\vec{x}) \,\big] : \bm{\sigma}(\vec{x}) \;
   \mathrm{d}\Omega
@@ -155,6 +156,7 @@ The problem is now discretized using $n$ \emph{nodes} that are connected through
 \end{equation}
 whereby we will not further consider the time dependence (denoted with $t$) for now. Following standard Galerkin the test functions are interpolated in the same way, i.e.\
 \begin{equation}
+\label{eq:discretization}
   \vec{\phi}(\vec{x})
   \approx
   \vec{\phi}^h(\vec{x})
@@ -663,6 +665,10 @@ where the column $\underline{x}^e$ contains the position vectors of the element 
   =
   \bm{J}(\vec{\xi}) \cdot \vec{\nabla}
 \end{equation}
+i.e.
+\begin{equation}
+  J_{ij} = \frac{\partial x_i}{\partial \xi_j}
+\end{equation}
 from which the inverse relationship trivially follows
 \begin{equation}
   \vec{\nabla} = \bm{J}^{-1}(\vec{\xi}) \cdot \vec{\nabla}_{\xi}\,
@@ -792,8 +798,296 @@ The iterative scheme is well understood from the illustration in Fig.~\ref{fig:n
 \end{figure}
 
 
+\section{Cylindrical coordinates}
+
+\subsection{??}
+
+\begin{figure}[htp]
+  \centering
+  \includegraphics[width=.2\textwidth]{figures/cylindrical_coordinates}
+  \caption{Caption here}
+  \label{fig:}
+\end{figure}
+
+\begin{equation}
+  x = r \cos \theta \qquad
+  y = r \sin \theta \qquad
+  z = z
+\end{equation}
+
+\begin{equation}
+  r      = \sqrt{ x^2 + y^2 }                \qquad
+  \theta = \mathrm{arctan}\left( y/x \right) \qquad
+  z      = z
+\end{equation}
+
+\begin{align}
+  \vec{e}_r      &=   \cos \theta \; \vec{e}_x + \sin \theta \; \vec{e}_y \nonumber \\
+  \vec{e}_\theta &= - \sin \theta \; \vec{e}_x + \cos \theta \; \vec{e}_y \nonumber \\
+  \vec{e}_r      &= \vec{e}_z
+\end{align}
 
 
+
+
+
+\begin{equation}
+  \vec{\nabla} =
+  \vec{e}_r \frac{\partial}{\partial r} +
+  \frac{1}{r} \vec{e}_\theta \frac{\partial}{\partial \theta} +
+  \vec{e}_z \frac{\partial}{\partial z}
+\end{equation}
+
+\begin{alignat}{3}
+  \frac{\partial \vec{e}_r}{\partial r     } &= 0              &\qquad \frac{\partial \vec{e}_\theta}{\partial r     } &= 0           &\qquad \frac{\partial \vec{e}_z}{\partial r     } &= 0 \nonumber \\
+  \frac{\partial \vec{e}_r}{\partial \theta} &= \vec{e}_\theta &\qquad \frac{\partial \vec{e}_\theta}{\partial \theta} &= - \vec{e}_r &\qquad \frac{\partial \vec{e}_z}{\partial \theta} &= 0 \nonumber \\
+  \frac{\partial \vec{e}_r}{\partial z     } &= 0              &\qquad \frac{\partial \vec{e}_\theta}{\partial z     } &= 0           &\qquad \frac{\partial \vec{e}_z}{\partial z     } &= 0
+\end{alignat}
+
+
+We start from the weak form in Eq.~\eqref{eq:static:weak:final}, that has been obtained strictly without specifying a coordinate system. Our point of departure is thus
+\begin{equation}
+  \int\limits_\Omega
+    \big[\, \vec{\nabla} \vec{\phi}(\vec{x}) \,\big] : \bm{\sigma}(\vec{x}) \;
+  \mathrm{d}\Omega
+  =
+  \int\limits_\Gamma
+    \vec{\phi}(\vec{x}) \cdot \vec{t}(\vec{x}) \;
+  \mathrm{d}\Gamma
+  \qquad
+  \forall \; \vec{\phi}(\vec{x}) \in \mathbb{R}^d
+\end{equation}
+
+The next step is to discretize using Eq.~\eqref{eq:discretization} thereby we have to be a be careful. We begin by making Eq.~\eqref{eq:discretization} more specific:
+\begin{equation}
+  \phi_r (\vec{x}) \vec{e}_r + \phi_\theta (\vec{x}) \vec{e}_\theta + \phi_z (\vec{x}) \vec{e}_z
+  \approx
+  \sum\limits_{i=1}^{n}
+  \phi_{i,r} N_i (\vec{x}) \vec{e}_r +
+  \phi_{i,\theta}  N_i (\vec{x}) \vec{e}_\theta +
+  \phi_{i,z}  N_i (\vec{x}) \vec{e}_z
+\end{equation}
+We can also evaluate the discretized gradient
+\begin{align}
+  &\vec{\nabla} \vec{\phi} (\vec{x})
+  \approx
+  \sum\limits_{i=1}^{n}
+  \bigg(
+  \vec{e}_r \frac{\partial}{\partial r} +
+  \frac{1}{r} \vec{e}_\theta \frac{\partial}{\partial \theta} +
+  \vec{e}_z \frac{\partial}{\partial z}
+  \bigg)
+  \bigg(
+  \phi_{i,r} N_i (\vec{x}) \vec{e}_r +
+  \phi_{i,\theta}  N_i (\vec{x}) \vec{e}_\theta +
+  \phi_{i,z}  N_i (\vec{x}) \vec{e}_z
+  \bigg)
+  \\
+  &=
+  \sum\limits_{i=1}^{n}
+    \phi_{i,r     } \frac{\partial N_i}{\partial r} \vec{e}_r \vec{e}_r
+  + \phi_{i,\theta} \frac{\partial N_i}{\partial r} \vec{e}_r \vec{e}_\theta
+  + \phi_{i,z     } \frac{\partial N_i}{\partial r} \vec{e}_r \vec{e}_z
+  \nonumber
+  \\
+  &\quad
+  + \phi_{i,r     } \frac{1}{r} \frac{\partial N_i }{\partial \theta} \vec{e}_\theta \vec{e}_r
+  + \phi_{i,r     } \frac{1}{r} N_i (\vec{x}) \vec{e}_\theta \vec{e}_\theta
+  + \phi_{i,\theta} \frac{1}{r} \frac{\partial N_i }{\partial \theta} \vec{e}_\theta \vec{e}_\theta
+  - \phi_{i,r} \frac{1}{r} N_i (\vec{x}) \vec{e}_r \vec{e}_\theta
+  + \phi_{i,z     } \frac{1}{r} \frac{\partial N_i }{\partial \theta} \vec{e}_\theta \vec{e}_z
+  \nonumber
+  \\
+  &\quad
+  + \phi_{i,r     } \frac{\partial N_i }{\partial z} \vec{e}_z \vec{e}_r
+  + \phi_{i,\theta} \frac{\partial N_i }{\partial z} \vec{e}_z \vec{e}_\theta
+  + \phi_{i,z     } \frac{\partial N_i }{\partial z} \vec{e}_z \vec{e}_z
+\end{align}
+Which we can denote in short as
+\begin{equation}
+  \vec{\nabla} \vec{\phi} (\vec{x})
+  \approx
+  \sum\limits_{i=1}^{n}
+  \mathcal{B}_i (\vec{x}) \cdot \vec{\phi}_i
+  =
+  \underline{\mathcal{B}}^\mathsf{T} \cdot \underline{\vec{\phi}}
+\end{equation}
+where the non-zero components of the third order $\mathcal{B}_i$ read
+\begin{alignat}{3}
+  \mathcal{B}_{i,r      r      r     } &=             \frac{\partial N_i}{\partial r}      & \qquad
+  \mathcal{B}_{i,\theta r      r     } &= \frac{1}{r} \frac{\partial N_i}{\partial \theta} & \qquad
+  \mathcal{B}_{i,z      r      r     } &=             \frac{\partial N_i}{\partial z}
+  \nonumber
+  \\
+  \mathcal{B}_{i,r      \theta r     } &= - \frac{1}{r} N_i (\vec{x})  & \qquad
+  \mathcal{B}_{i,\theta \theta r     } &=   \frac{1}{r} N_i (\vec{x})  & \qquad
+  \nonumber
+  \\
+  \mathcal{B}_{i,r      \theta \theta} &=             \frac{\partial N_i}{\partial r}       & \qquad
+  \mathcal{B}_{i,\theta \theta \theta} &= \frac{1}{r} \frac{\partial N_i}{\partial \theta}  & \qquad
+  \mathcal{B}_{i,z      \theta \theta} &=             \frac{\partial N_i}{\partial z}
+  \\
+  \mathcal{B}_{i,r      z      z     } &=             \frac{\partial N_i}{\partial r}       & \qquad
+  \mathcal{B}_{i,\theta z      z     } &= \frac{1}{r} \frac{\partial N_i}{\partial \theta}  & \qquad
+  \mathcal{B}_{i,z      z      z     } &=             \frac{\partial N_i}{\partial z}
+\end{alignat}
+%\begin{align}
+%  \mathcal{B}_{i,r      r      r     } &=             \frac{\partial N_i}{\partial r} \\
+%  %\mathcal{B}_{i,r      r      \theta} &= 0 \\
+%  %\mathcal{B}_{i,r      r      z     } &= 0 \\
+%  \mathcal{B}_{i,r      \theta r     } &= - \frac{1}{r} N_i (\vec{x}) \\
+%  \mathcal{B}_{i,r      \theta \theta} &=             \frac{\partial N_i}{\partial r} \\
+%  %\mathcal{B}_{i,r      \theta z     } &= 0 \\
+%  %\mathcal{B}_{i,r      z      r     } &= 0 \\
+%  %\mathcal{B}_{i,r      z      \theta} &= 0 \\
+%  \mathcal{B}_{i,r      z      z     } &=             \frac{\partial N_i}{\partial z} \\
+%  \mathcal{B}_{i,\theta r      r     } &= \frac{1}{r} \frac{\partial N_i}{\partial \theta} \\
+%  %\mathcal{B}_{i,\theta r      \theta} &= 0 \\
+%  %\mathcal{B}_{i,\theta r      z     } &= 0 \\
+%  \mathcal{B}_{i,\theta \theta r     } &= \frac{1}{r} N_i (\vec{x}) \\
+%  \mathcal{B}_{i,\theta \theta \theta} &= \frac{1}{r} \frac{\partial N_i}{\partial \theta} \\
+%  %\mathcal{B}_{i,\theta \theta z     } &= 0 \\
+%  %\mathcal{B}_{i,\theta z      r     } &= 0 \\
+%  %\mathcal{B}_{i,\theta z      \theta} &= 0 \\
+%  \mathcal{B}_{i,\theta z      z     } &= \frac{1}{r} \frac{\partial N_i}{\partial \theta} \\
+%  \mathcal{B}_{i,z      r      r     } &=             \frac{\partial N_i}{\partial z} \\
+%  %\mathcal{B}_{i,z      r      \theta} &= 0 \\
+%  %\mathcal{B}_{i,z      r      z     } &= 0 \\
+%  %\mathcal{B}_{i,z      \theta r     } &= 0 \\
+%  \mathcal{B}_{i,z      \theta \theta} &=             \frac{\partial N_i}{\partial z} \\
+%  %\mathcal{B}_{i,z      \theta z     } &= 0 \\
+%  %\mathcal{B}_{i,z      z      r     } &= 0 \\
+%  %\mathcal{B}_{i,z      z      \theta} &= 0 \\
+%  \mathcal{B}_{i,z      z      z     } &=             \frac{\partial N_i}{\partial z} \\
+%\end{align}
+Note that similarly
+\begin{equation}
+  \vec{\nabla} \vec{u} (\vec{x})
+  \approx
+  \sum\limits_{i=1}^{n}
+  \mathcal{B}_i (\vec{x}) \cdot \vec{u}_i
+  =
+  \underline{\mathcal{B}}^\mathsf{T} \cdot \underline{\vec{u}}
+\end{equation}
+
+
+\begin{equation}
+  \int\limits_\Omega
+    \left( \underline{\mathcal{B}}^\mathsf{T} \cdot \underline{\vec{\phi}} \right) : \bm{\sigma}(\vec{x}) \;
+  \mathrm{d}\Omega
+  =
+  \int\limits_\Gamma
+    \underline{N}^\mathsf{T}(\vec{x}) \; \underline{\vec{\phi}} \cdot \vec{t}(\vec{x}) \;
+  \mathrm{d}\Gamma
+  \qquad
+  \forall \; \underline{\vec{\phi}} \in \mathbb{R}^d
+\end{equation}
+
+
+\begin{equation}
+  \underline{\vec{\phi}}^\mathsf{T} \cdot
+  \int\limits_\Omega
+    \underline{\mathcal{B}} : \bm{\sigma}(\vec{x}) \;
+  \mathrm{d}\Omega
+  =
+  \underline{\vec{\phi}}^\mathsf{T} \cdot
+  \int\limits_\Gamma
+    \underline{N}(\vec{x}) \vec{t}(\vec{x}) \;
+  \mathrm{d}\Gamma
+  \qquad
+  \forall \; \underline{\vec{\phi}} \in \mathbb{R}^d
+\end{equation}
+
+
+\begin{equation}
+  \int\limits_\Omega
+    \underline{\mathcal{B}} : \bm{\sigma}(\vec{x}) \;
+  \mathrm{d}\Omega
+  =
+  \int\limits_\Gamma
+    \underline{N}(\vec{x}) \vec{t}(\vec{x}) \;
+  \mathrm{d}\Gamma
+\end{equation}
+
+\begin{equation}
+  \int\limits_\Omega
+    \underline{\mathcal{B}} : \left( \mathbb{C} : \bm{\varepsilon}(\vec{x}) \right) \;
+  \mathrm{d}\Omega
+  =
+  \int\limits_\Gamma
+    \underline{N}(\vec{x}) \vec{t}(\vec{x}) \;
+  \mathrm{d}\Gamma
+\end{equation}
+
+\begin{equation}
+  \int\limits_\Omega
+    \underline{\mathcal{B}} : \left( \mathbb{C} : \vec{\nabla}\vec{u}(\vec{x}) \right) \;
+  \mathrm{d}\Omega
+  =
+  \int\limits_\Gamma
+    \underline{N}(\vec{x}) \vec{t}(\vec{x}) \;
+  \mathrm{d}\Gamma
+\end{equation}
+
+\begin{equation}
+  \int\limits_\Omega
+    \underline{\mathcal{B}} : \left( \mathbb{C} :( \underline{\mathcal{B}}^\mathsf{T} \cdot \underline{\vec{u}}) \right) \;
+  \mathrm{d}\Omega
+  =
+  \int\limits_\Gamma
+    \underline{N}(\vec{x}) \vec{t}(\vec{x}) \;
+  \mathrm{d}\Gamma
+\end{equation}
+
+\begin{equation}
+  \int\limits_\Omega
+    \underline{\mathcal{B}} : \left( \mathbb{C} : \underline{\mathcal{B}}^\mathsf{T} \right) \;
+  \mathrm{d}\Omega
+  \cdot \underline{\vec{u}}
+  =
+  \int\limits_\Gamma
+    \underline{N}(\vec{x}) \vec{t}(\vec{x}) \;
+  \mathrm{d}\Gamma
+\end{equation}
+
+\begin{equation}
+  \vec{\nabla}_\xi = \bm{J} \cdot \vec{\nabla}
+\end{equation}
+
+\begin{equation}
+  \vec{e}_\xi  \frac{\partial}{\partial \xi }  +
+  \vec{e}_\eta \frac{\partial}{\partial \eta} +
+  \vec{e}_\mu  \frac{\partial}{\partial \mu}
+  =
+  \bm{J} \cdot
+  \left(
+              \vec{e}_r      \frac{\partial}{\partial r     } +
+  \frac{1}{r} \vec{e}_\theta \frac{\partial}{\partial \theta} +
+              \vec{e}_z      \frac{\partial}{\partial z     }
+  \right)
+\end{equation}
+
+\begin{align}
+  \bm{J}
+  &=
+  \vec{e}_\xi    \frac{\partial r     }{\partial \xi } \vec{e}_r      +
+  \vec{e}_\xi  r \frac{\partial \theta}{\partial \xi } \vec{e}_\theta +
+  \vec{e}_\xi    \frac{\partial z     }{\partial \xi } \vec{e}_z
+  \nonumber
+  \\
+  &+
+  \vec{e}_\eta   \frac{\partial r     }{\partial \eta} \vec{e}_r      +
+  \vec{e}_\eta r \frac{\partial \theta}{\partial \eta} \vec{e}_\theta +
+  \vec{e}_\eta   \frac{\partial z     }{\partial \eta} \vec{e}_z
+  \nonumber
+  \\
+  &+
+  \vec{e}_\mu    \frac{\partial r     }{\partial \mu } \vec{e}_r      +
+  \vec{e}_\mu  r \frac{\partial \theta}{\partial \mu } \vec{e}_\theta +
+  \vec{e}_\mu    \frac{\partial z     }{\partial \mu } \vec{e}_z
+\end{align}
+
+\subsection{Axisymmetric}
 
 % \bibliography{example_refs}
 
