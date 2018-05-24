@@ -102,7 +102,7 @@ C4 = K * II + 2. * G * I4d
 # ==================================================================================================
 
 # number of elements
-nz = 3
+nz = 10
 nr = 3
 
 # mesh dimensions
@@ -224,7 +224,7 @@ for e in conn:
       Bm = np.zeros((3,3,3))
 
       Bm[0,0,0] = dNdx[m,1]        # B(m, r      r      r      )
-      Bm[0,1,0] = -1./rk * N[m]    # B(m, r      \theta r      )
+      Bm[0,1,1] = -1./rk * N[m]    # B(m, r      \theta \theta )
       Bm[0,1,1] = dNdx[m,1]        # B(m, r      \theta \theta )
       Bm[0,2,2] = dNdx[m,1]        # B(m, r      z      z      )
 
@@ -242,7 +242,7 @@ for e in conn:
         Bn = np.zeros((3,3,3))
 
         Bn[0,0,0] = dNdx[n,1]        # B(n, r      r      r      )
-        Bn[0,1,0] = -1./rk * N[n]    # B(n, r      \theta r      )
+        Bn[0,1,1] = -1./rk * N[n]    # B(n, r      \theta \theta )
         Bn[0,1,1] = dNdx[n,1]        # B(n, r      \theta \theta )
         Bn[0,2,2] = dNdx[n,1]        # B(n, r      z      z      )
 
