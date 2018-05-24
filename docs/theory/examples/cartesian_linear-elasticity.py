@@ -62,6 +62,9 @@ nne   = 4                # number of nodes per element
 nd    = 2                # number of dimensions
 ndof  = nnode * nd       # total number of degrees of freedom
 
+# out-of-plane thickness
+thick = 1.
+
 # coordinates and connectivity: zero-initialize
 coor = np.zeros((nnode,nd ), dtype='float')
 conn = np.zeros((nelem,nne), dtype='int'  )
@@ -158,7 +161,7 @@ for e in conn:
           for j in range(nd):
             for k in range(nd):
               for l in range(nd):
-                Ke[m*nd+j, n*nd+k] += dNdx[m,i] * C4[i,j,k,l] * dNdx[n,l] * w * Jdet
+                Ke[m*nd+j, n*nd+k] += dNdx[m,i] * C4[i,j,k,l] * dNdx[n,l] * w * Jdet * thick
 
   # - assemble to global stiffness matrix
   iie = dofs[e,:].ravel()
@@ -218,8 +221,6 @@ fext = f[dofs]
 # ==================================================================================================
 # plot
 # ==================================================================================================
-
-print(fext[inode[:,-1],0].sum())
 
 import matplotlib.pyplot as plt
 
