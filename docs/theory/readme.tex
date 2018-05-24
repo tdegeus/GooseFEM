@@ -150,9 +150,7 @@ The problem is now discretized using $n$ \emph{nodes} that are connected through
   \approx
   \vec{u}^h(\vec{x},t)
   =
-  \sum_{i=1}^{n} N_i (\vec{x}) \; \vec{u}_i (t)
-  =
-  \underline{N}^\mathsf{T} (\vec{x}) \; \underline{\vec{x}} (t)
+  \sum_{m=1}^{n_\mathrm{nodes}} N_m (\vec{x}) \; \vec{u}_m (t)
 \end{equation}
 whereby we will not further consider the time dependence (denoted with $t$) for now. Following standard Galerkin the test functions are interpolated in the same way, i.e.\
 \begin{equation}
@@ -161,9 +159,7 @@ whereby we will not further consider the time dependence (denoted with $t$) for 
   \approx
   \vec{\phi}^h(\vec{x})
   =
-  \sum_{i=1}^{n} N_i (\vec{x}) \; \vec{\phi}_i
-  =
-  \underline{N}^\mathsf{T} (\vec{x}) \; \underline{\vec{\phi}}
+  \sum_{m=1}^{n_\mathrm{nodes}} N_m (\vec{x}) \; \vec{\phi}_m
 \end{equation}
 Applied to the problem sketch from Fig.~\ref{fig:problem}, a discretization might look like Fig.~\ref{fig:problem:discretized}. The nodes are clearly marked as circles. The lines connecting the nodes clearly mark the elements which are in this case three-node linear triangles.
 
@@ -176,58 +172,58 @@ Applied to the problem sketch from Fig.~\ref{fig:problem}, a discretization migh
 
 Applied to the balance equation the following is obtained
 \begin{equation}
-  \underline{\vec{\phi}}^\mathsf{T} \cdot
+  \vec{\phi}_m \cdot
   \int\limits_{\Omega^h}
-    \big[\, \vec{\nabla} \underline{N}(\vec{x}) \,\big]
+    \big[\, \vec{\nabla} N_m (\vec{x}) \,\big]
     \cdot
     \bm{\sigma}(\vec{x}) \;
   \mathrm{d}\Omega
   =
-  \underline{\vec{\phi}}^\mathsf{T} \cdot
+  \vec{\phi}_m \cdot
   \int\limits_{\Gamma^h}
-    \underline{N}(\vec{x}) \cdot
+    N_m (\vec{x}) \cdot
     \vec{t}(\vec{x}) \;
   \mathrm{d}\Gamma
   \qquad
-  \forall \; \underline{\vec{\phi}} \in \mathbb{R}^d_n
+  \forall \; \vec{\phi}_m \in \mathbb{R}^d_n
 \end{equation}
-from which the dependency on $\underline{\vec{\phi}}$ can be dropped:
+from which the dependency on $\vec{\phi}_m$ can be dropped:
 \begin{equation}
   \int\limits_{\Omega^h}
-    \big[\, \vec{\nabla} \underline{N}(\vec{x}) \,\big]
+    \big[\, \vec{\nabla} N_m (\vec{x}) \,\big]
     \cdot
     \bm{\sigma}(\vec{x}) \;
   \mathrm{d}\Omega
   =
   \int\limits_{\Gamma^h}
-    \underline{N}(\vec{x}) \cdot
+    N_m (\vec{x}) \cdot
     \vec{t}(\vec{x}) \;
   \mathrm{d}\Gamma
 \end{equation}
 This corresponds to a (non-linear) set of nodal balance equations:
 \begin{equation}
-  \underline{\vec{f}}^\mathrm{int}(\vec{x})
+  \vec{f}_m^\mathrm{int}(\vec{x})
   =
-  \underline{\vec{f}}^\mathrm{ext}(\vec{x})
+  \vec{f}_m^\mathrm{ext}(\vec{x})
 \end{equation}
 with:
 \begin{itemize}
   \item \emph{Internal forces}
   \begin{equation}
-    \underline{\vec{f}}^\mathrm{int}(\vec{x})
+    \vec{f}_m^\mathrm{int}(\vec{x})
     =
     \int\limits_{\Omega^h}
-      \big[\, \vec{\nabla} \underline{N}(\vec{x}) \,\big]
+      \big[\, \vec{\nabla} N_m (\vec{x}) \,\big]
       \cdot
       \bm{\sigma}(\vec{x}) \;
     \mathrm{d}\Omega
   \end{equation}
   \item \emph{External forces}
   \begin{equation}
-    \underline{\vec{f}}^\mathrm{ext}(\vec{x})
+    \vec{f}_m^\mathrm{ext}(\vec{x})
     =
     \int\limits_{\Gamma^h}
-      \underline{N}(\vec{x}) \cdot
+      N_m (\vec{x}) \cdot
       \vec{t}(\vec{x}) \;
     \mathrm{d}\Gamma
   \end{equation}
@@ -255,20 +251,20 @@ To further simplify the discussion, the boundary tractions are assumed to be som
 The nodal equilibrium equations now reads
 \begin{equation}
 \label{eq:static:eq-non-lin}
-  \underline{\vec{r}}(\vec{X}, \vec{u})
+  \vec{r}_m(\vec{X}, \vec{u})
   =
-  \underline{\vec{f}}^\mathrm{ext}(\vec{X})
+  \vec{f}_m^\mathrm{ext}(\vec{X})
   -
-  \underline{\vec{f}}^\mathrm{int}(\vec{X}, \vec{u})
+  \vec{f}_m^\mathrm{int}(\vec{X}, \vec{u})
   =
   \underline{\vec{0}}
 \end{equation}
 with
 \begin{equation}
-  \underline{\vec{f}}^\mathrm{int}(\vec{X}, \vec{u})
+  \vec{f}_m^\mathrm{int}(\vec{X}, \vec{u})
   =
   \int\limits_{\Omega^h_0}
-    \big[\, \vec{\nabla}_0 \underline{N}(\vec{X}) \,\big]
+    \big[\, \vec{\nabla}_0 N_m(\vec{X}) \,\big]
     \cdot
     \bm{\sigma}(\vec{X}, \vec{u}) \;
   \mathrm{d}\Omega_0
@@ -281,18 +277,18 @@ The displacement field $\vec{u}$ is now iteratively updated starting from some i
 The update, $\delta \vec{u}$, follows from the linearization of Eq.~\eqref{eq:static:eq-non-lin}. The results of which is
 \begin{equation}
   \int\limits_{\Omega^h_0}
-    \big[\, \vec{\nabla}_0 \underline{N}(\vec{X}) \,\big]
+    \big[\, \vec{\nabla}_0 N_m(\vec{X}) \,\big]
     \cdot
     \mathbb{K}\big(\vec{X},\vec{u}_{(i)}\big)
     \cdot
-    \big[\, \vec{\nabla}_0 \underline{N}(\vec{X}) \,\big]^\mathsf{T} \;
+    \big[\, \vec{\nabla}_0 N_n(\vec{X}) \,\big] \;
   \mathrm{d}\Omega_0
-  \cdot \delta \underline{\vec{u}}
+  \cdot \delta \vec{u}_n
   =
-  \underline{\vec{f}}^\mathrm{ext}(\vec{X})
+  \vec{f}_m^\mathrm{ext}(\vec{X})
   -
   \int\limits_{\Omega^h_0}
-    \big[\, \vec{\nabla}_0 \underline{N}(\vec{X}) \,\big]
+    \big[\, \vec{\nabla}_0 N_m(\vec{X}) \,\big]
     \cdot
     \bm{\sigma}\big(\vec{X},\vec{u}_{(i)}\big) \;
   \mathrm{d}\Omega_0
@@ -309,30 +305,30 @@ is the \emph{constitutive tangent operator}.
 
 In a shorter notation, the iterative update reads:
 \begin{equation}
-  \underline{\underline{\bm{K}}}_{(i)} \cdot \delta \underline{\vec{u}}
+  \bm{K}_{mn,(i)} \cdot \delta \vec{u}_m
   =
-  \underline{\vec{f}}^\mathrm{ext}
+  \vec{f}_m^\mathrm{ext}
   -
-  \underline{\vec{f}}^\mathrm{int}_{(i)}
+  \vec{f}_{m,(i)}^\mathrm{int}
 \end{equation}
 with
 \begin{equation}
-  \underline{\underline{\bm{K}}}_{(i)}
+  \bm{K}_{mn,(i)}
   =
   \int\limits_{\Omega^h_0}
-    \big[\, \vec{\nabla}_0 \underline{N}(\vec{X}) \,\big]
+    \big[\, \vec{\nabla}_0 N_m(\vec{X}) \,\big]
     \cdot
     \mathbb{K}\big(\vec{X}, \vec{u}_{(i)}\big)
     \cdot
-    \big[\, \vec{\nabla}_0 \underline{N}(\vec{X}) \,\big]^\mathsf{T} \;
+    \big[\, \vec{\nabla}_0 N_m(\vec{X}) \,\big] \;
   \mathrm{d}\Omega_0
 \end{equation}
 and
 \begin{equation}
-  \underline{\vec{f}}^\mathrm{int}_{(i)}
+  \vec{f}_{m,(i)}^\mathrm{int}
   =
   \int\limits_{\Omega^h_0}
-    \big[\, \vec{\nabla}_0 \underline{N}(\vec{X}) \,\big]
+    \big[\, \vec{\nabla}_0 N_m(\vec{X}) \,\big]
     \cdot
     \bm{\sigma}\big(\vec{X}, \vec{u}_{(i)}\big) \;
   \mathrm{d}\Omega_0
@@ -391,59 +387,65 @@ Integration by parts results in
 \end{equation}
 which is discretized as before:
 \begin{equation}
-  \underline{\vec{\phi}}^\mathsf{T} \cdot
+  \vec{\phi}_m \cdot
   \int\limits_\Omega
-    \rho(\vec{x})\; \underline{N}(\vec{x})\; \underline{N}^\mathsf{T}(\vec{x}) \;
+    \rho(\vec{x})\; N_m(\vec{x})\; N_n(\vec{x}) \;
   \mathrm{d}\Omega \;
-  \underline{\vec{a}}
+  \vec{a}_n
   =
-  \underline{\vec{\phi}}^\mathsf{T} \cdot
+  \vec{\phi}_m \cdot
   \int\limits_\Gamma
-    \underline{N}(\vec{x})\; \vec{t}(\vec{x}) \;
+    N_m(\vec{x})\; \vec{t}(\vec{x}) \;
   \mathrm{d}\Gamma
   -
-  \underline{\vec{\phi}}^\mathsf{T} \cdot
+  \vec{\phi}_m \cdot
   \int\limits_\Omega
-    \big[\, \vec{\nabla} \underline{N}(\vec{x}) \,\big]
+    \big[\, \vec{\nabla} N_m(\vec{x}) \,\big]
     :
     \bm{\sigma}(\vec{x}) \;
   \mathrm{d}\Omega
   \qquad
-  \forall \; \underline{\vec{\phi}} \in \mathbb{R}^d_n
+  \forall \; \vec{\phi}_m \in \mathbb{R}^d_n
 \end{equation}
 This is independent of the test functions, hence:
 \begin{equation}
 \label{eq:dynamics:system}
   \underbrace{
     \int\limits_\Omega
-      \rho(\vec{x})\; \underline{N}(\vec{x})\; \underline{N}^\mathsf{T}(\vec{x}) \;
+      \rho(\vec{x})\; N_m(\vec{x})\; N_n(\vec{x}) \;
     \mathrm{d}\Omega
-  }_{\underline{\underline{M}}(\vec{x})} \;
-  \underline{\vec{a}}
+  }_{\displaystyle
+    M_{mn}(\vec{x})
+  } \;
+  \vec{a}_n
   =
   \underbrace{
     \int\limits_\Gamma
-      \underline{N}(\vec{x})\; \vec{t}(\vec{x}) \;
+      N_m(\vec{x})\; \vec{t}(\vec{x}) \;
     \mathrm{d}\Gamma
-  }_{\underline{\vec{f}}^\mathrm{ext}(\vec{x})}
+  }_{\displaystyle
+    \vec{f}_m^\mathrm{ext}(\vec{x})
+  }
   -
   \underbrace{
     \int\limits_\Omega
-      \big[\, \vec{\nabla} \underline{N}(\vec{x}) \,\big]
+      \big[\, \vec{\nabla} N_m(\vec{x}) \,\big]
       :
       \bm{\sigma}(\vec{x}) \;
     \mathrm{d}\Omega
-  }_{\underline{\vec{f}}^\mathrm{int}(\vec{x})}
+  }_{\displaystyle
+    \vec{f}_m^\mathrm{int}(\vec{x})
+  }
 \end{equation}
 This is denoted as follows
 \begin{equation}
-  \underline{\underline{M}}(\vec{x})\; \underline{\vec{a}}
+  M_{mn}(\vec{x})\; \vec{a}_n
   =
-  \underline{\vec{f}}^\mathrm{ext}(\vec{x})
+  \vec{f}_m^\mathrm{ext}(\vec{x})
   -
-  \underline{\vec{f}}^\mathrm{int}(\vec{x})
+  \vec{f}_m^\mathrm{int}(\vec{x})
 \end{equation}
-Where $\underline{\underline{M}}(\vec{x})$ is the \emph{mass matrix}, $\underline{\vec{f}}^\mathrm{ext}(\vec{x})$ are the \emph{external forces}, and $\underline{\vec{f}}^\mathrm{int}(\vec{x})$ are the \emph{internal forces}.
+Where $M_{mn}(\vec{x})$ is the \emph{mass matrix}, $\vec{f}_m^\mathrm{ext}(\vec{x})$ are the \emph{external forces}, and $\vec{f}_m^\mathrm{int}(\vec{x})$ are the \emph{internal forces}.
 
 \subsection{Time discretization}
 \label{eq:dynamics:time}
@@ -513,10 +515,10 @@ For problems where the local volume is conversed (either weakly through slightly
 \end{equation}
 Which results in:
 \begin{equation}
-  \underline{\underline{M}}(\vec{x})
+  M_{mn}(\vec{x})
   =
   \int\limits_{\Omega_0}
-    \rho(\vec{X})\; \underline{N}(\vec{X})\; \underline{N}^\mathsf{T}(\vec{X}) \;
+    \rho(\vec{X})\; N_m(\vec{X})\; N_n(\vec{X}) \;
   \mathrm{d}\Omega_0
   =
   \mathrm{constant}
@@ -649,7 +651,7 @@ A very important concept in the Finite Element Method is the iso-parametric tran
 The mapping between the generic domain $Q$ and the physical domain $\Omega^e$ is as follows
 \begin{equation}
 \label{eq:isoparametric:coordinate}
-  \vec{x} ( \vec{\xi} ) = \big[\, \underline{N}^{e} \,\big]^\mathsf{T} \underline{x}^e
+  \vec{x} ( \vec{\xi} ) = N_m^{e} \; \underline{x}_m^e
 \end{equation}
 where the column $\underline{x}^e$ contains the position vectors of the element nodes in the actual coordinates (i.e.\ spanning $\Omega^e$). In order to perform the quadrature on $Q$ we must also map the gradient operator:
 \begin{equation}
@@ -679,16 +681,55 @@ where $\bm{J}$ is the Jacobian which can be obtained from the gradient of the sh
   =
   \vec{\nabla}_{\xi}\, \vec{x}(\vec{\xi})
   =
-  \big[\, \vec{\nabla}_{\xi}\, \underline{N}^{e} \,\big]^\mathsf{T} \; \underline{x}^e
+  \vec{\nabla}_{\xi}\, \big[\, N_m^{e} \; \vec{x}_m^e \,\big]
+  =
+  \big[\, \vec{\nabla}_{\xi}\, N_m^{e} \,\big] \; \vec{x}_m^e
 \end{equation}
 
 The gradient of the shape functions with respect to the actual coordinates can now be computed though
 \begin{equation}
-  \vec{\nabla} \underline{N}^{e}
+  \vec{\nabla} N_m^{e}
   =
-  \bm{J}^{-1}(\vec{\xi}) \cdot  \big[\, \vec{\nabla}_{\xi}\, \underline{N}^{e} \,\big]
+  \bm{J}^{-1}(\vec{\xi}) \cdot  \big[\, \vec{\nabla}_{\xi}\, N_m^{e} \,\big]
 \end{equation}
-Furthermore, the mapping between the real and the master volume is equal to
+
+The change of variables should also be accounted for in the integration:
+\begin{equation}
+  \int_\Omega (\ldots) \; \mathrm{d} \Omega
+  =
+  \iiint (\ldots) \; \mathrm{d} x \, \mathrm{d} y \, \mathrm{d} z
+  =
+  \iiint (\ldots) \; \left| \frac{\partial \left( x, y, z \right)}{\partial \left( \xi, \eta, \mu \right)} \right| \mathrm{d} \xi \, \mathrm{d} \eta \, \mathrm{d} \mu
+\end{equation}
+where the determinant of the Jacobian
+\begin{equation}
+  \frac{\partial \left( x, y, z \right)}{\partial \left( \xi, \eta, \mu \right)}
+  =
+  \left|
+    \begin{array}{ccc}
+      \displaystyle \frac{\partial x}{\partial \xi } &
+      \displaystyle \frac{\partial x}{\partial \eta} &
+      \displaystyle \frac{\partial x}{\partial \mu }
+      \\
+      \displaystyle \frac{\partial y}{\partial \xi } &
+      \displaystyle \frac{\partial y}{\partial \eta} &
+      \displaystyle \frac{\partial y}{\partial \mu }
+      \\
+      \displaystyle \frac{\partial z}{\partial \xi } &
+      \displaystyle \frac{\partial z}{\partial \eta} &
+      \displaystyle \frac{\partial z}{\partial \mu }
+    \end{array}
+  \right|
+\end{equation}
+We can now make use of the Jacobian that we already obtained
+\begin{equation}
+  \int_\Omega (\ldots) \; \mathrm{d} \Omega
+  =
+  \iiint (\ldots) \det \left( \bm{J}(\vec{\xi}) \right) \; \mathrm{d} \xi \, \mathrm{d} \eta \, \mathrm{d} \mu
+  =
+  \int_Q (\ldots) \det \left( \bm{J}(\vec{\xi}) \right) \; \mathrm{d} Q
+\end{equation}
+Note that another way to obtain this result is using
 \begin{align}
   \mathrm{d} \Omega
   &=
@@ -708,16 +749,16 @@ Numerical quadrature can be formulated (exactly) on the master element. It corre
 
 The practical implications, for example for the internal force, are as follows:
 \begin{align}
-  \underline{\vec{f}^e}
+  \vec{f}_m^e
   &=
   \int\limits_{\Omega^e}
-    \big[\, \vec{\nabla} \underline{N} \,\big]
+    \big[\, \vec{\nabla} N_m \,\big]
     \cdot
     \bm{\sigma}(\vec{x}) \;
   \mathrm{d}\Omega
   =
   \int\limits_{Q}
-    \big[\, \vec{\nabla} \underline{N} \,\big]
+    \big[\, \vec{\nabla} N_m \,\big]
     \cdot
     \bm{\sigma}(\vec{x}) \;
     \det \big( \bm{J}(\vec{\xi}) \big) \;
@@ -726,7 +767,7 @@ The practical implications, for example for the internal force, are as follows:
   &=
   \sum_{k}^{n_k}
   w_k
-  \big[\, \vec{\nabla} \underline{N} \,\big]_{\vec{\xi} = \vec{\xi}_k}
+  \big[\, \vec{\nabla} N_m \,\big]_{\vec{\xi} = \vec{\xi}_k}
   \cdot
   \bm{\sigma}\big(\vec{x}(\vec{\xi}_k)\big) \;
   \det \big( \bm{J}(\vec{\xi}_k) \big) \;
@@ -738,7 +779,7 @@ To obtain
 \begin{equation}
  \vec{x}(\vec{\xi}),\, \vec{\nabla}_0,\,\, \text{and}\, \int\limits_{\Omega_0} . \;\mathrm{d}\Omega
 \end{equation}
-simply replace $\underline{x}^e$ with $\underline{X}^e$ in Eq.~\eqref{eq:isoparametric:coordinate}. For this reason the same element implementation can be used in small strain and finite strain (total Lagrange and updated Lagrange), by providing either $\underline{X}^e$ or $\underline{X}^e + \underline{u}^e$ as input.
+simply replace $\vec{x}_m^e$ with $\vec{X}_m^e$ in Eq.~\eqref{eq:isoparametric:coordinate}. For this reason the same element implementation can be used in small strain and finite strain (total Lagrange and updated Lagrange), by providing either $\vec{X}_m^e$ or $\vec{X}_m^e + \vec{u}_m^e$ as input.
 
 
 \section{Newton-Raphson in one dimension}
@@ -797,6 +838,187 @@ The iterative scheme is well understood from the illustration in Fig.~\ref{fig:n
   \label{fig:newton-raphson}
 \end{figure}
 
+\section{B-matrix}
+
+\subsection{Discretization}
+
+\eqref{eq:static:weak:final}
+
+\begin{equation}
+  \int\limits_\Omega
+    \big[\, \vec{\nabla} \vec{\phi}(\vec{x}) \,\big] : \bm{\sigma}(\vec{x}) \;
+  \mathrm{d}\Omega
+  =
+  \int\limits_\Gamma
+    \vec{\phi}(\vec{x}) \cdot
+    \vec{t}(\vec{x}) \;
+  \mathrm{d}\Gamma
+  \qquad
+  \forall \; \vec{\phi}(\vec{x}) \in \mathbb{R}^d
+\end{equation}
+
+The discretization from Eq.~\eqref{eq:discretization} can be written more precisely as
+
+\begin{equation}
+  \phi_x(\vec{x}) \vec{e}_x +
+  \phi_y(\vec{x}) \vec{e}_y +
+  \phi_z(\vec{x}) \vec{e}_z
+  \approx
+  \sum_{m=1}^{n_\mathrm{nodes}}
+  N_m (\vec{x}) \; \phi_{m,x} \vec{e}_x +
+  N_m (\vec{x}) \; \phi_{m,y} \vec{e}_y +
+  N_m (\vec{x}) \; \phi_{m,z} \vec{e}_z
+\end{equation}
+
+
+\begin{align}
+  &
+  \vec{\nabla} \vec{\phi}(\vec{x})
+  \approx
+  \sum_{m=1}^{n_\mathrm{nodes}}
+  \bigg(
+    \vec{e}_x \frac{\partial}{\partial x} +
+    \vec{e}_y \frac{\partial}{\partial y} +
+    \vec{e}_z \frac{\partial}{\partial z}
+  \bigg)
+  \bigg(
+    N_m (\vec{x}) \; \phi_{m,x} \vec{e}_x +
+    N_m (\vec{x}) \; \phi_{m,y} \vec{e}_y +
+    N_m (\vec{x}) \; \phi_{m,z} \vec{e}_z
+  \bigg)
+  \\
+  &
+  =
+  \phi_{m,x} \frac{\partial N_m}{\partial x} \vec{e}_x \vec{e}_x +
+  \phi_{m,y} \frac{\partial N_m}{\partial x} \vec{e}_x \vec{e}_y +
+  \phi_{m,z} \frac{\partial N_m}{\partial x} \vec{e}_x \vec{e}_z
+  \\
+  &
+  +
+  \phi_{m,x} \frac{\partial N_m}{\partial y} \vec{e}_y \vec{e}_x +
+  \phi_{m,y} \frac{\partial N_m}{\partial y} \vec{e}_y \vec{e}_y +
+  \phi_{m,z} \frac{\partial N_m}{\partial y} \vec{e}_y \vec{e}_z
+  \\
+  &
+  +
+  \phi_{m,x} \frac{\partial N_m}{\partial z} \vec{e}_z \vec{e}_x +
+  \phi_{m,y} \frac{\partial N_m}{\partial z} \vec{e}_z \vec{e}_y +
+  \phi_{m,z} \frac{\partial N_m}{\partial z} \vec{e}_z \vec{e}_z
+\end{align}
+
+Which we can denote in short as
+\begin{equation}
+  \vec{\nabla} \vec{\phi} (\vec{x})
+  \approx
+  \sum_{m=1}^{n_\mathrm{nodes}}
+  \mathcal{B}_m (\vec{x}) \cdot \vec{\phi}_m
+\end{equation}
+
+
+\begin{alignat}{3}
+  \mathcal{B}_{m,x x x} &= \frac{\partial N_m}{\partial x} & \qquad
+  \mathcal{B}_{m,y x x} &= \frac{\partial N_m}{\partial y} & \qquad
+  \mathcal{B}_{m,z x x} &= \frac{\partial N_m}{\partial z}
+  \nonumber
+  \\
+  \mathcal{B}_{m,x y y} &= \frac{\partial N_m}{\partial x}  & \qquad
+  \mathcal{B}_{m,y y y} &= \frac{\partial N_m}{\partial y}  & \qquad
+  \mathcal{B}_{m,z y y} &= \frac{\partial N_m}{\partial z}
+  \\
+  \mathcal{B}_{m,x z z} &= \frac{\partial N_m}{\partial x}  & \qquad
+  \mathcal{B}_{m,y z z} &= \frac{\partial N_m}{\partial y}  & \qquad
+  \mathcal{B}_{m,z z z} &= \frac{\partial N_m}{\partial z}
+\end{alignat}
+
+Note that similarly
+\begin{equation}
+  \vec{\nabla} \vec{u} (\vec{x})
+  \approx
+  \sum_{m=1}^{n_\mathrm{nodes}}
+  \mathcal{B}_m (\vec{x}) \cdot \vec{u}_m
+\end{equation}
+
+
+\begin{equation}
+  \int\limits_{\Omega^h}
+    \left( \mathcal{B}_m \cdot \vec{\phi}_m \right) : \bm{\sigma}(\vec{x}) \;
+  \mathrm{d}\Omega
+  =
+  \int\limits_{\Gamma^h}
+    N_m (\vec{x}) \; \vec{\phi}_m \cdot \vec{t}(\vec{x}) \;
+  \mathrm{d}\Gamma
+  \qquad
+  \forall \; \vec{\phi}_m \in \mathbb{R}^d_n
+\end{equation}
+
+
+\begin{equation}
+  \vec{\phi}_m \cdot
+  \int\limits_{\Omega^h}
+    \mathcal{B}_m^T : \bm{\sigma}(\vec{x}) \;
+  \mathrm{d}\Omega
+  =
+  \vec{\phi}_m \cdot
+  \int\limits_{\Gamma^h}
+    N_m(\vec{x}) \; \vec{t}(\vec{x}) \;
+  \mathrm{d}\Gamma
+  \qquad
+  \forall \; \vec{\phi}_m \in \mathbb{R}^d_n
+\end{equation}
+
+
+\begin{equation}
+  \int\limits_{\Omega^h}
+    \mathcal{B}_m^T : \bm{\sigma}(\vec{x}) \;
+  \mathrm{d}\Omega
+  =
+  \int\limits_{\Gamma^h}
+    N_m(\vec{x}) \; \vec{t}(\vec{x}) \;
+  \mathrm{d}\Gamma
+\end{equation}
+
+\subsection{Linear elasticity}
+
+\begin{equation}
+  \int\limits_{\Omega_0^h}
+    \tilde{\mathcal{B}}_m^T : \Big( \mathbb{C} : \bm{\varepsilon}(\vec{x}) \Big) \;
+  \mathrm{d}\Omega
+  =
+  \int\limits_{\Gamma^h}
+    N_m(\vec{x}) \; \vec{t}(\vec{x}) \;
+  \mathrm{d}\Gamma
+\end{equation}
+
+\begin{equation}
+  \int\limits_{\Omega_0^h}
+    \tilde{\mathcal{B}}_m^T : \Big( \mathbb{C} : \vec{\nabla}\vec{u}(\vec{x}) \Big) \;
+  \mathrm{d}\Omega
+  =
+  \int\limits_{\Gamma^h}
+    N_m(\vec{x}) \; \vec{t}(\vec{x}) \;
+  \mathrm{d}\Gamma
+\end{equation}
+
+\begin{equation}
+  \int\limits_{\Omega_0^h}
+    \tilde{\mathcal{B}}_m^T : \Big( \mathbb{C} : ( \tilde{\mathcal{B}}_n \cdot \vec{u}_n) \Big) \;
+  \mathrm{d}\Omega
+  =
+  \int\limits_{\Gamma^h}
+    N_m(\vec{x}) \; \vec{t}(\vec{x}) \;
+  \mathrm{d}\Gamma
+\end{equation}
+
+\begin{equation}
+  \int\limits_{\Omega_0^h}
+    \tilde{\mathcal{B}}_m^T : \Big( \mathbb{C} : \tilde{\mathcal{B}}_n \Big) \;
+  \mathrm{d}\Omega
+  \cdot \vec{u}_n
+  =
+  \int\limits_{\Gamma^h}
+    N_m(\vec{x}) \; \vec{t}(\vec{x}) \;
+  \mathrm{d}\Gamma
+\end{equation}
 
 \section{Cylindrical coordinates}
 
@@ -910,7 +1132,7 @@ Which we can denote in short as
   \sum\limits_{i=1}^{n}
   \mathcal{B}_i (\vec{x}) \cdot \vec{\phi}_i
   =
-  \underline{\mathcal{B}}^\mathsf{T} \cdot \underline{\vec{\phi}}
+  \underline{\mathcal{B}}^\mathsf{T} \cdot \vec{\phi}_m
 \end{equation}
 where the non-zero components of the third order $\mathcal{B}_i$ read
 \begin{alignat}{3}
@@ -960,95 +1182,7 @@ where the non-zero components of the third order $\mathcal{B}_i$ read
 %  %\mathcal{B}_{i,z      z      \theta} &= 0 \\
 %  \mathcal{B}_{i,z      z      z     } &=             \frac{\partial N_i}{\partial z} \\
 %\end{align}
-Note that similarly
-\begin{equation}
-  \vec{\nabla} \vec{u} (\vec{x})
-  \approx
-  \sum\limits_{i=1}^{n}
-  \mathcal{B}_i (\vec{x}) \cdot \vec{u}_i
-  =
-  \underline{\mathcal{B}}^\mathsf{T} \cdot \underline{\vec{u}}
-\end{equation}
 
-
-\begin{equation}
-  \int\limits_\Omega
-    \left( \underline{\mathcal{B}}^\mathsf{T} \cdot \underline{\vec{\phi}} \right) : \bm{\sigma}(\vec{x}) \;
-  \mathrm{d}\Omega
-  =
-  \int\limits_\Gamma
-    \underline{N}^\mathsf{T}(\vec{x}) \; \underline{\vec{\phi}} \cdot \vec{t}(\vec{x}) \;
-  \mathrm{d}\Gamma
-  \qquad
-  \forall \; \underline{\vec{\phi}} \in \mathbb{R}^d
-\end{equation}
-
-
-\begin{equation}
-  \underline{\vec{\phi}}^\mathsf{T} \cdot
-  \int\limits_\Omega
-    \underline{\mathcal{B}} : \bm{\sigma}(\vec{x}) \;
-  \mathrm{d}\Omega
-  =
-  \underline{\vec{\phi}}^\mathsf{T} \cdot
-  \int\limits_\Gamma
-    \underline{N}(\vec{x}) \vec{t}(\vec{x}) \;
-  \mathrm{d}\Gamma
-  \qquad
-  \forall \; \underline{\vec{\phi}} \in \mathbb{R}^d
-\end{equation}
-
-
-\begin{equation}
-  \int\limits_\Omega
-    \underline{\mathcal{B}} : \bm{\sigma}(\vec{x}) \;
-  \mathrm{d}\Omega
-  =
-  \int\limits_\Gamma
-    \underline{N}(\vec{x}) \vec{t}(\vec{x}) \;
-  \mathrm{d}\Gamma
-\end{equation}
-
-\begin{equation}
-  \int\limits_\Omega
-    \underline{\mathcal{B}} : \left( \mathbb{C} : \bm{\varepsilon}(\vec{x}) \right) \;
-  \mathrm{d}\Omega
-  =
-  \int\limits_\Gamma
-    \underline{N}(\vec{x}) \vec{t}(\vec{x}) \;
-  \mathrm{d}\Gamma
-\end{equation}
-
-\begin{equation}
-  \int\limits_\Omega
-    \underline{\mathcal{B}} : \left( \mathbb{C} : \vec{\nabla}\vec{u}(\vec{x}) \right) \;
-  \mathrm{d}\Omega
-  =
-  \int\limits_\Gamma
-    \underline{N}(\vec{x}) \vec{t}(\vec{x}) \;
-  \mathrm{d}\Gamma
-\end{equation}
-
-\begin{equation}
-  \int\limits_\Omega
-    \underline{\mathcal{B}} : \left( \mathbb{C} :( \underline{\mathcal{B}}^\mathsf{T} \cdot \underline{\vec{u}}) \right) \;
-  \mathrm{d}\Omega
-  =
-  \int\limits_\Gamma
-    \underline{N}(\vec{x}) \vec{t}(\vec{x}) \;
-  \mathrm{d}\Gamma
-\end{equation}
-
-\begin{equation}
-  \int\limits_\Omega
-    \underline{\mathcal{B}} : \left( \mathbb{C} : \underline{\mathcal{B}}^\mathsf{T} \right) \;
-  \mathrm{d}\Omega
-  \cdot \underline{\vec{u}}
-  =
-  \int\limits_\Gamma
-    \underline{N}(\vec{x}) \vec{t}(\vec{x}) \;
-  \mathrm{d}\Gamma
-\end{equation}
 
 \begin{equation}
   \vec{\nabla}_\xi = \bm{J} \cdot \vec{\nabla}

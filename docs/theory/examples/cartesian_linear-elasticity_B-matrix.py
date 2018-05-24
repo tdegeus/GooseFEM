@@ -127,13 +127,6 @@ Ke = np.zeros((nne*ndim, nne*ndim))
 
 for w, xi in zip(W, Xi):
 
-  N = np.array([
-    [.25 * (1.-xi[0]) * (1.-xi[1])],
-    [.25 * (1.+xi[0]) * (1.-xi[1])],
-    [.25 * (1.+xi[0]) * (1.+xi[1])],
-    [.25 * (1.-xi[0]) * (1.+xi[1])],
-  ])
-
   dNdxi = np.array([
     [-.25*(1.-xi[1]), -.25*(1.-xi[0])],
     [+.25*(1.-xi[1]), -.25*(1.+xi[0])],
@@ -158,58 +151,36 @@ for w, xi in zip(W, Xi):
       for j in range(ndim):
         dNdx[m,i] += Jinv[i,j] * dNdxi[m,j]
 
-  xk = np.zeros((ndim))
-
-  for n in range(nne):
-    for i in range(ndim):
-      xk[i] += N[n] * xe[n,i]
-
-  rk = xk[0]
-
   for m in range(nne):
 
     Bm = np.zeros((3,3,3))
 
-    Bm[0,0,0] = dNdx[m,0]        # B(m, r      r      r      )
-    Bm[0,1,0] = -1./rk * N[m]    # B(m, r      \theta r      )
-    Bm[0,1,1] = dNdx[m,0]        # B(m, r      \theta \theta )
-    Bm[0,2,2] = dNdx[m,0]        # B(m, r      z      z      )
+    Bm[0,0,0] = dNdx[m,0]
+    Bm[0,1,1] = dNdx[m,0]
 
-    Bm[1,0,0] = 0.               # B(m, \theta r      r      ) - axisymmetric
-    Bm[1,1,0] = +1./rk * N[m]    # B(m, \theta \theta r      )
-    Bm[1,1,1] = 0.               # B(m, \theta \theta \theta ) - axisymmetric
-    Bm[1,2,2] = 0.               # B(m, \theta z      z      ) - axisymmetric
-
-    Bm[2,0,0] = dNdx[m,1]        # B(m, z      r      r      )
-    Bm[2,1,1] = dNdx[m,1]        # B(m, z      \theta \theta )
-    Bm[2,2,2] = dNdx[m,1]        # B(m, z      z      z      )
+    Bm[1,0,0] = dNdx[m,1]
+    Bm[1,1,1] = dNdx[m,1]
 
     for n in range(nne):
 
       Bn = np.zeros((3,3,3))
 
-      Bn[0,0,0] = dNdx[n,0]        # B(n, r      r      r      )
-      Bn[0,1,0] = -1./rk * N[n]    # B(n, r      \theta r      )
-      Bn[0,1,1] = dNdx[n,0]        # B(n, r      \theta \theta )
-      Bn[0,2,2] = dNdx[n,0]        # B(n, r      z      z      )
+      Bn[0,0,0] = dNdx[n,0]
+      Bn[0,1,1] = dNdx[n,0]
 
-      Bn[1,0,0] = 0.               # B(n, \theta r      r      ) - axisymmetric
-      Bn[1,1,0] = +1./rk * N[n]    # B(n, \theta \theta r      )
-      Bn[1,1,1] = 0.               # B(n, \theta \theta \theta ) - axisymmetric
-      Bn[1,2,2] = 0.               # B(n, \theta z      z      ) - axisymmetric
-
-      Bn[2,0,0] = dNdx[n,1]        # B(n, z      r      r      )
-      Bn[2,1,1] = dNdx[n,1]        # B(n, z      \theta \theta )
-      Bn[2,2,2] = dNdx[n,1]        # B(n, z      z      z      )
+      Bn[1,0,0] = dNdx[n,1]
+      Bn[1,1,1] = dNdx[n,1]
 
       Kmn = ddot33(transpose3(Bm),ddot43(C4,Bn))
 
       iim = np.array([ m*ndim+0, m*ndim+1 ])
       iin = np.array([ n*ndim+0, n*ndim+1 ])
 
-      Ke[np.ix_(iim,iin)] += Kmn[np.ix_([0,2], [0,2])] * w * Jdet * rk
+      Ke[np.ix_(iim,iin)] += Kmn[np.ix_([0,1], [0,1])] * w * Jdet
 
 print(Ke)
+
+# print(np.linalg.inv(Ke))
 
 
   # Ke[]
