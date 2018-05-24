@@ -102,8 +102,8 @@ C4 = K * II + 2. * G * I4d
 # ==================================================================================================
 
 # number of elements
-nz = 1
-nr = 1
+nz = 3
+nr = 3
 
 # mesh dimensions
 nelem =  nz    *  nr     # number of elements
@@ -225,16 +225,16 @@ for e in conn:
 
       Bm[0,0,0] = dNdx[m,1]        # B(m, r      r      r      )
       Bm[0,1,0] = -1./rk * N[m]    # B(m, r      \theta r      )
-      Bm[1,1,0] = dNdx[m,1]        # B(m, \theta \theta r      )
-      Bm[2,2,0] = dNdx[m,1]        # B(m, z      z      r      )
+      Bm[0,1,1] = dNdx[m,1]        # B(m, r      \theta \theta )
+      Bm[0,2,2] = dNdx[m,1]        # B(m, r      z      z      )
 
-      Bm[0,0,1] = 0.               # B(m, r      r      \theta ) - axisymmetric
-      Bm[0,1,1] = +1./rk * N[m]    # B(m, r      \theta \theta )
+      Bm[1,0,0] = 0.               # B(m, \theta r      r      ) - axisymmetric
+      Bm[1,1,0] = +1./rk * N[m]    # B(m, \theta \theta r      )
       Bm[1,1,1] = 0.               # B(m, \theta \theta \theta ) - axisymmetric
-      Bm[2,2,1] = 0.               # B(m, z      z      \theta ) - axisymmetric
+      Bm[1,2,2] = 0.               # B(m, \theta z      z      ) - axisymmetric
 
-      Bm[0,0,2] = dNdx[m,0]        # B(m, r      r      z      )
-      Bm[1,1,2] = dNdx[m,0]        # B(m, \theta \theta z      )
+      Bm[2,0,0] = dNdx[m,0]        # B(m, z      r      r      )
+      Bm[2,1,1] = dNdx[m,0]        # B(m, z      \theta \theta )
       Bm[2,2,2] = dNdx[m,0]        # B(m, z      z      z      )
 
       for n in range(nne):
@@ -243,16 +243,16 @@ for e in conn:
 
         Bn[0,0,0] = dNdx[n,1]        # B(n, r      r      r      )
         Bn[0,1,0] = -1./rk * N[n]    # B(n, r      \theta r      )
-        Bn[1,1,0] = dNdx[n,1]        # B(n, \theta \theta r      )
-        Bn[2,2,0] = dNdx[n,1]        # B(n, z      z      r      )
+        Bn[0,1,1] = dNdx[n,1]        # B(n, r      \theta \theta )
+        Bn[0,2,2] = dNdx[n,1]        # B(n, r      z      z      )
 
-        Bn[0,0,1] = 0.               # B(n, r      r      \theta ) - axisymmetric
-        Bn[0,1,1] = +1./rk * N[n]    # B(n, r      \theta \theta )
+        Bn[1,0,0] = 0.               # B(n, \theta r      r      ) - axisymmetric
+        Bn[1,1,0] = +1./rk * N[n]    # B(n, \theta \theta r      )
         Bn[1,1,1] = 0.               # B(n, \theta \theta \theta ) - axisymmetric
-        Bn[2,2,1] = 0.               # B(n, z      z      \theta ) - axisymmetric
+        Bn[1,2,2] = 0.               # B(n, \theta z      z      ) - axisymmetric
 
-        Bn[0,0,2] = dNdx[n,0]        # B(n, r      r      z      )
-        Bn[1,1,2] = dNdx[n,0]        # B(n, \theta \theta z      )
+        Bn[2,0,0] = dNdx[n,0]        # B(n, z      r      r      )
+        Bn[2,1,1] = dNdx[n,0]        # B(n, z      \theta \theta )
         Bn[2,2,2] = dNdx[n,0]        # B(n, z      z      z      )
 
         Kmn = ddot33(transpose3(Bm),ddot43(C4,Bn))
@@ -260,7 +260,7 @@ for e in conn:
         iim = np.array([ m*nd+0, m*nd+1 ])
         iin = np.array([ n*nd+0, n*nd+1 ])
 
-        Ke[np.ix_(iim,iin)] += Kmn[np.ix_([0,2], [0,2])] * w * Jdet * rk * 2. * np.pi
+        Ke[np.ix_(iim,iin)] += Kmn[np.ix_([2,0], [2,0])] * w * Jdet * rk * 2. * np.pi
 
   # - assemble to global stiffness matrix
   iie = dofs[e,:].ravel()
