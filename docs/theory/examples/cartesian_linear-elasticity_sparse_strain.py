@@ -1,57 +1,9 @@
 
 import numpy as np
+from scipy.sparse        import dok_matrix
+from scipy.sparse.linalg import spsolve
 
 np.set_printoptions(linewidth=200)
-
-# ==================================================================================================
-# tensor products
-# ==================================================================================================
-
-def ddot43(A,B):
-
-  nd = A.shape[0]
-
-  C = np.zeros((nd,nd,nd))
-
-  for i in range(nd):
-    for j in range(nd):
-      for k in range(nd):
-        for l in range(nd):
-          for m in range(nd):
-            C[i,j,m] += A[i,j,k,l] * B[l,k,m]
-
-  return C
-
-# --------------------------------------------------------------------------------------------------
-
-def ddot33(A,B):
-
-  nd = A.shape[0]
-
-  C = np.zeros((nd,nd))
-
-  for i in range(nd):
-    for j in range(nd):
-      for k in range(nd):
-        for l in range(nd):
-          C[i,l] += A[i,j,k] * B[k,j,l]
-
-  return C
-
-# --------------------------------------------------------------------------------------------------
-
-def transpose3(A):
-
-  nd = A.shape[0]
-
-  C = np.zeros((nd,nd,nd))
-
-  for i in range(nd):
-    for j in range(nd):
-      for k in range(nd):
-        C[k,j,i] = A[i,j,k]
-
-  return C
 
 # ==================================================================================================
 # identity tensors
@@ -102,15 +54,19 @@ C4 = K * II + 2. * G * I4d
 # ==================================================================================================
 
 # number of elements
-nz = 20
-nr = 16
+nx = 20
+ny = 20
 
 # mesh dimensions
-nelem =  nz    *  nr     # number of elements
-nnode = (nz+1) * (nr+1)  # number of nodes
+nelem =  nx    *  ny     # number of elements
+nnode = (nx+1) * (ny+1)  # number of nodes
 nne   = 4                # number of nodes per element
 nd    = 2                # number of dimensions
+nip   = 4                # number of integration points
 ndof  = nnode * nd       # total number of degrees of freedom
+
+# out-of-plane thickness
+thick = 1.
 
 # coordinates and connectivity: zero-initialize
 coor = np.zeros((nnode,nd ), dtype='float')
@@ -118,14 +74,14 @@ conn = np.zeros((nelem,nne), dtype='int'  )
 
 # coordinates: set
 # - grid of points
-z,r = np.meshgrid(np.linspace(0,1,nz+1), np.linspace(0,1,nr+1))
+x,y = np.meshgrid(np.linspace(0,1,nx+1), np.linspace(0,1,ny+1))
 # - store from grid of points
-coor[:,0] = z.ravel()
-coor[:,1] = r.ravel()
+coor[:,0] = x.ravel()
+coor[:,1] = y.ravel()
 
 # connectivity: set
 # - grid of node numbers
-inode = np.arange(nnode).reshape(nr+1, nz+1)
+inode = np.arange(nnode).reshape(ny+1, nx+1)
 # - store from grid of node numbers
 conn[:,0] = inode[ :-1, :-1].ravel()
 conn[:,1] = inode[ :-1,1:  ].ravel()
@@ -160,7 +116,7 @@ W = np.array([
 # ==================================================================================================
 
 # allocate matrix
-K = np.zeros((ndof, ndof))
+K = dok_matrix((ndof, ndof), dtype=np.float)
 
 # loop over nodes
 for e in conn:
@@ -173,14 +129,6 @@ for e in conn:
 
   # - numerical quadrature
   for w, xi in zip(W, Xi):
-
-    # -- shape functions
-    N = np.array([
-      [.25 * (1.-xi[0]) * (1.-xi[1])],
-      [.25 * (1.+xi[0]) * (1.-xi[1])],
-      [.25 * (1.+xi[0]) * (1.+xi[1])],
-      [.25 * (1.-xi[0]) * (1.+xi[1])],
-    ])
 
     # -- shape function gradients (w.r.t. the local element coordinates)
     dNdxi = np.array([
@@ -209,58 +157,14 @@ for e in conn:
         for j in range(nd):
           dNdx[m,i] += Jinv[i,j] * dNdxi[m,j]
 
-    # -- global coordinates of the integration point
-    xk = np.zeros((nd))
-
-    for n in range(nne):
-      for i in range(nd):
-        xk[i] += N[n] * xe[n,i]
-
-    rk = xk[1]
-
     # -- assemble to element stiffness matrix
     for m in range(nne):
-
-      Bm = np.zeros((3,3,3))
-
-      Bm[0,0,0] = dNdx[m,1]        # B(m, r      r      r      )
-      Bm[0,1,1] = -1./rk * N[m]    # B(m, r      \theta \theta )
-      Bm[0,1,1] = dNdx[m,1]        # B(m, r      \theta \theta )
-      Bm[0,2,2] = dNdx[m,1]        # B(m, r      z      z      )
-
-      Bm[1,0,0] = 0.               # B(m, \theta r      r      ) - axisymmetric
-      Bm[1,1,0] = +1./rk * N[m]    # B(m, \theta \theta r      )
-      Bm[1,1,1] = 0.               # B(m, \theta \theta \theta ) - axisymmetric
-      Bm[1,2,2] = 0.               # B(m, \theta z      z      ) - axisymmetric
-
-      Bm[2,0,0] = dNdx[m,0]        # B(m, z      r      r      )
-      Bm[2,1,1] = dNdx[m,0]        # B(m, z      \theta \theta )
-      Bm[2,2,2] = dNdx[m,0]        # B(m, z      z      z      )
-
       for n in range(nne):
-
-        Bn = np.zeros((3,3,3))
-
-        Bn[0,0,0] = dNdx[n,1]        # B(n, r      r      r      )
-        Bn[0,1,1] = -1./rk * N[n]    # B(n, r      \theta \theta )
-        Bn[0,1,1] = dNdx[n,1]        # B(n, r      \theta \theta )
-        Bn[0,2,2] = dNdx[n,1]        # B(n, r      z      z      )
-
-        Bn[1,0,0] = 0.               # B(n, \theta r      r      ) - axisymmetric
-        Bn[1,1,0] = +1./rk * N[n]    # B(n, \theta \theta r      )
-        Bn[1,1,1] = 0.               # B(n, \theta \theta \theta ) - axisymmetric
-        Bn[1,2,2] = 0.               # B(n, \theta z      z      ) - axisymmetric
-
-        Bn[2,0,0] = dNdx[n,0]        # B(n, z      r      r      )
-        Bn[2,1,1] = dNdx[n,0]        # B(n, z      \theta \theta )
-        Bn[2,2,2] = dNdx[n,0]        # B(n, z      z      z      )
-
-        Kmn = ddot33(transpose3(Bm),ddot43(C4,Bn))
-
-        iim = np.array([ m*nd+0, m*nd+1 ])
-        iin = np.array([ n*nd+0, n*nd+1 ])
-
-        Ke[np.ix_(iim,iin)] += Kmn[np.ix_([2,0], [2,0])] * w * Jdet * rk * 2. * np.pi
+        for i in range(nd):
+          for j in range(nd):
+            for k in range(nd):
+              for l in range(nd):
+                Ke[m*nd+j, n*nd+k] += dNdx[m,i] * C4[i,j,k,l] * dNdx[n,l] * w * Jdet * thick
 
   # - assemble to global stiffness matrix
   iie = dofs[e,:].ravel()
@@ -279,15 +183,15 @@ u = np.zeros((ndof))
 # - zero-initialize
 iip  = np.empty((0),dtype='int'  )
 up   = np.empty((0),dtype='float')
-# - 'r = 0' : 'u_r = 0'
+# - 'y = 0' : 'u_y = 0'
 idof = dofs[inode[0,:], 1]
 iip  = np.hstack(( iip, idof                      ))
 up   = np.hstack(( up , 0.0 * np.ones(idof.shape) ))
-# - 'z = 0' : 'u_z = 0'
+# - 'x = 0' : 'u_x = 0'
 idof = dofs[inode[:,0], 0]
 iip  = np.hstack(( iip, idof                      ))
 up   = np.hstack(( up , 0.0 * np.ones(idof.shape) ))
-# - 'z = 1' : 'u_z = 0.1'
+# - 'x = 1' : 'u_x = 0.1'
 idof = dofs[inode[:,-1], 0]
 iip  = np.hstack(( iip, idof                      ))
 up   = np.hstack(( up , 0.1 * np.ones(idof.shape) ))
@@ -297,15 +201,15 @@ iiu  = np.setdiff1d(dofs.ravel(), iip)
 
 # partition
 # - stiffness matrix
-Kuu  = K[np.ix_(iiu, iiu)]
-Kup  = K[np.ix_(iiu, iip)]
-Kpu  = K[np.ix_(iip, iiu)]
-Kpp  = K[np.ix_(iip, iip)]
+Kuu  = K.tocsr()[iiu,:].tocsc()[:,iiu]
+Kup  = K.tocsr()[iiu,:].tocsc()[:,iip]
+Kpu  = K.tocsr()[iip,:].tocsc()[:,iiu]
+Kpp  = K.tocsr()[iip,:].tocsc()[:,iip]
 # - external force
 fu   = f[iiu]
 
 # solve
-uu   = np.linalg.solve(Kuu, fu - Kup.dot(up))
+uu   = spsolve(Kuu, fu - Kup.dot(up))
 fp   = Kpu.dot(uu) + Kpp.dot(up)
 
 # assemble
@@ -318,18 +222,78 @@ disp = u[dofs]
 fext = f[dofs]
 
 # ==================================================================================================
+# compute strain
+# ==================================================================================================
+
+# strain per integration point: allocate
+Eps = np.zeros((nelem,nip,nd,nd),dtype='float')
+
+# loop over nodes
+for ielem, e in enumerate(conn):
+
+  # - nodal coordinates and displacements
+  xe = coor[e,:]
+  ue = disp[e,:]
+
+  # - allocate element stiffness matrix
+  Ke = np.zeros((nne*nd, nne*nd))
+
+  # - numerical quadrature
+  for k, (w, xi) in enumerate(zip(W, Xi)):
+
+    # -- shape function gradients (w.r.t. the local element coordinates)
+    dNdxi = np.array([
+      [-.25*(1.-xi[1]), -.25*(1.-xi[0])],
+      [+.25*(1.-xi[1]), -.25*(1.+xi[0])],
+      [+.25*(1.+xi[1]), +.25*(1.+xi[0])],
+      [-.25*(1.+xi[1]), +.25*(1.-xi[0])],
+    ])
+
+    # -- Jacobian
+    J = np.zeros((nd, nd))
+
+    for m in range(nne):
+      for i in range(nd):
+        for j in range(nd):
+          J[i,j] += dNdxi[m,i] * xe[m,j]
+
+    Jinv = np.linalg.inv(J)
+    Jdet = np.linalg.det(J)
+
+    # -- shape function gradients (w.r.t. the global coordinates)
+    dNdx = np.zeros((nne,nd))
+
+    for m in range(nne):
+      for i in range(nd):
+        for j in range(nd):
+          dNdx[m,i] += Jinv[i,j] * dNdxi[m,j]
+
+    # -- displacement gradient
+    gradu = np.zeros((nd,nd))
+
+    for m in range(nne):
+      for i in range(nd):
+        for j in range(nd):
+          gradu[i,j] += dNdx[m,i] * ue[m,j]
+
+    # -- strain
+    eps = .5 * ( gradu + gradu.T )
+
+    # -- assemble
+    Eps[ielem,k,:,:] = eps
+
+# ==================================================================================================
 # plot
 # ==================================================================================================
 
 import matplotlib.pyplot as plt
 
-fig, axes =  plt.subplots(ncols=2, figsize=(16,8))
+fig, axes = plt.subplots(ncols=2, figsize=(16,8))
 
 axes[0].scatter(coor[:,0], coor[:,1])
 axes[0].quiver (coor[:,0], coor[:,1], disp[:,0], disp[:,1])
 
-axes[1].scatter((coor+disp)[:,0], (coor+disp)[:,1])
-axes[1].quiver ((coor+disp)[:,0], (coor+disp)[:,1], fext[:,0], fext[:,1], scale=.4)
+axes[1].imshow(Eps[:,:,0,0].reshape(ny*int(nip/nd), nx*int(nip/nd)), clim=(0,.2))
 
 for axis in axes:
   axis.set_xlim([-0.4, 1.5])
