@@ -201,7 +201,7 @@ inline ColD Vector::asDofs_p(const MatD &nodevec) const
 inline ColD Vector::asDofs(const ArrD &elemvec) const
 {
   // check input
-  assert( elemvec.ndim()   == 3       );
+  assert( elemvec.rank()   == 3       );
   assert( elemvec.shape(0) == m_nelem );
   assert( elemvec.shape(1) == m_nne   );
   assert( elemvec.shape(2) == m_ndim  );
@@ -224,7 +224,7 @@ inline ColD Vector::asDofs(const ArrD &elemvec) const
 inline ColD Vector::asDofs_u(const ArrD &elemvec) const
 {
   // check input
-  assert( elemvec.ndim()   == 3       );
+  assert( elemvec.rank()   == 3       );
   assert( elemvec.shape(0) == m_nelem );
   assert( elemvec.shape(1) == m_nne   );
   assert( elemvec.shape(2) == m_ndim  );
@@ -248,7 +248,7 @@ inline ColD Vector::asDofs_u(const ArrD &elemvec) const
 inline ColD Vector::asDofs_p(const ArrD &elemvec) const
 {
   // check input
-  assert( elemvec.ndim()   == 3       );
+  assert( elemvec.rank()   == 3       );
   assert( elemvec.shape(0) == m_nelem );
   assert( elemvec.shape(1) == m_nne   );
   assert( elemvec.shape(2) == m_ndim  );
@@ -314,7 +314,7 @@ inline MatD Vector::asNode(const ColD &dofval_u, const ColD &dofval_p) const
 inline MatD Vector::asNode(const ArrD &elemvec) const
 {
   // check input
-  assert( elemvec.ndim()   == 3       );
+  assert( elemvec.rank()   == 3       );
   assert( elemvec.shape(0) == m_nelem );
   assert( elemvec.shape(1) == m_nne   );
   assert( elemvec.shape(2) == m_ndim  );
@@ -516,7 +516,7 @@ inline ColD Vector::assembleDofs_p(const MatD &nodevec) const
 inline ColD Vector::assembleDofs(const ArrD &elemvec) const
 {
   // check input
-  assert( elemvec.ndim()   == 3       );
+  assert( elemvec.rank()   == 3       );
   assert( elemvec.shape(0) == m_nelem );
   assert( elemvec.shape(1) == m_nne   );
   assert( elemvec.shape(2) == m_ndim  );
@@ -556,7 +556,7 @@ inline ColD Vector::assembleDofs(const ArrD &elemvec) const
 inline ColD Vector::assembleDofs_u(const ArrD &elemvec) const
 {
   // check input
-  assert( elemvec.ndim()   == 3       );
+  assert( elemvec.rank()   == 3       );
   assert( elemvec.shape(0) == m_nelem );
   assert( elemvec.shape(1) == m_nne   );
   assert( elemvec.shape(2) == m_ndim  );
@@ -597,7 +597,7 @@ inline ColD Vector::assembleDofs_u(const ArrD &elemvec) const
 inline ColD Vector::assembleDofs_p(const ArrD &elemvec) const
 {
   // check input
-  assert( elemvec.ndim()   == 3       );
+  assert( elemvec.rank()   == 3       );
   assert( elemvec.shape(0) == m_nelem );
   assert( elemvec.shape(1) == m_nne   );
   assert( elemvec.shape(2) == m_ndim  );
@@ -638,7 +638,7 @@ inline ColD Vector::assembleDofs_p(const ArrD &elemvec) const
 inline MatD Vector::assembleNode(const ArrD &elemvec) const
 {
   // check input
-  assert( elemvec.ndim()   == 3       );
+  assert( elemvec.rank()   == 3       );
   assert( elemvec.shape(0) == m_nelem );
   assert( elemvec.shape(1) == m_nne   );
   assert( elemvec.shape(2) == m_ndim  );

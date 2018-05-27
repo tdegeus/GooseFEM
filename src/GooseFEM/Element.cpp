@@ -43,7 +43,7 @@ inline ArrD asElementVector(const MatS &conn, const MatD &nodevec)
 inline MatD assembleNodeVector(const MatS &conn, const ArrD &elemvec)
 {
   // check input
-  assert( elemvec.ndim() == 3 ); // nodal vector stored per element [nelem, nne, ndim]
+  assert( elemvec.rank() == 3 ); // nodal vector stored per element [nelem, nne, ndim]
 
   // extract dimensions
   size_t nelem = static_cast<size_t>(conn.rows()); // number of elements

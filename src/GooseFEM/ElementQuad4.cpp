@@ -121,7 +121,7 @@ inline Quadrature::Quadrature(const ArrD &x, const ArrD &xi, const ArrD &w)
 : m_x(x), m_w(w), m_xi(xi)
 {
   // check input
-  assert( m_x.ndim()   == 3      ); // shape: [nelem, nne, ndim]
+  assert( m_x.rank()   == 3      ); // shape: [nelem, nne, ndim]
   assert( m_x.shape(1) == m_nne  ); // number of nodes per element
   assert( m_x.shape(2) == m_ndim ); // number of dimensions
 
@@ -148,10 +148,10 @@ inline Quadrature::Quadrature(const ArrD &x, const ArrD &xi, const ArrD &w)
   }
 
   // check input
-  assert( m_xi.ndim()   == 2      ); // shape: [nip, ndim]
+  assert( m_xi.rank()   == 2      ); // shape: [nip, ndim]
   assert( m_xi.shape(0) == m_nip  ); // number of integration points
   assert( m_xi.shape(1) == m_ndim ); // number of dimensions
-  assert( m_w .ndim()   == 1      ); // shape: [nip]
+  assert( m_w .rank()   == 1      ); // shape: [nip]
   assert( m_w .size()   == m_nip  ); // number of integration points
 
   // allocate arrays
@@ -241,7 +241,7 @@ inline size_t Quadrature::nip() const
 inline void Quadrature::update_x(const ArrD &x)
 {
   // check input
-  assert( x.ndim()   == 3          ); // shape: [nelem, nne, ndim]
+  assert( x.rank()   == 3          ); // shape: [nelem, nne, ndim]
   assert( x.shape(0) == m_nelem    ); // number of elements
   assert( x.shape(1) == m_nne      ); // number of nodes per element
   assert( x.shape(2) == m_ndim     ); // number of dimensions
@@ -263,8 +263,8 @@ inline void Quadrature::compute_dN()
     // intermediate quantities and local views
     double Jdet, w, vol;
     cppmat::tiny::matrix<double,m_nne,m_ndim> dNx;
-    cppmat::view::tiny::matrix<double,m_nne,m_ndim> dNxi, x;
-    cppmat::cartesian2d::tensor2<double> J, Jinv;
+    cppmat::view::matrix<double,m_nne,m_ndim> dNxi, x;
+    cppmat::tiny::cartesian::tensor2<double,2> J, Jinv;
 
     // loop over all elements (in parallel)
     #pragma omp for
@@ -319,7 +319,7 @@ template<class T>
 inline ArrD Quadrature::gradN_vector(const ArrD &elemvec) const
 {
   // check input
-  assert( elemvec.ndim()   == 3       ); // shape: [nelem, nne, ndim]
+  assert( elemvec.rank()   == 3       ); // shape: [nelem, nne, ndim]
   assert( elemvec.shape(0) == m_nelem ); // number of elements
   assert( elemvec.shape(1) == m_nne   ); // number of nodes per element
   assert( elemvec.shape(2) == m_ndim  ); // number of dimensions
@@ -335,7 +335,7 @@ inline ArrD Quadrature::gradN_vector(const ArrD &elemvec) const
   {
     // intermediate quantities and local views
     T gradu;
-    cppmat::view::tiny::matrix<double,m_nne,m_ndim> dNx, u;
+    cppmat::view::matrix<double,m_nne,m_ndim> dNx, u;
 
     // loop over all elements (in parallel)
     #pragma omp for
@@ -372,7 +372,7 @@ template<class T>
 inline ArrD Quadrature::gradN_vector_T(const ArrD &elemvec) const
 {
   // check input
-  assert( elemvec.ndim()   == 3       ); // shape: [nelem, nne, ndim]
+  assert( elemvec.rank()   == 3       ); // shape: [nelem, nne, ndim]
   assert( elemvec.shape(0) == m_nelem ); // number of elements
   assert( elemvec.shape(1) == m_nne   ); // number of nodes per element
   assert( elemvec.shape(2) == m_ndim  ); // number of dimensions
@@ -388,7 +388,7 @@ inline ArrD Quadrature::gradN_vector_T(const ArrD &elemvec) const
   {
     // intermediate quantities and local views
     T gradu;
-    cppmat::view::tiny::matrix<double,m_nne,m_ndim> dNx, u;
+    cppmat::view::matrix<double,m_nne,m_ndim> dNx, u;
 
     // loop over all elements (in parallel)
     #pragma omp for
@@ -425,7 +425,7 @@ template<class T>
 inline ArrD Quadrature::symGradN_vector(const ArrD &elemvec) const
 {
   // check input
-  assert( elemvec.ndim()   == 3       ); // shape: [nelem, nne, ndim]
+  assert( elemvec.rank()   == 3       ); // shape: [nelem, nne, ndim]
   assert( elemvec.shape(0) == m_nelem ); // number of elements
   assert( elemvec.shape(1) == m_nne   ); // number of nodes per element
   assert( elemvec.shape(2) == m_ndim  ); // number of dimensions
@@ -441,8 +441,8 @@ inline ArrD Quadrature::symGradN_vector(const ArrD &elemvec) const
   {
     // intermediate quantities and local views
     T eps;
-    cppmat::cartesian2d::tensor2<double> gradu;
-    cppmat::view::tiny::matrix<double,m_nne,m_ndim> dNx, u;
+    cppmat::tiny::cartesian::tensor2<double,m_ndim> gradu;
+    cppmat::view::matrix<double,m_nne,m_ndim> dNx, u;
 
     // loop over all elements (in parallel)
     #pragma omp for
@@ -485,7 +485,7 @@ inline ArrD Quadrature::symGradN_vector(const ArrD &elemvec) const
 inline ArrD Quadrature::int_N_scalar_NT_dV(const ArrD &qscalar) const
 {
   // check input
-  assert( qscalar.ndim()   == 2          ); // shape: [nelem, nip]
+  assert( qscalar.rank()   == 2          ); // shape: [nelem, nip]
   assert( qscalar.shape(0) == m_nelem    ); // number of elements
   assert( qscalar.shape(1) == m_nip      ); // number of integration points
 
@@ -496,7 +496,7 @@ inline ArrD Quadrature::int_N_scalar_NT_dV(const ArrD &qscalar) const
   {
     // intermediate quantities and local views
     cppmat::tiny::matrix<double,m_nne*m_ndim,m_nne*m_ndim> M;
-    cppmat::view::tiny::vector<double,m_nne> N;
+    cppmat::view::vector<double,m_nne> N;
     double rho, vol;
 
     // loop over all elements (in parallel)
@@ -543,7 +543,7 @@ inline ArrD Quadrature::int_gradN_dot_tensor2_dV(const ArrD &qtensor) const
     T tmp;
 
     // check input
-    assert( qtensor.ndim()   == 3          ); // shape: [nelem, nip, #tensor-components]
+    assert( qtensor.rank()   == 3          ); // shape: [nelem, nip, #tensor-components]
     assert( qtensor.shape(0) == m_nelem    ); // number of elements
     assert( qtensor.shape(1) == m_nip      ); // number of integration points
     assert( qtensor.shape(2) == tmp.size() ); // tensor dimensions
@@ -556,7 +556,7 @@ inline ArrD Quadrature::int_gradN_dot_tensor2_dV(const ArrD &qtensor) const
   #pragma omp parallel
   {
     // intermediate quantities and local views
-    cppmat::view::tiny::matrix<double,m_nne,m_ndim> dNx;
+    cppmat::view::matrix<double,m_nne,m_ndim> dNx;
     cppmat::tiny::matrix<double,m_nne,m_ndim> f;
     double vol;
     T sig;
@@ -597,33 +597,33 @@ inline ArrD Quadrature::int_gradN_dot_tensor2_dV(const ArrD &qtensor) const
 
 inline ArrD Quadrature::gradN_vector(const ArrD &elemvec) const
 {
-  return gradN_vector<cppmat::cartesian2d::tensor2<double>>(elemvec);
+  return gradN_vector<cppmat::tiny::cartesian::tensor2<double,2>>(elemvec);
 }
 
 // -------------------------------------------------------------------------------------------------
 
 inline ArrD Quadrature::gradN_vector_T(const ArrD &elemvec) const
 {
-  return gradN_vector_T<cppmat::cartesian2d::tensor2<double>>(elemvec);
+  return gradN_vector_T<cppmat::tiny::cartesian::tensor2<double,2>>(elemvec);
 }
 
 // -------------------------------------------------------------------------------------------------
 
 inline ArrD Quadrature::symGradN_vector(const ArrD &elemvec) const
 {
-  return symGradN_vector<cppmat::cartesian2d::tensor2s<double>>(elemvec);
+  return symGradN_vector<cppmat::tiny::cartesian::tensor2s<double,2>>(elemvec);
 }
 
 // -------------------------------------------------------------------------------------------------
 
 inline ArrD Quadrature::int_gradN_dot_tensor2_dV(const ArrD &qtensor) const
 {
-  assert( qtensor.ndim() == 3 ); // shape: [nelem, nip, #tensor-components]
+  assert( qtensor.rank() == 3 ); // shape: [nelem, nip, #tensor-components]
 
   if ( qtensor.shape(2) == m_ndim*m_ndim )
-    return int_gradN_dot_tensor2_dV<cppmat::view::cartesian2d::tensor2<double>>(qtensor);
+    return int_gradN_dot_tensor2_dV<cppmat::view::cartesian::tensor2<double,2>>(qtensor);
   else if ( qtensor.shape(2) == (m_ndim+1)*m_ndim/2 )
-    return int_gradN_dot_tensor2_dV<cppmat::view::cartesian2d::tensor2s<double>>(qtensor);
+    return int_gradN_dot_tensor2_dV<cppmat::view::cartesian::tensor2s<double,2>>(qtensor);
   else
     throw std::runtime_error("assert: qtensor.shape(2) == 4 or qtensor.shape(2) == 3");
 }
@@ -632,7 +632,7 @@ inline ArrD Quadrature::int_gradN_dot_tensor2_dV(const ArrD &qtensor) const
 
 inline ArrD Quadrature::int_gradN_dot_tensor2s_dV(const ArrD &qtensor) const
 {
-  return int_gradN_dot_tensor2_dV<cppmat::view::cartesian2d::tensor2s<double>>(qtensor);
+  return int_gradN_dot_tensor2_dV<cppmat::view::cartesian::tensor2s<double,2>>(qtensor);
 }
 
 // -------------------------------------------------------------------------------------------------

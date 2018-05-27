@@ -270,7 +270,7 @@ inline ColD MatrixDiagonal::dot_p(const ColD &b_u, const ColD &b_p) const
 inline void MatrixDiagonal::check_diagonal(const ArrD &elemmat) const
 {
   // check input
-  assert( elemmat.ndim()   == 3            );
+  assert( elemmat.rank()   == 3            );
   assert( elemmat.shape(0) == m_nelem      );
   assert( elemmat.shape(1) == m_nne*m_ndim );
   assert( elemmat.shape(2) == m_nne*m_ndim );
@@ -295,7 +295,7 @@ inline void MatrixDiagonal::check_diagonal(const ArrD &elemmat) const
 inline void MatrixDiagonal::assemble(const ArrD &elemmat)
 {
   // check input
-  assert( elemmat.ndim()   == 3            );
+  assert( elemmat.rank()   == 3            );
   assert( elemmat.shape(0) == m_nelem      );
   assert( elemmat.shape(1) == m_nne*m_ndim );
   assert( elemmat.shape(2) == m_nne*m_ndim );

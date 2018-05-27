@@ -10,7 +10,8 @@
 
 #define EQ(a,b) REQUIRE_THAT( (a), Catch::WithinAbs((b), 1.e-12) );
 
-using T2s = cppmat::cartesian2d::tensor2s<double>;
+using T2  = cppmat::tiny::cartesian::tensor2 <double,2>;
+using T2s = cppmat::tiny::cartesian::tensor2s<double,2>;
 
 // =================================================================================================
 
@@ -67,14 +68,14 @@ SECTION( "symGradN_vector" )
 
   // macroscopic deformation gradient
   // - allocate
-  cppmat::cartesian2d::tensor2<double> F;
+  T2 F;
   // - zero-initialize
   F.setZero();
   // - set non-zero components
   F(0,1) = 0.1;
 
   // convert the macroscopic strain tensor
-  cppmat::cartesian2d::tensor2<double> EPS = .5 * ( F + F.T() );
+  T2 EPS = .5 * ( F + F.T() );
 
   // nodal coordinates
   GooseFEM::MatD coor = mesh.coor();;
@@ -99,7 +100,7 @@ SECTION( "symGradN_vector" )
 
   // check
   // - temporary tensor, to view the tensors
-  cppmat::view::cartesian2d::tensor2s<double> Eps;
+  cppmat::view::cartesian::tensor2s<double,2> Eps;
   // - check sizes
   REQUIRE( eps.shape(0) == mesh.nelem() );
   REQUIRE( eps.shape(1) == quad.nip()   );
@@ -138,7 +139,7 @@ SECTION( "symGradN_vector, int_gradN_dot_tensor2s_dV" )
 
   // macroscopic deformation gradient
   // - allocate
-  cppmat::cartesian2d::tensor2<double> F;
+  T2 F;
   // - zero-initialize
   F.setZero();
   // - set non-zero components
