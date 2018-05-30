@@ -74,11 +74,9 @@ public:
   // alias:
   //    T2   = cppmat::cartesian2d::tensor2<double>         -  #tensor-components = 4
   //    T2s  = cppmat::cartesian2d::tensor2s<double>        -  #tensor-components = 3
-  //    vT2  = cppmat::view::cartesian2d::tensor2<double>   -  #tensor-components = 4
-  //    vT2s = cppmat::view::cartesian2d::tensor2s<double>  -  #tensor-components = 3
 
   // constructor: integration point coordinates and weights are optional (default: Gauss)
-  Quadrature(){};
+  Quadrature() = default;
   Quadrature(const ArrD &x, const ArrD &xi=ArrD(), const ArrD &w=ArrD());
 
   // update the nodal positions (shape of "x" should match the earlier definition)
@@ -91,8 +89,7 @@ public:
   size_t nip()   const; // number of integration points
 
   // return integration volume
-  ArrD dV() const;              // returns: qscalar
-  ArrD dV(size_t ncomp) const;  // returns: qtensor (same volume per tensor-component)
+  ArrD dV(size_t ncomp=0) const;  // returns: qscalar/qtensor (same volume per tensor-component)
 
   // dyadic product "qtensor(i,j) += dNdx(m,i) * elemvec(m,j)", its transpose and its symmetric part
   // - allow template (e.g. T2/T2s, or higher dimensional tensors)
@@ -108,11 +105,11 @@ public:
   ArrD int_N_scalar_NT_dV(const ArrD &qscalar) const; // returns: elemmat
 
   // integral of the dot product "elemvec(m,j) += dNdx(m,i) * qtensor(i,j) * dV"
-  // - allow template (e.g. vT2/vT2s, or higher dimensional tensors)
+  // - allow template (e.g. T2/T2s, or higher dimensional tensors)
   template<class T> ArrD int_gradN_dot_tensor2_dV(const ArrD &qtensor) const; // returns: elemvec
   // - default template
-  ArrD int_gradN_dot_tensor2_dV (const ArrD &qtensor) const; // template: vT2/vT2s (auto-select)
-  ArrD int_gradN_dot_tensor2s_dV(const ArrD &qtensor) const; // template: vT2s
+  ArrD int_gradN_dot_tensor2_dV (const ArrD &qtensor) const; // template: T2/T2s (auto-select)
+  ArrD int_gradN_dot_tensor2s_dV(const ArrD &qtensor) const; // template: T2s
 
 };
 

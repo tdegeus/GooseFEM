@@ -176,8 +176,46 @@ py::module sm = mElement.def_submodule("Quad4", "Linear quadrilateral elements (
 // abbreviate name-space
 namespace SM = GooseFEM::Element::Quad4;
 
+using T2  = cppmat::tiny::cartesian::tensor2 <double,2>;
+using T2s = cppmat::tiny::cartesian::tensor2s<double,2>;
+
 // -------------------------------------------------------------------------------------------------
 
+py::class_<SM::Quadrature>(sm, "Quadrature")
+  // constructor
+  .def(
+    py::init<const ArrD &,const ArrD &,const ArrD &>(),
+    "Quadrature",
+    py::arg("x"),
+    py::arg("xi"),
+    py::arg("w")
+  )
+  // sizes
+  .def("nelem"                    , &SM::Quadrature::nelem)
+  .def("nne"                      , &SM::Quadrature::nne)
+  .def("ndim"                     , &SM::Quadrature::ndim)
+  .def("nip"                      , &SM::Quadrature::nip)
+  .def("dV"                       , &SM::Quadrature::dV)
+  .def("gradN_vector"             , &SM::Quadrature::gradN_vector<T2>)
+  .def("gradN_vector_T"           , &SM::Quadrature::gradN_vector_T<T2>)
+  .def("symGradN_vector"          , &SM::Quadrature::symGradN_vector<T2s>)
+  .def("int_N_scalar_NT_dV"       , &SM::Quadrature::int_N_scalar_NT_dV)
+  .def("int_gradN_dot_tensor2_dV" , &SM::Quadrature::int_gradN_dot_tensor2_dV<T2>)
+  .def("int_gradN_dot_tensor2s_dV", &SM::Quadrature::int_gradN_dot_tensor2_dV<T2s>)
+  // print to screen
+  .def("__repr__",
+    [](const SM::Quadrature &a){ return "<GooseFEM.Element.Quad4.Quadrature>"; }
+  );
+
+// -------------------------------------------------------------------------------------------------
+
+py::module ssm = sm.def_submodule("Gauss", "Gauss quadrature");
+
+namespace SSM = GooseFEM::Element::Quad4::Gauss;
+
+ssm.def("nip", &SSM::nip);
+ssm.def("xi", &SSM::xi);
+ssm.def("w", &SSM::w);
 
 // -------------------------------------------------------------------------------------------------
 

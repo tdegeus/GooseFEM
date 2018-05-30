@@ -186,17 +186,12 @@ inline Quadrature::Quadrature(const ArrD &x, const ArrD &xi, const ArrD &w)
   compute_dN();
 }
 
-// -------------------------------------- integration volume ---------------------------------------
-
-inline ArrD Quadrature::dV() const
-{
-  return m_vol;
-}
-
-// ---------------------------- integration volume per tensor-component ----------------------------
+// --------------------------- integration volume (per tensor-component) ---------------------------
 
 inline ArrD Quadrature::dV(size_t ncomp) const
 {
+  if ( ncomp == 0 ) return m_vol;
+
   ArrD out = ArrD::Zero({m_nelem, m_nip, ncomp});
 
   #pragma omp parallel for
@@ -572,9 +567,9 @@ inline ArrD Quadrature::int_gradN_dot_tensor2_dV(const ArrD &qtensor) const
       for ( size_t k = 0 ; k < m_nip ; ++k )
       {
         // - alias
-        dNx.setMap(&m_dNx  (e,k)); // shape function gradients (global coordinates)
-        sig.setMap(&qtensor(e,k)); // integration point tensor (e.g. stress)
-        vol = m_vol        (e,k);  // integration point volume
+        dNx.setMap (&m_dNx  (e,k)); // shape function gradients (global coordinates)
+        sig.setCopy(&qtensor(e,k)); // integration point tensor (e.g. stress)
+        vol = m_vol         (e,k);  // integration point volume
 
         // - evaluate dot product, and assemble (loops partly unrolled for efficiency)
         //   f(m,j) += dNdx(m,i) * sig(i,j) * dV;
@@ -621,9 +616,9 @@ inline ArrD Quadrature::int_gradN_dot_tensor2_dV(const ArrD &qtensor) const
   assert( qtensor.rank() == 3 ); // shape: [nelem, nip, #tensor-components]
 
   if ( qtensor.shape(2) == m_ndim*m_ndim )
-    return int_gradN_dot_tensor2_dV<cppmat::view::cartesian::tensor2<double,2>>(qtensor);
+    return int_gradN_dot_tensor2_dV<cppmat::tiny::cartesian::tensor2<double,2>>(qtensor);
   else if ( qtensor.shape(2) == (m_ndim+1)*m_ndim/2 )
-    return int_gradN_dot_tensor2_dV<cppmat::view::cartesian::tensor2s<double,2>>(qtensor);
+    return int_gradN_dot_tensor2_dV<cppmat::tiny::cartesian::tensor2s<double,2>>(qtensor);
   else
     throw std::runtime_error("assert: qtensor.shape(2) == 4 or qtensor.shape(2) == 3");
 }
@@ -632,7 +627,7 @@ inline ArrD Quadrature::int_gradN_dot_tensor2_dV(const ArrD &qtensor) const
 
 inline ArrD Quadrature::int_gradN_dot_tensor2s_dV(const ArrD &qtensor) const
 {
-  return int_gradN_dot_tensor2_dV<cppmat::view::cartesian::tensor2s<double,2>>(qtensor);
+  return int_gradN_dot_tensor2_dV<cppmat::tiny::cartesian::tensor2s<double,2>>(qtensor);
 }
 
 // -------------------------------------------------------------------------------------------------
