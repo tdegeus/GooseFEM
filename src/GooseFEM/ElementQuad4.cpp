@@ -256,7 +256,7 @@ inline void Quadrature::compute_dN()
   #pragma omp parallel
   {
     // intermediate quantities and local views
-    double Jdet, w, vol;
+    double Jdet;
     cppmat::tiny::matrix<double,m_nne,m_ndim> dNx;
     cppmat::view::matrix<double,m_nne,m_ndim> dNxi, x;
     cppmat::tiny::cartesian::tensor2<double,2> J, Jinv;
@@ -265,16 +265,14 @@ inline void Quadrature::compute_dN()
     #pragma omp for
     for ( size_t e = 0 ; e < m_nelem ; ++e )
     {
-      // alias
-      x.setMap(&m_x(e)); // nodal positions
+      // alias nodal positions
+      x.setMap(&m_x(e));
 
       // loop over integration points
       for ( size_t k = 0 ; k < m_nip ; ++k )
       {
-        // - alias
-        dNxi.setMap(&m_dNxi(  k)); // shape function gradients (local coordinates)
-        vol =        m_vol (e,k);  // volume
-        w   =        m_w   (  k);  // weight factor
+        // - alias shape function gradients (local coordinates)
+        dNxi.setMap(&m_dNxi(k));
 
         // - Jacobian (loops unrolled for efficiency)
         //   J(i,j) += dNxi(m,i) * xe(m,j)
@@ -287,9 +285,6 @@ inline void Quadrature::compute_dN()
         Jdet = J.det();
         Jinv = J.inv();
 
-        // - integration point volume
-        vol = w * Jdet;
-
         // - shape function gradients wrt global coordinates (loops partly unrolled for efficiency)
         //   dNx(m,i) += Jinv(i,j) * dNxi(m,j)
         for ( size_t m = 0 ; m < m_nne ; ++m )
@@ -299,10 +294,10 @@ inline void Quadrature::compute_dN()
         }
 
         // - copy to matrix: shape function gradients (global coordinates)
-        std::copy(dNx.begin(), dNx.end(), m_dNx.item(e,k));
+        dNx.copyTo(m_dNx.item(e,k));
 
         // - copy to matrix: integration point volume
-        m_vol(e,k) = vol;
+        m_vol(e,k) = m_w(k) * Jdet;
       }
     }
   } // #pragma omp parallel
@@ -319,12 +314,8 @@ inline ArrD Quadrature::gradN_vector(const ArrD &elemvec) const
   assert( elemvec.shape(1) == m_nne   ); // number of nodes per element
   assert( elemvec.shape(2) == m_ndim  ); // number of dimensions
 
-  // temporary tensor, to deduce size of the output
-  T dummytensor;
-  size_t tdim = dummytensor.size();
-
   // zero-initialize output: matrix of tensors
-  ArrD qtensor = ArrD::Zero({m_nelem, m_nip, tdim});
+  ArrD qtensor = ArrD::Zero({m_nelem, m_nip, T::Size()});
 
   #pragma omp parallel
   {
@@ -336,14 +327,14 @@ inline ArrD Quadrature::gradN_vector(const ArrD &elemvec) const
     #pragma omp for
     for ( size_t e = 0 ; e < m_nelem ; ++e )
     {
-      // alias
-      u.setMap(&elemvec(e)); // element vector (e.g. nodal displacements)
+      // alias element vector (e.g. nodal displacements)
+      u.setMap(&elemvec(e));
 
       // loop over all integration points in element "e"
       for ( size_t k = 0 ; k < m_nip ; ++k )
       {
-        // - alias
-        dNx.setMap(&m_dNx(e,k)); // shape function gradients (global coordinates)
+        // - alias shape function gradients (local coordinates)
+        dNx.setMap(&m_dNx(e,k));
 
         // - evaluate dyadic product (loops unrolled for efficiency)
         //   gradu(i,j) += dNx(m,i) * ue(m,j)
@@ -372,12 +363,8 @@ inline ArrD Quadrature::gradN_vector_T(const ArrD &elemvec) const
   assert( elemvec.shape(1) == m_nne   ); // number of nodes per element
   assert( elemvec.shape(2) == m_ndim  ); // number of dimensions
 
-  // temporary tensor, to deduce size of the output
-  T dummytensor;
-  size_t tdim = dummytensor.size();
-
   // zero-initialize output: matrix of tensors
-  ArrD qtensor = ArrD::Zero({m_nelem, m_nip, tdim});
+  ArrD qtensor = ArrD::Zero({m_nelem, m_nip, T::Size()});
 
   #pragma omp parallel
   {
@@ -389,14 +376,14 @@ inline ArrD Quadrature::gradN_vector_T(const ArrD &elemvec) const
     #pragma omp for
     for ( size_t e = 0 ; e < m_nelem ; ++e )
     {
-      // alias
-      u.setMap(&elemvec(e)); // element vector (e.g. nodal displacements)
+      // alias element vector (e.g. nodal displacements)
+      u.setMap(&elemvec(e));
 
       // loop over all integration points in element "e"
       for ( size_t k = 0 ; k < m_nip ; ++k )
       {
-        // - alias
-        dNx.setMap(&m_dNx(e,k)); // shape function gradients (global coordinates)
+        // - alias shape function gradients (global coordinates)
+        dNx.setMap(&m_dNx(e,k));
 
         // - evaluate dyadic product (loops unrolled for efficiency)
         //   gradu(j,i) += dNx(m,i) * ue(m,j)
@@ -425,12 +412,8 @@ inline ArrD Quadrature::symGradN_vector(const ArrD &elemvec) const
   assert( elemvec.shape(1) == m_nne   ); // number of nodes per element
   assert( elemvec.shape(2) == m_ndim  ); // number of dimensions
 
-  // temporary tensor, to deduce size of the output
-  T dummytensor;
-  size_t tdim = dummytensor.size();
-
   // zero-initialize output: matrix of tensors
-  ArrD qtensor = ArrD::Zero({m_nelem, m_nip, tdim});
+  ArrD qtensor = ArrD::Zero({m_nelem, m_nip, T::Size()});
 
   #pragma omp parallel
   {
@@ -443,14 +426,14 @@ inline ArrD Quadrature::symGradN_vector(const ArrD &elemvec) const
     #pragma omp for
     for ( size_t e = 0 ; e < m_nelem ; ++e )
     {
-      // alias
-      u.setMap(&elemvec(e)); // element vector (e.g. nodal displacements)
+      // alias element vector (e.g. nodal displacements)
+      u.setMap(&elemvec(e));
 
       // loop over all integration points in element "e"
       for ( size_t k = 0 ; k < m_nip ; ++k )
       {
-        // - alias
-        dNx.setMap(&m_dNx(e,k)); // shape function gradients (global coordinates)
+        // - alias shape function gradients (global coordinates)
+        dNx.setMap(&m_dNx(e,k));
 
         // - evaluate dyadic product (loops unrolled for efficiency)
         //   gradu(i,j) += dNx(m,i) * ue(m,j)
@@ -504,8 +487,10 @@ inline ArrD Quadrature::int_N_scalar_NT_dV(const ArrD &qscalar) const
       // loop over all integration points in element "e"
       for ( size_t k = 0 ; k < m_nip ; ++k )
       {
+        // - alias shape functions
+        N.setMap(&m_N(k));
+
         // - alias
-        N.setMap(&m_N(  k)); // shape functions
         vol = m_vol  (e,k);  // integration point volume
         rho = qscalar(e,k);  // integration point scalar (e.g. density)
 
@@ -532,18 +517,11 @@ inline ArrD Quadrature::int_N_scalar_NT_dV(const ArrD &qscalar) const
 template<class T>
 inline ArrD Quadrature::int_gradN_dot_tensor2_dV(const ArrD &qtensor) const
 {
-  #ifndef NDEBUG
-
-    // dummy variable
-    T tmp;
-
-    // check input
-    assert( qtensor.rank()   == 3          ); // shape: [nelem, nip, #tensor-components]
-    assert( qtensor.shape(0) == m_nelem    ); // number of elements
-    assert( qtensor.shape(1) == m_nip      ); // number of integration points
-    assert( qtensor.shape(2) == tmp.size() ); // tensor dimensions
-
-  #endif
+  // check input
+  assert( qtensor.rank()   == 3         ); // shape: [nelem, nip, #tensor-components]
+  assert( qtensor.shape(0) == m_nelem   ); // number of elements
+  assert( qtensor.shape(1) == m_nip     ); // number of integration points
+  assert( qtensor.shape(2) == T::Size() ); // tensor dimensions
 
   // zero-initialize output: matrix of vectors
   ArrD elemvec = ArrD::Zero({m_nelem, m_nne, m_ndim});
@@ -616,10 +594,15 @@ inline ArrD Quadrature::int_gradN_dot_tensor2_dV(const ArrD &qtensor) const
   assert( qtensor.rank() == 3 ); // shape: [nelem, nip, #tensor-components]
 
   if ( qtensor.shape(2) == m_ndim*m_ndim )
+
     return int_gradN_dot_tensor2_dV<cppmat::tiny::cartesian::tensor2<double,2>>(qtensor);
+
   else if ( qtensor.shape(2) == (m_ndim+1)*m_ndim/2 )
+
     return int_gradN_dot_tensor2_dV<cppmat::tiny::cartesian::tensor2s<double,2>>(qtensor);
+
   else
+
     throw std::runtime_error("assert: qtensor.shape(2) == 4 or qtensor.shape(2) == 3");
 }
 

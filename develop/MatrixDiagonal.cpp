@@ -1,14 +1,5 @@
 
-#include <catch/catch.hpp>
-
-#define CPPMAT_NOCONVERT
-#include <cppmat/cppmat.h>
-
-#include <Eigen/Eigen>
-
-#include <GooseFEM/GooseFEM.h>
-
-#define EQ(a,b) REQUIRE_THAT( (a), Catch::WithinAbs((b), 1.e-12) );
+#include "support.h"
 
 // =================================================================================================
 
