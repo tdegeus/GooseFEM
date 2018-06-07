@@ -12,7 +12,7 @@
 
 #include <cppmat/pybind11.h>
 
-#include "../src/GooseFEM/GooseFEM.h"
+#include "GooseFEM.h"
 
 // =================================================================================================
 
@@ -20,18 +20,42 @@
 namespace py = pybind11;
 namespace M  = GooseFEM;
 
-// abbreviate types(s)
+// abbreviate types
 typedef GooseFEM::ColD ColD;
 typedef GooseFEM::ColS ColS;
 typedef GooseFEM::MatD MatD;
 typedef GooseFEM::MatS MatS;
 typedef GooseFEM::ArrD ArrD;
 
+// abbreviate const types
 typedef const GooseFEM::ColD cColD;
 typedef const GooseFEM::ColS cColS;
 typedef const GooseFEM::MatD cMatD;
 typedef const GooseFEM::MatS cMatS;
 typedef const GooseFEM::ArrD cArrD;
+
+// =================================================================================================
+
+class PyGeometry : public GooseFEM::Dynamics::Geometry
+{
+public:
+  // inherit the constructors
+  using GooseFEM::Dynamics::Geometry::Geometry;
+
+  // trampoline
+  ColD solve_A()                  override { PYBIND11_OVERLOAD_PURE( ColD, GooseFEM::Dynamics::Geometry, solve_A         ); }
+  ColD solve_V()                  override { PYBIND11_OVERLOAD_PURE( ColD, GooseFEM::Dynamics::Geometry, solve_V         ); }
+  MatD u()      const             override { PYBIND11_OVERLOAD_PURE( MatD, GooseFEM::Dynamics::Geometry, u               ); }
+  MatD v()      const             override { PYBIND11_OVERLOAD_PURE( MatD, GooseFEM::Dynamics::Geometry, v               ); }
+  MatD a()      const             override { PYBIND11_OVERLOAD_PURE( MatD, GooseFEM::Dynamics::Geometry, a               ); }
+  ColD dofs_u() const             override { PYBIND11_OVERLOAD_PURE( ColD, GooseFEM::Dynamics::Geometry, dofs_u          ); }
+  ColD dofs_v() const             override { PYBIND11_OVERLOAD_PURE( ColD, GooseFEM::Dynamics::Geometry, dofs_v          ); }
+  ColD dofs_a() const             override { PYBIND11_OVERLOAD_PURE( ColD, GooseFEM::Dynamics::Geometry, dofs_a          ); }
+  void set_u(const MatD &nodevec) override { PYBIND11_OVERLOAD_PURE( void, GooseFEM::Dynamics::Geometry, set_u  , nodevec); }
+  void set_u(const ColD &dofval ) override { PYBIND11_OVERLOAD_PURE( void, GooseFEM::Dynamics::Geometry, set_u  , dofval ); }
+  void set_v(const ColD &dofval ) override { PYBIND11_OVERLOAD_PURE( void, GooseFEM::Dynamics::Geometry, set_v  , dofval ); }
+  void set_a(const ColD &dofval ) override { PYBIND11_OVERLOAD_PURE( void, GooseFEM::Dynamics::Geometry, set_a  , dofval ); }
+};
 
 // =========================================== GooseFEM ============================================
 
@@ -142,6 +166,52 @@ py::class_<GooseFEM::MatrixDiagonal>(m, "MatrixDiagonal")
   // print to screen
   .def("__repr__",
     [](const GooseFEM::MatrixDiagonal &a){ return "<GooseFEM.MatrixDiagonal>"; }
+  );
+
+// =========================== GooseFEM::Dynamics - GooseFEM/Dynamics.h ============================
+
+py::module mDynamics = m.def_submodule("Dynamics", "Solve routines for dynamic FEM");
+
+// -------------------------------------------------------------------------------------------------
+
+mDynamics.def("Verlet",
+  &GooseFEM::Dynamics::Verlet,
+  "Verlet time integration",
+  py::arg("geometry"),
+  py::arg("dt")
+);
+
+// -------------------------------------------------------------------------------------------------
+
+mDynamics.def("velocityVerlet",
+  &GooseFEM::Dynamics::velocityVerlet,
+  "Velocity-Verlet time integration",
+  py::arg("geometry"),
+  py::arg("dt")
+);
+
+// -------------------------------------------------------------------------------------------------
+
+py::class_<GooseFEM::Dynamics::Geometry, PyGeometry>(mDynamics, "Geometry")
+  // constructor
+  .def(py::init<>())
+  // methods
+  .def("solve_A"   , &GooseFEM::Dynamics::Geometry::solve_A)
+  .def("solve_V"   , &GooseFEM::Dynamics::Geometry::solve_V)
+  .def("u"         , &GooseFEM::Dynamics::Geometry::u      )
+  .def("v"         , &GooseFEM::Dynamics::Geometry::v      )
+  .def("a"         , &GooseFEM::Dynamics::Geometry::a      )
+  .def("dofs_u"    , &GooseFEM::Dynamics::Geometry::dofs_u )
+  .def("dofs_v"    , &GooseFEM::Dynamics::Geometry::dofs_v )
+  .def("dofs_a"    , &GooseFEM::Dynamics::Geometry::dofs_a )
+  .def("set_v"     , &GooseFEM::Dynamics::Geometry::set_v  )
+  .def("set_a"     , &GooseFEM::Dynamics::Geometry::set_a  )
+  .def("set_u"     , py::overload_cast<const MatD &>(&GooseFEM::Dynamics::Geometry::set_u))
+  .def("set_u"     , py::overload_cast<const ColD &>(&GooseFEM::Dynamics::Geometry::set_u))
+
+  // print to screen
+  .def("__repr__",
+    [](const GooseFEM::Dynamics::Geometry &a){ return "<GooseDEM.Dynamics.Geometry>"; }
   );
 
 // ============================ GooseFEM::Element - GooseFEM/Element.h =============================
