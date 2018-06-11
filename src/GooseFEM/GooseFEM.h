@@ -63,6 +63,7 @@ namespace GooseFEM
   // - alias cppmat matrices
   typedef cppmat::array<double> ArrD;
   typedef cppmat::array<size_t> ArrS;
+  typedef cppmat::array<int>    ArrI;
 }
 
 // =================================================================================================
