@@ -48,11 +48,11 @@ public:
 
 // ------------------------------------ evaluate one time step -------------------------------------
 
-inline void Verlet        (Geometry &geometry, double dt);
-inline void velocityVerlet(Geometry &geometry, double dt);
+inline void Verlet        (Geometry &geometry, double dt, size_t nstep=1);
+inline void velocityVerlet(Geometry &geometry, double dt, size_t nstep=1);
 
 namespace Overdamped {
-inline void forwardEuler  (Geometry &geometry, double dt);
+inline void forwardEuler  (Geometry &geometry, double dt, size_t nstep=1);
 }
 
 // -------------------------------------------------------------------------------------------------

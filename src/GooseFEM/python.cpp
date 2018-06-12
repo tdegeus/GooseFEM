@@ -178,7 +178,8 @@ mDynamics.def("Verlet",
   &GooseFEM::Dynamics::Verlet,
   "Verlet time integration",
   py::arg("geometry"),
-  py::arg("dt")
+  py::arg("dt"),
+  py::arg("nstep")=1
 );
 
 // -------------------------------------------------------------------------------------------------
@@ -187,7 +188,8 @@ mDynamics.def("velocityVerlet",
   &GooseFEM::Dynamics::velocityVerlet,
   "Velocity-Verlet time integration",
   py::arg("geometry"),
-  py::arg("dt")
+  py::arg("dt"),
+  py::arg("nstep")=1
 );
 
 // -------------------------------------------------------------------------------------------------

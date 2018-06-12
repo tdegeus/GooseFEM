@@ -100,6 +100,13 @@ inline size_t Vector::nnp() const
   return m_nnp;
 }
 
+// ------------------------------------------ return DOFs ------------------------------------------
+
+inline MatS Vector::dofs() const
+{
+  return m_dofs;
+}
+
 // -------------------------------------- return unknown DOFs --------------------------------------
 
 inline ColS Vector::iiu() const

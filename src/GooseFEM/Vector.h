@@ -60,8 +60,9 @@ public:
   size_t nnp()   const; // number of prescribed DOFs
 
   // DOF lists
-  ColS iiu() const; // unknown    DOFs
-  ColS iip() const; // prescribed DOFs
+  MatS dofs() const; // DOFs
+  ColS iiu()  const; // unknown    DOFs
+  ColS iip()  const; // prescribed DOFs
 
   // convert vectors (overwrite entries that occur more that once)
   ColD asDofs   (const ColD &dofval_u, const ColD &dofval_p) const;
