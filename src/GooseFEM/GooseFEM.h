@@ -29,7 +29,7 @@
 
 #define GOOSEFEM_WORLD_VERSION 0
 #define GOOSEFEM_MAJOR_VERSION 0
-#define GOOSEFEM_MINOR_VERSION 10
+#define GOOSEFEM_MINOR_VERSION 11
 
 #define GOOSEFEM_VERSION_AT_LEAST(x,y,z) \
   (GOOSEFEM_WORLD_VERSION>x || (GOOSEFEM_WORLD_VERSION>=x && \
@@ -79,16 +79,16 @@ namespace GooseFEM
 #include "Iterate.h"
 #include "Dynamics.h"
 
-#include "Mesh.cpp"
-#include "MeshTri3.cpp"
-#include "MeshQuad4.cpp"
-#include "MeshHex8.cpp"
-#include "Element.cpp"
-#include "ElementQuad4.cpp"
-#include "Vector.cpp"
-#include "MatrixDiagonal.cpp"
-#include "Iterate.cpp"
-#include "Dynamics.cpp"
+#include "Mesh.hpp"
+#include "MeshTri3.hpp"
+#include "MeshQuad4.hpp"
+#include "MeshHex8.hpp"
+#include "Element.hpp"
+#include "ElementQuad4.hpp"
+#include "Vector.hpp"
+#include "MatrixDiagonal.hpp"
+#include "Iterate.hpp"
+#include "Dynamics.hpp"
 
 // =================================================================================================
 

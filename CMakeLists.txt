@@ -17,25 +17,25 @@ set(parse_version src/${PROJECT_NAME}/${PROJECT_NAME}.h)
 # header files
 set(headers
   src/GooseFEM/GooseFEM.h
-  src/GooseFEM/Mesh.cpp
+  src/GooseFEM/Mesh.hpp
   src/GooseFEM/Mesh.h
-  src/GooseFEM/MeshTri3.cpp
+  src/GooseFEM/MeshTri3.hpp
   src/GooseFEM/MeshTri3.h
-  src/GooseFEM/MeshQuad4.cpp
+  src/GooseFEM/MeshQuad4.hpp
   src/GooseFEM/MeshQuad4.h
-  src/GooseFEM/MeshHex8.cpp
+  src/GooseFEM/MeshHex8.hpp
   src/GooseFEM/MeshHex8.h
-  src/GooseFEM/Element.cpp
+  src/GooseFEM/Element.hpp
   src/GooseFEM/Element.h
-  src/GooseFEM/ElementQuad4.cpp
+  src/GooseFEM/ElementQuad4.hpp
   src/GooseFEM/ElementQuad4.h
-  src/GooseFEM/Vector.cpp
+  src/GooseFEM/Vector.hpp
   src/GooseFEM/Vector.h
-  src/GooseFEM/MatrixDiagonal.cpp
+  src/GooseFEM/MatrixDiagonal.hpp
   src/GooseFEM/MatrixDiagonal.h
-  src/GooseFEM/Iterate.cpp
+  src/GooseFEM/Iterate.hpp
   src/GooseFEM/Iterate.h
-  src/GooseFEM/Dynamics.cpp
+  src/GooseFEM/Dynamics.hpp
   src/GooseFEM/Dynamics.h
 )
 
