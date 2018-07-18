@@ -2,7 +2,7 @@
 #ifndef SUPPORT_H
 #define SUPPORT_H
 
-#include <catch/catch.hpp>
+#include <catch2/catch.hpp>
 #include <cppmat/cppmat.h>
 #include <Eigen/Eigen>
 

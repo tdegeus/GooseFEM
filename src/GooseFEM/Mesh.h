@@ -39,7 +39,7 @@ inline MatS renumber(const MatS &dofs);
 template<class InputIterator, class OutputIterator, class IndexIterator>
 inline void reorder(
   const InputIterator first, const InputIterator last, const OutputIterator result,
-  const IndexIterator first_index, const IndexIterator last_index, std::string location
+  const IndexIterator idx_first, const IndexIterator idx_last, std::string location
 );
 // - interface
 inline MatS reorder(const MatS &dofs, const ColS &idx, std::string location="end");

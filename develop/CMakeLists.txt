@@ -50,5 +50,6 @@ add_executable(${PROJECT_NAME}
   Vector.cpp
   MatrixDiagonal.cpp
   ElementQuad4.cpp
+  ElementHex8.cpp
   Iterate.cpp
 )

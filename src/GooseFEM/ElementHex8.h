@@ -4,20 +4,20 @@
 
 ================================================================================================= */
 
-#ifndef GOOSEFEM_ELEMENTQUAD4_H
-#define GOOSEFEM_ELEMENTQUAD4_H
+#ifndef GOOSEFEM_ELEMENTHEX8_H
+#define GOOSEFEM_ELEMENTHEX8_H
 
 // -------------------------------------------------------------------------------------------------
 
 #include "GooseFEM.h"
 
-// =================================== GooseFEM::Element::Quad4 ====================================
+// ==================================== GooseFEM::Element::Hex8 ====================================
 
 namespace GooseFEM {
 namespace Element {
-namespace Quad4 {
+namespace Hex8 {
 
-// ================================ GooseFEM::Element::Quad4::Gauss ================================
+// ================================ GooseFEM::Element::Hex8::Gauss =================================
 
 namespace Gauss {
 inline size_t nip(); // number of integration points
@@ -25,7 +25,7 @@ inline ArrD   xi();  // integration point coordinates (local coordinates)
 inline ArrD   w();   // integration point weights
 }
 
-// ================================ GooseFEM::Element::Quad4::Nodal ================================
+// ================================ GooseFEM::Element::Hex8::Nodal =================================
 
 namespace Nodal {
 inline size_t nip(); // number of integration points
@@ -46,8 +46,8 @@ private:
   size_t m_nip;   // number of integration points
 
   // dimensions (fixed for this element type)
-  static const size_t m_nne=4;  // number of nodes per element
-  static const size_t m_ndim=2; // number of dimensions
+  static const size_t m_nne=8;  // number of nodes per element
+  static const size_t m_ndim=3; // number of dimensions
 
   // data arrays
   ArrD m_x;    // nodal positions stored per element [nelem, nne, ndim]
@@ -72,8 +72,8 @@ public:
   //    "qscalar"  -  integration point scalar          -  ArrD  -  [nelem, nip]
   //
   // alias:
-  //    T2   = cppmat::tiny::cartesian::tensor2<double,2>         -  #tensor-components = 4
-  //    T2s  = cppmat::tiny::cartesian::tensor2s<double,2>        -  #tensor-components = 3
+  //    T2   = cppmat::tiny::cartesian::tensor2<double,3>         -  #tensor-components = 9
+  //    T2s  = cppmat::tiny::cartesian::tensor2s<double,3>        -  #tensor-components = 6
 
   // constructor: integration point coordinates and weights are optional (default: Gauss)
   Quadrature() = default;

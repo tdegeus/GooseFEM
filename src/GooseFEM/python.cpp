@@ -242,7 +242,7 @@ mElement.def("assembleElementVector",
 
 {
 
-// create submodule
+// create sub-module
 py::module sm = mElement.def_submodule("Quad4", "Linear quadrilateral elements (2D)");
 
 // abbreviate name-space
@@ -259,15 +259,15 @@ py::class_<SM::Quadrature>(sm, "Quadrature")
     py::init<const ArrD &,const ArrD &,const ArrD &>(),
     "Quadrature",
     py::arg("x"),
-    py::arg("xi"),
-    py::arg("w")
+    py::arg("xi")=ArrD::Zero({0}),
+    py::arg("w")=ArrD::Zero({0})
   )
   // sizes
   .def("nelem"                    , &SM::Quadrature::nelem)
   .def("nne"                      , &SM::Quadrature::nne)
   .def("ndim"                     , &SM::Quadrature::ndim)
   .def("nip"                      , &SM::Quadrature::nip)
-  .def("dV"                       , &SM::Quadrature::dV)
+  .def("dV"                       , &SM::Quadrature::dV, py::arg("ncomp")=0)
   .def("gradN_vector"             , &SM::Quadrature::gradN_vector<T2>)
   .def("gradN_vector_T"           , &SM::Quadrature::gradN_vector_T<T2>)
   .def("symGradN_vector"          , &SM::Quadrature::symGradN_vector<T2s>)
@@ -281,13 +281,104 @@ py::class_<SM::Quadrature>(sm, "Quadrature")
 
 // -------------------------------------------------------------------------------------------------
 
+{
+
 py::module ssm = sm.def_submodule("Gauss", "Gauss quadrature");
 
 namespace SSM = GooseFEM::Element::Quad4::Gauss;
 
 ssm.def("nip", &SSM::nip);
-ssm.def("xi", &SSM::xi);
-ssm.def("w", &SSM::w);
+ssm.def("xi" , &SSM::xi);
+ssm.def("w"  , &SSM::w);
+
+}
+
+// -------------------------------------------------------------------------------------------------
+
+{
+
+py::module ssm = sm.def_submodule("Nodal", "Nodal quadrature");
+
+namespace SSM = GooseFEM::Element::Quad4::Nodal;
+
+ssm.def("nip", &SSM::nip);
+ssm.def("xi" , &SSM::xi);
+ssm.def("w"  , &SSM::w);
+
+}
+
+// -------------------------------------------------------------------------------------------------
+
+}
+
+// ====================== GooseFEM::Element::Hex8 - GooseFEM/ElementHex8.h =======================
+
+{
+
+// create sub-module
+py::module sm = mElement.def_submodule("Hex8", "Linear hexahedron (brick) elements (3D)");
+
+// abbreviate name-space
+namespace SM = GooseFEM::Element::Hex8;
+
+using T2  = cppmat::tiny::cartesian::tensor2 <double,3>;
+using T2s = cppmat::tiny::cartesian::tensor2s<double,3>;
+
+// -------------------------------------------------------------------------------------------------
+
+py::class_<SM::Quadrature>(sm, "Quadrature")
+  // constructor
+  .def(
+    py::init<const ArrD &,const ArrD &,const ArrD &>(),
+    "Quadrature",
+    py::arg("x"),
+    py::arg("xi")=ArrD::Zero({0}),
+    py::arg("w")=ArrD::Zero({0})
+  )
+  // sizes
+  .def("nelem"                    , &SM::Quadrature::nelem)
+  .def("nne"                      , &SM::Quadrature::nne)
+  .def("ndim"                     , &SM::Quadrature::ndim)
+  .def("nip"                      , &SM::Quadrature::nip)
+  .def("dV"                       , &SM::Quadrature::dV, py::arg("ncomp")=0)
+  .def("gradN_vector"             , &SM::Quadrature::gradN_vector<T2>)
+  .def("gradN_vector_T"           , &SM::Quadrature::gradN_vector_T<T2>)
+  .def("symGradN_vector"          , &SM::Quadrature::symGradN_vector<T2s>)
+  .def("int_N_scalar_NT_dV"       , &SM::Quadrature::int_N_scalar_NT_dV)
+  .def("int_gradN_dot_tensor2_dV" , &SM::Quadrature::int_gradN_dot_tensor2_dV<T2>)
+  .def("int_gradN_dot_tensor2s_dV", &SM::Quadrature::int_gradN_dot_tensor2_dV<T2s>)
+  // print to screen
+  .def("__repr__",
+    [](const SM::Quadrature &a){ return "<GooseFEM.Element.Hex8.Quadrature>"; }
+  );
+
+// -------------------------------------------------------------------------------------------------
+
+{
+
+py::module ssm = sm.def_submodule("Gauss", "Gauss quadrature");
+
+namespace SSM = GooseFEM::Element::Hex8::Gauss;
+
+ssm.def("nip", &SSM::nip);
+ssm.def("xi" , &SSM::xi);
+ssm.def("w"  , &SSM::w);
+
+}
+
+// -------------------------------------------------------------------------------------------------
+
+{
+
+py::module ssm = sm.def_submodule("Nodal", "Nodal quadrature");
+
+namespace SSM = GooseFEM::Element::Hex8::Nodal;
+
+ssm.def("nip", &SSM::nip);
+ssm.def("xi" , &SSM::xi);
+ssm.def("w"  , &SSM::w);
+
+}
 
 // -------------------------------------------------------------------------------------------------
 
@@ -299,16 +390,21 @@ py::module mMesh = m.def_submodule("Mesh", "Generic mesh routines");
 
 // -------------------------------------------------------------------------------------------------
 
-mMesh.def("elem2node",
-  &GooseFEM::Mesh::elem2node,
+mMesh.def("elem2node", &GooseFEM::Mesh::elem2node,
   "Elements connect to each node: [ number of elements , element numbers ]",
   py::arg("conn")
 );
 
 // -------------------------------------------------------------------------------------------------
 
-mMesh.def("dofs",
-  &GooseFEM::Mesh::dofs,
+mMesh.def("coordination", &GooseFEM::Mesh::coordination,
+  "Get the coordination number of each node: the number of elements connected to it",
+  py::arg("conn")
+);
+
+// -------------------------------------------------------------------------------------------------
+
+mMesh.def("dofs", &GooseFEM::Mesh::dofs,
   "List with DOF-numbers (in sequential order)",
   py::arg("nnode"),
   py::arg("ndim")
@@ -341,7 +437,7 @@ mMesh.def("reorder",
 
 {
 
-// create submodule
+// create sub-module
 py::module sm = mMesh.def_submodule("Hex8", "Linear hexahedron (brick) elements (3D)");
 
 // abbreviate name-space
@@ -651,7 +747,7 @@ py::class_<SM::FineLayer>(sm, "FineLayer")
 
 {
 
-// create submodule
+// create sub-module
 py::module sm = mMesh.def_submodule("Quad4", "Linear quadrilateral elements (2D)");
 
 // abbreviate name-space
@@ -754,7 +850,7 @@ py::class_<SM::FineLayer>(sm, "FineLayer")
 
 {
 
-// create submodule
+// create sub-module
 py::module sm = mMesh.def_submodule("Tri3" , "Linear triangular elements (2D)");
 
 // abbreviate name-space

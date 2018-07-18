@@ -140,14 +140,13 @@ inline SpMatS elem2node(const MatS &conn)
 
   // number of elements connected to each node
   // - allocate
-  ColS N(nnode), idx(nnode);
-  // - initialize
-  N  .setZero();
-  idx.setZero();
+  ColS N  = ColS::Zero(nnode);
   // - fill from connectivity
   for ( auto it = conn.data(); it != conn.data()+conn.size(); ++it ) N(*it) += 1;
 
   // triplet list, with elements per node
+  // - allocate
+  ColS idx = ColS::Zero(nnode);
   // - type
   typedef Eigen::Triplet<size_t> T;
   // - allocate
@@ -170,6 +169,22 @@ inline SpMatS elem2node(const MatS &conn)
   mat.setFromTriplets(triplets.begin(), triplets.end());
 
   return mat;
+}
+
+// ------------------------------ coordination number of each element ------------------------------
+
+inline ColS coordination(const MatS &conn)
+{
+  // get number of nodes
+  size_t nnode = conn.maxCoeff() + 1;
+
+  // number of elements connected to each node
+  // - allocate
+  ColS N = ColS::Zero(nnode);
+  // - fill from connectivity
+  for ( auto it = conn.data(); it != conn.data()+conn.size(); ++it ) N(*it) += 1;
+
+  return N;
 }
 
 // -------------------------------------------------------------------------------------------------

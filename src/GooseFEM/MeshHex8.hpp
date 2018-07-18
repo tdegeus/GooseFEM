@@ -1299,13 +1299,13 @@ inline MatS FineLayer::conn() const
         for ( size_t ix = 0 ; ix < m_nelx(iy) ; ++ix ) {
           // -- bottom element
           out(ielem,0) = bot + (ix  ) +    iz    * (m_nelx(iy)+1);
-          out(ielem,1) = bot + (ix+1) +    iz    * (m_nelx(iy)+1);
+          out(ielem,1) = bot + (ix  ) + (  iz+1) * (m_nelx(iy)+1);
           out(ielem,2) = bot + (ix+1) + (  iz+1) * (m_nelx(iy)+1);
-          out(ielem,3) = bot + (ix  ) + (  iz+1) * (m_nelx(iy)+1);
+          out(ielem,3) = bot + (ix+1) +    iz    * (m_nelx(iy)+1);
           out(ielem,4) = mid + (ix  ) +  2*iz    * (m_nelx(iy)+1);
-          out(ielem,5) = mid + (ix+1) +  2*iz    * (m_nelx(iy)+1);
+          out(ielem,5) = mid + (ix  ) + (2*iz+1) * (m_nelx(iy)+1);
           out(ielem,6) = mid + (ix+1) + (2*iz+1) * (m_nelx(iy)+1);
-          out(ielem,7) = mid + (ix  ) + (2*iz+1) * (m_nelx(iy)+1);
+          out(ielem,7) = mid + (ix+1) +  2*iz    * (m_nelx(iy)+1);
           ielem++;
           // -- top-back element
           out(ielem,0) = mid + (ix  ) + (2*iz+1) * (m_nelx(iy)+1);
