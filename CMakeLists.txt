@@ -29,6 +29,8 @@ set(headers
   src/GooseFEM/Element.h
   src/GooseFEM/ElementQuad4.hpp
   src/GooseFEM/ElementQuad4.h
+  src/GooseFEM/ElementHex8.hpp
+  src/GooseFEM/ElementHex8.h
   src/GooseFEM/Vector.hpp
   src/GooseFEM/Vector.h
   src/GooseFEM/MatrixDiagonal.hpp
