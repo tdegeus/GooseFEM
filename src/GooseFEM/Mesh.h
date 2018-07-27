@@ -19,7 +19,7 @@ namespace Mesh {
 // -------------------------------------------------------------------------------------------------
 
 // list with DOF-numbers in sequential order
-inline MatS dofs(size_t nnode, size_t ndim);
+inline xt::xtensor<size_t,2> dofs(size_t nnode, size_t ndim);
 
 // -------------------------------------------------------------------------------------------------
 
@@ -30,7 +30,7 @@ inline void renumber(
   const InputIterator first, const InputIterator last, const OutputIterator result
 );
 // - interface
-inline MatS renumber(const MatS &dofs);
+inline xt::xtensor<size_t,2> renumber(const xt::xtensor<size_t,2> &dofs);
 
 // -------------------------------------------------------------------------------------------------
 
@@ -42,14 +42,20 @@ inline void reorder(
   const IndexIterator idx_first, const IndexIterator idx_last, std::string location
 );
 // - interface
-inline MatS reorder(const MatS &dofs, const ColS &idx, std::string location="end");
+inline xt::xtensor<size_t,2> reorder(const xt::xtensor<size_t,2> &dofs,
+  const xt::xtensor<size_t,1> &idx, std::string location="end");
 
 // -------------------------------------------------------------------------------------------------
 
 // elements connected to each node:
 // out[: ,0  ] = number of elements connected to each node
 // out[j ,i+1] = "i"th element connected to node "j"
-inline SpMatS elem2node(const MatS &conn);
+inline SpMatS elem2node(const xt::xtensor<size_t,2> &conn);
+
+// -------------------------------------------------------------------------------------------------
+
+// number of elements connected to each node
+inline xt::xtensor<size_t,1> coordination(const xt::xtensor<size_t,2> &conn);
 
 // -------------------------------------------------------------------------------------------------
 
