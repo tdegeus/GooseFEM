@@ -23,26 +23,26 @@ class Geometry
 public:
 
   // solve for DOF-accelerations [ndof]
-  virtual ColD solve_A() { return ColD(); };
-  virtual ColD solve_V() { return ColD(); };
+  virtual xt::xtensor<double,1> solve_A() { xt::xtensor<double,1> out = xt::empty<double>({0}); return out; };
+  virtual xt::xtensor<double,1> solve_V() { xt::xtensor<double,1> out = xt::empty<double>({0}); return out; };
 
   // return nodal vectors [nnode, ndim]
-  virtual MatD u() const { return MatD(); };
-  virtual MatD v() const { return MatD(); };
-  virtual MatD a() const { return MatD(); };
+  virtual xt::xtensor<double,2> u() const { xt::xtensor<double,2> out = xt::empty<double>({0,0}); return out; };
+  virtual xt::xtensor<double,2> v() const { xt::xtensor<double,2> out = xt::empty<double>({0,0}); return out; };
+  virtual xt::xtensor<double,2> a() const { xt::xtensor<double,2> out = xt::empty<double>({0,0}); return out; };
 
   // return DOF values [ndof]
-  virtual ColD dofs_u() const { return ColD(); };
-  virtual ColD dofs_v() const { return ColD(); };
-  virtual ColD dofs_a() const { return ColD(); };
+  virtual xt::xtensor<double,1> dofs_u() const { xt::xtensor<double,1> out = xt::empty<double>({0}); return out; };
+  virtual xt::xtensor<double,1> dofs_v() const { xt::xtensor<double,1> out = xt::empty<double>({0}); return out; };
+  virtual xt::xtensor<double,1> dofs_a() const { xt::xtensor<double,1> out = xt::empty<double>({0}); return out; };
 
   // overwrite nodal vectors [nnode, ndim]
-  virtual void set_u(const MatD &nodevec) { UNUSED(nodevec); return; };
+  virtual void set_u(const xt::xtensor<double,2> &nodevec) { UNUSED(nodevec); return; };
 
   // overwrite nodal vectors, reconstructed from DOF values [ndof]
-  virtual void set_u(const ColD &dofval) { UNUSED(dofval); return; };
-  virtual void set_v(const ColD &dofval) { UNUSED(dofval); return; };
-  virtual void set_a(const ColD &dofval) { UNUSED(dofval); return; };
+  virtual void set_u(const xt::xtensor<double,1> &dofval) { UNUSED(dofval); return; };
+  virtual void set_v(const xt::xtensor<double,1> &dofval) { UNUSED(dofval); return; };
+  virtual void set_a(const xt::xtensor<double,1> &dofval) { UNUSED(dofval); return; };
 
 };
 
