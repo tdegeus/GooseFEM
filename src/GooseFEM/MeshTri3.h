@@ -22,35 +22,35 @@ namespace Tri3 {
 class Regular
 {
 private:
-  double m_h;      // elementary element edge-size (in both directions)
-  size_t m_nelx;   // number of elements in x-direction (length == "m_nelx * m_h")
-  size_t m_nely;   // number of elements in y-direction (length == "m_nely * m_h")
-  size_t m_nelem;  // number of elements
-  size_t m_nnode;  // number of nodes
-  size_t m_nne=3;  // number of nodes-per-element
-  size_t m_ndim=2; // number of dimensions
+  double m_h;                   // elementary element edge-size (in both directions)
+  size_t m_nelx;                // number of elements in x-direction (length == "m_nelx * m_h")
+  size_t m_nely;                // number of elements in y-direction (length == "m_nely * m_h")
+  size_t m_nelem;               // number of elements
+  size_t m_nnode;               // number of nodes
+  static const size_t m_nne=3;  // number of nodes-per-element
+  static const size_t m_ndim=2; // number of dimensions
 
 public:
   // mesh with "2*nelx*nely" 'elements' of edge size "h"
   Regular(size_t nelx, size_t nely, double h=1.);
   // sizes
-  size_t nelem() const;                   // number of elements
-  size_t nnode() const;                   // number of nodes
-  size_t nne() const;                     // number of nodes-per-element
-  size_t ndim() const;                    // number of dimensions
+  size_t nelem() const; // number of elements
+  size_t nnode() const; // number of nodes
+  size_t nne() const;   // number of nodes-per-element
+  size_t ndim() const;  // number of dimensions
   // mesh
-  MatD   coor() const;                    // nodal positions [nnode ,ndim]
-  MatS   conn() const;                    // connectivity    [nelem ,nne ]
+  xt::xtensor<double,2> coor() const;                    // nodal positions [nnode ,ndim]
+  xt::xtensor<size_t,2> conn() const;                    // connectivity    [nelem ,nne ]
   // boundary nodes: edges
-  ColS   nodesBottomEdge() const;         // node-numbers along the bottom edge
-  ColS   nodesTopEdge() const;            // node-numbers along the top    edge
-  ColS   nodesLeftEdge() const;           // node-numbers along the left   edge
-  ColS   nodesRightEdge() const;          // node-numbers along the right  edge
+  xt::xtensor<size_t,1> nodesBottomEdge() const;         // node-numbers along the bottom edge
+  xt::xtensor<size_t,1> nodesTopEdge() const;            // node-numbers along the top    edge
+  xt::xtensor<size_t,1> nodesLeftEdge() const;           // node-numbers along the left   edge
+  xt::xtensor<size_t,1> nodesRightEdge() const;          // node-numbers along the right  edge
   // boundary nodes: edges, without corners
-  ColS   nodesBottomOpenEdge() const;     // node-numbers along the bottom edge
-  ColS   nodesTopOpenEdge() const;        // node-numbers along the top    edge
-  ColS   nodesLeftOpenEdge() const;       // node-numbers along the left   edge
-  ColS   nodesRightOpenEdge() const;      // node-numbers along the right  edge
+  xt::xtensor<size_t,1> nodesBottomOpenEdge() const;     // node-numbers along the bottom edge
+  xt::xtensor<size_t,1> nodesTopOpenEdge() const;        // node-numbers along the top    edge
+  xt::xtensor<size_t,1> nodesLeftOpenEdge() const;       // node-numbers along the left   edge
+  xt::xtensor<size_t,1> nodesRightOpenEdge() const;      // node-numbers along the right  edge
   // boundary nodes: corners
   size_t nodesBottomLeftCorner() const;   // node-number of the bottom - left  corner
   size_t nodesBottomRightCorner() const;  // node-number of the bottom - right corner
@@ -62,26 +62,25 @@ public:
   size_t nodesRightBottomCorner() const;  // alias, see above: nodesTopLeftCorner
   size_t nodesRightTopCorner() const;     // alias, see above: nodesTopRightCorner
   // periodicity
-  MatS   nodesPeriodic() const; // periodic node pairs [:,2]: (independent, dependent)
-  size_t nodesOrigin() const;   // bottom-left node, used as reference for periodicity
-  MatS   dofs() const;          // DOF-numbers for each component of each node (sequential)
-  MatS   dofsPeriodic() const;  // ,, for the case that the periodicity if fully eliminated
+  xt::xtensor<size_t,2> nodesPeriodic() const; // periodic node pairs [:,2]: (independent, dependent)
+  size_t                nodesOrigin() const;   // bottom-left node, used as reference for periodicity
+  xt::xtensor<size_t,2> dofs() const;          // DOF-numbers for each component of each node (sequential)
+  xt::xtensor<size_t,2> dofsPeriodic() const;  // ,, for the case that the periodicity if fully eliminated
 };
 
 // ----------------------------------------- mesh analysis -----------------------------------------
 
 // read / set the orientation (-1 / +1) of all triangles
-inline ColI getOrientation(const MatD &coor, const MatS &conn                                     );
-inline MatS setOrientation(const MatD &coor, const MatS &conn,                  int orientation=-1);
-inline MatS setOrientation(const MatD &coor, const MatS &conn, const ColI &val, int orientation=-1);
+inline xt::xtensor<int   ,1> getOrientation(const xt::xtensor<double,2> &coor, const xt::xtensor<size_t,2> &conn                                                   );
+inline xt::xtensor<size_t,2> setOrientation(const xt::xtensor<double,2> &coor, const xt::xtensor<size_t,2> &conn,                                int orientation=-1);
+inline xt::xtensor<size_t,2> setOrientation(const xt::xtensor<double,2> &coor, const xt::xtensor<size_t,2> &conn, const xt::xtensor<int,1> &val, int orientation=-1);
 
 // --------------------------------------- re-triangulation ----------------------------------------
 
 // simple interface to compute the full re-triangulation; it uses, depending on the input mesh:
 // (1) the minimal evasive "TriUpdate"
 // (2) the more rigorous "TriCompute"
-inline MatS retriangulate(const MatD &coor, const MatS &conn, int orientation=-1);
-
+inline xt::xtensor<size_t,2> retriangulate(const xt::xtensor<double,2> &coor, const xt::xtensor<size_t,2> &conn, int orientation=-1);
 
 // ================================= GooseFEM::Mesh::Tri3::Private =================================
 
@@ -93,15 +92,15 @@ namespace Private {
 class TriUpdate
 {
 private:
-  MatS   m_edge;    // the element that neighbors along each edge (m_nelem: no neighbor)
-  MatS   m_conn;    // connectivity (updated)
-  MatD   m_coor;    // nodal positions (does not change)
-  size_t m_nelem;   // #elements
-  size_t m_nnode;   // #nodes
-  size_t m_nne;     // #nodes-per-element
-  size_t m_ndim;    // #dimensions
-  ColS   m_elem;    // the two elements involved in the last element change (see below)
-  ColS   m_node;    // the four nodes   involved in the last element change (see below)
+  size_t                m_nelem; // #elements
+  size_t                m_nnode; // #nodes
+  size_t                m_nne;   // #nodes-per-element
+  size_t                m_ndim;  // #dimensions
+  xt::xtensor<size_t,2> m_edge;  // the element that neighbors along each edge (m_nelem: no neighbor)
+  xt::xtensor<size_t,2> m_conn;  // connectivity (updated)
+  xt::xtensor<double,2> m_coor;  // nodal positions (does not change)
+  xt::xtensor_fixed<size_t,xt::xshape<2>> m_elem; // the two elements in the last element change
+  xt::xtensor_fixed<size_t,xt::xshape<4>> m_node; // the four nodes   in the last element change
   // old: m_elem(0) = [ m_node(0) , m_node(1) , m_node(2) ]
   //      m_elem(1) = [ m_node(1) , m_node(3) , m_node(2) ]
   // new: m_elem(0) = [ m_node(0) , m_node(3) , m_node(2) ]
@@ -115,13 +114,13 @@ private:
 
 public:
   TriUpdate(){};
-  TriUpdate(const MatD &coor, const MatS &conn);
+  TriUpdate(const xt::xtensor<double,2> &coor, const xt::xtensor<size_t,2> &conn);
 
-  bool eval     ();                     // re-triangulate the full mesh (returns "true" if changed)
-  bool increment();                     // one re-triangulation step    (returns "true" if changed)
-  MatS conn     () { return m_conn; };  // return (new) connectivity
-  MatS ch_elem  () { return m_elem; };  // return element involved in last element change
-  MatS ch_node  () { return m_node; };  // return nodes   involved in last element change
+  bool eval     (); // re-triangulate the full mesh (returns "true" if changed)
+  bool increment(); // one re-triangulation step    (returns "true" if changed)
+  xt::xtensor<size_t,2> conn()    { return m_conn; };  // (new) connectivity
+  xt::xtensor<size_t,2> ch_elem() { return m_elem; };  // element involved in last element change
+  xt::xtensor<size_t,2> ch_node() { return m_node; };  // nodes   involved in last element change
 };
 
 // -------------------------------- support class - edge definition --------------------------------

@@ -76,7 +76,6 @@ inline xt::xtensor<double,2> Regular::coor() const
   size_t inode = 0;
 
   for ( size_t iy = 0 ; iy < m_nely+1 ; ++iy ) {
-
     for ( size_t ix = 0 ; ix < m_nelx+1 ; ++ix ) {
       out(inode,0) = x(ix);
       out(inode,1) = y(iy);
