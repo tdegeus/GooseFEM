@@ -18,7 +18,7 @@ namespace Element {
 
 // -------------------------------------------------------------------------------------------------
 
-inline ArrD asElementVector(const MatS &conn, const MatD &nodevec)
+inline ArrD asElementVector(const xt::xtensor<size_t,2> &conn, const xt::xtensor<double,2> &nodevec)
 {
   // extract dimensions
   size_t nelem = static_cast<size_t>(conn   .rows());
@@ -40,7 +40,7 @@ inline ArrD asElementVector(const MatS &conn, const MatD &nodevec)
 
 // -------------------------------------------------------------------------------------------------
 
-inline MatD assembleNodeVector(const MatS &conn, const ArrD &elemvec)
+inline xt::xtensor<double,2> assembleNodeVector(const xt::xtensor<size_t,2> &conn, const ArrD &elemvec)
 {
   // check input
   assert( elemvec.rank() == 3 ); // nodal vector stored per element [nelem, nne, ndim]
@@ -56,7 +56,7 @@ inline MatD assembleNodeVector(const MatS &conn, const ArrD &elemvec)
   assert( elemvec.shape(1) == nne   );
 
   // zero-initialize output: nodal vectors
-  MatD nodevec = MatD::Zero(nnode, ndim);
+  xt::xtensor<double,2> nodevec = xt::xtensor<double,2>::Zero(nnode, ndim);
 
   // temporarily disable parallelization by Eigen
   Eigen::setNbThreads(1);
@@ -65,7 +65,7 @@ inline MatD assembleNodeVector(const MatS &conn, const ArrD &elemvec)
   #pragma omp parallel
   {
     // zero-initialize output: nodal vectors
-    MatD t_nodevec = MatD::Zero(nnode, ndim);
+    xt::xtensor<double,2> t_nodevec = xt::xtensor<double,2>::Zero(nnode, ndim);
 
     // assemble from nodal vectors stored per element
     #pragma omp for
