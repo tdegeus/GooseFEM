@@ -36,6 +36,13 @@ inline size_t Regular::nelem() const
   return m_nelem;
 }
 
+// ---------------------------------------- number of nodes ----------------------------------------
+
+inline size_t Regular::nnode() const
+{
+  return m_nnode;
+}
+
 // ---------------------------------- number of nodes per element ----------------------------------
 
 inline size_t Regular::nne() const
@@ -50,15 +57,6 @@ inline size_t Regular::ndim() const
   return m_ndim;
 }
 
-
-// ---------------------------------------- number of nodes ----------------------------------------
-
-inline size_t Regular::nnode() const
-{
-  return m_nnode;
-}
-
-
 // ------------------------ number of nodes, after eliminating periodicity -------------------------
 
 inline size_t Regular::nnodePeriodic() const
@@ -68,16 +66,17 @@ inline size_t Regular::nnodePeriodic() const
 
 // --------------------------------- coordinates (nodal positions) ---------------------------------
 
-inline MatD Regular::coor() const
+inline xt::xtensor<double,2> Regular::coor() const
 {
-  MatD out(m_nnode, m_ndim);
+  xt::xtensor<double,2> out = xt::empty<double>({m_nnode, m_ndim});
 
-  ColD x = ColD::LinSpaced(m_nelx+1, 0.0, m_h*static_cast<double>(m_nelx));
-  ColD y = ColD::LinSpaced(m_nely+1, 0.0, m_h*static_cast<double>(m_nely));
+  xt::xtensor<double,1> x = xt::linspace<double>(0.0, m_h*static_cast<double>(m_nelx), m_nelx+1);
+  xt::xtensor<double,1> y = xt::linspace<double>(0.0, m_h*static_cast<double>(m_nely), m_nely+1);
 
   size_t inode = 0;
 
   for ( size_t iy = 0 ; iy < m_nely+1 ; ++iy ) {
+
     for ( size_t ix = 0 ; ix < m_nelx+1 ; ++ix ) {
       out(inode,0) = x(ix);
       out(inode,1) = y(iy);
@@ -90,9 +89,9 @@ inline MatD Regular::coor() const
 
 // ---------------------------- connectivity (node-numbers per element) ----------------------------
 
-inline MatS Regular::conn() const
+inline xt::xtensor<size_t,2> Regular::conn() const
 {
-  MatS out(m_nelem,m_nne);
+  xt::xtensor<size_t,2> out = xt::empty<size_t>({m_nelem,m_nne});
 
   size_t ielem = 0;
 
@@ -111,9 +110,9 @@ inline MatS Regular::conn() const
 
 // ------------------------------ node-numbers along the bottom edge -------------------------------
 
-inline ColS Regular::nodesBottomEdge() const
+inline xt::xtensor<size_t,1> Regular::nodesBottomEdge() const
 {
-  ColS out(m_nelx+1);
+  xt::xtensor<size_t,1> out = xt::empty<size_t>({m_nelx+1});
 
   for ( size_t ix = 0 ; ix < m_nelx+1 ; ++ix )
     out(ix) = ix;
@@ -123,9 +122,9 @@ inline ColS Regular::nodesBottomEdge() const
 
 // -------------------------------- node-numbers along the top edge --------------------------------
 
-inline ColS Regular::nodesTopEdge() const
+inline xt::xtensor<size_t,1> Regular::nodesTopEdge() const
 {
-  ColS out(m_nelx+1);
+  xt::xtensor<size_t,1> out = xt::empty<size_t>({m_nelx+1});
 
   for ( size_t ix = 0 ; ix < m_nelx+1 ; ++ix )
     out(ix) = ix + m_nely*(m_nelx+1);
@@ -135,9 +134,9 @@ inline ColS Regular::nodesTopEdge() const
 
 // ------------------------------- node-numbers along the left edge --------------------------------
 
-inline ColS Regular::nodesLeftEdge() const
+inline xt::xtensor<size_t,1> Regular::nodesLeftEdge() const
 {
-  ColS out(m_nely+1);
+  xt::xtensor<size_t,1> out = xt::empty<size_t>({m_nely+1});
 
   for ( size_t iy = 0 ; iy < m_nely+1 ; ++iy )
     out(iy) = iy*(m_nelx+1);
@@ -147,9 +146,9 @@ inline ColS Regular::nodesLeftEdge() const
 
 // ------------------------------- node-numbers along the right edge -------------------------------
 
-inline ColS Regular::nodesRightEdge() const
+inline xt::xtensor<size_t,1> Regular::nodesRightEdge() const
 {
-  ColS out(m_nely+1);
+  xt::xtensor<size_t,1> out = xt::empty<size_t>({m_nely+1});
 
   for ( size_t iy = 0 ; iy < m_nely+1 ; ++iy )
     out(iy) = iy*(m_nelx+1) + m_nelx;
@@ -159,9 +158,9 @@ inline ColS Regular::nodesRightEdge() const
 
 // ---------------------- node-numbers along the bottom edge, without corners ----------------------
 
-inline ColS Regular::nodesBottomOpenEdge() const
+inline xt::xtensor<size_t,1> Regular::nodesBottomOpenEdge() const
 {
-  ColS out(m_nelx-1);
+  xt::xtensor<size_t,1> out = xt::empty<size_t>({m_nelx-1});
 
   for ( size_t ix = 1 ; ix < m_nelx ; ++ix )
     out(ix-1) = ix;
@@ -171,9 +170,9 @@ inline ColS Regular::nodesBottomOpenEdge() const
 
 // ----------------------- node-numbers along the top edge, without corners ------------------------
 
-inline ColS Regular::nodesTopOpenEdge() const
+inline xt::xtensor<size_t,1> Regular::nodesTopOpenEdge() const
 {
-  ColS out(m_nelx-1);
+  xt::xtensor<size_t,1> out = xt::empty<size_t>({m_nelx-1});
 
   for ( size_t ix = 1 ; ix < m_nelx ; ++ix )
     out(ix-1) = ix + m_nely*(m_nelx+1);
@@ -183,9 +182,9 @@ inline ColS Regular::nodesTopOpenEdge() const
 
 // ----------------------- node-numbers along the left edge, without corners -----------------------
 
-inline ColS Regular::nodesLeftOpenEdge() const
+inline xt::xtensor<size_t,1> Regular::nodesLeftOpenEdge() const
 {
-  ColS out(m_nely-1);
+  xt::xtensor<size_t,1> out = xt::empty<size_t>({m_nely-1});
 
   for ( size_t iy = 1 ; iy < m_nely ; ++iy )
     out(iy-1) = iy*(m_nelx+1);
@@ -195,9 +194,9 @@ inline ColS Regular::nodesLeftOpenEdge() const
 
 // ---------------------- node-numbers along the right edge, without corners -----------------------
 
-inline ColS Regular::nodesRightOpenEdge() const
+inline xt::xtensor<size_t,1> Regular::nodesRightOpenEdge() const
 {
-  ColS out(m_nely-1);
+  xt::xtensor<size_t,1> out = xt::empty<size_t>({m_nely-1});
 
   for ( size_t iy = 1 ; iy < m_nely ; ++iy )
     out(iy-1) = iy*(m_nelx+1) + m_nelx;
@@ -242,20 +241,20 @@ inline size_t Regular::nodesRightTopCorner() const    { return nodesTopRightCorn
 
 // ------------------------------ node-numbers of periodic node-pairs ------------------------------
 
-inline MatS Regular::nodesPeriodic() const
+inline xt::xtensor<size_t,2> Regular::nodesPeriodic() const
 {
   // edges (without corners)
-  ColS bot = nodesBottomOpenEdge();
-  ColS top = nodesTopOpenEdge();
-  ColS lft = nodesLeftOpenEdge();
-  ColS rgt = nodesRightOpenEdge();
+  xt::xtensor<size_t,1> bot = nodesBottomOpenEdge();
+  xt::xtensor<size_t,1> top = nodesTopOpenEdge();
+  xt::xtensor<size_t,1> lft = nodesLeftOpenEdge();
+  xt::xtensor<size_t,1> rgt = nodesRightOpenEdge();
 
   // allocate nodal ties
   // - number of tying per category
   size_t tedge = bot.size() + lft.size();
   size_t tnode = 3;
   // - allocate
-  MatS out(tedge+tnode, 2);
+  xt::xtensor<size_t,2> out = xt::empty<size_t>({tedge+tnode, std::size_t(2)});
 
   // counter
   size_t i = 0;
@@ -266,8 +265,8 @@ inline MatS Regular::nodesPeriodic() const
   out(i,0) = nodesBottomLeftCorner(); out(i,1) = nodesTopLeftCorner();     ++i;
 
   // tie all corresponding edges to each other
-  for ( auto j = 0 ; j<bot.size() ; ++j ){ out(i,0) = bot(j); out(i,1) = top(j); ++i; }
-  for ( auto j = 0 ; j<lft.size() ; ++j ){ out(i,0) = lft(j); out(i,1) = rgt(j); ++i; }
+  for ( size_t j = 0 ; j<bot.size() ; ++j ){ out(i,0) = bot(j); out(i,1) = top(j); ++i; }
+  for ( size_t j = 0 ; j<lft.size() ; ++j ){ out(i,0) = lft(j); out(i,1) = rgt(j); ++i; }
 
   return out;
 }
@@ -281,24 +280,23 @@ inline size_t Regular::nodesOrigin() const
 
 // ------------------------- DOF numbers per node (sequentially numbered) --------------------------
 
-inline MatS Regular::dofs() const
+inline xt::xtensor<size_t,2> Regular::dofs() const
 {
   return GooseFEM::Mesh::dofs(m_nnode,m_ndim);
 }
 
 // ------------------------ DOP-numbers with periodic dependencies removed -------------------------
 
-inline MatS Regular::dofsPeriodic() const
+inline xt::xtensor<size_t,2> Regular::dofsPeriodic() const
 {
   // DOF-numbers for each component of each node (sequential)
-  MatS out = GooseFEM::Mesh::dofs(m_nnode,m_ndim);
+  xt::xtensor<size_t,2> out = GooseFEM::Mesh::dofs(m_nnode,m_ndim);
 
   // periodic node-pairs
-  MatS   nodePer = nodesPeriodic();
-  size_t nper    = static_cast<size_t>(nodePer.rows());
+  xt::xtensor<size_t,2> nodePer = nodesPeriodic();
 
   // eliminate 'dependent' DOFs; renumber "out" to be sequential for the remaining DOFs
-  for ( size_t i = 0 ; i < nper ; ++i )
+  for ( size_t i = 0 ; i < nodePer.shape()[0] ; ++i )
     for ( size_t j = 0 ; j < m_ndim ; ++j )
       out(nodePer(i,1),j) = out(nodePer(i,0),j);
 
@@ -309,7 +307,7 @@ inline MatS Regular::dofsPeriodic() const
 // ------------------------------------------ constructor ------------------------------------------
 
 inline FineLayer::FineLayer(size_t nelx, size_t nely, double h, size_t nfine):
-m_h(h), m_nelx(nelx)
+m_h(h)
 {
   // basic assumptions
   assert( nelx >= 1 );
@@ -323,8 +321,9 @@ m_h(h), m_nelx(nelx)
 
   // temporary variables
   size_t nmin, ntot;
-  ColS nhx(nely), nhy(nely);
-  ColI refine(nely);
+  xt::xtensor<size_t,1> nhx    =      xt::ones<size_t>({nely});
+  xt::xtensor<size_t,1> nhy    =      xt::ones<size_t>({nely});
+  xt::xtensor<int   ,1> refine = -1 * xt::ones<int>   ({nely});
 
   // minimum height in y-direction (half of the height because of symmetry)
   if ( nely  % 2 == 0 ) nmin  =  nely    /2;
@@ -335,11 +334,6 @@ m_h(h), m_nelx(nelx)
   else                  nfine = (nfine+1)/2;
   if ( nfine < 1      ) nfine = 1;
   if ( nfine > nmin   ) nfine = nmin;
-
-  // initialize to state with only fine elements
-  nhx   .setOnes();
-  nhy   .setOnes();
-  refine.setConstant(-1);
 
   // loop over element layers in y-direction, try to coarsen using these rules:
   // (1) element size in y-direction <= distance to origin in y-direction
@@ -355,10 +349,12 @@ m_h(h), m_nelx(nelx)
     // rules (1,2) satisfied: coarsen in x-direction
     if ( 3*nhy(iy) <= ntot and nelx%(3*nhx(iy)) == 0 and ntot+nhy(iy) < nmin )
     {
-      refine     (iy            )  = 0;
-      nhy        (iy            ) *= 2;
-      nhy.segment(iy+1,nely-iy-1) *= 3;
-      nhx.segment(iy  ,nely-iy  ) *= 3;
+      refine(iy)  = 0;
+      nhy   (iy) *= 2;
+      auto vnhy = xt::view(nhy, xt::range(iy+1, _));
+      auto vnhx = xt::view(nhx, xt::range(iy  , _));
+      vnhy *= 3;
+      vnhx *= 3;
     }
 
     // update the number of elements in y-direction
@@ -373,13 +369,13 @@ m_h(h), m_nelx(nelx)
   // ------------------------------------
 
   // allocate mesh constructor parameters
-  m_nhx      .conservativeResize(nely*2-1);
-  m_nhy      .conservativeResize(nely*2-1);
-  m_refine   .conservativeResize(nely*2-1);
-  m_nelx     .conservativeResize(nely*2-1);
-  m_nnd      .conservativeResize(nely*2  );
-  m_startElem.conservativeResize(nely*2-1);
-  m_startNode.conservativeResize(nely*2  );
+  m_nhx       = xt::empty<size_t>({nely*2-1});
+  m_nhy       = xt::empty<size_t>({nely*2-1});
+  m_refine    = xt::empty<int>   ({nely*2-1});
+  m_nelx      = xt::empty<size_t>({nely*2-1});
+  m_nnd       = xt::empty<size_t>({nely*2  });
+  m_startElem = xt::empty<size_t>({nely*2-1});
+  m_startNode = xt::empty<size_t>({nely*2  });
 
   // fill
   // - lower half
@@ -483,17 +479,17 @@ inline size_t FineLayer::shape(size_t i) const
 {
   assert( i >= 0 and i <= 1 );
 
-  if ( i == 0 ) return m_nelx.maxCoeff();
-  else          return m_nhy .sum();
+  if ( i == 0 ) return xt::amax(m_nelx)[0];
+  else          return xt::sum (m_nhy )[0];
 
 }
 
 // --------------------------------- coordinates (nodal positions) ---------------------------------
 
-inline MatD FineLayer::coor() const
+inline xt::xtensor<double,2> FineLayer::coor() const
 {
   // allocate output
-  MatD out(m_nnode, m_ndim);
+  xt::xtensor<double,2> out = xt::empty<double>({m_nnode, m_ndim});
 
   // current node, number of element layers
   size_t inode = 0;
@@ -501,7 +497,7 @@ inline MatD FineLayer::coor() const
 
   // y-position of each main node layer (i.e. excluding node layers for refinement/coarsening)
   // - allocate
-  ColD y(nely+1);
+  xt::xtensor<double,1> y = xt::empty<double>({nely+1});
   // - initialize
   y(0) = 0.0;
   // - compute
@@ -514,7 +510,7 @@ inline MatD FineLayer::coor() const
   for ( size_t iy = 0 ; ; ++iy )
   {
     // get positions along the x- and z-axis
-    ColD x = ColD::LinSpaced(m_nelx(iy)+1, 0.0, m_Lx);
+    xt::xtensor<double,1> x = xt::linspace<double>(0.0, m_Lx, m_nelx(iy)+1);
 
     // add nodes of the bottom layer of this element
     for ( size_t ix = 0 ; ix < m_nelx(iy)+1 ; ++ix ) {
@@ -550,7 +546,7 @@ inline MatD FineLayer::coor() const
   for ( size_t iy = (nely-1)/2 ; iy < nely ; ++iy )
   {
     // get positions along the x- and z-axis
-    ColD x = ColD::LinSpaced(m_nelx(iy)+1, 0.0, m_Lx);
+    xt::xtensor<double,1> x = xt::linspace<double>(0.0, m_Lx, m_nelx(iy)+1);
 
     // add extra nodes of the intermediate layer, for refinement in x-direction
     if ( m_refine(iy) == 0 )
@@ -581,10 +577,10 @@ inline MatD FineLayer::coor() const
 
 // ---------------------------- connectivity (node-numbers per element) ----------------------------
 
-inline MatS FineLayer::conn() const
+inline xt::xtensor<size_t,2> FineLayer::conn() const
 {
   // allocate output
-  MatS out(m_nelem, m_nne);
+  xt::xtensor<size_t,2> out = xt::empty<size_t>({m_nelem, m_nne});
 
   // current element, number of element layers, starting nodes of each node layer
   size_t ielem = 0;
@@ -679,13 +675,13 @@ inline MatS FineLayer::conn() const
 
 // ------------------------------ element numbers of the middle layer ------------------------------
 
-inline ColS FineLayer::elementsMiddleLayer() const
+inline xt::xtensor<size_t,1> FineLayer::elementsMiddleLayer() const
 {
   // number of element layers in y-direction, the index of the middle layer
   size_t nely = static_cast<size_t>(m_nhy.size());
   size_t iy   = (nely-1)/2;
 
-  ColS out(m_nelx(iy));
+  xt::xtensor<size_t,1> out = xt::empty<size_t>({m_nelx(iy)});
 
   for ( size_t ix = 0 ; ix < m_nelx(iy) ; ++ix )
     out(ix) = m_startElem(iy) + ix;
@@ -695,9 +691,9 @@ inline ColS FineLayer::elementsMiddleLayer() const
 
 // ------------------------------ node-numbers along the bottom edge -------------------------------
 
-inline ColS FineLayer::nodesBottomEdge() const
+inline xt::xtensor<size_t,1> FineLayer::nodesBottomEdge() const
 {
-  ColS out(m_nelx(0)+1);
+  xt::xtensor<size_t,1> out = xt::empty<size_t>({m_nelx(0)+1});
 
   for ( size_t ix = 0 ; ix < m_nelx(0)+1 ; ++ix )
     out(ix) = m_startNode(0) + ix;
@@ -707,11 +703,11 @@ inline ColS FineLayer::nodesBottomEdge() const
 
 // -------------------------------- node-numbers along the top edge --------------------------------
 
-inline ColS FineLayer::nodesTopEdge() const
+inline xt::xtensor<size_t,1> FineLayer::nodesTopEdge() const
 {
   size_t nely = static_cast<size_t>(m_nhy.size());
 
-  ColS out(m_nelx(nely-1)+1);
+  xt::xtensor<size_t,1> out = xt::empty<size_t>({m_nelx(nely-1)+1});
 
   for ( size_t ix = 0 ; ix < m_nelx(nely-1)+1 ; ++ix )
     out(ix) = m_startNode(nely) + ix;
@@ -721,11 +717,11 @@ inline ColS FineLayer::nodesTopEdge() const
 
 // ------------------------------- node-numbers along the left edge --------------------------------
 
-inline ColS FineLayer::nodesLeftEdge() const
+inline xt::xtensor<size_t,1> FineLayer::nodesLeftEdge() const
 {
   size_t nely = static_cast<size_t>(m_nhy.size());
 
-  ColS out(nely+1);
+  xt::xtensor<size_t,1> out = xt::empty<size_t>({nely+1});
 
   for ( size_t iy = 0 ; iy < (nely+1)/2 ; ++iy )
     out(iy) = m_startNode(iy);
@@ -738,11 +734,11 @@ inline ColS FineLayer::nodesLeftEdge() const
 
 // ------------------------------- node-numbers along the right edge -------------------------------
 
-inline ColS FineLayer::nodesRightEdge() const
+inline xt::xtensor<size_t,1> FineLayer::nodesRightEdge() const
 {
   size_t nely = static_cast<size_t>(m_nhy.size());
 
-  ColS out(nely+1);
+  xt::xtensor<size_t,1> out = xt::empty<size_t>({nely+1});
 
   for ( size_t iy = 0 ; iy < (nely+1)/2 ; ++iy )
     out(iy) = m_startNode(iy) + m_nelx(iy);
@@ -755,9 +751,9 @@ inline ColS FineLayer::nodesRightEdge() const
 
 // ---------------------- node-numbers along the bottom edge, without corners ----------------------
 
-inline ColS FineLayer::nodesBottomOpenEdge() const
+inline xt::xtensor<size_t,1> FineLayer::nodesBottomOpenEdge() const
 {
-  ColS out(m_nelx(0)-1);
+  xt::xtensor<size_t,1> out = xt::empty<size_t>({m_nelx(0)-1});
 
   for ( size_t ix = 1 ; ix < m_nelx(0) ; ++ix )
     out(ix-1) = m_startNode(0) + ix;
@@ -767,11 +763,11 @@ inline ColS FineLayer::nodesBottomOpenEdge() const
 
 // ----------------------- node-numbers along the top edge, without corners ------------------------
 
-inline ColS FineLayer::nodesTopOpenEdge() const
+inline xt::xtensor<size_t,1> FineLayer::nodesTopOpenEdge() const
 {
   size_t nely = static_cast<size_t>(m_nhy.size());
 
-  ColS out(m_nelx(nely-1)-1);
+  xt::xtensor<size_t,1> out = xt::empty<size_t>({m_nelx(nely-1)-1});
 
   for ( size_t ix = 1 ; ix < m_nelx(nely-1) ; ++ix )
     out(ix-1) = m_startNode(nely) + ix;
@@ -781,11 +777,11 @@ inline ColS FineLayer::nodesTopOpenEdge() const
 
 // ----------------------- node-numbers along the left edge, without corners -----------------------
 
-inline ColS FineLayer::nodesLeftOpenEdge() const
+inline xt::xtensor<size_t,1> FineLayer::nodesLeftOpenEdge() const
 {
   size_t nely = static_cast<size_t>(m_nhy.size());
 
-  ColS out(nely-1);
+  xt::xtensor<size_t,1> out = xt::empty<size_t>({nely-1});
 
   for ( size_t iy = 1 ; iy < (nely+1)/2 ; ++iy )
     out(iy-1) = m_startNode(iy);
@@ -798,11 +794,11 @@ inline ColS FineLayer::nodesLeftOpenEdge() const
 
 // ---------------------- node-numbers along the right edge, without corners -----------------------
 
-inline ColS FineLayer::nodesRightOpenEdge() const
+inline xt::xtensor<size_t,1> FineLayer::nodesRightOpenEdge() const
 {
   size_t nely = static_cast<size_t>(m_nhy.size());
 
-  ColS out(nely-1);
+  xt::xtensor<size_t,1> out = xt::empty<size_t>({nely-1});
 
   for ( size_t iy = 1 ; iy < (nely+1)/2 ; ++iy )
     out(iy-1) = m_startNode(iy) + m_nelx(iy);
@@ -854,20 +850,20 @@ inline size_t FineLayer::nodesRightTopCorner() const    { return nodesTopRightCo
 
 // ------------------------------ node-numbers of periodic node-pairs ------------------------------
 
-inline MatS FineLayer::nodesPeriodic() const
+inline xt::xtensor<size_t,2> FineLayer::nodesPeriodic() const
 {
   // edges (without corners)
-  ColS bot = nodesBottomOpenEdge();
-  ColS top = nodesTopOpenEdge();
-  ColS lft = nodesLeftOpenEdge();
-  ColS rgt = nodesRightOpenEdge();
+  xt::xtensor<size_t,1> bot = nodesBottomOpenEdge();
+  xt::xtensor<size_t,1> top = nodesTopOpenEdge();
+  xt::xtensor<size_t,1> lft = nodesLeftOpenEdge();
+  xt::xtensor<size_t,1> rgt = nodesRightOpenEdge();
 
   // allocate nodal ties
   // - number of tying per category
   size_t tedge = bot.size() + lft.size();
   size_t tnode = 3;
   // - allocate
-  MatS out(tedge+tnode, 2);
+  xt::xtensor<size_t,2> out = xt::empty<size_t>({tedge+tnode, std::size_t(2)});
 
   // counter
   size_t i = 0;
@@ -878,8 +874,8 @@ inline MatS FineLayer::nodesPeriodic() const
   out(i,0) = nodesBottomLeftCorner(); out(i,1) = nodesTopLeftCorner();     ++i;
 
   // tie all corresponding edges to each other
-  for ( auto j = 0 ; j<bot.size() ; ++j ){ out(i,0) = bot(j); out(i,1) = top(j); ++i; }
-  for ( auto j = 0 ; j<lft.size() ; ++j ){ out(i,0) = lft(j); out(i,1) = rgt(j); ++i; }
+  for ( size_t j = 0 ; j<bot.size() ; ++j ){ out(i,0) = bot(j); out(i,1) = top(j); ++i; }
+  for ( size_t j = 0 ; j<lft.size() ; ++j ){ out(i,0) = lft(j); out(i,1) = rgt(j); ++i; }
 
   return out;
 }
@@ -893,24 +889,23 @@ inline size_t FineLayer::nodesOrigin() const
 
 // ------------------------- DOF numbers per node (sequentially numbered) --------------------------
 
-inline MatS FineLayer::dofs() const
+inline xt::xtensor<size_t,2> FineLayer::dofs() const
 {
   return GooseFEM::Mesh::dofs(m_nnode,m_ndim);
 }
 
 // ------------------------ DOP-numbers with periodic dependencies removed -------------------------
 
-inline MatS FineLayer::dofsPeriodic() const
+inline xt::xtensor<size_t,2> FineLayer::dofsPeriodic() const
 {
   // DOF-numbers for each component of each node (sequential)
-  MatS out = GooseFEM::Mesh::dofs(m_nnode,m_ndim);
+  xt::xtensor<size_t,2> out = GooseFEM::Mesh::dofs(m_nnode,m_ndim);
 
   // periodic node-pairs
-  MatS   nodePer = nodesPeriodic();
-  size_t nper    = static_cast<size_t>(nodePer.rows());
+  xt::xtensor<size_t,2>   nodePer = nodesPeriodic();
 
   // eliminate 'dependent' DOFs; renumber "out" to be sequential for the remaining DOFs
-  for ( size_t i = 0 ; i < nper ; ++i )
+  for ( size_t i = 0 ; i < nodePer.shape()[0] ; ++i )
     for ( size_t j = 0 ; j < m_ndim ; ++j )
       out(nodePer(i,1),j) = out(nodePer(i,0),j);
 
