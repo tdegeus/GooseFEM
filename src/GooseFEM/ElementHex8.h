@@ -21,7 +21,7 @@ namespace Hex8 {
 
 static const size_t ndim = 3;
 
-using T2 = xt::xtensor_fixed<double, xt::xshape<3,3>>;
+using T2 = xt::xtensor_fixed<double, xt::xshape<ndim,ndim>>;
 
 inline double det(const T2 &A);
 inline T2     inv(const T2 &A);

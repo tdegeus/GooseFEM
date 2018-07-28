@@ -21,11 +21,11 @@ inline Vector::Vector(const xt::xtensor<size_t,2> &conn, const xt::xtensor<size_
 m_conn(conn), m_dofs(dofs)
 {
   // extract mesh dimensions
-  m_nelem = static_cast<size_t>(m_conn.shape()[0]);
-  m_nne   = static_cast<size_t>(m_conn.shape()[1]);
-  m_nnode = static_cast<size_t>(m_dofs.shape()[0]);
-  m_ndim  = static_cast<size_t>(m_dofs.shape()[1]);
-  m_ndof  = static_cast<size_t>(xt::amax(m_dofs)[0] + 1);
+  m_nelem = m_conn.shape()[0];
+  m_nne   = m_conn.shape()[1];
+  m_nnode = m_dofs.shape()[0];
+  m_ndim  = m_dofs.shape()[1];
+  m_ndof  = xt::amax(m_dofs)[0] + 1;
   m_nnp   = 0;
   m_nnu   = m_ndof;
   m_iiu   = xt::arange<size_t>(m_ndof);
@@ -38,16 +38,16 @@ m_conn(conn), m_dofs(dofs)
 
 // ------------------------------------------ constructor ------------------------------------------
 
-inline Vector::Vector(const xt::xtensor<size_t,2> &conn, const xt::xtensor<size_t,2> &dofs, const xt::xtensor<size_t,1> &iip) :
-m_conn(conn), m_dofs(dofs), m_iip(iip)
+inline Vector::Vector(const xt::xtensor<size_t,2> &conn, const xt::xtensor<size_t,2> &dofs,
+  const xt::xtensor<size_t,1> &iip) : m_conn(conn), m_dofs(dofs), m_iip(iip)
 {
   // extract mesh dimensions
-  m_nelem = static_cast<size_t>(m_conn.shape()[0]);
-  m_nne   = static_cast<size_t>(m_conn.shape()[1]);
-  m_nnode = static_cast<size_t>(m_dofs.shape()[0]);
-  m_ndim  = static_cast<size_t>(m_dofs.shape()[1]);
-  m_ndof  = static_cast<size_t>(xt::amax(m_dofs)[0] + 1);
-  m_nnp   = static_cast<size_t>(m_iip .size());
+  m_nelem = m_conn.shape()[0];
+  m_nne   = m_conn.shape()[1];
+  m_nnode = m_dofs.shape()[0];
+  m_ndim  = m_dofs.shape()[1];
+  m_ndof  = xt::amax(m_dofs)[0] + 1;
+  m_nnp   = m_iip.size();
   m_nnu   = m_ndof - m_nnp;
 
   // check consistency

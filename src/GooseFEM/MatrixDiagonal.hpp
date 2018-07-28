@@ -325,7 +325,7 @@ inline void MatrixDiagonal::assemble(const xt::xtensor<double,3> &elemmat)
   assert( elemmat.shape()[2] == m_nne*m_ndim );
 
   // zero-initialize matrix
-  m_data *= xt::zeros<double>({m_ndof});;
+  m_data *= 0.0;
 
   // temporarily disable parallelization by Eigen
   Eigen::setNbThreads(1);

@@ -401,7 +401,7 @@ inline void Quadrature::update_x(const xt::xtensor<double,3> &x)
   compute_dN();
 }
 
-// // ------------------------ shape function gradients in global coordinates -------------------------
+// ------------------------ shape function gradients in global coordinates -------------------------
 
 inline void Quadrature::compute_dN()
 {
@@ -415,8 +415,9 @@ inline void Quadrature::compute_dN()
     // loop over integration points
     for ( size_t k = 0 ; k < m_nip ; ++k )
     {
-      // - alias shape function gradients (local coordinates)
-      auto dNxi = xt::view(m_dNxi, k, xt::all(), xt::all());
+      // - alias
+      auto dNxi = xt::view(m_dNxi,    k, xt::all(), xt::all());
+      auto dNx  = xt::view(m_dNx , e, k, xt::all(), xt::all());
 
       // - Jacobian
       T2 J = xt::zeros<double>({m_ndim,m_ndim});
@@ -430,7 +431,6 @@ inline void Quadrature::compute_dN()
       T2     Jinv = inv(J);
 
       // - shape function gradients wrt global coordinates
-      auto dNx = xt::view(m_dNx, e, k, xt::all(), xt::all());
       for ( size_t m = 0 ; m < m_nne ; ++m )
         for ( size_t i = 0 ; i < m_ndim ; ++i )
           for ( size_t j = 0 ; j < m_ndim ; ++j )
@@ -468,11 +468,11 @@ inline void Quadrature::gradN_vector(
     // loop over all integration points in element "e"
     for ( size_t k = 0 ; k < m_nip ; ++k )
     {
-      // - alias shape function gradients (local coordinates)
-      auto dNx = xt::view(m_dNx, e, k, xt::all(), xt::all());
+      // - alias
+      auto dNx   = xt::view(m_dNx  , e, k, xt::all()          , xt::all()          );
+      auto gradu = xt::view(qtensor, e, k, xt::range(0,m_ndim), xt::range(0,m_ndim));
 
       // - evaluate dyadic product
-      auto gradu = xt::view(qtensor, e, k, xt::range(0,m_ndim), xt::range(0,m_ndim));
       for ( size_t m = 0 ; m < m_nne ; ++m )
         for ( size_t i = 0 ; i < m_ndim ; ++i )
           for ( size_t j = 0 ; j < m_ndim ; ++j )
@@ -518,11 +518,11 @@ inline void Quadrature::gradN_vector_T(
     // loop over all integration points in element "e"
     for ( size_t k = 0 ; k < m_nip ; ++k )
     {
-      // - alias shape function gradients (local coordinates)
-      auto dNx = xt::view(m_dNx, e, k, xt::all(), xt::all());
+      // - alias
+      auto dNx   = xt::view(m_dNx  , e, k, xt::all()          , xt::all()          );
+      auto gradu = xt::view(qtensor, e, k, xt::range(0,m_ndim), xt::range(0,m_ndim));
 
       // - evaluate dyadic product
-      auto gradu = xt::view(qtensor, e, k, xt::range(0,m_ndim), xt::range(0,m_ndim));
       for ( size_t m = 0 ; m < m_nne ; ++m )
         for ( size_t i = 0 ; i < m_ndim ; ++i )
           for ( size_t j = 0 ; j < m_ndim ; ++j )
@@ -569,15 +569,15 @@ inline void Quadrature::symGradN_vector(
     for ( size_t k = 0 ; k < m_nip ; ++k )
     {
       // - alias shape function gradients (local coordinates)
-      auto dNx = xt::view(m_dNx, e, k, xt::all(), xt::all());
+      auto dNx = xt::view(m_dNx  , e, k, xt::all()          , xt::all()          );
+      auto eps = xt::view(qtensor, e, k, xt::range(0,m_ndim), xt::range(0,m_ndim));
 
       // - evaluate dyadic product
-      auto gradu = xt::view(qtensor, e, k, xt::range(0,m_ndim), xt::range(0,m_ndim));
       for ( size_t m = 0 ; m < m_nne ; ++m ) {
         for ( size_t i = 0 ; i < m_ndim ; ++i ) {
           for ( size_t j = 0 ; j < m_ndim ; ++j ) {
-            gradu(i,j) += dNx(m,i) * u(m,j) / 2.;
-            gradu(j,i) += dNx(m,i) * u(m,j) / 2.;
+            eps(i,j) += dNx(m,i) * u(m,j) / 2.;
+            eps(j,i) += dNx(m,i) * u(m,j) / 2.;
           }
         }
       }

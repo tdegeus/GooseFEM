@@ -23,7 +23,15 @@
 #include <algorithm>
 #include <math.h>
 #include <Eigen/Eigen>
-#include <cppmat/cppmat.h>
+
+#include <xtensor/xarray.hpp>
+#include <xtensor/xtensor.hpp>
+#include <xtensor/xfixed.hpp>
+#include <xtensor/xview.hpp>
+#include <xtensor/xstrided_view.hpp>
+#include <xtensor/xio.hpp>
+
+using namespace xt::placeholders;
 
 // =================================================================================================
 
@@ -48,22 +56,11 @@
 
 // =================================================================================================
 
-// alias types
+// alias Eigen sparse matrices
 namespace GooseFEM
 {
-  // - alias Eigen dense matrices
-  typedef Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor> MatD;
-  typedef Eigen::Matrix<size_t, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor> MatS;
-  typedef Eigen::Matrix<double, Eigen::Dynamic,              1, Eigen::ColMajor> ColD;
-  typedef Eigen::Matrix<size_t, Eigen::Dynamic,              1, Eigen::ColMajor> ColS;
-  typedef Eigen::Matrix<int   , Eigen::Dynamic,              1, Eigen::ColMajor> ColI;
-  // - alias Eigen sparse matrices
   typedef Eigen::SparseMatrix<double,Eigen::RowMajor> SpMatD;
   typedef Eigen::SparseMatrix<size_t,Eigen::RowMajor> SpMatS;
-  // - alias cppmat matrices
-  typedef cppmat::array<double> ArrD;
-  typedef cppmat::array<size_t> ArrS;
-  typedef cppmat::array<int>    ArrI;
 }
 
 // =================================================================================================
