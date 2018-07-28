@@ -14,37 +14,29 @@ SECTION( "dot" )
   GooseFEM::Mesh::Quad4::Regular mesh(2,2);
 
   // random matrix and column
-  GooseFEM::MatD a = GooseFEM::MatD::Random(mesh.nnode()*mesh.ndim(),mesh.nnode()*mesh.ndim());
-  GooseFEM::ColD b = GooseFEM::ColD::Random(mesh.nnode()*mesh.ndim());
-  GooseFEM::ColD c;
+  xt::xtensor<double,1> a = xt::random::rand<double>({mesh.nnode()*mesh.ndim()});
+  xt::xtensor<double,1> b = xt::random::rand<double>({mesh.nnode()*mesh.ndim()});
+  xt::xtensor<double,1> c;
 
-  // set diagonal
-  for ( auto i = 0 ; i < a.rows() ; ++i ) {
-    for ( auto j = 0 ; j < a.cols() ; ++j ) {
-      if ( i != j ) a(i,j)  = 0.0;
-      else          a(i,j) += 1.0;
-    }
-  }
-
-  // compute product using Eigen
+  // compute product
   c = a * b;
 
   // convert to GooseFEM
   // - allocate
   GooseFEM::MatrixDiagonal A(mesh.conn(), mesh.dofs());
-  GooseFEM::ColD C;
+  xt::xtensor<double,1> C;
   // - set
-  for ( auto i = 0 ; i < a.rows() ; ++i )
-    A(i,i) = a(i,i);
+  for ( size_t i = 0 ; i < a.shape()[0] ; ++i )
+    A(i,i) = a(i);
 
   // compute product
-  C = A * b;
+  C = A.dot(b);
 
   // check
   // - size
   REQUIRE( C.size() == c.size() );
   // - components
-  for ( auto i = 0 ; i < c.rows() ; ++i )
+  for ( size_t i = 0 ; i < c.shape()[0] ; ++i )
     EQ( C(i), c(i) );
 }
 
@@ -56,31 +48,23 @@ SECTION( "solve" )
   GooseFEM::Mesh::Quad4::Regular mesh(2,2);
 
   // random matrix and column
-  GooseFEM::MatD a = GooseFEM::MatD::Random(mesh.nnode()*mesh.ndim(),mesh.nnode()*mesh.ndim());
-  GooseFEM::ColD b = GooseFEM::ColD::Random(mesh.nnode()*mesh.ndim());
-  GooseFEM::ColD c;
+  xt::xtensor<double,1> a = xt::random::rand<double>({mesh.nnode()*mesh.ndim()});
+  xt::xtensor<double,1> b = xt::random::rand<double>({mesh.nnode()*mesh.ndim()});
+  xt::xtensor<double,1> c;
 
-  // set diagonal
-  for ( auto i = 0 ; i < a.rows() ; ++i ) {
-    for ( auto j = 0 ; j < a.cols() ; ++j ) {
-      if ( i != j ) a(i,j)  = 0.0;
-      else          a(i,j) += 1.0;
-    }
-  }
-
-  // compute product using Eigen
+  // compute product
   c = a * b;
 
   // convert to GooseFEM
   // - allocate
   GooseFEM::MatrixDiagonal A(mesh.conn(), mesh.dofs());
-  GooseFEM::ColD B, C;
+  xt::xtensor<double,1> B, C;
   // - set
-  for ( auto i = 0 ; i < a.rows() ; ++i )
-    A(i,i) = a(i,i);
+  for ( size_t i = 0 ; i < a.shape()[0] ; ++i )
+    A(i,i) = a(i);
 
   // compute product
-  C = A * b;
+  C = A.dot(b);
 
   // solve
   B = A.solve(C);
@@ -89,10 +73,10 @@ SECTION( "solve" )
   // - size
   REQUIRE( B.size() == b.size() );
   // - components
-  for ( auto i = 0 ; i < b.rows() ; ++i )
+  for ( size_t i = 0 ; i < b.shape()[0] ; ++i )
     EQ( B(i), b(i) );
 }
 
-// =================================================================================================
+// // =================================================================================================
 
 }

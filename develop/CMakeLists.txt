@@ -8,6 +8,9 @@ option(WARNINGS "Show build warnings" ON)
 # basic compiler options
 # ----------------------
 
+# set optimization level
+set(CMAKE_BUILD_TYPE Release)
+
 # set C++ standard
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -28,19 +31,18 @@ endif()
 # load packages
 # -------------
 
+# add custom paths
+if(NOT "$ENV{INCLUDE_PATH}" STREQUAL "")
+  string(REPLACE ":" ";" INCLUDE_LIST "$ENV{INCLUDE_PATH}")
+  include_directories(SYSTEM ${INCLUDE_LIST})
+endif()
+
 # load pkg-config
 find_package(PkgConfig)
 
-# load header-only modules using pkg-config
-# - cppmat
-pkg_check_modules(CPPMAT REQUIRED cppmat)
-include_directories(${CPPMAT_INCLUDE_DIRS})
-# - eigen3
+# eigen3
 pkg_check_modules(EIGEN3 REQUIRED eigen3)
 include_directories(SYSTEM ${EIGEN3_INCLUDE_DIRS})
-# - GooseFEM
-pkg_check_modules(GOOSEFEM REQUIRED GooseFEM)
-include_directories(${GOOSEFEM_INCLUDE_DIRS})
 
 # compile
 # -------
