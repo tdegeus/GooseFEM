@@ -12,33 +12,33 @@ include(GNUInstallDirs)
 project(GooseFEM)
 
 # file that contains the version information
-set(parse_version src/${PROJECT_NAME}/${PROJECT_NAME}.h)
+set(parse_version include/${PROJECT_NAME}/${PROJECT_NAME}.h)
 
 # header files
 set(headers
-  src/GooseFEM/GooseFEM.h
-  src/GooseFEM/Mesh.hpp
-  src/GooseFEM/Mesh.h
-  src/GooseFEM/MeshTri3.hpp
-  src/GooseFEM/MeshTri3.h
-  src/GooseFEM/MeshQuad4.hpp
-  src/GooseFEM/MeshQuad4.h
-  src/GooseFEM/MeshHex8.hpp
-  src/GooseFEM/MeshHex8.h
-  src/GooseFEM/Element.hpp
-  src/GooseFEM/Element.h
-  src/GooseFEM/ElementQuad4.hpp
-  src/GooseFEM/ElementQuad4.h
-  src/GooseFEM/ElementHex8.hpp
-  src/GooseFEM/ElementHex8.h
-  src/GooseFEM/Vector.hpp
-  src/GooseFEM/Vector.h
-  src/GooseFEM/MatrixDiagonal.hpp
-  src/GooseFEM/MatrixDiagonal.h
-  src/GooseFEM/Iterate.hpp
-  src/GooseFEM/Iterate.h
-  src/GooseFEM/Dynamics.hpp
-  src/GooseFEM/Dynamics.h
+  include/GooseFEM/GooseFEM.h
+  include/GooseFEM/Mesh.hpp
+  include/GooseFEM/Mesh.h
+  include/GooseFEM/MeshTri3.hpp
+  include/GooseFEM/MeshTri3.h
+  include/GooseFEM/MeshQuad4.hpp
+  include/GooseFEM/MeshQuad4.h
+  include/GooseFEM/MeshHex8.hpp
+  include/GooseFEM/MeshHex8.h
+  include/GooseFEM/Element.hpp
+  include/GooseFEM/Element.h
+  include/GooseFEM/ElementQuad4.hpp
+  include/GooseFEM/ElementQuad4.h
+  include/GooseFEM/ElementHex8.hpp
+  include/GooseFEM/ElementHex8.h
+  include/GooseFEM/Vector.hpp
+  include/GooseFEM/Vector.h
+  include/GooseFEM/MatrixDiagonal.hpp
+  include/GooseFEM/MatrixDiagonal.h
+  include/GooseFEM/Iterate.hpp
+  include/GooseFEM/Iterate.h
+  include/GooseFEM/Dynamics.hpp
+  include/GooseFEM/Dynamics.h
 )
 
 # automatically parse the version number

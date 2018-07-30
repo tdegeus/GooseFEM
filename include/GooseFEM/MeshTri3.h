@@ -113,7 +113,7 @@ private:
   void chedge(size_t edge, size_t old_elem, size_t new_elem);
 
 public:
-  TriUpdate(){};
+  TriUpdate() = default;
   TriUpdate(const xt::xtensor<double,2> &coor, const xt::xtensor<size_t,2> &conn);
 
   bool eval     (); // re-triangulate the full mesh (returns "true" if changed)
@@ -133,7 +133,7 @@ public:
   size_t elem; // element to which the edge belong
   size_t edge; // edge index within the element (e.g. edge==1 -> n1=conn(0,elem), n2=conn(1,elem))
 
-  Edge(){};
+  Edge() = default;
   Edge(size_t i, size_t j, size_t el, size_t ed, bool sort=false);
 };
 

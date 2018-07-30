@@ -45,7 +45,7 @@ private:
 public:
 
   // constructor
-  MatrixDiagonal(){};
+  MatrixDiagonal() = default;
   MatrixDiagonal(const xt::xtensor<size_t,2> &conn, const xt::xtensor<size_t,2> &dofs);
   MatrixDiagonal(const xt::xtensor<size_t,2> &conn, const xt::xtensor<size_t,2> &dofs, const xt::xtensor<size_t,1> &iip);
 

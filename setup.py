@@ -11,7 +11,7 @@ import setuptools
 import pybind11
 import pyxtensor
 
-header = open('src/GooseFEM/GooseFEM.h','r').read()
+header = open('include/GooseFEM/GooseFEM.h','r').read()
 world  = re.split(r'(.*)(\#define GOOSEFEM_WORLD_VERSION\ )([0-9]+)(.*)',header)[3]
 major  = re.split(r'(.*)(\#define GOOSEFEM_MAJOR_VERSION\ )([0-9]+)(.*)',header)[3]
 minor  = re.split(r'(.*)(\#define GOOSEFEM_MINOR_VERSION\ )([0-9]+)(.*)',header)[3]
@@ -21,7 +21,7 @@ __version__ = '.'.join([world,major,minor])
 ext_modules = [
   Extension(
     'GooseFEM',
-    ['src/GooseFEM/python.cpp'],
+    ['include/GooseFEM/python.cpp'],
     include_dirs=[
       pybind11 .get_include(False),
       pybind11 .get_include(True ),

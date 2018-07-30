@@ -36,8 +36,8 @@ using namespace xt::placeholders;
 // =================================================================================================
 
 #define GOOSEFEM_WORLD_VERSION 0
-#define GOOSEFEM_MAJOR_VERSION 0
-#define GOOSEFEM_MINOR_VERSION 11
+#define GOOSEFEM_MAJOR_VERSION 1
+#define GOOSEFEM_MINOR_VERSION 0
 
 #define GOOSEFEM_VERSION_AT_LEAST(x,y,z) \
   (GOOSEFEM_WORLD_VERSION>x || (GOOSEFEM_WORLD_VERSION>=x && \
