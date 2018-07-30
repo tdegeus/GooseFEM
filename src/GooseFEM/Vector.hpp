@@ -519,7 +519,6 @@ inline void Vector::assembleDofs(const xt::xtensor<double,2> &nodevec,
 
   dofval *= 0.0;
 
-  #pragma omp parallel for
   for ( size_t n = 0 ; n < m_nnode ; ++n )
     for ( size_t i = 0 ; i < m_ndim ; ++i )
       dofval(m_dofs(n,i)) += nodevec(n,i);
@@ -547,7 +546,6 @@ inline void Vector::assembleDofs_u(const xt::xtensor<double,2> &nodevec,
 
   dofval *= 0.0;
 
-  #pragma omp parallel for
   for ( size_t n = 0 ; n < m_nnode ; ++n )
     for ( size_t i = 0 ; i < m_ndim ; ++i )
       if ( m_part(n,i) < m_nnu )
@@ -576,7 +574,6 @@ inline void Vector::assembleDofs_p(const xt::xtensor<double,2> &nodevec,
 
   dofval *= 0.0;
 
-  #pragma omp parallel for
   for ( size_t n = 0 ; n < m_nnode ; ++n )
     for ( size_t i = 0 ; i < m_ndim ; ++i )
       if ( m_part(n,i) >= m_nnu )
@@ -606,7 +603,6 @@ inline void Vector::assembleDofs(const xt::xtensor<double,3> &elemvec,
 
   dofval *= 0.0;
 
-  #pragma omp parallel for
     for ( size_t e = 0 ; e < m_nelem ; ++e )
       for ( size_t m = 0 ; m < m_nne ; ++m )
         for ( size_t i = 0 ; i < m_ndim ; ++i )
@@ -636,7 +632,6 @@ inline void Vector::assembleDofs_u(const xt::xtensor<double,3> &elemvec,
 
   dofval *= 0.0;
 
-  #pragma omp parallel for
   for ( size_t e = 0 ; e < m_nelem ; ++e )
     for ( size_t m = 0 ; m < m_nne ; ++m )
       for ( size_t i = 0 ; i < m_ndim ; ++i )
@@ -667,7 +662,6 @@ inline void Vector::assembleDofs_p(const xt::xtensor<double,3> &elemvec,
 
   dofval *= 0.0;
 
-  #pragma omp parallel for
   for ( size_t e = 0 ; e < m_nelem ; ++e )
     for ( size_t m = 0 ; m < m_nne ; ++m )
       for ( size_t i = 0 ; i < m_ndim ; ++i )
@@ -699,7 +693,6 @@ inline void Vector::assembleNode(const xt::xtensor<double,3> &elemvec,
 
   nodevec *= 0.0;
 
-  #pragma omp parallel for
   for ( size_t e = 0 ; e < m_nelem ; ++e )
     for ( size_t m = 0 ; m < m_nne ; ++m )
       for ( size_t i = 0 ; i < m_ndim ; ++i )

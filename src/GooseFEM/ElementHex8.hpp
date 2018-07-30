@@ -19,19 +19,7 @@ namespace Hex8 {
 
 // ======================================== tensor algebra =========================================
 
-inline double det(const T2 &A)
-{
-  return ( A[0] * A[4] * A[8] +
-           A[1] * A[5] * A[6] +
-           A[2] * A[3] * A[7] ) -
-         ( A[2] * A[4] * A[6] +
-           A[1] * A[3] * A[8] +
-           A[0] * A[5] * A[7] );
-}
-
-// -------------------------------------------------------------------------------------------------
-
-inline double inv(const T2 &A, T2 &C)
+inline double inv(const T2 &A, T2 &Ainv)
 {
   // compute determinant
   double det = ( A[0] * A[4] * A[8] +
@@ -42,15 +30,15 @@ inline double inv(const T2 &A, T2 &C)
                  A[0] * A[5] * A[7] );
 
   // compute inverse
-  C[0] = (A[4]*A[8]-A[5]*A[7]) / det;
-  C[1] = (A[2]*A[7]-A[1]*A[8]) / det;
-  C[2] = (A[1]*A[5]-A[2]*A[4]) / det;
-  C[3] = (A[5]*A[6]-A[3]*A[8]) / det;
-  C[4] = (A[0]*A[8]-A[2]*A[6]) / det;
-  C[5] = (A[2]*A[3]-A[0]*A[5]) / det;
-  C[6] = (A[3]*A[7]-A[4]*A[6]) / det;
-  C[7] = (A[1]*A[6]-A[0]*A[7]) / det;
-  C[8] = (A[0]*A[4]-A[1]*A[3]) / det;
+  Ainv[0] = (A[4]*A[8]-A[5]*A[7]) / det;
+  Ainv[1] = (A[2]*A[7]-A[1]*A[8]) / det;
+  Ainv[2] = (A[1]*A[5]-A[2]*A[4]) / det;
+  Ainv[3] = (A[5]*A[6]-A[3]*A[8]) / det;
+  Ainv[4] = (A[0]*A[8]-A[2]*A[6]) / det;
+  Ainv[5] = (A[2]*A[3]-A[0]*A[5]) / det;
+  Ainv[6] = (A[3]*A[7]-A[4]*A[6]) / det;
+  Ainv[7] = (A[1]*A[6]-A[0]*A[7]) / det;
+  Ainv[8] = (A[0]*A[4]-A[1]*A[3]) / det;
 
   return det;
 }
@@ -439,8 +427,10 @@ inline void Quadrature::compute_dN()
         // - determinant and inverse of the Jacobian
         double Jdet = inv(J, Jinv);
 
-        // - shape function gradients wrt global coordinates
-        for ( size_t m = 0 ; m < m_nne ; ++m ) {
+        // - shape function gradients wrt global coordinates (loops partly unrolled for efficiency)
+        //   dNx(m,i) += Jinv(i,j) * dNxi(m,j);
+        for ( size_t m = 0 ; m < m_nne ; ++m )
+        {
           dNx(m,0) = Jinv(0,0) * dNxi(m,0) + Jinv(0,1) * dNxi(m,1) + Jinv(0,2) * dNxi(m,2);
           dNx(m,1) = Jinv(1,0) * dNxi(m,0) + Jinv(1,1) * dNxi(m,1) + Jinv(1,2) * dNxi(m,2);
           dNx(m,2) = Jinv(2,0) * dNxi(m,0) + Jinv(2,1) * dNxi(m,1) + Jinv(2,2) * dNxi(m,2);
@@ -533,7 +523,7 @@ inline void Quadrature::gradN_vector_T(
       auto dNx   = xt::view(m_dNx  , e, k, xt::all()          , xt::all()          );
       auto gradu = xt::view(qtensor, e, k, xt::range(0,m_ndim), xt::range(0,m_ndim));
 
-      // - evaluate dyadic product
+      // - evaluate transpose of dyadic product
       for ( size_t m = 0 ; m < m_nne ; ++m )
         for ( size_t i = 0 ; i < m_ndim ; ++i )
           for ( size_t j = 0 ; j < m_ndim ; ++j )
@@ -583,7 +573,7 @@ inline void Quadrature::symGradN_vector(
       auto dNx = xt::view(m_dNx  , e, k, xt::all()          , xt::all()          );
       auto eps = xt::view(qtensor, e, k, xt::range(0,m_ndim), xt::range(0,m_ndim));
 
-      // - evaluate dyadic product
+      // - evaluate symmetrized dyadic product
       for ( size_t m = 0 ; m < m_nne ; ++m ) {
         for ( size_t i = 0 ; i < m_ndim ; ++i ) {
           for ( size_t j = 0 ; j < m_ndim ; ++j ) {
@@ -640,10 +630,13 @@ inline void Quadrature::int_N_scalar_NT_dV(
 
       // - evaluate scalar product, for all dimensions, and assemble
       //   M(m*ndim+i,n*ndim+i) += N(m) * scalar * N(n) * dV
-      for ( size_t m = 0 ; m < m_nne ; ++m )
-        for ( size_t n = 0 ; n < m_nne ; ++n )
-          for ( size_t i = 0 ; i < m_ndim ; ++i )
-            M(m*m_ndim+i, n*m_ndim+i) += N(m) * rho * N(n) * vol;
+      for ( size_t m = 0 ; m < m_nne ; ++m ) {
+        for ( size_t n = 0 ; n < m_nne ; ++n ) {
+          M(m*m_ndim+0, n*m_ndim+0) += N(m) * rho * N(n) * vol;
+          M(m*m_ndim+1, n*m_ndim+1) += N(m) * rho * N(n) * vol;
+          M(m*m_ndim+2, n*m_ndim+2) += N(m) * rho * N(n) * vol;
+        }
+      }
     }
   }
 }
@@ -692,9 +685,11 @@ inline void Quadrature::int_gradN_dot_tensor2_dV(const xt::xtensor<double,4> &qt
 
       // - evaluate dot product, and assemble
       for ( size_t m = 0 ; m < m_nne ; ++m )
-        for ( size_t i = 0 ; i < m_ndim ; ++i )
-          for ( size_t j = 0 ; j < m_ndim ; ++j )
-            f(m,j) += dNx(m,i) * sig(i,j) * vol;
+      {
+        f(m,0) += ( dNx(m,0) * sig(0,0) + dNx(m,1) * sig(1,0) + dNx(m,2) * sig(2,0) ) * vol;
+        f(m,1) += ( dNx(m,0) * sig(0,1) + dNx(m,1) * sig(1,1) + dNx(m,2) * sig(2,1) ) * vol;
+        f(m,2) += ( dNx(m,0) * sig(0,2) + dNx(m,1) * sig(1,2) + dNx(m,2) * sig(2,2) ) * vol;
+      }
     }
   }
 }

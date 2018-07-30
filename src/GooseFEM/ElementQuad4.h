@@ -23,8 +23,7 @@ static const size_t ndim = 2;
 
 using T2 = xt::xtensor_fixed<double, xt::xshape<ndim,ndim>>;
 
-inline double det(const T2 &A);
-inline T2     inv(const T2 &A);
+inline double inv(const T2 &A, T2 &Ainv);
 
 // ================================ GooseFEM::Element::Quad4::Gauss ================================
 

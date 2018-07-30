@@ -12,6 +12,8 @@
 
 #include <cppmat/pybind11.h>
 
+#include <pyxtensor/pyxtensor.hpp>
+
 #include "GooseFEM.h"
 
 // =================================================================================================
@@ -20,20 +22,6 @@
 namespace py = pybind11;
 namespace M  = GooseFEM;
 
-// abbreviate types
-typedef GooseFEM::ColD ColD;
-typedef GooseFEM::ColS ColS;
-typedef GooseFEM::MatD MatD;
-typedef GooseFEM::MatS MatS;
-typedef GooseFEM::ArrD ArrD;
-
-// abbreviate const types
-typedef const GooseFEM::ColD cColD;
-typedef const GooseFEM::ColS cColS;
-typedef const GooseFEM::MatD cMatD;
-typedef const GooseFEM::MatS cMatS;
-typedef const GooseFEM::ArrD cArrD;
-
 // =================================================================================================
 
 class PyGeometry : public GooseFEM::Dynamics::Geometry
@@ -41,20 +29,23 @@ class PyGeometry : public GooseFEM::Dynamics::Geometry
 public:
   // inherit the constructors
   using GooseFEM::Dynamics::Geometry::Geometry;
+  using Arr1 = xt::xtensor<double,1>;
+  using Arr2 = xt::xtensor<double,2>;
+  using Arr3 = xt::xtensor<double,3>;
 
   // trampoline
-  ColD solve_A()                  override { PYBIND11_OVERLOAD_PURE( ColD, GooseFEM::Dynamics::Geometry, solve_A         ); }
-  ColD solve_V()                  override { PYBIND11_OVERLOAD_PURE( ColD, GooseFEM::Dynamics::Geometry, solve_V         ); }
-  MatD u()      const             override { PYBIND11_OVERLOAD_PURE( MatD, GooseFEM::Dynamics::Geometry, u               ); }
-  MatD v()      const             override { PYBIND11_OVERLOAD_PURE( MatD, GooseFEM::Dynamics::Geometry, v               ); }
-  MatD a()      const             override { PYBIND11_OVERLOAD_PURE( MatD, GooseFEM::Dynamics::Geometry, a               ); }
-  ColD dofs_u() const             override { PYBIND11_OVERLOAD_PURE( ColD, GooseFEM::Dynamics::Geometry, dofs_u          ); }
-  ColD dofs_v() const             override { PYBIND11_OVERLOAD_PURE( ColD, GooseFEM::Dynamics::Geometry, dofs_v          ); }
-  ColD dofs_a() const             override { PYBIND11_OVERLOAD_PURE( ColD, GooseFEM::Dynamics::Geometry, dofs_a          ); }
-  void set_u(const MatD &nodevec) override { PYBIND11_OVERLOAD_PURE( void, GooseFEM::Dynamics::Geometry, set_u  , nodevec); }
-  void set_u(const ColD &dofval ) override { PYBIND11_OVERLOAD_PURE( void, GooseFEM::Dynamics::Geometry, set_u  , dofval ); }
-  void set_v(const ColD &dofval ) override { PYBIND11_OVERLOAD_PURE( void, GooseFEM::Dynamics::Geometry, set_v  , dofval ); }
-  void set_a(const ColD &dofval ) override { PYBIND11_OVERLOAD_PURE( void, GooseFEM::Dynamics::Geometry, set_a  , dofval ); }
+  xt::xtensor<double,1> solve_A()                  override { PYBIND11_OVERLOAD_PURE( Arr1, GooseFEM::Dynamics::Geometry, solve_A         ); }
+  xt::xtensor<double,1> solve_V()                  override { PYBIND11_OVERLOAD_PURE( Arr1, GooseFEM::Dynamics::Geometry, solve_V         ); }
+  xt::xtensor<double,2> u()      const             override { PYBIND11_OVERLOAD_PURE( Arr2, GooseFEM::Dynamics::Geometry, u               ); }
+  xt::xtensor<double,2> v()      const             override { PYBIND11_OVERLOAD_PURE( Arr2, GooseFEM::Dynamics::Geometry, v               ); }
+  xt::xtensor<double,2> a()      const             override { PYBIND11_OVERLOAD_PURE( Arr2, GooseFEM::Dynamics::Geometry, a               ); }
+  xt::xtensor<double,1> dofs_u() const             override { PYBIND11_OVERLOAD_PURE( Arr1, GooseFEM::Dynamics::Geometry, dofs_u          ); }
+  xt::xtensor<double,1> dofs_v() const             override { PYBIND11_OVERLOAD_PURE( Arr1, GooseFEM::Dynamics::Geometry, dofs_v          ); }
+  xt::xtensor<double,1> dofs_a() const             override { PYBIND11_OVERLOAD_PURE( Arr1, GooseFEM::Dynamics::Geometry, dofs_a          ); }
+  void set_u(const xt::xtensor<double,2> &nodevec) override { PYBIND11_OVERLOAD_PURE( void, GooseFEM::Dynamics::Geometry, set_u  , nodevec); }
+  void set_u(const xt::xtensor<double,1> &dofval ) override { PYBIND11_OVERLOAD_PURE( void, GooseFEM::Dynamics::Geometry, set_u  , dofval ); }
+  void set_v(const xt::xtensor<double,1> &dofval ) override { PYBIND11_OVERLOAD_PURE( void, GooseFEM::Dynamics::Geometry, set_v  , dofval ); }
+  void set_a(const xt::xtensor<double,1> &dofval ) override { PYBIND11_OVERLOAD_PURE( void, GooseFEM::Dynamics::Geometry, set_a  , dofval ); }
 };
 
 // =========================================== GooseFEM ============================================
@@ -68,11 +59,18 @@ m.doc() = "Some simple finite element meshes and operations";
 py::class_<GooseFEM::Vector>(m, "Vector")
   // constructor
   .def(
-    py::init<cMatS &, cMatS &, cColS &>(),
+    py::init<const xt::xtensor<size_t,2> &, const xt::xtensor<size_t,2> &>(),
+    "Class to switch between DOF/nodal/element views of vectors",
+    py::arg("conn"),
+    py::arg("dofs")
+  )
+  // constructor
+  .def(
+    py::init<const xt::xtensor<size_t,2> &, const xt::xtensor<size_t,2> &, const xt::xtensor<size_t,1> &>(),
     "Class to switch between DOF/nodal/element views of vectors",
     py::arg("conn"),
     py::arg("dofs"),
-    py::arg("iip")=GooseFEM::ColS()
+    py::arg("iip")
   )
   // methods
   .def("nelem", &M::Vector::nelem)
@@ -86,42 +84,49 @@ py::class_<GooseFEM::Vector>(m, "Vector")
   .def("iiu"  , &M::Vector::iiu  )
   .def("iip"  , &M::Vector::iip  )
   // -
-  .def("asDofs"    , py::overload_cast<cColD&,cColD&>(&M::Vector::asDofs    , py::const_))
-  .def("asDofs"    , py::overload_cast<cMatD&       >(&M::Vector::asDofs    , py::const_))
-  .def("asDofs"    , py::overload_cast<cArrD&       >(&M::Vector::asDofs    , py::const_))
-  .def("asDofs_u"  , py::overload_cast<cMatD&       >(&M::Vector::asDofs_u  , py::const_))
-  .def("asDofs_u"  , py::overload_cast<cArrD&       >(&M::Vector::asDofs_u  , py::const_))
-  .def("asDofs_p"  , py::overload_cast<cMatD&       >(&M::Vector::asDofs_p  , py::const_))
-  .def("asDofs_p"  , py::overload_cast<cArrD&       >(&M::Vector::asDofs_p  , py::const_))
-  .def("asNode"    , py::overload_cast<cColD&       >(&M::Vector::asNode    , py::const_))
-  .def("asNode"    , py::overload_cast<cColD&,cColD&>(&M::Vector::asNode    , py::const_))
-  .def("asNode"    , py::overload_cast<cArrD&       >(&M::Vector::asNode    , py::const_))
-  .def("asElement" , py::overload_cast<cColD&       >(&M::Vector::asElement , py::const_))
-  .def("asElement" , py::overload_cast<cColD&,cColD&>(&M::Vector::asElement , py::const_))
-  .def("asElement" , py::overload_cast<cMatD&       >(&M::Vector::asElement , py::const_))
+  .def("asDofs"    , py::overload_cast<const xt::xtensor<double,1>&,const xt::xtensor<double,1>&>(&M::Vector::asDofs    , py::const_))
+  .def("asDofs"    , py::overload_cast<const xt::xtensor<double,2>&                             >(&M::Vector::asDofs    , py::const_))
+  .def("asDofs"    , py::overload_cast<const xt::xtensor<double,3>&                             >(&M::Vector::asDofs    , py::const_))
+  .def("asDofs_u"  , py::overload_cast<const xt::xtensor<double,2>&                             >(&M::Vector::asDofs_u  , py::const_))
+  .def("asDofs_u"  , py::overload_cast<const xt::xtensor<double,3>&                             >(&M::Vector::asDofs_u  , py::const_))
+  .def("asDofs_p"  , py::overload_cast<const xt::xtensor<double,2>&                             >(&M::Vector::asDofs_p  , py::const_))
+  .def("asDofs_p"  , py::overload_cast<const xt::xtensor<double,3>&                             >(&M::Vector::asDofs_p  , py::const_))
+  .def("asNode"    , py::overload_cast<const xt::xtensor<double,1>&                             >(&M::Vector::asNode    , py::const_))
+  .def("asNode"    , py::overload_cast<const xt::xtensor<double,1>&,const xt::xtensor<double,1>&>(&M::Vector::asNode    , py::const_))
+  .def("asNode"    , py::overload_cast<const xt::xtensor<double,3>&                             >(&M::Vector::asNode    , py::const_))
+  .def("asElement" , py::overload_cast<const xt::xtensor<double,1>&                             >(&M::Vector::asElement , py::const_))
+  .def("asElement" , py::overload_cast<const xt::xtensor<double,1>&,const xt::xtensor<double,1>&>(&M::Vector::asElement , py::const_))
+  .def("asElement" , py::overload_cast<const xt::xtensor<double,2>&                             >(&M::Vector::asElement , py::const_))
   // -
-  .def("assembleDofs"  , py::overload_cast<cMatD&>(&M::Vector::assembleDofs  , py::const_))
-  .def("assembleDofs"  , py::overload_cast<cArrD&>(&M::Vector::assembleDofs  , py::const_))
-  .def("assembleDofs_u", py::overload_cast<cMatD&>(&M::Vector::assembleDofs_u, py::const_))
-  .def("assembleDofs_u", py::overload_cast<cArrD&>(&M::Vector::assembleDofs_u, py::const_))
-  .def("assembleDofs_p", py::overload_cast<cMatD&>(&M::Vector::assembleDofs_p, py::const_))
-  .def("assembleDofs_p", py::overload_cast<cArrD&>(&M::Vector::assembleDofs_p, py::const_))
-  .def("assembleNode"  , py::overload_cast<cArrD&>(&M::Vector::assembleNode  , py::const_))
+  .def("assembleDofs"  , py::overload_cast<const xt::xtensor<double,2>&>(&M::Vector::assembleDofs  , py::const_))
+  .def("assembleDofs"  , py::overload_cast<const xt::xtensor<double,3>&>(&M::Vector::assembleDofs  , py::const_))
+  .def("assembleDofs_u", py::overload_cast<const xt::xtensor<double,2>&>(&M::Vector::assembleDofs_u, py::const_))
+  .def("assembleDofs_u", py::overload_cast<const xt::xtensor<double,3>&>(&M::Vector::assembleDofs_u, py::const_))
+  .def("assembleDofs_p", py::overload_cast<const xt::xtensor<double,2>&>(&M::Vector::assembleDofs_p, py::const_))
+  .def("assembleDofs_p", py::overload_cast<const xt::xtensor<double,3>&>(&M::Vector::assembleDofs_p, py::const_))
+  .def("assembleNode"  , py::overload_cast<const xt::xtensor<double,3>&>(&M::Vector::assembleNode  , py::const_))
   // print to screen
   .def("__repr__",
-    [](const GooseFEM::Vector &a){ return "<GooseFEM.Vector>"; }
+    [](const GooseFEM::Vector &){ return "<GooseFEM.Vector>"; }
   );
 
 // ============================= GooseFEM - GooseFEM/MatrixDiagonal.h ==============================
 
 py::class_<GooseFEM::MatrixDiagonal>(m, "MatrixDiagonal")
+// constructor
+  .def(
+    py::init<const xt::xtensor<size_t,2> &, const xt::xtensor<size_t,2> &>(),
+    "Class to switch between DOF/nodal/element views of vectors",
+    py::arg("conn"),
+    py::arg("dofs")
+  )
   // constructor
   .def(
-    py::init<cMatS &, cMatS &, cColS &>(),
+    py::init<const xt::xtensor<size_t,2> &, const xt::xtensor<size_t,2> &, const xt::xtensor<size_t,1> &>(),
     "Class to switch between DOF/nodal/element views of vectors",
     py::arg("conn"),
     py::arg("dofs"),
-    py::arg("iip")=GooseFEM::ColS()
+    py::arg("iip")
   )
   // methods
   .def("nelem", &M::MatrixDiagonal::nelem)
@@ -135,19 +140,21 @@ py::class_<GooseFEM::MatrixDiagonal>(m, "MatrixDiagonal")
   .def("iiu"  , &M::MatrixDiagonal::iiu  )
   .def("iip"  , &M::MatrixDiagonal::iip  )
   // -
-  .def("dot"  ,                                  &M::MatrixDiagonal::dot               )
-  .def("dot_u", py::overload_cast<cColD&       >(&M::MatrixDiagonal::dot_u, py::const_))
-  .def("dot_u", py::overload_cast<cColD&,cColD&>(&M::MatrixDiagonal::dot_u, py::const_))
-  .def("dot_p", py::overload_cast<cColD&       >(&M::MatrixDiagonal::dot_p, py::const_))
-  .def("dot_p", py::overload_cast<cColD&,cColD&>(&M::MatrixDiagonal::dot_p, py::const_))
+  .def("dot"  ,                                                                              &M::MatrixDiagonal::dot               )
+  .def("dot_u", py::overload_cast<const xt::xtensor<double,1>&                             >(&M::MatrixDiagonal::dot_u, py::const_))
+  .def("dot_u", py::overload_cast<const xt::xtensor<double,1>&,const xt::xtensor<double,1>&>(&M::MatrixDiagonal::dot_u, py::const_))
+  .def("dot_p", py::overload_cast<const xt::xtensor<double,1>&                             >(&M::MatrixDiagonal::dot_p, py::const_))
+  .def("dot_p", py::overload_cast<const xt::xtensor<double,1>&,const xt::xtensor<double,1>&>(&M::MatrixDiagonal::dot_p, py::const_))
   // -
   .def("check_diagonal", &M::MatrixDiagonal::check_diagonal)
   .def("assemble"      , &M::MatrixDiagonal::assemble      )
   // .def("set"           , &M::MatrixDiagonal::set           )
   // .def("set_uu"        , &M::MatrixDiagonal::set_uu        )
   // .def("set_pp"        , &M::MatrixDiagonal::set_pp        )
-  .def("solve"         , &M::MatrixDiagonal::solve, "Solve", py::arg("rhs"), py::arg("u_p")=ColD())
-  .def("solve_u"       , &M::MatrixDiagonal::solve_u       )
+  .def("solve"         , py::overload_cast<const xt::xtensor<double,1>&                              >(&M::MatrixDiagonal::solve  ), "Solve", py::arg("rhs"  )                )
+  .def("solve"         , py::overload_cast<const xt::xtensor<double,1>&, const xt::xtensor<double,1>&>(&M::MatrixDiagonal::solve  ), "Solve", py::arg("rhs"  ), py::arg("u_p"))
+  .def("solve_u"       , py::overload_cast<const xt::xtensor<double,1>&                              >(&M::MatrixDiagonal::solve_u), "Solve", py::arg("rhs_u")                )
+  .def("solve_u"       , py::overload_cast<const xt::xtensor<double,1>&, const xt::xtensor<double,1>&>(&M::MatrixDiagonal::solve_u), "Solve", py::arg("rhs_u"), py::arg("u_p"))
   // .def("rhs_p"         , &M::MatrixDiagonal::rhs_p         )
   .def("asDiagonal"    , &M::MatrixDiagonal::asDiagonal    )
   // .def("asDiagonal_uu" , &M::MatrixDiagonal::asDiagonal_uu )
@@ -165,7 +172,7 @@ py::class_<GooseFEM::MatrixDiagonal>(m, "MatrixDiagonal")
 
   // print to screen
   .def("__repr__",
-    [](const GooseFEM::MatrixDiagonal &a){ return "<GooseFEM.MatrixDiagonal>"; }
+    [](const GooseFEM::MatrixDiagonal &){ return "<GooseFEM.MatrixDiagonal>"; }
   );
 
 // =========================== GooseFEM::Dynamics - GooseFEM/Dynamics.h ============================
@@ -192,7 +199,7 @@ mDynamics.def("velocityVerlet",
   py::arg("nstep")=1
 );
 
-// -------------------------------------------------------------------------------------------------
+// // -------------------------------------------------------------------------------------------------
 
 py::class_<GooseFEM::Dynamics::Geometry, PyGeometry>(mDynamics, "Geometry")
   // constructor
@@ -208,12 +215,12 @@ py::class_<GooseFEM::Dynamics::Geometry, PyGeometry>(mDynamics, "Geometry")
   .def("dofs_a"    , &GooseFEM::Dynamics::Geometry::dofs_a )
   .def("set_v"     , &GooseFEM::Dynamics::Geometry::set_v  )
   .def("set_a"     , &GooseFEM::Dynamics::Geometry::set_a  )
-  .def("set_u"     , py::overload_cast<const MatD &>(&GooseFEM::Dynamics::Geometry::set_u))
-  .def("set_u"     , py::overload_cast<const ColD &>(&GooseFEM::Dynamics::Geometry::set_u))
+  .def("set_u"     , py::overload_cast<const xt::xtensor<double,2> &>(&GooseFEM::Dynamics::Geometry::set_u))
+  .def("set_u"     , py::overload_cast<const xt::xtensor<double,1> &>(&GooseFEM::Dynamics::Geometry::set_u))
 
   // print to screen
   .def("__repr__",
-    [](const GooseFEM::Dynamics::Geometry &a){ return "<GooseDEM.Dynamics.Geometry>"; }
+    [](const GooseFEM::Dynamics::Geometry &){ return "<GooseDEM.Dynamics.Geometry>"; }
   );
 
 // ============================ GooseFEM::Element - GooseFEM/Element.h =============================
@@ -248,35 +255,37 @@ py::module sm = mElement.def_submodule("Quad4", "Linear quadrilateral elements (
 // abbreviate name-space
 namespace SM = GooseFEM::Element::Quad4;
 
-using T2  = cppmat::tiny::cartesian::tensor2 <double,2>;
-using T2s = cppmat::tiny::cartesian::tensor2s<double,2>;
-
 // -------------------------------------------------------------------------------------------------
 
 py::class_<SM::Quadrature>(sm, "Quadrature")
   // constructor
   .def(
-    py::init<const ArrD &,const ArrD &,const ArrD &>(),
+    py::init<const xt::xtensor<double,3> &>(),
+    "Quadrature",
+    py::arg("x")
+  )
+  // constructor
+  .def(
+    py::init<const xt::xtensor<double,3> &, const xt::xtensor<double,2> &, const xt::xtensor<double,1> &>(),
     "Quadrature",
     py::arg("x"),
-    py::arg("xi")=ArrD::Zero({0}),
-    py::arg("w")=ArrD::Zero({0})
+    py::arg("xi"),
+    py::arg("w")
   )
   // sizes
   .def("nelem"                    , &SM::Quadrature::nelem)
   .def("nne"                      , &SM::Quadrature::nne)
   .def("ndim"                     , &SM::Quadrature::ndim)
   .def("nip"                      , &SM::Quadrature::nip)
-  .def("dV"                       , &SM::Quadrature::dV, py::arg("ncomp")=0)
-  .def("gradN_vector"             , &SM::Quadrature::gradN_vector<T2>)
-  .def("gradN_vector_T"           , &SM::Quadrature::gradN_vector_T<T2>)
-  .def("symGradN_vector"          , &SM::Quadrature::symGradN_vector<T2s>)
-  .def("int_N_scalar_NT_dV"       , &SM::Quadrature::int_N_scalar_NT_dV)
-  .def("int_gradN_dot_tensor2_dV" , &SM::Quadrature::int_gradN_dot_tensor2_dV<T2>)
-  .def("int_gradN_dot_tensor2s_dV", &SM::Quadrature::int_gradN_dot_tensor2_dV<T2s>)
+  .def("dV"                       , py::overload_cast<>(&SM::Quadrature::dV, py::const_))
+  .def("gradN_vector"             , py::overload_cast<const xt::xtensor<double,3> &>(&SM::Quadrature::gradN_vector, py::const_))
+  .def("gradN_vector_T"           , py::overload_cast<const xt::xtensor<double,3> &>(&SM::Quadrature::gradN_vector_T, py::const_))
+  .def("symGradN_vector"          , py::overload_cast<const xt::xtensor<double,3> &>(&SM::Quadrature::symGradN_vector, py::const_))
+  .def("int_N_scalar_NT_dV"       , py::overload_cast<const xt::xtensor<double,2> &>(&SM::Quadrature::int_N_scalar_NT_dV, py::const_))
+  .def("int_gradN_dot_tensor2_dV" , py::overload_cast<const xt::xtensor<double,4> &>(&SM::Quadrature::int_gradN_dot_tensor2_dV, py::const_))
   // print to screen
   .def("__repr__",
-    [](const SM::Quadrature &a){ return "<GooseFEM.Element.Quad4.Quadrature>"; }
+    [](const SM::Quadrature &){ return "<GooseFEM.Element.Quad4.Quadrature>"; }
   );
 
 // -------------------------------------------------------------------------------------------------
@@ -321,35 +330,37 @@ py::module sm = mElement.def_submodule("Hex8", "Linear hexahedron (brick) elemen
 // abbreviate name-space
 namespace SM = GooseFEM::Element::Hex8;
 
-using T2  = cppmat::tiny::cartesian::tensor2 <double,3>;
-using T2s = cppmat::tiny::cartesian::tensor2s<double,3>;
-
 // -------------------------------------------------------------------------------------------------
 
 py::class_<SM::Quadrature>(sm, "Quadrature")
   // constructor
   .def(
-    py::init<const ArrD &,const ArrD &,const ArrD &>(),
+    py::init<const xt::xtensor<double,3> &>(),
+    "Quadrature",
+    py::arg("x")
+  )
+  // constructor
+  .def(
+    py::init<const xt::xtensor<double,3> &, const xt::xtensor<double,2> &, const xt::xtensor<double,1> &>(),
     "Quadrature",
     py::arg("x"),
-    py::arg("xi")=ArrD::Zero({0}),
-    py::arg("w")=ArrD::Zero({0})
+    py::arg("xi"),
+    py::arg("w")
   )
   // sizes
   .def("nelem"                    , &SM::Quadrature::nelem)
   .def("nne"                      , &SM::Quadrature::nne)
   .def("ndim"                     , &SM::Quadrature::ndim)
   .def("nip"                      , &SM::Quadrature::nip)
-  .def("dV"                       , &SM::Quadrature::dV, py::arg("ncomp")=0)
-  .def("gradN_vector"             , &SM::Quadrature::gradN_vector<T2>)
-  .def("gradN_vector_T"           , &SM::Quadrature::gradN_vector_T<T2>)
-  .def("symGradN_vector"          , &SM::Quadrature::symGradN_vector<T2s>)
-  .def("int_N_scalar_NT_dV"       , &SM::Quadrature::int_N_scalar_NT_dV)
-  .def("int_gradN_dot_tensor2_dV" , &SM::Quadrature::int_gradN_dot_tensor2_dV<T2>)
-  .def("int_gradN_dot_tensor2s_dV", &SM::Quadrature::int_gradN_dot_tensor2_dV<T2s>)
+  .def("dV"                       , py::overload_cast<>(&SM::Quadrature::dV, py::const_))
+  .def("gradN_vector"             , py::overload_cast<const xt::xtensor<double,3> &>(&SM::Quadrature::gradN_vector, py::const_))
+  .def("gradN_vector_T"           , py::overload_cast<const xt::xtensor<double,3> &>(&SM::Quadrature::gradN_vector_T, py::const_))
+  .def("symGradN_vector"          , py::overload_cast<const xt::xtensor<double,3> &>(&SM::Quadrature::symGradN_vector, py::const_))
+  .def("int_N_scalar_NT_dV"       , py::overload_cast<const xt::xtensor<double,2> &>(&SM::Quadrature::int_N_scalar_NT_dV, py::const_))
+  .def("int_gradN_dot_tensor2_dV" , py::overload_cast<const xt::xtensor<double,4> &>(&SM::Quadrature::int_gradN_dot_tensor2_dV, py::const_))
   // print to screen
   .def("__repr__",
-    [](const SM::Quadrature &a){ return "<GooseFEM.Element.Hex8.Quadrature>"; }
+    [](const SM::Quadrature &){ return "<GooseFEM.Element.Hex8.Quadrature>"; }
   );
 
 // -------------------------------------------------------------------------------------------------
@@ -412,20 +423,20 @@ mMesh.def("dofs", &GooseFEM::Mesh::dofs,
 
 // -------------------------------------------------------------------------------------------------
 
-using renumber = GooseFEM::MatS(cMatS &);
+using renumber = xt::xtensor<size_t,2>(const xt::xtensor<size_t,2> &);
 
 mMesh.def("renumber",
-  py::overload_cast<cMatS &>((renumber*)&GooseFEM::Mesh::renumber),
+  py::overload_cast<const xt::xtensor<size_t,2> &>((renumber*)&GooseFEM::Mesh::renumber),
   "Renumber DOF-list to use the lowest possible index",
   py::arg("dofs")
 );
 
 // -------------------------------------------------------------------------------------------------
 
-using reorder = GooseFEM::MatS(cMatS &, cColS&, std::string);
+using reorder = xt::xtensor<size_t,2>(const xt::xtensor<size_t,2> &, const xt::xtensor<size_t,1>&, std::string);
 
 mMesh.def("reorder",
-  py::overload_cast<cMatS&,cColS&,std::string>(
+  py::overload_cast<const xt::xtensor<size_t,2>&,const xt::xtensor<size_t,1>&,std::string>(
     (reorder*)&GooseFEM::Mesh::reorder),
   "Renumber DOF-list to begin or end with 'idx'",
   py::arg("dofs"),
@@ -586,7 +597,7 @@ py::class_<SM::Regular>(sm, "Regular")
   .def("dofsPeriodic"               , &SM::Regular::dofsPeriodic               )
   // print to screen
   .def("__repr__",
-    [](const SM::Regular &a){ return "<GooseFEM.Mesh.Hex8.Regular>"; }
+    [](const SM::Regular &){ return "<GooseFEM.Mesh.Hex8.Regular>"; }
   );
 
 // -------------------------------------------------------------------------------------------------
@@ -736,7 +747,7 @@ py::class_<SM::FineLayer>(sm, "FineLayer")
   .def("dofsPeriodic"               , &SM::FineLayer::dofsPeriodic               )
   // print to screen
   .def("__repr__",
-    [](const SM::FineLayer &a){ return "<GooseFEM.Mesh.Hex8.FineLayer>"; }
+    [](const SM::FineLayer &){ return "<GooseFEM.Mesh.Hex8.FineLayer>"; }
   );
 
 // -------------------------------------------------------------------------------------------------
@@ -793,7 +804,7 @@ py::class_<SM::Regular>(sm, "Regular")
   .def("dofsPeriodic"          , &SM::Regular::dofsPeriodic          )
 
   .def("__repr__",
-    [](const SM::Regular &a){ return "<GooseFEM.Mesh.Quad4.Regular>"; }
+    [](const SM::Regular &){ return "<GooseFEM.Mesh.Quad4.Regular>"; }
   );
 
 // -------------------------------------------------------------------------------------------------
@@ -839,7 +850,7 @@ py::class_<SM::FineLayer>(sm, "FineLayer")
   .def("dofsPeriodic"          , &SM::FineLayer::dofsPeriodic          )
 
   .def("__repr__",
-    [](const SM::FineLayer &a){ return "<GooseFEM.Mesh.Quad4.FineLayer>"; }
+    [](const SM::FineLayer &){ return "<GooseFEM.Mesh.Quad4.FineLayer>"; }
   );
 
 // -------------------------------------------------------------------------------------------------
@@ -896,7 +907,7 @@ py::class_<SM::Regular>(sm, "Regular")
   .def("dofsPeriodic"          , &SM::Regular::dofsPeriodic          )
 
   .def("__repr__",
-    [](const SM::Regular &a){ return "<GooseFEM.Mesh.Tri3.Regular>"; }
+    [](const SM::Regular &){ return "<GooseFEM.Mesh.Tri3.Regular>"; }
   );
 
 // -------------------------------------------------------------------------------------------------

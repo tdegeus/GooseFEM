@@ -65,6 +65,30 @@ public:
   xt::xtensor<size_t,1> iiu()  const; // unknown    DOFs
   xt::xtensor<size_t,1> iip()  const; // prescribed DOFs
 
+  // convert vectors (overwrite entries that occur more that once) -- no allocation
+  void asDofs   (const xt::xtensor<double,1> &dofval_u, const xt::xtensor<double,1> &dofval_p, xt::xtensor<double,1> &dofval ) const;
+  void asDofs   (const xt::xtensor<double,2> &nodevec                                        , xt::xtensor<double,1> &dofval ) const;
+  void asDofs   (const xt::xtensor<double,3> &elemvec                                        , xt::xtensor<double,1> &dofval ) const;
+  void asDofs_u (const xt::xtensor<double,2> &nodevec                                        , xt::xtensor<double,1> &dofval ) const;
+  void asDofs_u (const xt::xtensor<double,3> &elemvec                                        , xt::xtensor<double,1> &dofval ) const;
+  void asDofs_p (const xt::xtensor<double,2> &nodevec                                        , xt::xtensor<double,1> &dofval ) const;
+  void asDofs_p (const xt::xtensor<double,3> &elemvec                                        , xt::xtensor<double,1> &dofval ) const;
+  void asNode   (const xt::xtensor<double,1> &dofval                                         , xt::xtensor<double,2> &nodevec) const;
+  void asNode   (const xt::xtensor<double,1> &dofval_u, const xt::xtensor<double,1> &dofval_p, xt::xtensor<double,2> &nodevec) const;
+  void asNode   (const xt::xtensor<double,3> &elemvec                                        , xt::xtensor<double,2> &nodevec) const;
+  void asElement(const xt::xtensor<double,1> &dofval                                         , xt::xtensor<double,3> &elemvec) const;
+  void asElement(const xt::xtensor<double,1> &dofval_u, const xt::xtensor<double,1> &dofval_p, xt::xtensor<double,3> &elemvec) const;
+  void asElement(const xt::xtensor<double,2> &nodevec                                        , xt::xtensor<double,3> &elemvec) const;
+
+  // assemble vectors (adds entries that occur more that once) -- no allocation
+  void assembleDofs  (const xt::xtensor<double,2> &nodevec, xt::xtensor<double,1> &dofval ) const;
+  void assembleDofs  (const xt::xtensor<double,3> &elemvec, xt::xtensor<double,1> &dofval ) const;
+  void assembleDofs_u(const xt::xtensor<double,2> &nodevec, xt::xtensor<double,1> &dofval ) const;
+  void assembleDofs_u(const xt::xtensor<double,3> &elemvec, xt::xtensor<double,1> &dofval ) const;
+  void assembleDofs_p(const xt::xtensor<double,2> &nodevec, xt::xtensor<double,1> &dofval ) const;
+  void assembleDofs_p(const xt::xtensor<double,3> &elemvec, xt::xtensor<double,1> &dofval ) const;
+  void assembleNode  (const xt::xtensor<double,3> &elemvec, xt::xtensor<double,2> &nodevec) const;
+
   // convert vectors (overwrite entries that occur more that once)
   xt::xtensor<double,1> asDofs   (const xt::xtensor<double,1> &dofval_u, const xt::xtensor<double,1> &dofval_p) const;
   xt::xtensor<double,1> asDofs   (const xt::xtensor<double,2> &nodevec                                        ) const;

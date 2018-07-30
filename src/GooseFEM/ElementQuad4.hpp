@@ -19,28 +19,18 @@ namespace Quad4 {
 
 // ======================================== tensor algebra =========================================
 
-inline double det(const T2 &A)
-{
-  return A[0] * A[3] - A[1] * A[2];
-}
-
-// -------------------------------------------------------------------------------------------------
-
-inline T2 inv(const T2 &A)
+inline double inv(const T2 &A, T2 &Ainv)
 {
   // compute determinant
-  double D = det(A);
-
-  // allocate result
-  T2 C = xt::empty<double>({ndim,ndim});
+  double det = A[0] * A[3] - A[1] * A[2];
 
   // compute inverse
-  C[0] =       A[3] / D;
-  C[1] = -1. * A[1] / D;
-  C[2] = -1. * A[2] / D;
-  C[3] =       A[0] / D;
+  Ainv[0] =       A[3] / det;
+  Ainv[1] = -1. * A[1] / det;
+  Ainv[2] = -1. * A[2] / det;
+  Ainv[3] =       A[0] / det;
 
-  return C;
+  return det;
 }
 
 // ================================ GooseFEM::Element::Quad4::Gauss ================================
@@ -338,41 +328,46 @@ inline void Quadrature::update_x(const xt::xtensor<double,3> &x)
 inline void Quadrature::compute_dN()
 {
   // loop over all elements (in parallel)
-  #pragma omp parallel for
-  for ( size_t e = 0 ; e < m_nelem ; ++e )
+  #pragma omp parallel
   {
-    // alias nodal positions
-    auto x = xt::view(m_x, e, xt::all(), xt::all());
+    // - allocate
+    T2 J;
+    T2 Jinv;
 
-    // loop over integration points
-    for ( size_t k = 0 ; k < m_nip ; ++k )
+    #pragma omp for
+    for ( size_t e = 0 ; e < m_nelem ; ++e )
     {
-      // - alias
-      auto dNxi = xt::view(m_dNxi,    k, xt::all(), xt::all());
-      auto dNx  = xt::view(m_dNx , e, k, xt::all(), xt::all());
+      // alias nodal positions
+      auto x = xt::view(m_x, e, xt::all(), xt::all());
 
-      // - Jacobian (loops unrolled for efficiency)
-      //   J(i,j) += dNxi(m,i) * x(m,j);
-      T2 J = xt::empty<double>({m_ndim,m_ndim});
-      J(0,0) = dNxi(0,0)*x(0,0) + dNxi(1,0)*x(1,0) + dNxi(2,0)*x(2,0) + dNxi(3,0)*x(3,0);
-      J(0,1) = dNxi(0,0)*x(0,1) + dNxi(1,0)*x(1,1) + dNxi(2,0)*x(2,1) + dNxi(3,0)*x(3,1);
-      J(1,0) = dNxi(0,1)*x(0,0) + dNxi(1,1)*x(1,0) + dNxi(2,1)*x(2,0) + dNxi(3,1)*x(3,0);
-      J(1,1) = dNxi(0,1)*x(0,1) + dNxi(1,1)*x(1,1) + dNxi(2,1)*x(2,1) + dNxi(3,1)*x(3,1);
-
-      // - determinant and inverse of the Jacobian
-      double Jdet = det(J);
-      T2     Jinv = inv(J);
-
-      // - shape function gradients wrt global coordinates (loops partly unrolled for efficiency)
-      //   dNx(m,i) += Jinv(i,j) * dNxi(m,j);
-      for ( size_t m = 0 ; m < m_nne ; ++m )
+      // loop over integration points
+      for ( size_t k = 0 ; k < m_nip ; ++k )
       {
-        dNx(m,0) = Jinv(0,0) * dNxi(m,0) + Jinv(0,1) * dNxi(m,1);
-        dNx(m,1) = Jinv(1,0) * dNxi(m,0) + Jinv(1,1) * dNxi(m,1);
-      }
+        // - alias
+        auto dNxi = xt::view(m_dNxi,    k, xt::all(), xt::all());
+        auto dNx  = xt::view(m_dNx , e, k, xt::all(), xt::all());
 
-      // - copy to matrix: integration point volume
-      m_vol(e,k) = m_w(k) * Jdet;
+        // - Jacobian (loops unrolled for efficiency)
+        //   J(i,j) += dNxi(m,i) * x(m,j);
+        J(0,0) = dNxi(0,0)*x(0,0) + dNxi(1,0)*x(1,0) + dNxi(2,0)*x(2,0) + dNxi(3,0)*x(3,0);
+        J(0,1) = dNxi(0,0)*x(0,1) + dNxi(1,0)*x(1,1) + dNxi(2,0)*x(2,1) + dNxi(3,0)*x(3,1);
+        J(1,0) = dNxi(0,1)*x(0,0) + dNxi(1,1)*x(1,0) + dNxi(2,1)*x(2,0) + dNxi(3,1)*x(3,0);
+        J(1,1) = dNxi(0,1)*x(0,1) + dNxi(1,1)*x(1,1) + dNxi(2,1)*x(2,1) + dNxi(3,1)*x(3,1);
+
+        // - determinant and inverse of the Jacobian
+        double Jdet = inv(J, Jinv);
+
+        // - shape function gradients wrt global coordinates (loops partly unrolled for efficiency)
+        //   dNx(m,i) += Jinv(i,j) * dNxi(m,j);
+        for ( size_t m = 0 ; m < m_nne ; ++m )
+        {
+          dNx(m,0) = Jinv(0,0) * dNxi(m,0) + Jinv(0,1) * dNxi(m,1);
+          dNx(m,1) = Jinv(1,0) * dNxi(m,0) + Jinv(1,1) * dNxi(m,1);
+        }
+
+        // - copy to matrix: integration point volume
+        m_vol(e,k) = m_w(k) * Jdet;
+      }
     }
   }
 }
@@ -458,7 +453,7 @@ inline void Quadrature::gradN_vector_T(
       auto dNx   = xt::view(m_dNx  , e, k, xt::all()          , xt::all()          );
       auto gradu = xt::view(qtensor, e, k, xt::range(0,m_ndim), xt::range(0,m_ndim));
 
-      // - evaluate dyadic product (loops unrolled for efficiency)
+      // - evaluate transpose of dyadic product (loops unrolled for efficiency)
       //   gradu(j,i) += dNx(m,i) * u(m,j)
       gradu(0,0) = dNx(0,0)*u(0,0) + dNx(1,0)*u(1,0) + dNx(2,0)*u(2,0) + dNx(3,0)*u(3,0);
       gradu(1,0) = dNx(0,0)*u(0,1) + dNx(1,0)*u(1,1) + dNx(2,0)*u(2,1) + dNx(3,0)*u(3,1);
@@ -509,7 +504,7 @@ inline void Quadrature::symGradN_vector(
       auto dNx = xt::view(m_dNx  , e, k, xt::all()          , xt::all()          );
       auto eps = xt::view(qtensor, e, k, xt::range(0,m_ndim), xt::range(0,m_ndim));
 
-      // - evaluate dyadic product (loops unrolled for efficiency)
+      // - evaluate symmetrized dyadic product (loops unrolled for efficiency)
       //   grad(i,j) += dNx(m,i) * u(m,j)
       //   eps (j,i)  = 0.5 * ( grad(i,j) + grad(j,i) )
       eps(0,0) =   dNx(0,0)*u(0,0) + dNx(1,0)*u(1,0) + dNx(2,0)*u(2,0) + dNx(3,0)*u(3,0);
