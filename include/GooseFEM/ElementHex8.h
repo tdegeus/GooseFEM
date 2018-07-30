@@ -74,10 +74,10 @@ private:
 public:
 
   // convention:
-  //    "elemmat"  -  matrices stored per element       -  ArrD  -  [nelem, nne*ndim, nne*ndim]
-  //    "elemvec"  -  nodal vectors stored per element  -  ArrD  -  [nelem, nne, ndim]
-  //    "qtensor"  -  integration point tensor          -  ArrD  -  [nelem, nip, ndim, ndim]
-  //    "qscalar"  -  integration point scalar          -  ArrD  -  [nelem, nip]
+  //    "elemmat"  -  matrices stored per element       -  [nelem, nne*ndim, nne*ndim]
+  //    "elemvec"  -  nodal vectors stored per element  -  [nelem, nne, ndim]
+  //    "qtensor"  -  integration point tensor          -  [nelem, nip, ndim, ndim]
+  //    "qscalar"  -  integration point scalar          -  [nelem, nip]
 
   // constructor: integration point coordinates and weights are optional (default: Gauss)
   Quadrature() = default;
