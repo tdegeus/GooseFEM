@@ -17,20 +17,40 @@ namespace GooseFEM {
 
 // ------------------------------------------ constructor ------------------------------------------
 
-inline Vector::Vector(const MatS &conn, const MatS &dofs, const ColS &iip) :
-m_conn(conn), m_dofs(dofs), m_iip(iip)
+inline Vector::Vector(const xt::xtensor<size_t,2> &conn, const xt::xtensor<size_t,2> &dofs) :
+  m_conn(conn), m_dofs(dofs)
 {
-  // extract mesh dimensions
-  m_nelem = static_cast<size_t>(m_conn.rows());
-  m_nne   = static_cast<size_t>(m_conn.cols());
-  m_nnode = static_cast<size_t>(m_dofs.rows());
-  m_ndim  = static_cast<size_t>(m_dofs.cols());
-  m_ndof  = static_cast<size_t>(m_dofs.maxCoeff() + 1);
-  m_nnp   = static_cast<size_t>(m_iip .size());
-  m_nnu   = m_ndof - m_nnp;
+  m_nelem = m_conn.shape()[0];
+  m_nne   = m_conn.shape()[1];
+  m_nnode = m_dofs.shape()[0];
+  m_ndim  = m_dofs.shape()[1];
+  m_ndof  = xt::amax(m_dofs)[0] + 1;
+  m_nnp   = 0;
+  m_nnu   = m_ndof;
+  m_iiu   = xt::arange<size_t>(m_ndof);
+  m_iip   = xt::empty<size_t>({0});
 
   // check consistency
-  assert( m_conn.maxCoeff() + 1 == m_nnode );
+  assert( xt::amax(m_conn)[0] + 1 == m_nnode );
+  assert( m_ndof <= m_nnode * m_ndim );
+}
+
+// ------------------------------------------ constructor ------------------------------------------
+
+inline Vector::Vector(const xt::xtensor<size_t,2> &conn, const xt::xtensor<size_t,2> &dofs,
+  const xt::xtensor<size_t,1> &iip) : m_conn(conn), m_dofs(dofs), m_iip(iip)
+{
+  m_nelem = m_conn.shape()[0];
+  m_nne   = m_conn.shape()[1];
+  m_nnode = m_dofs.shape()[0];
+  m_ndim  = m_dofs.shape()[1];
+  m_ndof  = xt::amax(m_dofs)[0] + 1;
+  m_nnp   = m_iip.size();
+  m_nnu   = m_ndof - m_nnp;
+  m_iiu   = xt::empty<size_t>({m_nnu});
+
+  // check consistency
+  assert( xt::amax(m_conn)[0] + 1 == m_nnode );
   assert( m_ndof <= m_nnode * m_ndim );
 
   // reorder DOFs such that they can be used for partitioning; renumber such that
@@ -41,9 +61,6 @@ m_conn(conn), m_dofs(dofs), m_iip(iip)
   m_part = Mesh::reorder(m_dofs, m_iip, "end");
 
   // extract unknown DOFs
-  // - allocate
-  m_iiu.conservativeResize(m_nnu);
-  // - set
   #pragma omp parallel for
   for ( size_t n = 0 ; n < m_nnode ; ++n )
     for ( size_t i = 0 ; i < m_ndim ; ++i )
@@ -102,275 +119,343 @@ inline size_t Vector::nnp() const
 
 // ------------------------------------------ return DOFs ------------------------------------------
 
-inline MatS Vector::dofs() const
+inline xt::xtensor<size_t,2> Vector::dofs() const
 {
   return m_dofs;
 }
 
 // -------------------------------------- return unknown DOFs --------------------------------------
 
-inline ColS Vector::iiu() const
+inline xt::xtensor<size_t,1> Vector::iiu() const
 {
   return m_iiu;
 }
 
 // ------------------------------------ return prescribed DOFs -------------------------------------
 
-inline ColS Vector::iip() const
+inline xt::xtensor<size_t,1> Vector::iip() const
 {
   return m_iip;
 }
 
 // --------------------------------------- dofval -> dofval ----------------------------------------
 
-inline ColD Vector::asDofs(const ColD &dofval_u, const ColD &dofval_p) const
+inline void Vector::asDofs(const xt::xtensor<double,1> &dofval_u,
+  const xt::xtensor<double,1> &dofval_p, xt::xtensor<double,1> &dofval) const
 {
-  // check input
-  assert( static_cast<size_t>(dofval_u.size()) == m_nnu );
-  assert( static_cast<size_t>(dofval_p.size()) == m_nnp );
+  assert( dofval_u.size() == m_nnu  );
+  assert( dofval_p.size() == m_nnp  );
+  assert( dofval.size()   == m_ndof );
 
-  // zero-initialize output
-  ColD dofval = ColD::Zero(m_ndof);
-
-  // apply conversion
   #pragma omp parallel for
   for ( size_t i = 0 ; i < m_nnu ; ++i ) dofval(m_iiu(i)) = dofval_u(i);
   #pragma omp parallel for
   for ( size_t i = 0 ; i < m_nnp ; ++i ) dofval(m_iip(i)) = dofval_p(i);
+}
+
+// -------------------------------------------------------------------------------------------------
+
+inline xt::xtensor<double,1> Vector::asDofs(const xt::xtensor<double,1> &dofval_u,
+  const xt::xtensor<double,1> &dofval_p) const
+{
+  xt::xtensor<double,1> dofval = xt::empty<double>({m_ndof});
+
+  this->asDofs(dofval_u, dofval_p, dofval);
 
   return dofval;
 }
 
 // --------------------------------------- nodevec -> dofval ---------------------------------------
 
-inline ColD Vector::asDofs(const MatD &nodevec) const
+inline void Vector::asDofs(const xt::xtensor<double,2> &nodevec,
+  xt::xtensor<double,1> &dofval) const
 {
-  // check input
-  assert( static_cast<size_t>(nodevec.rows()) == m_nnode );
-  assert( static_cast<size_t>(nodevec.cols()) == m_ndim  );
+  assert( nodevec.shape()[0] == m_nnode );
+  assert( nodevec.shape()[1] == m_ndim  );
+  assert( dofval.size()      == m_ndof  );
 
-  // zero-initialize output
-  ColD dofval = ColD::Zero(m_ndof);
-
-  // apply conversion
-  #pragma omp for
+  #pragma omp parallel for
   for ( size_t n = 0 ; n < m_nnode ; ++n )
     for ( size_t i = 0 ; i < m_ndim ; ++i )
       dofval(m_dofs(n,i)) = nodevec(n,i);
+}
+
+// -------------------------------------------------------------------------------------------------
+
+inline xt::xtensor<double,1> Vector::asDofs(const xt::xtensor<double,2> &nodevec) const
+{
+  xt::xtensor<double,1> dofval = xt::empty<double>({m_ndof});
+
+  this->asDofs(nodevec, dofval);
 
   return dofval;
 }
 
 // --------------------------------------- nodevec -> dofval ---------------------------------------
 
-inline ColD Vector::asDofs_u(const MatD &nodevec) const
+inline void Vector::asDofs_u(const xt::xtensor<double,2> &nodevec,
+  xt::xtensor<double,1> &dofval) const
 {
-  // check input
-  assert( static_cast<size_t>(nodevec.rows()) == m_nnode );
-  assert( static_cast<size_t>(nodevec.cols()) == m_ndim  );
+  assert( nodevec.shape()[0] == m_nnode );
+  assert( nodevec.shape()[1] == m_ndim  );
+  assert( dofval.size()      == m_nnu   );
 
-  // zero-initialize output
-  ColD dofval = ColD::Zero(m_nnu);
-
-  // apply conversion
-  #pragma omp for
+  #pragma omp parallel for
   for ( size_t n = 0 ; n < m_nnode ; ++n )
     for ( size_t i = 0 ; i < m_ndim ; ++i )
       if ( m_part(n,i) < m_nnu )
         dofval(m_part(n,i)) = nodevec(n,i);
+}
+
+// -------------------------------------------------------------------------------------------------
+
+inline xt::xtensor<double,1> Vector::asDofs_u(const xt::xtensor<double,2> &nodevec) const
+{
+  xt::xtensor<double,1> dofval = xt::empty<double>({m_nnu});
+
+  this->asDofs_u(nodevec, dofval);
 
   return dofval;
 }
 
 // --------------------------------------- nodevec -> dofval ---------------------------------------
 
-inline ColD Vector::asDofs_p(const MatD &nodevec) const
+inline void Vector::asDofs_p(const xt::xtensor<double,2> &nodevec,
+  xt::xtensor<double,1> &dofval) const
 {
-  // check input
-  assert( static_cast<size_t>(nodevec.rows()) == m_nnode );
-  assert( static_cast<size_t>(nodevec.cols()) == m_ndim  );
+  assert( nodevec.shape()[0] == m_nnode );
+  assert( nodevec.shape()[1] == m_ndim  );
+  assert( dofval.size()      == m_nnp   );
 
-  // zero-initialize output
-  ColD dofval = ColD::Zero(m_nnp);
-
-  // apply conversion
-  #pragma omp for
+  #pragma omp parallel for
   for ( size_t n = 0 ; n < m_nnode ; ++n )
     for ( size_t i = 0 ; i < m_ndim ; ++i )
       if ( m_part(n,i) >= m_nnu )
         dofval(m_part(n,i)-m_nnu) = nodevec(n,i);
+}
+
+// -------------------------------------------------------------------------------------------------
+
+inline xt::xtensor<double,1> Vector::asDofs_p(const xt::xtensor<double,2> &nodevec) const
+{
+  xt::xtensor<double,1> dofval = xt::empty<double>({m_nnp});
+
+  this->asDofs_p(nodevec, dofval);
 
   return dofval;
 }
 
 // --------------------------------------- elemvec -> dofval ---------------------------------------
 
-inline ColD Vector::asDofs(const ArrD &elemvec) const
+inline void Vector::asDofs(const xt::xtensor<double,3> &elemvec,
+  xt::xtensor<double,1> &dofval) const
 {
-  // check input
-  assert( elemvec.rank()   == 3       );
-  assert( elemvec.shape(0) == m_nelem );
-  assert( elemvec.shape(1) == m_nne   );
-  assert( elemvec.shape(2) == m_ndim  );
+  assert( elemvec.shape()[0] == m_nelem );
+  assert( elemvec.shape()[1] == m_nne   );
+  assert( elemvec.shape()[2] == m_ndim  );
+  assert( dofval.size()      == m_ndof  );
 
-  // zero-initialize output
-  ColD dofval = ColD::Zero(m_ndof);
-
-  // apply conversion
-  #pragma omp for
+  #pragma omp parallel for
   for ( size_t e = 0 ; e < m_nelem ; ++e )
     for ( size_t m = 0 ; m < m_nne ; ++m )
       for ( size_t i = 0 ; i < m_ndim ; ++i )
         dofval(m_dofs(m_conn(e,m),i)) = elemvec(e,m,i);
+}
+
+// -------------------------------------------------------------------------------------------------
+
+inline xt::xtensor<double,1> Vector::asDofs(const xt::xtensor<double,3> &elemvec) const
+{
+  xt::xtensor<double,1> dofval = xt::empty<double>({m_ndof});
+
+  this->asDofs(elemvec, dofval);
 
   return dofval;
 }
 
 // --------------------------------------- elemvec -> dofval ---------------------------------------
 
-inline ColD Vector::asDofs_u(const ArrD &elemvec) const
+inline void Vector::asDofs_u(const xt::xtensor<double,3> &elemvec,
+  xt::xtensor<double,1> &dofval) const
 {
-  // check input
-  assert( elemvec.rank()   == 3       );
-  assert( elemvec.shape(0) == m_nelem );
-  assert( elemvec.shape(1) == m_nne   );
-  assert( elemvec.shape(2) == m_ndim  );
+  assert( elemvec.shape()[0] == m_nelem );
+  assert( elemvec.shape()[1] == m_nne   );
+  assert( elemvec.shape()[2] == m_ndim  );
+  assert( dofval.size()      == m_nnu   );
 
-  // zero-initialize output
-  ColD dofval = ColD::Zero(m_nnu);
-
-  // apply conversion
-  #pragma omp for
+  #pragma omp parallel for
   for ( size_t e = 0 ; e < m_nelem ; ++e )
     for ( size_t m = 0 ; m < m_nne ; ++m )
       for ( size_t i = 0 ; i < m_ndim ; ++i )
         if ( m_part(m_conn(e,m),i) < m_nnu )
           dofval(m_part(m_conn(e,m),i)) = elemvec(e,m,i);
+}
+
+// -------------------------------------------------------------------------------------------------
+
+inline xt::xtensor<double,1> Vector::asDofs_u(const xt::xtensor<double,3> &elemvec) const
+{
+  xt::xtensor<double,1> dofval = xt::empty<double>({m_nnu});
+
+  this->asDofs_u(elemvec, dofval);
 
   return dofval;
 }
 
 // --------------------------------------- elemvec -> dofval ---------------------------------------
 
-inline ColD Vector::asDofs_p(const ArrD &elemvec) const
+inline void Vector::asDofs_p(const xt::xtensor<double,3> &elemvec,
+  xt::xtensor<double,1> &dofval) const
 {
-  // check input
-  assert( elemvec.rank()   == 3       );
-  assert( elemvec.shape(0) == m_nelem );
-  assert( elemvec.shape(1) == m_nne   );
-  assert( elemvec.shape(2) == m_ndim  );
+  assert( elemvec.shape()[0] == m_nelem );
+  assert( elemvec.shape()[1] == m_nne   );
+  assert( elemvec.shape()[2] == m_ndim  );
+  assert( dofval.size()      == m_nnp   );
 
-  // zero-initialize output
-  ColD dofval = ColD::Zero(m_nnp);
-
-  // apply conversion
-  #pragma omp for
+  #pragma omp parallel for
   for ( size_t e = 0 ; e < m_nelem ; ++e )
     for ( size_t m = 0 ; m < m_nne ; ++m )
       for ( size_t i = 0 ; i < m_ndim ; ++i )
         if ( m_part(m_conn(e,m),i) >= m_nnu )
           dofval(m_part(m_conn(e,m),i)-m_nnu) = elemvec(e,m,i);
+}
+
+// -------------------------------------------------------------------------------------------------
+
+inline xt::xtensor<double,1> Vector::asDofs_p(const xt::xtensor<double,3> &elemvec) const
+{
+  xt::xtensor<double,1> dofval = xt::empty<double>({m_nnp});
+
+  this->asDofs_p(elemvec, dofval);
 
   return dofval;
 }
 
 // --------------------------------------- dofval -> nodevec ---------------------------------------
 
-inline MatD Vector::asNode(const ColD &dofval) const
+inline void Vector::asNode(const xt::xtensor<double,1> &dofval,
+  xt::xtensor<double,2> &nodevec) const
 {
-  // check input
-  assert( static_cast<size_t>(dofval.size()) == m_ndof );
+  assert( dofval.size()      == m_ndof  );
+  assert( nodevec.shape()[0] == m_nnode );
+  assert( nodevec.shape()[1] == m_ndim  );
 
-  // zero-initialize output
-  MatD nodevec = MatD::Zero(m_nnode, m_ndim);
-
-  // apply conversion
-  #pragma omp for
+  #pragma omp parallel for
   for ( size_t n = 0 ; n < m_nnode ; ++n )
     for ( size_t i = 0 ; i < m_ndim ; ++i )
       nodevec(n,i) = dofval(m_dofs(n,i));
+}
+
+// -------------------------------------------------------------------------------------------------
+
+inline xt::xtensor<double,2> Vector::asNode(const xt::xtensor<double,1> &dofval) const
+{
+  xt::xtensor<double,2> nodevec = xt::empty<double>({m_nnode, m_ndim});
+
+  this->asNode(dofval, nodevec);
 
   return nodevec;
 }
 
 // --------------------------------------- dofval -> nodevec ---------------------------------------
 
-inline MatD Vector::asNode(const ColD &dofval_u, const ColD &dofval_p) const
+inline void Vector::asNode(const xt::xtensor<double,1> &dofval_u,
+  const xt::xtensor<double,1> &dofval_p, xt::xtensor<double,2> &nodevec) const
 {
-  // check input
-  assert( static_cast<size_t>(dofval_u.size()) == m_nnu );
-  assert( static_cast<size_t>(dofval_p.size()) == m_nnp );
+  assert( dofval_u.size()    == m_nnu   );
+  assert( dofval_p.size()    == m_nnp   );
+  assert( nodevec.shape()[0] == m_nnode );
+  assert( nodevec.shape()[1] == m_ndim  );
 
-  // zero-initialize output
-  MatD nodevec = MatD::Zero(m_nnode, m_ndim);
-
-  // apply conversion
-  #pragma omp for
+  #pragma omp parallel for
   for ( size_t n = 0 ; n < m_nnode ; ++n ) {
     for ( size_t i = 0 ; i < m_ndim ; ++i ) {
       if ( m_part(n,i) < m_nnu ) nodevec(n,i) = dofval_u(m_part(n,i)      );
       else                       nodevec(n,i) = dofval_p(m_part(n,i)-m_nnu);
     }
   }
+}
+
+// -------------------------------------------------------------------------------------------------
+
+inline xt::xtensor<double,2> Vector::asNode(const xt::xtensor<double,1> &dofval_u,
+  const xt::xtensor<double,1> &dofval_p) const
+{
+  xt::xtensor<double,2> nodevec = xt::empty<double>({m_nnode, m_ndim});
+
+  this->asNode(dofval_u, dofval_p, nodevec);
 
   return nodevec;
 }
 
 // --------------------------------------- elemvec -> nodevec ---------------------------------------
 
-inline MatD Vector::asNode(const ArrD &elemvec) const
+inline void Vector::asNode(const xt::xtensor<double,3> &elemvec,
+  xt::xtensor<double,2> &nodevec) const
 {
-  // check input
-  assert( elemvec.rank()   == 3       );
-  assert( elemvec.shape(0) == m_nelem );
-  assert( elemvec.shape(1) == m_nne   );
-  assert( elemvec.shape(2) == m_ndim  );
+  assert( elemvec.shape()[0] == m_nelem );
+  assert( elemvec.shape()[1] == m_nne   );
+  assert( elemvec.shape()[2] == m_ndim  );
+  assert( nodevec.shape()[0] == m_nnode );
+  assert( nodevec.shape()[1] == m_ndim  );
 
-  // zero-initialize output
-  MatD nodevec = MatD::Zero(m_nnode, m_ndim);
-
-  // apply conversion
-  #pragma omp for
+  #pragma omp parallel for
   for ( size_t e = 0 ; e < m_nelem ; ++e )
     for ( size_t m = 0 ; m < m_nne ; ++m )
       for ( size_t i = 0 ; i < m_ndim ; ++i )
         nodevec(m_conn(e,m),i) = elemvec(e,m,i);
+}
+
+// -------------------------------------------------------------------------------------------------
+
+inline xt::xtensor<double,2> Vector::asNode(const xt::xtensor<double,3> &elemvec) const
+{
+  xt::xtensor<double,2> nodevec = xt::empty<double>({m_nnode, m_ndim});
+
+  this->asNode(elemvec, nodevec);
 
   return nodevec;
 }
 
 // --------------------------------------- dofval -> elemvec ---------------------------------------
 
-inline ArrD Vector::asElement(const ColD &dofval) const
+inline void Vector::asElement(const xt::xtensor<double,1> &dofval,
+  xt::xtensor<double,3> &elemvec) const
 {
-  // check input
-  assert( static_cast<size_t>(dofval.size()) == m_ndof );
+  assert( dofval.size()      == m_ndof  );
+  assert( elemvec.shape()[0] == m_nelem );
+  assert( elemvec.shape()[1] == m_nne   );
+  assert( elemvec.shape()[2] == m_ndim  );
 
-  // zero-initialize output: nodal vectors stored per element
-  ArrD elemvec = ArrD::Zero({m_nelem, m_nne, m_ndim});
-
-  // read from nodal vectors
   #pragma omp parallel for
   for ( size_t e = 0 ; e < m_nelem ; ++e )
     for ( size_t m = 0 ; m < m_nne ; ++m )
       for ( size_t i = 0 ; i < m_ndim ; ++i )
         elemvec(e,m,i) = dofval(m_dofs(m_conn(e,m),i));
+}
+
+// -------------------------------------------------------------------------------------------------
+
+inline xt::xtensor<double,3> Vector::asElement(const xt::xtensor<double,1> &dofval) const
+{
+  xt::xtensor<double,3> elemvec = xt::empty<double>({m_nelem, m_nne, m_ndim});
+
+  this->asElement(dofval, elemvec);
 
   return elemvec;
 }
 
 // --------------------------------------- dofval -> elemvec ---------------------------------------
 
-inline ArrD Vector::asElement(const ColD &dofval_u, const ColD &dofval_p) const
+inline void Vector::asElement(const xt::xtensor<double,1> &dofval_u,
+  const xt::xtensor<double,1> &dofval_p, xt::xtensor<double,3> &elemvec) const
 {
-  // check input
-  assert( static_cast<size_t>(dofval_u.size()) == m_nnu );
-  assert( static_cast<size_t>(dofval_p.size()) == m_nnp );
+  assert( dofval_u.size()    == m_nnu   );
+  assert( dofval_p.size()    == m_nnp   );
+  assert( elemvec.shape()[0] == m_nelem );
+  assert( elemvec.shape()[1] == m_nne   );
+  assert( elemvec.shape()[2] == m_ndim  );
 
-  // zero-initialize output: nodal vectors stored per element
-  ArrD elemvec = ArrD::Zero({m_nelem, m_nne, m_ndim});
-
-  // read from nodal vectors
   #pragma omp parallel for
   for ( size_t e = 0 ; e < m_nelem ; ++e ) {
     for ( size_t m = 0 ; m < m_nne ; ++m ) {
@@ -380,302 +465,247 @@ inline ArrD Vector::asElement(const ColD &dofval_u, const ColD &dofval_p) const
       }
     }
   }
+}
+
+// -------------------------------------------------------------------------------------------------
+
+inline xt::xtensor<double,3> Vector::asElement(const xt::xtensor<double,1> &dofval_u,
+  const xt::xtensor<double,1> &dofval_p) const
+{
+  xt::xtensor<double,3> elemvec = xt::empty<double>({m_nelem, m_nne, m_ndim});
+
+  this->asElement(dofval_u, dofval_p, elemvec);
 
   return elemvec;
 }
 
 // -------------------------------------- nodevec -> elemvec ---------------------------------------
 
-inline ArrD Vector::asElement(const MatD &nodevec) const
+inline void Vector::asElement(const xt::xtensor<double,2> &nodevec,
+  xt::xtensor<double,3> &elemvec) const
 {
-  // check input
-  assert( static_cast<size_t>(nodevec.rows()) == m_nnode );
-  assert( static_cast<size_t>(nodevec.cols()) == m_ndim  );
+  assert( nodevec.shape()[0] == m_nnode );
+  assert( nodevec.shape()[1] == m_ndim  );
+  assert( elemvec.shape()[0] == m_nelem );
+  assert( elemvec.shape()[1] == m_nne   );
+  assert( elemvec.shape()[2] == m_ndim  );
 
-  // zero-initialize output: nodal vectors stored per element
-  ArrD elemvec = ArrD::Zero({m_nelem, m_nne, m_ndim});
-
-  // read from nodal vectors
   #pragma omp parallel for
   for ( size_t e = 0 ; e < m_nelem ; ++e )
     for ( size_t m = 0 ; m < m_nne ; ++m )
       for ( size_t i = 0 ; i < m_ndim ; ++i )
         elemvec(e,m,i) = nodevec(m_conn(e,m),i);
+}
+
+// -------------------------------------------------------------------------------------------------
+
+inline xt::xtensor<double,3> Vector::asElement(const xt::xtensor<double,2> &nodevec) const
+{
+  xt::xtensor<double,3> elemvec = xt::empty<double>({m_nelem, m_nne, m_ndim});
+
+  this->asElement(nodevec, elemvec);
 
   return elemvec;
 }
 
 // --------------------------------------- nodevec -> dofval ---------------------------------------
 
-inline ColD Vector::assembleDofs(const MatD &nodevec) const
+inline void Vector::assembleDofs(const xt::xtensor<double,2> &nodevec,
+  xt::xtensor<double,1> &dofval) const
 {
-  // check input
-  assert( static_cast<size_t>(nodevec.rows()) == m_nnode );
-  assert( static_cast<size_t>(nodevec.cols()) == m_ndim  );
+  assert( nodevec.shape()[0] == m_nnode );
+  assert( nodevec.shape()[1] == m_ndim  );
+  assert( dofval.size()      == m_ndof  );
 
-  // zero-initialize output
-  ColD dofval = ColD::Zero(m_ndof);
+  dofval *= 0.0;
 
-  // temporarily disable parallelization by Eigen
-  Eigen::setNbThreads(1);
+  for ( size_t n = 0 ; n < m_nnode ; ++n )
+    for ( size_t i = 0 ; i < m_ndim ; ++i )
+      dofval(m_dofs(n,i)) += nodevec(n,i);
+}
 
-  // start threads (all variables declared in this scope are local to each thread)
-  #pragma omp parallel
-  {
-    // zero-initialize output
-    ColD t_dofval = ColD::Zero(m_ndof);
+// -------------------------------------------------------------------------------------------------
 
-    // assemble
-    #pragma omp for
-    for ( size_t n = 0 ; n < m_nnode ; ++n )
-      for ( size_t i = 0 ; i < m_ndim ; ++i )
-        t_dofval(m_dofs(n,i)) += nodevec(n,i);
+inline xt::xtensor<double,1> Vector::assembleDofs(const xt::xtensor<double,2> &nodevec) const
+{
+  xt::xtensor<double,1> dofval = xt::empty<double>({m_ndof});
 
-    // reduce: combine result obtained on the different threads
-    #pragma omp critical
-      dofval += t_dofval;
-  }
-
-  // reset automatic parallelization by Eigen
-  Eigen::setNbThreads(0);
+  this->assembleDofs(nodevec, dofval);
 
   return dofval;
 }
 
 // --------------------------------------- nodevec -> dofval ---------------------------------------
 
-inline ColD Vector::assembleDofs_u(const MatD &nodevec) const
+inline void Vector::assembleDofs_u(const xt::xtensor<double,2> &nodevec,
+  xt::xtensor<double,1> &dofval) const
 {
-  // check input
-  assert( static_cast<size_t>(nodevec.rows()) == m_nnode );
-  assert( static_cast<size_t>(nodevec.cols()) == m_ndim  );
+  assert( nodevec.shape()[0] == m_nnode );
+  assert( nodevec.shape()[1] == m_ndim  );
+  assert( dofval.size()      == m_nnu   );
 
-  // zero-initialize output
-  ColD dofval = ColD::Zero(m_nnu);
+  dofval *= 0.0;
 
-  // temporarily disable parallelization by Eigen
-  Eigen::setNbThreads(1);
+  for ( size_t n = 0 ; n < m_nnode ; ++n )
+    for ( size_t i = 0 ; i < m_ndim ; ++i )
+      if ( m_part(n,i) < m_nnu )
+        dofval(m_part(n,i)) += nodevec(n,i);
+}
 
-  // start threads (all variables declared in this scope are local to each thread)
-  #pragma omp parallel
-  {
-    // zero-initialize output
-    ColD t_dofval = ColD::Zero(m_nnu);
+// -------------------------------------------------------------------------------------------------
 
-    // assemble
-    #pragma omp for
-    for ( size_t n = 0 ; n < m_nnode ; ++n )
-      for ( size_t i = 0 ; i < m_ndim ; ++i )
-        if ( m_part(n,i) < m_nnu )
-          t_dofval(m_part(n,i)) += nodevec(n,i);
+inline xt::xtensor<double,1> Vector::assembleDofs_u(const xt::xtensor<double,2> &nodevec) const
+{
+  xt::xtensor<double,1> dofval = xt::empty<double>({m_nnu});
 
-    // reduce: combine result obtained on the different threads
-    #pragma omp critical
-      dofval += t_dofval;
-  }
-
-  // reset automatic parallelization by Eigen
-  Eigen::setNbThreads(0);
+  this->assembleDofs_u(nodevec, dofval);
 
   return dofval;
 }
 
 // --------------------------------------- nodevec -> dofval ---------------------------------------
 
-inline ColD Vector::assembleDofs_p(const MatD &nodevec) const
+inline void Vector::assembleDofs_p(const xt::xtensor<double,2> &nodevec,
+  xt::xtensor<double,1> &dofval) const
 {
-  // check input
-  assert( static_cast<size_t>(nodevec.rows()) == m_nnode );
-  assert( static_cast<size_t>(nodevec.cols()) == m_ndim  );
+  assert( nodevec.shape()[0] == m_nnode );
+  assert( nodevec.shape()[1] == m_ndim  );
+  assert( dofval.size()      == m_nnp   );
 
-  // zero-initialize output
-  ColD dofval = ColD::Zero(m_nnp);
+  dofval *= 0.0;
 
-  // temporarily disable parallelization by Eigen
-  Eigen::setNbThreads(1);
+  for ( size_t n = 0 ; n < m_nnode ; ++n )
+    for ( size_t i = 0 ; i < m_ndim ; ++i )
+      if ( m_part(n,i) >= m_nnu )
+        dofval(m_part(n,i)-m_nnu) += nodevec(n,i);
+}
 
-  // start threads (all variables declared in this scope are local to each thread)
-  #pragma omp parallel
-  {
-    // zero-initialize output
-    ColD t_dofval = ColD::Zero(m_nnp);
+// -------------------------------------------------------------------------------------------------
 
-    // assemble
-    #pragma omp for
-    for ( size_t n = 0 ; n < m_nnode ; ++n )
+inline xt::xtensor<double,1> Vector::assembleDofs_p(const xt::xtensor<double,2> &nodevec) const
+{
+  xt::xtensor<double,1> dofval = xt::empty<double>({m_nnp});
+
+  this->assembleDofs_p(nodevec, dofval);
+
+  return dofval;
+}
+
+// --------------------------------------- elemvec -> dofval ---------------------------------------
+
+inline void Vector::assembleDofs(const xt::xtensor<double,3> &elemvec,
+  xt::xtensor<double,1> &dofval) const
+{
+  assert( elemvec.shape()[0] == m_nelem );
+  assert( elemvec.shape()[1] == m_nne   );
+  assert( elemvec.shape()[2] == m_ndim  );
+  assert( dofval.size()      == m_ndof  );
+
+  dofval *= 0.0;
+
+    for ( size_t e = 0 ; e < m_nelem ; ++e )
+      for ( size_t m = 0 ; m < m_nne ; ++m )
+        for ( size_t i = 0 ; i < m_ndim ; ++i )
+          dofval(m_dofs(m_conn(e,m),i)) += elemvec(e,m,i);
+}
+
+// -------------------------------------------------------------------------------------------------
+
+inline xt::xtensor<double,1> Vector::assembleDofs(const xt::xtensor<double,3> &elemvec) const
+{
+  xt::xtensor<double,1> dofval = xt::empty<double>({m_ndof});
+
+  this->assembleDofs(elemvec, dofval);
+
+  return dofval;
+}
+
+// --------------------------------------- elemvec -> dofval ---------------------------------------
+
+inline void Vector::assembleDofs_u(const xt::xtensor<double,3> &elemvec,
+  xt::xtensor<double,1> &dofval) const
+{
+  assert( elemvec.shape()[0] == m_nelem );
+  assert( elemvec.shape()[1] == m_nne   );
+  assert( elemvec.shape()[2] == m_ndim  );
+  assert( dofval.size()      == m_nnu   );
+
+  dofval *= 0.0;
+
+  for ( size_t e = 0 ; e < m_nelem ; ++e )
+    for ( size_t m = 0 ; m < m_nne ; ++m )
       for ( size_t i = 0 ; i < m_ndim ; ++i )
-        if ( m_part(n,i) >= m_nnu )
-          t_dofval(m_part(n,i)-m_nnu) += nodevec(n,i);
+        if ( m_part(m_conn(e,m),i) < m_nnu )
+          dofval(m_dofs(m_conn(e,m),i)) += elemvec(e,m,i);
+}
 
-    // reduce: combine result obtained on the different threads
-    #pragma omp critical
-      dofval += t_dofval;
-  }
+// -------------------------------------------------------------------------------------------------
 
-  // reset automatic parallelization by Eigen
-  Eigen::setNbThreads(0);
+inline xt::xtensor<double,1> Vector::assembleDofs_u(const xt::xtensor<double,3> &elemvec) const
+{
+  xt::xtensor<double,1> dofval = xt::empty<double>({m_nnu});
+
+  this->assembleDofs_u(elemvec, dofval);
 
   return dofval;
 }
 
 // --------------------------------------- elemvec -> dofval ---------------------------------------
 
-inline ColD Vector::assembleDofs(const ArrD &elemvec) const
+inline void Vector::assembleDofs_p(const xt::xtensor<double,3> &elemvec,
+  xt::xtensor<double,1> &dofval) const
 {
-  // check input
-  assert( elemvec.rank()   == 3       );
-  assert( elemvec.shape(0) == m_nelem );
-  assert( elemvec.shape(1) == m_nne   );
-  assert( elemvec.shape(2) == m_ndim  );
+  assert( elemvec.shape()[0] == m_nelem );
+  assert( elemvec.shape()[1] == m_nne   );
+  assert( elemvec.shape()[2] == m_ndim  );
+  assert( dofval.size()      == m_nnp   );
 
-  // zero-initialize output
-  ColD dofval = ColD::Zero(m_ndof);
+  dofval *= 0.0;
 
-  // temporarily disable parallelization by Eigen
-  Eigen::setNbThreads(1);
-
-  // start threads (all variables declared in this scope are local to each thread)
-  #pragma omp parallel
-  {
-    // zero-initialize output
-    ColD t_dofval = ColD::Zero(m_ndof);
-
-    // assemble
-    #pragma omp for
-    for ( size_t e = 0 ; e < m_nelem ; ++e )
-      for ( size_t m = 0 ; m < m_nne ; ++m )
-        for ( size_t i = 0 ; i < m_ndim ; ++i )
-          t_dofval(m_dofs(m_conn(e,m),i)) += elemvec(e,m,i);
-
-    // reduce: combine result obtained on the different threads
-    #pragma omp critical
-      dofval += t_dofval;
-  }
-
-  // reset automatic parallelization by Eigen
-  Eigen::setNbThreads(0);
-
-  return dofval;
+  for ( size_t e = 0 ; e < m_nelem ; ++e )
+    for ( size_t m = 0 ; m < m_nne ; ++m )
+      for ( size_t i = 0 ; i < m_ndim ; ++i )
+        if ( m_part(m_conn(e,m),i) >= m_nnu )
+          dofval(m_dofs(m_conn(e,m),i)-m_nnu) += elemvec(e,m,i);
 }
 
-// --------------------------------------- elemvec -> dofval ---------------------------------------
+// -------------------------------------------------------------------------------------------------
 
-inline ColD Vector::assembleDofs_u(const ArrD &elemvec) const
+inline xt::xtensor<double,1> Vector::assembleDofs_p(const xt::xtensor<double,3> &elemvec) const
 {
-  // check input
-  assert( elemvec.rank()   == 3       );
-  assert( elemvec.shape(0) == m_nelem );
-  assert( elemvec.shape(1) == m_nne   );
-  assert( elemvec.shape(2) == m_ndim  );
+  xt::xtensor<double,1> dofval = xt::empty<double>({m_nnp});
 
-  // zero-initialize output
-  ColD dofval = ColD::Zero(m_nnu);
-
-  // temporarily disable parallelization by Eigen
-  Eigen::setNbThreads(1);
-
-  // start threads (all variables declared in this scope are local to each thread)
-  #pragma omp parallel
-  {
-    // zero-initialize output
-    ColD t_dofval = ColD::Zero(m_nnu);
-
-    // assemble
-    #pragma omp for
-    for ( size_t e = 0 ; e < m_nelem ; ++e )
-      for ( size_t m = 0 ; m < m_nne ; ++m )
-        for ( size_t i = 0 ; i < m_ndim ; ++i )
-          if ( m_part(m_conn(e,m),i) < m_nnu )
-            t_dofval(m_dofs(m_conn(e,m),i)) += elemvec(e,m,i);
-
-    // reduce: combine result obtained on the different threads
-    #pragma omp critical
-      dofval += t_dofval;
-  }
-
-  // reset automatic parallelization by Eigen
-  Eigen::setNbThreads(0);
-
-  return dofval;
-}
-
-// --------------------------------------- elemvec -> dofval ---------------------------------------
-
-inline ColD Vector::assembleDofs_p(const ArrD &elemvec) const
-{
-  // check input
-  assert( elemvec.rank()   == 3       );
-  assert( elemvec.shape(0) == m_nelem );
-  assert( elemvec.shape(1) == m_nne   );
-  assert( elemvec.shape(2) == m_ndim  );
-
-  // zero-initialize output
-  ColD dofval = ColD::Zero(m_nnp);
-
-  // temporarily disable parallelization by Eigen
-  Eigen::setNbThreads(1);
-
-  // start threads (all variables declared in this scope are local to each thread)
-  #pragma omp parallel
-  {
-    // zero-initialize output
-    ColD t_dofval = ColD::Zero(m_nnp);
-
-    // assemble
-    #pragma omp for
-    for ( size_t e = 0 ; e < m_nelem ; ++e )
-      for ( size_t m = 0 ; m < m_nne ; ++m )
-        for ( size_t i = 0 ; i < m_ndim ; ++i )
-          if ( m_part(m_conn(e,m),i) >= m_nnu )
-            t_dofval(m_dofs(m_conn(e,m),i)-m_nnu) += elemvec(e,m,i);
-
-    // reduce: combine result obtained on the different threads
-    #pragma omp critical
-      dofval += t_dofval;
-  }
-
-  // reset automatic parallelization by Eigen
-  Eigen::setNbThreads(0);
+  this->assembleDofs_p(elemvec, dofval);
 
   return dofval;
 }
 
 // --------------------------------------- elemvec -> nodevec ---------------------------------------
 
-inline MatD Vector::assembleNode(const ArrD &elemvec) const
+inline void Vector::assembleNode(const xt::xtensor<double,3> &elemvec,
+  xt::xtensor<double,2> &nodevec) const
 {
-  // check input
-  assert( elemvec.rank()   == 3       );
-  assert( elemvec.shape(0) == m_nelem );
-  assert( elemvec.shape(1) == m_nne   );
-  assert( elemvec.shape(2) == m_ndim  );
+  assert( elemvec.shape()[0] == m_nelem );
+  assert( elemvec.shape()[1] == m_nne   );
+  assert( elemvec.shape()[2] == m_ndim  );
+  assert( nodevec.shape()[0] == m_nnode );
+  assert( nodevec.shape()[1] == m_ndim  );
 
-  // zero-initialize output
-  MatD nodevec = MatD::Zero(m_nnode, m_ndim);
+  nodevec *= 0.0;
 
-  // temporarily disable parallelization by Eigen
-  Eigen::setNbThreads(1);
+  for ( size_t e = 0 ; e < m_nelem ; ++e )
+    for ( size_t m = 0 ; m < m_nne ; ++m )
+      for ( size_t i = 0 ; i < m_ndim ; ++i )
+        nodevec(m_conn(e,m),i) += elemvec(e,m,i);
+}
 
-  // start threads (all variables declared in this scope are local to each thread)
-  #pragma omp parallel
-  {
-    // zero-initialize output
-    MatD t_nodevec = MatD::Zero(m_nnode, m_ndim);
+// -------------------------------------------------------------------------------------------------
 
-    // assemble
-    #pragma omp for
-    for ( size_t e = 0 ; e < m_nelem ; ++e )
-      for ( size_t m = 0 ; m < m_nne ; ++m )
-        for ( size_t i = 0 ; i < m_ndim ; ++i )
-          t_nodevec(m_conn(e,m),i) += elemvec(e,m,i);
+inline xt::xtensor<double,2> Vector::assembleNode(const xt::xtensor<double,3> &elemvec) const
+{
+  xt::xtensor<double,2> nodevec = xt::empty<double>({m_nnode, m_ndim});
 
-    // reduce: combine result obtained on the different threads
-    #pragma omp critical
-      nodevec += t_nodevec;
-  }
-
-  // reset automatic parallelization by Eigen
-  Eigen::setNbThreads(0);
+  this->assembleNode(elemvec, nodevec);
 
   return nodevec;
 }

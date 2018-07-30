@@ -18,7 +18,7 @@ SECTION( "asDofs - nodevec" )
 
   // velocity field
   // - allocate
-  GooseFEM::MatD v(mesh.nnode(),2);
+  xt::xtensor<double,2> v = xt::empty<double>({mesh.nnode(), std::size_t(2)});
   // - set periodic
   v(0,0) = 1.0;  v(0,1) = 0.0;
   v(1,0) = 1.0;  v(1,1) = 0.0;
@@ -31,7 +31,7 @@ SECTION( "asDofs - nodevec" )
   v(8,0) = 1.0;  v(8,1) = 0.0;
 
   // convert to DOFs
-  GooseFEM::ColD V = vector.asDofs(v);
+  xt::xtensor<double,1> V = vector.asDofs(v);
 
   // check
   // - size
@@ -59,7 +59,7 @@ SECTION( "asDofs - elemvec" )
 
   // velocity field
   // - allocate
-  GooseFEM::MatD v(mesh.nnode(),2);
+  xt::xtensor<double,2> v = xt::empty<double>({mesh.nnode(), std::size_t(2)});
   // - set periodic
   v(0,0) = 1.0;  v(0,1) = 0.0;
   v(1,0) = 1.0;  v(1,1) = 0.0;
@@ -73,7 +73,7 @@ SECTION( "asDofs - elemvec" )
 
 
   // convert to DOFs - element - DOFs
-  GooseFEM::ColD V = vector.asDofs(vector.asElement(vector.asDofs(v)));
+  xt::xtensor<double,1> V = vector.asDofs(vector.asElement(vector.asDofs(v)));
 
   // check
   // - size
@@ -101,7 +101,7 @@ SECTION( "asDofs - assembleDofs" )
 
   // force field
   // - allocate
-  GooseFEM::MatD f(mesh.nnode(),2);
+  xt::xtensor<double,2> f = xt::empty<double>({mesh.nnode(), std::size_t(2)});
   // - set periodic
   f(0,0) = -1.0;  f(0,1) = -1.0;
   f(1,0) =  0.0;  f(1,1) = -1.0;
@@ -114,7 +114,7 @@ SECTION( "asDofs - assembleDofs" )
   f(8,0) =  1.0;  f(8,1) =  1.0;
 
   // assemble as DOFs
-  GooseFEM::ColD F = vector.assembleDofs(f);
+  xt::xtensor<double,1> F = vector.assembleDofs(f);
 
   // check
   // - size
@@ -142,7 +142,7 @@ SECTION( "asDofs - assembleNode" )
 
   // force field
   // - allocate
-  GooseFEM::MatD f(mesh.nnode(),2);
+  xt::xtensor<double,2> f = xt::empty<double>({mesh.nnode(), std::size_t(2)});
   // - set periodic
   f(0,0) = -1.0;  f(0,1) = -1.0;
   f(1,0) =  0.0;  f(1,1) = -1.0;
@@ -155,7 +155,7 @@ SECTION( "asDofs - assembleNode" )
   f(8,0) =  1.0;  f(8,1) =  1.0;
 
   // convert to element, assemble as DOFs
-  GooseFEM::ColD F = vector.assembleDofs( vector.asElement(f) );
+  xt::xtensor<double,1> F = vector.assembleDofs( vector.asElement(f) );
 
   // check
   // - size

@@ -22,16 +22,16 @@ class MatrixDiagonal
 private:
 
   // data
-  ColD m_data;          // the diagonal matrix (not-partitioned)
-  ColD m_inv;           // inverse of "m_data", can be re-used to solve different right-hand-sides
-  bool m_change=false;  // signal changes to data compare to the last inverse
+  xt::xtensor<double,1> m_data;          // the diagonal matrix (not-partitioned)
+  xt::xtensor<double,1> m_inv;           // inverse of "m_data", can be re-used to solve different right-hand-sides
+  bool                  m_change=false;  // signal changes to data compare to the last inverse
 
   // information
-  MatS m_conn; // connectivity                               [nelem, nne ]
-  MatS m_dofs; // DOF-numbers per node                       [nnode, ndim]
-  MatS m_part; // DOF-numbers per node, after partitioning   [nnode, ndim]
-  ColS m_iiu;  // DOF-numbers that are unknown               [nnu]
-  ColS m_iip;  // DOF-numbers that are prescribed            [nnp]
+  xt::xtensor<size_t,2> m_conn; // connectivity                               [nelem, nne ]
+  xt::xtensor<size_t,2> m_dofs; // DOF-numbers per node                       [nnode, ndim]
+  xt::xtensor<size_t,2> m_part; // DOF-numbers per node, after partitioning   [nnode, ndim]
+  xt::xtensor<size_t,1> m_iiu;  // DOF-numbers that are unknown               [nnu]
+  xt::xtensor<size_t,1> m_iip;  // DOF-numbers that are prescribed            [nnp]
 
   // dimensions
   size_t m_nelem; // number of elements
@@ -46,7 +46,8 @@ public:
 
   // constructor
   MatrixDiagonal(){};
-  MatrixDiagonal(const MatS &conn, const MatS &dofs, const ColS &iip=ColS());
+  MatrixDiagonal(const xt::xtensor<size_t,2> &conn, const xt::xtensor<size_t,2> &dofs);
+  MatrixDiagonal(const xt::xtensor<size_t,2> &conn, const xt::xtensor<size_t,2> &dofs, const xt::xtensor<size_t,1> &iip);
 
   // index operators: access plain storage
   double&       operator[](size_t i);
@@ -68,41 +69,43 @@ public:
   size_t nnp()   const; // number of prescribed DOFs
 
   // DOF lists
-  ColS iiu() const; // unknown    DOFs
-  ColS iip() const; // prescribed DOFs
+  xt::xtensor<size_t,1> iiu() const; // unknown    DOFs
+  xt::xtensor<size_t,1> iip() const; // prescribed DOFs
 
   // product: c_i = A_ij * b_j
-  ColD dot  (const ColD &b                   ) const; // c   = A    * b
-  ColD dot_u(const ColD &b                   ) const; // c_u = A_uu * b_u + A_up * b_p
-  ColD dot_u(const ColD &b_u, const ColD &b_p) const; // c_u = A_uu * b_u + A_up * b_p
-  ColD dot_p(const ColD &b                   ) const; // c_p = A_pu * b_u + A_pp * b_p
-  ColD dot_p(const ColD &b_u, const ColD &b_p) const; // c_p = A_pu * b_u + A_pp * b_p
+  xt::xtensor<double,1> dot  (const xt::xtensor<double,1> &b                                    ) const; // c   = A    * b
+  xt::xtensor<double,1> dot_u(const xt::xtensor<double,1> &b                                    ) const; // c_u = A_uu * b_u + A_up * b_p
+  xt::xtensor<double,1> dot_u(const xt::xtensor<double,1> &b_u, const xt::xtensor<double,1> &b_p) const; // c_u = A_uu * b_u + A_up * b_p
+  xt::xtensor<double,1> dot_p(const xt::xtensor<double,1> &b                                    ) const; // c_p = A_pu * b_u + A_pp * b_p
+  xt::xtensor<double,1> dot_p(const xt::xtensor<double,1> &b_u, const xt::xtensor<double,1> &b_p) const; // c_p = A_pu * b_u + A_pp * b_p
 
   // check structure of the matrices stored per element [nelem, nne*ndim, nne*ndim]
-  void check_diagonal(const ArrD &elemmat) const;
+  void check_diagonal(const xt::xtensor<double,3> &elemmat) const;
 
   // assemble from matrices stored per element [nelem, nne*ndim, nne*ndim]
   // WARNING: ignores any off-diagonal terms
-  void assemble(const ArrD &elemmat);
+  void assemble(const xt::xtensor<double,3> &elemmat);
 
   // set matrix components from externally assembled object
-  void set   (const ColD &matrix   ) const; // diagonal [ndof]
-  void set_uu(const ColD &matrix_uu) const; // diagonal [nnu]
-  void set_pp(const ColD &matrix_pp) const; // diagonal [nnp]
+  void set   (const xt::xtensor<double,1> &matrix   ) const; // diagonal [ndof]
+  void set_uu(const xt::xtensor<double,1> &matrix_uu) const; // diagonal [nnu]
+  void set_pp(const xt::xtensor<double,1> &matrix_pp) const; // diagonal [nnp]
 
   // solve
   // ("u_p" is useless as all cross-terms are zero, it is here for aesthetics)
-  ColD solve  (const ColD &rhs  , const ColD &u_p=ColD()); // [ndof] -> [ndof]
-  ColD solve_u(const ColD &rhs_u, const ColD &u_p=ColD()); // [nnu]  -> [nnu]
+  xt::xtensor<double,1> solve  (const xt::xtensor<double,1> &rhs                                    ); // [ndof] -> [ndof]
+  xt::xtensor<double,1> solve  (const xt::xtensor<double,1> &rhs  , const xt::xtensor<double,1> &u_p); // [ndof] -> [ndof]
+  xt::xtensor<double,1> solve_u(const xt::xtensor<double,1> &rhs_u                                  ); // [nnu]  -> [nnu]
+  xt::xtensor<double,1> solve_u(const xt::xtensor<double,1> &rhs_u, const xt::xtensor<double,1> &u_p); // [nnu]  -> [nnu]
 
   // get the right-hand-side of prescribed DOFs: [nnu], [nnp] -> [nnp]
   // ("u_u" is useless as all cross-terms are zero, it is here for aesthetics)
-  ColD rhs_p(const ColD &u_u, const ColD &u_p) const;
+  xt::xtensor<double,1> rhs_p(const xt::xtensor<double,1> &u_u, const xt::xtensor<double,1> &u_p) const;
 
   // return (sub-)matrix as diagonal matrix (column)
-  ColD asDiagonal   () const; // [ndpf]
-  ColD asDiagonal_uu() const; // [nnu]
-  ColD asDiagonal_pp() const; // [nnp]
+  xt::xtensor<double,1> asDiagonal   () const; // [ndpf]
+  xt::xtensor<double,1> asDiagonal_uu() const; // [nnu]
+  xt::xtensor<double,1> asDiagonal_pp() const; // [nnp]
 
   // return (sub-)matrix as sparse matrix
   SpMatD asSparse   () const; // [ndof,ndof]
@@ -112,18 +115,18 @@ public:
   SpMatD asSparse_pp() const; // [nnp ,nnp ]
 
   // return (sub-)matrix as dense matrix
-  MatD asDense   () const; // [ndof,ndof]
-  MatD asDense_uu() const; // [nnu ,nnu ]
-  MatD asDense_up() const; // [nnu ,nnp ]
-  MatD asDense_pu() const; // [nnp ,nnu ]
-  MatD asDense_pp() const; // [nnp ,nnp ]
+  xt::xtensor<double,2> asDense   () const; // [ndof,ndof]
+  xt::xtensor<double,2> asDense_uu() const; // [nnu ,nnu ]
+  xt::xtensor<double,2> asDense_up() const; // [nnu ,nnp ]
+  xt::xtensor<double,2> asDense_pu() const; // [nnp ,nnu ]
+  xt::xtensor<double,2> asDense_pp() const; // [nnp ,nnp ]
 
 };
 
 // -------------------------------------------------------------------------------------------------
 
 // matrix/column product: '[ndof,ndof]' * [ndof] -> [ndof]
-inline ColD operator* (const MatrixDiagonal &A, const ColD &b);
+inline xt::xtensor<double,1> operator* (const MatrixDiagonal &A, const xt::xtensor<double,1> &b);
 
 // -------------------------------------------------------------------------------------------------
 

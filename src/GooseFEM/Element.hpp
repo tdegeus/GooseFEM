@@ -18,15 +18,15 @@ namespace Element {
 
 // -------------------------------------------------------------------------------------------------
 
-inline ArrD asElementVector(const MatS &conn, const MatD &nodevec)
+inline xt::xtensor<double,3> asElementVector(const xt::xtensor<size_t,2> &conn, const xt::xtensor<double,2> &nodevec)
 {
   // extract dimensions
-  size_t nelem = static_cast<size_t>(conn   .rows());
-  size_t nne   = static_cast<size_t>(conn   .cols());
-  size_t ndim  = static_cast<size_t>(nodevec.cols());
+  size_t nelem = conn   .shape()[0];
+  size_t nne   = conn   .shape()[1];
+  size_t ndim  = nodevec.shape()[1];
 
   // allocate output: nodal vectors stored per element
-  ArrD elemvec = ArrD::Zero({nelem, nne, ndim});
+  xt::xtensor<double,3> elemvec = xt::zeros<double>({nelem, nne, ndim});
 
   // read from nodal vectors
   #pragma omp parallel for
@@ -40,23 +40,20 @@ inline ArrD asElementVector(const MatS &conn, const MatD &nodevec)
 
 // -------------------------------------------------------------------------------------------------
 
-inline MatD assembleNodeVector(const MatS &conn, const ArrD &elemvec)
+inline xt::xtensor<double,2> assembleNodeVector(const xt::xtensor<size_t,2> &conn, const xt::xtensor<double,3> &elemvec)
 {
-  // check input
-  assert( elemvec.rank() == 3 ); // nodal vector stored per element [nelem, nne, ndim]
-
   // extract dimensions
-  size_t nelem = static_cast<size_t>(conn.rows()); // number of elements
-  size_t nne   = static_cast<size_t>(conn.cols()); // number of nodes per element
-  size_t ndim  = elemvec.shape(2);                 // number of dimensions
-  size_t nnode = conn.maxCoeff()+1;                // number of nodes
+  size_t nelem = conn.shape()[0];     // number of elements
+  size_t nne   = conn.shape()[1];     // number of nodes per element
+  size_t ndim  = elemvec.shape()[2];  // number of dimensions
+  size_t nnode = xt::amax(conn)[0]+1; // number of nodes
 
   // check input
-  assert( elemvec.shape(0) == nelem );
-  assert( elemvec.shape(1) == nne   );
+  assert( elemvec.shape()[0] == nelem );
+  assert( elemvec.shape()[1] == nne   );
 
   // zero-initialize output: nodal vectors
-  MatD nodevec = MatD::Zero(nnode, ndim);
+  xt::xtensor<double,2> nodevec = xt::zeros<double>({nnode, ndim});
 
   // temporarily disable parallelization by Eigen
   Eigen::setNbThreads(1);
@@ -65,7 +62,7 @@ inline MatD assembleNodeVector(const MatS &conn, const ArrD &elemvec)
   #pragma omp parallel
   {
     // zero-initialize output: nodal vectors
-    MatD t_nodevec = MatD::Zero(nnode, ndim);
+    xt::xtensor<double,2> t_nodevec = xt::zeros<double>({nnode, ndim});
 
     // assemble from nodal vectors stored per element
     #pragma omp for

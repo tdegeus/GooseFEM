@@ -24,24 +24,24 @@ inline void Verlet(Geometry &g, double dt, size_t nstep)
   {
     // history
 
-    ColD V;
-    ColD A;
-    ColD V_n = g.dofs_v();
-    ColD A_n = g.dofs_a();
+    xt::xtensor<double,1> V;
+    xt::xtensor<double,1> A;
+    xt::xtensor<double,1> V_n = g.dofs_v();
+    xt::xtensor<double,1> A_n = g.dofs_a();
 
     // new displacement
 
-    g.set_u(MatD( g.u() + dt * g.v() + 0.5 * std::pow(dt,2.) * g.a() ));
+    g.set_u(xt::eval( g.u() + dt * g.v() + 0.5 * std::pow(dt,2.) * g.a() ));
 
     // new acceleration
 
     A = g.solve_A();
 
-    g.set_a(ColD( A ));
+    g.set_a(xt::eval( A ));
 
     // new velocity
 
-    g.set_v(ColD( V_n + .5 * dt * ( A_n + A ) ));
+    g.set_v(xt::eval( V_n + .5 * dt * ( A_n + A ) ));
   }
 }
 
@@ -53,34 +53,34 @@ inline void velocityVerlet(Geometry &g, double dt, size_t nstep)
   {
     // history
 
-    ColD V;
-    ColD A;
-    ColD V_n = g.dofs_v();
-    ColD A_n = g.dofs_a();
+    xt::xtensor<double,1> V;
+    xt::xtensor<double,1> A;
+    xt::xtensor<double,1> V_n = g.dofs_v();
+    xt::xtensor<double,1> A_n = g.dofs_a();
 
     // new displacement
 
-    g.set_u(MatD( g.u() + dt * g.v() + 0.5 * std::pow(dt,2.) * g.a() ));
+    g.set_u(xt::eval( g.u() + dt * g.v() + 0.5 * std::pow(dt,2.) * g.a() ));
 
     // estimate new velocity
 
-    g.set_v(ColD( V_n + dt * A_n ));
+    g.set_v(xt::eval( V_n + dt * A_n ));
 
     A = g.solve_A();
 
-    g.set_v(ColD( V_n + .5 * dt * ( A_n + A ) ));
+    g.set_v(xt::eval( V_n + .5 * dt * ( A_n + A ) ));
 
     // new velocity
 
     A = g.solve_A();
 
-    g.set_v(ColD( V_n + .5 * dt * ( A_n + A ) ));
+    g.set_v(xt::eval( V_n + .5 * dt * ( A_n + A ) ));
 
     // new acceleration
 
     A = g.solve_A();
 
-    g.set_a(ColD( A ));
+    g.set_a(xt::eval( A ));
   }
 }
 
@@ -92,7 +92,7 @@ inline void forwardEuler(Geometry &g, double dt, size_t nstep)
 {
   for ( size_t istep = 0 ; istep < nstep ; ++istep )
   {
-    g.set_u(ColD( g.dofs_u() + dt * g.solve_V() ));
+    g.set_u(xt::eval( g.dofs_u() + dt * g.solve_V() ));
   }
 }
 }
