@@ -4,16 +4,16 @@
 
 ================================================================================================= */
 
-#ifndef XGOOSEFEM_MESHTRI3_CPP
-#define XGOOSEFEM_MESHTRI3_CPP
+#ifndef GOOSEFEM_MESHTRI3_CPP
+#define GOOSEFEM_MESHTRI3_CPP
 
 // -------------------------------------------------------------------------------------------------
 
 #include "MeshTri3.h"
 
-// ===================================== xGooseFEM::Mesh::Tri3 ======================================
+// ===================================== GooseFEM::Mesh::Tri3 ======================================
 
-namespace xGooseFEM {
+namespace GooseFEM {
 namespace Mesh {
 namespace Tri3 {
 
@@ -25,8 +25,8 @@ m_h(h), m_nelx(nelx), m_nely(nely)
   assert( m_nelx >= 1 );
   assert( m_nely >= 1 );
 
-  m_nnode = (m_nelx+1) * (m_nely+1);
-  m_nelem =  m_nelx    *  m_nely * 2;
+  m_nnode = (m_nelx+1) * (m_nely+1)    ;
+  m_nelem =  m_nelx    *  m_nely    * 2;
 }
 
 // -------------------------------------- number of elements ---------------------------------------
@@ -59,12 +59,12 @@ inline size_t Regular::ndim() const
 
 // --------------------------------- coordinates (nodal positions) ---------------------------------
 
-inline xt::xtensor<double,2> Regular::coor() const
+inline MatD Regular::coor() const
 {
-  xt::xtensor<double,2> out = xt::empty<double>({m_nnode, m_ndim});
+  MatD out(m_nnode , m_ndim);
 
-  xt::xtensor<double,1> x = xt::linspace<double>(0.0, m_h*static_cast<double>(m_nelx), m_nelx+1);
-  xt::xtensor<double,1> y = xt::linspace<double>(0.0, m_h*static_cast<double>(m_nely), m_nely+1);
+  ColD x = ColD::LinSpaced( m_nelx+1 , 0.0 , m_h * static_cast<double>(m_nelx) );
+  ColD y = ColD::LinSpaced( m_nely+1 , 0.0 , m_h * static_cast<double>(m_nely) );
 
   size_t inode = 0;
 
@@ -81,9 +81,9 @@ inline xt::xtensor<double,2> Regular::coor() const
 
 // ---------------------------- connectivity (node-numbers per element) ----------------------------
 
-inline xt::xtensor<size_t,2> Regular::conn() const
+inline MatS Regular::conn() const
 {
-  xt::xtensor<size_t,2> out = xt::empty<size_t>({m_nelem,m_nne});
+  MatS out(m_nelem , m_nne);
 
   size_t ielem = 0;
 
@@ -105,9 +105,9 @@ inline xt::xtensor<size_t,2> Regular::conn() const
 
 // ------------------------------ node-numbers along the bottom edge -------------------------------
 
-inline xt::xtensor<size_t,1> Regular::nodesBottomEdge() const
+inline ColS Regular::nodesBottomEdge() const
 {
-  xt::xtensor<size_t,1> out = xt::empty<size_t>({m_nelx+1});
+  ColS out(m_nelx+1);
 
   for ( size_t ix = 0 ; ix < m_nelx+1 ; ++ix )
     out(ix) = ix;
@@ -117,9 +117,9 @@ inline xt::xtensor<size_t,1> Regular::nodesBottomEdge() const
 
 // -------------------------------- node-numbers along the top edge --------------------------------
 
-inline xt::xtensor<size_t,1> Regular::nodesTopEdge() const
+inline ColS Regular::nodesTopEdge() const
 {
-  xt::xtensor<size_t,1> out = xt::empty<size_t>({m_nelx+1});
+  ColS out(m_nelx+1);
 
   for ( size_t ix = 0 ; ix < m_nelx+1 ; ++ix )
     out(ix) = ix + m_nely*(m_nelx+1);
@@ -129,9 +129,9 @@ inline xt::xtensor<size_t,1> Regular::nodesTopEdge() const
 
 // ------------------------------- node-numbers along the left edge --------------------------------
 
-inline xt::xtensor<size_t,1> Regular::nodesLeftEdge() const
+inline ColS Regular::nodesLeftEdge() const
 {
-  xt::xtensor<size_t,1> out = xt::empty<size_t>({m_nely+1});
+  ColS out(m_nely+1);
 
   for ( size_t iy = 0 ; iy < m_nely+1 ; ++iy )
     out(iy) = iy*(m_nelx+1);
@@ -141,9 +141,9 @@ inline xt::xtensor<size_t,1> Regular::nodesLeftEdge() const
 
 // ------------------------------- node-numbers along the right edge -------------------------------
 
-inline xt::xtensor<size_t,1> Regular::nodesRightEdge() const
+inline ColS Regular::nodesRightEdge() const
 {
-  xt::xtensor<size_t,1> out = xt::empty<size_t>({m_nely+1});
+  ColS out(m_nely+1);
 
   for ( size_t iy = 0 ; iy < m_nely+1 ; ++iy )
     out(iy) = iy*(m_nelx+1) + m_nelx;
@@ -153,9 +153,9 @@ inline xt::xtensor<size_t,1> Regular::nodesRightEdge() const
 
 // ---------------------- node-numbers along the bottom edge, without corners ----------------------
 
-inline xt::xtensor<size_t,1> Regular::nodesBottomOpenEdge() const
+inline ColS Regular::nodesBottomOpenEdge() const
 {
-  xt::xtensor<size_t,1> out = xt::empty<size_t>({m_nelx-1});
+  ColS out(m_nelx-1);
 
   for ( size_t ix = 1 ; ix < m_nelx ; ++ix )
     out(ix-1) = ix;
@@ -165,9 +165,9 @@ inline xt::xtensor<size_t,1> Regular::nodesBottomOpenEdge() const
 
 // ----------------------- node-numbers along the top edge, without corners ------------------------
 
-inline xt::xtensor<size_t,1> Regular::nodesTopOpenEdge() const
+inline ColS Regular::nodesTopOpenEdge() const
 {
-  xt::xtensor<size_t,1> out = xt::empty<size_t>({m_nelx-1});
+  ColS out(m_nelx-1);
 
   for ( size_t ix = 1 ; ix < m_nelx ; ++ix )
     out(ix-1) = ix + m_nely*(m_nelx+1);
@@ -177,9 +177,9 @@ inline xt::xtensor<size_t,1> Regular::nodesTopOpenEdge() const
 
 // ----------------------- node-numbers along the left edge, without corners -----------------------
 
-inline xt::xtensor<size_t,1> Regular::nodesLeftOpenEdge() const
+inline ColS Regular::nodesLeftOpenEdge() const
 {
-  xt::xtensor<size_t,1> out = xt::empty<size_t>({m_nely-1});
+  ColS out(m_nely-1);
 
   for ( size_t iy = 1 ; iy < m_nely ; ++iy )
     out(iy-1) = iy*(m_nelx+1);
@@ -189,9 +189,9 @@ inline xt::xtensor<size_t,1> Regular::nodesLeftOpenEdge() const
 
 // ---------------------- node-numbers along the right edge, without corners -----------------------
 
-inline xt::xtensor<size_t,1> Regular::nodesRightOpenEdge() const
+inline ColS Regular::nodesRightOpenEdge() const
 {
-  xt::xtensor<size_t,1> out = xt::empty<size_t>({m_nely-1});
+  ColS out(m_nely-1);
 
   for ( size_t iy = 1 ; iy < m_nely ; ++iy )
     out(iy-1) = iy*(m_nelx+1) + m_nelx;
@@ -229,27 +229,27 @@ inline size_t Regular::nodesTopRightCorner() const
 
 // ----------------------------- node-number of the corners (aliases) ------------------------------
 
-inline size_t Regular::nodesLeftBottomCorner() const  { return nodesBottomLeftCorner();  }
-inline size_t Regular::nodesLeftTopCorner() const     { return nodesTopLeftCorner();     }
+inline size_t Regular::nodesLeftBottomCorner()  const { return nodesBottomLeftCorner();  }
+inline size_t Regular::nodesLeftTopCorner()     const { return nodesTopLeftCorner();     }
 inline size_t Regular::nodesRightBottomCorner() const { return nodesBottomRightCorner(); }
-inline size_t Regular::nodesRightTopCorner() const    { return nodesTopRightCorner();    }
+inline size_t Regular::nodesRightTopCorner()    const { return nodesTopRightCorner();    }
 
 // ------------------------------ node-numbers of periodic node-pairs ------------------------------
 
-inline xt::xtensor<size_t,2> Regular::nodesPeriodic() const
+inline MatS Regular::nodesPeriodic() const
 {
   // edges (without corners)
-  xt::xtensor<size_t,1> bot = nodesBottomOpenEdge();
-  xt::xtensor<size_t,1> top = nodesTopOpenEdge();
-  xt::xtensor<size_t,1> lft = nodesLeftOpenEdge();
-  xt::xtensor<size_t,1> rgt = nodesRightOpenEdge();
+  ColS bot = nodesBottomOpenEdge();
+  ColS top = nodesTopOpenEdge();
+  ColS lft = nodesLeftOpenEdge();
+  ColS rgt = nodesRightOpenEdge();
 
   // allocate nodal ties
   // - number of tying per category
   size_t tedge = bot.size() + lft.size();
   size_t tnode = 3;
   // - allocate
-  xt::xtensor<size_t,2> out = xt::empty<size_t>({tedge+tnode, std::size_t(2)});
+  MatS out(tedge+tnode, 2);
 
   // counter
   size_t i = 0;
@@ -260,8 +260,8 @@ inline xt::xtensor<size_t,2> Regular::nodesPeriodic() const
   out(i,0) = nodesBottomLeftCorner(); out(i,1) = nodesTopLeftCorner();     ++i;
 
   // tie all corresponding edges to each other
-  for ( size_t j = 0 ; j<bot.size() ; ++j ){ out(i,0) = bot(j); out(i,1) = top(j); ++i; }
-  for ( size_t j = 0 ; j<lft.size() ; ++j ){ out(i,0) = lft(j); out(i,1) = rgt(j); ++i; }
+  for ( auto j = 0 ; j<bot.size() ; ++j ){ out(i,0) = bot(j); out(i,1) = top(j); ++i; }
+  for ( auto j = 0 ; j<lft.size() ; ++j ){ out(i,0) = lft(j); out(i,1) = rgt(j); ++i; }
 
   return out;
 }
@@ -275,51 +275,53 @@ inline size_t Regular::nodesOrigin() const
 
 // ------------------------- DOF numbers per node (sequentially numbered) --------------------------
 
-inline xt::xtensor<size_t,2> Regular::dofs() const
+inline MatS Regular::dofs() const
 {
-  return xGooseFEM::Mesh::dofs(m_nnode,m_ndim);
+  return GooseFEM::Mesh::dofs(m_nnode,m_ndim);
 }
 
 // ------------------------ DOP-numbers with periodic dependencies removed -------------------------
 
-inline xt::xtensor<size_t,2> Regular::dofsPeriodic() const
+inline MatS Regular::dofsPeriodic() const
 {
   // DOF-numbers for each component of each node (sequential)
-  xt::xtensor<size_t,2> out = xGooseFEM::Mesh::dofs(m_nnode,m_ndim);
+  MatS out = GooseFEM::Mesh::dofs(m_nnode,m_ndim);
 
   // periodic node-pairs
-  xt::xtensor<size_t,2> nodePer = nodesPeriodic();
+  MatS   nodePer = nodesPeriodic();
+  size_t nper    = static_cast<size_t>(nodePer.rows());
 
   // eliminate 'dependent' DOFs; renumber "out" to be sequential for the remaining DOFs
-  for ( size_t i = 0 ; i < nodePer.shape()[0] ; ++i )
+  for ( size_t i = 0 ; i < nper ; ++i )
     for ( size_t j = 0 ; j < m_ndim ; ++j )
       out(nodePer(i,1),j) = out(nodePer(i,0),j);
 
   // renumber "out" to be sequential
-  return xGooseFEM::Mesh::renumber(out);
+  return GooseFEM::Mesh::renumber(out);
 }
 
 // ------------------------------ get the orientation of each element ------------------------------
 
-inline xt::xtensor<int,1> getOrientation(const xt::xtensor<double,2> &coor, const xt::xtensor<size_t,2> &conn)
+inline ColI getOrientation(const MatD &coor, const MatS &conn)
 {
-  assert( conn.shape()[1] == 3 );
-  assert( coor.shape()[1] == 2 );
+  assert( conn.cols() == 3 );
+  assert( coor.cols() == 2 );
 
+  Eigen::Vector2d v1,v2;
   double k;
-  size_t nelem = conn.shape()[0];
+  size_t nelem = static_cast<size_t>( conn.rows() );
 
-  xt::xtensor<int,1> out = xt::empty<int>({nelem});
+  ColI out( nelem );
 
   for ( size_t ielem = 0 ; ielem < nelem ; ++ielem )
   {
-    auto v1 = xt::view(coor, conn(ielem,0), xt::all()) - xt::view(coor, conn(ielem,1), xt::all());
-    auto v2 = xt::view(coor, conn(ielem,2), xt::all()) - xt::view(coor, conn(ielem,1), xt::all());
+    v1 = coor.row( conn(ielem,0) ) - coor.row( conn(ielem,1) );
+    v2 = coor.row( conn(ielem,2) ) - coor.row( conn(ielem,1) );
 
-    k = v1(0) * v2(1) - v2(0) * v1(1);
+    k  = v1(0) * v2(1) - v2(0) * v1(1);
 
-    if ( k < 0 ) out(ielem) = -1;
-    else         out(ielem) = +1;
+    if ( k < 0 ) out( ielem ) = -1;
+    else         out( ielem ) = +1;
   }
 
   return out;
@@ -327,31 +329,31 @@ inline xt::xtensor<int,1> getOrientation(const xt::xtensor<double,2> &coor, cons
 
 // ------------------------------ set the orientation of each element ------------------------------
 
-inline xt::xtensor<size_t,2> setOrientation(const xt::xtensor<double,2> &coor, const xt::xtensor<size_t,2> &conn, int orientation)
+inline MatS setOrientation(const MatD &coor, const MatS &conn, int orientation)
 {
-  assert( conn.shape()[1] == 3 );
-  assert( coor.shape()[1] == 2 );
+  assert( conn.cols() == 3 );
+  assert( coor.cols() == 2 );
   assert( orientation == -1 || orientation == +1 );
 
-  xt::xtensor<int,1> val = getOrientation(coor, conn);
+  ColI val = getOrientation(coor, conn);
 
-  return setOrientation(coor, conn, val, orientation);
+  return setOrientation( coor, conn, val, orientation );
 }
 
 // -------------------- set the orientation of each element to a certain value ---------------------
 
-inline xt::xtensor<size_t,2> setOrientation(const xt::xtensor<double,2> &coor, const xt::xtensor<size_t,2> &conn, const xt::xtensor<int,1> &val, int orientation)
+inline MatS setOrientation(const MatD &coor, const MatS &conn, const ColI &val, int orientation)
 {
-  assert( conn.shape()[1] == 3 );
-  assert( coor.shape()[1] == 2 );
-  assert( conn.shape()[0] == val.size() );
+  assert( conn.cols() == 3 );
+  assert( coor.cols() == 2 );
+  assert( conn.rows() == val.size() );
   assert( orientation == -1 || orientation == +1 );
 
   // avoid compiler warning
   UNUSED(coor);
 
-  size_t nelem = conn.shape()[0];
-  xt::xtensor<size_t,2> out = conn;
+  size_t nelem = static_cast<size_t>(conn.rows());
+  MatS   out   = conn;
 
   for ( size_t ielem = 0 ; ielem < nelem ; ++ielem )
     if ( ( orientation == -1 and val(ielem) > 0 ) or ( orientation == +1 and val(ielem) < 0 ) )
@@ -362,15 +364,15 @@ inline xt::xtensor<size_t,2> setOrientation(const xt::xtensor<double,2> &coor, c
 
 // ------------------------------------- re-triangulation API --------------------------------------
 
-inline xt::xtensor<size_t,2> retriangulate(const xt::xtensor<double,2> &coor, const xt::xtensor<size_t,2> &conn, int orientation)
+inline MatS retriangulate(const MatD &coor, const MatS &conn, int orientation)
 {
   // get the orientation of all elements
-  xt::xtensor<int,1> dir = getOrientation(coor, conn);
+  ColI dir = getOrientation(coor, conn);
   // check the orientation
-  bool eq = static_cast<size_t>(std::abs(xt::sum(dir)[0])) == conn.shape()[0];
+  bool eq  = std::abs(dir.sum()) == conn.rows();
 
   // new connectivity
-  xt::xtensor<size_t,2> out;
+  MatS out;
 
   // perform re-triangulation
   // - use "TriUpdate"
@@ -389,26 +391,30 @@ inline xt::xtensor<size_t,2> retriangulate(const xt::xtensor<double,2> &coor, co
   return setOrientation(coor,out,orientation);
 }
 
-// ================================= xGooseFEM::Mesh::Tri3::Private =================================
+// ================================= GooseFEM::Mesh::Tri3::Private =================================
 
 namespace Private {
 
 // ------------------------------------------ constructor ------------------------------------------
 
-inline TriUpdate::TriUpdate(const xt::xtensor<double,2> &coor, const xt::xtensor<size_t,2> &conn): m_conn(conn), m_coor(coor)
+inline TriUpdate::TriUpdate(const MatD &coor, const MatS &conn): m_conn(conn), m_coor(coor)
 {
-  assert( conn.shape()[1] == 3 );
-  assert( coor.shape()[1] == 2 );
+  assert( conn.cols() == 3 );
+  assert( coor.cols() == 2 );
 
   // store shapes
-  m_nnode = coor.shape()[0];
-  m_ndim  = coor.shape()[1];
-  m_nelem = conn.shape()[0];
-  m_nne   = conn.shape()[1];
+  m_nnode = static_cast<size_t>( coor.rows() );
+  m_ndim  = static_cast<size_t>( coor.cols() );
+  m_nelem = static_cast<size_t>( conn.rows() );
+  m_nne   = static_cast<size_t>( conn.cols() );
+
+  // resize internal arrays
+  m_elem.resize(2);
+  m_node.resize(4);
 
   // set default to out-of-bounds, to make clear that nothing happened yet
-  m_elem = m_nelem * xt::ones<size_t>({2});
-  m_node = m_nnode * xt::ones<size_t>({4});
+  m_elem.setConstant(m_nelem);
+  m_node.setConstant(m_nnode);
 
   edge();
 }
@@ -417,8 +423,8 @@ inline TriUpdate::TriUpdate(const xt::xtensor<double,2> &coor, const xt::xtensor
 
 inline void TriUpdate::edge()
 {
-  // signal that nothing has been set
-  m_edge = m_nelem * xt::ones<size_t>({m_nelem , m_nne});
+  m_edge.resize(m_nelem , m_nne);
+  m_edge.setConstant(m_nelem); // signal that nothing has been set
 
   std::vector<size_t> idx = {0,1,2}; // lists to convert connectivity -> edges
   std::vector<size_t> jdx = {1,2,0}; // lists to convert connectivity -> edges
@@ -476,8 +482,8 @@ inline bool TriUpdate::increment()
   size_t ielem,jelem,iedge,jedge;
   double phi1,phi2;
 
-  xt::xtensor_fixed<size_t,xt::xshape<4>> c = xt::empty<size_t>({4});
-  xt::xtensor_fixed<size_t,xt::xshape<4>> n = xt::empty<size_t>({4});
+  ColS c(4);
+  ColS n(4);
 
   // loop over all elements
   for ( ielem = 0 ; ielem < m_nelem ; ++ielem )
@@ -506,14 +512,14 @@ inline bool TriUpdate::increment()
       else if ( jedge==2 ) { c(3)=m_conn(jelem,1); }
 
       // construct edge vectors
-      auto a1 = xt::view(m_coor, c(1), xt::all()) - xt::view(m_coor, c(0), xt::all());
-      auto b1 = xt::view(m_coor, c(2), xt::all()) - xt::view(m_coor, c(0), xt::all());
-      auto a2 = xt::view(m_coor, c(1), xt::all()) - xt::view(m_coor, c(3), xt::all());
-      auto b2 = xt::view(m_coor, c(2), xt::all()) - xt::view(m_coor, c(3), xt::all());
+      Eigen::Vector2d a1 = m_coor.row( c(1) ) - m_coor.row( c(0) );
+      Eigen::Vector2d b1 = m_coor.row( c(2) ) - m_coor.row( c(0) );
+      Eigen::Vector2d a2 = m_coor.row( c(1) ) - m_coor.row( c(3) );
+      Eigen::Vector2d b2 = m_coor.row( c(2) ) - m_coor.row( c(3) );
 
       // compute angles of the relevant corners
-      phi1 = std::acos((a1(0)*b1(0)+a1(1)*b1(1))/(std::pow((a1(0)*a1(0)+a1(1)*a1(1)),0.5)*std::pow((b1(0)*b1(0)+b1(1)*b1(1)),0.5)));
-      phi2 = std::acos((a2(0)*b2(0)+a2(1)*b2(1))/(std::pow((a2(0)*a2(0)+a2(1)*a2(1)),0.5)*std::pow((b2(0)*b2(0)+b2(1)*b2(1)),0.5)));
+      phi1 = std::acos(a1.dot(b1)/(std::pow(a1.dot(a1),0.5)*std::pow(b1.dot(b1),0.5)));
+      phi2 = std::acos(a2.dot(b2)/(std::pow(a2.dot(a2),0.5)*std::pow(b2.dot(b2),0.5)));
 
       // update mesh if needed
       if ( phi1+phi2 > M_PI )

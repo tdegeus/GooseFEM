@@ -4,8 +4,8 @@
 
 ================================================================================================= */
 
-#ifndef XGOOSEFEM_H
-#define XGOOSEFEM_H
+#ifndef GOOSEFEM_H
+#define GOOSEFEM_H
 
 // =================================================================================================
 
@@ -23,36 +23,23 @@
 #include <algorithm>
 #include <math.h>
 #include <Eigen/Eigen>
-
-#include <xtensor/xarray.hpp>
-#include <xtensor/xtensor.hpp>
-#include <xtensor/xfixed.hpp>
-#include <xtensor/xview.hpp>
-#include <xtensor/xstrided_view.hpp>
-#include <xtensor/xio.hpp>
-#include <xtensor/xsort.hpp>
-#include <xtensor/xmath.hpp>
-#include <xtensor/xadapt.hpp>
-#include <xtensor/xutils.hpp>
-#include <xtensor/xlayout.hpp>
-
-using namespace xt::placeholders;
+#include <cppmat/cppmat.h>
 
 // =================================================================================================
 
-#define XGOOSEFEM_WORLD_VERSION 0
-#define XGOOSEFEM_MAJOR_VERSION 1
-#define XGOOSEFEM_MINOR_VERSION 0
+#define GOOSEFEM_WORLD_VERSION 0
+#define GOOSEFEM_MAJOR_VERSION 0
+#define GOOSEFEM_MINOR_VERSION 11
 
-#define XGOOSEFEM_VERSION_AT_LEAST(x,y,z) \
-  (XGOOSEFEM_WORLD_VERSION>x || (XGOOSEFEM_WORLD_VERSION>=x && \
-  (XGOOSEFEM_MAJOR_VERSION>y || (XGOOSEFEM_MAJOR_VERSION>=y && \
-                                XGOOSEFEM_MINOR_VERSION>=z))))
+#define GOOSEFEM_VERSION_AT_LEAST(x,y,z) \
+  (GOOSEFEM_WORLD_VERSION>x || (GOOSEFEM_WORLD_VERSION>=x && \
+  (GOOSEFEM_MAJOR_VERSION>y || (GOOSEFEM_MAJOR_VERSION>=y && \
+                                GOOSEFEM_MINOR_VERSION>=z))))
 
-#define XGOOSEFEM_VERSION(x,y,z) \
-  (XGOOSEFEM_WORLD_VERSION==x && \
-   XGOOSEFEM_MAJOR_VERSION==y && \
-   XGOOSEFEM_MINOR_VERSION==z)
+#define GOOSEFEM_VERSION(x,y,z) \
+  (GOOSEFEM_WORLD_VERSION==x && \
+   GOOSEFEM_MAJOR_VERSION==y && \
+   GOOSEFEM_MINOR_VERSION==z)
 
 // =================================================================================================
 
@@ -61,11 +48,22 @@ using namespace xt::placeholders;
 
 // =================================================================================================
 
-// alias Eigen sparse matrices
-namespace xGooseFEM
+// alias types
+namespace GooseFEM
 {
+  // - alias Eigen dense matrices
+  typedef Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor> MatD;
+  typedef Eigen::Matrix<size_t, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor> MatS;
+  typedef Eigen::Matrix<double, Eigen::Dynamic,              1, Eigen::ColMajor> ColD;
+  typedef Eigen::Matrix<size_t, Eigen::Dynamic,              1, Eigen::ColMajor> ColS;
+  typedef Eigen::Matrix<int   , Eigen::Dynamic,              1, Eigen::ColMajor> ColI;
+  // - alias Eigen sparse matrices
   typedef Eigen::SparseMatrix<double,Eigen::RowMajor> SpMatD;
   typedef Eigen::SparseMatrix<size_t,Eigen::RowMajor> SpMatS;
+  // - alias cppmat matrices
+  typedef cppmat::array<double> ArrD;
+  typedef cppmat::array<size_t> ArrS;
+  typedef cppmat::array<int>    ArrI;
 }
 
 // =================================================================================================

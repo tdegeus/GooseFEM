@@ -4,16 +4,16 @@
 
 ================================================================================================= */
 
-#ifndef XGOOSEFEM_DYNAMICS_H
-#define XGOOSEFEM_DYNAMICS_H
+#ifndef GOOSEFEM_DYNAMICS_H
+#define GOOSEFEM_DYNAMICS_H
 
 // -------------------------------------------------------------------------------------------------
 
 #include "GooseFEM.h"
 
-// ======================================= xGooseFEM::Dynamics =======================================
+// ======================================= GooseFEM::Dynamics =======================================
 
-namespace xGooseFEM {
+namespace GooseFEM {
 namespace Dynamics {
 
 // ------------------------------------------ dummy class ------------------------------------------
@@ -23,26 +23,26 @@ class Geometry
 public:
 
   // solve for DOF-accelerations [ndof]
-  virtual xt::xtensor<double,1> solve_A() { return xt::empty<double>({0}); };
-  virtual xt::xtensor<double,1> solve_V() { return xt::empty<double>({0}); };
+  virtual ColD solve_A() { return ColD(); };
+  virtual ColD solve_V() { return ColD(); };
 
   // return nodal vectors [nnode, ndim]
-  virtual xt::xtensor<double,2> u() const { return xt::empty<double>({0,0}); };
-  virtual xt::xtensor<double,2> v() const { return xt::empty<double>({0,0}); };
-  virtual xt::xtensor<double,2> a() const { return xt::empty<double>({0,0}); };
+  virtual MatD u() const { return MatD(); };
+  virtual MatD v() const { return MatD(); };
+  virtual MatD a() const { return MatD(); };
 
   // return DOF values [ndof]
-  virtual xt::xtensor<double,1> dofs_u() const { return xt::empty<double>({0}); };
-  virtual xt::xtensor<double,1> dofs_v() const { return xt::empty<double>({0}); };
-  virtual xt::xtensor<double,1> dofs_a() const { return xt::empty<double>({0}); };
+  virtual ColD dofs_u() const { return ColD(); };
+  virtual ColD dofs_v() const { return ColD(); };
+  virtual ColD dofs_a() const { return ColD(); };
 
   // overwrite nodal vectors [nnode, ndim]
-  virtual void set_u(const xt::xtensor<double,2> &nodevec) { UNUSED(nodevec); return; };
+  virtual void set_u(const MatD &nodevec) { UNUSED(nodevec); return; };
 
   // overwrite nodal vectors, reconstructed from DOF values [ndof]
-  virtual void set_u(const xt::xtensor<double,1> &dofval) { UNUSED(dofval); return; };
-  virtual void set_v(const xt::xtensor<double,1> &dofval) { UNUSED(dofval); return; };
-  virtual void set_a(const xt::xtensor<double,1> &dofval) { UNUSED(dofval); return; };
+  virtual void set_u(const ColD &dofval) { UNUSED(dofval); return; };
+  virtual void set_v(const ColD &dofval) { UNUSED(dofval); return; };
+  virtual void set_a(const ColD &dofval) { UNUSED(dofval); return; };
 
 };
 

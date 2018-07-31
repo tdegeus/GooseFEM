@@ -4,23 +4,27 @@
 
 ================================================================================================= */
 
-#ifndef XGOOSEFEM_MESH_CPP
-#define XGOOSEFEM_MESH_CPP
+#ifndef GOOSEFEM_MESH_CPP
+#define GOOSEFEM_MESH_CPP
 
 // -------------------------------------------------------------------------------------------------
 
 #include "Mesh.h"
 
-// ======================================== xGooseFEM::Mesh =========================================
+// ======================================== GooseFEM::Mesh =========================================
 
-namespace xGooseFEM {
+namespace GooseFEM {
 namespace Mesh {
 
 // ----------------------------------------- list of DOFs ------------------------------------------
 
-inline xt::xtensor<size_t,2> dofs(size_t nnode, size_t ndim)
+inline MatS dofs(size_t nnode, size_t ndim)
 {
-  return xt::reshape_view(xt::arange<size_t>(nnode*ndim),{nnode,ndim});
+  ColS dofs_vec = ColS::LinSpaced(nnode*ndim, 0, nnode*ndim);
+
+  Eigen::Map<MatS> dofs(dofs_vec.data(), nnode, ndim);
+
+  return dofs;
 }
 
 // ---------------------------------- renumber to lowest possible ----------------------------------
@@ -52,9 +56,9 @@ inline void renumber(
 
 // ------------------------------------- renumber - interface --------------------------------------
 
-inline xt::xtensor<size_t,2> renumber(const xt::xtensor<size_t,2> &in)
+inline MatS renumber(const MatS &in)
 {
-  xt::xtensor<size_t,2> out(in.shape());
+  MatS out(in.rows(), in.cols());
 
   renumber(in.data(), in.data()+in.size(), out.data());
 
@@ -118,9 +122,9 @@ inline void reorder(
 
 // -------------------------------------- reorder - interface --------------------------------------
 
-inline xt::xtensor<size_t,2> reorder(const xt::xtensor<size_t,2> &in, const xt::xtensor<size_t,1> &idx, std::string loc)
+inline MatS reorder(const MatS &in, const ColS &idx, std::string loc)
 {
-  xt::xtensor<size_t,2> out(in.shape());
+  MatS out(in.rows(), in.cols());
 
   reorder(in.data(), in.data()+in.size(), out.data(), idx.data(), idx.data()+idx.size(), loc);
 
@@ -129,30 +133,30 @@ inline xt::xtensor<size_t,2> reorder(const xt::xtensor<size_t,2> &in, const xt::
 
 // ---------------------------- list of elements connected to each node ----------------------------
 
-inline SpMatS elem2node(const xt::xtensor<size_t,2> &conn)
+inline SpMatS elem2node(const MatS &conn)
 {
   // get number of nodes
-  size_t nnode = xt::amax(conn)[0] + 1;
+  size_t nnode = conn.maxCoeff() + 1;
 
   // number of elements connected to each node
   // - allocate
-  xt::xtensor<size_t,1> N = xt::zeros<size_t>({nnode});
+  ColS N  = ColS::Zero(nnode);
   // - fill from connectivity
   for ( auto it = conn.data(); it != conn.data()+conn.size(); ++it ) N(*it) += 1;
 
   // triplet list, with elements per node
   // - allocate
-  xt::xtensor<size_t,1> idx = xt::zeros<size_t>({nnode});
+  ColS idx = ColS::Zero(nnode);
   // - type
   typedef Eigen::Triplet<size_t> T;
   // - allocate
   std::vector<T> triplets;
   // - predict size
-  triplets.reserve(xt::sum(N)[0]);
+  triplets.reserve(N.sum());
   // - fill
-  for ( size_t e = 0 ; e < conn.shape()[0] ; ++e ) {
-    for ( size_t m = 0 ; m < conn.shape()[1] ; ++m ) {
-      size_t nd = conn(e,m);
+  for ( auto e = 0 ; e < conn.rows() ; ++e ) {
+    for ( auto m = 0 ; m < conn.cols() ; ++m ) {
+      auto nd = conn(e,m);
       triplets.push_back(T(nd, idx(nd), e));
       idx(nd)++;
     }
@@ -160,7 +164,7 @@ inline SpMatS elem2node(const xt::xtensor<size_t,2> &conn)
 
   // spare matrix
   // - allocate
-  SpMatS mat(nnode, xt::amax(N)[0]);
+  SpMatS mat(nnode, N.maxCoeff());
   // - fill
   mat.setFromTriplets(triplets.begin(), triplets.end());
 
@@ -169,14 +173,14 @@ inline SpMatS elem2node(const xt::xtensor<size_t,2> &conn)
 
 // ------------------------------ coordination number of each element ------------------------------
 
-inline xt::xtensor<size_t,1> coordination(const xt::xtensor<size_t,2> &conn)
+inline ColS coordination(const MatS &conn)
 {
   // get number of nodes
-  size_t nnode = xt::amax(conn)[0] + 1;
+  size_t nnode = conn.maxCoeff() + 1;
 
   // number of elements connected to each node
   // - allocate
-  xt::xtensor<size_t,1> N = xt::zeros<size_t>({nnode});
+  ColS N = ColS::Zero(nnode);
   // - fill from connectivity
   for ( auto it = conn.data(); it != conn.data()+conn.size(); ++it ) N(*it) += 1;
 

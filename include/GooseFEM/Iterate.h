@@ -4,25 +4,40 @@
 
 ================================================================================================= */
 
-#ifndef XGOOSEFEM_ELEMENT_H
-#define XGOOSEFEM_ELEMENT_H
+#ifndef GOOSEFEM_ITERATE_H
+#define GOOSEFEM_ITERATE_H
 
 // -------------------------------------------------------------------------------------------------
 
 #include "GooseFEM.h"
 
-// ======================================= xGooseFEM::Element =======================================
+// ======================================= GooseFEM::Iterate =======================================
 
-namespace xGooseFEM {
-namespace Element {
+namespace GooseFEM {
+namespace Iterate {
 
 // -------------------------------------------------------------------------------------------------
 
-// convert nodal vector [nnode, ndim] to nodal vector stored per element [nelem, nne, ndim]
-inline xt::xtensor<double,3> asElementVector(const xt::xtensor<size_t,2> &conn, const xt::xtensor<double,2> &nodevec);
+class StopList
+{
+private:
 
-// assemble nodal vector stored per element [nelem, nne, ndim] to nodal vector [nnode, ndim]
-inline xt::xtensor<double,2> assembleNodeVector(const xt::xtensor<size_t,2> &conn, const xt::xtensor<double,3> &elemvec);
+  // list with residuals
+  std::vector<double> m_res;
+
+public:
+
+  // constructors
+  StopList(size_t n=1);
+
+  // reset all residuals to infinity (and change the number of residuals to check)
+  void reset();
+  void reset(size_t n);
+
+  // update list of residuals, return true if all residuals are below the tolerance
+  bool stop(double res, double tol);
+
+};
 
 // -------------------------------------------------------------------------------------------------
 

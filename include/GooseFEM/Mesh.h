@@ -4,22 +4,22 @@
 
 ================================================================================================= */
 
-#ifndef XGOOSEFEM_MESH_H
-#define XGOOSEFEM_MESH_H
+#ifndef GOOSEFEM_MESH_H
+#define GOOSEFEM_MESH_H
 
 // -------------------------------------------------------------------------------------------------
 
 #include "GooseFEM.h"
 
-// ======================================== xGooseFEM::Mesh =========================================
+// ======================================== GooseFEM::Mesh =========================================
 
-namespace xGooseFEM {
+namespace GooseFEM {
 namespace Mesh {
 
 // -------------------------------------------------------------------------------------------------
 
 // list with DOF-numbers in sequential order
-inline xt::xtensor<size_t,2> dofs(size_t nnode, size_t ndim);
+inline MatS dofs(size_t nnode, size_t ndim);
 
 // -------------------------------------------------------------------------------------------------
 
@@ -30,7 +30,7 @@ inline void renumber(
   const InputIterator first, const InputIterator last, const OutputIterator result
 );
 // - interface
-inline xt::xtensor<size_t,2> renumber(const xt::xtensor<size_t,2> &dofs);
+inline MatS renumber(const MatS &dofs);
 
 // -------------------------------------------------------------------------------------------------
 
@@ -42,20 +42,14 @@ inline void reorder(
   const IndexIterator idx_first, const IndexIterator idx_last, std::string location
 );
 // - interface
-inline xt::xtensor<size_t,2> reorder(const xt::xtensor<size_t,2> &dofs,
-  const xt::xtensor<size_t,1> &idx, std::string location="end");
+inline MatS reorder(const MatS &dofs, const ColS &idx, std::string location="end");
 
 // -------------------------------------------------------------------------------------------------
 
 // elements connected to each node:
 // out[: ,0  ] = number of elements connected to each node
 // out[j ,i+1] = "i"th element connected to node "j"
-inline SpMatS elem2node(const xt::xtensor<size_t,2> &conn);
-
-// -------------------------------------------------------------------------------------------------
-
-// number of elements connected to each node
-inline xt::xtensor<size_t,1> coordination(const xt::xtensor<size_t,2> &conn);
+inline SpMatS elem2node(const MatS &conn);
 
 // -------------------------------------------------------------------------------------------------
 
