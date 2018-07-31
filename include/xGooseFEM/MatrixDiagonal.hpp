@@ -4,8 +4,8 @@
 
 ================================================================================================= */
 
-#ifndef GOOSEFEM_MATRIXDIAGONAL_CPP
-#define GOOSEFEM_MATRIXDIAGONAL_CPP
+#ifndef XGOOSEFEM_MATRIXDIAGONAL_CPP
+#define XGOOSEFEM_MATRIXDIAGONAL_CPP
 
 // -------------------------------------------------------------------------------------------------
 
@@ -13,7 +13,7 @@
 
 // =========================================== GooseFEM ============================================
 
-namespace GooseFEM {
+namespace xGooseFEM {
 
 // ------------------------------------------ constructor ------------------------------------------
 
@@ -327,29 +327,11 @@ inline void MatrixDiagonal::assemble(const xt::xtensor<double,3> &elemmat)
   // zero-initialize matrix
   m_data *= 0.0;
 
-  // temporarily disable parallelization by Eigen
-  Eigen::setNbThreads(1);
-
-  // start threads (all variables declared in this scope are local to each thread)
-  #pragma omp parallel
-  {
-    // zero-initialize matrix
-    xt::xtensor<double,1> t_mat = xt::zeros<double>({m_ndof});
-
-    // assemble
-    #pragma omp for
-    for ( size_t e = 0 ; e < m_nelem ; ++e )
-      for ( size_t m = 0 ; m < m_nne ; ++m )
-        for ( size_t i = 0 ; i < m_ndim ; ++i )
-          t_mat(m_dofs(m_conn(e,m),i)) += elemmat(e,m*m_ndim+i,m*m_ndim+i);
-
-    // reduce: combine result obtained on the different threads
-    #pragma omp critical
-      m_data += t_mat;
-  }
-
-  // reset automatic parallelization by Eigen
-  Eigen::setNbThreads(0);
+  // assemble
+  for ( size_t e = 0 ; e < m_nelem ; ++e )
+    for ( size_t m = 0 ; m < m_nne ; ++m )
+      for ( size_t i = 0 ; i < m_ndim ; ++i )
+        m_data(m_dofs(m_conn(e,m),i)) += elemmat(e,m*m_ndim+i,m*m_ndim+i);
 
   // signal change
   m_change = true;

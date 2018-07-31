@@ -4,16 +4,16 @@
 
 ================================================================================================= */
 
-#ifndef GOOSEFEM_MESHHEX8_H
-#define GOOSEFEM_MESHHEX8_H
+#ifndef XGOOSEFEM_MESHHEX8_H
+#define XGOOSEFEM_MESHHEX8_H
 
 // -------------------------------------------------------------------------------------------------
 
 #include "GooseFEM.h"
 
-// ===================================== GooseFEM::Mesh::Hex8 ======================================
+// ===================================== xGooseFEM::Mesh::Hex8 ======================================
 
-namespace GooseFEM {
+namespace xGooseFEM {
 namespace Mesh {
 namespace Hex8 {
 

@@ -3,7 +3,7 @@
 
 // =================================================================================================
 
-TEST_CASE("GooseFEM::ElementQuad4", "ElementQuad4.h")
+TEST_CASE("xGooseFEM::ElementQuad4", "ElementQuad4.h")
 {
 
 using T2 = xt::xtensor_fixed<double, xt::xshape<2,2>>;
@@ -13,17 +13,17 @@ using T2 = xt::xtensor_fixed<double, xt::xshape<2,2>>;
 SECTION( "int_N_scalar_NT_dV" )
 {
   // mesh
-  GooseFEM::Mesh::Quad4::Regular mesh(3,3);
+  xGooseFEM::Mesh::Quad4::Regular mesh(3,3);
 
   // vector-definition, and a diagonal matrix
-  GooseFEM::Vector         vec(mesh.conn(), mesh.dofsPeriodic());
-  GooseFEM::MatrixDiagonal mat(mesh.conn(), mesh.dofsPeriodic());
+  xGooseFEM::Vector         vec(mesh.conn(), mesh.dofsPeriodic());
+  xGooseFEM::MatrixDiagonal mat(mesh.conn(), mesh.dofsPeriodic());
 
   // element definition, with nodal quadrature
-  GooseFEM::Element::Quad4::Quadrature quad(
+  xGooseFEM::Element::Quad4::Quadrature quad(
     vec.asElement(mesh.coor()),
-    GooseFEM::Element::Quad4::Nodal::xi(),
-    GooseFEM::Element::Quad4::Nodal::w()
+    xGooseFEM::Element::Quad4::Nodal::xi(),
+    xGooseFEM::Element::Quad4::Nodal::w()
   );
 
   // scalar per quadrature point (e.g. mass-density "rho")
@@ -47,13 +47,13 @@ SECTION( "int_N_scalar_NT_dV" )
 SECTION( "symGradN_vector" )
 {
   // mesh
-  GooseFEM::Mesh::Quad4::FineLayer mesh(27,27);
+  xGooseFEM::Mesh::Quad4::FineLayer mesh(27,27);
 
   // vector-definition
-  GooseFEM::Vector vec(mesh.conn(), mesh.dofs());
+  xGooseFEM::Vector vec(mesh.conn(), mesh.dofs());
 
   // element definition, with Gauss quadrature
-  GooseFEM::Element::Quad4::Quadrature quad( vec.asElement(mesh.coor()) );
+  xGooseFEM::Element::Quad4::Quadrature quad( vec.asElement(mesh.coor()) );
 
   // macroscopic deformation gradient and strain
   // - zero-initialize
@@ -110,13 +110,13 @@ SECTION( "symGradN_vector" )
 SECTION( "symGradN_vector, int_gradN_dot_tensor2s_dV" )
 {
   // mesh
-  GooseFEM::Mesh::Quad4::FineLayer mesh(27,27);
+  xGooseFEM::Mesh::Quad4::FineLayer mesh(27,27);
 
   // vector-definition
-  GooseFEM::Vector vec(mesh.conn(), mesh.dofsPeriodic());
+  xGooseFEM::Vector vec(mesh.conn(), mesh.dofsPeriodic());
 
   // element definition, with Gauss quadrature
-  GooseFEM::Element::Quad4::Quadrature quad( vec.asElement(mesh.coor()) );
+  xGooseFEM::Element::Quad4::Quadrature quad( vec.asElement(mesh.coor()) );
 
   // macroscopic deformation gradient and strain
   // - zero-initialize

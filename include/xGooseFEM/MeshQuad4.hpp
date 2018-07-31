@@ -4,16 +4,16 @@
 
 ================================================================================================= */
 
-#ifndef GOOSEFEM_MESHQUAD4_CPP
-#define GOOSEFEM_MESHQUAD4_CPP
+#ifndef XGOOSEFEM_MESHQUAD4_CPP
+#define XGOOSEFEM_MESHQUAD4_CPP
 
 // -------------------------------------------------------------------------------------------------
 
 #include "MeshQuad4.h"
 
-// ===================================== GooseFEM::Mesh::Quad4 =====================================
+// ===================================== xGooseFEM::Mesh::Quad4 =====================================
 
-namespace GooseFEM {
+namespace xGooseFEM {
 namespace Mesh {
 namespace Quad4 {
 
@@ -281,7 +281,7 @@ inline size_t Regular::nodesOrigin() const
 
 inline xt::xtensor<size_t,2> Regular::dofs() const
 {
-  return GooseFEM::Mesh::dofs(m_nnode,m_ndim);
+  return xGooseFEM::Mesh::dofs(m_nnode,m_ndim);
 }
 
 // ------------------------ DOP-numbers with periodic dependencies removed -------------------------
@@ -289,7 +289,7 @@ inline xt::xtensor<size_t,2> Regular::dofs() const
 inline xt::xtensor<size_t,2> Regular::dofsPeriodic() const
 {
   // DOF-numbers for each component of each node (sequential)
-  xt::xtensor<size_t,2> out = GooseFEM::Mesh::dofs(m_nnode,m_ndim);
+  xt::xtensor<size_t,2> out = xGooseFEM::Mesh::dofs(m_nnode,m_ndim);
 
   // periodic node-pairs
   xt::xtensor<size_t,2> nodePer = nodesPeriodic();
@@ -300,7 +300,7 @@ inline xt::xtensor<size_t,2> Regular::dofsPeriodic() const
       out(nodePer(i,1),j) = out(nodePer(i,0),j);
 
   // renumber "out" to be sequential
-  return GooseFEM::Mesh::renumber(out);
+  return xGooseFEM::Mesh::renumber(out);
 }
 
 // ------------------------------------------ constructor ------------------------------------------
@@ -890,7 +890,7 @@ inline size_t FineLayer::nodesOrigin() const
 
 inline xt::xtensor<size_t,2> FineLayer::dofs() const
 {
-  return GooseFEM::Mesh::dofs(m_nnode,m_ndim);
+  return xGooseFEM::Mesh::dofs(m_nnode,m_ndim);
 }
 
 // ------------------------ DOP-numbers with periodic dependencies removed -------------------------
@@ -898,7 +898,7 @@ inline xt::xtensor<size_t,2> FineLayer::dofs() const
 inline xt::xtensor<size_t,2> FineLayer::dofsPeriodic() const
 {
   // DOF-numbers for each component of each node (sequential)
-  xt::xtensor<size_t,2> out = GooseFEM::Mesh::dofs(m_nnode,m_ndim);
+  xt::xtensor<size_t,2> out = xGooseFEM::Mesh::dofs(m_nnode,m_ndim);
 
   // periodic node-pairs
   xt::xtensor<size_t,2>   nodePer = nodesPeriodic();
@@ -909,7 +909,7 @@ inline xt::xtensor<size_t,2> FineLayer::dofsPeriodic() const
       out(nodePer(i,1),j) = out(nodePer(i,0),j);
 
   // renumber "out" to be sequential
-  return GooseFEM::Mesh::renumber(out);
+  return xGooseFEM::Mesh::renumber(out);
 }
 
 // -------------------------------------------------------------------------------------------------

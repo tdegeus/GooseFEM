@@ -9,36 +9,36 @@ include(GNUInstallDirs)
 # ----------------
 
 # name
-project(GooseFEM)
+project(xGooseFEM)
 
 # file that contains the version information
-set(parse_version include/${PROJECT_NAME}/${PROJECT_NAME}.h)
+set(parse_version include/xGooseFEM/GooseFEM.h)
 
 # header files
 set(headers
-  include/GooseFEM/GooseFEM.h
-  include/GooseFEM/Mesh.hpp
-  include/GooseFEM/Mesh.h
-  include/GooseFEM/MeshTri3.hpp
-  include/GooseFEM/MeshTri3.h
-  include/GooseFEM/MeshQuad4.hpp
-  include/GooseFEM/MeshQuad4.h
-  include/GooseFEM/MeshHex8.hpp
-  include/GooseFEM/MeshHex8.h
-  include/GooseFEM/Element.hpp
-  include/GooseFEM/Element.h
-  include/GooseFEM/ElementQuad4.hpp
-  include/GooseFEM/ElementQuad4.h
-  include/GooseFEM/ElementHex8.hpp
-  include/GooseFEM/ElementHex8.h
-  include/GooseFEM/Vector.hpp
-  include/GooseFEM/Vector.h
-  include/GooseFEM/MatrixDiagonal.hpp
-  include/GooseFEM/MatrixDiagonal.h
-  include/GooseFEM/Iterate.hpp
-  include/GooseFEM/Iterate.h
-  include/GooseFEM/Dynamics.hpp
-  include/GooseFEM/Dynamics.h
+  include/xGooseFEM/GooseFEM.h
+  include/xGooseFEM/Mesh.hpp
+  include/xGooseFEM/Mesh.h
+  include/xGooseFEM/MeshTri3.hpp
+  include/xGooseFEM/MeshTri3.h
+  include/xGooseFEM/MeshQuad4.hpp
+  include/xGooseFEM/MeshQuad4.h
+  include/xGooseFEM/MeshHex8.hpp
+  include/xGooseFEM/MeshHex8.h
+  include/xGooseFEM/Element.hpp
+  include/xGooseFEM/Element.h
+  include/xGooseFEM/ElementQuad4.hpp
+  include/xGooseFEM/ElementQuad4.h
+  include/xGooseFEM/ElementHex8.hpp
+  include/xGooseFEM/ElementHex8.h
+  include/xGooseFEM/Vector.hpp
+  include/xGooseFEM/Vector.h
+  include/xGooseFEM/MatrixDiagonal.hpp
+  include/xGooseFEM/MatrixDiagonal.h
+  include/xGooseFEM/Iterate.hpp
+  include/xGooseFEM/Iterate.h
+  include/xGooseFEM/Dynamics.hpp
+  include/xGooseFEM/Dynamics.h
 )
 
 # automatically parse the version number
@@ -59,8 +59,8 @@ set(GOOSEFEM_INCLUDE_DIR     "${CMAKE_INSTALL_PREFIX}/${INCLUDE_INSTALL_DIR}")
 set(INCLUDE_INSTALL_DIR      "${CMAKE_INSTALL_INCLUDEDIR}/${PROJECT_NAME}")
 set(CMAKEPACKAGE_INSTALL_DIR "${CMAKE_INSTALL_DATADIR}/${PROJECT_NAME}")
 set(PKGCONFIG_INSTALL_DIR    "${CMAKE_INSTALL_DATADIR}/pkgconfig")
-set(fcmake                   "${PROJECT_NAME}Config.cmake")
-set(fpkg                     "${PROJECT_NAME}.pc")
+set(fcmake                   "GooseFEMConfig.cmake")
+set(fpkg                     "GooseFEM.pc")
 
 # options
 # -------
@@ -86,8 +86,8 @@ endif()
 # ---------------
 
 configure_package_config_file(
-  ${CMAKE_CURRENT_SOURCE_DIR}/${PROJECT_NAME}Config.cmake.in
-  ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}Config.cmake
+  ${CMAKE_CURRENT_SOURCE_DIR}/GooseFEMConfig.cmake.in
+  ${CMAKE_CURRENT_BINARY_DIR}/GooseFEMConfig.cmake
   PATH_VARS GOOSEFEM_INCLUDE_DIR GOOSEFEM_ROOT_DIR
   INSTALL_DESTINATION ${CMAKEPACKAGE_INSTALL_DIR}
   NO_CHECK_REQUIRED_COMPONENTS_MACRO

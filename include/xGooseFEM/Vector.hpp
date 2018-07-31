@@ -4,8 +4,8 @@
 
 ================================================================================================= */
 
-#ifndef GOOSEFEM_VECTOR_CPP
-#define GOOSEFEM_VECTOR_CPP
+#ifndef XGOOSEFEM_VECTOR_CPP
+#define XGOOSEFEM_VECTOR_CPP
 
 // -------------------------------------------------------------------------------------------------
 
@@ -13,7 +13,7 @@
 
 // =========================================== GooseFEM ============================================
 
-namespace GooseFEM {
+namespace xGooseFEM {
 
 // ------------------------------------------ constructor ------------------------------------------
 
@@ -603,10 +603,10 @@ inline void Vector::assembleDofs(const xt::xtensor<double,3> &elemvec,
 
   dofval *= 0.0;
 
-    for ( size_t e = 0 ; e < m_nelem ; ++e )
-      for ( size_t m = 0 ; m < m_nne ; ++m )
-        for ( size_t i = 0 ; i < m_ndim ; ++i )
-          dofval(m_dofs(m_conn(e,m),i)) += elemvec(e,m,i);
+  for ( size_t e = 0 ; e < m_nelem ; ++e )
+    for ( size_t m = 0 ; m < m_nne ; ++m )
+      for ( size_t i = 0 ; i < m_ndim ; ++i )
+        dofval(m_dofs(m_conn(e,m),i)) += elemvec(e,m,i);
 }
 
 // -------------------------------------------------------------------------------------------------

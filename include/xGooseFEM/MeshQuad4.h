@@ -4,16 +4,16 @@
 
 ================================================================================================= */
 
-#ifndef GOOSEFEM_MESHQUAD4_H
-#define GOOSEFEM_MESHQUAD4_H
+#ifndef XGOOSEFEM_MESHQUAD4_H
+#define XGOOSEFEM_MESHQUAD4_H
 
 // -------------------------------------------------------------------------------------------------
 
 #include "GooseFEM.h"
 
-// ===================================== GooseFEM::Mesh::Quad4 =====================================
+// ===================================== xGooseFEM::Mesh::Quad4 =====================================
 
-namespace GooseFEM {
+namespace xGooseFEM {
 namespace Mesh {
 namespace Quad4 {
 

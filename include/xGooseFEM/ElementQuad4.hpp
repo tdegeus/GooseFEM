@@ -4,16 +4,16 @@
 
 ================================================================================================= */
 
-#ifndef GOOSEFEM_ELEMENTQUAD4_CPP
-#define GOOSEFEM_ELEMENTQUAD4_CPP
+#ifndef XGOOSEFEM_ELEMENTQUAD4_CPP
+#define XGOOSEFEM_ELEMENTQUAD4_CPP
 
 // -------------------------------------------------------------------------------------------------
 
 #include "ElementQuad4.h"
 
-// =================================== GooseFEM::Element::Quad4 ====================================
+// =================================== xGooseFEM::Element::Quad4 ====================================
 
-namespace GooseFEM {
+namespace xGooseFEM {
 namespace Element {
 namespace Quad4 {
 
@@ -33,7 +33,7 @@ inline double inv(const T2 &A, T2 &Ainv)
   return det;
 }
 
-// ================================ GooseFEM::Element::Quad4::Gauss ================================
+// ================================ xGooseFEM::Element::Quad4::Gauss ================================
 
 namespace Gauss {
 
@@ -81,7 +81,7 @@ inline xt::xtensor<double,1> w()
 
 }
 
-// ================================ GooseFEM::Element::Quad4::Nodal ================================
+// ================================ xGooseFEM::Element::Quad4::Nodal ================================
 
 namespace Nodal {
 

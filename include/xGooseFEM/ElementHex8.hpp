@@ -4,16 +4,16 @@
 
 ================================================================================================= */
 
-#ifndef GOOSEFEM_ELEMENTHEX8_CPP
-#define GOOSEFEM_ELEMENTHEX8_CPP
+#ifndef XGOOSEFEM_ELEMENTHEX8_CPP
+#define XGOOSEFEM_ELEMENTHEX8_CPP
 
 // -------------------------------------------------------------------------------------------------
 
 #include "ElementHex8.h"
 
-// ==================================== GooseFEM::Element::Hex8 ====================================
+// ==================================== xGooseFEM::Element::Hex8 ====================================
 
-namespace GooseFEM {
+namespace xGooseFEM {
 namespace Element {
 namespace Hex8 {
 
@@ -43,7 +43,7 @@ inline double inv(const T2 &A, T2 &Ainv)
   return det;
 }
 
-// ================================ GooseFEM::Element::Hex8::Gauss =================================
+// ================================ xGooseFEM::Element::Hex8::Gauss =================================
 
 namespace Gauss {
 
@@ -99,7 +99,7 @@ inline xt::xtensor<double,1> w()
 
 }
 
-// ================================ GooseFEM::Element::Hex8::Nodal ================================
+// ================================ xGooseFEM::Element::Hex8::Nodal ================================
 
 namespace Nodal {
 

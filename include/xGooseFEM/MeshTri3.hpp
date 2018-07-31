@@ -4,16 +4,16 @@
 
 ================================================================================================= */
 
-#ifndef GOOSEFEM_MESHTRI3_CPP
-#define GOOSEFEM_MESHTRI3_CPP
+#ifndef XGOOSEFEM_MESHTRI3_CPP
+#define XGOOSEFEM_MESHTRI3_CPP
 
 // -------------------------------------------------------------------------------------------------
 
 #include "MeshTri3.h"
 
-// ===================================== GooseFEM::Mesh::Tri3 ======================================
+// ===================================== xGooseFEM::Mesh::Tri3 ======================================
 
-namespace GooseFEM {
+namespace xGooseFEM {
 namespace Mesh {
 namespace Tri3 {
 
@@ -277,7 +277,7 @@ inline size_t Regular::nodesOrigin() const
 
 inline xt::xtensor<size_t,2> Regular::dofs() const
 {
-  return GooseFEM::Mesh::dofs(m_nnode,m_ndim);
+  return xGooseFEM::Mesh::dofs(m_nnode,m_ndim);
 }
 
 // ------------------------ DOP-numbers with periodic dependencies removed -------------------------
@@ -285,7 +285,7 @@ inline xt::xtensor<size_t,2> Regular::dofs() const
 inline xt::xtensor<size_t,2> Regular::dofsPeriodic() const
 {
   // DOF-numbers for each component of each node (sequential)
-  xt::xtensor<size_t,2> out = GooseFEM::Mesh::dofs(m_nnode,m_ndim);
+  xt::xtensor<size_t,2> out = xGooseFEM::Mesh::dofs(m_nnode,m_ndim);
 
   // periodic node-pairs
   xt::xtensor<size_t,2> nodePer = nodesPeriodic();
@@ -296,7 +296,7 @@ inline xt::xtensor<size_t,2> Regular::dofsPeriodic() const
       out(nodePer(i,1),j) = out(nodePer(i,0),j);
 
   // renumber "out" to be sequential
-  return GooseFEM::Mesh::renumber(out);
+  return xGooseFEM::Mesh::renumber(out);
 }
 
 // ------------------------------ get the orientation of each element ------------------------------
@@ -389,7 +389,7 @@ inline xt::xtensor<size_t,2> retriangulate(const xt::xtensor<double,2> &coor, co
   return setOrientation(coor,out,orientation);
 }
 
-// ================================= GooseFEM::Mesh::Tri3::Private =================================
+// ================================= xGooseFEM::Mesh::Tri3::Private =================================
 
 namespace Private {
 

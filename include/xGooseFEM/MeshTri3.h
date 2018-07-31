@@ -4,16 +4,16 @@
 
 ================================================================================================= */
 
-#ifndef GOOSEFEM_MESHTRI3_H
-#define GOOSEFEM_MESHTRI3_H
+#ifndef XGOOSEFEM_MESHTRI3_H
+#define XGOOSEFEM_MESHTRI3_H
 
 // -------------------------------------------------------------------------------------------------
 
 #include "Mesh.h"
 
-// ===================================== GooseFEM::Mesh::Tri3 ======================================
+// ===================================== xGooseFEM::Mesh::Tri3 ======================================
 
-namespace GooseFEM {
+namespace xGooseFEM {
 namespace Mesh {
 namespace Tri3 {
 
@@ -82,7 +82,7 @@ inline xt::xtensor<size_t,2> setOrientation(const xt::xtensor<double,2> &coor, c
 // (2) the more rigorous "TriCompute"
 inline xt::xtensor<size_t,2> retriangulate(const xt::xtensor<double,2> &coor, const xt::xtensor<size_t,2> &conn, int orientation=-1);
 
-// ================================= GooseFEM::Mesh::Tri3::Private =================================
+// ================================= xGooseFEM::Mesh::Tri3::Private =================================
 
 namespace Private {
 

@@ -3,7 +3,7 @@
 
 // =================================================================================================
 
-TEST_CASE("GooseFEM::Vector", "Vector.h")
+TEST_CASE("xGooseFEM::Vector", "Vector.h")
 {
 
 // =================================================================================================
@@ -11,10 +11,10 @@ TEST_CASE("GooseFEM::Vector", "Vector.h")
 SECTION( "asDofs - nodevec" )
 {
   // mesh
-  GooseFEM::Mesh::Quad4::Regular mesh(2,2);
+  xGooseFEM::Mesh::Quad4::Regular mesh(2,2);
 
   // vector-definition
-  GooseFEM::Vector vector(mesh.conn(), mesh.dofsPeriodic());
+  xGooseFEM::Vector vector(mesh.conn(), mesh.dofsPeriodic());
 
   // velocity field
   // - allocate
@@ -52,10 +52,10 @@ SECTION( "asDofs - nodevec" )
 SECTION( "asDofs - elemvec" )
 {
   // mesh
-  GooseFEM::Mesh::Quad4::Regular mesh(2,2);
+  xGooseFEM::Mesh::Quad4::Regular mesh(2,2);
 
   // vector-definition
-  GooseFEM::Vector vector(mesh.conn(), mesh.dofsPeriodic());
+  xGooseFEM::Vector vector(mesh.conn(), mesh.dofsPeriodic());
 
   // velocity field
   // - allocate
@@ -94,10 +94,10 @@ SECTION( "asDofs - elemvec" )
 SECTION( "asDofs - assembleDofs" )
 {
   // mesh
-  GooseFEM::Mesh::Quad4::Regular mesh(2,2);
+  xGooseFEM::Mesh::Quad4::Regular mesh(2,2);
 
   // vector-definition
-  GooseFEM::Vector vector(mesh.conn(), mesh.dofsPeriodic());
+  xGooseFEM::Vector vector(mesh.conn(), mesh.dofsPeriodic());
 
   // force field
   // - allocate
@@ -135,10 +135,10 @@ SECTION( "asDofs - assembleDofs" )
 SECTION( "asDofs - assembleNode" )
 {
   // mesh
-  GooseFEM::Mesh::Quad4::Regular mesh(2,2);
+  xGooseFEM::Mesh::Quad4::Regular mesh(2,2);
 
   // vector-definition
-  GooseFEM::Vector vector(mesh.conn(), mesh.dofsPeriodic());
+  xGooseFEM::Vector vector(mesh.conn(), mesh.dofsPeriodic());
 
   // force field
   // - allocate

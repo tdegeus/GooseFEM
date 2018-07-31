@@ -4,16 +4,16 @@
 
 ================================================================================================= */
 
-#ifndef GOOSEFEM_ELEMENTHEX8_H
-#define GOOSEFEM_ELEMENTHEX8_H
+#ifndef XGOOSEFEM_ELEMENTHEX8_H
+#define XGOOSEFEM_ELEMENTHEX8_H
 
 // -------------------------------------------------------------------------------------------------
 
 #include "GooseFEM.h"
 
-// ==================================== GooseFEM::Element::Hex8 ====================================
+// ==================================== xGooseFEM::Element::Hex8 ====================================
 
-namespace GooseFEM {
+namespace xGooseFEM {
 namespace Element {
 namespace Hex8 {
 
@@ -25,7 +25,7 @@ using T2 = xt::xtensor_fixed<double, xt::xshape<ndim,ndim>>;
 
 inline double inv(const T2 &A, T2 &Ainv);
 
-// ================================ GooseFEM::Element::Hex8::Gauss =================================
+// ================================ xGooseFEM::Element::Hex8::Gauss =================================
 
 namespace Gauss {
 inline size_t                nip(); // number of integration points
@@ -33,7 +33,7 @@ inline xt::xtensor<double,2> xi();  // integration point coordinates (local coor
 inline xt::xtensor<double,1> w();   // integration point weights
 }
 
-// ================================ GooseFEM::Element::Hex8::Nodal =================================
+// ================================ xGooseFEM::Element::Hex8::Nodal =================================
 
 namespace Nodal {
 inline size_t                nip(); // number of integration points

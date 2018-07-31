@@ -6,7 +6,7 @@ using T2s = cppmat::tiny::cartesian::tensor2s<double,3>;
 
 // =================================================================================================
 
-TEST_CASE("GooseFEM::ElementHex8", "ElementHex8.h")
+TEST_CASE("xGooseFEM::ElementHex8", "ElementHex8.h")
 {
 
 using T2 = xt::xtensor_fixed<double, xt::xshape<3,3>>;
@@ -16,17 +16,17 @@ using T2 = xt::xtensor_fixed<double, xt::xshape<3,3>>;
 SECTION( "int_N_scalar_NT_dV" )
 {
   // mesh
-  GooseFEM::Mesh::Hex8::Regular mesh(3,3,3);
+  xGooseFEM::Mesh::Hex8::Regular mesh(3,3,3);
 
   // vector-definition, and a diagonal matrix
-  GooseFEM::Vector         vec(mesh.conn(), mesh.dofsPeriodic());
-  GooseFEM::MatrixDiagonal mat(mesh.conn(), mesh.dofsPeriodic());
+  xGooseFEM::Vector         vec(mesh.conn(), mesh.dofsPeriodic());
+  xGooseFEM::MatrixDiagonal mat(mesh.conn(), mesh.dofsPeriodic());
 
   // element definition, with nodal quadrature
-  GooseFEM::Element::Hex8::Quadrature quad(
+  xGooseFEM::Element::Hex8::Quadrature quad(
     vec.asElement(mesh.coor()),
-    GooseFEM::Element::Hex8::Nodal::xi(),
-    GooseFEM::Element::Hex8::Nodal::w()
+    xGooseFEM::Element::Hex8::Nodal::xi(),
+    xGooseFEM::Element::Hex8::Nodal::w()
   );
 
   // scalar per quadrature point (e.g. mass-density "rho")
@@ -50,13 +50,13 @@ SECTION( "int_N_scalar_NT_dV" )
 SECTION( "symGradN_vector" )
 {
   // mesh
-  GooseFEM::Mesh::Hex8::FineLayer mesh(27,27,27);
+  xGooseFEM::Mesh::Hex8::FineLayer mesh(27,27,27);
 
   // vector-definition
-  GooseFEM::Vector vec(mesh.conn(), mesh.dofs());
+  xGooseFEM::Vector vec(mesh.conn(), mesh.dofs());
 
   // element definition, with Gauss quadrature
-  GooseFEM::Element::Hex8::Quadrature quad( vec.asElement(mesh.coor()) );
+  xGooseFEM::Element::Hex8::Quadrature quad( vec.asElement(mesh.coor()) );
 
   // macroscopic deformation gradient and strain
   // - zero-initialize
@@ -113,13 +113,13 @@ SECTION( "symGradN_vector" )
 SECTION( "symGradN_vector, int_gradN_dot_tensor2s_dV" )
 {
   // mesh
-  GooseFEM::Mesh::Hex8::FineLayer mesh(27,27,27);
+  xGooseFEM::Mesh::Hex8::FineLayer mesh(27,27,27);
 
   // vector-definition
-  GooseFEM::Vector vec(mesh.conn(), mesh.dofsPeriodic());
+  xGooseFEM::Vector vec(mesh.conn(), mesh.dofsPeriodic());
 
   // element definition, with Gauss quadrature
-  GooseFEM::Element::Hex8::Quadrature quad( vec.asElement(mesh.coor()) );
+  xGooseFEM::Element::Hex8::Quadrature quad( vec.asElement(mesh.coor()) );
 
   // macroscopic deformation gradient and strain
   // - zero-initialize
