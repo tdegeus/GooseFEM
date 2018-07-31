@@ -9,7 +9,7 @@
 #include <xtensor/xrandom.hpp>
 #include <xtensor/xmath.hpp>
 
-#include "../src/GooseFEM/GooseFEM.h"
+#include "../include/GooseFEM/GooseFEM.h"
 
 #define EQ(a,b) REQUIRE_THAT( (a), Catch::WithinAbs((b), 1.e-12) );
 

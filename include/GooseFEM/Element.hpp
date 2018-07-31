@@ -26,7 +26,7 @@ inline xt::xtensor<double,3> asElementVector(const xt::xtensor<size_t,2> &conn, 
   size_t ndim  = nodevec.shape()[1];
 
   // allocate output: nodal vectors stored per element
-  xt::xtensor<double,3> elemvec = xt::zeros<double>({nelem, nne, ndim});
+  xt::xtensor<double,3> elemvec = xt::empty<double>({nelem, nne, ndim});
 
   // read from nodal vectors
   #pragma omp parallel for
@@ -55,29 +55,12 @@ inline xt::xtensor<double,2> assembleNodeVector(const xt::xtensor<size_t,2> &con
   // zero-initialize output: nodal vectors
   xt::xtensor<double,2> nodevec = xt::zeros<double>({nnode, ndim});
 
-  // temporarily disable parallelization by Eigen
-  Eigen::setNbThreads(1);
+  // assemble from nodal vectors stored per element
+  for ( size_t e = 0 ; e < nelem ; ++e )
+    for ( size_t m = 0 ; m < nne ; ++m )
+      for ( size_t i = 0 ; i < ndim ; ++i )
+        nodevec(conn(e,m),i) += elemvec(e,m,i);
 
-  // start threads (all variables declared in this scope are local to each thread)
-  #pragma omp parallel
-  {
-    // zero-initialize output: nodal vectors
-    xt::xtensor<double,2> t_nodevec = xt::zeros<double>({nnode, ndim});
-
-    // assemble from nodal vectors stored per element
-    #pragma omp for
-    for ( size_t e = 0 ; e < nelem ; ++e )
-      for ( size_t m = 0 ; m < nne ; ++m )
-        for ( size_t i = 0 ; i < ndim ; ++i )
-          t_nodevec(conn(e,m),i) += elemvec(e,m,i);
-
-    // reduce: combine result obtained on the different threads
-    #pragma omp critical
-      nodevec += t_nodevec;
-  }
-
-  // reset automatic parallelization by Eigen
-  Eigen::setNbThreads(0);
 
   return nodevec;
 }

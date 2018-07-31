@@ -347,6 +347,17 @@ inline xt::xtensor<double,2> Quadrature::dV() const
   return out;
 }
 
+// -------------------------------------------------------------------------------------------------
+
+inline xt::xtensor<double,4> Quadrature::dVtensor() const
+{
+  xt::xtensor<double,4> out = xt::empty<double>({m_nelem, m_nip, m_ndim, m_ndim});
+
+  this->dV(out);
+
+  return out;
+}
+
 // -------------------------------------- number of elements ---------------------------------------
 
 inline size_t Quadrature::nelem() const

@@ -30,6 +30,11 @@
 #include <xtensor/xview.hpp>
 #include <xtensor/xstrided_view.hpp>
 #include <xtensor/xio.hpp>
+#include <xtensor/xsort.hpp>
+#include <xtensor/xmath.hpp>
+#include <xtensor/xadapt.hpp>
+#include <xtensor/xutils.hpp>
+#include <xtensor/xlayout.hpp>
 
 using namespace xt::placeholders;
 

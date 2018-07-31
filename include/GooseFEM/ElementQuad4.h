@@ -97,8 +97,9 @@ public:
   // - in-place
   void dV(xt::xtensor<double,2> &qscalar) const;
   void dV(xt::xtensor<double,4> &qtensor) const; // same volume for all tensor components
-  // - return qscalar
+  // - return qscalar/qtensor
   xt::xtensor<double,2> dV() const;
+  xt::xtensor<double,4> dVtensor() const;
 
   // dyadic product "qtensor(i,j) += dNdx(m,i) * elemvec(m,j)", its transpose and its symmetric part
   // - in-place

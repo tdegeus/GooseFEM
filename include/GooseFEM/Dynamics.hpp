@@ -22,8 +22,9 @@ inline void Verlet(Geometry &g, double dt, size_t nstep)
 {
   for ( size_t istep = 0 ; istep < nstep ; ++istep )
   {
-    // history
+    // variables & history
 
+    xt::xtensor<double,2> u;
     xt::xtensor<double,1> V;
     xt::xtensor<double,1> A;
     xt::xtensor<double,1> V_n = g.dofs_v();
@@ -31,17 +32,21 @@ inline void Verlet(Geometry &g, double dt, size_t nstep)
 
     // new displacement
 
-    g.set_u(xt::eval( g.u() + dt * g.v() + 0.5 * std::pow(dt,2.) * g.a() ));
+    u = g.u() + dt * g.v() + 0.5 * std::pow(dt,2.) * g.a();
+
+    g.set_u(u);
 
     // new acceleration
 
     A = g.solve_A();
 
-    g.set_a(xt::eval( A ));
+    g.set_a(A);
 
     // new velocity
 
-    g.set_v(xt::eval( V_n + .5 * dt * ( A_n + A ) ));
+    V = V_n + .5 * dt * ( A_n + A );
+
+    g.set_v(V);
   }
 }
 
@@ -51,8 +56,9 @@ inline void velocityVerlet(Geometry &g, double dt, size_t nstep)
 {
   for ( size_t istep = 0 ; istep < nstep ; ++istep )
   {
-    // history
+    // variables & history
 
+    xt::xtensor<double,2> u;
     xt::xtensor<double,1> V;
     xt::xtensor<double,1> A;
     xt::xtensor<double,1> V_n = g.dofs_v();
@@ -60,27 +66,35 @@ inline void velocityVerlet(Geometry &g, double dt, size_t nstep)
 
     // new displacement
 
-    g.set_u(xt::eval( g.u() + dt * g.v() + 0.5 * std::pow(dt,2.) * g.a() ));
+    u = g.u() + dt * g.v() + 0.5 * std::pow(dt,2.) * g.a();
+
+    g.set_u(u);
 
     // estimate new velocity
 
-    g.set_v(xt::eval( V_n + dt * A_n ));
+    V = V_n + dt * A_n;
+
+    g.set_v(V);
 
     A = g.solve_A();
 
-    g.set_v(xt::eval( V_n + .5 * dt * ( A_n + A ) ));
+    V = V_n + .5 * dt * ( A_n + A );
+
+    g.set_v(V);
 
     // new velocity
 
     A = g.solve_A();
 
-    g.set_v(xt::eval( V_n + .5 * dt * ( A_n + A ) ));
+    V = V_n + .5 * dt * ( A_n + A );
+
+    g.set_v(V);
 
     // new acceleration
 
     A = g.solve_A();
 
-    g.set_a(xt::eval( A ));
+    g.set_a(A);
   }
 }
 
@@ -92,7 +106,9 @@ inline void forwardEuler(Geometry &g, double dt, size_t nstep)
 {
   for ( size_t istep = 0 ; istep < nstep ; ++istep )
   {
-    g.set_u(xt::eval( g.dofs_u() + dt * g.solve_V() ));
+    xt::xtensor<double,1> U = g.dofs_u() + dt * g.solve_V();
+
+    g.set_u(U);
   }
 }
 }
