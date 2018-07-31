@@ -9,7 +9,7 @@ from setuptools import setup, Extension
 import sys, re
 import setuptools
 import pybind11
-import pyxtensor
+import cppmat
 
 header = open('include/GooseFEM/GooseFEM.h','r').read()
 world  = re.split(r'(.*)(\#define GOOSEFEM_WORLD_VERSION\ )([0-9]+)(.*)',header)[3]
@@ -23,13 +23,11 @@ ext_modules = [
     'GooseFEM',
     ['include/GooseFEM/python.cpp'],
     include_dirs=[
-      pybind11 .get_include(False),
-      pybind11 .get_include(True ),
-      pyxtensor.get_include(False),
-      pyxtensor.get_include(True ),
-      pyxtensor.find_xtensor(),
-      pyxtensor.find_xtl(),
-      pyxtensor.find_eigen(),
+      pybind11.get_include(False),
+      pybind11.get_include(True ),
+      cppmat  .get_include(False),
+      cppmat  .get_include(True ),
+      cppmat  .find_eigen()
     ],
     language='c++'
   ),
@@ -45,7 +43,7 @@ setup(
   author_email     = 'tom@geus.me',
   url              = 'https://github.com/tdegeus/GooseFEM',
   ext_modules      = ext_modules,
-  install_requires = ['pybind11>=2.2.0','pyxtensor>=0.0.1'],
-  cmdclass         = {'build_ext': pyxtensor.BuildExt},
+  install_requires = ['pybind11>=2.2.0','cppmat>=1.0.6'],
+  cmdclass         = {'build_ext': cppmat.BuildExt},
   zip_safe         = False,
 )
