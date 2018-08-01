@@ -11,7 +11,7 @@
 
 #include "GooseFEM.h"
 
-// ======================================= xGooseFEM::Dynamics =======================================
+// ======================================= GooseFEM::Dynamics =======================================
 
 namespace xGooseFEM {
 namespace Dynamics {

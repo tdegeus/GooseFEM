@@ -19,9 +19,7 @@ namespace Quad4 {
 
 // ======================================== tensor algebra =========================================
 
-static const size_t ndim = 2;
-
-using T2 = xt::xtensor_fixed<double, xt::xshape<ndim,ndim>>;
+using T2 = xt::xtensor_fixed<double, xt::xshape<2,2>>;
 
 inline double inv(const T2 &A, T2 &Ainv);
 

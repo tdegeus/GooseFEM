@@ -11,7 +11,7 @@
 
 #include "ElementQuad4.h"
 
-// =================================== xGooseFEM::Element::Quad4 ====================================
+// =================================== GooseFEM::Element::Quad4 ====================================
 
 namespace xGooseFEM {
 namespace Element {
@@ -33,7 +33,7 @@ inline double inv(const T2 &A, T2 &Ainv)
   return det;
 }
 
-// ================================ xGooseFEM::Element::Quad4::Gauss ================================
+// ================================ GooseFEM::Element::Quad4::Gauss ================================
 
 namespace Gauss {
 
@@ -48,8 +48,8 @@ inline size_t nip()
 
 inline xt::xtensor<double,2> xi()
 {
-  static const size_t nip  = 4;
-  static const size_t ndim = 2;
+  size_t nip  = 4;
+  size_t ndim = 2;
 
   xt::xtensor<double,2> xi = xt::empty<double>({nip,ndim});
 
@@ -65,7 +65,7 @@ inline xt::xtensor<double,2> xi()
 
 inline xt::xtensor<double,1> w()
 {
-  static const size_t nip = 4;
+  size_t nip = 4;
 
   xt::xtensor<double,1> w = xt::empty<double>({nip});
 
@@ -81,7 +81,7 @@ inline xt::xtensor<double,1> w()
 
 }
 
-// ================================ xGooseFEM::Element::Quad4::Nodal ================================
+// ================================ GooseFEM::Element::Quad4::Nodal ================================
 
 namespace Nodal {
 
@@ -96,8 +96,8 @@ inline size_t nip()
 
 inline xt::xtensor<double,2> xi()
 {
-  static const size_t nip  = 4;
-  static const size_t ndim = 2;
+  size_t nip  = 4;
+  size_t ndim = 2;
 
   xt::xtensor<double,2> xi = xt::empty<double>({nip,ndim});
 
@@ -113,7 +113,7 @@ inline xt::xtensor<double,2> xi()
 
 inline xt::xtensor<double,1> w()
 {
-  static const size_t nip = 4;
+  size_t nip = 4;
 
   xt::xtensor<double,1> w = xt::empty<double>({nip});
 
@@ -138,13 +138,13 @@ inline Quadrature::Quadrature(const xt::xtensor<double,3> &x) : m_x(x)
   assert( m_x.shape()[1] == m_nne  );
   assert( m_x.shape()[2] == m_ndim );
 
-  // set integration scheme
-  m_xi = Gauss::xi();
-  m_w  = Gauss::w ();
+  // integration scheme
+  m_nip = Gauss::nip();
+  m_xi  = Gauss::xi();
+  m_w   = Gauss::w();
 
   // extract number of elements
   m_nelem = m_x.shape()[0];
-  m_nip   = m_w.size();
 
   // allocate arrays
   // - shape functions
@@ -520,8 +520,8 @@ inline void Quadrature::symGradN_vector(
       //   eps (j,i)  = 0.5 * ( grad(i,j) + grad(j,i) )
       eps(0,0) =   dNx(0,0)*u(0,0) + dNx(1,0)*u(1,0) + dNx(2,0)*u(2,0) + dNx(3,0)*u(3,0);
       eps(1,1) =   dNx(0,1)*u(0,1) + dNx(1,1)*u(1,1) + dNx(2,1)*u(2,1) + dNx(3,1)*u(3,1);
-      eps(0,1) = ( dNx(0,1)*u(0,0) + dNx(1,1)*u(1,0) + dNx(2,1)*u(2,0) + dNx(3,1)*u(3,0) +
-                   dNx(0,0)*u(0,1) + dNx(1,0)*u(1,1) + dNx(2,0)*u(2,1) + dNx(3,0)*u(3,1) ) / 2.;
+      eps(0,1) = ( dNx(0,0)*u(0,1) + dNx(1,0)*u(1,1) + dNx(2,0)*u(2,1) + dNx(3,0)*u(3,1) +
+                   dNx(0,1)*u(0,0) + dNx(1,1)*u(1,0) + dNx(2,1)*u(2,0) + dNx(3,1)*u(3,0) ) / 2.;
       eps(1,0) =   eps(0,1);
     }
   }
@@ -597,13 +597,13 @@ inline xt::xtensor<double,3> Quadrature::int_N_scalar_NT_dV(const xt::xtensor<do
 inline void Quadrature::int_gradN_dot_tensor2_dV(const xt::xtensor<double,4> &qtensor,
   xt::xtensor<double,3> &elemvec) const
 {
-  assert( qtensor.shape()[0] == m_nelem ); // number of elements
-  assert( qtensor.shape()[1] == m_nip   ); // number of integration points
-  assert( qtensor.shape()[2] >= m_ndim  ); // number of dimensions
-  assert( qtensor.shape()[3] >= m_ndim  ); // number of dimensions
-  assert( elemvec.shape()[0] == m_nelem ); // number of elements
-  assert( elemvec.shape()[1] == m_nne   ); // number of nodes per element
-  assert( elemvec.shape()[2] == m_ndim  ); // number of dimensions
+  assert( qtensor.shape()[0] == m_nelem );
+  assert( qtensor.shape()[1] == m_nip   );
+  assert( qtensor.shape()[2] >= m_ndim  );
+  assert( qtensor.shape()[3] >= m_ndim  );
+  assert( elemvec.shape()[0] == m_nelem );
+  assert( elemvec.shape()[1] == m_nne   );
+  assert( elemvec.shape()[2] == m_ndim  );
 
   // zero-initialize output: matrix of vectors
   elemvec *= 0.0;

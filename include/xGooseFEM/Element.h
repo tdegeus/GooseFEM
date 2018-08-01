@@ -11,7 +11,7 @@
 
 #include "GooseFEM.h"
 
-// ======================================= xGooseFEM::Element =======================================
+// ======================================= GooseFEM::Element =======================================
 
 namespace xGooseFEM {
 namespace Element {

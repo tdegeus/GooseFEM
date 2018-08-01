@@ -11,7 +11,7 @@
 
 #include "Element.h"
 
-// ======================================= xGooseFEM::Element =======================================
+// ======================================= GooseFEM::Element =======================================
 
 namespace xGooseFEM {
 namespace Element {
@@ -60,7 +60,6 @@ inline xt::xtensor<double,2> assembleNodeVector(const xt::xtensor<size_t,2> &con
     for ( size_t m = 0 ; m < nne ; ++m )
       for ( size_t i = 0 ; i < ndim ; ++i )
         nodevec(conn(e,m),i) += elemvec(e,m,i);
-
 
   return nodevec;
 }
