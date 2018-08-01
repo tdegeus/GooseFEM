@@ -42,8 +42,7 @@ inline ArrD asElementVector(const MatS &conn, const MatD &nodevec)
 
 inline MatD assembleNodeVector(const MatS &conn, const ArrD &elemvec)
 {
-  // check input
-  assert( elemvec.rank() == 3 ); // nodal vector stored per element [nelem, nne, ndim]
+  assert( elemvec.rank() == 3 );
 
   // extract dimensions
   size_t nelem = static_cast<size_t>(conn.rows()); // number of elements
@@ -58,29 +57,11 @@ inline MatD assembleNodeVector(const MatS &conn, const ArrD &elemvec)
   // zero-initialize output: nodal vectors
   MatD nodevec = MatD::Zero(nnode, ndim);
 
-  // temporarily disable parallelization by Eigen
-  Eigen::setNbThreads(1);
-
-  // start threads (all variables declared in this scope are local to each thread)
-  #pragma omp parallel
-  {
-    // zero-initialize output: nodal vectors
-    MatD t_nodevec = MatD::Zero(nnode, ndim);
-
-    // assemble from nodal vectors stored per element
-    #pragma omp for
-    for ( size_t e = 0 ; e < nelem ; ++e )
-      for ( size_t m = 0 ; m < nne ; ++m )
-        for ( size_t i = 0 ; i < ndim ; ++i )
-          t_nodevec(conn(e,m),i) += elemvec(e,m,i);
-
-    // reduce: combine result obtained on the different threads
-    #pragma omp critical
-      nodevec += t_nodevec;
-  }
-
-  // reset automatic parallelization by Eigen
-  Eigen::setNbThreads(0);
+  // assemble from nodal vectors stored per element
+  for ( size_t e = 0 ; e < nelem ; ++e )
+    for ( size_t m = 0 ; m < nne ; ++m )
+      for ( size_t i = 0 ; i < ndim ; ++i )
+        nodevec(conn(e,m),i) += elemvec(e,m,i);
 
   return nodevec;
 }

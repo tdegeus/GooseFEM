@@ -17,6 +17,14 @@ namespace GooseFEM {
 namespace Element {
 namespace Quad4 {
 
+// ======================================== tensor algebra =========================================
+
+static const size_t ndim = 2;
+
+using T2 = cppmat::tiny::cartesian::tensor2<double,ndim>;
+
+inline double inv(const T2 &A, T2 &Ainv);
+
 // ================================ GooseFEM::Element::Quad4::Gauss ================================
 
 namespace Gauss {
@@ -77,7 +85,8 @@ public:
 
   // constructor: integration point coordinates and weights are optional (default: Gauss)
   Quadrature() = default;
-  Quadrature(const ArrD &x, const ArrD &xi=ArrD(), const ArrD &w=ArrD());
+  Quadrature(const ArrD &x);
+  Quadrature(const ArrD &x, const ArrD &xi, const ArrD &w);
 
   // update the nodal positions (shape of "x" should match the earlier definition)
   void update_x(const ArrD &x);
@@ -93,21 +102,36 @@ public:
 
   // dyadic product "qtensor(i,j) += dNdx(m,i) * elemvec(m,j)", its transpose and its symmetric part
   // - allow template (e.g. T2/T2s, or higher dimensional tensors)
+  template<class T> void gradN_vector   (const ArrD &elemvec, ArrD &qtensor) const;
+  template<class T> void gradN_vector_T (const ArrD &elemvec, ArrD &qtensor) const;
+  template<class T> void symGradN_vector(const ArrD &elemvec, ArrD &qtensor) const;
+  // -
   template<class T> ArrD gradN_vector   (const ArrD &elemvec) const; // returns: qtensor
   template<class T> ArrD gradN_vector_T (const ArrD &elemvec) const; // returns: qtensor
   template<class T> ArrD symGradN_vector(const ArrD &elemvec) const; // returns: qtensor
   // - default template
+  void gradN_vector   (const ArrD &elemvec, ArrD &qtensor) const; // template: T2
+  void gradN_vector_T (const ArrD &elemvec, ArrD &qtensor) const; // template: T2
+  void symGradN_vector(const ArrD &elemvec, ArrD &qtensor) const; // template: T2s
+  // -
   ArrD gradN_vector   (const ArrD &elemvec) const; // template: T2
   ArrD gradN_vector_T (const ArrD &elemvec) const; // template: T2
   ArrD symGradN_vector(const ArrD &elemvec) const; // template: T2s
 
   // integral of the scalar product "elemmat(m*ndim+i,n*ndim+i) += N(m) * qscalar * N(n) * dV"
+  void int_N_scalar_NT_dV(const ArrD &qscalar, ArrD &elemmat) const; // returns: elemmat
+  // -
   ArrD int_N_scalar_NT_dV(const ArrD &qscalar) const; // returns: elemmat
 
   // integral of the dot product "elemvec(m,j) += dNdx(m,i) * qtensor(i,j) * dV"
   // - allow template (e.g. T2/T2s, or higher dimensional tensors)
+  template<class T> void int_gradN_dot_tensor2_dV(const ArrD &qtensor, ArrD &elemvec) const; // returns: elemvec
+  //
   template<class T> ArrD int_gradN_dot_tensor2_dV(const ArrD &qtensor) const; // returns: elemvec
   // - default template
+  void int_gradN_dot_tensor2_dV (const ArrD &qtensor, ArrD &elemvec) const; // template: T2/T2s (auto-select)
+  void int_gradN_dot_tensor2s_dV(const ArrD &qtensor, ArrD &elemvec) const; // template: T2s
+  // -
   ArrD int_gradN_dot_tensor2_dV (const ArrD &qtensor) const; // template: T2/T2s (auto-select)
   ArrD int_gradN_dot_tensor2s_dV(const ArrD &qtensor) const; // template: T2s
 

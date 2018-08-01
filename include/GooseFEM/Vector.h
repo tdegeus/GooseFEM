@@ -40,15 +40,16 @@ private:
 public:
 
   // notation:
-  //    "nodevec"   -  nodal vectors                     -  MatD  -  [nnode, ndim]
-  //    "elemvec"   -  nodal vectors stored per element  -  ArrD  -  [nelem, nne, ndim]
-  //    "dofval"    -  DOF values                        -  ColD  -  [ndof]
-  //    "dofval_u"  -  DOF values (Unknown)              -  ColD  -  [nnu]
-  //    "dofval_p"  -  DOF values (Prescribed)           -  ColD  -  [nnp]
+  //    "nodevec"   -  nodal vectors                     -  [nnode, ndim]
+  //    "elemvec"   -  nodal vectors stored per element  -  [nelem, nne, ndim]
+  //    "dofval"    -  DOF values                        -  [ndof]
+  //    "dofval_u"  -  DOF values (Unknown)              -  [nnu]
+  //    "dofval_p"  -  DOF values (Prescribed)           -  [nnp]
 
   // constructor
   Vector(){};
-  Vector(const MatS &conn, const MatS &dofs, const ColS &iip=ColS());
+  Vector(const MatS &conn, const MatS &dofs);
+  Vector(const MatS &conn, const MatS &dofs, const ColS &iip);
 
   // dimensions
   size_t nelem() const; // number of elements
@@ -63,6 +64,30 @@ public:
   MatS dofs() const; // DOFs
   ColS iiu()  const; // unknown    DOFs
   ColS iip()  const; // prescribed DOFs
+
+  // convert vectors (overwrite entries that occur more that once) -- no allocation
+  void asDofs   (const ColD &dofval_u, const ColD &dofval_p, ColD &dofval ) const;
+  void asDofs   (const MatD &nodevec                       , ColD &dofval ) const;
+  void asDofs   (const ArrD &elemvec                       , ColD &dofval ) const;
+  void asDofs_u (const MatD &nodevec                       , ColD &dofval ) const;
+  void asDofs_u (const ArrD &elemvec                       , ColD &dofval ) const;
+  void asDofs_p (const MatD &nodevec                       , ColD &dofval ) const;
+  void asDofs_p (const ArrD &elemvec                       , ColD &dofval ) const;
+  void asNode   (const ColD &dofval                        , MatD &nodevec) const;
+  void asNode   (const ColD &dofval_u, const ColD &dofval_p, MatD &nodevec) const;
+  void asNode   (const ArrD &elemvec                       , MatD &nodevec) const;
+  void asElement(const ColD &dofval                        , ArrD &elemvec) const;
+  void asElement(const ColD &dofval_u, const ColD &dofval_p, ArrD &elemvec) const;
+  void asElement(const MatD &nodevec                       , ArrD &elemvec) const;
+
+  // assemble vectors (adds entries that occur more that once) -- no allocation
+  void assembleDofs  (const MatD &nodevec, ColD &dofval ) const;
+  void assembleDofs  (const ArrD &elemvec, ColD &dofval ) const;
+  void assembleDofs_u(const MatD &nodevec, ColD &dofval ) const;
+  void assembleDofs_u(const ArrD &elemvec, ColD &dofval ) const;
+  void assembleDofs_p(const MatD &nodevec, ColD &dofval ) const;
+  void assembleDofs_p(const ArrD &elemvec, ColD &dofval ) const;
+  void assembleNode  (const ArrD &elemvec, MatD &nodevec) const;
 
   // convert vectors (overwrite entries that occur more that once)
   ColD asDofs   (const ColD &dofval_u, const ColD &dofval_p) const;
