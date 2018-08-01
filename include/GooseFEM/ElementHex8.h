@@ -19,9 +19,7 @@ namespace Hex8 {
 
 // ======================================== tensor algebra =========================================
 
-static const size_t ndim = 3;
-
-using T2 = cppmat::tiny::cartesian::tensor2<double,ndim>;
+using T2 = cppmat::tiny::cartesian::tensor2<double,3>;
 
 inline double inv(const T2 &A, T2 &Ainv);
 

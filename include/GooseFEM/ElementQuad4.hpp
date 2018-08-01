@@ -48,8 +48,8 @@ inline size_t nip()
 
 inline ArrD xi()
 {
-  static const size_t nip  = 4;
-  static const size_t ndim = 2;
+  size_t nip  = 4;
+  size_t ndim = 2;
 
   ArrD xi({nip,ndim});
 
@@ -65,7 +65,7 @@ inline ArrD xi()
 
 inline ArrD w()
 {
-  static const size_t nip = 4;
+  size_t nip = 4;
 
   ArrD w({nip});
 
@@ -96,8 +96,8 @@ inline size_t nip()
 
 inline ArrD xi()
 {
-  static const size_t nip  = 4;
-  static const size_t ndim = 2;
+  size_t nip  = 4;
+  size_t ndim = 2;
 
   ArrD xi({nip,ndim});
 
@@ -113,7 +113,7 @@ inline ArrD xi()
 
 inline ArrD w()
 {
-  static const size_t nip = 4;
+  size_t nip = 4;
 
   ArrD w({nip});
 
