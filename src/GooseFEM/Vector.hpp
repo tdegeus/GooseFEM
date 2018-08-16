@@ -517,7 +517,7 @@ inline void Vector::assembleDofs(const xt::xtensor<double,2> &nodevec,
   assert( nodevec.shape()[1] == m_ndim  );
   assert( dofval.size()      == m_ndof  );
 
-  dofval *= 0.0;
+  dofval.fill(0.0);
 
   for ( size_t n = 0 ; n < m_nnode ; ++n )
     for ( size_t i = 0 ; i < m_ndim ; ++i )
@@ -544,7 +544,7 @@ inline void Vector::assembleDofs_u(const xt::xtensor<double,2> &nodevec,
   assert( nodevec.shape()[1] == m_ndim  );
   assert( dofval.size()      == m_nnu   );
 
-  dofval *= 0.0;
+  dofval.fill(0.0);
 
   for ( size_t n = 0 ; n < m_nnode ; ++n )
     for ( size_t i = 0 ; i < m_ndim ; ++i )
@@ -572,7 +572,7 @@ inline void Vector::assembleDofs_p(const xt::xtensor<double,2> &nodevec,
   assert( nodevec.shape()[1] == m_ndim  );
   assert( dofval.size()      == m_nnp   );
 
-  dofval *= 0.0;
+  dofval.fill(0.0);
 
   for ( size_t n = 0 ; n < m_nnode ; ++n )
     for ( size_t i = 0 ; i < m_ndim ; ++i )
@@ -601,7 +601,7 @@ inline void Vector::assembleDofs(const xt::xtensor<double,3> &elemvec,
   assert( elemvec.shape()[2] == m_ndim  );
   assert( dofval.size()      == m_ndof  );
 
-  dofval *= 0.0;
+  dofval.fill(0.0);
 
     for ( size_t e = 0 ; e < m_nelem ; ++e )
       for ( size_t m = 0 ; m < m_nne ; ++m )
@@ -630,7 +630,7 @@ inline void Vector::assembleDofs_u(const xt::xtensor<double,3> &elemvec,
   assert( elemvec.shape()[2] == m_ndim  );
   assert( dofval.size()      == m_nnu   );
 
-  dofval *= 0.0;
+  dofval.fill(0.0);
 
   for ( size_t e = 0 ; e < m_nelem ; ++e )
     for ( size_t m = 0 ; m < m_nne ; ++m )
@@ -660,7 +660,7 @@ inline void Vector::assembleDofs_p(const xt::xtensor<double,3> &elemvec,
   assert( elemvec.shape()[2] == m_ndim  );
   assert( dofval.size()      == m_nnp   );
 
-  dofval *= 0.0;
+  dofval.fill(0.0);
 
   for ( size_t e = 0 ; e < m_nelem ; ++e )
     for ( size_t m = 0 ; m < m_nne ; ++m )
@@ -691,7 +691,7 @@ inline void Vector::assembleNode(const xt::xtensor<double,3> &elemvec,
   assert( nodevec.shape()[0] == m_nnode );
   assert( nodevec.shape()[1] == m_ndim  );
 
-  nodevec *= 0.0;
+  nodevec.fill(0.0);
 
   for ( size_t e = 0 ; e < m_nelem ; ++e )
     for ( size_t m = 0 ; m < m_nne ; ++m )
