@@ -595,6 +595,8 @@ inline void Quadrature::int_gradN_dot_tensor2_dV(const xt::xtensor<double,4> &qt
   assert( elemvec.shape()[1] == m_nne   ); // number of nodes per element
   assert( elemvec.shape()[2] == m_ndim  ); // number of dimensions
 
+  xt::xtensor_fixed<double, xt::xshape<m_nne, m_ndim>> f;
+
   // zero-initialize output: matrix of vectors
   elemvec.fill(0.0);
 
@@ -602,14 +604,12 @@ inline void Quadrature::int_gradN_dot_tensor2_dV(const xt::xtensor<double,4> &qt
   #pragma omp parallel for
   for ( size_t e = 0 ; e < m_nelem ; ++e )
   {
-    // alias (e.g. nodal force)
-    auto f = xt::view(elemvec, e, xt::all(), xt::all());
-
+    f.fill(0.0);
     // loop over all integration points in element "e"
     for ( size_t k = 0 ; k < m_nip ; ++k )
     {
       // - alias
-      auto dNx = xt::adapt(&m_dNx(e, k, 0, 0),   xt::xshape<m_nne, m_ndim>());
+      auto dNx = xt::adapt(&m_dNx(e, k, 0, 0),   xt::xshape< m_nne, m_ndim>());
       auto sig = xt::adapt(&qtensor(e, k, 0, 0), xt::xshape<m_ndim, m_ndim>());
       double vol = m_vol(e,k);
 
@@ -619,6 +619,8 @@ inline void Quadrature::int_gradN_dot_tensor2_dV(const xt::xtensor<double,4> &qt
         f(m,0) += ( dNx(m,0) * sig(0,0) + dNx(m,1) * sig(1,0) ) * vol;
         f(m,1) += ( dNx(m,0) * sig(0,1) + dNx(m,1) * sig(1,1) ) * vol;
       }
+
+      std::copy(f.begin(), f.end(), &elemvec(e,0,0));
     }
   }
 }
