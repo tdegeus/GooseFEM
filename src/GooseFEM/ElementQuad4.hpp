@@ -620,8 +620,8 @@ inline void Quadrature::int_gradN_dot_tensor2_dV(const xt::xtensor<double,4> &qt
         f(m,1) += ( dNx(m,0) * sig(0,1) + dNx(m,1) * sig(1,1) ) * vol;
       }
 
-      std::copy(f.begin(), f.end(), &elemvec(e,0,0));
     }
+    std::copy(f.begin(), f.end(), &elemvec(e,0,0));
   }
 }
 
