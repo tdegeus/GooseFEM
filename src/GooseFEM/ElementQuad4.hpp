@@ -386,7 +386,7 @@ inline void Quadrature::gradN_vector(
   assert( qtensor.shape()[3] >= m_ndim  );
 
   // zero-initialize output: matrix of tensors
-  qtensor *= 0.0;
+  qtensor.fill(0.0);
 
   // loop over all elements (in parallel)
   #pragma omp parallel for
@@ -437,7 +437,7 @@ inline void Quadrature::gradN_vector_T(
   assert( qtensor.shape()[3] >= m_ndim  );
 
   // zero-initialize output: matrix of tensors
-  qtensor *= 0.0;
+  qtensor.fill(0.0);
 
   // loop over all elements (in parallel)
   #pragma omp parallel for
@@ -488,20 +488,21 @@ inline void Quadrature::symGradN_vector(
   assert( qtensor.shape()[3] >= m_ndim  );
 
   // zero-initialize output: matrix of tensors
-  qtensor *= 0.0;
+  qtensor.fill(0.0);
 
   // loop over all elements (in parallel)
   #pragma omp parallel for
   for ( size_t e = 0 ; e < m_nelem ; ++e )
   {
     // alias element vector (e.g. nodal displacements)
-    auto u = xt::view(elemvec, e, xt::all(), xt::all());
+    auto u = xt::adapt(&elemvec(e, 0, 0), xt::xshape<m_nne, m_ndim>());
 
     // loop over all integration points in element "e"
     for ( size_t k = 0 ; k < m_nip ; ++k )
     {
       // - alias shape function gradients (local coordinates)
       auto dNx = xt::view(m_dNx  , e, k, xt::all()          , xt::all()          );
+      // probably improved if allocating temporary fixed shape eps and copying
       auto eps = xt::view(qtensor, e, k, xt::range(0,m_ndim), xt::range(0,m_ndim));
 
       // - evaluate symmetrized dyadic product (loops unrolled for efficiency)
@@ -539,7 +540,7 @@ inline void Quadrature::int_N_scalar_NT_dV(
   assert( elemmat.shape()[2] == m_nne*m_ndim );
 
   // zero-initialize: matrix of matrices
-  elemmat *= 0.0;
+  elemmat.fill(0.0);
 
   // loop over all elements (in parallel)
   #pragma omp parallel for
@@ -594,22 +595,22 @@ inline void Quadrature::int_gradN_dot_tensor2_dV(const xt::xtensor<double,4> &qt
   assert( elemvec.shape()[1] == m_nne   ); // number of nodes per element
   assert( elemvec.shape()[2] == m_ndim  ); // number of dimensions
 
+  xt::xtensor_fixed<double, xt::xshape<m_nne, m_ndim>> f;
+
   // zero-initialize output: matrix of vectors
-  elemvec *= 0.0;
+  elemvec.fill(0.0);
 
   // loop over all elements (in parallel)
   #pragma omp parallel for
   for ( size_t e = 0 ; e < m_nelem ; ++e )
   {
-    // alias (e.g. nodal force)
-    auto f = xt::view(elemvec, e, xt::all(), xt::all());
-
+    f.fill(0.0);
     // loop over all integration points in element "e"
     for ( size_t k = 0 ; k < m_nip ; ++k )
     {
       // - alias
-      auto   dNx = xt::view(m_dNx  , e, k, xt::all(), xt::all());
-      auto   sig = xt::view(qtensor, e, k, xt::range(0,m_ndim), xt::range(0,m_ndim));
+      auto dNx = xt::adapt(&m_dNx(e, k, 0, 0),   xt::xshape< m_nne, m_ndim>());
+      auto sig = xt::adapt(&qtensor(e, k, 0, 0), xt::xshape<m_ndim, m_ndim>());
       double vol = m_vol(e,k);
 
       // - evaluate dot product, and assemble
@@ -618,7 +619,9 @@ inline void Quadrature::int_gradN_dot_tensor2_dV(const xt::xtensor<double,4> &qt
         f(m,0) += ( dNx(m,0) * sig(0,0) + dNx(m,1) * sig(1,0) ) * vol;
         f(m,1) += ( dNx(m,0) * sig(0,1) + dNx(m,1) * sig(1,1) ) * vol;
       }
+
     }
+    std::copy(f.begin(), f.end(), &elemvec(e,0,0));
   }
 }
 

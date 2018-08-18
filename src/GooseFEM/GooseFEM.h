@@ -25,6 +25,7 @@
 #include <Eigen/Eigen>
 
 #include <xtensor/xarray.hpp>
+#include <xtensor/xadapt.hpp>
 #include <xtensor/xtensor.hpp>
 #include <xtensor/xfixed.hpp>
 #include <xtensor/xview.hpp>
