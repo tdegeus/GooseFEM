@@ -3,6 +3,7 @@
 (c - GPLv3) T.W.J. de Geus (Tom) | tom@geus.me | www.geus.me | github.com/tdegeus/GooseFEM
 
 ================================================================================================= */
+#include <xtensor/xinfo.hpp>
 
 #ifndef GOOSEFEM_VECTOR_CPP
 #define GOOSEFEM_VECTOR_CPP
@@ -460,8 +461,8 @@ inline void Vector::asElement(const xt::xtensor<double,1> &dofval_u,
   for ( size_t e = 0 ; e < m_nelem ; ++e ) {
     for ( size_t m = 0 ; m < m_nne ; ++m ) {
       for ( size_t i = 0 ; i < m_ndim ; ++i ) {
-        if ( m_part(m_conn(e,m),i)<m_nnu ) elemvec(e,m,i) = dofval_u(m_part(m_conn(e,m),i)      );
-        else                               elemvec(e,m,i) = dofval_p(m_part(m_conn(e,m),i)-m_nnu);
+        if ( m_part.unchecked(m_conn.unchecked(e,m),i)<m_nnu ) elemvec.unchecked(e,m,i) = dofval_u.unchecked(m_part.unchecked(m_conn.unchecked(e,m),i)      );
+        else                               elemvec.unchecked(e,m,i) = dofval_p.unchecked(m_part.unchecked(m_conn.unchecked(e,m),i)-m_nnu);
       }
     }
   }
@@ -494,7 +495,7 @@ inline void Vector::asElement(const xt::xtensor<double,2> &nodevec,
   for ( size_t e = 0 ; e < m_nelem ; ++e )
     for ( size_t m = 0 ; m < m_nne ; ++m )
       for ( size_t i = 0 ; i < m_ndim ; ++i )
-        elemvec(e,m,i) = nodevec(m_conn(e,m),i);
+        elemvec.unchecked(e,m,i) = nodevec.unchecked(m_conn.unchecked(e,m),i);
 }
 
 // -------------------------------------------------------------------------------------------------
@@ -591,6 +592,7 @@ inline xt::xtensor<double,1> Vector::assembleDofs_p(const xt::xtensor<double,2> 
   return dofval;
 }
 
+
 // --------------------------------------- elemvec -> dofval ---------------------------------------
 
 inline void Vector::assembleDofs(const xt::xtensor<double,3> &elemvec,
@@ -606,7 +608,7 @@ inline void Vector::assembleDofs(const xt::xtensor<double,3> &elemvec,
     for ( size_t e = 0 ; e < m_nelem ; ++e )
       for ( size_t m = 0 ; m < m_nne ; ++m )
         for ( size_t i = 0 ; i < m_ndim ; ++i )
-          dofval(m_dofs(m_conn(e,m),i)) += elemvec(e,m,i);
+          dofval.unchecked(m_dofs.unchecked(m_conn.unchecked(e,m),i)) += elemvec.unchecked(e,m,i);
 }
 
 // -------------------------------------------------------------------------------------------------
