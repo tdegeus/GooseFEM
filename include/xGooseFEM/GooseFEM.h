@@ -24,7 +24,6 @@
 #include <math.h>
 #include <Eigen/Eigen>
 
-#include <xtensor/xinfo.hpp>
 #include <xtensor/xarray.hpp>
 #include <xtensor/xadapt.hpp>
 #include <xtensor/xtensor.hpp>
@@ -37,6 +36,7 @@
 #include <xtensor/xadapt.hpp>
 #include <xtensor/xutils.hpp>
 #include <xtensor/xlayout.hpp>
+#include <xtensor/xinfo.hpp>
 
 using namespace xt::placeholders;
 
