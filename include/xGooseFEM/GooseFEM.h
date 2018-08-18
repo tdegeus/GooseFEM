@@ -24,7 +24,9 @@
 #include <math.h>
 #include <Eigen/Eigen>
 
+#include <xtensor/xinfo.hpp>
 #include <xtensor/xarray.hpp>
+#include <xtensor/xadapt.hpp>
 #include <xtensor/xtensor.hpp>
 #include <xtensor/xfixed.hpp>
 #include <xtensor/xview.hpp>
@@ -47,7 +49,7 @@ using namespace xt::placeholders;
 #define XGOOSEFEM_VERSION_AT_LEAST(x,y,z) \
   (XGOOSEFEM_WORLD_VERSION>x || (XGOOSEFEM_WORLD_VERSION>=x && \
   (XGOOSEFEM_MAJOR_VERSION>y || (XGOOSEFEM_MAJOR_VERSION>=y && \
-                                XGOOSEFEM_MINOR_VERSION>=z))))
+                                 XGOOSEFEM_MINOR_VERSION>=z))))
 
 #define XGOOSEFEM_VERSION(x,y,z) \
   (XGOOSEFEM_WORLD_VERSION==x && \

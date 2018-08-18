@@ -11,7 +11,7 @@
 
 #include "GooseFEM.h"
 
-// ======================================= xGooseFEM::Iterate =======================================
+// ======================================= GooseFEM::Iterate =======================================
 
 namespace xGooseFEM {
 namespace Iterate {

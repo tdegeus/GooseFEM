@@ -460,8 +460,8 @@ inline void Vector::asElement(const xt::xtensor<double,1> &dofval_u,
   for ( size_t e = 0 ; e < m_nelem ; ++e ) {
     for ( size_t m = 0 ; m < m_nne ; ++m ) {
       for ( size_t i = 0 ; i < m_ndim ; ++i ) {
-        if ( m_part(m_conn(e,m),i)<m_nnu ) elemvec(e,m,i) = dofval_u(m_part(m_conn(e,m),i)      );
-        else                               elemvec(e,m,i) = dofval_p(m_part(m_conn(e,m),i)-m_nnu);
+        if ( m_part.unchecked(m_conn.unchecked(e,m),i)<m_nnu ) elemvec.unchecked(e,m,i) = dofval_u.unchecked(m_part.unchecked(m_conn.unchecked(e,m),i)      );
+        else                               elemvec.unchecked(e,m,i) = dofval_p.unchecked(m_part.unchecked(m_conn.unchecked(e,m),i)-m_nnu);
       }
     }
   }
@@ -494,7 +494,7 @@ inline void Vector::asElement(const xt::xtensor<double,2> &nodevec,
   for ( size_t e = 0 ; e < m_nelem ; ++e )
     for ( size_t m = 0 ; m < m_nne ; ++m )
       for ( size_t i = 0 ; i < m_ndim ; ++i )
-        elemvec(e,m,i) = nodevec(m_conn(e,m),i);
+        elemvec.unchecked(e,m,i) = nodevec.unchecked(m_conn.unchecked(e,m),i);
 }
 
 // -------------------------------------------------------------------------------------------------
@@ -517,7 +517,7 @@ inline void Vector::assembleDofs(const xt::xtensor<double,2> &nodevec,
   assert( nodevec.shape()[1] == m_ndim  );
   assert( dofval.size()      == m_ndof  );
 
-  dofval *= 0.0;
+  dofval.fill(0.0);
 
   for ( size_t n = 0 ; n < m_nnode ; ++n )
     for ( size_t i = 0 ; i < m_ndim ; ++i )
@@ -544,7 +544,7 @@ inline void Vector::assembleDofs_u(const xt::xtensor<double,2> &nodevec,
   assert( nodevec.shape()[1] == m_ndim  );
   assert( dofval.size()      == m_nnu   );
 
-  dofval *= 0.0;
+  dofval.fill(0.0);
 
   for ( size_t n = 0 ; n < m_nnode ; ++n )
     for ( size_t i = 0 ; i < m_ndim ; ++i )
@@ -572,7 +572,7 @@ inline void Vector::assembleDofs_p(const xt::xtensor<double,2> &nodevec,
   assert( nodevec.shape()[1] == m_ndim  );
   assert( dofval.size()      == m_nnp   );
 
-  dofval *= 0.0;
+  dofval.fill(0.0);
 
   for ( size_t n = 0 ; n < m_nnode ; ++n )
     for ( size_t i = 0 ; i < m_ndim ; ++i )
@@ -601,12 +601,12 @@ inline void Vector::assembleDofs(const xt::xtensor<double,3> &elemvec,
   assert( elemvec.shape()[2] == m_ndim  );
   assert( dofval.size()      == m_ndof  );
 
-  dofval *= 0.0;
+  dofval.fill(0.0);
 
   for ( size_t e = 0 ; e < m_nelem ; ++e )
     for ( size_t m = 0 ; m < m_nne ; ++m )
       for ( size_t i = 0 ; i < m_ndim ; ++i )
-        dofval(m_dofs(m_conn(e,m),i)) += elemvec(e,m,i);
+          dofval.unchecked(m_dofs.unchecked(m_conn.unchecked(e,m),i)) += elemvec.unchecked(e,m,i);
 }
 
 // -------------------------------------------------------------------------------------------------
@@ -630,7 +630,7 @@ inline void Vector::assembleDofs_u(const xt::xtensor<double,3> &elemvec,
   assert( elemvec.shape()[2] == m_ndim  );
   assert( dofval.size()      == m_nnu   );
 
-  dofval *= 0.0;
+  dofval.fill(0.0);
 
   for ( size_t e = 0 ; e < m_nelem ; ++e )
     for ( size_t m = 0 ; m < m_nne ; ++m )
@@ -660,7 +660,7 @@ inline void Vector::assembleDofs_p(const xt::xtensor<double,3> &elemvec,
   assert( elemvec.shape()[2] == m_ndim  );
   assert( dofval.size()      == m_nnp   );
 
-  dofval *= 0.0;
+  dofval.fill(0.0);
 
   for ( size_t e = 0 ; e < m_nelem ; ++e )
     for ( size_t m = 0 ; m < m_nne ; ++m )
@@ -691,7 +691,7 @@ inline void Vector::assembleNode(const xt::xtensor<double,3> &elemvec,
   assert( nodevec.shape()[0] == m_nnode );
   assert( nodevec.shape()[1] == m_ndim  );
 
-  nodevec *= 0.0;
+  nodevec.fill(0.0);
 
   for ( size_t e = 0 ; e < m_nelem ; ++e )
     for ( size_t m = 0 ; m < m_nne ; ++m )

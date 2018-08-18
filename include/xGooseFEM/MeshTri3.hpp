@@ -11,7 +11,7 @@
 
 #include "MeshTri3.h"
 
-// ===================================== xGooseFEM::Mesh::Tri3 ======================================
+// ===================================== GooseFEM::Mesh::Tri3 ======================================
 
 namespace xGooseFEM {
 namespace Mesh {
@@ -389,7 +389,7 @@ inline xt::xtensor<size_t,2> retriangulate(const xt::xtensor<double,2> &coor, co
   return setOrientation(coor,out,orientation);
 }
 
-// ================================= xGooseFEM::Mesh::Tri3::Private =================================
+// ================================= GooseFEM::Mesh::Tri3::Private =================================
 
 namespace Private {
 

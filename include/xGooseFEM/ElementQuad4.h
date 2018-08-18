@@ -11,7 +11,7 @@
 
 #include "GooseFEM.h"
 
-// =================================== xGooseFEM::Element::Quad4 ====================================
+// =================================== GooseFEM::Element::Quad4 ====================================
 
 namespace xGooseFEM {
 namespace Element {
@@ -23,7 +23,7 @@ using T2 = xt::xtensor_fixed<double, xt::xshape<2,2>>;
 
 inline double inv(const T2 &A, T2 &Ainv);
 
-// ================================ xGooseFEM::Element::Quad4::Gauss ================================
+// ================================ GooseFEM::Element::Quad4::Gauss ================================
 
 namespace Gauss {
 inline size_t                nip(); // number of integration points
@@ -31,7 +31,7 @@ inline xt::xtensor<double,2> xi();  // integration point coordinates (local coor
 inline xt::xtensor<double,1> w();   // integration point weights
 }
 
-// ================================ xGooseFEM::Element::Quad4::Nodal ================================
+// ================================ GooseFEM::Element::Quad4::Nodal ================================
 
 namespace Nodal {
 inline size_t                nip(); // number of integration points

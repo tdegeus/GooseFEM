@@ -11,7 +11,7 @@
 
 #include "GooseFEM.h"
 
-// ===================================== xGooseFEM::Mesh::Quad4 =====================================
+// ===================================== GooseFEM::Mesh::Quad4 =====================================
 
 namespace xGooseFEM {
 namespace Mesh {
