@@ -495,12 +495,13 @@ inline void Quadrature::symGradN_vector(
   assert( elemvec.shape()[2] == m_ndim  );
   assert( qtensor.shape()[0] == m_nelem );
   assert( qtensor.shape()[1] == m_nne   );
-  assert( qtensor.shape()[2] >= m_ndim  );
-  assert( qtensor.shape()[3] >= m_ndim  );
+  assert( qtensor.shape()[2] == m_ndim  );
+  assert( qtensor.shape()[3] == m_ndim  );
 
   // zero-initialize output: matrix of tensors
   qtensor.fill(0.0);
 
+  xt::xtensor_fixed<double, xt::xshape<2, 2>> eps;
   // loop over all elements (in parallel)
   #pragma omp parallel for
   for ( size_t e = 0 ; e < m_nelem ; ++e )
@@ -512,9 +513,7 @@ inline void Quadrature::symGradN_vector(
     for ( size_t k = 0 ; k < m_nip ; ++k )
     {
       // - alias shape function gradients (local coordinates)
-      auto dNx = xt::view(m_dNx  , e, k, xt::all()          , xt::all()          );
-      // probably improved if allocating temporary fixed shape eps and copying
-      auto eps = xt::view(qtensor, e, k, xt::range(0,m_ndim), xt::range(0,m_ndim));
+      auto dNx = xt::adapt(&m_dNx(e, k, 0, 0), xt::xshape<m_nne, m_ndim>());
 
       // - evaluate symmetrized dyadic product (loops unrolled for efficiency)
       //   grad(i,j) += dNx(m,i) * u(m,j)
@@ -524,6 +523,8 @@ inline void Quadrature::symGradN_vector(
       eps(0,1) = ( dNx(0,0)*u(0,1) + dNx(1,0)*u(1,1) + dNx(2,0)*u(2,1) + dNx(3,0)*u(3,1) +
                    dNx(0,1)*u(0,0) + dNx(1,1)*u(1,0) + dNx(2,1)*u(2,0) + dNx(3,1)*u(3,0) ) / 2.;
       eps(1,0) =   eps(0,1);
+
+      std::copy(eps.begin(), eps.end(), &qtensor(e, k, 0, 0));
     }
   }
 }
