@@ -1,7 +1,7 @@
 
 #include <GooseFEM/GooseFEM.h>
 #include <ElastoPlasticQPot/ElastoPlasticQPot.h>
-#include <HDF5pp.h>
+// #include <HDF5pp.h>
 
 // -------------------------------------------------------------------------------------------------
 
@@ -227,14 +227,14 @@ int main()
     Epot(inc) = geometry.Epot();
   }
 
-  // write to output file
-  H5p::File f = H5p::File("example.hdf5","w");
-  f.write("/global/Epot",Epot           );
-  f.write("/global/Ekin",Ekin           );
-  f.write("/global/t"   ,t              );
-  f.write("/mesh/conn"  ,geometry.conn());
-  f.write("/mesh/coor"  ,geometry.coor());
-  f.write("/mesh/disp"  ,geometry.u()   );
+  // // write to output file
+  // H5p::File f = H5p::File("example.hdf5","w");
+  // f.write("/global/Epot",Epot           );
+  // f.write("/global/Ekin",Ekin           );
+  // f.write("/global/t"   ,t              );
+  // f.write("/mesh/conn"  ,geometry.conn());
+  // f.write("/mesh/coor"  ,geometry.coor());
+  // f.write("/mesh/disp"  ,geometry.u()   );
 
   return 0;
 }
