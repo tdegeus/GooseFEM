@@ -257,14 +257,14 @@ inline void Quadrature::dV(xt::xtensor<double,4> &qtensor) const
 {
   assert( qtensor.shape()[0] == m_nelem );
   assert( qtensor.shape()[1] == m_nne   );
-  assert( qtensor.shape()[2] >= m_ndim  );
-  assert( qtensor.shape()[3] >= m_ndim  );
+  assert( qtensor.shape()[2] == m_ndim  );
+  assert( qtensor.shape()[3] == m_ndim  );
 
   #pragma omp parallel for
   for ( size_t e = 0 ; e < m_nelem ; ++e )
     for ( size_t k = 0 ; k < m_nip ; ++k )
-      for ( size_t i = 0 ; i < qtensor.shape()[2] ; ++i )
-        for ( size_t j = 0 ; j < qtensor.shape()[3] ; ++j )
+      for ( size_t i = 0 ; i < m_ndim ; ++i )
+        for ( size_t j = 0 ; j < m_ndim ; ++j )
           qtensor(e,k,i,j) = m_vol(e,k);
 }
 
@@ -341,22 +341,21 @@ inline void Quadrature::compute_dN()
   // loop over all elements (in parallel)
   #pragma omp parallel
   {
-    // - allocate
-    T2 J;
-    T2 Jinv;
+    // allocate local variables
+    T2 J, Jinv;
 
     #pragma omp for
     for ( size_t e = 0 ; e < m_nelem ; ++e )
     {
       // alias nodal positions
-      auto x = xt::view(m_x, e, xt::all(), xt::all());
+      auto x = xt::adapt(&m_x(e,0,0), xt::xshape<m_nne,m_ndim>());
 
       // loop over integration points
       for ( size_t k = 0 ; k < m_nip ; ++k )
       {
         // - alias
-        auto dNxi = xt::view(m_dNxi,    k, xt::all(), xt::all());
-        auto dNx  = xt::view(m_dNx , e, k, xt::all(), xt::all());
+        auto dNxi = xt::adapt(&m_dNxi(  k,0,0), xt::xshape<m_nne,m_ndim>());
+        auto dNx  = xt::adapt(&m_dNx (e,k,0,0), xt::xshape<m_nne,m_ndim>());
 
         // - Jacobian (loops unrolled for efficiency)
         //   J(i,j) += dNxi(m,i) * x(m,j);
@@ -376,7 +375,7 @@ inline void Quadrature::compute_dN()
           dNx(m,1) = Jinv(1,0) * dNxi(m,0) + Jinv(1,1) * dNxi(m,1);
         }
 
-        // - copy to matrix: integration point volume
+        // - integration point volume
         m_vol(e,k) = m_w(k) * Jdet;
       }
     }
@@ -404,7 +403,7 @@ inline void Quadrature::gradN_vector(
   for ( size_t e = 0 ; e < m_nelem ; ++e )
   {
     // alias element vector (e.g. nodal displacements)
-    auto u = xt::view(elemvec, e, xt::all(), xt::all());
+    auto u = xt::adapt(&elemvec(e,0,0), xt::xshape<m_nne,m_ndim>());
 
     // loop over all integration points in element "e"
     for ( size_t k = 0 ; k < m_nip ; ++k )
@@ -455,7 +454,7 @@ inline void Quadrature::gradN_vector_T(
   for ( size_t e = 0 ; e < m_nelem ; ++e )
   {
     // alias element vector (e.g. nodal displacements)
-    auto u = xt::view(elemvec, e, xt::all(), xt::all());
+    auto u = xt::adapt(&elemvec(e,0,0), xt::xshape<m_nne,m_ndim>());
 
     // loop over all integration points in element "e"
     for ( size_t k = 0 ; k < m_nip ; ++k )
@@ -621,9 +620,9 @@ inline void Quadrature::int_gradN_dot_tensor2_dV(const xt::xtensor<double,4> &qt
     for ( size_t k = 0 ; k < m_nip ; ++k )
     {
       // - alias
-      auto dNx = xt::adapt(&m_dNx(e, k, 0, 0),   xt::xshape< m_nne, m_ndim>());
-      auto sig = xt::adapt(&qtensor(e, k, 0, 0), xt::xshape<m_ndim, m_ndim>());
-      double vol = m_vol(e,k);
+      auto  dNx = xt::adapt(&m_dNx  (e,k,0,0), xt::xshape<m_nne ,m_ndim>());
+      auto  sig = xt::adapt(&qtensor(e,k,0,0), xt::xshape<m_ndim,m_ndim>());
+      auto& vol = m_vol(e,k);
 
       // - evaluate dot product, and assemble
       for ( size_t m = 0 ; m < m_nne ; ++m )
