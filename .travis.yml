@@ -58,8 +58,9 @@ install:
     - conda config --set always_yes yes --set changeps1 no
     - conda update -q conda
     - conda install cmake -c conda-forge
-    - conda install xtl==0.4.15 -c QuantStack
+    - conda install xtl -c QuantStack
     - conda install xsimd -c QuantStack
+    - conda install xtensor -c QuantStack
     - conda install nlohmann_json -c QuantStack
     # build path
     - cd develop
