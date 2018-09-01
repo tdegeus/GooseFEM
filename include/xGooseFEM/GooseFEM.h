@@ -64,6 +64,8 @@ using namespace xt::placeholders;
 // dummy operation that can be use to suppress the "unused parameter" warnings
 #define UNUSED(p) ( (void)(p) )
 
+#pragma GCC diagnostic ignored "-Wunknown-pragmas"
+
 // =================================================================================================
 
 // alias Eigen sparse matrices
