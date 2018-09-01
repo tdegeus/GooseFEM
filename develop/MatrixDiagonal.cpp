@@ -36,8 +36,7 @@ SECTION( "dot" )
   // - size
   REQUIRE( C.size() == c.size() );
   // - components
-  for ( size_t i = 0 ; i < c.shape()[0] ; ++i )
-    EQ( C(i), c(i) );
+  REQUIRE( xt::allclose(C, c) );
 }
 
 // -------------------------------------------------------------------------------------------------
@@ -73,8 +72,7 @@ SECTION( "solve" )
   // - size
   REQUIRE( B.size() == b.size() );
   // - components
-  for ( size_t i = 0 ; i < b.shape()[0] ; ++i )
-    EQ( B(i), b(i) );
+  REQUIRE( xt::allclose(B, b) );
 }
 
 // // =================================================================================================

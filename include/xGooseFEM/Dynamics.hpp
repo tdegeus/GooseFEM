@@ -32,19 +32,19 @@ inline void Verlet(Geometry &g, double dt, size_t nstep)
 
     // new displacement
 
-    u = g.u() + dt * g.v() + 0.5 * std::pow(dt,2.) * g.a();
+    xt::noalias(u) = g.u() + dt * g.v() + 0.5 * std::pow(dt,2.) * g.a();
 
     g.set_u(u);
 
     // new acceleration
 
-    A = g.solve_A();
+    xt::noalias(A) = g.solve_A();
 
     g.set_a(A);
 
     // new velocity
 
-    V = V_n + .5 * dt * ( A_n + A );
+    xt::noalias(V) = V_n + .5 * dt * ( A_n + A );
 
     g.set_v(V);
   }
@@ -66,33 +66,33 @@ inline void velocityVerlet(Geometry &g, double dt, size_t nstep)
 
     // new displacement
 
-    u = g.u() + dt * g.v() + 0.5 * std::pow(dt,2.) * g.a();
+    xt::noalias(u) = g.u() + dt * g.v() + 0.5 * std::pow(dt,2.) * g.a();
 
     g.set_u(u);
 
     // estimate new velocity
 
-    V = V_n + dt * A_n;
+    xt::noalias(V) = V_n + dt * A_n;
 
     g.set_v(V);
 
-    A = g.solve_A();
+    xt::noalias(A) = g.solve_A();
 
-    V = V_n + .5 * dt * ( A_n + A );
+    xt::noalias(V) = V_n + .5 * dt * ( A_n + A );
 
     g.set_v(V);
 
     // new velocity
 
-    A = g.solve_A();
+    xt::noalias(A) = g.solve_A();
 
-    V = V_n + .5 * dt * ( A_n + A );
+    xt::noalias(V) = V_n + .5 * dt * ( A_n + A );
 
     g.set_v(V);
 
     // new acceleration
 
-    A = g.solve_A();
+    xt::noalias(A) = g.solve_A();
 
     g.set_a(A);
   }
@@ -104,9 +104,11 @@ namespace Overdamped
 {
 inline void forwardEuler(Geometry &g, double dt, size_t nstep)
 {
+  xt::xtensor<double,1> U;
+
   for ( size_t istep = 0 ; istep < nstep ; ++istep )
   {
-    xt::xtensor<double,1> U = g.dofs_u() + dt * g.solve_V();
+    xt::noalias(U) = g.dofs_u() + dt * g.solve_V();
 
     g.set_u(U);
   }

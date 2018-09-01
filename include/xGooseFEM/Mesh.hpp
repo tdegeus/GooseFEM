@@ -16,120 +16,113 @@
 namespace xGooseFEM {
 namespace Mesh {
 
-// ----------------------------------------- list of DOFs ------------------------------------------
+// -------------------------------------------------------------------------------------------------
 
 inline xt::xtensor<size_t,2> dofs(size_t nnode, size_t ndim)
 {
   return xt::reshape_view(xt::arange<size_t>(nnode*ndim),{nnode,ndim});
 }
 
-// ---------------------------------- renumber to lowest possible ----------------------------------
+// -------------------------------------------------------------------------------------------------
 
-template<class InputIterator, class OutputIterator>
-inline void renumber(
-  const InputIterator first, const InputIterator last, const OutputIterator result
-)
+inline xt::xtensor<size_t,1> renumber_index(const xt::xtensor<size_t,2> &dofs)
 {
-  // size of input and the the renumber list
-  auto N = last - first;
-  auto M = (*std::max_element(first, last)) + 1;
+  // get unique list of DOFs
+  xt::xtensor<size_t,1> unique = xt::unique(dofs);
 
-  // allocate presence list and list of new indices
-  std::vector<size_t> inList(M, 0); // initialize all items as 'excluded' (== 0)
-  std::vector<size_t> index (M);
+  // allocate list to renumber "dofs"
+  xt::xtensor<size_t,1> renum = xt::empty<size_t>({xt::amax(dofs)[0]+1});
 
-  // selectively set items that are 'included' (== 1)
-  for ( auto it = first; it != last; ++it ) inList[*it] = 1;
+  // define renumbering
+  for ( size_t i = 0 ; i < unique.size() ; ++i ) renum[unique[i]] = i;
 
-  // new indices: cumulative sum of presence list
-  std::partial_sum(inList.begin(), inList.end(), index.begin());
-  // make index start at 0
-  for ( auto &i: index ) i--;
-
-  // apply renumbering
-  for ( auto i = 0; i < N; ++i ) *(result+i) = index[*(first+i)];
+  return renum;
 }
 
-// ------------------------------------- renumber - interface --------------------------------------
+// -------------------------------------------------------------------------------------------------
 
-inline xt::xtensor<size_t,2> renumber(const xt::xtensor<size_t,2> &in)
+inline xt::xtensor<size_t,2> renumber(const xt::xtensor<size_t,2> &dofs)
 {
-  xt::xtensor<size_t,2> out(in.shape());
+  // list to renumber "dofs"
+  auto renum = renumber_index(dofs);
 
-  renumber(in.data(), in.data()+in.size(), out.data());
+  // allocate reordered DOFs
+  xt::xtensor<size_t,2> dofs_renumbered(dofs.shape());
 
-  return out;
+  // iterator for loop below
+  auto jt = dofs_renumbered.begin();
+
+  // loop to renumber: dofs_renumbered(i,j) = renum(dofs(i,j))
+  for ( auto it = dofs.begin() ; it != dofs.end() ; ++it, ++jt )
+    (*jt) = renum((*it));
+
+  return dofs_renumbered;
 }
 
-// ------------------------- reorder certain indices to the beginning/end --------------------------
+// -------------------------------------------------------------------------------------------------
 
-template<class InputIterator, class OutputIterator, class IndexIterator>
-inline void reorder(
-  const InputIterator first, const InputIterator last, const OutputIterator result,
-  const IndexIterator first_index, const IndexIterator last_index, std::string location
-)
+inline xt::xtensor<size_t,1> reorder_index(const xt::xtensor<size_t,2> &dofs,
+  const xt::xtensor<size_t,1> &iip, const std::string &location)
 {
-  // check uniqueness of input
-  #ifndef NDEBUG
-  std::vector<size_t> iip(last_index-first_index);
-  std::copy(first_index, last_index, iip.begin());
-  std::sort(iip.begin(), iip.end());
-  assert( std::unique(iip.begin(), iip.end()) == iip.end() );
-  #endif
+  // check "iip" to be a unique set
+  assert( xt::unique(iip).size() == iip.size() );
 
-  // size of input and the the renumber list
-  auto N = last - first;
-  auto M = (*std::max_element(first, last)) + 1;
+  // get remaining DOFs
+  auto iiu = xt::setdiff1d(dofs, iip);
 
-  // allocate presence list and list of new indices
-  std::vector<size_t> inList(M, 0); // initialize all items as 'excluded' (== 0)
-  std::vector<size_t> index (M);
+  // get sizes
+  auto nnu = iiu.size();
+  auto nnp = iip.size();
 
-  // selectively set items that are 'included' (== 1)
-  for ( auto it = first; it != last; ++it ) inList[*it] = 1;
-  // check that all indices are actually included
-  #ifndef NDEBUG
-  for ( auto it = first_index; it != last_index; ++it ) assert( inList[*it] == 1 );
-  #endif
-  // remove indices whose new index will be fixed
-  for ( auto it = first_index; it != last_index; ++it ) inList[*it] = 0;
-  // find number of entries
-  size_t nnu = std::accumulate(inList.begin(), inList.end(), 0);
+  // original set of DOFs
+  auto old = xt::unique(dofs);
 
-  // new indices: cumulative sum of presence list
-  std::partial_sum(inList.begin(), inList.end(), index.begin());
-  // make index start at 0
-  for ( auto &i: index ) i--;
-  // optionally move to end
-  if ( location == "begin" ) for ( auto &i: index ) i += (last_index - first_index);
+  // sanity check
+  assert( iiu.size() + iip.size() == dofs.size() );
 
-  // manually set indices
-  // - allocate offset
-  size_t offset;
-  // - set offset
-  if ( location == "begin" ) offset = 0;
-  else                       offset = nnu;
-  // - apply
-  for ( auto it = first_index; it != last_index; ++it ) { index[*it] = offset; ++offset; }
+  // list to renumber "dofs"
+  // - allocate
+  xt::xtensor<size_t,1> renum = xt::empty<size_t>({xt::amax(dofs)[0]+1});
+  // - fill
+  if ( location == "end" ) {
+    for ( size_t i = 0 ; i < iiu.size() ; ++i ) renum(iiu(i)) = i    ;
+    for ( size_t i = 0 ; i < iip.size() ; ++i ) renum(iip(i)) = i+nnu;
+  }
+  else if ( location == "begin" or location == "beginning" ) {
+    for ( size_t i = 0 ; i < iip.size() ; ++i ) renum(iip(i)) = i    ;
+    for ( size_t i = 0 ; i < iiu.size() ; ++i ) renum(iiu(i)) = i+nnp;
+  }
+  else {
+    throw std::runtime_error("Unknown reorder location '" + location + "'");
+  }
 
-  // apply renumbering
-  for ( auto i = 0; i < N; ++i ) *(result+i) = index[*(first+i)];
+  return renum;
 }
 
-// -------------------------------------- reorder - interface --------------------------------------
+// -------------------------------------------------------------------------------------------------
 
-inline xt::xtensor<size_t,2> reorder(const xt::xtensor<size_t,2> &in, const xt::xtensor<size_t,1> &idx, std::string loc)
+inline xt::xtensor<size_t,2> reorder(const xt::xtensor<size_t,2> &dofs,
+  const xt::xtensor<size_t,1> &iip, const std::string &location)
 {
-  xt::xtensor<size_t,2> out(in.shape());
+  // list to renumber "dofs"
+  auto renum = reorder_index(dofs, iip, location);
 
-  reorder(in.data(), in.data()+in.size(), out.data(), idx.data(), idx.data()+idx.size(), loc);
+  // allocate reordered DOFs
+  xt::xtensor<size_t,2> dofs_reordered(dofs.shape());
 
-  return out;
+  // iterator for loop below
+  auto jt = dofs_reordered.begin();
+
+  // loop to renumber: dofs_reordered(i,j) = renum(dofs(i,j))
+  for ( auto it = dofs.begin() ; it != dofs.end() ; ++it, ++jt )
+    *jt = renum(*it);
+
+  return dofs_reordered;
 }
 
-// ---------------------------- list of elements connected to each node ----------------------------
+// -------------------------------------------------------------------------------------------------
 
-inline SpMatS elem2node(const xt::xtensor<size_t,2> &conn)
+inline xt::xtensor<size_t,1> coordination(const xt::xtensor<size_t,2> &conn)
 {
   // get number of nodes
   size_t nnode = xt::amax(conn)[0] + 1;
@@ -138,7 +131,20 @@ inline SpMatS elem2node(const xt::xtensor<size_t,2> &conn)
   // - allocate
   xt::xtensor<size_t,1> N = xt::zeros<size_t>({nnode});
   // - fill from connectivity
-  for ( auto it = conn.data(); it != conn.data()+conn.size(); ++it ) N(*it) += 1;
+  for ( auto it = conn.begin(); it != conn.end(); ++it ) N(*it) += 1;
+
+  return N;
+}
+
+// -------------------------------------------------------------------------------------------------
+
+inline SpMatS elem2node(const xt::xtensor<size_t,2> &conn)
+{
+  // get coordination
+  auto N = coordination(conn);
+
+  // get number of nodes
+  auto nnode = N.size();
 
   // triplet list, with elements per node
   // - allocate
@@ -150,11 +156,15 @@ inline SpMatS elem2node(const xt::xtensor<size_t,2> &conn)
   // - predict size
   triplets.reserve(xt::sum(N)[0]);
   // - fill
-  for ( size_t e = 0 ; e < conn.shape()[0] ; ++e ) {
-    for ( size_t m = 0 ; m < conn.shape()[1] ; ++m ) {
-      size_t nd = conn(e,m);
-      triplets.push_back(T(nd, idx(nd), e));
-      idx(nd)++;
+  for ( size_t e = 0 ; e < conn.shape()[0] ; ++e )
+  {
+    for ( size_t m = 0 ; m < conn.shape()[1] ; ++m )
+    {
+      size_t node = conn(e,m);
+
+      triplets.push_back(T(node, idx(node), e));
+
+      idx(node)++;
     }
   }
 
@@ -165,22 +175,6 @@ inline SpMatS elem2node(const xt::xtensor<size_t,2> &conn)
   mat.setFromTriplets(triplets.begin(), triplets.end());
 
   return mat;
-}
-
-// ------------------------------ coordination number of each element ------------------------------
-
-inline xt::xtensor<size_t,1> coordination(const xt::xtensor<size_t,2> &conn)
-{
-  // get number of nodes
-  size_t nnode = xt::amax(conn)[0] + 1;
-
-  // number of elements connected to each node
-  // - allocate
-  xt::xtensor<size_t,1> N = xt::zeros<size_t>({nnode});
-  // - fill from connectivity
-  for ( auto it = conn.data(); it != conn.data()+conn.size(); ++it ) N(*it) += 1;
-
-  return N;
 }
 
 // -------------------------------------------------------------------------------------------------

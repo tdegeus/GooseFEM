@@ -38,8 +38,7 @@ SECTION( "int_N_scalar_NT_dV" )
   // - check the size
   REQUIRE( M.size() == vec.ndof() );
   // - check each component
-  for ( size_t i = 0 ; i < M.size() ; ++i )
-    EQ( M(i), 1 );
+  REQUIRE( xt::allclose(M, 1.) );
 }
 
 // =================================================================================================
@@ -81,28 +80,25 @@ SECTION( "symGradN_vector" )
   xt::xtensor<double,4> dV = eps;
   quad.dV(dV);
 
-  auto epsbar = xt::sum(dV*eps, {0,1}) / xt::sum(dV, {0,1});
+  // volume averaged strain tensor
+  auto epsbar = xt::average(eps, dV, {0,1});
 
-  // check
+  // check local strain tensors
   // - check sizes
   REQUIRE( eps.shape()[0] == mesh.nelem() );
   REQUIRE( eps.shape()[1] == quad.nip()   );
-  REQUIRE( eps.shape()[2] == mesh.ndim()   );
-  REQUIRE( eps.shape()[3] == mesh.ndim()   );
+  REQUIRE( eps.shape()[2] == mesh.ndim()  );
+  REQUIRE( eps.shape()[3] == mesh.ndim()  );
   // - check all components
   for ( size_t e = 0 ; e < mesh.nelem() ; ++e ) {
     for ( size_t k = 0 ; k < quad.nip() ; ++k ) {
-      auto Eps = xt::view(eps, e, k, xt::all(), xt::all());
-      for ( size_t i = 0 ; i < Eps.shape()[0] ; ++i )
-        for ( size_t j = 0 ; j < Eps.shape()[1] ; ++j )
-          EQ( Eps(i,j), EPS(i,j) );
+      auto Eps = xt::view(eps, e, k);
+      REQUIRE( xt::allclose(Eps, EPS));
     }
   }
 
   // check macroscopic tensor
-  for ( size_t i = 0 ; i < epsbar.shape()[0] ; ++i )
-    for ( size_t j = 0 ; j < epsbar.shape()[1] ; ++j )
-      EQ( epsbar(i,j), EPS(i,j) );
+  REQUIRE( xt::allclose(epsbar, EPS));
 }
 
 // =================================================================================================
@@ -143,10 +139,8 @@ SECTION( "symGradN_vector, int_gradN_dot_tensor2s_dV" )
   // check
   // - size
   REQUIRE( Fi.size() == vec.ndof() );
-  // - check all components
-  for ( size_t i = 0 ; i < vec.ndof() ; ++i )
-    EQ( Fi(i), 0 );
-
+  // - check each component
+  REQUIRE( xt::allclose(Fi, 0.) );
 }
 
 // =================================================================================================

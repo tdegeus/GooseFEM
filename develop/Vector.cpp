@@ -71,7 +71,6 @@ SECTION( "asDofs - elemvec" )
   v(7,0) = 1.0;  v(7,1) = 0.0;
   v(8,0) = 1.0;  v(8,1) = 0.0;
 
-
   // convert to DOFs - element - DOFs
   xt::xtensor<double,1> V = vector.asDofs(vector.asElement(vector.asDofs(v)));
 

@@ -54,17 +54,17 @@ PYBIND11_MODULE(GooseFEM, m) {
 
 m.doc() = "Some simple finite element meshes and operations";
 
-// ================================= GooseFEM - GooseFEM/Vector.h ==================================
+// ======================================== GooseFEM.Vector ========================================
 
 py::class_<GooseFEM::Vector>(m, "Vector")
-  // constructor
+  // -
   .def(
     py::init<const xt::xtensor<size_t,2> &, const xt::xtensor<size_t,2> &>(),
     "Class to switch between DOF/nodal/element views of vectors",
     py::arg("conn"),
     py::arg("dofs")
   )
-  // constructor
+  // -
   .def(
     py::init<const xt::xtensor<size_t,2> &, const xt::xtensor<size_t,2> &, const xt::xtensor<size_t,1> &>(),
     "Class to switch between DOF/nodal/element views of vectors",
@@ -72,7 +72,7 @@ py::class_<GooseFEM::Vector>(m, "Vector")
     py::arg("dofs"),
     py::arg("iip")
   )
-  // methods
+  // -
   .def("nelem", &M::Vector::nelem)
   .def("nne"  , &M::Vector::nne  )
   .def("nnode", &M::Vector::nnode)
@@ -81,22 +81,25 @@ py::class_<GooseFEM::Vector>(m, "Vector")
   .def("nnu"  , &M::Vector::nnu  )
   .def("nnp"  , &M::Vector::nnp  )
   // -
+  .def("dofs" , &M::Vector::dofs )
   .def("iiu"  , &M::Vector::iiu  )
   .def("iip"  , &M::Vector::iip  )
   // -
-  .def("asDofs"    , py::overload_cast<const xt::xtensor<double,1>&,const xt::xtensor<double,1>&>(&M::Vector::asDofs    , py::const_))
-  .def("asDofs"    , py::overload_cast<const xt::xtensor<double,2>&                             >(&M::Vector::asDofs    , py::const_))
-  .def("asDofs"    , py::overload_cast<const xt::xtensor<double,3>&                             >(&M::Vector::asDofs    , py::const_))
-  .def("asDofs_u"  , py::overload_cast<const xt::xtensor<double,2>&                             >(&M::Vector::asDofs_u  , py::const_))
-  .def("asDofs_u"  , py::overload_cast<const xt::xtensor<double,3>&                             >(&M::Vector::asDofs_u  , py::const_))
-  .def("asDofs_p"  , py::overload_cast<const xt::xtensor<double,2>&                             >(&M::Vector::asDofs_p  , py::const_))
-  .def("asDofs_p"  , py::overload_cast<const xt::xtensor<double,3>&                             >(&M::Vector::asDofs_p  , py::const_))
-  .def("asNode"    , py::overload_cast<const xt::xtensor<double,1>&                             >(&M::Vector::asNode    , py::const_))
-  .def("asNode"    , py::overload_cast<const xt::xtensor<double,1>&,const xt::xtensor<double,1>&>(&M::Vector::asNode    , py::const_))
-  .def("asNode"    , py::overload_cast<const xt::xtensor<double,3>&                             >(&M::Vector::asNode    , py::const_))
-  .def("asElement" , py::overload_cast<const xt::xtensor<double,1>&                             >(&M::Vector::asElement , py::const_))
-  .def("asElement" , py::overload_cast<const xt::xtensor<double,1>&,const xt::xtensor<double,1>&>(&M::Vector::asElement , py::const_))
-  .def("asElement" , py::overload_cast<const xt::xtensor<double,2>&                             >(&M::Vector::asElement , py::const_))
+  .def("asDofs"  , py::overload_cast<const xt::xtensor<double,1>&,const xt::xtensor<double,1>&>(&M::Vector::asDofs  , py::const_))
+  .def("asDofs"  , py::overload_cast<const xt::xtensor<double,2>&                             >(&M::Vector::asDofs  , py::const_))
+  .def("asDofs"  , py::overload_cast<const xt::xtensor<double,3>&                             >(&M::Vector::asDofs  , py::const_))
+  .def("asDofs_u", py::overload_cast<const xt::xtensor<double,2>&                             >(&M::Vector::asDofs_u, py::const_))
+  .def("asDofs_u", py::overload_cast<const xt::xtensor<double,3>&                             >(&M::Vector::asDofs_u, py::const_))
+  .def("asDofs_p", py::overload_cast<const xt::xtensor<double,2>&                             >(&M::Vector::asDofs_p, py::const_))
+  .def("asDofs_p", py::overload_cast<const xt::xtensor<double,3>&                             >(&M::Vector::asDofs_p, py::const_))
+  // -
+  .def("asNode", py::overload_cast<const xt::xtensor<double,1>&                             >(&M::Vector::asNode, py::const_))
+  .def("asNode", py::overload_cast<const xt::xtensor<double,1>&,const xt::xtensor<double,1>&>(&M::Vector::asNode, py::const_))
+  .def("asNode", py::overload_cast<const xt::xtensor<double,3>&                             >(&M::Vector::asNode, py::const_))
+  // -
+  .def("asElement", py::overload_cast<const xt::xtensor<double,1>&                             >(&M::Vector::asElement, py::const_))
+  .def("asElement", py::overload_cast<const xt::xtensor<double,1>&,const xt::xtensor<double,1>&>(&M::Vector::asElement, py::const_))
+  .def("asElement", py::overload_cast<const xt::xtensor<double,2>&                             >(&M::Vector::asElement, py::const_))
   // -
   .def("assembleDofs"  , py::overload_cast<const xt::xtensor<double,2>&>(&M::Vector::assembleDofs  , py::const_))
   .def("assembleDofs"  , py::overload_cast<const xt::xtensor<double,3>&>(&M::Vector::assembleDofs  , py::const_))
@@ -104,23 +107,24 @@ py::class_<GooseFEM::Vector>(m, "Vector")
   .def("assembleDofs_u", py::overload_cast<const xt::xtensor<double,3>&>(&M::Vector::assembleDofs_u, py::const_))
   .def("assembleDofs_p", py::overload_cast<const xt::xtensor<double,2>&>(&M::Vector::assembleDofs_p, py::const_))
   .def("assembleDofs_p", py::overload_cast<const xt::xtensor<double,3>&>(&M::Vector::assembleDofs_p, py::const_))
+  // -
   .def("assembleNode"  , py::overload_cast<const xt::xtensor<double,3>&>(&M::Vector::assembleNode  , py::const_))
-  // print to screen
+  // -
   .def("__repr__",
     [](const GooseFEM::Vector &){ return "<GooseFEM.Vector>"; }
   );
 
-// ============================= GooseFEM - GooseFEM/MatrixDiagonal.h ==============================
+// ==================================== GooseFEM.MatrixDiagonal ====================================
 
 py::class_<GooseFEM::MatrixDiagonal>(m, "MatrixDiagonal")
-// constructor
+  // -
   .def(
     py::init<const xt::xtensor<size_t,2> &, const xt::xtensor<size_t,2> &>(),
     "Class to switch between DOF/nodal/element views of vectors",
     py::arg("conn"),
     py::arg("dofs")
   )
-  // constructor
+  // -
   .def(
     py::init<const xt::xtensor<size_t,2> &, const xt::xtensor<size_t,2> &, const xt::xtensor<size_t,1> &>(),
     "Class to switch between DOF/nodal/element views of vectors",
@@ -128,7 +132,7 @@ py::class_<GooseFEM::MatrixDiagonal>(m, "MatrixDiagonal")
     py::arg("dofs"),
     py::arg("iip")
   )
-  // methods
+  // -
   .def("nelem", &M::MatrixDiagonal::nelem)
   .def("nne"  , &M::MatrixDiagonal::nne  )
   .def("nnode", &M::MatrixDiagonal::nnode)

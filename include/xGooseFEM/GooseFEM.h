@@ -37,6 +37,7 @@
 #include <xtensor/xutils.hpp>
 #include <xtensor/xlayout.hpp>
 #include <xtensor/xinfo.hpp>
+#include <xtensor/xnoalias.hpp>
 
 using namespace xt::placeholders;
 

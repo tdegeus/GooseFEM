@@ -21,41 +21,27 @@ namespace Mesh {
 // list with DOF-numbers in sequential order
 inline xt::xtensor<size_t,2> dofs(size_t nnode, size_t ndim);
 
-// -------------------------------------------------------------------------------------------------
-
 // renumber to lowest possible numbers (e.g. [0,3,4,2] -> [0,2,3,1])
-// - core
-template<class InputIterator, class OutputIterator>
-inline void renumber(
-  const InputIterator first, const InputIterator last, const OutputIterator result
-);
-// - interface
 inline xt::xtensor<size_t,2> renumber(const xt::xtensor<size_t,2> &dofs);
 
-// -------------------------------------------------------------------------------------------------
+// get the list needed to renumber: dofs_renumbered(i,j) = index(dofs(i,j))
+inline xt::xtensor<size_t,1> renumber_index(const xt::xtensor<size_t,2> &dofs);
 
-// reorder (and renumber) such that certain indices "idx" are moved to the beginning or the end
-// - core
-template<class InputIterator, class OutputIterator, class IndexIterator>
-inline void reorder(
-  const InputIterator first, const InputIterator last, const OutputIterator result,
-  const IndexIterator idx_first, const IndexIterator idx_last, std::string location
-);
-// - interface
+// renumber such that certain indices "iip" are are moved to the beginning or the end
+// (get the lowest or the highest indices); if "iiu" are the remaining indices, after renumbering:
+// iiu = arange(nnu), iip = nnu + arange(nnp)
 inline xt::xtensor<size_t,2> reorder(const xt::xtensor<size_t,2> &dofs,
-  const xt::xtensor<size_t,1> &idx, std::string location="end");
+  const xt::xtensor<size_t,1> &iip, const std::string &location="end");
 
-// -------------------------------------------------------------------------------------------------
-
-// elements connected to each node:
-// out[: ,0  ] = number of elements connected to each node
-// out[j ,i+1] = "i"th element connected to node "j"
-inline SpMatS elem2node(const xt::xtensor<size_t,2> &conn);
-
-// -------------------------------------------------------------------------------------------------
+// get the list needed to reorder: dofs_reordered(i,j) = index(dofs(i,j))
+inline xt::xtensor<size_t,1> reorder_index(const xt::xtensor<size_t,2> &dofs,
+  const xt::xtensor<size_t,1> &iip, const std::string &location="end");
 
 // number of elements connected to each node
 inline xt::xtensor<size_t,1> coordination(const xt::xtensor<size_t,2> &conn);
+
+// elements connected to each node
+inline SpMatS elem2node(const xt::xtensor<size_t,2> &conn);
 
 // -------------------------------------------------------------------------------------------------
 
