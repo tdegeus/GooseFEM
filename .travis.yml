@@ -81,5 +81,6 @@ install:
     - make install
     - export INCLUDE_PATH="${PWD}"/opt/include:"${INCLUDE_PATH}"
     - cd ../..
+    # make test-cases
     - cmake ..
 script: make && ./test
