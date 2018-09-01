@@ -79,9 +79,7 @@ install:
     - mkdir opt
     - cmake .. -DCATCH_BUILD_TESTING=OFF -DCMAKE_INSTALL_PREFIX:PATH="${PWD}"/opt
     - make install
-    # - mkdir -p opt/include
-    # - cp -r ../single_include/catch2 opt/include/
-    # - export INCLUDE_PATH="${PWD}"/opt/include:"${INCLUDE_PATH}"
+    - export INCLUDE_PATH="${PWD}"/opt/include:"${INCLUDE_PATH}"
     - cd ../..
     - cmake ..
 script: make && ./test
