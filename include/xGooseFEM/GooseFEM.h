@@ -22,7 +22,9 @@
 #include <limits>
 #include <algorithm>
 #include <math.h>
+
 #include <Eigen/Eigen>
+#include <Eigen/Sparse>
 
 #include <xtensor/xarray.hpp>
 #include <xtensor/xadapt.hpp>
