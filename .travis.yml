@@ -45,6 +45,22 @@ before_install:
         export CXX=clang++ CC=clang;
       fi
 install:
+    # Define the version of miniconda to download
+    - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then
+        MINCONDA_OS=$MINCONDA_LINUX;
+      elif [[ "$TRAVIS_OS_NAME" == "osx" ]]; then
+        MINCONDA_OS=$MINCONDA_OSX;
+      fi
+    - wget "http://repo.continuum.io/miniconda/Miniconda3-$MINCONDA_VERSION-$MINCONDA_OS.sh" -O miniconda.sh;
+    - bash miniconda.sh -b -p $HOME/miniconda
+    - export PATH="$HOME/miniconda/bin:$PATH"
+    - hash -r
+    - conda config --set always_yes yes --set changeps1 no
+    - conda update -q conda
+    - conda install cmake -c conda-forge
+    - conda install xtl==0.4.15 -c QuantStack
+    - conda install xsimd -c QuantStack
+    - conda install nlohmann_json -c QuantStack
     # build path
     - cd develop
     - mkdir build
@@ -54,12 +70,12 @@ install:
     - cd Catch2
     - mkdir build
     - cd build
-    # - mkdir opt
-    # - cmake .. -DCATCH_BUILD_TESTING=OFF -DCMAKE_INSTALL_PREFIX:PATH="${PWD}"/opt
-    # - make install
-    - mkdir -p opt/include
-    - cp -r ../single_include/catch2 opt/include/
-    - export INCLUDE_PATH="${PWD}"/opt/include:"${INCLUDE_PATH}"
+    - mkdir opt
+    - cmake .. -DCATCH_BUILD_TESTING=OFF -DCMAKE_INSTALL_PREFIX:PATH="${PWD}"/opt
+    - make install
+    # - mkdir -p opt/include
+    # - cp -r ../single_include/catch2 opt/include/
+    # - export INCLUDE_PATH="${PWD}"/opt/include:"${INCLUDE_PATH}"
     - cd ../..
     - cmake ..
 script: make && ./test
