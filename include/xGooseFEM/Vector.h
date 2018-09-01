@@ -79,21 +79,22 @@ public:
 
   // convert to "nodevec" (overwrite entries that occur more than once) -- (auto allocation below)
 
+  void asNode(const xt::xtensor<double,1> &dofval_u, const xt::xtensor<double,1> &dofval_p,
+    xt::xtensor<double,2> &nodevec) const;
+
   void asNode(const xt::xtensor<double,1> &dofval,
     xt::xtensor<double,2> &nodevec) const;
 
-  void asNode(const xt::xtensor<double,1> &dofval_u, const xt::xtensor<double,1> &dofval_p,
-    xt::xtensor<double,2> &nodevec) const;
 
   void asNode(const xt::xtensor<double,3> &elemvec,
     xt::xtensor<double,2> &nodevec) const;
 
   // convert to "elemvec" (overwrite entries that occur more than once) -- (auto allocation below)
 
-  void asElement(const xt::xtensor<double,1> &dofval,
+  void asElement(const xt::xtensor<double,1> &dofval_u, const xt::xtensor<double,1> &dofval_p,
     xt::xtensor<double,3> &elemvec) const;
 
-  void asElement(const xt::xtensor<double,1> &dofval_u, const xt::xtensor<double,1> &dofval_p,
+  void asElement(const xt::xtensor<double,1> &dofval,
     xt::xtensor<double,3> &elemvec) const;
 
   void asElement(const xt::xtensor<double,2> &nodevec,
