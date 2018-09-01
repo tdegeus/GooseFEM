@@ -58,8 +58,8 @@ install:
       fi
     - wget "http://repo.continuum.io/miniconda/Miniconda3-$MINCONDA_VERSION-$MINCONDA_OS.sh" -O miniconda.sh;
     - bash miniconda.sh -b -p $HOME/miniconda
-    - export PATH="$HOME/miniconda/bin:$PATH"
-    - export INCLUDE_PATH="$HOME/miniconda/include:$INCLUDE_PATH"
+    - export PATH="$HOME/miniconda/bin:${PATH}"
+    - export INCLUDE_PATH="$HOME/miniconda/include:${INCLUDE_PATH}"
     - hash -r
     - conda config --set always_yes yes --set changeps1 no
     - conda update -q conda
