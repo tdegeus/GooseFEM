@@ -1,0 +1,65 @@
+language: cpp
+dist: trusty
+env:
+matrix:
+  fast_finish: true
+  include:
+    - os: linux
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+          packages:
+            - g++-4.9
+            - libeigen3-dev
+      env: COMPILER=gcc GCC=4.9
+    - os: linux
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+          packages:
+            - g++-5
+            - libeigen3-dev
+      env: COMPILER=gcc GCC=5
+    - os: linux
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+          packages:
+            - g++-6
+            - libeigen3-dev
+      env: COMPILER=gcc GCC=6
+before_install:
+    - |
+      # Configure build variables
+      if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then
+        if [[ "$COMPILER" == "gcc" ]]; then
+          export CXX=g++-$GCC CC=gcc-$GCC;
+        fi
+        if [[ "$COMPILER" == "clang" ]]; then
+          export CXX=clang++-$CLANG CC=clang-$CLANG;
+        fi
+      elif [[ "$TRAVIS_OS_NAME" == "osx" ]]; then
+        export CXX=clang++ CC=clang;
+      fi
+install:
+    # build path
+    - cd develop
+    - mkdir build
+    - cd build
+    # install catch
+    - git clone https://github.com/catchorg/Catch2.git
+    - cd Catch2
+    - mkdir build
+    - cd build
+    # - mkdir opt
+    # - cmake .. -DCATCH_BUILD_TESTING=OFF -DCMAKE_INSTALL_PREFIX:PATH="${PWD}"/opt
+    # - make install
+    - mkdir -p opt/include
+    - cp -r ../single_include/catch2 opt/include/
+    - export INCLUDE_PATH="${PWD}"/opt/include:"${INCLUDE_PATH}"
+    - cd ../..
+    - cmake ..
+script: make && ./test
