@@ -31,6 +31,11 @@ matrix:
             - g++-6
             - libeigen3-dev
       env: COMPILER=gcc GCC=6
+env:
+  global:
+    - MINCONDA_VERSION="latest"
+    - MINCONDA_LINUX="Linux-x86_64"
+    - MINCONDA_OSX="MacOSX-x86_64"
 before_install:
     - |
       # Configure build variables
