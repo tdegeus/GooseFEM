@@ -1,9 +1,22 @@
+#==================================================================================================#
+#                                                                                                  #
+# (c - GPLv3) T.W.J. de Geus (Tom) | tom@geus.me | www.geus.me | github.com/tdegeus/GooseFEM       #
+#                                                                                                  #
+#==================================================================================================#
+
+# initialization
+# --------------
+
 # required to specify the c++ standard
 cmake_minimum_required(VERSION 3.0)
 
 # required for install
 include(CMakePackageConfigHelpers)
 include(GNUInstallDirs)
+
+# options
+option(PKGCONFIG "Build pkg-config" ON)
+option(BUILD_TESTS "${PROJECT_NAME} test suite" OFF)
 
 # project settings
 # ----------------
@@ -49,7 +62,10 @@ string(REGEX MATCH "define[ \t]+GOOSEFEM_MAJOR_VERSION[ \t]+([0-9]+)" _ "${versi
 set(major_version "${CMAKE_MATCH_1}")
 string(REGEX MATCH "define[ \t]+GOOSEFEM_MINOR_VERSION[ \t]+([0-9]+)" _ "${version}")
 set(minor_version "${CMAKE_MATCH_1}")
-set(GOOSEFEM_VERSION_NUMBER ${world_version}.${major_version}.${minor_version})
+set(GOOSEFEM_VERSION ${world_version}.${major_version}.${minor_version})
+
+# print information to screen
+message(STATUS "Building ${PROJECT_NAME} v${GOOSEFEM_VERSION}")
 
 # paths
 # -----
@@ -62,26 +78,6 @@ set(PKGCONFIG_INSTALL_DIR    "${CMAKE_INSTALL_DATADIR}/pkgconfig")
 set(fcmake                   "GooseFEMConfig.cmake")
 set(fpkg                     "GooseFEM.pc")
 
-# options
-# -------
-
-# configure pkg-config (default: on)
-option(PKGCONFIG "Build pkg-config ${fpkg} file" ON)
-
-# disable pkg-config for native Windows builds
-if(WIN32 OR CMAKE_HOST_SYSTEM_NAME MATCHES Windows)
-  option(PKGCONFIG "Build pkg-config ${fpkg} file" OFF)
-endif()
-
-# C++ standard
-# ------------
-
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set(CMAKE_CXX_EXTENSIONS OFF)
-if(NOT CMAKE_CXX_STANDARD OR CMAKE_CXX_STANDARD LESS 14)
-  set(CMAKE_CXX_STANDARD 14)
-endif()
-
 # configure CMake
 # ---------------
 
@@ -93,8 +89,18 @@ configure_package_config_file(
   NO_CHECK_REQUIRED_COMPONENTS_MACRO
 )
 
-# install
-# -------
+# install/build
+# -------------
+
+# build test cases
+if(BUILD_TESTS)
+  add_subdirectory(test)
+endif()
+
+# disable pkg-config for native Windows builds
+if(WIN32 OR CMAKE_HOST_SYSTEM_NAME MATCHES Windows)
+  option(PKGCONFIG "Build pkg-config ${fpkg} file" OFF)
+endif()
 
 # pkg-config
 if(PKGCONFIG)
@@ -116,6 +122,10 @@ message(STATUS "+---------------------------------------------------------------
 message(STATUS "|")
 message(STATUS "| Use 'make install' to install in")
 message(STATUS "|   ${CMAKE_INSTALL_PREFIX}")
+if(BUILD_TESTS)
+  message(STATUS "|")
+  message(STATUS "| Use 'make' and './test' to run the tests")
+endif()
 message(STATUS "|")
 message(STATUS "| To specify a custom directory call")
 message(STATUS "|   cmake /path/to/${PROJECT_NAME} -DCMAKE_INSTALL_PREFIX=yourprefix")

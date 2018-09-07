@@ -4,6 +4,6 @@ exec_prefix=${prefix}
 Name: GooseFEM
 Description: Several Finite Element simulation, and some simple meshes and operations (C++/Python)
 Requires:
-Version: @GOOSEFEM_VERSION_NUMBER@
+Version: @GOOSEFEM_VERSION@
 Libs:
 Cflags: -I${prefix}/@GOOSEFEM_INCLUDE_DIR@

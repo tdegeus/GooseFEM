@@ -69,19 +69,8 @@ install:
     - conda install xtensor -c QuantStack
     - conda install nlohmann_json -c QuantStack
     # build path
-    - cd develop
     - mkdir build
     - cd build
-    # install master of xtensor
-    - git clone https://github.com/QuantStack/xtensor.git
-    - cd xtensor
-    - mkdir build
-    - cd build
-    - mkdir opt
-    - cmake .. -DCMAKE_INSTALL_PREFIX:PATH="${PWD}"/opt
-    - make install
-    - export INCLUDE_PATH="${PWD}"/opt/include:"${INCLUDE_PATH}"
-    - cd ../..
     # install catch
     - git clone https://github.com/catchorg/Catch2.git
     - cd Catch2
@@ -93,5 +82,8 @@ install:
     - export INCLUDE_PATH="${PWD}"/opt/include:"${INCLUDE_PATH}"
     - cd ../..
     # make test-cases
-    - cmake ..
-script: make && ./test
+    - cmake .. -DBUILD_TESTS=ON
+    - make
+    - cd test
+script:
+    - ./test

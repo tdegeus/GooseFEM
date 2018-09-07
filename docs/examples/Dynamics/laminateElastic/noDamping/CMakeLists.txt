@@ -35,10 +35,10 @@ if(NOT "$ENV{INCLUDE_PATH}" STREQUAL "")
   include_directories(${INCLUDE_LIST})
 endif()
 
-# # load HDF5
-# find_package(HDF5 COMPONENTS CXX REQUIRED)
-# include_directories(${HDF5_INCLUDE_DIRS})
-# set(PROJECT_LIBS ${PROJECT_LIBS} ${HDF5_LIBS} ${HDF5_LIBRARIES})
+# load HDF5
+find_package(HDF5 COMPONENTS CXX REQUIRED)
+include_directories(${HDF5_INCLUDE_DIRS})
+set(PROJECT_LIBS ${PROJECT_LIBS} ${HDF5_LIBS} ${HDF5_LIBRARIES})
 
 # load eigen
 find_package(PkgConfig)
@@ -50,5 +50,5 @@ include_directories(SYSTEM ${EIGEN3_INCLUDE_DIRS})
 
 add_executable(${PROJECT_NAME} main.cpp)
 
-# target_link_libraries(${PROJECT_NAME} ${PROJECT_LIBS})
+target_link_libraries(${PROJECT_NAME} ${PROJECT_LIBS})
 

@@ -45,19 +45,19 @@ using namespace xt::placeholders;
 
 // =================================================================================================
 
-#define XGOOSEFEM_WORLD_VERSION 0
-#define XGOOSEFEM_MAJOR_VERSION 1
-#define XGOOSEFEM_MINOR_VERSION 0
+#define GOOSEFEM_WORLD_VERSION 0
+#define GOOSEFEM_MAJOR_VERSION 1
+#define GOOSEFEM_MINOR_VERSION 0
 
-#define XGOOSEFEM_VERSION_AT_LEAST(x,y,z) \
-  (XGOOSEFEM_WORLD_VERSION>x || (XGOOSEFEM_WORLD_VERSION>=x && \
-  (XGOOSEFEM_MAJOR_VERSION>y || (XGOOSEFEM_MAJOR_VERSION>=y && \
-                                 XGOOSEFEM_MINOR_VERSION>=z))))
+#define GOOSEFEM_VERSION_AT_LEAST(x,y,z) \
+  (GOOSEFEM_WORLD_VERSION>x || (GOOSEFEM_WORLD_VERSION>=x && \
+  (GOOSEFEM_MAJOR_VERSION>y || (GOOSEFEM_MAJOR_VERSION>=y && \
+                                 GOOSEFEM_MINOR_VERSION>=z))))
 
-#define XGOOSEFEM_VERSION(x,y,z) \
-  (XGOOSEFEM_WORLD_VERSION==x && \
-   XGOOSEFEM_MAJOR_VERSION==y && \
-   XGOOSEFEM_MINOR_VERSION==z)
+#define GOOSEFEM_VERSION(x,y,z) \
+  (GOOSEFEM_WORLD_VERSION==x && \
+   GOOSEFEM_MAJOR_VERSION==y && \
+   GOOSEFEM_MINOR_VERSION==z)
 
 // =================================================================================================
 
