@@ -71,6 +71,16 @@ install:
     # build path
     - mkdir build
     - cd build
+    # install master of xtensor
+    - git clone https://github.com/QuantStack/xtensor.git
+    - cd xtensor
+    - mkdir build
+    - cd build
+    - mkdir opt
+    - cmake .. -DCMAKE_INSTALL_PREFIX:PATH="${PWD}"/opt
+    - make install
+    - export INCLUDE_PATH="${PWD}"/opt/include:"${INCLUDE_PATH}"
+    - cd ../..
     # install catch
     - git clone https://github.com/catchorg/Catch2.git
     - cd Catch2
