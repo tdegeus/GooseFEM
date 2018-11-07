@@ -91,7 +91,7 @@ inline xt::xtensor<double,1> MatrixDiagonal::dot(const xt::xtensor<double,1> &x)
   return m_data * x;
 }
 
-// ----------------------------- assemble matrices stored per element ------------------------------
+// -------------------------------------------------------------------------------------------------
 
 inline void MatrixDiagonal::assemble(const xt::xtensor<double,3> &elemmat)
 {
@@ -109,6 +109,20 @@ inline void MatrixDiagonal::assemble(const xt::xtensor<double,3> &elemmat)
     for ( size_t m = 0 ; m < m_nne ; ++m )
       for ( size_t i = 0 ; i < m_ndim ; ++i )
         m_data(m_dofs(m_conn(e,m),i)) += elemmat(e,m*m_ndim+i,m*m_ndim+i);
+
+  // signal change
+  m_change = true;
+}
+
+// -------------------------------------------------------------------------------------------------
+
+inline void MatrixDiagonal::set(const xt::xtensor<double,1> &A)
+{
+  // check input
+  assert( A.shape()[0] == m_ndof );
+
+  // copy
+  std::copy(A.begin(), A.end(), m_data.begin());
 
   // signal change
   m_change = true;

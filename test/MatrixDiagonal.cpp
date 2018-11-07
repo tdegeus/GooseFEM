@@ -26,8 +26,7 @@ SECTION( "dot" )
   xGooseFEM::MatrixDiagonal A(mesh.conn(), mesh.dofs());
   xt::xtensor<double,1> C;
   // - set
-  for ( size_t i = 0 ; i < a.shape()[0] ; ++i )
-    A(i,i) = a(i);
+  A.set(a);
 
   // compute product
   C = A.dot(b);
@@ -59,8 +58,7 @@ SECTION( "solve" )
   xGooseFEM::MatrixDiagonal A(mesh.conn(), mesh.dofs());
   xt::xtensor<double,1> B, C;
   // - set
-  for ( size_t i = 0 ; i < a.shape()[0] ; ++i )
-    A(i,i) = a(i);
+  A.set(a);
 
   // compute product
   C = A.dot(b);

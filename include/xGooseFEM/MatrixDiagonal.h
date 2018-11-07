@@ -42,6 +42,9 @@ public:
   // WARNING: ignores any off-diagonal terms
   void assemble(const xt::xtensor<double,3> &elemmat);
 
+  // set
+  void set(const xt::xtensor<double,1> &A);
+
   // solve: x = A \ b
   xt::xtensor<double,1> solve(const xt::xtensor<double,1> &b);
 
