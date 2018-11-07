@@ -11,13 +11,13 @@
 
 #include "ElementQuad4.h"
 
-// =================================== GooseFEM::Element::Quad4 ====================================
+// =================================================================================================
 
 namespace xGooseFEM {
 namespace Element {
 namespace Quad4 {
 
-// ======================================== tensor algebra =========================================
+// =================================================================================================
 
 inline double inv(const T2 &A, T2 &Ainv)
 {
@@ -33,18 +33,18 @@ inline double inv(const T2 &A, T2 &Ainv)
   return det;
 }
 
-// ================================ GooseFEM::Element::Quad4::Gauss ================================
+// =================================================================================================
 
 namespace Gauss {
 
-// --------------------------------- number of integration points ----------------------------------
+// -------------------------------------------------------------------------------------------------
 
 inline size_t nip()
 {
   return 4;
 }
 
-// ----------------------- integration point coordinates (local coordinates) -----------------------
+// -------------------------------------------------------------------------------------------------
 
 inline xt::xtensor<double,2> xi()
 {
@@ -61,55 +61,7 @@ inline xt::xtensor<double,2> xi()
   return xi;
 }
 
-// ----------------------------------- integration point weights -----------------------------------
-
-inline xt::xtensor<double,1> w()
-{
-  size_t nip = 4;
-
-  xt::xtensor<double,1> w = xt::empty<double>({nip});
-
-  w(0) = 1.;
-  w(1) = 1.;
-  w(2) = 1.;
-  w(3) = 1.;
-
-  return w;
-}
-
 // -------------------------------------------------------------------------------------------------
-
-}
-
-// ================================ GooseFEM::Element::Quad4::Nodal ================================
-
-namespace Nodal {
-
-// --------------------------------- number of integration points ----------------------------------
-
-inline size_t nip()
-{
-  return 4;
-}
-
-// ----------------------- integration point coordinates (local coordinates) -----------------------
-
-inline xt::xtensor<double,2> xi()
-{
-  size_t nip  = 4;
-  size_t ndim = 2;
-
-  xt::xtensor<double,2> xi = xt::empty<double>({nip,ndim});
-
-  xi(0,0) = -1.;    xi(0,1) = -1.;
-  xi(1,0) = +1.;    xi(1,1) = -1.;
-  xi(2,0) = +1.;    xi(2,1) = +1.;
-  xi(3,0) = -1.;    xi(3,1) = +1.;
-
-  return xi;
-}
-
-// ----------------------------------- integration point weights -----------------------------------
 
 inline xt::xtensor<double,1> w()
 {
@@ -131,7 +83,55 @@ inline xt::xtensor<double,1> w()
 
 // =================================================================================================
 
-// ------------------------------------------ constructor ------------------------------------------
+namespace Nodal {
+
+// -------------------------------------------------------------------------------------------------
+
+inline size_t nip()
+{
+  return 4;
+}
+
+// -------------------------------------------------------------------------------------------------
+
+inline xt::xtensor<double,2> xi()
+{
+  size_t nip  = 4;
+  size_t ndim = 2;
+
+  xt::xtensor<double,2> xi = xt::empty<double>({nip,ndim});
+
+  xi(0,0) = -1.;    xi(0,1) = -1.;
+  xi(1,0) = +1.;    xi(1,1) = -1.;
+  xi(2,0) = +1.;    xi(2,1) = +1.;
+  xi(3,0) = -1.;    xi(3,1) = +1.;
+
+  return xi;
+}
+
+// -------------------------------------------------------------------------------------------------
+
+inline xt::xtensor<double,1> w()
+{
+  size_t nip = 4;
+
+  xt::xtensor<double,1> w = xt::empty<double>({nip});
+
+  w(0) = 1.;
+  w(1) = 1.;
+  w(2) = 1.;
+  w(3) = 1.;
+
+  return w;
+}
+
+// -------------------------------------------------------------------------------------------------
+
+}
+
+// =================================================================================================
+
+// -------------------------------------------------------------------------------------------------
 
 inline Quadrature::Quadrature(const xt::xtensor<double,3> &x) : m_x(x)
 {
@@ -180,7 +180,7 @@ inline Quadrature::Quadrature(const xt::xtensor<double,3> &x) : m_x(x)
   compute_dN();
 }
 
-// ------------------------------------------ constructor ------------------------------------------
+// -------------------------------------------------------------------------------------------------
 
 inline Quadrature::Quadrature(const xt::xtensor<double,3> &x, const xt::xtensor<double,2> &xi,
   const xt::xtensor<double,1> &w) : m_x(x), m_w(w), m_xi(xi)
@@ -230,7 +230,7 @@ inline Quadrature::Quadrature(const xt::xtensor<double,3> &x, const xt::xtensor<
   compute_dN();
 }
 
-// --------------------------- integration volume (per tensor-component) ---------------------------
+// -------------------------------------------------------------------------------------------------
 
 inline void Quadrature::dV(xt::xtensor<double,2> &qscalar) const
 {
@@ -262,55 +262,33 @@ inline void Quadrature::dV(xt::xtensor<double,4> &qtensor) const
 
 // -------------------------------------------------------------------------------------------------
 
-inline xt::xtensor<double,2> Quadrature::dV() const
-{
-  xt::xtensor<double,2> out = xt::empty<double>({m_nelem, m_nip});
-
-  this->dV(out);
-
-  return out;
-}
-
-// -------------------------------------------------------------------------------------------------
-
-inline xt::xtensor<double,4> Quadrature::dVtensor() const
-{
-  xt::xtensor<double,4> out = xt::empty<double>({m_nelem, m_nip, m_ndim, m_ndim});
-
-  this->dV(out);
-
-  return out;
-}
-
-// -------------------------------------- number of elements ---------------------------------------
-
 inline size_t Quadrature::nelem() const
 {
   return m_nelem;
 }
 
-// ---------------------------------- number of nodes per element ----------------------------------
+// -------------------------------------------------------------------------------------------------
 
 inline size_t Quadrature::nne() const
 {
   return m_nne;
 }
 
-// ------------------------------------- number of dimensions --------------------------------------
+// -------------------------------------------------------------------------------------------------
 
 inline size_t Quadrature::ndim() const
 {
   return m_ndim;
 }
 
-// --------------------------------- number of integration points ----------------------------------
+// -------------------------------------------------------------------------------------------------
 
 inline size_t Quadrature::nip() const
 {
   return m_nip;
 }
 
-// --------------------------------------- update positions ----------------------------------------
+// -------------------------------------------------------------------------------------------------
 
 inline void Quadrature::update_x(const xt::xtensor<double,3> &x)
 {
@@ -326,7 +304,7 @@ inline void Quadrature::update_x(const xt::xtensor<double,3> &x)
   compute_dN();
 }
 
-// ------------------------ shape function gradients in global coordinates -------------------------
+// -------------------------------------------------------------------------------------------------
 
 inline void Quadrature::compute_dN()
 {
@@ -374,7 +352,7 @@ inline void Quadrature::compute_dN()
   }
 }
 
-// ------------------- dyadic product "qtensor(i,j) = dNdx(m,i) * elemvec(m,j)" --------------------
+// -------------------------------------------------------------------------------------------------
 
 inline void Quadrature::gradN_vector(
   const xt::xtensor<double,3> &elemvec, xt::xtensor<double,4> &qtensor) const
@@ -416,17 +394,6 @@ inline void Quadrature::gradN_vector(
 
 // -------------------------------------------------------------------------------------------------
 
-inline xt::xtensor<double,4> Quadrature::gradN_vector(const xt::xtensor<double,3> &elemvec) const
-{
-  xt::xtensor<double,4> qtensor = xt::empty<double>({m_nelem, m_nip, m_ndim, m_ndim});
-
-  this->gradN_vector(elemvec, qtensor);
-
-  return qtensor;
-}
-
-// ---------------------------------- transpose of "gradN_vector" ----------------------------------
-
 inline void Quadrature::gradN_vector_T(
   const xt::xtensor<double,3> &elemvec, xt::xtensor<double,4> &qtensor) const
 {
@@ -466,17 +433,6 @@ inline void Quadrature::gradN_vector_T(
 }
 
 // -------------------------------------------------------------------------------------------------
-
-inline xt::xtensor<double,4> Quadrature::gradN_vector_T(const xt::xtensor<double,3> &elemvec) const
-{
-  xt::xtensor<double,4> qtensor = xt::empty<double>({m_nelem, m_nip, m_ndim, m_ndim});
-
-  this->gradN_vector_T(elemvec, qtensor);
-
-  return qtensor;
-}
-
-// ------------------------------- symmetric part of "gradN_vector" --------------------------------
 
 inline void Quadrature::symGradN_vector(
   const xt::xtensor<double,3> &elemvec, xt::xtensor<double,4> &qtensor) const
@@ -518,17 +474,6 @@ inline void Quadrature::symGradN_vector(
   }
 }
 
-// -------------------------------------------------------------------------------------------------
-
-inline xt::xtensor<double,4> Quadrature::symGradN_vector(const xt::xtensor<double,3> &elemvec) const
-{
-  xt::xtensor<double,4> qtensor = xt::empty<double>({m_nelem, m_nip, m_ndim, m_ndim});
-
-  this->symGradN_vector(elemvec, qtensor);
-
-  return qtensor;
-}
-
 // ------- scalar product "elemmat(m*ndim+i,n*ndim+i) = N(m) * qscalar * N(n)"; for all "i" --------
 
 inline void Quadrature::int_N_scalar_NT_dV(
@@ -568,17 +513,6 @@ inline void Quadrature::int_N_scalar_NT_dV(
       }
     }
   }
-}
-
-// -------------------------------------------------------------------------------------------------
-
-inline xt::xtensor<double,3> Quadrature::int_N_scalar_NT_dV(const xt::xtensor<double,2> &qscalar) const
-{
-  xt::xtensor<double,3> elemmat = xt::empty<double>({m_nelem, m_nne*m_ndim, m_nne*m_ndim});
-
-  this->int_N_scalar_NT_dV(qscalar, elemmat);
-
-  return elemmat;
 }
 
 // ------------ integral of dot product "elemvec(m,j) += dNdx(m,i) * qtensor(i,j) * dV" ------------
@@ -624,7 +558,121 @@ inline void Quadrature::int_gradN_dot_tensor2_dV(const xt::xtensor<double,4> &qt
 
 // -------------------------------------------------------------------------------------------------
 
-inline xt::xtensor<double,3> Quadrature::int_gradN_dot_tensor2_dV(const xt::xtensor<double,4> &qtensor) const
+inline void Quadrature::int_gradN_dot_tensor4_dot_gradNT_dV(const xt::xtensor<double,6> &qtensor,
+  xt::xtensor<double,3> &elemmat) const
+{
+  assert( qtensor.shape()[0] == m_nelem );
+  assert( qtensor.shape()[1] == m_nip   );
+  assert( qtensor.shape()[2] == m_ndim  );
+  assert( qtensor.shape()[3] == m_ndim  );
+  assert( qtensor.shape()[4] == m_ndim  );
+  assert( qtensor.shape()[5] == m_ndim  );
+
+  assert( elemmat.shape()[0] == m_nelem      );
+  assert( elemmat.shape()[1] == m_nne*m_ndim );
+  assert( elemmat.shape()[2] == m_nne*m_ndim );
+
+  // zero-initialize output: matrix of vector
+  elemmat.fill(0.0);
+
+  // loop over all elements (in parallel)
+  #pragma omp parallel for
+  for ( size_t e = 0 ; e < m_nelem ; ++e )
+  {
+    // alias (e.g. nodal force)
+    auto K = xt::adapt(&elemmat(e,0,0), xt::xshape<m_nne*m_ndim,m_nne*m_ndim>());
+
+    // loop over all integration points in element "e"
+    for ( size_t q = 0 ; q < m_nip ; ++q ){
+
+      // - alias
+      auto  dNx = xt::adapt(&m_dNx(e,q,0,0), xt::xshape<m_nne,m_ndim>());
+      auto  C   = xt::adapt(&qtensor(e,q,0,0,0,0), xt::xshape<m_ndim,m_ndim,m_ndim,m_ndim>());
+      auto& vol = m_vol(e,q);
+
+      // - evaluate dot product, and assemble
+      for ( size_t m = 0 ; m < m_nne ; ++m )
+        for ( size_t n = 0 ; n < m_nne ; ++n )
+          for ( size_t i = 0 ; i < m_ndim ; ++i )
+            for ( size_t j = 0 ; j < m_ndim ; ++j )
+              for ( size_t k = 0 ; k < m_ndim ; ++k )
+                for ( size_t l = 0 ; l < m_ndim ; ++l )
+                  K(m*m_ndim+j, n*m_ndim+k) += dNx(m,i) * C(i,j,k,l) * dNx(n,l) * vol;
+     }
+  }
+}
+
+// -------------------------------------------------------------------------------------------------
+
+inline xt::xtensor<double,2> Quadrature::dV() const
+{
+  xt::xtensor<double,2> out = xt::empty<double>({m_nelem, m_nip});
+
+  this->dV(out);
+
+  return out;
+}
+
+// -------------------------------------------------------------------------------------------------
+
+inline xt::xtensor<double,4> Quadrature::dVtensor() const
+{
+  xt::xtensor<double,4> out = xt::empty<double>({m_nelem, m_nip, m_ndim, m_ndim});
+
+  this->dV(out);
+
+  return out;
+}
+
+// -------------------------------------------------------------------------------------------------
+
+inline xt::xtensor<double,4> Quadrature::gradN_vector(const xt::xtensor<double,3> &elemvec) const
+{
+  xt::xtensor<double,4> qtensor = xt::empty<double>({m_nelem, m_nip, m_ndim, m_ndim});
+
+  this->gradN_vector(elemvec, qtensor);
+
+  return qtensor;
+}
+
+// -------------------------------------------------------------------------------------------------
+
+inline xt::xtensor<double,4> Quadrature::gradN_vector_T(const xt::xtensor<double,3> &elemvec) const
+{
+  xt::xtensor<double,4> qtensor = xt::empty<double>({m_nelem, m_nip, m_ndim, m_ndim});
+
+  this->gradN_vector_T(elemvec, qtensor);
+
+  return qtensor;
+}
+
+// -------------------------------------------------------------------------------------------------
+
+inline xt::xtensor<double,4> Quadrature::symGradN_vector(const xt::xtensor<double,3> &elemvec) const
+{
+  xt::xtensor<double,4> qtensor = xt::empty<double>({m_nelem, m_nip, m_ndim, m_ndim});
+
+  this->symGradN_vector(elemvec, qtensor);
+
+  return qtensor;
+}
+
+// -------------------------------------------------------------------------------------------------
+
+inline xt::xtensor<double,3> Quadrature::int_N_scalar_NT_dV(
+  const xt::xtensor<double,2> &qscalar) const
+{
+  xt::xtensor<double,3> elemmat = xt::empty<double>({m_nelem, m_nne*m_ndim, m_nne*m_ndim});
+
+  this->int_N_scalar_NT_dV(qscalar, elemmat);
+
+  return elemmat;
+}
+
+// -------------------------------------------------------------------------------------------------
+
+inline xt::xtensor<double,3> Quadrature::int_gradN_dot_tensor2_dV(
+  const xt::xtensor<double,4> &qtensor) const
 {
   xt::xtensor<double,3> elemvec = xt::empty<double>({m_nelem, m_nne, m_ndim});
 
@@ -632,6 +680,18 @@ inline xt::xtensor<double,3> Quadrature::int_gradN_dot_tensor2_dV(const xt::xten
 
   return elemvec;
 }
+
+// -------------------------------------------------------------------------------------------------
+
+inline xt::xtensor<double,3> Quadrature::int_gradN_dot_tensor4_dot_gradNT_dV(
+  const xt::xtensor<double,6> &qtensor) const
+ {
+   xt::xtensor<double,3> elemmat = xt::empty<double>({m_nelem, m_ndim*m_nne, m_ndim*m_nne});
+
+   this->int_gradN_dot_tensor4_dot_gradNT_dV(qtensor, elemmat);
+
+   return elemmat;
+ }
 
 // -------------------------------------------------------------------------------------------------
 

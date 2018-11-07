@@ -22,6 +22,9 @@ class Geometry
 {
 public:
 
+  // destructor
+  virtual ~Geometry() {};
+
   // solve for DOF-accelerations [ndof]
   virtual xt::xtensor<double,1> solve_A() { return xt::empty<double>({0}); };
   virtual xt::xtensor<double,1> solve_V() { return xt::empty<double>({0}); };

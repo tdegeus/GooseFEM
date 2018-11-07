@@ -71,6 +71,7 @@ namespace xGooseFEM
 {
   typedef Eigen::SparseMatrix<double,Eigen::RowMajor> SpMatD;
   typedef Eigen::SparseMatrix<size_t,Eigen::RowMajor> SpMatS;
+  typedef Eigen::Triplet<double> TripD;
 }
 
 // =================================================================================================
@@ -83,7 +84,10 @@ namespace xGooseFEM
 #include "ElementQuad4.h"
 #include "ElementHex8.h"
 #include "Vector.h"
+#include "VectorPartitioned.h"
+#include "MatrixPartitioned.h"
 #include "MatrixDiagonal.h"
+#include "MatrixDiagonalPartitioned.h"
 #include "Iterate.h"
 #include "Dynamics.h"
 
@@ -95,7 +99,10 @@ namespace xGooseFEM
 #include "ElementQuad4.hpp"
 #include "ElementHex8.hpp"
 #include "Vector.hpp"
+#include "VectorPartitioned.hpp"
+#include "MatrixPartitioned.hpp"
 #include "MatrixDiagonal.hpp"
+#include "MatrixDiagonalPartitioned.hpp"
 #include "Iterate.hpp"
 #include "Dynamics.hpp"
 
