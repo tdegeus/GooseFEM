@@ -42,12 +42,20 @@ set(headers
   include/xGooseFEM/Element.h
   include/xGooseFEM/ElementQuad4.hpp
   include/xGooseFEM/ElementQuad4.h
+  include/xGooseFEM/ElementQuad4Planar.hpp
+  include/xGooseFEM/ElementQuad4Planar.h
   include/xGooseFEM/ElementHex8.hpp
   include/xGooseFEM/ElementHex8.h
   include/xGooseFEM/Vector.hpp
   include/xGooseFEM/Vector.h
+  include/xGooseFEM/VectorPartitioned.hpp
+  include/xGooseFEM/VectorPartitioned.h
+  include/xGooseFEM/MatrixPartitioned.hpp
+  include/xGooseFEM/MatrixPartitioned.h
   include/xGooseFEM/MatrixDiagonal.hpp
   include/xGooseFEM/MatrixDiagonal.h
+  include/xGooseFEM/MatrixDiagonalPartitioned.hpp
+  include/xGooseFEM/MatrixDiagonalPartitioned.h
   include/xGooseFEM/Iterate.hpp
   include/xGooseFEM/Iterate.h
   include/xGooseFEM/Dynamics.hpp

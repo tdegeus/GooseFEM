@@ -52,7 +52,7 @@ using namespace xt::placeholders;
 #define GOOSEFEM_VERSION_AT_LEAST(x,y,z) \
   (GOOSEFEM_WORLD_VERSION>x || (GOOSEFEM_WORLD_VERSION>=x && \
   (GOOSEFEM_MAJOR_VERSION>y || (GOOSEFEM_MAJOR_VERSION>=y && \
-                                 GOOSEFEM_MINOR_VERSION>=z))))
+                                GOOSEFEM_MINOR_VERSION>=z))))
 
 #define GOOSEFEM_VERSION(x,y,z) \
   (GOOSEFEM_WORLD_VERSION==x && \
@@ -77,33 +77,34 @@ namespace xGooseFEM
 // =================================================================================================
 
 #include "Mesh.h"
-#include "MeshTri3.h"
-#include "MeshQuad4.h"
-#include "MeshHex8.h"
-#include "Element.h"
-#include "ElementQuad4.h"
-#include "ElementHex8.h"
-#include "Vector.h"
-#include "VectorPartitioned.h"
-#include "MatrixPartitioned.h"
-#include "MatrixDiagonal.h"
-#include "MatrixDiagonalPartitioned.h"
-#include "Iterate.h"
-#include "Dynamics.h"
-
 #include "Mesh.hpp"
+#include "MeshTri3.h"
 #include "MeshTri3.hpp"
+#include "MeshQuad4.h"
 #include "MeshQuad4.hpp"
+#include "MeshHex8.h"
 #include "MeshHex8.hpp"
+#include "Element.h"
 #include "Element.hpp"
+#include "ElementQuad4.h"
 #include "ElementQuad4.hpp"
+#include "ElementQuad4Planar.h"
+#include "ElementQuad4Planar.hpp"
+#include "ElementHex8.h"
 #include "ElementHex8.hpp"
+#include "Vector.h"
 #include "Vector.hpp"
+#include "VectorPartitioned.h"
 #include "VectorPartitioned.hpp"
+#include "MatrixPartitioned.h"
 #include "MatrixPartitioned.hpp"
+#include "MatrixDiagonal.h"
 #include "MatrixDiagonal.hpp"
+#include "MatrixDiagonalPartitioned.h"
 #include "MatrixDiagonalPartitioned.hpp"
+#include "Iterate.h"
 #include "Iterate.hpp"
+#include "Dynamics.h"
 #include "Dynamics.hpp"
 
 // =================================================================================================

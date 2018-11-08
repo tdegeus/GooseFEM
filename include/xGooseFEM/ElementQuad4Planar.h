@@ -4,8 +4,8 @@
 
 ================================================================================================= */
 
-#ifndef XGOOSEFEM_ELEMENTQUAD4_H
-#define XGOOSEFEM_ELEMENTQUAD4_H
+#ifndef XGOOSEFEM_ELEMENTQUAD4PLANAR_H
+#define XGOOSEFEM_ELEMENTQUAD4PLANAR_H
 
 // -------------------------------------------------------------------------------------------------
 
@@ -17,53 +17,30 @@ namespace xGooseFEM {
 namespace Element {
 namespace Quad4 {
 
-// =================================================================================================
-
-using T2 = xt::xtensor_fixed<double, xt::xshape<2,2>>;
-
-inline double inv(const T2 &A, T2 &Ainv);
-
-// =================================================================================================
-
-namespace Gauss {
-inline size_t                nip(); // number of integration points
-inline xt::xtensor<double,2> xi();  // integration point coordinates (local coordinates)
-inline xt::xtensor<double,1> w();   // integration point weights
-}
-
-// =================================================================================================
-
-namespace Nodal {
-inline size_t                nip(); // number of integration points
-inline xt::xtensor<double,2> xi();  // integration point coordinates (local coordinates)
-inline xt::xtensor<double,1> w();   // integration point weights
-}
-
-// =================================================================================================
-
 // -------------------------------------------------------------------------------------------------
 
-class Quadrature
+class QuadraturePlanar
 {
 public:
 
   // fixed dimensions:
   //    ndim = 2   -  number of dimensions
   //    nne  = 4   -  number of nodes per element
+  //    tdim = 3   -  number of dimensions of tensors
   //
   // naming convention:
   //    "elemmat"  -  matrices stored per element       -  [nelem, nne*ndim, nne*ndim]
   //    "elemvec"  -  nodal vectors stored per element  -  [nelem, nne, ndim]
-  //    "qtensor"  -  integration point tensor          -  [nelem, nip, ndim, ndim]
+  //    "qtensor"  -  integration point tensor          -  [nelem, nip, tdim, tdim]
   //    "qscalar"  -  integration point scalar          -  [nelem, nip]
 
   // constructor: integration point coordinates and weights are optional (default: Gauss)
 
-  Quadrature() = default;
+  QuadraturePlanar() = default;
 
-  Quadrature(const xt::xtensor<double,3> &x) : Quadrature(x, Gauss::xi(), Gauss::w()){};
+  QuadraturePlanar(const xt::xtensor<double,3> &x, double thick=1.) : QuadraturePlanar(x, Gauss::xi(), Gauss::w()){};
 
-  Quadrature(const xt::xtensor<double,3> &x, const xt::xtensor<double,2> &xi, const xt::xtensor<double,1> &w);
+  QuadraturePlanar(const xt::xtensor<double,3> &x, const xt::xtensor<double,2> &xi, const xt::xtensor<double,1> &w, double thick=1.);
 
   // update the nodal positions (shape of "x" should match the earlier definition)
 
@@ -140,6 +117,7 @@ private:
   // dimensions (fixed for this element type)
   static const size_t m_nne=4;  // number of nodes per element
   static const size_t m_ndim=2; // number of dimensions
+  static const size_t m_tdim=3; // number of dimensions of tensors
 
   // data arrays
   xt::xtensor<double,3> m_x;    // nodal positions stored per element [nelem, nne, ndim]
@@ -149,6 +127,9 @@ private:
   xt::xtensor<double,3> m_dNxi; // shape function gradients w.r.t. local  coordinate [nip, nne, ndim]
   xt::xtensor<double,4> m_dNx;  // shape function gradients w.r.t. global coordinate [nelem, nip, nne, ndim]
   xt::xtensor<double,2> m_vol;  // integration point volume [nelem, nip]
+
+  // thickness
+  double m_thick;
 
 };
 
