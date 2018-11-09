@@ -3,7 +3,7 @@
 
 // =================================================================================================
 
-TEST_CASE("xGooseFEM::MatrixDiagonal", "MatrixDiagonal.h")
+TEST_CASE("GooseFEM::MatrixDiagonal", "MatrixDiagonal.h")
 {
 
 // =================================================================================================
@@ -11,7 +11,7 @@ TEST_CASE("xGooseFEM::MatrixDiagonal", "MatrixDiagonal.h")
 SECTION( "dot" )
 {
   // mesh
-  xGooseFEM::Mesh::Quad4::Regular mesh(2,2);
+  GooseFEM::Mesh::Quad4::Regular mesh(2,2);
 
   // random matrix and column
   xt::xtensor<double,1> a = xt::random::rand<double>({mesh.nnode()*mesh.ndim()});
@@ -21,9 +21,9 @@ SECTION( "dot" )
   // compute product
   c = a * b;
 
-  // convert to xGooseFEM
+  // convert to GooseFEM
   // - allocate
-  xGooseFEM::MatrixDiagonal A(mesh.conn(), mesh.dofs());
+  GooseFEM::MatrixDiagonal A(mesh.conn(), mesh.dofs());
   xt::xtensor<double,1> C;
   // - set
   A.set(a);
@@ -43,7 +43,7 @@ SECTION( "dot" )
 SECTION( "solve" )
 {
   // mesh
-  xGooseFEM::Mesh::Quad4::Regular mesh(2,2);
+  GooseFEM::Mesh::Quad4::Regular mesh(2,2);
 
   // random matrix and column
   xt::xtensor<double,1> a = xt::random::rand<double>({mesh.nnode()*mesh.ndim()});
@@ -53,9 +53,9 @@ SECTION( "solve" )
   // compute product
   c = a * b;
 
-  // convert to xGooseFEM
+  // convert to GooseFEM
   // - allocate
-  xGooseFEM::MatrixDiagonal A(mesh.conn(), mesh.dofs());
+  GooseFEM::MatrixDiagonal A(mesh.conn(), mesh.dofs());
   xt::xtensor<double,1> B, C;
   // - set
   A.set(a);

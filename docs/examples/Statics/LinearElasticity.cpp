@@ -1,4 +1,4 @@
-#include <xGooseFEM/GooseFEM.h>
+#include <GooseFEM/GooseFEM.h>
 #include <GMatLinearElastic/GMatLinearElastic.h>
 
 int main()
@@ -6,7 +6,7 @@ int main()
   // mesh
   // ----
 
-  xGooseFEM::Mesh::Quad4::Regular mesh(5,5);
+  GooseFEM::Mesh::Quad4::Regular mesh(5,5);
 
   xt::xtensor<double,2> coor = mesh.coor();
   xt::xtensor<size_t,2> conn = mesh.conn();
@@ -33,10 +33,10 @@ int main()
   // element definition
   // ------------------
 
-  xGooseFEM::VectorPartitioned vector(conn, dofs, iip);
-  xGooseFEM::MatrixPartitioned K     (conn, dofs, iip);
+  GooseFEM::VectorPartitioned vector(conn, dofs, iip);
+  GooseFEM::MatrixPartitioned K     (conn, dofs, iip);
 
-  xGooseFEM::Element::Quad4::QuadraturePlanar elem(vector.asElement(coor));
+  GooseFEM::Element::Quad4::QuadraturePlanar elem(vector.asElement(coor));
 
   GMatLinearElastic::Cartesian3d::Material mat(mesh.nelem(), elem.nip(), 1., 1.);
 

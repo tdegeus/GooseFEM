@@ -22,44 +22,44 @@ option(BUILD_TESTS "${PROJECT_NAME} test suite" OFF)
 # ----------------
 
 # name
-project(xGooseFEM)
+project(GooseFEM)
 
 # file that contains the version information
-set(parse_version include/xGooseFEM/GooseFEM.h)
+set(parse_version include/GooseFEM/GooseFEM.h)
 
 # header files
 set(headers
-  include/xGooseFEM/GooseFEM.h
-  include/xGooseFEM/Mesh.hpp
-  include/xGooseFEM/Mesh.h
-  include/xGooseFEM/MeshTri3.hpp
-  include/xGooseFEM/MeshTri3.h
-  include/xGooseFEM/MeshQuad4.hpp
-  include/xGooseFEM/MeshQuad4.h
-  include/xGooseFEM/MeshHex8.hpp
-  include/xGooseFEM/MeshHex8.h
-  include/xGooseFEM/Element.hpp
-  include/xGooseFEM/Element.h
-  include/xGooseFEM/ElementQuad4.hpp
-  include/xGooseFEM/ElementQuad4.h
-  include/xGooseFEM/ElementQuad4Planar.hpp
-  include/xGooseFEM/ElementQuad4Planar.h
-  include/xGooseFEM/ElementHex8.hpp
-  include/xGooseFEM/ElementHex8.h
-  include/xGooseFEM/Vector.hpp
-  include/xGooseFEM/Vector.h
-  include/xGooseFEM/VectorPartitioned.hpp
-  include/xGooseFEM/VectorPartitioned.h
-  include/xGooseFEM/MatrixPartitioned.hpp
-  include/xGooseFEM/MatrixPartitioned.h
-  include/xGooseFEM/MatrixDiagonal.hpp
-  include/xGooseFEM/MatrixDiagonal.h
-  include/xGooseFEM/MatrixDiagonalPartitioned.hpp
-  include/xGooseFEM/MatrixDiagonalPartitioned.h
-  include/xGooseFEM/Iterate.hpp
-  include/xGooseFEM/Iterate.h
-  include/xGooseFEM/Dynamics.hpp
-  include/xGooseFEM/Dynamics.h
+  include/GooseFEM/GooseFEM.h
+  include/GooseFEM/Mesh.hpp
+  include/GooseFEM/Mesh.h
+  include/GooseFEM/MeshTri3.hpp
+  include/GooseFEM/MeshTri3.h
+  include/GooseFEM/MeshQuad4.hpp
+  include/GooseFEM/MeshQuad4.h
+  include/GooseFEM/MeshHex8.hpp
+  include/GooseFEM/MeshHex8.h
+  include/GooseFEM/Element.hpp
+  include/GooseFEM/Element.h
+  include/GooseFEM/ElementQuad4.hpp
+  include/GooseFEM/ElementQuad4.h
+  include/GooseFEM/ElementQuad4Planar.hpp
+  include/GooseFEM/ElementQuad4Planar.h
+  include/GooseFEM/ElementHex8.hpp
+  include/GooseFEM/ElementHex8.h
+  include/GooseFEM/Vector.hpp
+  include/GooseFEM/Vector.h
+  include/GooseFEM/VectorPartitioned.hpp
+  include/GooseFEM/VectorPartitioned.h
+  include/GooseFEM/MatrixPartitioned.hpp
+  include/GooseFEM/MatrixPartitioned.h
+  include/GooseFEM/MatrixDiagonal.hpp
+  include/GooseFEM/MatrixDiagonal.h
+  include/GooseFEM/MatrixDiagonalPartitioned.hpp
+  include/GooseFEM/MatrixDiagonalPartitioned.h
+  include/GooseFEM/Iterate.hpp
+  include/GooseFEM/Iterate.h
+  include/GooseFEM/Dynamics.hpp
+  include/GooseFEM/Dynamics.h
 )
 
 # automatically parse the version number

@@ -1,12 +1,12 @@
 
-#include <xGooseFEM/GooseFEM.h>
+#include <GooseFEM/GooseFEM.h>
 #include <xElastoPlasticQPot/ElastoPlasticQPot.h>
 #include <HDF5pp.h>
 
 // -------------------------------------------------------------------------------------------------
 
-namespace GF = xGooseFEM;
-namespace QD = xGooseFEM::Element::Quad4;
+namespace GF = GooseFEM;
+namespace QD = GooseFEM::Element::Quad4;
 namespace GM = xElastoPlasticQPot::Cartesian2d;
 
 using T2 = xt::xtensor_fixed<double, xt::xshape<2,2>>;
@@ -25,7 +25,7 @@ inline double sqdot(const xt::xtensor<double,1> &M, const xt::xtensor<double,1> 
 
 // -------------------------------------------------------------------------------------------------
 
-class Geometry : public xGooseFEM::Dynamics::Geometry
+class Geometry : public GooseFEM::Dynamics::Geometry
 {
 private:
 
