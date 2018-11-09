@@ -3,7 +3,7 @@ import sys, os, re
 import h5py
 import numpy             as np
 import matplotlib.pyplot as plt
-import goosempl          as gplt
+import GooseMPL          as gplt
 import matplotlib        as mpl
 
 plt.style.use(['goose','goose-latex'])

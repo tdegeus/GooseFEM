@@ -153,7 +153,7 @@ inline xt::xtensor<double,1> Geometry::solve_A()
 {
   xt::xtensor<double,4> Eps = m_quad.symGradN_vector( m_vec.asElement(m_u) );
   xt::xtensor<double,4> Sig = m_mat.Sig(Eps);
-  xt::xtensor<double,1> F = m_vec.assembleDofs( m_quad.int_gradN_dot_tensor2_dV(Sig) );
+  xt::xtensor<double,1> F   = m_vec.assembleDofs( m_quad.int_gradN_dot_tensor2_dV(Sig) );
 
   return m_M.solve( -F );
 }
@@ -216,7 +216,6 @@ int main()
 
   // loop over increments
   for ( size_t inc = 0 ; inc < static_cast<size_t>(Epot.size()) ; ++inc )
-  // for ( size_t inc = 0 ; inc < 2000 ; ++inc )
   {
     // - compute increment
     GF::Dynamics::velocityVerlet(geometry, dt);
