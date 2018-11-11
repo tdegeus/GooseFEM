@@ -53,7 +53,7 @@ int main()
   xt::xtensor<double,6> C = mat.Tangent();
 
   // internal force
-  xt::xtensor<double,2> fint = vector.asNode(elem.int_gradN_dot_tensor2_dV(Sig));
+  xt::xtensor<double,2> fint = vector.assembleNode(elem.int_gradN_dot_tensor2_dV(Sig));
 
   // stiffness matrix
   K.assemble(elem.int_gradN_dot_tensor4_dot_gradNT_dV(C));
