@@ -11,33 +11,39 @@ Verlet
 
 .. code-block:: cpp
 
+  xt::xtensor<double,2> u    = xt::zeros<double>({nnode, ndim});
+  xt::xtensor<double,2> v    = xt::zeros<double>({nnode, ndim});
+  xt::xtensor<double,2> a    = xt::zeros<double>({nnode, ndim});
+  xt::xtensor<double,2> v_n  = xt::zeros<double>({nnode, ndim});
+  xt::xtensor<double,2> a_n  = xt::zeros<double>({nnode, ndim});
+
+  xt::xtensor<double,2> fres = xt::zeros<double>({nnode, ndim});
+
+  GooseFEM::MatrixDiagonal M(...);
+
+  ...
+
   while ( ... )
   {
-    // variables & history
+    // history
 
-    xt::xtensor<double,2> u;
-    xt::xtensor<double,1> V;
-    xt::xtensor<double,1> A;
-    xt::xtensor<double,1> V_n = g.dofs_v();
-    xt::xtensor<double,1> A_n = g.dofs_a();
+    xt::noalias(v_n) = v;
+    xt::noalias(a_n) = a;
 
     // new displacement
 
-    xt::noalias(u) = g.u() + dt * g.v() + 0.5 * std::pow(dt,2.) * g.a();
+    xt::noalias(u) = u + dt * v + 0.5 * std::pow(dt,2.) * a;
 
-    g.set_u(u);
+    ...
 
     // new acceleration
 
-    xt::noalias(A) = g.solve_A();
-
-    g.set_a(A);
+    M.solve(fres, a);
 
     // new velocity
 
-    xt::noalias(V) = V_n + .5 * dt * ( A_n + A );
+    xt::noalias(v) = v_n + .5 * dt * ( a_n + a );
 
-    g.set_v(V);
   }
 
 Velocity Verlet
@@ -49,43 +55,39 @@ Velocity Verlet
   {
     // variables & history
 
-    xt::xtensor<double,2> u;
-    xt::xtensor<double,1> V;
-    xt::xtensor<double,1> A;
-    xt::xtensor<double,1> V_n = g.dofs_v();
-    xt::xtensor<double,1> A_n = g.dofs_a();
+    xt::noalias(v_n) = v;
+    xt::noalias(a_n) = a;
 
     // new displacement
 
-    xt::noalias(u) = g.u() + dt * g.v() + 0.5 * std::pow(dt,2.) * g.a();
+    xt::noalias(u) = u + dt * v + 0.5 * std::pow(dt,2.) * a;
 
-    g.set_u(u);
+    ...
 
     // estimate new velocity
 
-    xt::noalias(V) = V_n + dt * A_n;
+    xt::noalias(v) = v_n + dt * a_n;
 
-    g.set_v(V);
+    ...
 
-    xt::noalias(A) = g.solve_A();
+    M.solve(fres, a);
 
-    xt::noalias(V) = V_n + .5 * dt * ( A_n + A );
+    xt::noalias(v) = v_n + .5 * dt * ( a_n + a );
 
-    g.set_v(V);
+    ...
 
     // new velocity
 
-    xt::noalias(A) = g.solve_A();
+    M.solve(fres, a);
 
-    xt::noalias(V) = V_n + .5 * dt * ( A_n + A );
+    xt::noalias(v) = v_n + .5 * dt * ( a_n + a );
 
-    g.set_v(V);
+    ...
 
     // new acceleration
 
-    xt::noalias(A) = g.solve_A();
+    M.solve(fres, a);
 
-    g.set_a(A);
   }
 
 Forward Euler
@@ -93,9 +95,14 @@ Forward Euler
 
 .. code-block:: cpp
 
+  xt::xtensor<double,2> u = xt::zeros<double>({nnode, ndim});
+  xt::xtensor<double,2> v = xt::zeros<double>({nnode, ndim});
+
+  ...
+
   while ( ... )
   {
-    xt::noalias(U) = g.dofs_u() + dt * g.solve_V();
+    xt::noalias(u) = u + dt * v;
 
-    g.set_u(U);
+    ...
   }
