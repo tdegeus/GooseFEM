@@ -127,6 +127,20 @@ int main()
     material.Sig(Eps, Sig);
     vector.assembleNode(quad.int_gradN_dot_tensor2_dV(Sig), fint);
 
+    // estimate new velocity
+
+    xt::noalias(v) = v_n + dt * a_n;
+
+    // compute residual force & solve
+
+    xt::noalias(fres) = fext - fint;
+
+    M.solve(fres, a);
+
+    // re-estimate new velocity
+
+    xt::noalias(v) = v_n + .5 * dt * ( a_n + a );
+
     // compute residual force & solve
 
     xt::noalias(fres) = fext - fint;
@@ -136,6 +150,12 @@ int main()
     // new velocity
 
     xt::noalias(v) = v_n + .5 * dt * ( a_n + a );
+
+    // compute residual force & solve
+
+    xt::noalias(fres) = fext - fint;
+
+    M.solve(fres, a);
 
     // store output variables
 

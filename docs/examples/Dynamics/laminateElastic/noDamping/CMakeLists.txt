@@ -4,10 +4,13 @@ cmake_minimum_required(VERSION 3.1)
 # ----------
 
 # define a project name
-project(example)
+project(main)
 
 # define empty list of libraries to link
 set(PROJECT_LIBS "")
+
+# copy files to build folder
+configure_file("plot.py" "plot.py" COPYONLY)
 
 # basic compiler options
 # ----------------------
