@@ -21,14 +21,14 @@ class MatrixPartitioned
 {
 public:
 
-  // default constructor
-  MatrixPartitioned() = default;
+  // constructors
 
-  // constructor
+  MatrixPartitioned() = default;
   MatrixPartitioned(const xt::xtensor<size_t,2> &conn, const xt::xtensor<size_t,2> &dofs,
     const xt::xtensor<size_t,1> &iip);
 
   // dimensions
+
   size_t nelem() const; // number of elements
   size_t nne()   const; // number of nodes per element
   size_t nnode() const; // number of nodes
@@ -38,15 +38,31 @@ public:
   size_t nnp()   const; // number of prescribed DOFs
 
   // DOF lists
+
   xt::xtensor<size_t,2> dofs() const; // DOFs
   xt::xtensor<size_t,1> iiu()  const; // unknown    DOFs
   xt::xtensor<size_t,1> iip()  const; // prescribed DOFs
 
   // assemble from matrices stored per element [nelem, nne*ndim, nne*ndim]
+
   void assemble(const xt::xtensor<double,3> &elemmat);
 
-  // solve: x_u = A_uu \ ( b_u - A_up * x_p )
-  xt::xtensor<double,1> solve(const xt::xtensor<double,1> &b_u, const xt::xtensor<double,1> &x_p);
+  // solve: x = A \ b
+  //   x_u = A_uu \ ( b_u - A_up * x_p )
+  //   b_p = A_pu * x_u + A_pp * x_p
+
+  void solve(xt::xtensor<double,2> &b,
+    xt::xtensor<double,2> &x);
+
+  void solve(xt::xtensor<double,1> &b,
+    xt::xtensor<double,1> &x);
+
+  void solve_u(const xt::xtensor<double,1> &b_u, const xt::xtensor<double,1> &x_p,
+    xt::xtensor<double,1> &x_u);
+
+  // auto allocation of the functions above
+
+  xt::xtensor<double,1> solve_u(const xt::xtensor<double,1> &b_u, const xt::xtensor<double,1> &x_p);
 
 private:
 
@@ -85,7 +101,20 @@ private:
   size_t m_nnp;   // number of prescribed DOFs
 
   // compute inverse (automatically evaluated by "solve")
+
   void factorize();
+
+  // convert arrays (see VectorPartitioned, which contains public functions)
+
+  Eigen::VectorXd asDofs_u(const xt::xtensor<double,1> &dofval) const;
+
+  Eigen::VectorXd asDofs_u(const xt::xtensor<double,2> &nodevec) const;
+
+  Eigen::VectorXd asDofs_p(const xt::xtensor<double,1> &dofval) const;
+
+  Eigen::VectorXd asDofs_p(const xt::xtensor<double,2> &nodevec) const;
+
+
 };
 
 // -------------------------------------------------------------------------------------------------

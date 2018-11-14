@@ -102,22 +102,23 @@ Data-storage
 Contents
 ========
 
-Code overview
--------------
-
 .. toctree::
+   :caption: USAGE
    :maxdepth: 1
 
    Mesh.rst
    Element.rst
    Vector.rst
+
+.. toctree::
+   :caption: INSTALLATION
+   :maxdepth: 1
+
    compile.rst
    develop.rst
 
-Examples
---------
-
 .. toctree::
+   :caption: EXAMPLES
    :maxdepth: 1
 
    examples/Dynamics/readme.rst

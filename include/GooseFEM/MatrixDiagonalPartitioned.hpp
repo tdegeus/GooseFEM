@@ -73,53 +73,18 @@ inline xt::xtensor<size_t,1> MatrixDiagonalPartitioned::iip() const { return m_i
 
 // -------------------------------------------------------------------------------------------------
 
-inline void MatrixDiagonalPartitioned::dot(const xt::xtensor<double,1> &x,
-  xt::xtensor<double,1> &b) const
+inline void MatrixDiagonalPartitioned::factorize()
 {
-  assert( x.size() == m_ndof );
-  assert( b.size() == m_ndof );
+  // skip for unchanged "m_data"
+  if ( ! m_change ) return;
 
+  // invert
   #pragma omp parallel for
-  for ( size_t i = 0 ; i < m_nnu ; ++i )
-    b(m_iiu(i)) = m_data_uu(i) * x(m_iiu(i));
+  for ( size_t d = 0 ; d < m_nnu ; ++d )
+    m_inv_uu(d) = 1. / m_data_uu(d);
 
-  #pragma omp parallel for
-  for ( size_t i = 0 ; i < m_nnp ; ++i )
-    b(m_iip(i)) = m_data_pp(i) * x(m_iip(i));
-}
-
-// -------------------------------------------------------------------------------------------------
-
-inline void MatrixDiagonalPartitioned::dot_u(
-  const xt::xtensor<double,1> &x_u, const xt::xtensor<double,1> &x_p,
-  xt::xtensor<double,1> &b_u) const
-{
-  UNUSED(x_p);
-
-  assert( x_u.size() == m_nnu );
-  assert( x_p.size() == m_nnp );
-  assert( b_u.size() == m_nnu );
-
-  #pragma omp parallel for
-  for ( size_t i = 0 ; i < m_nnu ; ++i )
-    b_u(i) = m_data_uu(i) * x_u(i);
-}
-
-// -------------------------------------------------------------------------------------------------
-
-inline void MatrixDiagonalPartitioned::dot_p(
-  const xt::xtensor<double,1> &x_u, const xt::xtensor<double,1> &x_p,
-  xt::xtensor<double,1> &b_p) const
-{
-  UNUSED(x_u);
-
-  assert( x_u.size() == m_nnu );
-  assert( x_p.size() == m_nnp );
-  assert( b_p.size() == m_nnp );
-
-  #pragma omp parallel for
-  for ( size_t i = 0 ; i < m_nnp ; ++i )
-    b_p(i) = m_data_pp(i) * x_p(i);
+  // reset signal
+  m_change = false;
 }
 
 // -------------------------------------------------------------------------------------------------
@@ -143,12 +108,12 @@ inline void MatrixDiagonalPartitioned::assemble(const xt::xtensor<double,3> &ele
     {
       for ( size_t i = 0 ; i < m_ndim ; ++i )
       {
-        size_t di = m_part(m_conn(e,m),i);
+        size_t d = m_part(m_conn(e,m),i);
 
-        if ( di < m_nnu )
-          m_data_uu(di      ) += elemmat(e,m*m_ndim+i,m*m_ndim+i);
+        if ( d < m_nnu )
+          m_data_uu(d      ) += elemmat(e,m*m_ndim+i,m*m_ndim+i);
         else
-          m_data_pp(di-m_nnu) += elemmat(e,m*m_ndim+i,m*m_ndim+i);
+          m_data_pp(d-m_nnu) += elemmat(e,m*m_ndim+i,m*m_ndim+i);
       }
     }
   }
@@ -159,23 +124,125 @@ inline void MatrixDiagonalPartitioned::assemble(const xt::xtensor<double,3> &ele
 
 // -------------------------------------------------------------------------------------------------
 
-inline void MatrixDiagonalPartitioned::factorize()
+inline void MatrixDiagonalPartitioned::dot(const xt::xtensor<double,2> &x,
+  xt::xtensor<double,2> &b) const
 {
-  // skip for unchanged "m_data"
-  if ( ! m_change ) return;
+  assert( x.shape()[0] == m_nnode );
+  assert( x.shape()[1] == m_ndim  );
+  assert( b.shape()[0] == m_nnode );
+  assert( b.shape()[1] == m_ndim  );
 
-  // invert
   #pragma omp parallel for
-  for ( size_t i = 0 ; i < m_nnu ; ++i )
-    m_inv_uu(i) = 1. / m_data_uu(i);
+  for ( size_t m = 0 ; m < m_nnode ; ++m )
+  {
+    for ( size_t i = 0 ; i < m_ndim ; ++i )
+    {
+      size_t d = m_part(m,i);
 
-  // reset signal
-  m_change = false;
+      if ( d < m_nnu ) b(m,i) = m_data_uu(d      ) * x(m,i);
+      else             b(m,i) = m_data_pp(d-m_nnu) * x(m,i);
+    }
+  }
 }
 
 // -------------------------------------------------------------------------------------------------
 
-inline void MatrixDiagonalPartitioned::solve(
+inline void MatrixDiagonalPartitioned::dot(const xt::xtensor<double,1> &x,
+  xt::xtensor<double,1> &b) const
+{
+  assert( x.size() == m_ndof );
+  assert( b.size() == m_ndof );
+
+  #pragma omp parallel for
+  for ( size_t d = 0 ; d < m_nnu ; ++d )
+    b(m_iiu(d)) = m_data_uu(d) * x(m_iiu(d));
+
+  #pragma omp parallel for
+  for ( size_t d = 0 ; d < m_nnp ; ++d )
+    b(m_iip(d)) = m_data_pp(d) * x(m_iip(d));
+}
+
+// -------------------------------------------------------------------------------------------------
+
+inline void MatrixDiagonalPartitioned::dot_u(
+  const xt::xtensor<double,1> &x_u, const xt::xtensor<double,1> &x_p,
+  xt::xtensor<double,1> &b_u) const
+{
+  UNUSED(x_p);
+
+  assert( x_u.size() == m_nnu );
+  assert( x_p.size() == m_nnp );
+  assert( b_u.size() == m_nnu );
+
+  #pragma omp parallel for
+  for ( size_t d = 0 ; d < m_nnu ; ++d )
+    b_u(d) = m_data_uu(d) * x_u(d);
+}
+
+// -------------------------------------------------------------------------------------------------
+
+inline void MatrixDiagonalPartitioned::dot_p(
+  const xt::xtensor<double,1> &x_u, const xt::xtensor<double,1> &x_p,
+  xt::xtensor<double,1> &b_p) const
+{
+  UNUSED(x_u);
+
+  assert( x_u.size() == m_nnu );
+  assert( x_p.size() == m_nnp );
+  assert( b_p.size() == m_nnp );
+
+  #pragma omp parallel for
+  for ( size_t d = 0 ; d < m_nnp ; ++d )
+    b_p(d) = m_data_pp(d) * x_p(d);
+}
+
+// -------------------------------------------------------------------------------------------------
+
+inline void MatrixDiagonalPartitioned::solve(xt::xtensor<double,2> &b,
+  xt::xtensor<double,2> &x)
+{
+  assert( b.shape()[0] == m_nnode );
+  assert( b.shape()[1] == m_ndim  );
+  assert( x.shape()[0] == m_nnode );
+  assert( x.shape()[1] == m_ndim  );
+
+  this->factorize();
+
+  #pragma omp parallel for
+  for ( size_t m = 0 ; m < m_nnode ; ++m )
+  {
+    for ( size_t i = 0 ; i < m_ndim ; ++i )
+    {
+      size_t d = m_part(m,i);
+
+      if ( d < m_nnu ) x(m,i) = m_inv_uu (d      ) * b(m,i);
+      else             b(m,i) = m_data_pp(d-m_nnu) * x(m,i);
+    }
+  }
+}
+
+// -------------------------------------------------------------------------------------------------
+
+inline void MatrixDiagonalPartitioned::solve(xt::xtensor<double,1> &b,
+  xt::xtensor<double,1> &x)
+{
+  assert( b.size() == m_ndof );
+  assert( x.size() == m_ndof );
+
+  this->factorize();
+
+  #pragma omp parallel for
+  for ( size_t d = 0 ; d < m_nnu ; ++d )
+    x(m_iiu(d)) = m_inv_uu(d) * b(m_iiu(d));
+
+  #pragma omp parallel for
+  for ( size_t d = 0 ; d < m_nnp ; ++d )
+    b(m_iip(d)) = m_data_pp(d) * x(m_iip(d));
+}
+
+// -------------------------------------------------------------------------------------------------
+
+inline void MatrixDiagonalPartitioned::solve_u(
   const xt::xtensor<double,1> &b_u, const xt::xtensor<double,1> &x_p,
   xt::xtensor<double,1> &x_u)
 {
@@ -188,8 +255,8 @@ inline void MatrixDiagonalPartitioned::solve(
   this->factorize();
 
   #pragma omp parallel for
-  for ( size_t i = 0 ; i < m_nnu ; ++i )
-    x_u(i) = m_inv_uu(i) * b_u(i);
+  for ( size_t d = 0 ; d < m_nnu ; ++d )
+    x_u(d) = m_inv_uu(d) * b_u(d);
 }
 
 // -------------------------------------------------------------------------------------------------
@@ -199,14 +266,25 @@ inline xt::xtensor<double,1> MatrixDiagonalPartitioned::asDiagonal() const
   xt::xtensor<double,1> out = xt::zeros<double>({m_ndof});
 
   #pragma omp parallel for
-  for ( size_t i = 0 ; i < m_nnu ; ++i )
-    out(m_iiu(i)) = m_data_uu(i);
+  for ( size_t d = 0 ; d < m_nnu ; ++d )
+    out(m_iiu(d)) = m_data_uu(d);
 
   #pragma omp parallel for
-  for ( size_t i = 0 ; i < m_nnp ; ++i )
-    out(m_iip(i)) = m_data_pp(i);
+  for ( size_t d = 0 ; d < m_nnp ; ++d )
+    out(m_iip(d)) = m_data_pp(d);
 
   return out;
+}
+
+// -------------------------------------------------------------------------------------------------
+
+inline xt::xtensor<double,2> MatrixDiagonalPartitioned::dot(const xt::xtensor<double,2> &x) const
+{
+  xt::xtensor<double,2> b = xt::empty<double>({m_nnode, m_ndim});
+
+  this->dot(x, b);
+
+  return b;
 }
 
 // -------------------------------------------------------------------------------------------------
@@ -246,12 +324,12 @@ inline xt::xtensor<double,1> MatrixDiagonalPartitioned::dot_p(
 
 // -------------------------------------------------------------------------------------------------
 
-inline xt::xtensor<double,1> MatrixDiagonalPartitioned::solve(
+inline xt::xtensor<double,1> MatrixDiagonalPartitioned::solve_u(
   const xt::xtensor<double,1> &b_u, const xt::xtensor<double,1> &x_p)
 {
   xt::xtensor<double,1> x_u = xt::empty<double>({m_nnu});
 
-  this->solve(b_u, x_p, x_u);
+  this->solve_u(b_u, x_p, x_u);
 
   return x_u;
 }

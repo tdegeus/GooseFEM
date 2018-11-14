@@ -45,6 +45,11 @@ public:
 
   xt::xtensor<size_t,2> dofs() const; // DOFs
 
+  // copy nodevec to another nodevec
+
+  void copy(const xt::xtensor<double,2> &nodevec_src,
+    xt::xtensor<double,2> &nodevec_dest) const;
+
   // convert to "dofval" (overwrite entries that occur more than once) -- (auto allocation below)
 
   void asDofs(const xt::xtensor<double,2> &nodevec,

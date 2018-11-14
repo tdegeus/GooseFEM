@@ -50,6 +50,8 @@ set(headers
   include/GooseFEM/Vector.h
   include/GooseFEM/VectorPartitioned.hpp
   include/GooseFEM/VectorPartitioned.h
+  include/GooseFEM/Matrix.hpp
+  include/GooseFEM/Matrix.h
   include/GooseFEM/MatrixPartitioned.hpp
   include/GooseFEM/MatrixPartitioned.h
   include/GooseFEM/MatrixDiagonal.hpp

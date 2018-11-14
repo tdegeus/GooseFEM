@@ -4,8 +4,8 @@
 
 ================================================================================================= */
 
-#ifndef GOOSEFEM_MATRIXDIAGONAL_H
-#define GOOSEFEM_MATRIXDIAGONAL_H
+#ifndef GOOSEFEM_MATRIX_H
+#define GOOSEFEM_MATRIX_H
 
 // -------------------------------------------------------------------------------------------------
 
@@ -17,14 +17,14 @@ namespace GooseFEM {
 
 // -------------------------------------------------------------------------------------------------
 
-class MatrixDiagonal
+class Matrix
 {
 public:
 
   // constructors
 
-  MatrixDiagonal() = default;
-  MatrixDiagonal(const xt::xtensor<size_t,2> &conn, const xt::xtensor<size_t,2> &dofs);
+  Matrix() = default;
+  Matrix(const xt::xtensor<size_t,2> &conn, const xt::xtensor<size_t,2> &dofs);
 
   // dimensions
 
@@ -38,24 +38,13 @@ public:
 
   xt::xtensor<size_t,2> dofs() const; // DOFs
 
-  // set matrix components
-
-  void set(const xt::xtensor<double,1> &A);
-
   // assemble from matrices stored per element [nelem, nne*ndim, nne*ndim]
-  // WARNING: ignores any off-diagonal terms
 
   void assemble(const xt::xtensor<double,3> &elemmat);
 
-  // product: b_i = A_ij * x_j
-
-  void dot(const xt::xtensor<double,2> &x,
-    xt::xtensor<double,2> &b) const;
-
-  void dot(const xt::xtensor<double,1> &x,
-    xt::xtensor<double,1> &b) const;
-
   // solve: x = A \ b
+  //   x_u = A_uu \ ( b_u - A_up * x_p )
+  //   b_p = A_pu * x_u + A_pp * x_p
 
   void solve(const xt::xtensor<double,2> &b,
     xt::xtensor<double,2> &x);
@@ -63,15 +52,7 @@ public:
   void solve(const xt::xtensor<double,1> &b,
     xt::xtensor<double,1> &x);
 
-  // return matrix as diagonal matrix (column)
-
-  xt::xtensor<double,1> asDiagonal() const;
-
   // auto allocation of the functions above
-
-  xt::xtensor<double,2> dot(const xt::xtensor<double,2> &x) const;
-
-  xt::xtensor<double,1> dot(const xt::xtensor<double,1> &x) const;
 
   xt::xtensor<double,2> solve(const xt::xtensor<double,2> &b);
 
@@ -79,9 +60,14 @@ public:
 
 private:
 
-  // the diagonal matrix, and its inverse (re-used to solve different RHS)
-  xt::xtensor<double,1> m_data;
-  xt::xtensor<double,1> m_inv;
+  // the matrix
+  Eigen::SparseMatrix<double> m_data;
+
+  // the matrix to assemble
+  std::vector<TripD> m_trip;
+
+  // solver (re-used to solve different RHS)
+  Eigen::SimplicialLDLT<Eigen::SparseMatrix<double>> m_solver;
 
   // signal changes to data compare to the last inverse
   bool m_change=false;
@@ -98,7 +84,15 @@ private:
   size_t m_ndof;  // number of DOFs
 
   // compute inverse (automatically evaluated by "solve")
+
   void factorize();
+
+  // convert arrays (see VectorPartitioned, which contains public functions)
+
+  Eigen::VectorXd asDofs(const xt::xtensor<double,2> &nodevec) const;
+
+  void asNode(const Eigen::VectorXd &dofval, xt::xtensor<double,2> &nodevec) const;
+
 };
 
 // -------------------------------------------------------------------------------------------------

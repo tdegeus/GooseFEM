@@ -96,6 +96,8 @@ namespace GooseFEM
 #include "Vector.hpp"
 #include "VectorPartitioned.h"
 #include "VectorPartitioned.hpp"
+#include "Matrix.h"
+#include "Matrix.hpp"
 #include "MatrixPartitioned.h"
 #include "MatrixPartitioned.hpp"
 #include "MatrixDiagonal.h"

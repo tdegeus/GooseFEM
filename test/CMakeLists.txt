@@ -50,6 +50,7 @@ include_directories(SYSTEM ${EIGEN3_INCLUDE_DIRS})
 add_executable(${PROJECT_NAME}
   main.cpp
   Vector.cpp
+  VectorPartitioned.cpp
   MatrixDiagonal.cpp
   ElementQuad4.cpp
   ElementHex8.cpp

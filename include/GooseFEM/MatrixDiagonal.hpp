@@ -54,13 +54,32 @@ inline xt::xtensor<size_t,2> MatrixDiagonal::dofs() const { return m_dofs; }
 
 // -------------------------------------------------------------------------------------------------
 
-inline void MatrixDiagonal::dot(const xt::xtensor<double,1> &x,
-  xt::xtensor<double,1> &b) const
+inline void MatrixDiagonal::factorize()
 {
-  assert( x.size() == m_ndof );
-  assert( b.size() == m_ndof );
+  // skip for unchanged "m_data"
+  if ( ! m_change ) return;
 
-  xt::noalias(b) = m_data * x;
+  // invert
+  #pragma omp parallel for
+  for ( size_t d = 0 ; d < m_ndof ; ++d )
+    m_inv(d) = 1. / m_data(d);
+
+  // reset signal
+  m_change = false;
+}
+
+// -------------------------------------------------------------------------------------------------
+
+inline void MatrixDiagonal::set(const xt::xtensor<double,1> &A)
+{
+  // check input
+  assert( A.shape()[0] == m_ndof );
+
+  // copy
+  std::copy(A.begin(), A.end(), m_data.begin());
+
+  // signal change
+  m_change = true;
 }
 
 // -------------------------------------------------------------------------------------------------
@@ -88,32 +107,45 @@ inline void MatrixDiagonal::assemble(const xt::xtensor<double,3> &elemmat)
 
 // -------------------------------------------------------------------------------------------------
 
-inline void MatrixDiagonal::set(const xt::xtensor<double,1> &A)
+inline void MatrixDiagonal::dot(const xt::xtensor<double,2> &x,
+  xt::xtensor<double,2> &b) const
 {
-  // check input
-  assert( A.shape()[0] == m_ndof );
+  assert( x.shape()[0] == m_nnode );
+  assert( x.shape()[1] == m_ndim  );
+  assert( b.shape()[0] == m_nnode );
+  assert( b.shape()[1] == m_ndim  );
 
-  // copy
-  std::copy(A.begin(), A.end(), m_data.begin());
-
-  // signal change
-  m_change = true;
+  #pragma omp parallel for
+  for ( size_t m = 0 ; m < m_nnode ; ++m )
+    for ( size_t i = 0 ; i < m_ndim ; ++i )
+      b(m,i) = m_data(m_dofs(m,i)) * x(m,i);
 }
 
 // -------------------------------------------------------------------------------------------------
 
-inline void MatrixDiagonal::factorize()
+inline void MatrixDiagonal::dot(const xt::xtensor<double,1> &x,
+  xt::xtensor<double,1> &b) const
 {
-  // skip for unchanged "m_data"
-  if ( ! m_change ) return;
+  assert( x.size() == m_ndof );
+  assert( b.size() == m_ndof );
 
-  // invert
+  xt::noalias(b) = m_data * x;
+}
+
+// -------------------------------------------------------------------------------------------------
+
+inline void MatrixDiagonal::solve(const xt::xtensor<double,2> &b,
+  xt::xtensor<double,2> &x)
+{
+  assert( b.size() == m_ndof );
+  assert( x.size() == m_ndof );
+
+  this->factorize();
+
   #pragma omp parallel for
-  for ( size_t i = 0 ; i < m_ndof ; ++i )
-    m_inv(i) = 1. / m_data(i);
-
-  // reset signal
-  m_change = false;
+  for ( size_t m = 0 ; m < m_nnode ; ++m )
+    for ( size_t i = 0 ; i < m_ndim ; ++i )
+      x(m,i) = m_inv(m_dofs(m,i)) * b(m,i);
 }
 
 // -------------------------------------------------------------------------------------------------
@@ -138,6 +170,17 @@ inline xt::xtensor<double,1> MatrixDiagonal::asDiagonal() const
 
 // -------------------------------------------------------------------------------------------------
 
+inline xt::xtensor<double,2> MatrixDiagonal::dot(const xt::xtensor<double,2> &x) const
+{
+  xt::xtensor<double,2> b = xt::empty<double>({m_nnode, m_ndim});
+
+  this->dot(x, b);
+
+  return b;
+}
+
+// -------------------------------------------------------------------------------------------------
+
 inline xt::xtensor<double,1> MatrixDiagonal::dot(const xt::xtensor<double,1> &x) const
 {
   xt::xtensor<double,1> b = xt::empty<double>({m_ndof});
@@ -145,6 +188,17 @@ inline xt::xtensor<double,1> MatrixDiagonal::dot(const xt::xtensor<double,1> &x)
   this->dot(x, b);
 
   return b;
+}
+
+// -------------------------------------------------------------------------------------------------
+
+inline xt::xtensor<double,2> MatrixDiagonal::solve(const xt::xtensor<double,2> &b)
+{
+  xt::xtensor<double,2> x = xt::empty<double>({m_nnode, m_ndim});
+
+  this->solve(b, x);
+
+  return x;
 }
 
 // -------------------------------------------------------------------------------------------------

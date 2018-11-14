@@ -51,6 +51,10 @@ public:
   // product: b_i = A_ij * x_j
 
   //   b = A * x
+  void dot(const xt::xtensor<double,2> &x,
+    xt::xtensor<double,2> &b) const;
+
+  //   b = A * x
   void dot(const xt::xtensor<double,1> &x,
     xt::xtensor<double,1> &b) const;
 
@@ -62,9 +66,17 @@ public:
   void dot_p(const xt::xtensor<double,1> &x_u, const xt::xtensor<double,1> &x_p,
     xt::xtensor<double,1> &b_p) const;
 
-  // solve: x_u = A_uu \ ( b_u - A_up * x_p ) == A_uu \ b_u
+  // solve: x = A \ b
+  //   x_u = A_uu \ ( b_u - A_up * x_p ) == A_uu \ b_u
+  //   b_p = A_pu * x_u + A_pp * x_p     == A_pp * x_p
 
-  void solve(const xt::xtensor<double,1> &b_u, const xt::xtensor<double,1> &x_p,
+  void solve(xt::xtensor<double,2> &b,
+    xt::xtensor<double,2> &x);
+
+  void solve(xt::xtensor<double,1> &b,
+    xt::xtensor<double,1> &x);
+
+  void solve_u(const xt::xtensor<double,1> &b_u, const xt::xtensor<double,1> &x_p,
     xt::xtensor<double,1> &x_u);
 
   // return matrix as diagonal matrix (column)
@@ -73,13 +85,15 @@ public:
 
   // auto allocation of the functions above
 
+  xt::xtensor<double,2> dot(const xt::xtensor<double,2> &x) const;
+
   xt::xtensor<double,1> dot(const xt::xtensor<double,1> &x) const;
 
   xt::xtensor<double,1> dot_u(const xt::xtensor<double,1> &x_u, const xt::xtensor<double,1> &x_p) const;
 
   xt::xtensor<double,1> dot_p(const xt::xtensor<double,1> &x_u, const xt::xtensor<double,1> &x_p) const;
 
-  xt::xtensor<double,1> solve(const xt::xtensor<double,1> &b_u, const xt::xtensor<double,1> &x_p);
+  xt::xtensor<double,1> solve_u(const xt::xtensor<double,1> &b_u, const xt::xtensor<double,1> &x_p);
 
 private:
 
