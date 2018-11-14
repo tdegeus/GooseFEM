@@ -9,7 +9,6 @@ project(example)
 # define empty list of libraries to link
 set(PROJECT_LIBS "")
 
-
 # basic compiler options
 # ----------------------
 
@@ -30,7 +29,7 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DXTENSOR_USE_XSIMD=ON")
 # load packages
 # -------------
 
-# add custom paths
+# add custom include paths
 if(NOT "$ENV{INCLUDE_PATH}" STREQUAL "")
   string(REPLACE ":" ";" INCLUDE_LIST "$ENV{INCLUDE_PATH}")
   include_directories(${INCLUDE_LIST})

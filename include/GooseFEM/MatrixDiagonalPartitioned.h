@@ -21,14 +21,14 @@ class MatrixDiagonalPartitioned
 {
 public:
 
-  // default constructor
-  MatrixDiagonalPartitioned() = default;
+  // constructors
 
-  // constructor
+  MatrixDiagonalPartitioned() = default;
   MatrixDiagonalPartitioned(const xt::xtensor<size_t,2> &conn, const xt::xtensor<size_t,2> &dofs,
     const xt::xtensor<size_t,1> &iip);
 
   // dimensions
+
   size_t nelem() const; // number of elements
   size_t nne()   const; // number of nodes per element
   size_t nnode() const; // number of nodes
@@ -38,27 +38,48 @@ public:
   size_t nnp()   const; // number of prescribed DOFs
 
   // DOF lists
+
   xt::xtensor<size_t,2> dofs() const; // DOFs
   xt::xtensor<size_t,1> iiu()  const; // unknown    DOFs
   xt::xtensor<size_t,1> iip()  const; // prescribed DOFs
 
-  // product: b_i = A_ij * x_j
-  //   b   = A    * x
-  xt::xtensor<double,1> dot  (const xt::xtensor<double,1> &x                                    ) const;
-  //   b_u = A_uu * x_u + A_up * x_p
-  xt::xtensor<double,1> dot_u(const xt::xtensor<double,1> &x_u, const xt::xtensor<double,1> &x_p) const;
-  //   b_p = A_pu * x_u + A_pp * x_p
-  xt::xtensor<double,1> dot_p(const xt::xtensor<double,1> &x_u, const xt::xtensor<double,1> &x_p) const;
-
   // assemble from matrices stored per element [nelem, nne*ndim, nne*ndim]
   // WARNING: ignores any off-diagonal terms
+
   void assemble(const xt::xtensor<double,3> &elemmat);
 
-  // solve: x_u = A_uu \ ( b_u - A_up * x_p )
-  xt::xtensor<double,1> solve(const xt::xtensor<double,1> &b_u, const xt::xtensor<double,1> &x_p);
+  // product: b_i = A_ij * x_j
 
-  // return matrix as diagonal matrix
+  //   b = A * x
+  void dot(const xt::xtensor<double,1> &x,
+    xt::xtensor<double,1> &b) const;
+
+  //   b_u = A_uu * x_u + A_up * x_p == A_uu * x_u
+  void dot_u(const xt::xtensor<double,1> &x_u, const xt::xtensor<double,1> &x_p,
+    xt::xtensor<double,1> &b_u) const;
+
+  //   b_p = A_pu * x_u + A_pp * x_p == A_pp * x_p
+  void dot_p(const xt::xtensor<double,1> &x_u, const xt::xtensor<double,1> &x_p,
+    xt::xtensor<double,1> &b_p) const;
+
+  // solve: x_u = A_uu \ ( b_u - A_up * x_p ) == A_uu \ b_u
+
+  void solve(const xt::xtensor<double,1> &b_u, const xt::xtensor<double,1> &x_p,
+    xt::xtensor<double,1> &x_u);
+
+  // return matrix as diagonal matrix (column)
+
   xt::xtensor<double,1> asDiagonal() const;
+
+  // auto allocation of the functions above
+
+  xt::xtensor<double,1> dot(const xt::xtensor<double,1> &x) const;
+
+  xt::xtensor<double,1> dot_u(const xt::xtensor<double,1> &x_u, const xt::xtensor<double,1> &x_p) const;
+
+  xt::xtensor<double,1> dot_p(const xt::xtensor<double,1> &x_u, const xt::xtensor<double,1> &x_p) const;
+
+  xt::xtensor<double,1> solve(const xt::xtensor<double,1> &b_u, const xt::xtensor<double,1> &x_p);
 
 private:
 

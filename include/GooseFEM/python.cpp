@@ -21,31 +21,6 @@
 namespace py = pybind11;
 namespace M  = GooseFEM;
 
-// ======================================= trampoline class ========================================
-
-class PyGeometry : public GooseFEM::Dynamics::Geometry
-{
-public:
-  using GooseFEM::Dynamics::Geometry::Geometry;
-  using Arr1 = xt::xtensor<double,1>;
-  using Arr2 = xt::xtensor<double,2>;
-  using Arr3 = xt::xtensor<double,3>;
-
-  xt::xtensor<double,1> solve_A()                  override { PYBIND11_OVERLOAD_PURE( Arr1, GooseFEM::Dynamics::Geometry, solve_A         ); }
-  xt::xtensor<double,1> solve_V()                  override { PYBIND11_OVERLOAD_PURE( Arr1, GooseFEM::Dynamics::Geometry, solve_V         ); }
-  xt::xtensor<double,2> u()      const             override { PYBIND11_OVERLOAD_PURE( Arr2, GooseFEM::Dynamics::Geometry, u               ); }
-  xt::xtensor<double,2> v()      const             override { PYBIND11_OVERLOAD_PURE( Arr2, GooseFEM::Dynamics::Geometry, v               ); }
-  xt::xtensor<double,2> a()      const             override { PYBIND11_OVERLOAD_PURE( Arr2, GooseFEM::Dynamics::Geometry, a               ); }
-  xt::xtensor<double,1> dofs_u() const             override { PYBIND11_OVERLOAD_PURE( Arr1, GooseFEM::Dynamics::Geometry, dofs_u          ); }
-  xt::xtensor<double,1> dofs_v() const             override { PYBIND11_OVERLOAD_PURE( Arr1, GooseFEM::Dynamics::Geometry, dofs_v          ); }
-  xt::xtensor<double,1> dofs_a() const             override { PYBIND11_OVERLOAD_PURE( Arr1, GooseFEM::Dynamics::Geometry, dofs_a          ); }
-
-  void set_u(const xt::xtensor<double,2> &nodevec) override { PYBIND11_OVERLOAD_PURE( void, GooseFEM::Dynamics::Geometry, set_u  , nodevec); }
-  void set_u(const xt::xtensor<double,1> &dofval ) override { PYBIND11_OVERLOAD_PURE( void, GooseFEM::Dynamics::Geometry, set_u  , dofval ); }
-  void set_v(const xt::xtensor<double,1> &dofval ) override { PYBIND11_OVERLOAD_PURE( void, GooseFEM::Dynamics::Geometry, set_v  , dofval ); }
-  void set_a(const xt::xtensor<double,1> &dofval ) override { PYBIND11_OVERLOAD_PURE( void, GooseFEM::Dynamics::Geometry, set_a  , dofval ); }
-};
-
 // =========================================== GooseFEM ============================================
 
 PYBIND11_MODULE(GooseFEM, m) {
@@ -97,7 +72,7 @@ py::class_<GooseFEM::VectorPartitioned>(m, "VectorPartitioned")
 
   .def("__repr__", [](const GooseFEM::VectorPartitioned &){ return "<GooseFEM.Vector>"; });
 
-// ==================================== GooseFEM.MatrixDiagonalPartitioned ====================================
+// ============================== GooseFEM.MatrixDiagonalPartitioned ===============================
 
 py::class_<GooseFEM::MatrixDiagonalPartitioned>(m, "MatrixDiagonalPartitioned")
 
@@ -111,54 +86,21 @@ py::class_<GooseFEM::MatrixDiagonalPartitioned>(m, "MatrixDiagonalPartitioned")
   .def("nnu"  , &M::MatrixDiagonalPartitioned::nnu  , "Return number of unknown degrees-of-freedom")
   .def("nnp"  , &M::MatrixDiagonalPartitioned::nnp  , "Return number of prescribed degrees-of-freedom")
 
+  .def("assemble", &M::MatrixDiagonalPartitioned::assemble, "Assemble matrix from 'elemmat", py::arg("elemmat"))
+
   .def("dofs" , &M::MatrixDiagonalPartitioned::dofs , "Return degrees-of-freedom")
   .def("iiu"  , &M::MatrixDiagonalPartitioned::iiu  , "Return unknown degrees-of-freedom")
   .def("iip"  , &M::MatrixDiagonalPartitioned::iip  , "Return prescribed degrees-of-freedom")
 
-  .def("dot"  , &M::MatrixDiagonalPartitioned::dot  , "Dot product 'b_i = A_ij * x_j", py::arg("x"))
-  .def("dot_u", &M::MatrixDiagonalPartitioned::dot_u, "Dot product 'b_i = A_ij * x_j", py::arg("x_u"), py::arg("x_p"))
-  .def("dot_p", &M::MatrixDiagonalPartitioned::dot_p, "Dot product 'b_i = A_ij * x_j", py::arg("x_u"), py::arg("x_p"))
+  .def("dot"  , py::overload_cast<const xt::xtensor<double,1>&                              >(&M::MatrixDiagonalPartitioned::dot  , py::const_), "Dot product 'b_i = A_ij * x_j"                                              , py::arg("x"))
+  .def("dot_u", py::overload_cast<const xt::xtensor<double,1>&, const xt::xtensor<double,1>&>(&M::MatrixDiagonalPartitioned::dot_u, py::const_), "Dot product 'b_i = A_ij * x_j (b_u = A_uu * x_u + A_up * x_p == A_uu * x_u)", py::arg("x_u"), py::arg("x_p"))
+  .def("dot_p", py::overload_cast<const xt::xtensor<double,1>&, const xt::xtensor<double,1>&>(&M::MatrixDiagonalPartitioned::dot_p, py::const_), "Dot product 'b_i = A_ij * x_j (b_p = A_pu * x_u + A_pp * x_p == A_pp * x_p)", py::arg("x_u"), py::arg("x_p"))
 
-  .def("assemble", &M::MatrixDiagonalPartitioned::assemble, "Assemble from 'elemmat", py::arg("elemmat"))
-
-  .def("solve", &M::MatrixDiagonalPartitioned::solve, "Solve", py::arg("b_u"), py::arg("x_p"))
+  .def("solve", py::overload_cast<const xt::xtensor<double,1>&, const xt::xtensor<double,1>&>(&M::MatrixDiagonalPartitioned::solve), "Solve 'x_u = A_uu \\ ( b_u - A_up * x_p ) == A_uu \\ b_u'", py::arg("b_u"), py::arg("x_p"))
 
   .def("asDiagonal", &M::MatrixDiagonalPartitioned::asDiagonal, "Return as diagonal matrix (column)")
 
   .def("__repr__", [](const GooseFEM::MatrixDiagonalPartitioned &){ return "<GooseFEM.MatrixDiagonalPartitioned>"; });
-
-// ======================================= GooseFEM.Dynamics =======================================
-
-py::module mDynamics = m.def_submodule("Dynamics", "Solve routines for dynamic FEM");
-
-// -------------------------------------------------------------------------------------------------
-
-mDynamics.def("Verlet"        , &GooseFEM::Dynamics::Verlet        , "Verlet time integration"         , py::arg("geometry"), py::arg("dt"), py::arg("nstep")=1);
-mDynamics.def("velocityVerlet", &GooseFEM::Dynamics::velocityVerlet, "Velocity-Verlet time integration", py::arg("geometry"), py::arg("dt"), py::arg("nstep")=1);
-
-// -------------------------------------------------------------------------------------------------
-
-py::class_<GooseFEM::Dynamics::Geometry, PyGeometry>(mDynamics, "Geometry")
-
-  .def(py::init<>())
-
-  .def("solve_A"   , &GooseFEM::Dynamics::Geometry::solve_A, "Solve for accelerations (dofval)" )
-  .def("solve_V"   , &GooseFEM::Dynamics::Geometry::solve_V, "Solve for velocities    (dofval)" )
-
-  .def("u"         , &GooseFEM::Dynamics::Geometry::u      , "Return displacements (nodevec)")
-  .def("v"         , &GooseFEM::Dynamics::Geometry::v      , "Return velocities    (nodevec)")
-  .def("a"         , &GooseFEM::Dynamics::Geometry::a      , "Return accelerations (nodevec)")
-
-  .def("dofs_u"    , &GooseFEM::Dynamics::Geometry::dofs_u , "Return displacements (dofval)" )
-  .def("dofs_v"    , &GooseFEM::Dynamics::Geometry::dofs_v , "Return velocities    (dofval)" )
-  .def("dofs_a"    , &GooseFEM::Dynamics::Geometry::dofs_a , "Return accelerations (dofval)" )
-
-  .def("set_u"     , py::overload_cast<const xt::xtensor<double,1> &>(&GooseFEM::Dynamics::Geometry::set_u), "Overwrite displacements", py::arg("dofval" ))
-  .def("set_u"     , py::overload_cast<const xt::xtensor<double,2> &>(&GooseFEM::Dynamics::Geometry::set_u), "Overwrite displacements", py::arg("nodevec"))
-  .def("set_v"     ,                                                  &GooseFEM::Dynamics::Geometry::set_v , "Overwrite velocities"   , py::arg("nodevec"))
-  .def("set_a"     ,                                                  &GooseFEM::Dynamics::Geometry::set_a , "Overwrite accelerations", py::arg("nodevec"))
-
-  .def("__repr__", [](const GooseFEM::Dynamics::Geometry &){ return "<GooseDEM.Dynamics.Geometry>"; });
 
 // ======================================= GooseFEM.Element ========================================
 

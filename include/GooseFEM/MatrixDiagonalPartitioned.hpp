@@ -51,142 +51,75 @@ inline MatrixDiagonalPartitioned::MatrixDiagonalPartitioned(const xt::xtensor<si
 
 // -------------------------------------------------------------------------------------------------
 
-inline size_t MatrixDiagonalPartitioned::nelem() const
-{
-  return m_nelem;
-}
+inline size_t MatrixDiagonalPartitioned::nelem() const { return m_nelem; }
+
+inline size_t MatrixDiagonalPartitioned::nne() const { return m_nne; }
+
+inline size_t MatrixDiagonalPartitioned::nnode() const { return m_nnode; }
+
+inline size_t MatrixDiagonalPartitioned::ndim() const { return m_ndim; }
+
+inline size_t MatrixDiagonalPartitioned::ndof() const { return m_ndof; }
+
+inline size_t MatrixDiagonalPartitioned::nnu() const { return m_nnu; }
+
+inline size_t MatrixDiagonalPartitioned::nnp() const { return m_nnp; }
+
+inline xt::xtensor<size_t,2> MatrixDiagonalPartitioned::dofs() const { return m_dofs; }
+
+inline xt::xtensor<size_t,1> MatrixDiagonalPartitioned::iiu() const { return m_iiu; }
+
+inline xt::xtensor<size_t,1> MatrixDiagonalPartitioned::iip() const { return m_iip; }
 
 // -------------------------------------------------------------------------------------------------
 
-inline size_t MatrixDiagonalPartitioned::nne() const
+inline void MatrixDiagonalPartitioned::dot(const xt::xtensor<double,1> &x,
+  xt::xtensor<double,1> &b) const
 {
-  return m_nne;
-}
-
-// -------------------------------------------------------------------------------------------------
-
-inline size_t MatrixDiagonalPartitioned::nnode() const
-{
-  return m_nnode;
-}
-
-// -------------------------------------------------------------------------------------------------
-
-inline size_t MatrixDiagonalPartitioned::ndim() const
-{
-  return m_ndim;
-}
-
-// -------------------------------------------------------------------------------------------------
-
-inline size_t MatrixDiagonalPartitioned::ndof() const
-{
-  return m_ndof;
-}
-
-// -------------------------------------------------------------------------------------------------
-
-inline size_t MatrixDiagonalPartitioned::nnu() const
-{
-  return m_nnu;
-}
-
-// -------------------------------------------------------------------------------------------------
-
-inline size_t MatrixDiagonalPartitioned::nnp() const
-{
-  return m_nnp;
-}
-
-// -------------------------------------------------------------------------------------------------
-
-inline xt::xtensor<size_t,2> MatrixDiagonalPartitioned::dofs() const
-{
-  return m_dofs;
-}
-
-// -------------------------------------------------------------------------------------------------
-
-inline xt::xtensor<size_t,1> MatrixDiagonalPartitioned::iiu() const
-{
-  return m_iiu;
-}
-
-// -------------------------------------------------------------------------------------------------
-
-inline xt::xtensor<size_t,1> MatrixDiagonalPartitioned::iip() const
-{
-  return m_iip;
-}
-
-// -------------------------------------------------------------------------------------------------
-
-inline xt::xtensor<double,1> MatrixDiagonalPartitioned::dot(const xt::xtensor<double,1> &x) const
-{
-  // check input
   assert( x.size() == m_ndof );
+  assert( b.size() == m_ndof );
 
-  // allocate output
-  xt::xtensor<double,1> b = xt::empty<double>({m_ndof});
-
-  // compute product
-  // -
   #pragma omp parallel for
   for ( size_t i = 0 ; i < m_nnu ; ++i )
     b(m_iiu(i)) = m_data_uu(i) * x(m_iiu(i));
-  // -
+
   #pragma omp parallel for
   for ( size_t i = 0 ; i < m_nnp ; ++i )
     b(m_iip(i)) = m_data_pp(i) * x(m_iip(i));
-
-  // return output
-  return b;
 }
 
 // -------------------------------------------------------------------------------------------------
 
-inline xt::xtensor<double,1> MatrixDiagonalPartitioned::dot_u(
-  const xt::xtensor<double,1> &x_u, const xt::xtensor<double,1> &x_p) const
+inline void MatrixDiagonalPartitioned::dot_u(
+  const xt::xtensor<double,1> &x_u, const xt::xtensor<double,1> &x_p,
+  xt::xtensor<double,1> &b_u) const
 {
-  // suppress warning
   UNUSED(x_p);
 
-  // check input
   assert( x_u.size() == m_nnu );
   assert( x_p.size() == m_nnp );
+  assert( b_u.size() == m_nnu );
 
-  // allocate output
-  xt::xtensor<double,1> b_u = xt::empty<double>({m_nnu});
-
-  // compute product
   #pragma omp parallel for
   for ( size_t i = 0 ; i < m_nnu ; ++i )
     b_u(i) = m_data_uu(i) * x_u(i);
-
-  return b_u;
 }
 
 // -------------------------------------------------------------------------------------------------
 
-inline xt::xtensor<double,1> MatrixDiagonalPartitioned::dot_p(
-  const xt::xtensor<double,1> &x_u, const xt::xtensor<double,1> &x_p) const
+inline void MatrixDiagonalPartitioned::dot_p(
+  const xt::xtensor<double,1> &x_u, const xt::xtensor<double,1> &x_p,
+  xt::xtensor<double,1> &b_p) const
 {
-  // suppress warning
   UNUSED(x_u);
 
-  // check input
   assert( x_u.size() == m_nnu );
   assert( x_p.size() == m_nnp );
+  assert( b_p.size() == m_nnp );
 
-  // allocate output
-  xt::xtensor<double,1> b_p = xt::empty<double>({m_nnp});
-
-  // compute product
   #pragma omp parallel for
   for ( size_t i = 0 ; i < m_nnp ; ++i )
     b_p(i) = m_data_pp(i) * x_p(i);
-
-  return b_p;
 }
 
 // -------------------------------------------------------------------------------------------------
@@ -242,50 +175,85 @@ inline void MatrixDiagonalPartitioned::factorize()
 
 // -------------------------------------------------------------------------------------------------
 
-inline xt::xtensor<double,1> MatrixDiagonalPartitioned::solve(
-  const xt::xtensor<double,1> &b_u, const xt::xtensor<double,1> &x_p)
+inline void MatrixDiagonalPartitioned::solve(
+  const xt::xtensor<double,1> &b_u, const xt::xtensor<double,1> &x_p,
+  xt::xtensor<double,1> &x_u)
 {
-  // suppress warning
   UNUSED(x_p);
 
-  // check input
   assert( b_u.shape()[0] == m_nnu );
   assert( x_p.shape()[0] == m_nnp );
+  assert( x_u.shape()[0] == m_nnu );
 
-  // factorise (if needed)
   this->factorize();
 
-  // allocate output
-  xt::xtensor<double,1> x_u = xt::empty<double>({m_nnu});
-
-  // solve
   #pragma omp parallel for
   for ( size_t i = 0 ; i < m_nnu ; ++i )
     x_u(i) = m_inv_uu(i) * b_u(i);
-
-  // return output
-  return x_u;
 }
 
 // -------------------------------------------------------------------------------------------------
 
 inline xt::xtensor<double,1> MatrixDiagonalPartitioned::asDiagonal() const
 {
-  // allocate output
   xt::xtensor<double,1> out = xt::zeros<double>({m_ndof});
 
-  // assemble output
-  // -
   #pragma omp parallel for
   for ( size_t i = 0 ; i < m_nnu ; ++i )
     out(m_iiu(i)) = m_data_uu(i);
-  // -
+
   #pragma omp parallel for
   for ( size_t i = 0 ; i < m_nnp ; ++i )
     out(m_iip(i)) = m_data_pp(i);
 
-  // return output
   return out;
+}
+
+// -------------------------------------------------------------------------------------------------
+
+inline xt::xtensor<double,1> MatrixDiagonalPartitioned::dot(const xt::xtensor<double,1> &x) const
+{
+  xt::xtensor<double,1> b = xt::empty<double>({m_ndof});
+
+  this->dot(x, b);
+
+  return b;
+}
+
+// -------------------------------------------------------------------------------------------------
+
+inline xt::xtensor<double,1> MatrixDiagonalPartitioned::dot_u(
+  const xt::xtensor<double,1> &x_u, const xt::xtensor<double,1> &x_p) const
+{
+  xt::xtensor<double,1> b_u = xt::empty<double>({m_nnu});
+
+  this->dot_u(x_u, x_p, b_u);
+
+  return b_u;
+}
+
+// -------------------------------------------------------------------------------------------------
+
+inline xt::xtensor<double,1> MatrixDiagonalPartitioned::dot_p(
+  const xt::xtensor<double,1> &x_u, const xt::xtensor<double,1> &x_p) const
+{
+  xt::xtensor<double,1> b_p = xt::empty<double>({m_nnp});
+
+  this->dot_p(x_u, x_p, b_p);
+
+  return b_p;
+}
+
+// -------------------------------------------------------------------------------------------------
+
+inline xt::xtensor<double,1> MatrixDiagonalPartitioned::solve(
+  const xt::xtensor<double,1> &b_u, const xt::xtensor<double,1> &x_p)
+{
+  xt::xtensor<double,1> x_u = xt::empty<double>({m_nnu});
+
+  this->solve(b_u, x_p, x_u);
+
+  return x_u;
 }
 
 // -------------------------------------------------------------------------------------------------

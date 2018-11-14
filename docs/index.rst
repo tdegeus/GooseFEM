@@ -52,7 +52,7 @@ This header-only module provides C++ classes and several accompanying methods to
 Data-types
 ==========
 
-[:download:`GooseFEM/GooseFEM.h <../src/GooseFEM/GooseFEM.h>`]
+[:download:`GooseFEM/GooseFEM.h <../include/GooseFEM/GooseFEM.h>`]
 
 Beyond the default C++ types, GooseFEM use Eigen columns/matrices and cppmat multi-dimensional arrays. In particular:
 
@@ -102,6 +102,9 @@ Data-storage
 Contents
 ========
 
+Code overview
+-------------
+
 .. toctree::
    :maxdepth: 1
 
@@ -110,6 +113,14 @@ Contents
    Vector.rst
    compile.rst
    develop.rst
+
+Examples
+--------
+
+.. toctree::
+   :maxdepth: 1
+
+   examples/Dynamics/readme.rst
 
 .. tip::
 

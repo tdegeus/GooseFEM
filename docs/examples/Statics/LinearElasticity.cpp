@@ -1,5 +1,5 @@
 #include <GooseFEM/GooseFEM.h>
-#include <GMatLinearElastic/GMatLinearElastic.h>
+#include <GMatLinearElastic/Cartesian3d.h>
 
 int main()
 {
@@ -38,7 +38,7 @@ int main()
 
   GooseFEM::Element::Quad4::QuadraturePlanar elem(vector.asElement(coor));
 
-  GMatLinearElastic::Cartesian3d::Material mat(mesh.nelem(), elem.nip(), 1., 1.);
+  GMatLinearElastic::Cartesian3d::Matrix mat(mesh.nelem(), elem.nip(), 1., 1.);
 
   // solve
   // -----

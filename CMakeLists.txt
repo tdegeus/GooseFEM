@@ -58,8 +58,6 @@ set(headers
   include/GooseFEM/MatrixDiagonalPartitioned.h
   include/GooseFEM/Iterate.hpp
   include/GooseFEM/Iterate.h
-  include/GooseFEM/Dynamics.hpp
-  include/GooseFEM/Dynamics.h
 )
 
 # automatically parse the version number

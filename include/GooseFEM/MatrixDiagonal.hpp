@@ -40,55 +40,27 @@ inline MatrixDiagonal::MatrixDiagonal(const xt::xtensor<size_t,2> &conn,
 
 // -------------------------------------------------------------------------------------------------
 
-inline size_t MatrixDiagonal::nelem() const
-{
-  return m_nelem;
-}
+inline size_t MatrixDiagonal::nelem() const { return m_nelem; }
+
+inline size_t MatrixDiagonal::nne() const { return m_nne; }
+
+inline size_t MatrixDiagonal::nnode() const { return m_nnode; }
+
+inline size_t MatrixDiagonal::ndim() const { return m_ndim; }
+
+inline size_t MatrixDiagonal::ndof() const { return m_ndof; }
+
+inline xt::xtensor<size_t,2> MatrixDiagonal::dofs() const { return m_dofs; }
 
 // -------------------------------------------------------------------------------------------------
 
-inline size_t MatrixDiagonal::nne() const
+inline void MatrixDiagonal::dot(const xt::xtensor<double,1> &x,
+  xt::xtensor<double,1> &b) const
 {
-  return m_nne;
-}
-
-// -------------------------------------------------------------------------------------------------
-
-inline size_t MatrixDiagonal::nnode() const
-{
-  return m_nnode;
-}
-
-// -------------------------------------------------------------------------------------------------
-
-inline size_t MatrixDiagonal::ndim() const
-{
-  return m_ndim;
-}
-
-// -------------------------------------------------------------------------------------------------
-
-inline size_t MatrixDiagonal::ndof() const
-{
-  return m_ndof;
-}
-
-// -------------------------------------------------------------------------------------------------
-
-inline xt::xtensor<size_t,2> MatrixDiagonal::dofs() const
-{
-  return m_dofs;
-}
-
-// -------------------------------------------------------------------------------------------------
-
-inline xt::xtensor<double,1> MatrixDiagonal::dot(const xt::xtensor<double,1> &x) const
-{
-  // check input
   assert( x.size() == m_ndof );
+  assert( b.size() == m_ndof );
 
-  // compute product
-  return m_data * x;
+  xt::noalias(b) = m_data * x;
 }
 
 // -------------------------------------------------------------------------------------------------
@@ -146,19 +118,15 @@ inline void MatrixDiagonal::factorize()
 
 // -------------------------------------------------------------------------------------------------
 
-inline xt::xtensor<double,1> MatrixDiagonal::solve(const xt::xtensor<double,1> &b)
+inline void MatrixDiagonal::solve(const xt::xtensor<double,1> &b,
+  xt::xtensor<double,1> &x)
 {
-  // check input
   assert( b.size() == m_ndof );
+  assert( x.size() == m_ndof );
 
-  // factorise (if needed)
   this->factorize();
 
-  // solve
-  xt::xtensor<double,1> x = m_inv * b;
-
-  // return output
-  return x;
+  xt::noalias(x) = m_inv * b;
 }
 
 // -------------------------------------------------------------------------------------------------
@@ -166,6 +134,28 @@ inline xt::xtensor<double,1> MatrixDiagonal::solve(const xt::xtensor<double,1> &
 inline xt::xtensor<double,1> MatrixDiagonal::asDiagonal() const
 {
   return m_data;
+}
+
+// -------------------------------------------------------------------------------------------------
+
+inline xt::xtensor<double,1> MatrixDiagonal::dot(const xt::xtensor<double,1> &x) const
+{
+  xt::xtensor<double,1> b = xt::empty<double>({m_ndof});
+
+  this->dot(x, b);
+
+  return b;
+}
+
+// -------------------------------------------------------------------------------------------------
+
+inline xt::xtensor<double,1> MatrixDiagonal::solve(const xt::xtensor<double,1> &b)
+{
+  xt::xtensor<double,1> x = xt::empty<double>({m_ndof});
+
+  this->solve(b, x);
+
+  return x;
 }
 
 // -------------------------------------------------------------------------------------------------

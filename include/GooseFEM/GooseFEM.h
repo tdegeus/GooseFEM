@@ -104,8 +104,6 @@ namespace GooseFEM
 #include "MatrixDiagonalPartitioned.hpp"
 #include "Iterate.h"
 #include "Iterate.hpp"
-#include "Dynamics.h"
-#include "Dynamics.hpp"
 
 // =================================================================================================
 

@@ -21,11 +21,13 @@ class MatrixDiagonal
 {
 public:
 
-  // constructor
+  // constructors
+
   MatrixDiagonal() = default;
   MatrixDiagonal(const xt::xtensor<size_t,2> &conn, const xt::xtensor<size_t,2> &dofs);
 
   // dimensions
+
   size_t nelem() const; // number of elements
   size_t nne()   const; // number of nodes per element
   size_t nnode() const; // number of nodes
@@ -33,27 +35,41 @@ public:
   size_t ndof()  const; // number of DOFs
 
   // DOF lists
+
   xt::xtensor<size_t,2> dofs() const; // DOFs
 
-  // product: b_i = A_ij * x_j
-  xt::xtensor<double,1> dot(const xt::xtensor<double,1> &x) const;
+  // set matrix components
+
+  void set(const xt::xtensor<double,1> &A);
 
   // assemble from matrices stored per element [nelem, nne*ndim, nne*ndim]
   // WARNING: ignores any off-diagonal terms
+
   void assemble(const xt::xtensor<double,3> &elemmat);
 
-  // set
-  void set(const xt::xtensor<double,1> &A);
+  // product: b_i = A_ij * x_j
+
+  void dot(const xt::xtensor<double,1> &x,
+    xt::xtensor<double,1> &b) const;
 
   // solve: x = A \ b
-  xt::xtensor<double,1> solve(const xt::xtensor<double,1> &b);
+
+  void solve(const xt::xtensor<double,1> &b,
+    xt::xtensor<double,1> &x);
 
   // return matrix as diagonal matrix (column)
+
   xt::xtensor<double,1> asDiagonal() const;
+
+  // auto allocation of the functions above
+
+  xt::xtensor<double,1> dot(const xt::xtensor<double,1> &x) const;
+
+  xt::xtensor<double,1> solve(const xt::xtensor<double,1> &b);
 
 private:
 
-  // the diagonal matrix (not-partitioned), and its inverse (re-used to solve different RHS)
+  // the diagonal matrix, and its inverse (re-used to solve different RHS)
   xt::xtensor<double,1> m_data;
   xt::xtensor<double,1> m_inv;
 

@@ -6,7 +6,7 @@ GooseFEM::Mesh
 Generic methods
 ===============
 
-[:download:`GooseFEM/Mesh.h <../src/GooseFEM/Mesh.h>`, :download:`GooseFEM/Mesh.hpp <../src/GooseFEM/Mesh.hpp>`]
+[:download:`GooseFEM/Mesh.h <../include/GooseFEM/Mesh.h>`, :download:`GooseFEM/Mesh.hpp <../include/GooseFEM/Mesh.hpp>`]
 
 GooseFEM::Mesh::dofs
 --------------------
@@ -122,7 +122,7 @@ Predefined meshes
 GooseFEM::Mesh::Tri3
 --------------------
 
-[:download:`GooseFEM/MeshTri3.h <../src/GooseFEM/MeshTri3.h>`, :download:`GooseFEM/MeshTri3.hpp <../src/GooseFEM/MeshTri3.hpp>`]
+[:download:`GooseFEM/MeshTri3.h <../include/GooseFEM/MeshTri3.h>`, :download:`GooseFEM/MeshTri3.hpp <../include/GooseFEM/MeshTri3.hpp>`]
 
 GooseFEM::Mesh::Tri3::Regular
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -132,7 +132,7 @@ No description yet, please consult the code.
 GooseFEM::Mesh::Quad4
 ---------------------
 
-[:download:`GooseFEM/MeshQuad4.h <../src/GooseFEM/MeshQuad4.h>`, :download:`GooseFEM/MeshQuad4.hpp <../src/GooseFEM/MeshQuad4.hpp>`]
+[:download:`GooseFEM/MeshQuad4.h <../include/GooseFEM/MeshQuad4.h>`, :download:`GooseFEM/MeshQuad4.hpp <../include/GooseFEM/MeshQuad4.hpp>`]
 
 Naming convention
 ^^^^^^^^^^^^^^^^^
@@ -250,7 +250,7 @@ Methods:
 GooseFEM::Mesh::Hex8
 --------------------
 
-[:download:`MeshHex8.h <../src/GooseFEM/MeshHex8.h>`, :download:`MeshHex8.hpp <../src/GooseFEM/MeshHex8.hpp>`]
+[:download:`MeshHex8.h <../include/GooseFEM/MeshHex8.h>`, :download:`MeshHex8.hpp <../include/GooseFEM/MeshHex8.hpp>`]
 
 Naming convention
 ^^^^^^^^^^^^^^^^^
@@ -294,7 +294,7 @@ GooseFEM::Mesh::Tri3
 GooseFEM::Mesh::Tri3::Regular
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-[:download:`GooseFEM/MeshTri3.h <../src/GooseFEM/MeshTri3.h>`, :download:`GooseFEM/MeshTri3.hpp <../src/GooseFEM/MeshTri3.hpp>`]
+[:download:`GooseFEM/MeshTri3.h <../include/GooseFEM/MeshTri3.h>`, :download:`GooseFEM/MeshTri3.hpp <../include/GooseFEM/MeshTri3.hpp>`]
 
 
 GooseFEM::Mesh::Tri3::getOrientation
