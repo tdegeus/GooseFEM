@@ -4,100 +4,6 @@ import numpy as np
 np.set_printoptions(linewidth=200)
 
 # ==================================================================================================
-# tensor products
-# ==================================================================================================
-
-def ddot43(A,B):
-
-  nd = A.shape[0]
-
-  C = np.zeros((nd,nd,nd))
-
-  for i in range(nd):
-    for j in range(nd):
-      for k in range(nd):
-        for l in range(nd):
-          for m in range(nd):
-            C[i,j,m] += A[i,j,k,l] * B[l,k,m]
-
-  return C
-
-# --------------------------------------------------------------------------------------------------
-
-def ddot33(A,B):
-
-  nd = A.shape[0]
-
-  C = np.zeros((nd,nd))
-
-  for i in range(nd):
-    for j in range(nd):
-      for k in range(nd):
-        for l in range(nd):
-          C[i,l] += A[i,j,k] * B[k,j,l]
-
-  return C
-
-# --------------------------------------------------------------------------------------------------
-
-def transpose3(A):
-
-  nd = A.shape[0]
-
-  C = np.zeros((nd,nd,nd))
-
-  for i in range(nd):
-    for j in range(nd):
-      for k in range(nd):
-        C[k,j,i] = A[i,j,k]
-
-  return C
-
-# ==================================================================================================
-# identity tensors
-# ==================================================================================================
-
-II   = np.zeros((3,3,3,3))
-I4   = np.zeros((3,3,3,3))
-I4rt = np.zeros((3,3,3,3))
-Is   = np.zeros((3,3,3,3))
-
-for i in range(3):
-  for j in range(3):
-    for k in range(3):
-      for l in range(3):
-        if ( i == j and k == l ):
-          II[i,j,k,l] = 1.
-
-for i in range(3):
-  for j in range(3):
-    for k in range(3):
-      for l in range(3):
-        if ( i == l and j == k ):
-          I4[i,j,k,l] = 1.
-
-for i in range(3):
-  for j in range(3):
-    for k in range(3):
-      for l in range(3):
-        if ( i == k and j == l ):
-          I4rt[i,j,k,l] = 1.
-
-I4s = ( I4  + I4rt  ) / 2.
-I4d = ( I4s - II/3. )
-
-# ==================================================================================================
-# elasticity tensor
-# ==================================================================================================
-
-# bulk and shear modulus
-K = 0.8333333333333333
-G = 0.3846153846153846
-
-# elasticity tensor (3d)
-C4 = K * II + 2. * G * I4d
-
-# ==================================================================================================
 # mesh definition
 # ==================================================================================================
 
@@ -155,6 +61,103 @@ W = np.array([
   [1.],
 ])
 
+# number of integration points
+nip = 4
+
+# ==================================================================================================
+# integration point tensors and operations
+# ==================================================================================================
+
+# tensors products
+ddot22     = lambda A2,B2: np.einsum('...ij  ,...ji->...    ',A2,B2)
+ddot42     = lambda A4,B2: np.einsum('...ijkl,...lk->...ij  ',A4,B2)
+dyad22     = lambda A2,B2: np.einsum('...ij  ,...kl->...ijkl',A2,B2)
+ddot43     = lambda A4,B3: np.einsum('...ijkl,...lkm->...ijm',A4,B3)
+ddot33     = lambda A3,B3: np.einsum('...ijk ,...kjl->...il ',A3,B3)
+dot31      = lambda A3,B1: np.einsum('...ijk ,...k  ->...ij ',A3,B1)
+transpose3 = lambda A3   : np.einsum('...ijk        ->...kji',A3   )
+
+# identity tensors (per integration point)
+i    = np.eye(3)
+I    = np.einsum('ij  ,...'         ,                  i   ,np.ones([nelem,nip]))
+I4   = np.einsum('ijkl,...->...ijkl',np.einsum('il,jk',i,i),np.ones([nelem,nip]))
+I4rt = np.einsum('ijkl,...->...ijkl',np.einsum('ik,jl',i,i),np.ones([nelem,nip]))
+I4s  = (I4+I4rt)/2.
+II   = dyad22(I,I)
+I4d  = I4s-II/3.
+
+# bulk and shear modulus
+K = 0.8333333333333333
+G = 0.3846153846153846
+
+# elasticity tensor (per integration point)
+C4 = K * II + 2. * G * I4d
+
+# ==================================================================================================
+# B-matrices at each integration point
+# ==================================================================================================
+
+# allocate matrix
+B   = np.zeros((nelem,nip,nne,3,3,3))
+vol = np.zeros((nelem,nip))
+
+# loop over nodes
+for e, nodes in enumerate(conn):
+
+  # nodal coordinates
+  xe = coor[nodes,:]
+
+  # loop over integration points
+  for q, (w, xi) in enumerate(zip(W, Xi)):
+
+    # shape functions
+    N = np.array([
+      .25 * (1.-xi[0]) * (1.-xi[1]),
+      .25 * (1.+xi[0]) * (1.-xi[1]),
+      .25 * (1.+xi[0]) * (1.+xi[1]),
+      .25 * (1.-xi[0]) * (1.+xi[1]),
+    ])
+
+    # shape function gradients (w.r.t. the local element coordinates)
+    dNdxi = np.array([
+      [-.25*(1.-xi[1]), -.25*(1.-xi[0])],
+      [+.25*(1.-xi[1]), -.25*(1.+xi[0])],
+      [+.25*(1.+xi[1]), +.25*(1.+xi[0])],
+      [-.25*(1.+xi[1]), +.25*(1.-xi[0])],
+    ])
+
+    # Jacobian
+    J    = np.einsum('mi,mj->ij', dNdxi, xe)
+    Jinv = np.linalg.inv(J)
+    Jdet = np.linalg.det(J)
+
+    # shape function gradients (w.r.t. the global coordinates)
+    dNdx = np.einsum('ij,mj->mi', Jinv, dNdxi)
+
+    # global coordinates of the integration point
+    xq = np.einsum('m,mi->i', N, xe)
+    rq = xq[1]
+
+    # compute B-matrix and integration-point volume and store for later use
+    for m in range(nne):
+
+      Bm = np.zeros((3,3,3))
+
+      Bm[0,1,1] = -1./rq * N[m]    # B(m, r      \theta \theta )
+      Bm[1,1,0] = +1./rq * N[m]    # B(m, \theta \theta r      )
+
+      Bm[0,0,0] = dNdx[m,1]        # B(m, r      r      r      )
+      Bm[0,1,1] = dNdx[m,1]        # B(m, r      \theta \theta )
+      Bm[0,2,2] = dNdx[m,1]        # B(m, r      z      z      )
+
+      Bm[2,0,0] = dNdx[m,0]        # B(m, z      r      r      )
+      Bm[2,1,1] = dNdx[m,0]        # B(m, z      \theta \theta )
+      Bm[2,2,2] = dNdx[m,0]        # B(m, z      z      z      )
+
+      B[e,q,m,:,:,:] = Bm
+
+      vol[e,q] = w * Jdet * rq * 2. * np.pi
+
 # ==================================================================================================
 # assemble stiffness matrix
 # ==================================================================================================
@@ -163,107 +166,36 @@ W = np.array([
 K = np.zeros((ndof, ndof))
 
 # loop over nodes
-for e in conn:
+for e, nodes in enumerate(conn):
 
-  # - nodal coordinates
-  xe = coor[e,:]
-
-  # - allocate element stiffness matrix
+  # allocate element stiffness matrix
   Ke = np.zeros((nne*nd, nne*nd))
 
-  # - numerical quadrature
-  for w, xi in zip(W, Xi):
+  # loop over integration points
+  for q, (w, xi) in enumerate(zip(W, Xi)):
 
-    # -- shape functions
-    N = np.array([
-      [.25 * (1.-xi[0]) * (1.-xi[1])],
-      [.25 * (1.+xi[0]) * (1.-xi[1])],
-      [.25 * (1.+xi[0]) * (1.+xi[1])],
-      [.25 * (1.-xi[0]) * (1.+xi[1])],
-    ])
+    # alias integration point values
+    C4q = C4[e,q,:,:,:,:]
+    dV  = vol[e,q]
 
-    # -- shape function gradients (w.r.t. the local element coordinates)
-    dNdxi = np.array([
-      [-.25*(1.-xi[1]), -.25*(1.-xi[0])],
-      [+.25*(1.-xi[1]), -.25*(1.+xi[0])],
-      [+.25*(1.+xi[1]), +.25*(1.+xi[0])],
-      [-.25*(1.+xi[1]), +.25*(1.-xi[0])],
-    ])
-
-    # -- Jacobian
-    J = np.zeros((nd, nd))
-
-    for m in range(nne):
-      for i in range(nd):
-        for j in range(nd):
-          J[i,j] += dNdxi[m,i] * xe[m,j]
-
-    Jinv = np.linalg.inv(J)
-    Jdet = np.linalg.det(J)
-
-    # -- shape function gradients (w.r.t. the global coordinates)
-    dNdx = np.zeros((nne,nd))
-
-    for m in range(nne):
-      for i in range(nd):
-        for j in range(nd):
-          dNdx[m,i] += Jinv[i,j] * dNdxi[m,j]
-
-    # -- global coordinates of the integration point
-    xk = np.zeros((nd))
-
-    for n in range(nne):
-      for i in range(nd):
-        xk[i] += N[n] * xe[n,i]
-
-    rk = xk[1]
-
-    # -- assemble to element stiffness matrix
+    # assemble to element stiffness matrix
     for m in range(nne):
 
-      Bm = np.zeros((3,3,3))
-
-      Bm[0,0,0] = dNdx[m,1]        # B(m, r      r      r      )
-      Bm[0,1,1] = -1./rk * N[m]    # B(m, r      \theta \theta )
-      Bm[0,1,1] = dNdx[m,1]        # B(m, r      \theta \theta )
-      Bm[0,2,2] = dNdx[m,1]        # B(m, r      z      z      )
-
-      Bm[1,0,0] = 0.               # B(m, \theta r      r      ) - axisymmetric
-      Bm[1,1,0] = +1./rk * N[m]    # B(m, \theta \theta r      )
-      Bm[1,1,1] = 0.               # B(m, \theta \theta \theta ) - axisymmetric
-      Bm[1,2,2] = 0.               # B(m, \theta z      z      ) - axisymmetric
-
-      Bm[2,0,0] = dNdx[m,0]        # B(m, z      r      r      )
-      Bm[2,1,1] = dNdx[m,0]        # B(m, z      \theta \theta )
-      Bm[2,2,2] = dNdx[m,0]        # B(m, z      z      z      )
+      Bm = B[e,q,m,:,:,:]
 
       for n in range(nne):
 
-        Bn = np.zeros((3,3,3))
+        Bn = B[e,q,n,:,:,:]
 
-        Bn[0,0,0] = dNdx[n,1]        # B(n, r      r      r      )
-        Bn[0,1,1] = -1./rk * N[n]    # B(n, r      \theta \theta )
-        Bn[0,1,1] = dNdx[n,1]        # B(n, r      \theta \theta )
-        Bn[0,2,2] = dNdx[n,1]        # B(n, r      z      z      )
-
-        Bn[1,0,0] = 0.               # B(n, \theta r      r      ) - axisymmetric
-        Bn[1,1,0] = +1./rk * N[n]    # B(n, \theta \theta r      )
-        Bn[1,1,1] = 0.               # B(n, \theta \theta \theta ) - axisymmetric
-        Bn[1,2,2] = 0.               # B(n, \theta z      z      ) - axisymmetric
-
-        Bn[2,0,0] = dNdx[n,0]        # B(n, z      r      r      )
-        Bn[2,1,1] = dNdx[n,0]        # B(n, z      \theta \theta )
-        Bn[2,2,2] = dNdx[n,0]        # B(n, z      z      z      )
-
-        Kmn = ddot33(transpose3(Bm),ddot43(C4,Bn))
+        Kmn = ddot33(transpose3(Bm),ddot43(C4q,Bn))
 
         iim = np.array([ m*nd+0, m*nd+1 ])
         iin = np.array([ n*nd+0, n*nd+1 ])
 
-        Ke[np.ix_(iim,iin)] += Kmn[np.ix_([2,0], [2,0])] * w * Jdet * rk * 2. * np.pi
+        Ke[np.ix_(iim,iin)] += Kmn[np.ix_([2,0], [2,0])] * dV
 
-  # - assemble to global stiffness matrix
-  iie = dofs[e,:].ravel()
+  # assemble to global stiffness matrix
+  iie = dofs[nodes,:].ravel()
 
   K[np.ix_(iie,iie)] += Ke
 
@@ -316,6 +248,46 @@ f[iip] = fp
 # convert to nodal displacement and forces
 disp = u[dofs]
 fext = f[dofs]
+
+# ==================================================================================================
+# compute strain and stress
+# ==================================================================================================
+
+# zero-initialize
+# - strain tensor per integration point
+eps = np.zeros((nelem,nip,3,3))
+# - nodal displacement in 3-d
+um = np.zeros((3))
+
+# loop over nodes
+for e, nodes in enumerate(conn):
+
+  # nodal displacements
+  ue = disp[nodes,:]
+
+  # loop over integration points
+  for q, (w, xi) in enumerate(zip(W, Xi)):
+
+    # zero-initialize displacements gradient
+    gradu = np.zeros((3,3))
+
+    # compute displacement gradient
+    for m in range(nne):
+
+      # alias
+      # - B-matrix
+      Bm = B[e,q,m,:,:,:]
+      # - nodal displacement in 3-d (theta-component always zero)
+      um[np.ix_([2,0])] = ue[m,:]
+
+      # update
+      gradu += dot31(Bm, um)
+
+    # compute strain tensor, and store per integration point
+    eps[e,q] = .5 * ( gradu + gradu.T )
+
+# compute stress tensor (per integration point)
+sig = ddot42(C4,eps)
 
 # ==================================================================================================
 # plot

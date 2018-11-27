@@ -44,22 +44,26 @@ int main()
 
   QD::Quadrature quad(vector.asElement(coor));
 
-  size_t nnode = mesh.nnode();
-  size_t ndim  = mesh.ndim();
-  size_t nelem = mesh.nelem();
+  size_t nnode = coor.shape()[0];
+  size_t ndim  = coor.shape()[1];
+  size_t nelem = conn.shape()[0];
   size_t nip   = quad.nip();
 
-  xt::xtensor<double,2> u    = xt::zeros<double>(coor.shape());
-  xt::xtensor<double,2> v    = xt::zeros<double>(coor.shape());
-  xt::xtensor<double,2> a    = xt::zeros<double>(coor.shape());
-  xt::xtensor<double,2> v_n  = xt::zeros<double>(coor.shape());
-  xt::xtensor<double,2> a_n  = xt::zeros<double>(coor.shape());
+  // nodal displacements, velocities, and accelerations (current and last increment)
+  xt::xtensor<double,2> u   = xt::zeros<double>(coor.shape());
+  xt::xtensor<double,2> v   = xt::zeros<double>(coor.shape());
+  xt::xtensor<double,2> a   = xt::zeros<double>(coor.shape());
+  xt::xtensor<double,2> v_n = xt::zeros<double>(coor.shape());
+  xt::xtensor<double,2> a_n = xt::zeros<double>(coor.shape());
+
+  // nodal forces
   xt::xtensor<double,2> fint = xt::zeros<double>(coor.shape());
   xt::xtensor<double,2> fext = xt::zeros<double>(coor.shape());
   xt::xtensor<double,2> fres = xt::zeros<double>(coor.shape());
 
-  xt::xtensor<double,4> Eps  = xt::zeros<double>({nelem, nip, ndim, ndim});
-  xt::xtensor<double,4> Sig  = xt::zeros<double>({nelem, nip, ndim, ndim});
+  // integration point strain and stress
+  xt::xtensor<double,4> Eps = xt::zeros<double>({nelem, nip, ndim, ndim});
+  xt::xtensor<double,4> Sig = xt::zeros<double>({nelem, nip, ndim, ndim});
 
   // material definition
 
@@ -121,7 +125,7 @@ int main()
 
     xt::noalias(u) = u + dt * v + 0.5 * std::pow(dt,2.) * a;
 
-    // compute strain/strain, and corresponding internal
+    // compute strain/strain, and corresponding force
 
     quad.symGradN_vector(vector.asElement(u), Eps);
     material.Sig(Eps, Sig);

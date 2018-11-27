@@ -41,6 +41,14 @@ inline xt::xtensor<double,1> w();   // integration point weights
 
 // =================================================================================================
 
+namespace MidPoint {
+inline size_t                nip(); // number of integration points
+inline xt::xtensor<double,2> xi();  // integration point coordinates (local coordinates)
+inline xt::xtensor<double,1> w();   // integration point weights
+}
+
+// =================================================================================================
+
 // -------------------------------------------------------------------------------------------------
 
 class Quadrature

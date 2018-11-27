@@ -840,25 +840,9 @@ The iterative scheme is well understood from the illustration in Fig.~\ref{fig:n
 
 \section{B-matrix}
 
-\subsection{Discretization}
+\subsection{Discretisation}
 
-\eqref{eq:static:weak:final}
-
-\begin{equation}
-  \int\limits_\Omega
-    \big[\, \vec{\nabla} \vec{\phi}(\vec{x}) \,\big] : \bm{\sigma}(\vec{x}) \;
-  \mathrm{d}\Omega
-  =
-  \int\limits_\Gamma
-    \vec{\phi}(\vec{x}) \cdot
-    \vec{t}(\vec{x}) \;
-  \mathrm{d}\Gamma
-  \qquad
-  \forall \; \vec{\phi}(\vec{x}) \in \mathbb{R}^d
-\end{equation}
-
-The discretization from Eq.~\eqref{eq:discretization} can be written more precisely as
-
+The discretisation from Eq.~\eqref{eq:discretization} can be written more precisely as
 \begin{equation}
   \phi_x(\vec{x}) \vec{e}_x +
   \phi_y(\vec{x}) \vec{e}_y +
@@ -869,8 +853,7 @@ The discretization from Eq.~\eqref{eq:discretization} can be written more precis
   N_m (\vec{x}) \; \phi_{m,y} \vec{e}_y +
   N_m (\vec{x}) \; \phi_{m,z} \vec{e}_z
 \end{equation}
-
-
+whereby $\vec{\phi}(\vec{x})$ is a vector field such as the test functions, the displacement, the forces, etc. The resulting shape function gradients then read
 \begin{align}
   &
   \vec{\nabla} \vec{\phi}(\vec{x})
@@ -889,8 +872,8 @@ The discretization from Eq.~\eqref{eq:discretization} can be written more precis
   \\
   &
   =
-  \phi_{m,x} \frac{\partial N_m}{\partial x} \vec{e}_x \vec{e}_x +
-  \phi_{m,y} \frac{\partial N_m}{\partial x} \vec{e}_x \vec{e}_y +
+  \phi_{m,x} \frac{\partial N_m}{\partial x} \vec{e}_x \vec{e}_x + \nonumber
+  \phi_{m,y} \frac{\partial N_m}{\partial x} \vec{e}_x \vec{e}_y + \nonumber
   \phi_{m,z} \frac{\partial N_m}{\partial x} \vec{e}_x \vec{e}_z
   \\
   &
@@ -905,16 +888,15 @@ The discretization from Eq.~\eqref{eq:discretization} can be written more precis
   \phi_{m,y} \frac{\partial N_m}{\partial z} \vec{e}_z \vec{e}_y +
   \phi_{m,z} \frac{\partial N_m}{\partial z} \vec{e}_z \vec{e}_z
 \end{align}
-
-Which we can denote in short as
+Which can denote in short as
 \begin{equation}
+\label{eq:bmatrix:discretisation}
   \vec{\nabla} \vec{\phi} (\vec{x})
   \approx
   \sum_{m=1}^{n_\mathrm{nodes}}
   \mathcal{B}_m (\vec{x}) \cdot \vec{\phi}_m
 \end{equation}
-
-
+whereby $\mathcal{B}_m$ is third order tensor that collects the gradient of the shape function of a node $m$. The only non-zero components are
 \begin{alignat}{3}
   \mathcal{B}_{m,x x x} &= \frac{\partial N_m}{\partial x} & \qquad
   \mathcal{B}_{m,y x x} &= \frac{\partial N_m}{\partial y} & \qquad
@@ -930,15 +912,22 @@ Which we can denote in short as
   \mathcal{B}_{m,z z z} &= \frac{\partial N_m}{\partial z}
 \end{alignat}
 
-Note that similarly
+\subsection{Applied to the weak form}
+
+By means of example the organisation using the `B-matrix' can be applied to the weak form of Eq.~\eqref{eq:static:weak:final}, which reads
 \begin{equation}
-  \vec{\nabla} \vec{u} (\vec{x})
-  \approx
-  \sum_{m=1}^{n_\mathrm{nodes}}
-  \mathcal{B}_m (\vec{x}) \cdot \vec{u}_m
+  \int\limits_\Omega
+    \big[\, \vec{\nabla} \vec{\phi}(\vec{x}) \,\big] : \bm{\sigma}(\vec{x}) \;
+  \mathrm{d}\Omega
+  =
+  \int\limits_\Gamma
+    \vec{\phi}(\vec{x}) \cdot
+    \vec{t}(\vec{x}) \;
+  \mathrm{d}\Gamma
+  \qquad
+  \forall \; \vec{\phi}(\vec{x}) \in \mathbb{R}^d
 \end{equation}
-
-
+Substituting Eq.~\eqref{eq:bmatrix:discretisation} results in
 \begin{equation}
   \int\limits_{\Omega^h}
     \left( \mathcal{B}_m \cdot \vec{\phi}_m \right) : \bm{\sigma}(\vec{x}) \;
@@ -950,8 +939,7 @@ Note that similarly
   \qquad
   \forall \; \vec{\phi}_m \in \mathbb{R}^d_n
 \end{equation}
-
-
+from which we can take the nodal values of the test functions $\vec{\phi}_m$, that no longer depend on space, out of the volume integral:
 \begin{equation}
   \vec{\phi}_m \cdot
   \int\limits_{\Omega^h}
@@ -965,9 +953,9 @@ Note that similarly
   \qquad
   \forall \; \vec{\phi}_m \in \mathbb{R}^d_n
 \end{equation}
-
-
+From which it is obvious that the dependence on $\vec{\phi}_m$ can be dropped, resulting in the discretised weak form:
 \begin{equation}
+\label{eq:bmatrix:weak_form:discrete}
   \int\limits_{\Omega^h}
     \mathcal{B}_m^T : \bm{\sigma}(\vec{x}) \;
   \mathrm{d}\Omega
@@ -977,8 +965,9 @@ Note that similarly
   \mathrm{d}\Gamma
 \end{equation}
 
-\subsection{Linear elasticity}
+\subsection{Applied to linear elasticity}
 
+As a further illustration linear elasticity can be assumed. Application to Eq.~\eqref{eq:bmatrix:weak_form:discrete} trivially results in
 \begin{equation}
   \int\limits_{\Omega_0^h}
     \tilde{\mathcal{B}}_m^T : \Big( \mathbb{C} : \bm{\varepsilon}(\vec{x}) \Big) \;
@@ -988,7 +977,7 @@ Note that similarly
     N_m(\vec{x}) \; \vec{t}(\vec{x}) \;
   \mathrm{d}\Gamma
 \end{equation}
-
+where $\tilde{\cdot}$ emphasises that $\tilde{\mathcal{B}}_m$ are the gradients of the shape functions with respect to the coordinates in the, undeformed, reference frame. Now, because $\mathbb{C}$ symmetrises, this expression can be written in terms of the displacement gradient directly:
 \begin{equation}
   \int\limits_{\Omega_0^h}
     \tilde{\mathcal{B}}_m^T : \Big( \mathbb{C} : \vec{\nabla}\vec{u}(\vec{x}) \Big) \;
@@ -998,7 +987,7 @@ Note that similarly
     N_m(\vec{x}) \; \vec{t}(\vec{x}) \;
   \mathrm{d}\Gamma
 \end{equation}
-
+The displacement gradient is evaluated discretely using Eq.~\eqref{eq:bmatrix:weak_form:discrete}, resulting in:
 \begin{equation}
   \int\limits_{\Omega_0^h}
     \tilde{\mathcal{B}}_m^T : \Big( \mathbb{C} : ( \tilde{\mathcal{B}}_n \cdot \vec{u}_n) \Big) \;
@@ -1008,7 +997,7 @@ Note that similarly
     N_m(\vec{x}) \; \vec{t}(\vec{x}) \;
   \mathrm{d}\Gamma
 \end{equation}
-
+whereby, again, the nodal displacements, $\vec{u}_n$, are not a function of the position and can be taken out of the integral, such as to finally have a system that can be solved:
 \begin{equation}
   \int\limits_{\Omega_0^h}
     \tilde{\mathcal{B}}_m^T : \Big( \mathbb{C} : \tilde{\mathcal{B}}_n \Big) \;
@@ -1022,157 +1011,127 @@ Note that similarly
 
 \section{Cylindrical coordinates}
 
-\subsection{??}
-
 \begin{figure}[htp]
   \centering
-  \includegraphics[width=.2\textwidth]{figures/cylindrical_coordinates}
-  \caption{Caption here}
-  \label{fig:}
+  \includegraphics[width=.3\textwidth]{figures/cylindrical_coordinates}
+  \caption{Cylindrical coordinate system spanned by $(\vec{e}_r, \vec{e}_\theta, \vec{e}_z)$.}
+  \label{fig:cylindrical}
 \end{figure}
 
+The cylindrical coordinate system is spanned by $(\vec{e}_r, \vec{e}_\theta, \vec{e}_z)$ as visualised in Fig.~\ref{fig:cylindrical}. From this figure, the transition from cylindrical coordinates to Cartesian coordinates trivially follows to read
 \begin{equation}
   x = r \cos \theta \qquad
   y = r \sin \theta \qquad
   z = z
 \end{equation}
-
+and the inverse relation to read
 \begin{equation}
   r      = \sqrt{ x^2 + y^2 }                \qquad
   \theta = \mathrm{arctan}\left( y/x \right) \qquad
   z      = z
 \end{equation}
-
+Likewise, the unit vectors $(\vec{e}_r, \vec{e}_\theta, \vec{e}_z)$ can be expressed in terms of the unit vectors that span the Cartesian basis:
 \begin{align}
   \vec{e}_r      &=   \cos \theta \; \vec{e}_x + \sin \theta \; \vec{e}_y \nonumber \\
   \vec{e}_\theta &= - \sin \theta \; \vec{e}_x + \cos \theta \; \vec{e}_y \nonumber \\
-  \vec{e}_r      &= \vec{e}_z
+  \vec{e}_z      &= \vec{e}_z \label{eq:cylindrical:unit}
 \end{align}
 
-
-
-
-
+The gradient operator for cylindrical coordinates reads
 \begin{equation}
   \vec{\nabla} =
   \vec{e}_r \frac{\partial}{\partial r} +
   \frac{1}{r} \vec{e}_\theta \frac{\partial}{\partial \theta} +
   \vec{e}_z \frac{\partial}{\partial z}
 \end{equation}
-
+whereby from Eq.~\eqref{eq:cylindrical:unit} the derivates of the unit vector follow to be
 \begin{alignat}{3}
   \frac{\partial \vec{e}_r}{\partial r     } &= 0              &\qquad \frac{\partial \vec{e}_\theta}{\partial r     } &= 0           &\qquad \frac{\partial \vec{e}_z}{\partial r     } &= 0 \nonumber \\
   \frac{\partial \vec{e}_r}{\partial \theta} &= \vec{e}_\theta &\qquad \frac{\partial \vec{e}_\theta}{\partial \theta} &= - \vec{e}_r &\qquad \frac{\partial \vec{e}_z}{\partial \theta} &= 0 \nonumber \\
   \frac{\partial \vec{e}_r}{\partial z     } &= 0              &\qquad \frac{\partial \vec{e}_\theta}{\partial z     } &= 0           &\qquad \frac{\partial \vec{e}_z}{\partial z     } &= 0
 \end{alignat}
 
-
-We begin by making Eq.~\eqref{eq:discretization} more specific:
+A discretised vector field $\vec{\phi}(\vec{x})$ reads
 \begin{equation}
   \phi_r (\vec{x}) \vec{e}_r + \phi_\theta (\vec{x}) \vec{e}_\theta + \phi_z (\vec{x}) \vec{e}_z
   \approx
-  \sum\limits_{i=1}^{n}
-  N_i (\vec{x}) \phi_{i,r}       \vec{e}_r      +
-  N_i (\vec{x}) \phi_{i,\theta}  \vec{e}_\theta +
-  N_i (\vec{x}) \phi_{i,z}       \vec{e}_z
+  \sum\limits_{m=1}^{n_\mathrm{nodes}}
+  N^m (\vec{x}) \phi^{m}_{r}       \vec{e}_r      +
+  N^m (\vec{x}) \phi^{m}_{\theta}  \vec{e}_\theta +
+  N^m (\vec{x}) \phi^{m}_{z}       \vec{e}_z
 \end{equation}
-We can also evaluate the discretized gradient
+And consequently its discretised gradient reads
 \begin{align}
   &\vec{\nabla} \vec{\phi} (\vec{x})
   \approx
-  \sum\limits_{i=1}^{n}
+  \sum\limits_{m=1}^{n_\mathrm{nodes}}
+  \Bigg[
   \bigg(
   \vec{e}_r \frac{\partial}{\partial r} +
   \frac{1}{r} \vec{e}_\theta \frac{\partial}{\partial \theta} +
   \vec{e}_z \frac{\partial}{\partial z}
   \bigg)
   \bigg(
-  N_i (\vec{x}) \phi_{i,r}       \vec{e}_r      +
-  N_i (\vec{x}) \phi_{i,\theta}  \vec{e}_\theta +
-  N_i (\vec{x}) \phi_{i,z}       \vec{e}_z
+  N^m (\vec{x}) \phi^{m}_{r}       \vec{e}_r      +
+  N^m (\vec{x}) \phi^{m}_{\theta}  \vec{e}_\theta +
+  N^m (\vec{x}) \phi^{m}_{z}       \vec{e}_z
   \bigg)
+  \Bigg]
   \\
   &=
-  \sum\limits_{i=1}^{n}
-    \phi_{i,r     } \frac{\partial N_i}{\partial r} \vec{e}_r \vec{e}_r
-  + \phi_{i,\theta} \frac{\partial N_i}{\partial r} \vec{e}_r \vec{e}_\theta
-  + \phi_{i,z     } \frac{\partial N_i}{\partial r} \vec{e}_r \vec{e}_z
+  \sum\limits_{m=1}^{n_\mathrm{nodes}}
+  \Bigg[
+    \phi^{m}_{r     } \frac{\partial N^m}{\partial r} \vec{e}_r \vec{e}_r
+  + \phi^{m}_{\theta} \frac{\partial N^m}{\partial r} \vec{e}_r \vec{e}_\theta
+  + \phi^{m}_{z     } \frac{\partial N^m}{\partial r} \vec{e}_r \vec{e}_z
   \nonumber
   \\
   &\quad
-  + \phi_{i,r     } \frac{1}{r} \frac{\partial N_i }{\partial \theta} \vec{e}_\theta \vec{e}_r
-  + \phi_{i,r     } \frac{1}{r} N_i (\vec{x}) \vec{e}_\theta \vec{e}_\theta
-  + \phi_{i,\theta} \frac{1}{r} \frac{\partial N_i }{\partial \theta} \vec{e}_\theta \vec{e}_\theta
-  - \phi_{i,\theta} \frac{1}{r} N_i (\vec{x}) \vec{e}_r \vec{e}_\theta
-  + \phi_{i,z     } \frac{1}{r} \frac{\partial N_i }{\partial \theta} \vec{e}_\theta \vec{e}_z
+  + \phi^{m}_{r     } \frac{1}{r} \frac{\partial N^m }{\partial \theta} \vec{e}_\theta \vec{e}_r
+  + \phi^{m}_{r     } \frac{1}{r} N^m (\vec{x}) \vec{e}_\theta \vec{e}_\theta
+  + \phi^{m}_{\theta} \frac{1}{r} \frac{\partial N^m }{\partial \theta} \vec{e}_\theta \vec{e}_\theta
+  - \phi^{m}_{\theta} \frac{1}{r} N^m (\vec{x}) \vec{e}_r \vec{e}_\theta
+  + \phi^{m}_{z     } \frac{1}{r} \frac{\partial N^m }{\partial \theta} \vec{e}_\theta \vec{e}_z
   \nonumber
   \\
   &\quad
-  + \phi_{i,r     } \frac{\partial N_i }{\partial z} \vec{e}_z \vec{e}_r
-  + \phi_{i,\theta} \frac{\partial N_i }{\partial z} \vec{e}_z \vec{e}_\theta
-  + \phi_{i,z     } \frac{\partial N_i }{\partial z} \vec{e}_z \vec{e}_z
+  + \phi^{m}_{r     } \frac{\partial N^m }{\partial z} \vec{e}_z \vec{e}_r
+  + \phi^{m}_{\theta} \frac{\partial N^m }{\partial z} \vec{e}_z \vec{e}_\theta
+  + \phi^{m}_{z     } \frac{\partial N^m }{\partial z} \vec{e}_z \vec{e}_z
+  \Bigg]
 \end{align}
-Which we can denote in short as
+Which can be denoted in short as
 \begin{equation}
   \vec{\nabla} \vec{\phi} (\vec{x})
   \approx
-  \sum\limits_{i=1}^{n}
-  \mathcal{B}_i (\vec{x}) \cdot \vec{\phi}_i
+  \sum\limits_{m=1}^{n_\mathrm{nodes}}
+  \mathcal{B}_m (\vec{x}) \cdot \vec{\phi}_m
 \end{equation}
-where the non-zero components of the third order $\mathcal{B}_i$ read
+where the non-zero components of the third order $\mathcal{B}_m$ read
 \begin{alignat}{3}
-  \mathcal{B}_{i,r      r      r     } &=             \frac{\partial N_i}{\partial r}      & \qquad
-  \mathcal{B}_{i,\theta r      r     } &= \frac{1}{r} \frac{\partial N_i}{\partial \theta} & \qquad
-  \mathcal{B}_{i,z      r      r     } &=             \frac{\partial N_i}{\partial z}
+  \mathcal{B}^{m}_{r      r      r     } &=             \frac{\partial N^m}{\partial r}      & \qquad
+  \mathcal{B}^{m}_{\theta r      r     } &= \frac{1}{r} \frac{\partial N^m}{\partial \theta} & \qquad
+  \mathcal{B}^{m}_{z      r      r     } &=             \frac{\partial N^m}{\partial z}
   \nonumber
   \\
-  \mathcal{B}_{i,r      \theta \theta} &= - \frac{1}{r} N_i (\vec{x})  & \qquad
-  \mathcal{B}_{i,\theta \theta r     } &=   \frac{1}{r} N_i (\vec{x})  & \qquad
+  \mathcal{B}^{m}_{r      \theta \theta} &= - \frac{1}{r} N^m (\vec{x})  & \qquad
+  \mathcal{B}^{m}_{\theta \theta r     } &=   \frac{1}{r} N^m (\vec{x})  & \qquad
   \nonumber
   \\
-  \mathcal{B}_{i,r      \theta \theta} &=             \frac{\partial N_i}{\partial r}       & \qquad
-  \mathcal{B}_{i,\theta \theta \theta} &= \frac{1}{r} \frac{\partial N_i}{\partial \theta}  & \qquad
-  \mathcal{B}_{i,z      \theta \theta} &=             \frac{\partial N_i}{\partial z}
+  \mathcal{B}^{m}_{r      \theta \theta} &=             \frac{\partial N^m}{\partial r}       & \qquad
+  \mathcal{B}^{m}_{\theta \theta \theta} &= \frac{1}{r} \frac{\partial N^m}{\partial \theta}  & \qquad
+  \mathcal{B}^{m}_{z      \theta \theta} &=             \frac{\partial N^m}{\partial z}
   \\
-  \mathcal{B}_{i,r      z      z     } &=             \frac{\partial N_i}{\partial r}       & \qquad
-  \mathcal{B}_{i,\theta z      z     } &= \frac{1}{r} \frac{\partial N_i}{\partial \theta}  & \qquad
-  \mathcal{B}_{i,z      z      z     } &=             \frac{\partial N_i}{\partial z}
+  \mathcal{B}^{m}_{r      z      z     } &=             \frac{\partial N^m}{\partial r}       & \qquad
+  \mathcal{B}^{m}_{\theta z      z     } &= \frac{1}{r} \frac{\partial N^m}{\partial \theta}  & \qquad
+  \mathcal{B}^{m}_{z      z      z     } &=             \frac{\partial N^m}{\partial z}
 \end{alignat}
-%\begin{align}
-%  \mathcal{B}_{i,r      r      r     } &=             \frac{\partial N_i}{\partial r} \\
-%  %\mathcal{B}_{i,r      r      \theta} &= 0 \\
-%  %\mathcal{B}_{i,r      r      z     } &= 0 \\
-%  \mathcal{B}_{i,r      \theta r     } &= - \frac{1}{r} N_i (\vec{x}) \\
-%  \mathcal{B}_{i,r      \theta \theta} &=             \frac{\partial N_i}{\partial r} \\
-%  %\mathcal{B}_{i,r      \theta z     } &= 0 \\
-%  %\mathcal{B}_{i,r      z      r     } &= 0 \\
-%  %\mathcal{B}_{i,r      z      \theta} &= 0 \\
-%  \mathcal{B}_{i,r      z      z     } &=             \frac{\partial N_i}{\partial z} \\
-%  \mathcal{B}_{i,\theta r      r     } &= \frac{1}{r} \frac{\partial N_i}{\partial \theta} \\
-%  %\mathcal{B}_{i,\theta r      \theta} &= 0 \\
-%  %\mathcal{B}_{i,\theta r      z     } &= 0 \\
-%  \mathcal{B}_{i,\theta \theta r     } &= \frac{1}{r} N_i (\vec{x}) \\
-%  \mathcal{B}_{i,\theta \theta \theta} &= \frac{1}{r} \frac{\partial N_i}{\partial \theta} \\
-%  %\mathcal{B}_{i,\theta \theta z     } &= 0 \\
-%  %\mathcal{B}_{i,\theta z      r     } &= 0 \\
-%  %\mathcal{B}_{i,\theta z      \theta} &= 0 \\
-%  \mathcal{B}_{i,\theta z      z     } &= \frac{1}{r} \frac{\partial N_i}{\partial \theta} \\
-%  \mathcal{B}_{i,z      r      r     } &=             \frac{\partial N_i}{\partial z} \\
-%  %\mathcal{B}_{i,z      r      \theta} &= 0 \\
-%  %\mathcal{B}_{i,z      r      z     } &= 0 \\
-%  %\mathcal{B}_{i,z      \theta r     } &= 0 \\
-%  \mathcal{B}_{i,z      \theta \theta} &=             \frac{\partial N_i}{\partial z} \\
-%  %\mathcal{B}_{i,z      \theta z     } &= 0 \\
-%  %\mathcal{B}_{i,z      z      r     } &= 0 \\
-%  %\mathcal{B}_{i,z      z      \theta} &= 0 \\
-%  \mathcal{B}_{i,z      z      z     } &=             \frac{\partial N_i}{\partial z} \\
-%\end{align}
 
-
+Finally a Jacobian $\bm{J}$ can be defined to change coordinates as follows
 \begin{equation}
   \vec{\nabla}_\xi = \bm{J} \cdot \vec{\nabla}
 \end{equation}
-
+which in components reads
 \begin{equation}
   \vec{e}_\xi  \frac{\partial}{\partial \xi }  +
   \vec{e}_\eta \frac{\partial}{\partial \eta} +
@@ -1185,7 +1144,7 @@ where the non-zero components of the third order $\mathcal{B}_i$ read
               \vec{e}_z      \frac{\partial}{\partial z     }
   \right)
 \end{equation}
-
+The Jacobian is then obtained as
 \begin{align}
   \bm{J}
   &=
@@ -1206,7 +1165,6 @@ where the non-zero components of the third order $\mathcal{B}_i$ read
   \vec{e}_\mu    \frac{\partial z     }{\partial \mu } \vec{e}_z
 \end{align}
 
-\subsection{Axisymmetric}
 
 % \bibliography{example_refs}
 
