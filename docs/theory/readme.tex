@@ -20,9 +20,9 @@
 
 \hypersetup{pdfauthor={T.W.J. de Geus}}
 
-\header{%
+\headerEven{\emph{%
   The Finite Element Method in Continuum Mechanics, T.W.J.\ de Geus
-}
+}}
 
 \begin{document}
 
@@ -39,7 +39,7 @@ The theory of the Finite Element Method in Continuum Mechanics is discussed in a
 
 \subsection{The basic concept}
 
-The discussion starts by considering a static, solid mechanics, problem. Loosely speaking the goal is to find a deformation map, $\vec{x} = \varphi(\vec{X},t)$, that maps a body $\Omega_0$ to a deformed state $\Omega$ that satisfies equilibrium and the boundary conditions applied on $\Gamma$. This is illustrated in Fig.~\ref{fig:problem}, whereby it is emphasized that the body can be subjected to two kinds of boundary conditions:
+The discussion starts by considering a static, solid mechanics, problem. Loosely speaking the goal is to find a deformation map, $\vec{x} = \varphi(\vec{X},t)$, that maps a body $\Omega_0$ to a deformed state $\Omega$ that satisfies equilibrium \emph{and} the boundary conditions applied on $\Gamma$. This is illustrated in Fig.~\ref{fig:problem}, whereby it is emphasised that the body can be subjected to two kinds of boundary conditions:
 \begin{itemize}
   \item \emph{Essential} or \emph{Dirichlet} boundary conditions on $\Gamma_p$, whereby the displacements are prescribed.
   \item \emph{Natural} or \emph{Neumann} boundary conditions on $\Gamma_u$, whereby the tractions are prescribed. Note that traction-free natural boundary conditions are also perfectly acceptable.
@@ -112,16 +112,16 @@ In going from Eq.~\eqref{eq:static:int} to Eq.~\eqref{eq:static:weak}, use has b
   +
   \vec{\phi} \cdot \big[\, \vec{\nabla} \cdot \bm{\sigma} \,\big]
 \end{equation}
-together with the symmetry of the Cauchy stress
+Note thereby that the Cauchy stress tensor is symmetric:
 \begin{equation}
   \bm{\sigma} = \bm{\sigma}^T
 \end{equation}
 
 The right-hand side of this equation can be reduced to an area integral by employing Gauss's divergence theorem:
 \begin{equation}
-  \int\limits_\Omega \vec{\nabla} \cdot \vec{a}(\vec{x}) \; \mathrm{d}\Omega
+  \int\limits_\Omega \vec{\nabla} \cdot \vec{t}(\vec{x}) \; \mathrm{d}\Omega
   =
-  \int\limits_\Gamma \vec{n}(\vec{x}) \cdot \vec{a}(\vec{x}) \; \mathrm{d}\Gamma
+  \int\limits_\Gamma \vec{n}(\vec{x}) \cdot \vec{t}(\vec{x}) \; \mathrm{d}\Gamma
 \end{equation}
 where $\vec{n}$ is the normal along the surface $\Gamma$. The result reads
 \begin{equation}
@@ -142,9 +142,9 @@ where $\vec{n}$ is the normal along the surface $\Gamma$. The result reads
   \forall \; \vec{\phi}(\vec{x}) \in \mathbb{R}^d
 \end{equation}
 
-\subsection{Discretization}
+\subsection{Discretisation}
 
-The problem is now discretized using $n$ \emph{nodes} that are connected through \emph{elements}, which define the discretized domain $\Omega^h_0$. Shape functions $N_i(\vec{x})$ are used to extrapolate the nodal quantities throughout the domain $\Omega^h_0$ (and $\Omega^h$). For example the displacement field $\vec{u}(\vec{x})$
+The problem is now discretised using $n$ \emph{nodes} that are connected through \emph{elements}, which define the discretised domain $\Omega^h_0$. Shape functions $N_i(\vec{x})$ are used to interpolate the nodal quantities throughout the domain $\Omega^h_0$ (and $\Omega^h$). For example, the discretisation and interpolation of the displacement field reads
 \begin{equation}
   \vec{u}(\vec{x},t)
   \approx
@@ -154,20 +154,20 @@ The problem is now discretized using $n$ \emph{nodes} that are connected through
 \end{equation}
 whereby we will not further consider the time dependence (denoted with $t$) for now. Following standard Galerkin the test functions are interpolated in the same way, i.e.\
 \begin{equation}
-\label{eq:discretization}
+\label{eq:discretisation}
   \vec{\phi}(\vec{x})
   \approx
   \vec{\phi}^h(\vec{x})
   =
   \sum_{m=1}^{n_\mathrm{nodes}} N_m (\vec{x}) \; \vec{\phi}_m
 \end{equation}
-Applied to the problem sketch from Fig.~\ref{fig:problem}, a discretization might look like Fig.~\ref{fig:problem:discretized}. The nodes are clearly marked as circles. The lines connecting the nodes clearly mark the elements which are in this case three-node linear triangles.
+Applied to the problem sketch from Fig.~\ref{fig:problem}, a discretisation might look like Fig.~\ref{fig:problem:discretised}. The nodes are clearly marked as circles. The lines connecting the nodes clearly mark the elements which are in this case three-node linear triangles.
 
 \begin{figure}[htp]
   \centering
   \includegraphics[width=.25\textwidth]{figures/problem-discretized.pdf}
-  \caption{Example of a discretization of the problem in Fig.~\ref{fig:problem} using Finite Elements (linear triangles in this case).}
-  \label{fig:problem:discretized}
+  \caption{Example of a discretisation of the problem in Fig.~\ref{fig:problem} using Finite Elements (linear triangles in this case).}
+  \label{fig:problem:discretised}
 \end{figure}
 
 Applied to the balance equation the following is obtained
@@ -227,14 +227,14 @@ with:
       \vec{t}(\vec{x}) \;
     \mathrm{d}\Gamma
   \end{equation}
-  Note that this term is zero in the interior of the domain, i.e. in $\Omega^h \bigcap \Gamma^h$, while it can be zero or non-zero in $\Gamma^h$ depending on the problem details. Most often it following completely from the boundary conditions of the boundary value problem that we set out to solve.
+  Note that this term is zero in the interior of the domain, i.e. in $\Omega^h \bigcap \Gamma^h$, while it can be zero or non-zero in $\Gamma^h$ depending on the problem details. Most often it follows completely from the boundary conditions of the boundary value problem that we set out to solve.
 \end{itemize}
 
 \subsection{Iterative solution -- small strain}
 
 A commonly used strategy to solve the non-linear system is the iterative Newton-Raphson scheme (see Appendix~\ref{sec:newton-raphson}). The idea is thereby to formulate an initial guess for the solution, determine possible residual forces, and use these forces to come to a better guess for the solution. This is continued until the solution has been found, i.e. when the residual vanishes.
 
-This solution technique is discussed here in the context of small deformations. Assuming the deformations (and therefore rotations) to be small leads to the assumption that $\Omega = \Omega_0$, and thus that $\nabla = \nabla_0$. In this context one typically uses the linear strain tensor
+This solution technique is discussed here in the context of small deformations. Assuming the deformations (and therefore rotations) to be small, leads to the assumption that $\Omega = \Omega_0$, and thus that $\nabla = \nabla_0$. In this context one typically uses the linear strain tensor
 \begin{equation}
   \bm{\varepsilon}
   =
@@ -385,7 +385,7 @@ Integration by parts results in
   \qquad
   \forall \; \vec{\phi}(\vec{x}) \in \mathbb{R}^d
 \end{equation}
-which is discretized as before:
+which is discretised as before:
 \begin{equation}
   \vec{\phi}_m \cdot
   \int\limits_\Omega
@@ -404,10 +404,8 @@ which is discretized as before:
     :
     \bm{\sigma}(\vec{x}) \;
   \mathrm{d}\Omega
-  \qquad
-  \forall \; \vec{\phi}_m \in \mathbb{R}^d_n
 \end{equation}
-This is independent of the test functions, hence:
+which should still hold for all $\vec{\phi}_m \in \mathbb{R}^d_n$. However, this dependence can now trivially be dropped. Hence:
 \begin{equation}
 \label{eq:dynamics:system}
   \underbrace{
@@ -447,14 +445,14 @@ This is denoted as follows
 \end{equation}
 Where $M_{mn}(\vec{x})$ is the \emph{mass matrix}, $\vec{f}_m^\mathrm{ext}(\vec{x})$ are the \emph{external forces}, and $\vec{f}_m^\mathrm{int}(\vec{x})$ are the \emph{internal forces}.
 
-\subsection{Time discretization}
+\subsection{Time discretisation}
 \label{eq:dynamics:time}
 
-To solve the second order differential equation in time, one typically also discretizes time with some finite difference based scheme. For this we also need to distinguish the velocity field $\vec{v} = \dot{\vec{u}} = \dot{\vec{x}}$.
+To solve the second order differential equation in time, one typically also discretises time with some finite difference based scheme. For this we also need to distinguish the velocity field $\vec{v} = \dot{\vec{u}} = \dot{\vec{x}}$.
 
 \subsubsection{Verlet}
 
-In the case that the forces are velocity independent one can use the Velocity Verlet scheme, in which energy is conserved, i.e.\ it is reversible in time. The scheme reads are follows:
+In the case that the forces are velocity independent one can use the Velocity Verlet scheme, in which energy is conserved, i.e.\ it is reversible in time. The scheme reads as follows:
 
 \begin{enumerate}
   \item Compute the velocity on a dummy time grid:
@@ -563,9 +561,9 @@ To enhance computational efficiency, it may be a good option concentrate the mas
 
 \section{Shape functions}
 
-In the Finite Element Method a geometry is discretized using nodes. The nodes are grouped in elements which define the domain $\Omega^h$. The crux of the method is that nodal quantities, for example $\vec{u}_i$, are interpolated throughout the discretized domain $\Omega^h$ using shape functions $N_i (\vec{x})$. The shape functions are polynomials that spanned by the nodes, such that they constitute a partition of unity and satisfy $N_i (\vec{x}_j) = \delta_{ij}$, i.e. it is one in the node $i$, and zero in all other nodes. This implies that, while each shape function is globally supported, $N_i (\vec{x}) \neq 0$ only in the elements containing node $i$. For all other elements it is zero (even in between the nodes). This again implies that $\partial N_i / \partial \vec{x}$ is discontinuous across element boundaries.
+In the Finite Element Method a geometry is discretised using nodes. The nodes are grouped in elements which define the domain $\Omega^h$. The crux of the method is that nodal quantities, for example $\vec{u}_m$, are interpolated throughout the discretised domain $\Omega^h$ using shape functions $N_m (\vec{x})$. The shape functions are polynomials that spanned by the nodes, such that they constitute a partition of unity and satisfy $N_m (\vec{x}_n) = \delta_{mn}$, i.e. it is one in the node $i$, and zero in all other nodes. This implies that, while each shape function is globally supported, $N_m (\vec{x}) \neq 0$ only in the elements containing node $i$. For all other elements it is zero (even in between the nodes). This again implies that $\partial N_m / \partial \vec{x}$ is discontinuous across element boundaries.
 
-For a one-dimensional problem comprising four linear elements and five nodes the shape functions are sketched in Fig.~\ref{fig:shape:1d-domain}. To emphasize the global support of each shape function the shape function of node 2 is isolated in Fig.~\ref{fig:shape:1d-domain-2}. As can be seen, node 2 is only non-zero in elements 1 and 2, while it is zero everywhere else. To evaluate for example $f_2$, the internal force one node 2, the integration can be limited to these two elements:
+For a one-dimensional problem comprising four linear elements and five nodes, the shape functions are sketched in Fig.~\ref{fig:shape:1d-domain}. To emphasise the global support of each shape function the shape function of node 2 is isolated in Fig.~\ref{fig:shape:1d-domain-2}. As can be seen, node 2 is only non-zero in elements 1 and 2, while it is zero everywhere else. To evaluate for example $f_2$, the internal force one node 2, the integration can be limited to these two elements:
 \begin{equation}
   f_2
   =
@@ -586,7 +584,7 @@ For a one-dimensional problem comprising four linear elements and five nodes the
   \begin{minipage}[t]{.5\textwidth}
     \centering
     \includegraphics[width=1.\textwidth]{figures/shape-functions-1d.pdf}
-    \subcaption{All shape functions $N_i(x)$, each with a different color.}
+    \subcaption{All shape functions $N_m(x)$, each with a different colour.}
     \label{fig:shape:1d-domain}
   \end{minipage}
   \\
@@ -596,11 +594,11 @@ For a one-dimensional problem comprising four linear elements and five nodes the
     \subcaption{Isolated shape function $N_2(x)$.}
     \label{fig:shape:1d-domain-2}
   \end{minipage}
-  \caption{(a) Shape functions for a one-dimensional domain discretized using four two node, linear, element. (b) Isolated shape functions for node 2. The node numbers are displayed using a unique color, while the element numbers are shown in black in a different font, in between the nodes.}
+  \caption{(a) Shape functions for a one-dimensional domain discretised using four two node, linear, element. (b) Isolated shape functions for node 2. The node numbers are displayed using a unique colour, while the element numbers are shown in black in a different font, in between the nodes.}
   \label{fig:shape:1d-domain:fig}
 \end{figure}
 
-By now it should be clear that the above allows us assemble $\underline{f}$ element-by-element. For the example in Fig.~\ref{fig:shape:1d-domain:fig} this is graphically shown in Fig.~\ref{fig:shape:1d-domain:assembly}.
+By now it should be clear that the above allows the global system $f_m$ to be assembled element-by-element. For the example in Fig.~\ref{fig:shape:1d-domain:fig} this is graphically shown in Fig.~\ref{fig:shape:1d-domain:assembly} where the indices show that the \emph{shape functions} are evaluated compared to some generic element definition.
 
 \begin{figure}[htp]
   \centering
@@ -634,9 +632,6 @@ By now it should be clear that the above allows us assemble $\underline{f}$ elem
   \label{fig:shape:1d-domain:assembly}
 \end{figure}
 
-
-where the indices show that the \emph{shape functions} are evaluated compared to some generic element definition.
-
 \section{Iso-parametric transformation and quadrature}
 
 A very important concept in the Finite Element Method is the iso-parametric transformation. It allows an arbitrarily shaped element with volume $\Omega^e$ to be mapped onto a generic \emph{iso-parametric element} of constant volume $Q$, see Fig.~\ref{fig:isoparametric}. Using this mapping it is easy to perform interpolation and numerical quadrature using a generic implementation.
@@ -644,16 +639,16 @@ A very important concept in the Finite Element Method is the iso-parametric tran
 \begin{figure}[htp]
   \centering
   \includegraphics[width=.5\textwidth]{figures/isoparametric-transform.pdf}
-  \caption{Iso-parameteric transformation for a four node, bi-linear, quadrilateral element.}
+  \caption{Iso-parametric transformation for a four node, bi-linear, quadrilateral element.}
   \label{fig:isoparametric}
 \end{figure}
 
 The mapping between the generic domain $Q$ and the physical domain $\Omega^e$ is as follows
 \begin{equation}
 \label{eq:isoparametric:coordinate}
-  \vec{x} ( \vec{\xi} ) = N_m^{e} \; \underline{x}_m^e
+  \vec{x} ( \vec{\xi} ) = N_m^{e} \; \vec{x}_m^e
 \end{equation}
-where the column $\underline{x}^e$ contains the position vectors of the element nodes in the actual coordinates (i.e.\ spanning $\Omega^e$). In order to perform the quadrature on $Q$ we must also map the gradient operator:
+where the column $\vec{x}_m^e$ contains the position vectors of the element nodes in the actual coordinates (i.e.\ spanning $\Omega^e$). In order to perform the quadrature on $Q$ we must also map the gradient operator:
 \begin{equation}
   \vec{\nabla}_{\xi}\,
   =
@@ -745,9 +740,7 @@ Note that another way to obtain this result is using
   &=
   \det \big( \bm{J}(\vec{\xi}) \big)\, \mathrm{d} Q
 \end{align}
-Numerical quadrature can be formulated (exactly) on the master element. It corresponds to taking the weighted sum of the integrand evaluated at specific \emph{quadrature points} (or \emph{integration points}).
-
-The practical implications, for example for the internal force, are as follows:
+Numerical quadrature can be formulated (exactly) on the master element. It corresponds to taking the weighted sum of the integrand evaluated at specific \emph{quadrature points} (or \emph{integration points}). The practical implications, for example for the internal force, are as follows:
 \begin{align}
   \vec{f}_m^e
   &=
@@ -777,7 +770,7 @@ The practical implications, for example for the internal force, are as follows:
 
 To obtain
 \begin{equation}
- \vec{x}(\vec{\xi}),\, \vec{\nabla}_0,\,\, \text{and}\, \int\limits_{\Omega_0} . \;\mathrm{d}\Omega
+ \vec{x}(\vec{\xi}),\, \vec{\nabla}_0,\,\, \text{and}\, \int\limits_{\Omega_0} (\ldots) \;\mathrm{d}\Omega
 \end{equation}
 simply replace $\vec{x}_m^e$ with $\vec{X}_m^e$ in Eq.~\eqref{eq:isoparametric:coordinate}. For this reason the same element implementation can be used in small strain and finite strain (total Lagrange and updated Lagrange), by providing either $\vec{X}_m^e$ or $\vec{X}_m^e + \vec{u}_m^e$ as input.
 
@@ -828,12 +821,11 @@ These steps are then repeated, until the solution has been reached within a cert
 \begin{equation}
   \left| r \big( x_{(i+1)} \big) \right| < \epsilon
 \end{equation}
-
 The iterative scheme is well understood from the illustration in Fig.~\ref{fig:newton-raphson}.
 
 \begin{figure}[htp]
   \centering
-  \includegraphics[width=.3\textwidth]{figures/newton-raphson.pdf}
+  \includegraphics[width=.4\textwidth]{figures/newton-raphson.pdf}
   \caption{Schematic of the Newton-Raphson iterations in a one-dimensional problem.}
   \label{fig:newton-raphson}
 \end{figure}
@@ -842,7 +834,7 @@ The iterative scheme is well understood from the illustration in Fig.~\ref{fig:n
 
 \subsection{Discretisation}
 
-The discretisation from Eq.~\eqref{eq:discretization} can be written more precisely as
+The discretisation from Eq.~\eqref{eq:discretisation} can be written more precisely as
 \begin{equation}
   \phi_x(\vec{x}) \vec{e}_x +
   \phi_y(\vec{x}) \vec{e}_y +
@@ -1011,12 +1003,7 @@ whereby, again, the nodal displacements, $\vec{u}_n$, are not a function of the 
 
 \section{Cylindrical coordinates}
 
-\begin{figure}[htp]
-  \centering
-  \includegraphics[width=.3\textwidth]{figures/cylindrical_coordinates}
-  \caption{Cylindrical coordinate system spanned by $(\vec{e}_r, \vec{e}_\theta, \vec{e}_z)$.}
-  \label{fig:cylindrical}
-\end{figure}
+\paragraph{Coordinates}
 
 The cylindrical coordinate system is spanned by $(\vec{e}_r, \vec{e}_\theta, \vec{e}_z)$ as visualised in Fig.~\ref{fig:cylindrical}. From this figure, the transition from cylindrical coordinates to Cartesian coordinates trivially follows to read
 \begin{equation}
@@ -1036,7 +1023,6 @@ Likewise, the unit vectors $(\vec{e}_r, \vec{e}_\theta, \vec{e}_z)$ can be expre
   \vec{e}_\theta &= - \sin \theta \; \vec{e}_x + \cos \theta \; \vec{e}_y \nonumber \\
   \vec{e}_z      &= \vec{e}_z \label{eq:cylindrical:unit}
 \end{align}
-
 The gradient operator for cylindrical coordinates reads
 \begin{equation}
   \vec{\nabla} =
@@ -1050,6 +1036,15 @@ whereby from Eq.~\eqref{eq:cylindrical:unit} the derivates of the unit vector fo
   \frac{\partial \vec{e}_r}{\partial \theta} &= \vec{e}_\theta &\qquad \frac{\partial \vec{e}_\theta}{\partial \theta} &= - \vec{e}_r &\qquad \frac{\partial \vec{e}_z}{\partial \theta} &= 0 \nonumber \\
   \frac{\partial \vec{e}_r}{\partial z     } &= 0              &\qquad \frac{\partial \vec{e}_\theta}{\partial z     } &= 0           &\qquad \frac{\partial \vec{e}_z}{\partial z     } &= 0
 \end{alignat}
+
+\begin{figure}[htp]
+  \centering
+  \includegraphics[width=.3\textwidth]{figures/cylindrical_coordinates}
+  \caption{Cylindrical coordinate system spanned by $(\vec{e}_r, \vec{e}_\theta, \vec{e}_z)$.}
+  \label{fig:cylindrical}
+\end{figure}
+
+\paragraph{Discretisation}
 
 A discretised vector field $\vec{\phi}(\vec{x})$ reads
 \begin{equation}
@@ -1072,9 +1067,9 @@ And consequently its discretised gradient reads
   \vec{e}_z \frac{\partial}{\partial z}
   \bigg)
   \bigg(
-  N^m (\vec{x}) \phi^{m}_{r}       \vec{e}_r      +
-  N^m (\vec{x}) \phi^{m}_{\theta}  \vec{e}_\theta +
-  N^m (\vec{x}) \phi^{m}_{z}       \vec{e}_z
+  N^m \phi^{m}_{r}       \vec{e}_r      +
+  N^m \phi^{m}_{\theta}  \vec{e}_\theta +
+  N^m \phi^{m}_{z}       \vec{e}_z
   \bigg)
   \Bigg]
   \\
@@ -1087,11 +1082,11 @@ And consequently its discretised gradient reads
   \nonumber
   \\
   &\quad
-  + \phi^{m}_{r     } \frac{1}{r} \frac{\partial N^m }{\partial \theta} \vec{e}_\theta \vec{e}_r
-  + \phi^{m}_{r     } \frac{1}{r} N^m (\vec{x}) \vec{e}_\theta \vec{e}_\theta
-  + \phi^{m}_{\theta} \frac{1}{r} \frac{\partial N^m }{\partial \theta} \vec{e}_\theta \vec{e}_\theta
-  - \phi^{m}_{\theta} \frac{1}{r} N^m (\vec{x}) \vec{e}_r \vec{e}_\theta
-  + \phi^{m}_{z     } \frac{1}{r} \frac{\partial N^m }{\partial \theta} \vec{e}_\theta \vec{e}_z
+  + \phi^{m}_{r     } \frac{1}{r} \frac{\partial N^m}{\partial \theta} \vec{e}_\theta \vec{e}_r
+  + \phi^{m}_{r     } \frac{1}{r} N^m                                  \vec{e}_\theta \vec{e}_\theta
+  + \phi^{m}_{\theta} \frac{1}{r} \frac{\partial N^m}{\partial \theta} \vec{e}_\theta \vec{e}_\theta
+  - \phi^{m}_{\theta} \frac{1}{r} N^m                                  \vec{e}_r      \vec{e}_\theta
+  + \phi^{m}_{z     } \frac{1}{r} \frac{\partial N^m}{\partial \theta} \vec{e}_\theta \vec{e}_z
   \nonumber
   \\
   &\quad
@@ -1100,7 +1095,7 @@ And consequently its discretised gradient reads
   + \phi^{m}_{z     } \frac{\partial N^m }{\partial z} \vec{e}_z \vec{e}_z
   \Bigg]
 \end{align}
-Which can be denoted in short as
+whereby the spatial dependence was not denoted, but naturally persists. The above can be denoted in short as
 \begin{equation}
   \vec{\nabla} \vec{\phi} (\vec{x})
   \approx
@@ -1108,26 +1103,26 @@ Which can be denoted in short as
   \mathcal{B}_m (\vec{x}) \cdot \vec{\phi}_m
 \end{equation}
 where the non-zero components of the third order $\mathcal{B}_m$ read
-\begin{alignat}{3}
-  \mathcal{B}^{m}_{r      r      r     } &=             \frac{\partial N^m}{\partial r}      & \qquad
+\begin{alignat}{4}
+  \mathcal{B}^{m}_{r      r      r     } &= \frac{\partial N^m}{\partial r} & \qquad
+  \mathcal{B}^{m}_{r      \theta \theta} &= \frac{\partial N^m}{\partial r} - \frac{1}{r} N^m & \qquad
+  \mathcal{B}^{m}_{r      z      z     } &= \frac{\partial N^m}{\partial r}
+  \nonumber
+  \\
   \mathcal{B}^{m}_{\theta r      r     } &= \frac{1}{r} \frac{\partial N^m}{\partial \theta} & \qquad
-  \mathcal{B}^{m}_{z      r      r     } &=             \frac{\partial N^m}{\partial z}
+  \mathcal{B}^{m}_{\theta \theta \theta} &= \frac{1}{r} \frac{\partial N^m}{\partial \theta} & \qquad
+  \mathcal{B}^{m}_{\theta z      z     } &= \frac{1}{r} \frac{\partial N^m}{\partial \theta} & \qquad
+  \mathcal{B}^{m}_{\theta \theta r     } &= \frac{1}{r} N^m
   \nonumber
   \\
-  \mathcal{B}^{m}_{r      \theta \theta} &= - \frac{1}{r} N^m (\vec{x})  & \qquad
-  \mathcal{B}^{m}_{\theta \theta r     } &=   \frac{1}{r} N^m (\vec{x})  & \qquad
-  \nonumber
-  \\
-  \mathcal{B}^{m}_{r      \theta \theta} &=             \frac{\partial N^m}{\partial r}       & \qquad
-  \mathcal{B}^{m}_{\theta \theta \theta} &= \frac{1}{r} \frac{\partial N^m}{\partial \theta}  & \qquad
-  \mathcal{B}^{m}_{z      \theta \theta} &=             \frac{\partial N^m}{\partial z}
-  \\
-  \mathcal{B}^{m}_{r      z      z     } &=             \frac{\partial N^m}{\partial r}       & \qquad
-  \mathcal{B}^{m}_{\theta z      z     } &= \frac{1}{r} \frac{\partial N^m}{\partial \theta}  & \qquad
-  \mathcal{B}^{m}_{z      z      z     } &=             \frac{\partial N^m}{\partial z}
+  \mathcal{B}^{m}_{z      r      r     } &= \frac{\partial N^m}{\partial z} & \qquad
+  \mathcal{B}^{m}_{z      \theta \theta} &= \frac{\partial N^m}{\partial z} & \qquad
+  \mathcal{B}^{m}_{z      z      z     } &= \frac{\partial N^m}{\partial z}
 \end{alignat}
 
-Finally a Jacobian $\bm{J}$ can be defined to change coordinates as follows
+\paragraph{Jacobian}
+
+A Jacobian $\bm{J}$ can be defined to change coordinates as follows
 \begin{equation}
   \vec{\nabla}_\xi = \bm{J} \cdot \vec{\nabla}
 \end{equation}
@@ -1165,6 +1160,32 @@ The Jacobian is then obtained as
   \vec{e}_\mu    \frac{\partial z     }{\partial \mu } \vec{e}_z
 \end{align}
 
+\paragraph{Axisymmetric}
+
+Assuming axisymmetry implies assuming that there can be no variations along the $\vec{e}_\theta$ direction. This implies that any derivate $\partial / \partial \theta = 0$ and consequently that there are no degrees-of-freedom in the $\theta$ direction, i.e.\ $u_\theta = 0$. This implies that the only relevant non-zero components of the third order $\mathcal{B}_m$ read
+\begin{alignat}{4}
+  \mathcal{B}^{m}_{r      r      r     } &= \frac{\partial N^m}{\partial r} & \qquad
+  \mathcal{B}^{m}_{r      z      z     } &= \frac{\partial N^m}{\partial r}
+  \nonumber
+  \\
+  \mathcal{B}^{m}_{\theta \theta r     } &= \frac{1}{r} N^m
+  \nonumber
+  \\
+  \mathcal{B}^{m}_{z      r      r     } &= \frac{\partial N^m}{\partial z} & \qquad
+  \mathcal{B}^{m}_{z      z      z     } &= \frac{\partial N^m}{\partial z}
+\end{alignat}
+The Jacobian is furthermore reduced to
+\begin{align}
+  \bm{J}
+  &=
+  \vec{e}_\xi    \frac{\partial r     }{\partial \xi } \vec{e}_r +
+  \vec{e}_\xi    \frac{\partial z     }{\partial \xi } \vec{e}_z
+  \nonumber
+  \\
+  &+
+  \vec{e}_\eta   \frac{\partial r     }{\partial \eta} \vec{e}_r +
+  \vec{e}_\eta   \frac{\partial z     }{\partial \eta} \vec{e}_z
+\end{align}
 
 % \bibliography{example_refs}
 

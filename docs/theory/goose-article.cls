@@ -1,11 +1,11 @@
 % ------------------------------------------------------------------------------
 %  @LaTeX-class-file{
 %     filename        = "goose-article.cls",
-%     version         = "0.3",
-%     date            = "16 November 2016",
+%     version         = "0.1.1",
+%     date            = "1 April 2018",
 %     codetable       = "ISO/ASCII",
 %     keywords        = "LaTeX, goose-article",
-%     supported       = "http://tdegeus.github.io/GooseLaTeX",
+%     supported       = "https://github.com/tdegeus/goose-article",
 %     docstring       = "A customized article-class."
 % ------------------------------------------------------------------------------
 
@@ -40,6 +40,17 @@
 \newif\if@doublespacing
 \let\if@doublespacing\iffalse
 \DeclareOption{doublespacing}{\let\if@doublespacing\iftrue}
+
+\newif\if@twocolumn
+\let\if@twocolumn\iffalse
+\DeclareOption{twocolumn}{\let\if@twocolumn\iftrue}
+
+% No header
+% ---------
+
+\newif\if@empty
+\let\if@empty\iffalse
+\DeclareOption{empty}{\let\if@empty\iftrue}
 
 % Font: [times,garamond,verdana]
 % ------------------------------
@@ -84,6 +95,7 @@
 \RequirePackage[dvipsnames]{xcolor}
 \RequirePackage{authblk}
 \RequirePackage{hyperref}
+\RequirePackage{multicol}
 
 \renewcommand\thesubfigure{(\alph{subfigure})}
 
@@ -107,13 +119,13 @@
     \bibliographystyle{unsrtnat}
     \setlength{\bibsep}{3pt plus 0.3ex}
     \def\bibfont{\scriptsize}
-    \oldbibliography{#1}
+    \begin{multicols}{2}\raggedright\oldbibliography{#1}\end{multicols}
   }
 \fi
 
 % define DOI command
 \newcommand*{\doi}[1]{\sloppy\href{http://dx.doi.org/#1}{doi:~#1}}
-\newcommand*{\eprint}[1]{\sloppy\href{http://arxiv.org/abs/#1}{arXiv:~#1}}
+\newcommand*{\arxivid}[1]{\sloppy\href{http://arxiv.org/abs/#1}{arXiv:~#1}}
 
 % ==============================================================================
 % Font
@@ -169,6 +181,16 @@
 \fi
 
 % ==============================================================================
+% Two-columns
+% ==============================================================================
+
+\if@twocolumn
+  \AtBeginDocument{%
+    \twocolumn
+  }%
+\fi
+
+% ==============================================================================
 % Hyperref
 % ==============================================================================
 
@@ -213,6 +235,7 @@
   {}
   {}
   {}
+  {}
 
 % spacing {left}{top}{bottom}, of:
 % - section
@@ -221,6 +244,9 @@
 % - subsection
 \titlespacing{\subsection}
   {0pt}{0.8em}{0.4em}
+% - paragraph
+\titlespacing{\paragraph}
+  {0pt}{0.8em}{0em}
 
 % no paragraph indent after header
 \AtBeginDocument{%
@@ -279,8 +305,13 @@
 \fancyfoot{}
 \renewcommand{\headrulewidth}{0pt}
 \renewcommand{\footrulewidth}{0pt}
-\fancyhead[RO,LE]{\scriptsize \thepage}
-\newcommand{\header}[1]{\fancyhead[LO,RE]{\scriptsize\itshape#1}}
+\if@empty
+\else
+\fancyhead[RO,LE]{\thepage}
+\fi
+\newcommand{\header}[1]{\fancyhead[LO,RE]{#1}}
+\newcommand{\headerOdd}[1]{\fancyhead[LO]{#1}}
+\newcommand{\headerEven}[1]{\fancyhead[RE]{#1}}
 
 % ==============================================================================
 % Abstract and keywords

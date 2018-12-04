@@ -1,7 +1,24 @@
+# ==================================================================================================
+#
+# (c - GPLv3) T.W.J. de Geus (Tom) | tom@geus.me | www.geus.me | github.com/tdegeus/GooseFEM
+#
+# ==================================================================================================
 
 import numpy as np
 
 np.set_printoptions(linewidth=200)
+
+# ==================================================================================================
+# tensor products
+# ==================================================================================================
+
+ddot22     = lambda A2,B2: np.einsum('...ij  ,...ji->...    ',A2,B2)
+ddot42     = lambda A4,B2: np.einsum('...ijkl,...lk->...ij  ',A4,B2)
+dyad22     = lambda A2,B2: np.einsum('...ij  ,...kl->...ijkl',A2,B2)
+ddot43     = lambda A4,B3: np.einsum('...ijkl,...lkm->...ijm',A4,B3)
+ddot33     = lambda A3,B3: np.einsum('...ijk ,...kjl->...il ',A3,B3)
+dot31      = lambda A3,B1: np.einsum('...ijk ,...k  ->...ij ',A3,B1)
+transpose3 = lambda A3   : np.einsum('...ijk        ->...kji',A3   )
 
 # ==================================================================================================
 # mesh definition
@@ -15,21 +32,22 @@ nr = 16
 nelem =  nz    *  nr     # number of elements
 nnode = (nz+1) * (nr+1)  # number of nodes
 nne   = 4                # number of nodes per element
-nd    = 2                # number of dimensions
-ndof  = nnode * nd       # total number of degrees of freedom
+ndim  = 2                # number of dimensions
+ndof  = nnode * ndim     # total number of degrees of freedom
 
-# coordinates and connectivity: zero-initialize
-coor = np.zeros((nnode,nd ), dtype='float')
-conn = np.zeros((nelem,nne), dtype='int'  )
+# zero-initialise coordinates, displacements, and connectivity
+coor = np.zeros((nnode,ndim), dtype='float')
+disp = np.zeros((nnode,ndim), dtype='float')
+conn = np.zeros((nelem,nne ), dtype='int'  )
 
-# coordinates: set
+# coordinates
 # - grid of points
 z,r = np.meshgrid(np.linspace(0,1,nz+1), np.linspace(0,1,nr+1))
 # - store from grid of points
 coor[:,0] = z.ravel()
 coor[:,1] = r.ravel()
 
-# connectivity: set
+# connectivity
 # - grid of node numbers
 inode = np.arange(nnode).reshape(nr+1, nz+1)
 # - store from grid of node numbers
@@ -37,9 +55,14 @@ conn[:,0] = inode[ :-1, :-1].ravel()
 conn[:,1] = inode[ :-1,1:  ].ravel()
 conn[:,2] = inode[1:  ,1:  ].ravel()
 conn[:,3] = inode[1:  , :-1].ravel()
+# - node sets
+nodesLeft   = inode[ :, 0]
+nodesRight  = inode[ :,-1]
+nodesBottom = inode[ 0, :]
+nodesTop    = inode[-1, :]
 
 # DOF-numbers per node
-dofs = np.arange(nnode*nd).reshape(nnode,nd)
+dofs = np.arange(nnode*ndim).reshape(nnode,ndim)
 
 # ==================================================================================================
 # quadrature definition
@@ -65,41 +88,12 @@ W = np.array([
 nip = 4
 
 # ==================================================================================================
-# integration point tensors and operations
+# B-matrix at each integration point
 # ==================================================================================================
 
-# tensors products
-ddot22     = lambda A2,B2: np.einsum('...ij  ,...ji->...    ',A2,B2)
-ddot42     = lambda A4,B2: np.einsum('...ijkl,...lk->...ij  ',A4,B2)
-dyad22     = lambda A2,B2: np.einsum('...ij  ,...kl->...ijkl',A2,B2)
-ddot43     = lambda A4,B3: np.einsum('...ijkl,...lkm->...ijm',A4,B3)
-ddot33     = lambda A3,B3: np.einsum('...ijk ,...kjl->...il ',A3,B3)
-dot31      = lambda A3,B1: np.einsum('...ijk ,...k  ->...ij ',A3,B1)
-transpose3 = lambda A3   : np.einsum('...ijk        ->...kji',A3   )
-
-# identity tensors (per integration point)
-i    = np.eye(3)
-I    = np.einsum('ij  ,...'         ,                  i   ,np.ones([nelem,nip]))
-I4   = np.einsum('ijkl,...->...ijkl',np.einsum('il,jk',i,i),np.ones([nelem,nip]))
-I4rt = np.einsum('ijkl,...->...ijkl',np.einsum('ik,jl',i,i),np.ones([nelem,nip]))
-I4s  = (I4+I4rt)/2.
-II   = dyad22(I,I)
-I4d  = I4s-II/3.
-
-# bulk and shear modulus
-K = 0.8333333333333333
-G = 0.3846153846153846
-
-# elasticity tensor (per integration point)
-C4 = K * II + 2. * G * I4d
-
-# ==================================================================================================
-# B-matrices at each integration point
-# ==================================================================================================
-
-# allocate matrix
-B   = np.zeros((nelem,nip,nne,3,3,3))
-vol = np.zeros((nelem,nip))
+# allocate
+B   = np.empty((nelem,nip,nne,3,3,3))
+vol = np.empty((nelem,nip))
 
 # loop over nodes
 for e, nodes in enumerate(conn):
@@ -127,167 +121,263 @@ for e, nodes in enumerate(conn):
     ])
 
     # Jacobian
-    J    = np.einsum('mi,mj->ij', dNdxi, xe)
-    Jinv = np.linalg.inv(J)
-    Jdet = np.linalg.det(J)
+    Je    = np.einsum('mi,mj->ij', dNdxi, xe)
+    invJe = np.linalg.inv(Je)
+    detJe = np.linalg.det(Je)
 
     # shape function gradients (w.r.t. the global coordinates)
-    dNdx = np.einsum('ij,mj->mi', Jinv, dNdxi)
+    dNdxe = np.einsum('ij,mj->mi', invJe, dNdxi)
 
-    # global coordinates of the integration point
+    # global coordinates of the integration point, extract the radius
     xq = np.einsum('m,mi->i', N, xe)
     rq = xq[1]
 
     # compute B-matrix and integration-point volume and store for later use
     for m in range(nne):
 
-      Bm = np.zeros((3,3,3))
+      Be = np.zeros((3,3,3))
 
-      Bm[0,1,1] = -1./rq * N[m]    # B(m, r      \theta \theta )
-      Bm[1,1,0] = +1./rq * N[m]    # B(m, \theta \theta r      )
+      Be[0,0,0] = dNdxe[m,1]    # B(m, r      r      r      )
+      Be[0,2,2] = dNdxe[m,1]    # B(m, r      z      z      )
+      Be[1,1,0] = +1./rq * N[m] # B(m, \theta \theta r      )
+      Be[2,0,0] = dNdxe[m,0]    # B(m, z      r      r      )
+      Be[2,2,2] = dNdxe[m,0]    # B(m, z      z      z      )
 
-      Bm[0,0,0] = dNdx[m,1]        # B(m, r      r      r      )
-      Bm[0,1,1] = dNdx[m,1]        # B(m, r      \theta \theta )
-      Bm[0,2,2] = dNdx[m,1]        # B(m, r      z      z      )
+      B[e,q,m,:,:,:] = Be
 
-      Bm[2,0,0] = dNdx[m,0]        # B(m, z      r      r      )
-      Bm[2,1,1] = dNdx[m,0]        # B(m, z      \theta \theta )
-      Bm[2,2,2] = dNdx[m,0]        # B(m, z      z      z      )
-
-      B[e,q,m,:,:,:] = Bm
-
-      vol[e,q] = w * Jdet * rq * 2. * np.pi
+      vol[e,q] = w * detJe * rq * 2. * np.pi
 
 # ==================================================================================================
-# assemble stiffness matrix
+# stiffness tensor at each integration point (provides constitutive response and 'tangent')
 # ==================================================================================================
 
-# allocate matrix
+# identity tensors (per integration point)
+i    = np.eye(3)
+I    = np.einsum('ij  ,...'         ,                  i   ,np.ones([nelem,nip]))
+I4   = np.einsum('ijkl,...->...ijkl',np.einsum('il,jk',i,i),np.ones([nelem,nip]))
+I4rt = np.einsum('ijkl,...->...ijkl',np.einsum('ik,jl',i,i),np.ones([nelem,nip]))
+I4s  = (I4+I4rt)/2.
+II   = dyad22(I,I)
+I4d  = I4s-II/3.
+
+# bulk and shear modulus (homogeneous)
+K = 0.8333333333333333 * np.ones((nelem, nip))
+G = 0.3846153846153846 * np.ones((nelem, nip))
+
+# elasticity tensor (per integration point)
+C4 = np.einsum('eq,eqijkl->eqijkl', K, II) + 2. * np.einsum('eq,eqijkl->eqijkl', G, I4d)
+
+# ==================================================================================================
+# strain from nodal displacements, stress from constitutive response
+# ==================================================================================================
+
+# allocate strain tensor per integration point
+Eps = np.empty((nelem,nip,3,3))
+
+# loop over nodes
+for e, nodes in enumerate(conn):
+
+  # nodal displacements in 3-d
+  #   u_theta = 0 
+  #   (z,r) -> (r,theta,z)
+  ue      = np.zeros((nne,3))
+  ue[:,0] = disp[nodes,1]
+  ue[:,2] = disp[nodes,0]
+
+  # loop over integration points
+  for q, (w, xi) in enumerate(zip(W, Xi)):
+
+    # alias integration point values
+    Be = B[e,q,:,:,:,:]
+
+    # displacement gradient
+    gradu = np.einsum('mijk,mk->ij', Be, ue)
+
+    # compute strain tensor, and store per integration point
+    Eps[e,q] = .5 * ( gradu + gradu.T )
+
+# constitutive response: strain tensor -> stress tensor (per integration point)
+Sig = ddot42(C4, Eps)
+
+# ==================================================================================================
+# internal force from stress
+# ==================================================================================================
+
+# allocate internal force
+fint = np.zeros((ndof))
+
+# loop over nodes
+for e, nodes in enumerate(conn):
+
+  # allocate element internal force
+  fe = np.zeros((nne*ndim))
+
+  # loop over integration points
+  for q, (w, xi) in enumerate(zip(W, Xi)):
+
+    # alias integration point values
+    sig = Sig[e,q,:,:]
+    Be  = B  [e,q,:,:,:,:]
+    dV  = vol[e,q]
+
+    # assemble to element internal force
+    #   Bm = B[e,q,m,:,:,:]
+    #   fm = ddot32(transpose3(Bm), sig) * dV
+    #   fe[[m*ndim+0, m*ndim+1]] = [fm[m,2], fm[m,0]]
+    fq  = np.einsum('mijk,ij->mk', Be, sig) * dV
+    fe += fq[:,[2,0]].reshape(nne*ndim)
+
+  # assemble to global stiffness matrix
+  iie = dofs[nodes,:].ravel()
+  fint[iie] += fe
+
+# ==================================================================================================
+# stiffness matrix from 'tangent'
+# ==================================================================================================
+
+# allocate stiffness matrix
 K = np.zeros((ndof, ndof))
 
 # loop over nodes
 for e, nodes in enumerate(conn):
 
   # allocate element stiffness matrix
-  Ke = np.zeros((nne*nd, nne*nd))
+  Ke = np.zeros((nne*ndim, nne*ndim))
 
   # loop over integration points
   for q, (w, xi) in enumerate(zip(W, Xi)):
 
     # alias integration point values
-    C4q = C4[e,q,:,:,:,:]
+    c4  = C4 [e,q,:,:,:,:]
+    Be  = B  [e,q,:,:,:,:]
     dV  = vol[e,q]
 
     # assemble to element stiffness matrix
-    for m in range(nne):
-
-      Bm = B[e,q,m,:,:,:]
-
-      for n in range(nne):
-
-        Bn = B[e,q,n,:,:,:]
-
-        Kmn = ddot33(transpose3(Bm),ddot43(C4q,Bn))
-
-        iim = np.array([ m*nd+0, m*nd+1 ])
-        iin = np.array([ n*nd+0, n*nd+1 ])
-
-        Ke[np.ix_(iim,iin)] += Kmn[np.ix_([2,0], [2,0])] * dV
+    #   Bm  = B[e,q,m,:,:,:]
+    #   Bn  = B[e,q,n,:,:,:]
+    #   Kmn = ddot33(transpose3(Bm),ddot43(C4,Bn)) * dV
+    #   Ke[[m*ndim+0,m*ndim+1], [n*ndim+0,n*ndim+1]] += Kmn[[2,0], [2,0]]
+    Kq  = np.einsum('mabc,abde,nedf->mcnf', Be, c4, Be) * dV
+    Ke += Kq[np.ix_(np.arange(nne),[2,0],np.arange(nne),[2,0])].reshape(nne*ndim, nne*ndim)
 
   # assemble to global stiffness matrix
   iie = dofs[nodes,:].ravel()
-
   K[np.ix_(iie,iie)] += Ke
 
 # ==================================================================================================
 # partition and solve
 # ==================================================================================================
 
-# zero-initialize displacements and forces
-f = np.zeros((ndof))
-u = np.zeros((ndof))
+# prescribed external force: zero on all free DOFs
+# (other DOFs ignored in solution, the reaction forces on the DOFs are computed below)
+fext = np.zeros((ndof))
+
+# DOF-partitioning: ['u'nknown, 'p'rescribed]
+# - prescribed
+iip = np.hstack((
+  dofs[nodesBottom,1],
+  dofs[nodesLeft  ,0],
+  dofs[nodesRight ,0],
+))
+# - unknown
+iiu = np.setdiff1d(dofs.ravel(), iip)
 
 # fixed displacements
-# - zero-initialize
-iip  = np.empty((0),dtype='int'  )
-up   = np.empty((0),dtype='float')
-# - 'r = 0' : 'u_r = 0'
-idof = dofs[inode[0,:], 1]
-iip  = np.hstack(( iip, idof                      ))
-up   = np.hstack(( up , 0.0 * np.ones(idof.shape) ))
-# - 'z = 0' : 'u_z = 0'
-idof = dofs[inode[:,0], 0]
-iip  = np.hstack(( iip, idof                      ))
-up   = np.hstack(( up , 0.0 * np.ones(idof.shape) ))
-# - 'z = 1' : 'u_z = 0.1'
-idof = dofs[inode[:,-1], 0]
-iip  = np.hstack(( iip, idof                      ))
-up   = np.hstack(( up , 0.1 * np.ones(idof.shape) ))
+up = np.hstack((
+  0.0 * np.ones((len(nodesBottom))),
+  0.0 * np.ones((len(nodesLeft  ))),
+  0.1 * np.ones((len(nodesRight ))),
+))
 
-# free displacements
-iiu  = np.setdiff1d(dofs.ravel(), iip)
+# residual force
+r = fext - fint
 
 # partition
 # - stiffness matrix
-Kuu  = K[np.ix_(iiu, iiu)]
-Kup  = K[np.ix_(iiu, iip)]
-Kpu  = K[np.ix_(iip, iiu)]
-Kpp  = K[np.ix_(iip, iip)]
-# - external force
-fu   = f[iiu]
+Kuu = K[np.ix_(iiu, iiu)]
+Kup = K[np.ix_(iiu, iip)]
+Kpu = K[np.ix_(iip, iiu)]
+Kpp = K[np.ix_(iip, iip)]
+# - residual force
+ru = r[iiu]
 
-# solve
-uu   = np.linalg.solve(Kuu, fu - Kup.dot(up))
-fp   = Kpu.dot(uu) + Kpp.dot(up)
+# solve for unknown displacement DOFs
+uu = np.linalg.solve(Kuu, ru - Kup.dot(up))
 
 # assemble
+u      = np.empty((ndof))
 u[iiu] = uu
 u[iip] = up
-f[iip] = fp
 
-# convert to nodal displacement and forces
+# convert to nodal displacements
 disp = u[dofs]
-fext = f[dofs]
 
 # ==================================================================================================
-# compute strain and stress
+# strain from nodal displacements, stress from constitutive response
 # ==================================================================================================
 
-# zero-initialize
-# - strain tensor per integration point
-eps = np.zeros((nelem,nip,3,3))
-# - nodal displacement in 3-d
-um = np.zeros((3))
+# allocate strain tensor per integration point
+Eps = np.empty((nelem,nip,3,3))
 
 # loop over nodes
 for e, nodes in enumerate(conn):
 
-  # nodal displacements
-  ue = disp[nodes,:]
+  # nodal displacements in 3-d
+  #   u_theta = 0 
+  #   (z,r) -> (r,theta,z)
+  ue      = np.zeros((nne,3))
+  ue[:,0] = disp[nodes,1]
+  ue[:,2] = disp[nodes,0]
 
   # loop over integration points
   for q, (w, xi) in enumerate(zip(W, Xi)):
 
-    # zero-initialize displacements gradient
-    gradu = np.zeros((3,3))
+    # alias integration point values
+    Be = B[e,q,:,:,:,:]
 
-    # compute displacement gradient
-    for m in range(nne):
-
-      # alias
-      # - B-matrix
-      Bm = B[e,q,m,:,:,:]
-      # - nodal displacement in 3-d (theta-component always zero)
-      um[np.ix_([2,0])] = ue[m,:]
-
-      # update
-      gradu += dot31(Bm, um)
+    # displacement gradient
+    gradu = np.einsum('mijk,mk->ij', Be, ue)
 
     # compute strain tensor, and store per integration point
-    eps[e,q] = .5 * ( gradu + gradu.T )
+    Eps[e,q] = .5 * ( gradu + gradu.T )
 
-# compute stress tensor (per integration point)
-sig = ddot42(C4,eps)
+# constitutive response: strain tensor -> stress tensor (per integration point)
+Sig = ddot42(C4, Eps)
+
+# ==================================================================================================
+# internal force from stress, reaction (external) force from internal force on fixed nodes
+# ==================================================================================================
+
+# allocate internal force
+fint = np.zeros((ndof))
+
+# loop over nodes
+for e, nodes in enumerate(conn):
+
+  # allocate element internal force
+  fe = np.zeros((nne*ndim))
+
+  # loop over integration points
+  for q, (w, xi) in enumerate(zip(W, Xi)):
+
+    # alias integration point values
+    sig = Sig[e,q,:,:]
+    Be  = B  [e,q,:,:,:,:]
+    dV  = vol[e,q]
+
+    # assemble to element internal force
+    #   Bm = B[e,q,m,:,:,:]
+    #   fm = ddot32(transpose3(Bm), sig) * dV
+    #   fe[[m*ndim+0, m*ndim+1]] = [fm[m,2], fm[m,0]]
+    fq  = np.einsum('mijk,ij->mk', Be, sig) * dV
+    fe += fq[:,[2,0]].reshape(nne*ndim)
+
+  # assemble to global stiffness matrix
+  iie = dofs[nodes,:].ravel()
+  fint[iie] += fe
+
+# reaction force
+fext[iip] = fint[iip]
 
 # ==================================================================================================
 # plot
@@ -295,14 +385,20 @@ sig = ddot42(C4,eps)
 
 import matplotlib.pyplot as plt
 
-fig, axes =  plt.subplots(ncols=2, figsize=(16,8))
+fig, axes = plt.subplots(ncols=2, figsize=(16,8))
 
+# reconstruct external force as nodal vectors
+fext = fext[dofs]
+
+# plot original nodal positions + displacement field as arrows
 axes[0].scatter(coor[:,0], coor[:,1])
 axes[0].quiver (coor[:,0], coor[:,1], disp[:,0], disp[:,1])
 
+# plot new nodal positions + external (reaction) force field as arrows
 axes[1].scatter((coor+disp)[:,0], (coor+disp)[:,1])
 axes[1].quiver ((coor+disp)[:,0], (coor+disp)[:,1], fext[:,0], fext[:,1], scale=.4)
 
+# fix axes limits
 for axis in axes:
   axis.set_xlim([-0.4, 1.5])
   axis.set_ylim([-0.4, 1.5])

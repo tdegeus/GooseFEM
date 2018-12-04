@@ -5,8 +5,6 @@
 # ==================================================================================================
 
 import numpy as np
-from scipy.sparse        import dok_matrix
-from scipy.sparse.linalg import spsolve
 
 np.set_printoptions(linewidth=200)
 
@@ -64,6 +62,69 @@ nodesTop    = inode[-1, :]
 
 # DOF-numbers per node
 dofs = np.arange(nnode*ndim).reshape(nnode,ndim)
+
+# ==================================================================================================
+# periodicity
+# ==================================================================================================
+
+# add virtual nodes
+# - node set
+nodesVirtual = nnode + np.arange(2)
+# - update size
+nnode += 2
+ndof  += 4
+# - add coordinates (position is completely arbitrary)
+coor = np.vstack(( coor, np.array([[0.0, 1.1], [0.1, 1.1]]) ))
+# - add DOF numbers
+dofs = np.vstack(( dofs, np.max(dofs) + 1 + np.arange(4).reshape(2,2) ))
+
+# tyings (dependent, independent)
+tyings = np.vstack((
+  np.hstack(( nodesRight[1:-1].reshape(-1,1) , nodesLeft  [1:-1].reshape(-1,1) )),
+  np.hstack(( nodesTop  [1:-1].reshape(-1,1) , nodesBottom[1:-1].reshape(-1,1) )),
+  np.hstack(( nodesRight[   0].reshape(-1,1) , nodesBottom[   0].reshape(-1,1) )),
+  np.hstack(( nodesRight[  -1].reshape(-1,1) , nodesBottom[   0].reshape(-1,1) )),
+  np.hstack(( nodesLeft [  -1].reshape(-1,1) , nodesBottom[   0].reshape(-1,1) )),
+))
+
+# DOF-sets
+# - dependent DOFs
+iid = dofs[tyings[:,0],:].ravel()
+# - prescribed DOfs
+iip = np.hstack((
+  dofs[nodesBottom[0],:].ravel(),
+  dofs[nodesVirtual  ,:].ravel(),
+))
+# - independent DOFs
+iii = np.setdiff1d(dofs.ravel(), iid)
+# - unknown DOFs
+iiu = np.setdiff1d(iii, iip)
+
+# renumber
+# - list
+renum      = np.zeros(dofs.size, dtype='int')
+renum[iiu] = np.arange(iiu.size)
+renum[iip] = np.arange(iip.size) + iiu.size
+renum[iid] = np.arange(iid.size) + iiu.size + iip.size
+# - apply
+iiu  = renum[iiu ]
+iip  = renum[iip ]
+dofs = renum[dofs]
+# - define auxiliary DOF sets
+iii = np.hstack((iiu, iip))
+iid = np.arange(iid.size) + iii.size
+
+# nodal tyings
+# - zero-initialize
+Cdi = np.zeros((iid.size, iii.size))
+# - tie
+iie = 2 * np.arange(tyings.shape[0])
+Cdi[iie  ,dofs[tyings[:,1],0]] = 1.
+Cdi[iie+1,dofs[tyings[:,1],1]] = 1.
+Cdi[iie  ,dofs[nodesVirtual[0],0]] = coor[tyings[:,0],0] - coor[tyings[:,1],0] # (F-I)_xx
+Cdi[iie  ,dofs[nodesVirtual[0],1]] = coor[tyings[:,0],1] - coor[tyings[:,1],1] # (F-I)_xy
+Cdi[iie+1,dofs[nodesVirtual[1],0]] = coor[tyings[:,0],0] - coor[tyings[:,1],0] # (F-I)_yx
+Cdi[iie+1,dofs[nodesVirtual[1],1]] = coor[tyings[:,0],1] - coor[tyings[:,1],1] # (F-I)_yy
 
 # ==================================================================================================
 # quadrature definition
@@ -210,7 +271,7 @@ for e, nodes in enumerate(conn):
 # ==================================================================================================
 
 # allocate stiffness matrix
-K = dok_matrix((ndof, ndof), dtype=np.float)
+K = np.zeros((ndof, ndof))
 
 # loop over nodes
 for e, nodes in enumerate(conn):
@@ -242,42 +303,57 @@ for e, nodes in enumerate(conn):
 # (other DOFs ignored in solution, the reaction forces on the DOFs are computed below)
 fext = np.zeros((ndof))
 
-# DOF-partitioning: ['u'nknown, 'p'rescribed]
-# - prescribed
-iip = np.hstack((
-  dofs[nodesBottom,1],
-  dofs[nodesLeft  ,0],
-  dofs[nodesRight ,0],
-))
-# - unknown
-iiu = np.setdiff1d(dofs.ravel(), iip)
-
 # fixed displacements
-up = np.hstack((
-  0.0 * np.ones((len(nodesBottom))),
-  0.0 * np.ones((len(nodesLeft  ))),
-  0.1 * np.ones((len(nodesRight ))),
-))
+up = np.array([
+  0.0, # suppress rigid-body motion in x
+  0.0, # suppress rigid-body motion in x
+  0.0, # (F-I)_xx
+  0.1, # (F-I)_xy
+  0.0, # (F-I)_yx
+  0.0, # (F-I)_yy
+])
 
 # residual force
 r = fext - fint
 
+# partition in independent and dependent part
+# - stiffness matrix
+Kii = K[np.ix_(iii, iii)]
+Kid = K[np.ix_(iii, iid)]
+Kdi = K[np.ix_(iid, iii)]
+Kdd = K[np.ix_(iid, iid)]
+# - residual force
+ri = r[iii]
+rd = r[iid]
+
+# condense system
+Kii = Kii + np.dot(Kid, Cdi) + np.dot(Cdi.T, Kdi) + np.dot(Cdi.T, np.dot(Kdd, Cdi))
+ri  = ri + np.dot(Cdi.T, rd)
+
 # partition
 # - stiffness matrix
-Kuu  = K.tocsr()[iiu,:].tocsc()[:,iiu]
-Kup  = K.tocsr()[iiu,:].tocsc()[:,iip]
-Kpu  = K.tocsr()[iip,:].tocsc()[:,iiu]
-Kpp  = K.tocsr()[iip,:].tocsc()[:,iip]
+Kuu = Kii[np.ix_(iiu, iiu)]
+Kup = Kii[np.ix_(iiu, iip)]
+Kpu = Kii[np.ix_(iip, iiu)]
+Kpp = Kii[np.ix_(iip, iip)]
 # - residual force
-ru = r[iiu]
+ru = ri[iiu]
 
 # solve for unknown displacement DOFs
-uu = spsolve(Kuu, ru - Kup.dot(up))
+uu = np.linalg.solve(Kuu, ru - Kup.dot(up))
 
 # assemble
+ui      = np.empty((iii.size))
+ui[iiu] = uu
+ui[iip] = up
+
+# reconstruct
+# - dependent displacement DOFs
+ud = np.dot(Cdi, ui)
+# - assemble
 u      = np.empty((ndof))
-u[iiu] = uu
-u[iip] = up
+u[iii] = ui
+u[iid] = ud
 
 # convert to nodal displacements
 disp = u[dofs]
@@ -342,8 +418,17 @@ for e, nodes in enumerate(conn):
   iie = dofs[nodes,:].ravel()
   fint[iie] += fe
 
+# residual force
+# - all DOFs
+r = fext - fint
+# - partition [independent, dependent]
+ri = r[iii]
+rd = r[iid]
+# - condense system: apply tying relations
+ri  = ri + np.dot(Cdi.T, rd)
+
 # reaction force
-fext[iip] = fint[iip]
+fext[iip] = -ri[iip]
 
 # ==================================================================================================
 # plot
@@ -353,7 +438,7 @@ import matplotlib.pyplot as plt
 
 fig, axes = plt.subplots(ncols=2, figsize=(16,8))
 
-# reconstruct external force as nodal vectors
+# reconstruct external force as nodal vectors (for all nodes)
 fext = fext[dofs]
 
 # plot original nodal positions + displacement field as arrows
