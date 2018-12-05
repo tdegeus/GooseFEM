@@ -11,13 +11,13 @@
 
 #include "MeshTri3.h"
 
-// ===================================== GooseFEM::Mesh::Tri3 ======================================
+// =================================================================================================
 
 namespace GooseFEM {
 namespace Mesh {
 namespace Tri3 {
 
-// ------------------------------------------ constructor ------------------------------------------
+// -------------------------------------------------------------------------------------------------
 
 inline Regular::Regular(size_t nelx, size_t nely, double h):
 m_h(h), m_nelx(nelx), m_nely(nely)
@@ -29,35 +29,14 @@ m_h(h), m_nelx(nelx), m_nely(nely)
   m_nelem =  m_nelx    *  m_nely * 2;
 }
 
-// -------------------------------------- number of elements ---------------------------------------
+// -------------------------------------------------------------------------------------------------
 
-inline size_t Regular::nelem() const
-{
-  return m_nelem;
-}
+inline size_t Regular::nelem() const { return m_nelem; }
+inline size_t Regular::nnode() const { return m_nnode; }
+inline size_t Regular::nne()   const { return m_nne;   }
+inline size_t Regular::ndim()  const { return m_ndim;  }
 
-// ---------------------------------------- number of nodes ----------------------------------------
-
-inline size_t Regular::nnode() const
-{
-  return m_nnode;
-}
-
-// ---------------------------------- number of nodes per element ----------------------------------
-
-inline size_t Regular::nne() const
-{
-  return m_nne;
-}
-
-// ------------------------------------- number of dimensions --------------------------------------
-
-inline size_t Regular::ndim() const
-{
-  return m_ndim;
-}
-
-// --------------------------------- coordinates (nodal positions) ---------------------------------
+// -------------------------------------------------------------------------------------------------
 
 inline xt::xtensor<double,2> Regular::coor() const
 {
@@ -79,7 +58,7 @@ inline xt::xtensor<double,2> Regular::coor() const
   return out;
 }
 
-// ---------------------------- connectivity (node-numbers per element) ----------------------------
+// -------------------------------------------------------------------------------------------------
 
 inline xt::xtensor<size_t,2> Regular::conn() const
 {
@@ -103,7 +82,7 @@ inline xt::xtensor<size_t,2> Regular::conn() const
   return out;
 }
 
-// ------------------------------ node-numbers along the bottom edge -------------------------------
+// -------------------------------------------------------------------------------------------------
 
 inline xt::xtensor<size_t,1> Regular::nodesBottomEdge() const
 {
@@ -115,7 +94,7 @@ inline xt::xtensor<size_t,1> Regular::nodesBottomEdge() const
   return out;
 }
 
-// -------------------------------- node-numbers along the top edge --------------------------------
+// -------------------------------------------------------------------------------------------------
 
 inline xt::xtensor<size_t,1> Regular::nodesTopEdge() const
 {
@@ -127,7 +106,7 @@ inline xt::xtensor<size_t,1> Regular::nodesTopEdge() const
   return out;
 }
 
-// ------------------------------- node-numbers along the left edge --------------------------------
+// -------------------------------------------------------------------------------------------------
 
 inline xt::xtensor<size_t,1> Regular::nodesLeftEdge() const
 {
@@ -139,7 +118,7 @@ inline xt::xtensor<size_t,1> Regular::nodesLeftEdge() const
   return out;
 }
 
-// ------------------------------- node-numbers along the right edge -------------------------------
+// -------------------------------------------------------------------------------------------------
 
 inline xt::xtensor<size_t,1> Regular::nodesRightEdge() const
 {
@@ -151,7 +130,7 @@ inline xt::xtensor<size_t,1> Regular::nodesRightEdge() const
   return out;
 }
 
-// ---------------------- node-numbers along the bottom edge, without corners ----------------------
+// -------------------------------------------------------------------------------------------------
 
 inline xt::xtensor<size_t,1> Regular::nodesBottomOpenEdge() const
 {
@@ -163,7 +142,7 @@ inline xt::xtensor<size_t,1> Regular::nodesBottomOpenEdge() const
   return out;
 }
 
-// ----------------------- node-numbers along the top edge, without corners ------------------------
+// -------------------------------------------------------------------------------------------------
 
 inline xt::xtensor<size_t,1> Regular::nodesTopOpenEdge() const
 {
@@ -175,7 +154,7 @@ inline xt::xtensor<size_t,1> Regular::nodesTopOpenEdge() const
   return out;
 }
 
-// ----------------------- node-numbers along the left edge, without corners -----------------------
+// -------------------------------------------------------------------------------------------------
 
 inline xt::xtensor<size_t,1> Regular::nodesLeftOpenEdge() const
 {
@@ -187,7 +166,7 @@ inline xt::xtensor<size_t,1> Regular::nodesLeftOpenEdge() const
   return out;
 }
 
-// ---------------------- node-numbers along the right edge, without corners -----------------------
+// -------------------------------------------------------------------------------------------------
 
 inline xt::xtensor<size_t,1> Regular::nodesRightOpenEdge() const
 {
@@ -199,42 +178,42 @@ inline xt::xtensor<size_t,1> Regular::nodesRightOpenEdge() const
   return out;
 }
 
-// ----------------------------- node-number of the bottom-left corner -----------------------------
+// -------------------------------------------------------------------------------------------------
 
 inline size_t Regular::nodesBottomLeftCorner() const
 {
   return 0;
 }
 
-// ---------------------------- node-number of the bottom-right corner -----------------------------
+// -------------------------------------------------------------------------------------------------
 
 inline size_t Regular::nodesBottomRightCorner() const
 {
   return m_nelx;
 }
 
-// ------------------------------ node-number of the top-left corner -------------------------------
+// -------------------------------------------------------------------------------------------------
 
 inline size_t Regular::nodesTopLeftCorner() const
 {
   return m_nely*(m_nelx+1);
 }
 
-// ------------------------------ node-number of the top-right corner ------------------------------
+// -------------------------------------------------------------------------------------------------
 
 inline size_t Regular::nodesTopRightCorner() const
 {
   return m_nely*(m_nelx+1) + m_nelx;
 }
 
-// ----------------------------- node-number of the corners (aliases) ------------------------------
+// -------------------------------------------------------------------------------------------------
 
 inline size_t Regular::nodesLeftBottomCorner() const  { return nodesBottomLeftCorner();  }
 inline size_t Regular::nodesLeftTopCorner() const     { return nodesTopLeftCorner();     }
 inline size_t Regular::nodesRightBottomCorner() const { return nodesBottomRightCorner(); }
 inline size_t Regular::nodesRightTopCorner() const    { return nodesTopRightCorner();    }
 
-// ------------------------------ node-numbers of periodic node-pairs ------------------------------
+// -------------------------------------------------------------------------------------------------
 
 inline xt::xtensor<size_t,2> Regular::nodesPeriodic() const
 {
@@ -266,21 +245,21 @@ inline xt::xtensor<size_t,2> Regular::nodesPeriodic() const
   return out;
 }
 
-// ------------------------------ node-number that lies in the origin ------------------------------
+// -------------------------------------------------------------------------------------------------
 
 inline size_t Regular::nodesOrigin() const
 {
   return nodesBottomLeftCorner();
 }
 
-// ------------------------- DOF numbers per node (sequentially numbered) --------------------------
+// -------------------------------------------------------------------------------------------------
 
 inline xt::xtensor<size_t,2> Regular::dofs() const
 {
   return GooseFEM::Mesh::dofs(m_nnode,m_ndim);
 }
 
-// ------------------------ DOP-numbers with periodic dependencies removed -------------------------
+// -------------------------------------------------------------------------------------------------
 
 inline xt::xtensor<size_t,2> Regular::dofsPeriodic() const
 {
@@ -299,7 +278,7 @@ inline xt::xtensor<size_t,2> Regular::dofsPeriodic() const
   return GooseFEM::Mesh::renumber(out);
 }
 
-// ------------------------------ get the orientation of each element ------------------------------
+// -------------------------------------------------------------------------------------------------
 
 inline xt::xtensor<int,1> getOrientation(const xt::xtensor<double,2> &coor, const xt::xtensor<size_t,2> &conn)
 {
@@ -325,7 +304,7 @@ inline xt::xtensor<int,1> getOrientation(const xt::xtensor<double,2> &coor, cons
   return out;
 }
 
-// ------------------------------ set the orientation of each element ------------------------------
+// -------------------------------------------------------------------------------------------------
 
 inline xt::xtensor<size_t,2> setOrientation(const xt::xtensor<double,2> &coor, const xt::xtensor<size_t,2> &conn, int orientation)
 {
@@ -338,7 +317,7 @@ inline xt::xtensor<size_t,2> setOrientation(const xt::xtensor<double,2> &coor, c
   return setOrientation(coor, conn, val, orientation);
 }
 
-// -------------------- set the orientation of each element to a certain value ---------------------
+// -------------------------------------------------------------------------------------------------
 
 inline xt::xtensor<size_t,2> setOrientation(const xt::xtensor<double,2> &coor, const xt::xtensor<size_t,2> &conn, const xt::xtensor<int,1> &val, int orientation)
 {
@@ -360,7 +339,7 @@ inline xt::xtensor<size_t,2> setOrientation(const xt::xtensor<double,2> &coor, c
   return out;
 }
 
-// ------------------------------------- re-triangulation API --------------------------------------
+// -------------------------------------------------------------------------------------------------
 
 inline xt::xtensor<size_t,2> retriangulate(const xt::xtensor<double,2> &coor, const xt::xtensor<size_t,2> &conn, int orientation)
 {
@@ -389,11 +368,11 @@ inline xt::xtensor<size_t,2> retriangulate(const xt::xtensor<double,2> &coor, co
   return setOrientation(coor,out,orientation);
 }
 
-// ================================= GooseFEM::Mesh::Tri3::Private =================================
+// =================================================================================================
 
 namespace Private {
 
-// ------------------------------------------ constructor ------------------------------------------
+// -------------------------------------------------------------------------------------------------
 
 inline TriUpdate::TriUpdate(const xt::xtensor<double,2> &coor, const xt::xtensor<size_t,2> &conn): m_conn(conn), m_coor(coor)
 {
@@ -413,7 +392,7 @@ inline TriUpdate::TriUpdate(const xt::xtensor<double,2> &coor, const xt::xtensor
   edge();
 }
 
-// -------------------------- compute neighbors per edge of all elements ---------------------------
+// -------------------------------------------------------------------------------------------------
 
 inline void TriUpdate::edge()
 {
@@ -442,7 +421,7 @@ inline void TriUpdate::edge()
   }
 }
 
-// ---------------------------- update edges around renumbered elements ----------------------------
+// -------------------------------------------------------------------------------------------------
 
 inline void TriUpdate::chedge(size_t edge, size_t old_elem, size_t new_elem)
 {
@@ -458,7 +437,7 @@ inline void TriUpdate::chedge(size_t edge, size_t old_elem, size_t new_elem)
   m_edge( neigh , m ) = new_elem;
 }
 
-// --------------------------------- re-triangulate the full mesh ----------------------------------
+// -------------------------------------------------------------------------------------------------
 
 inline bool TriUpdate::eval()
 {
@@ -469,7 +448,7 @@ inline bool TriUpdate::eval()
   return change;
 }
 
-// ----------------------------------- one re-triangulation step -----------------------------------
+// -------------------------------------------------------------------------------------------------
 
 inline bool TriUpdate::increment()
 {
@@ -558,7 +537,7 @@ inline bool TriUpdate::increment()
   return false;
 }
 
-// ------------------------------------------ constructor ------------------------------------------
+// -------------------------------------------------------------------------------------------------
 
 inline Edge::Edge(size_t i, size_t j, size_t el, size_t ed, bool sort):
 n1(i), n2(j), elem(el), edge(ed)
@@ -567,7 +546,7 @@ n1(i), n2(j), elem(el), edge(ed)
     std::swap(n1,n2);
 }
 
-// --------------------------------------- compare two edges ---------------------------------------
+// -------------------------------------------------------------------------------------------------
 
 inline bool Edge_cmp(Edge a, Edge b)
 {
@@ -577,7 +556,7 @@ inline bool Edge_cmp(Edge a, Edge b)
   return false;
 }
 
-// ----------------------- sort edges by comparing the first and second node -----------------------
+// -------------------------------------------------------------------------------------------------
 
 inline bool Edge_sort(Edge a, Edge b)
 {

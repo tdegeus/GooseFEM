@@ -5,7 +5,6 @@
 ================================================================================================= */
 
 #include <Eigen/Eigen>
-#include <cppmat/cppmat.h>
 
 #include <pybind11/pybind11.h>
 #include <pybind11/eigen.h>
@@ -21,13 +20,13 @@
 namespace py = pybind11;
 namespace M  = GooseFEM;
 
-// =========================================== GooseFEM ============================================
+// =================================================================================================
 
 PYBIND11_MODULE(GooseFEM, m) {
 
 m.doc() = "Some simple finite element meshes and operations";
 
-// ======================================== GooseFEM.Vector ========================================
+// =================================================================================================
 
 py::class_<GooseFEM::VectorPartitioned>(m, "VectorPartitioned")
 
@@ -72,7 +71,7 @@ py::class_<GooseFEM::VectorPartitioned>(m, "VectorPartitioned")
 
   .def("__repr__", [](const GooseFEM::VectorPartitioned &){ return "<GooseFEM.Vector>"; });
 
-// ============================== GooseFEM.MatrixDiagonalPartitioned ===============================
+// =================================================================================================
 
 py::class_<GooseFEM::MatrixDiagonalPartitioned>(m, "MatrixDiagonalPartitioned")
 
@@ -96,13 +95,13 @@ py::class_<GooseFEM::MatrixDiagonalPartitioned>(m, "MatrixDiagonalPartitioned")
   .def("dot_u", py::overload_cast<const xt::xtensor<double,1>&, const xt::xtensor<double,1>&>(&M::MatrixDiagonalPartitioned::dot_u, py::const_), "Dot product 'b_i = A_ij * x_j (b_u = A_uu * x_u + A_up * x_p == A_uu * x_u)", py::arg("x_u"), py::arg("x_p"))
   .def("dot_p", py::overload_cast<const xt::xtensor<double,1>&, const xt::xtensor<double,1>&>(&M::MatrixDiagonalPartitioned::dot_p, py::const_), "Dot product 'b_i = A_ij * x_j (b_p = A_pu * x_u + A_pp * x_p == A_pp * x_p)", py::arg("x_u"), py::arg("x_p"))
 
-  .def("solve", py::overload_cast<const xt::xtensor<double,1>&, const xt::xtensor<double,1>&>(&M::MatrixDiagonalPartitioned::solve), "Solve 'x_u = A_uu \\ ( b_u - A_up * x_p ) == A_uu \\ b_u'", py::arg("b_u"), py::arg("x_p"))
+  // .def("solve_u", &M::MatrixDiagonalPartitioned::solve_u, "Solve 'x_u = A_uu \\ ( b_u - A_up * x_p ) == A_uu \\ b_u'", py::arg("b_u"), py::arg("x_p"))
 
   .def("asDiagonal", &M::MatrixDiagonalPartitioned::asDiagonal, "Return as diagonal matrix (column)")
 
   .def("__repr__", [](const GooseFEM::MatrixDiagonalPartitioned &){ return "<GooseFEM.MatrixDiagonalPartitioned>"; });
 
-// ======================================= GooseFEM.Element ========================================
+// =================================================================================================
 
 py::module mElement = m.def_submodule("Element", "Generic element routines");
 
@@ -111,7 +110,7 @@ py::module mElement = m.def_submodule("Element", "Generic element routines");
 mElement.def("asElementVector"      , &GooseFEM::Element::asElementVector   , "Covert to 'elemvec'", py::arg("conn"), py::arg("nodevec"));
 mElement.def("assembleElementVector", &GooseFEM::Element::assembleNodeVector, "Assemble 'nodevec'" , py::arg("conn"), py::arg("elemvec"));
 
-// ==================================== GooseFEM.Element.Quad4 =====================================
+// =================================================================================================
 
 {
 
@@ -170,7 +169,7 @@ ssm.def("w"  , &GooseFEM::Element::Quad4::Nodal::w  , "Return integration point 
 
 }
 
-// ===================================== GooseFEM.Element.Hex8 =====================================
+// =================================================================================================
 
 {
 
@@ -229,7 +228,7 @@ ssm.def("w"  , &GooseFEM::Element::Hex8::Nodal::w  , "Return integration point w
 
 }
 
-// ========================================= GooseFEM.Mesh =========================================
+// =================================================================================================
 
 py::module mMesh = m.def_submodule("Mesh", "Generic mesh routines");
 
@@ -249,7 +248,7 @@ mMesh.def("coordination", &GooseFEM::Mesh::coordination, "Coordination number of
 
 mMesh.def("elem2node", &GooseFEM::Mesh::elem2node, "Elements connect to each node", py::arg("conn"));
 
-// ====================================== GooseFEM.Mesh.Hex8 =======================================
+// =================================================================================================
 
 {
 
@@ -537,7 +536,7 @@ py::class_<GooseFEM::Mesh::Hex8::FineLayer>(sm, "FineLayer")
 
 }
 
-// ====================================== GooseFEM.Mesh.Quad4 ======================================
+// =================================================================================================
 
 {
 
@@ -632,7 +631,7 @@ py::class_<GooseFEM::Mesh::Quad4::FineLayer>(sm, "FineLayer")
 
 }
 
-// ====================================== GooseFEM.Mesh.Tri3 =======================================
+// =================================================================================================
 
 {
 

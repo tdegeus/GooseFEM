@@ -9,9 +9,9 @@
 
 // -------------------------------------------------------------------------------------------------
 
-#include "GooseFEM.h"
+#include "config.h"
 
-// =========================================== GooseFEM ============================================
+// =================================================================================================
 
 namespace GooseFEM {
 
@@ -73,10 +73,10 @@ private:
   Eigen::SparseMatrix<double> m_data_pp;
 
   // the matrix to assemble
-  std::vector<TripD> m_trip_uu;
-  std::vector<TripD> m_trip_up;
-  std::vector<TripD> m_trip_pu;
-  std::vector<TripD> m_trip_pp;
+  std::vector<Eigen::Triplet<double>> m_trip_uu;
+  std::vector<Eigen::Triplet<double>> m_trip_up;
+  std::vector<Eigen::Triplet<double>> m_trip_pu;
+  std::vector<Eigen::Triplet<double>> m_trip_pp;
 
   // solver (re-used to solve different RHS)
   Eigen::SimplicialLDLT<Eigen::SparseMatrix<double>> m_solver;
@@ -120,6 +120,10 @@ private:
 // -------------------------------------------------------------------------------------------------
 
 } // namespace ...
+
+// =================================================================================================
+
+#include "MatrixPartitioned.hpp"
 
 // =================================================================================================
 

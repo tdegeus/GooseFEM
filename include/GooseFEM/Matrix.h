@@ -9,9 +9,13 @@
 
 // -------------------------------------------------------------------------------------------------
 
-#include "GooseFEM.h"
+#include "config.h"
 
-// =========================================== GooseFEM ============================================
+#include <Eigen/Eigen>
+#include <Eigen/Sparse>
+#include <Eigen/SparseCholesky>
+
+// =================================================================================================
 
 namespace GooseFEM {
 
@@ -64,7 +68,7 @@ private:
   Eigen::SparseMatrix<double> m_data;
 
   // the matrix to assemble
-  std::vector<TripD> m_trip;
+  std::vector<Eigen::Triplet<double>> m_trip;
 
   // solver (re-used to solve different RHS)
   Eigen::SimplicialLDLT<Eigen::SparseMatrix<double>> m_solver;
@@ -98,6 +102,10 @@ private:
 // -------------------------------------------------------------------------------------------------
 
 } // namespace ...
+
+// =================================================================================================
+
+#include "Matrix.hpp"
 
 // =================================================================================================
 

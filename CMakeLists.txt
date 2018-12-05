@@ -25,10 +25,11 @@ option(BUILD_TESTS "${PROJECT_NAME} test suite" OFF)
 project(GooseFEM)
 
 # file that contains the version information
-set(parse_version include/GooseFEM/GooseFEM.h)
+set(parse_version include/GooseFEM/config.h)
 
 # header files
 set(headers
+  include/GooseFEM/config.h
   include/GooseFEM/GooseFEM.h
   include/GooseFEM/Mesh.hpp
   include/GooseFEM/Mesh.h

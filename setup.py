@@ -11,7 +11,7 @@ import setuptools
 import pybind11
 import pyxtensor
 
-header = open('include/GooseFEM/GooseFEM.h','r').read()
+header = open('include/GooseFEM/config.h','r').read()
 world  = re.split(r'(.*)(\#define GOOSEFEM_WORLD_VERSION\ )([0-9]+)(.*)',header)[3]
 major  = re.split(r'(.*)(\#define GOOSEFEM_MAJOR_VERSION\ )([0-9]+)(.*)',header)[3]
 minor  = re.split(r'(.*)(\#define GOOSEFEM_MINOR_VERSION\ )([0-9]+)(.*)',header)[3]

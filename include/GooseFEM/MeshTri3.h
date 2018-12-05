@@ -9,15 +9,15 @@
 
 // -------------------------------------------------------------------------------------------------
 
-#include "Mesh.h"
+#include "config.h"
 
-// ===================================== GooseFEM::Mesh::Tri3 ======================================
+// =================================================================================================
 
 namespace GooseFEM {
 namespace Mesh {
 namespace Tri3 {
 
-// ------------------------------------------ regular mesh -----------------------------------------
+// -------------------------------------------------------------------------------------------------
 
 class Regular
 {
@@ -68,25 +68,25 @@ public:
   xt::xtensor<size_t,2> dofsPeriodic() const;  // ,, for the case that the periodicity if fully eliminated
 };
 
-// ----------------------------------------- mesh analysis -----------------------------------------
+// -------------------------------------------------------------------------------------------------
 
 // read / set the orientation (-1 / +1) of all triangles
 inline xt::xtensor<int   ,1> getOrientation(const xt::xtensor<double,2> &coor, const xt::xtensor<size_t,2> &conn                                                   );
 inline xt::xtensor<size_t,2> setOrientation(const xt::xtensor<double,2> &coor, const xt::xtensor<size_t,2> &conn,                                int orientation=-1);
 inline xt::xtensor<size_t,2> setOrientation(const xt::xtensor<double,2> &coor, const xt::xtensor<size_t,2> &conn, const xt::xtensor<int,1> &val, int orientation=-1);
 
-// --------------------------------------- re-triangulation ----------------------------------------
+// -------------------------------------------------------------------------------------------------
 
 // simple interface to compute the full re-triangulation; it uses, depending on the input mesh:
 // (1) the minimal evasive "TriUpdate"
 // (2) the more rigorous "TriCompute"
 inline xt::xtensor<size_t,2> retriangulate(const xt::xtensor<double,2> &coor, const xt::xtensor<size_t,2> &conn, int orientation=-1);
 
-// ================================= GooseFEM::Mesh::Tri3::Private =================================
+// =================================================================================================
 
 namespace Private {
 
-// ------------------------- support class - update existing triangulation -------------------------
+// -------------------------------------------------------------------------------------------------
 
 // minimal evasive re-triangulation which only flips edges of the existing connectivity
 class TriUpdate
@@ -123,7 +123,7 @@ public:
   xt::xtensor<size_t,2> ch_node() { return m_node; };  // nodes   involved in last element change
 };
 
-// -------------------------------- support class - edge definition --------------------------------
+// -------------------------------------------------------------------------------------------------
 
 // support class to allow the storage of a list of edges
 class Edge {
@@ -147,8 +147,14 @@ inline bool Edge_sort(Edge a, Edge b); // check if "a" is smaller than "b" in te
 
 } // namespace Private
 
-// -------------------------------------------------------------------------------------------------
+// =================================================================================================
 
 }}} // namespace ...
+
+// =================================================================================================
+
+#include "MeshTri3.hpp"
+
+// =================================================================================================
 
 #endif
