@@ -11,8 +11,6 @@
 
 #include "Matrix.h"
 
-#include <Eigen/SparseCholesky>
-
 // =================================================================================================
 
 namespace GooseFEM {
@@ -119,7 +117,7 @@ inline void Matrix::assemble(const xt::xtensor<double,3> &elemmat)
       for ( size_t i = 0 ; i < m_ndim ; ++i )
         for ( size_t n = 0 ; n < m_nne ; ++n )
           for ( size_t j = 0 ; j < m_ndim ; ++j )
-            m_trip.push_back(TripD(
+            m_trip.push_back(Eigen::Triplet<double>(
               m_dofs(m_conn(e,m),i), m_dofs(m_conn(e,n),j), elemmat(e,m*m_ndim+i,n*m_ndim+j)
             ));
 

@@ -11,7 +11,7 @@
 
 #include "Mesh.h"
 
-// ======================================== GooseFEM::Mesh =========================================
+// =================================================================================================
 
 namespace GooseFEM {
 namespace Mesh {
@@ -138,43 +138,28 @@ inline xt::xtensor<size_t,1> coordination(const xt::xtensor<size_t,2> &conn)
 
 // -------------------------------------------------------------------------------------------------
 
-inline SpMatS elem2node(const xt::xtensor<size_t,2> &conn)
+inline std::vector<std::vector<size_t>> elem2node(const xt::xtensor<size_t,2> &conn)
 {
-  // get coordination
+  // get coordination per node
   auto N = coordination(conn);
 
   // get number of nodes
   auto nnode = N.size();
 
-  // triplet list, with elements per node
-  // - allocate
-  xt::xtensor<size_t,1> idx = xt::zeros<size_t>({nnode});
-  // - type
-  typedef Eigen::Triplet<size_t> T;
-  // - allocate
-  std::vector<T> triplets;
-  // - predict size
-  triplets.reserve(xt::sum(N)[0]);
-  // - fill
+  // allocate
+  std::vector<std::vector<size_t>> out;
+  // reserve outer size
+  out.resize(nnode);
+  // reserve inner sizes
+  for ( size_t i = 0 ; i < nnode ; ++i )
+    out[i].reserve(N(i));
+
+  // fill
   for ( size_t e = 0 ; e < conn.shape()[0] ; ++e )
-  {
     for ( size_t m = 0 ; m < conn.shape()[1] ; ++m )
-    {
-      size_t node = conn(e,m);
+      out[conn(e,m)].push_back(e);
 
-      triplets.push_back(T(node, idx(node), e));
-
-      idx(node)++;
-    }
-  }
-
-  // spare matrix
-  // - allocate
-  SpMatS mat(nnode, xt::amax(N)[0]);
-  // - fill
-  mat.setFromTriplets(triplets.begin(), triplets.end());
-
-  return mat;
+  return out;
 }
 
 // -------------------------------------------------------------------------------------------------

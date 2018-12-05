@@ -11,13 +11,13 @@
 
 #include "MeshQuad4.h"
 
-// ===================================== GooseFEM::Mesh::Quad4 =====================================
+// =================================================================================================
 
 namespace GooseFEM {
 namespace Mesh {
 namespace Quad4 {
 
-// ------------------------------------------ constructor ------------------------------------------
+// -------------------------------------------------------------------------------------------------
 
 inline Regular::Regular(size_t nelx, size_t nely, double h):
 m_h(h), m_nelx(nelx), m_nely(nely)
@@ -29,42 +29,21 @@ m_h(h), m_nelx(nelx), m_nely(nely)
   m_nelem =  m_nelx    *  m_nely   ;
 }
 
-// -------------------------------------- number of elements ---------------------------------------
+// -------------------------------------------------------------------------------------------------
 
-inline size_t Regular::nelem() const
-{
-  return m_nelem;
-}
+inline size_t Regular::nelem() const { return m_nelem; }
+inline size_t Regular::nnode() const { return m_nnode; }
+inline size_t Regular::nne()   const { return m_nne;   }
+inline size_t Regular::ndim()  const { return m_ndim;  }
 
-// ---------------------------------------- number of nodes ----------------------------------------
-
-inline size_t Regular::nnode() const
-{
-  return m_nnode;
-}
-
-// ---------------------------------- number of nodes per element ----------------------------------
-
-inline size_t Regular::nne() const
-{
-  return m_nne;
-}
-
-// ------------------------------------- number of dimensions --------------------------------------
-
-inline size_t Regular::ndim() const
-{
-  return m_ndim;
-}
-
-// ------------------------ number of nodes, after eliminating periodicity -------------------------
+// -------------------------------------------------------------------------------------------------
 
 inline size_t Regular::nnodePeriodic() const
 {
   return (m_nelx+1) * (m_nely+1) - (m_nely+1) - (m_nelx);
 }
 
-// --------------------------------- coordinates (nodal positions) ---------------------------------
+// -------------------------------------------------------------------------------------------------
 
 inline xt::xtensor<double,2> Regular::coor() const
 {
@@ -86,7 +65,7 @@ inline xt::xtensor<double,2> Regular::coor() const
   return out;
 }
 
-// ---------------------------- connectivity (node-numbers per element) ----------------------------
+// -------------------------------------------------------------------------------------------------
 
 inline xt::xtensor<size_t,2> Regular::conn() const
 {
@@ -107,7 +86,7 @@ inline xt::xtensor<size_t,2> Regular::conn() const
   return out;
 }
 
-// ------------------------------ node-numbers along the bottom edge -------------------------------
+// -------------------------------------------------------------------------------------------------
 
 inline xt::xtensor<size_t,1> Regular::nodesBottomEdge() const
 {
@@ -119,7 +98,7 @@ inline xt::xtensor<size_t,1> Regular::nodesBottomEdge() const
   return out;
 }
 
-// -------------------------------- node-numbers along the top edge --------------------------------
+// -------------------------------------------------------------------------------------------------
 
 inline xt::xtensor<size_t,1> Regular::nodesTopEdge() const
 {
@@ -131,7 +110,7 @@ inline xt::xtensor<size_t,1> Regular::nodesTopEdge() const
   return out;
 }
 
-// ------------------------------- node-numbers along the left edge --------------------------------
+// -------------------------------------------------------------------------------------------------
 
 inline xt::xtensor<size_t,1> Regular::nodesLeftEdge() const
 {
@@ -143,7 +122,7 @@ inline xt::xtensor<size_t,1> Regular::nodesLeftEdge() const
   return out;
 }
 
-// ------------------------------- node-numbers along the right edge -------------------------------
+// -------------------------------------------------------------------------------------------------
 
 inline xt::xtensor<size_t,1> Regular::nodesRightEdge() const
 {
@@ -203,42 +182,42 @@ inline xt::xtensor<size_t,1> Regular::nodesRightOpenEdge() const
   return out;
 }
 
-// ----------------------------- node-number of the bottom-left corner -----------------------------
+// -------------------------------------------------------------------------------------------------
 
 inline size_t Regular::nodesBottomLeftCorner() const
 {
   return 0;
 }
 
-// ---------------------------- node-number of the bottom-right corner -----------------------------
+// -------------------------------------------------------------------------------------------------
 
 inline size_t Regular::nodesBottomRightCorner() const
 {
   return m_nelx;
 }
 
-// ------------------------------ node-number of the top-left corner -------------------------------
+// -------------------------------------------------------------------------------------------------
 
 inline size_t Regular::nodesTopLeftCorner() const
 {
   return m_nely*(m_nelx+1);
 }
 
-// ------------------------------ node-number of the top-right corner ------------------------------
+// -------------------------------------------------------------------------------------------------
 
 inline size_t Regular::nodesTopRightCorner() const
 {
   return m_nely*(m_nelx+1) + m_nelx;
 }
 
-// ----------------------------- node-number of the corners (aliases) ------------------------------
+// -------------------------------------------------------------------------------------------------
 
 inline size_t Regular::nodesLeftBottomCorner() const  { return nodesBottomLeftCorner();  }
 inline size_t Regular::nodesLeftTopCorner() const     { return nodesTopLeftCorner();     }
 inline size_t Regular::nodesRightBottomCorner() const { return nodesBottomRightCorner(); }
 inline size_t Regular::nodesRightTopCorner() const    { return nodesTopRightCorner();    }
 
-// ------------------------------ node-numbers of periodic node-pairs ------------------------------
+// -------------------------------------------------------------------------------------------------
 
 inline xt::xtensor<size_t,2> Regular::nodesPeriodic() const
 {
@@ -270,21 +249,21 @@ inline xt::xtensor<size_t,2> Regular::nodesPeriodic() const
   return out;
 }
 
-// ------------------------------ node-number that lies in the origin ------------------------------
+// -------------------------------------------------------------------------------------------------
 
 inline size_t Regular::nodesOrigin() const
 {
   return nodesBottomLeftCorner();
 }
 
-// ------------------------- DOF numbers per node (sequentially numbered) --------------------------
+// -------------------------------------------------------------------------------------------------
 
 inline xt::xtensor<size_t,2> Regular::dofs() const
 {
   return GooseFEM::Mesh::dofs(m_nnode,m_ndim);
 }
 
-// ------------------------ DOP-numbers with periodic dependencies removed -------------------------
+// -------------------------------------------------------------------------------------------------
 
 inline xt::xtensor<size_t,2> Regular::dofsPeriodic() const
 {
@@ -303,7 +282,7 @@ inline xt::xtensor<size_t,2> Regular::dofsPeriodic() const
   return GooseFEM::Mesh::renumber(out);
 }
 
-// ------------------------------------------ constructor ------------------------------------------
+// -------------------------------------------------------------------------------------------------
 
 inline FineLayer::FineLayer(size_t nelx, size_t nely, double h, size_t nfine):
 m_h(h)
@@ -316,7 +295,7 @@ m_h(h)
   m_Lx = m_h * static_cast<double>(nelx);
 
   // compute element size in y-direction (use symmetry, compute upper half)
-  // ----------------------------------------------------------------------
+  // -------------------------------------------------------------------------------------------------
 
   // temporary variables
   size_t nmin, ntot;
@@ -365,7 +344,7 @@ m_h(h)
   }
 
   // symmetrize, compute full information
-  // ------------------------------------
+  // -------------------------------------------------------------------------------------------------
 
   // allocate mesh constructor parameters
   m_nhx       = xt::empty<size_t>({nely*2-1});
@@ -444,35 +423,35 @@ m_h(h)
   m_nnode += m_nelx(nely-1)+1;
 }
 
-// -------------------------------------- number of elements ---------------------------------------
+// -------------------------------------------------------------------------------------------------
 
 inline size_t FineLayer::nelem() const
 {
   return m_nelem;
 }
 
-// ---------------------------------------- number of nodes ----------------------------------------
+// -------------------------------------------------------------------------------------------------
 
 inline size_t FineLayer::nnode() const
 {
   return m_nnode;
 }
 
-// ---------------------------------- number of nodes per element ----------------------------------
+// -------------------------------------------------------------------------------------------------
 
 inline size_t FineLayer::nne() const
 {
   return m_nne;
 }
 
-// ------------------------------------- number of dimensions --------------------------------------
+// -------------------------------------------------------------------------------------------------
 
 inline size_t FineLayer::ndim() const
 {
   return m_ndim;
 }
 
-// ---------------------------- actual number of nodes in one direction ----------------------------
+// -------------------------------------------------------------------------------------------------
 
 inline size_t FineLayer::shape(size_t i) const
 {
@@ -483,7 +462,7 @@ inline size_t FineLayer::shape(size_t i) const
 
 }
 
-// --------------------------------- coordinates (nodal positions) ---------------------------------
+// -------------------------------------------------------------------------------------------------
 
 inline xt::xtensor<double,2> FineLayer::coor() const
 {
@@ -504,7 +483,7 @@ inline xt::xtensor<double,2> FineLayer::coor() const
     y(iy) = y(iy-1) + m_nhy(iy-1) * m_h;
 
   // loop over element layers (bottom -> middle) : add bottom layer (+ refinement layer) of nodes
-  // --------------------------------------------------------------------------------------------
+  // -------------------------------------------------------------------------------------------------
 
   for ( size_t iy = 0 ; ; ++iy )
   {
@@ -540,7 +519,7 @@ inline xt::xtensor<double,2> FineLayer::coor() const
   }
 
   // loop over element layers (middle -> top) : add (refinement layer +) top layer of nodes
-  // --------------------------------------------------------------------------------------
+  // -------------------------------------------------------------------------------------------------
 
   for ( size_t iy = (nely-1)/2 ; iy < nely ; ++iy )
   {
@@ -574,7 +553,7 @@ inline xt::xtensor<double,2> FineLayer::coor() const
   return out;
 }
 
-// ---------------------------- connectivity (node-numbers per element) ----------------------------
+// -------------------------------------------------------------------------------------------------
 
 inline xt::xtensor<size_t,2> FineLayer::conn() const
 {
@@ -672,7 +651,7 @@ inline xt::xtensor<size_t,2> FineLayer::conn() const
   return out;
 }
 
-// ------------------------------ element numbers of the middle layer ------------------------------
+// -------------------------------------------------------------------------------------------------
 
 inline xt::xtensor<size_t,1> FineLayer::elementsMiddleLayer() const
 {
@@ -688,7 +667,7 @@ inline xt::xtensor<size_t,1> FineLayer::elementsMiddleLayer() const
   return out;
 }
 
-// ------------------------------ node-numbers along the bottom edge -------------------------------
+// -------------------------------------------------------------------------------------------------
 
 inline xt::xtensor<size_t,1> FineLayer::nodesBottomEdge() const
 {
@@ -700,7 +679,7 @@ inline xt::xtensor<size_t,1> FineLayer::nodesBottomEdge() const
   return out;
 }
 
-// -------------------------------- node-numbers along the top edge --------------------------------
+// -------------------------------------------------------------------------------------------------
 
 inline xt::xtensor<size_t,1> FineLayer::nodesTopEdge() const
 {
@@ -714,7 +693,7 @@ inline xt::xtensor<size_t,1> FineLayer::nodesTopEdge() const
   return out;
 }
 
-// ------------------------------- node-numbers along the left edge --------------------------------
+// -------------------------------------------------------------------------------------------------
 
 inline xt::xtensor<size_t,1> FineLayer::nodesLeftEdge() const
 {
@@ -731,7 +710,7 @@ inline xt::xtensor<size_t,1> FineLayer::nodesLeftEdge() const
   return out;
 }
 
-// ------------------------------- node-numbers along the right edge -------------------------------
+// -------------------------------------------------------------------------------------------------
 
 inline xt::xtensor<size_t,1> FineLayer::nodesRightEdge() const
 {
@@ -808,21 +787,21 @@ inline xt::xtensor<size_t,1> FineLayer::nodesRightOpenEdge() const
   return out;
 }
 
-// ----------------------------- node-number of the bottom-left corner -----------------------------
+// -------------------------------------------------------------------------------------------------
 
 inline size_t FineLayer::nodesBottomLeftCorner() const
 {
   return m_startNode(0);
 }
 
-// ---------------------------- node-number of the bottom-right corner -----------------------------
+// -------------------------------------------------------------------------------------------------
 
 inline size_t FineLayer::nodesBottomRightCorner() const
 {
   return m_startNode(0) + m_nelx(0);
 }
 
-// ------------------------------ node-number of the top-left corner -------------------------------
+// -------------------------------------------------------------------------------------------------
 
 inline size_t FineLayer::nodesTopLeftCorner() const
 {
@@ -831,7 +810,7 @@ inline size_t FineLayer::nodesTopLeftCorner() const
   return m_startNode(nely);
 }
 
-// ------------------------------ node-number of the top-right corner ------------------------------
+// -------------------------------------------------------------------------------------------------
 
 inline size_t FineLayer::nodesTopRightCorner() const
 {
@@ -840,14 +819,14 @@ inline size_t FineLayer::nodesTopRightCorner() const
   return m_startNode(nely) + m_nelx(nely-1);
 }
 
-// -------------------------------------------- aliases --------------------------------------------
+// -------------------------------------------------------------------------------------------------
 
 inline size_t FineLayer::nodesLeftBottomCorner() const  { return nodesBottomLeftCorner();  }
 inline size_t FineLayer::nodesRightBottomCorner() const { return nodesBottomRightCorner(); }
 inline size_t FineLayer::nodesLeftTopCorner() const     { return nodesTopLeftCorner();     }
 inline size_t FineLayer::nodesRightTopCorner() const    { return nodesTopRightCorner();    }
 
-// ------------------------------ node-numbers of periodic node-pairs ------------------------------
+// -------------------------------------------------------------------------------------------------
 
 inline xt::xtensor<size_t,2> FineLayer::nodesPeriodic() const
 {
@@ -879,21 +858,21 @@ inline xt::xtensor<size_t,2> FineLayer::nodesPeriodic() const
   return out;
 }
 
-// ------------------------------ node-number that lies in the origin ------------------------------
+// -------------------------------------------------------------------------------------------------
 
 inline size_t FineLayer::nodesOrigin() const
 {
   return nodesBottomLeftCorner();
 }
 
-// ------------------------- DOF numbers per node (sequentially numbered) --------------------------
+// -------------------------------------------------------------------------------------------------
 
 inline xt::xtensor<size_t,2> FineLayer::dofs() const
 {
   return GooseFEM::Mesh::dofs(m_nnode,m_ndim);
 }
 
-// ------------------------ DOP-numbers with periodic dependencies removed -------------------------
+// -------------------------------------------------------------------------------------------------
 
 inline xt::xtensor<size_t,2> FineLayer::dofsPeriodic() const
 {

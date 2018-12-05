@@ -9,9 +9,9 @@
 
 // -------------------------------------------------------------------------------------------------
 
-#include "GooseFEM.h"
+#include "config.h"
 
-// ======================================== GooseFEM::Mesh =========================================
+// =================================================================================================
 
 namespace GooseFEM {
 namespace Mesh {
@@ -41,11 +41,15 @@ inline xt::xtensor<size_t,1> reorder_index(const xt::xtensor<size_t,2> &dofs,
 inline xt::xtensor<size_t,1> coordination(const xt::xtensor<size_t,2> &conn);
 
 // elements connected to each node
-inline SpMatS elem2node(const xt::xtensor<size_t,2> &conn);
+inline std::vector<std::vector<size_t>> elem2node(const xt::xtensor<size_t,2> &conn);
 
 // -------------------------------------------------------------------------------------------------
 
 }} // namespace ...
+
+// =================================================================================================
+
+#include "Mesh.hpp"
 
 // =================================================================================================
 

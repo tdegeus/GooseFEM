@@ -11,8 +11,6 @@
 
 #include "MatrixPartitioned.h"
 
-#include <Eigen/SparseCholesky>
-
 // =================================================================================================
 
 namespace GooseFEM {
@@ -191,13 +189,13 @@ inline void MatrixPartitioned::assemble(const xt::xtensor<double,3> &elemmat)
             size_t dj = m_part(m_conn(e,n),j);
 
             if      ( di < m_nnu and dj < m_nnu )
-              m_trip_uu.push_back(TripD(di      ,dj      ,elemmat(e,m*m_ndim+i,n*m_ndim+j)));
+              m_trip_uu.push_back(Eigen::Triplet<double>(di      ,dj      ,elemmat(e,m*m_ndim+i,n*m_ndim+j)));
             else if ( di < m_nnu )
-              m_trip_up.push_back(TripD(di      ,dj-m_nnu,elemmat(e,m*m_ndim+i,n*m_ndim+j)));
+              m_trip_up.push_back(Eigen::Triplet<double>(di      ,dj-m_nnu,elemmat(e,m*m_ndim+i,n*m_ndim+j)));
             else if ( dj < m_nnu )
-              m_trip_pu.push_back(TripD(di-m_nnu,dj      ,elemmat(e,m*m_ndim+i,n*m_ndim+j)));
+              m_trip_pu.push_back(Eigen::Triplet<double>(di-m_nnu,dj      ,elemmat(e,m*m_ndim+i,n*m_ndim+j)));
             else
-              m_trip_pp.push_back(TripD(di-m_nnu,dj-m_nnu,elemmat(e,m*m_ndim+i,n*m_ndim+j)));
+              m_trip_pp.push_back(Eigen::Triplet<double>(di-m_nnu,dj-m_nnu,elemmat(e,m*m_ndim+i,n*m_ndim+j)));
           }
         }
       }
