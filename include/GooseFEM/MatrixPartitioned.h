@@ -11,6 +11,10 @@
 
 #include "config.h"
 
+#include <Eigen/Eigen>
+#include <Eigen/Sparse>
+#include <Eigen/SparseCholesky>
+
 // =================================================================================================
 
 namespace GooseFEM {
