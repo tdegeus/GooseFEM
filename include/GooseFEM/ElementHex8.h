@@ -17,13 +17,12 @@ namespace GooseFEM {
 namespace Element {
 namespace Hex8 {
 
-// =================================================================================================
+// -------------------------------------------------------------------------------------------------
 
-using T2 = xt::xtensor_fixed<double, xt::xshape<3,3>>;
+inline double inv(const xt::xtensor_fixed<double, xt::xshape<3,3>> &A,
+  xt::xtensor_fixed<double, xt::xshape<3,3>> &Ainv);
 
-inline double inv(const T2 &A, T2 &Ainv);
-
-// =================================================================================================
+// -------------------------------------------------------------------------------------------------
 
 namespace Gauss {
 inline size_t                nip(); // number of integration points
@@ -31,7 +30,7 @@ inline xt::xtensor<double,2> xi();  // integration point coordinates (local coor
 inline xt::xtensor<double,1> w();   // integration point weights
 }
 
-// =================================================================================================
+// -------------------------------------------------------------------------------------------------
 
 namespace Nodal {
 inline size_t                nip(); // number of integration points
@@ -39,9 +38,8 @@ inline xt::xtensor<double,2> xi();  // integration point coordinates (local coor
 inline xt::xtensor<double,1> w();   // integration point weights
 }
 
-// =================================================================================================
+// -------------------------------------------------------------------------------------------------
 
-// ------------------------------------------ quadrature -------------------------------------------
 
 class Quadrature
 {
@@ -61,7 +59,7 @@ public:
 
   Quadrature() = default;
 
-  Quadrature(const xt::xtensor<double,3> &x) : Quadrature(x, Gauss::xi(), Gauss::w()){};
+  Quadrature(const xt::xtensor<double,3> &x);
 
   Quadrature(const xt::xtensor<double,3> &x, const xt::xtensor<double,2> &xi, const xt::xtensor<double,1> &w);
 
@@ -71,10 +69,10 @@ public:
 
   // return dimensions
 
-  size_t nelem() const { return m_nelem; }; // number of elements
-  size_t nne()   const { return m_nne;   }; // number of nodes per element
-  size_t ndim()  const { return m_ndim;  }; // number of dimension
-  size_t nip()   const { return m_nip;   }; // number of integration points
+  size_t nelem() const; // number of elements
+  size_t nne()   const; // number of nodes per element
+  size_t ndim()  const; // number of dimension
+  size_t nip()   const; // number of integration points
 
   // return integration volume
 

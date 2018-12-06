@@ -17,12 +17,12 @@ namespace GooseFEM {
 namespace Element {
 namespace Quad4 {
 
-// =================================================================================================
+// -------------------------------------------------------------------------------------------------
 
 inline double inv(const xt::xtensor_fixed<double, xt::xshape<2,2>> &A,
   xt::xtensor_fixed<double, xt::xshape<2,2>> &Ainv);
 
-// =================================================================================================
+// -------------------------------------------------------------------------------------------------
 
 namespace Gauss {
 inline size_t                nip(); // number of integration points
@@ -30,7 +30,7 @@ inline xt::xtensor<double,2> xi();  // integration point coordinates (local coor
 inline xt::xtensor<double,1> w();   // integration point weights
 }
 
-// =================================================================================================
+// -------------------------------------------------------------------------------------------------
 
 namespace Nodal {
 inline size_t                nip(); // number of integration points
@@ -38,15 +38,13 @@ inline xt::xtensor<double,2> xi();  // integration point coordinates (local coor
 inline xt::xtensor<double,1> w();   // integration point weights
 }
 
-// =================================================================================================
+// -------------------------------------------------------------------------------------------------
 
 namespace MidPoint {
 inline size_t                nip(); // number of integration points
 inline xt::xtensor<double,2> xi();  // integration point coordinates (local coordinates)
 inline xt::xtensor<double,1> w();   // integration point weights
 }
-
-// =================================================================================================
 
 // -------------------------------------------------------------------------------------------------
 

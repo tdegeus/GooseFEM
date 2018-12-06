@@ -137,11 +137,11 @@ for e, nodes in enumerate(conn):
 
       Be = np.zeros((3,3,3))
 
-      Be[0,0,0] = dNdxe[m,1]    # B(m, r      r      r      )
-      Be[0,2,2] = dNdxe[m,1]    # B(m, r      z      z      )
-      Be[1,1,0] = +1./rq * N[m] # B(m, \theta \theta r      )
-      Be[2,0,0] = dNdxe[m,0]    # B(m, z      r      r      )
-      Be[2,2,2] = dNdxe[m,0]    # B(m, z      z      z      )
+      Be[0,0,0] = dNdxe[m,1]    # B(m, r, r, r)
+      Be[0,2,2] = dNdxe[m,1]    # B(m, r, z, z)
+      Be[1,1,0] = +1./rq * N[m] # B(m, t, t, r)
+      Be[2,0,0] = dNdxe[m,0]    # B(m, z, r, r)
+      Be[2,2,2] = dNdxe[m,0]    # B(m, z, z, z)
 
       B[e,q,m,:,:,:] = Be
 
@@ -178,7 +178,7 @@ Eps = np.empty((nelem,nip,3,3))
 for e, nodes in enumerate(conn):
 
   # nodal displacements in 3-d
-  #   u_theta = 0 
+  #   u_theta = 0
   #   (z,r) -> (r,theta,z)
   ue      = np.zeros((nne,3))
   ue[:,0] = disp[nodes,1]
@@ -323,7 +323,7 @@ Eps = np.empty((nelem,nip,3,3))
 for e, nodes in enumerate(conn):
 
   # nodal displacements in 3-d
-  #   u_theta = 0 
+  #   u_theta = 0
   #   (z,r) -> (r,theta,z)
   ue      = np.zeros((nne,3))
   ue[:,0] = disp[nodes,1]

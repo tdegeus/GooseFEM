@@ -19,7 +19,8 @@ namespace Hex8 {
 
 // =================================================================================================
 
-inline double inv(const T2 &A, T2 &Ainv)
+inline double inv(const xt::xtensor_fixed<double, xt::xshape<3,3>> &A,
+  xt::xtensor_fixed<double, xt::xshape<3,3>> &Ainv)
 {
   // compute determinant
   double det = ( A(0,0) * A(1,1) * A(2,2) +
@@ -157,6 +158,11 @@ inline xt::xtensor<double,1> w()
 
 // =================================================================================================
 
+inline Quadrature::Quadrature(const xt::xtensor<double,3> &x) :
+  Quadrature(x, Gauss::xi(), Gauss::w()) {};
+
+// -------------------------------------------------------------------------------------------------
+
 inline Quadrature::Quadrature(const xt::xtensor<double,3> &x, const xt::xtensor<double,2> &xi,
   const xt::xtensor<double,1> &w) : m_x(x), m_w(w), m_xi(xi)
 {
@@ -230,6 +236,16 @@ inline Quadrature::Quadrature(const xt::xtensor<double,3> &x, const xt::xtensor<
 
 // -------------------------------------------------------------------------------------------------
 
+inline size_t Quadrature::nelem() const { return m_nelem; };
+
+inline size_t Quadrature::nne() const { return m_nne; };
+
+inline size_t Quadrature::ndim() const { return m_ndim; };
+
+inline size_t Quadrature::nip() const { return m_nip; };
+
+// -------------------------------------------------------------------------------------------------
+
 inline void Quadrature::dV(xt::xtensor<double,2> &qscalar) const
 {
   assert( qscalar.shape()[0] == m_nelem );
@@ -278,12 +294,12 @@ inline void Quadrature::update_x(const xt::xtensor<double,3> &x)
 
 inline void Quadrature::compute_dN()
 {
-  // loop over all elements (in parallel)
   #pragma omp parallel
   {
     // allocate local variables
-    T2 J, Jinv;
+    xt::xtensor_fixed<double, xt::xshape<3,3>> J, Jinv;
 
+    // loop over all elements (in parallel)
     #pragma omp for
     for ( size_t e = 0 ; e < m_nelem ; ++e )
     {
@@ -338,7 +354,7 @@ inline void Quadrature::gradN_vector(
   assert( qtensor.shape()[2] == m_ndim  );
   assert( qtensor.shape()[3] == m_ndim  );
 
-  // zero-initialize output: matrix of tensors
+  // zero-initialize
   qtensor.fill(0.0);
 
   // loop over all elements (in parallel)
@@ -377,7 +393,7 @@ inline void Quadrature::gradN_vector_T(
   assert( qtensor.shape()[2] == m_ndim  );
   assert( qtensor.shape()[3] == m_ndim  );
 
-  // zero-initialize output: matrix of tensors
+  // zero-initialize
   qtensor.fill(0.0);
 
   // loop over all elements (in parallel)
@@ -416,7 +432,7 @@ inline void Quadrature::symGradN_vector(
   assert( qtensor.shape()[2] == m_ndim  );
   assert( qtensor.shape()[3] == m_ndim  );
 
-  // zero-initialize output: matrix of tensors
+  // zero-initialize
   qtensor.fill(0.0);
 
   // loop over all elements (in parallel)
@@ -557,8 +573,8 @@ inline void Quadrature::int_gradN_dot_tensor4_dot_gradNT_dV(const xt::xtensor<do
     auto K = xt::adapt(&elemmat(e,0,0), xt::xshape<m_nne*m_ndim,m_nne*m_ndim>());
 
     // loop over all integration points in element "e"
-    for ( size_t q = 0 ; q < m_nip ; ++q ){
-
+    for ( size_t q = 0 ; q < m_nip ; ++q )
+    {
       // - alias
       auto  dNx = xt::adapt(&m_dNx(e,q,0,0), xt::xshape<m_nne,m_ndim>());
       auto  C   = xt::adapt(&qtensor(e,q,0,0,0,0), xt::xshape<m_ndim,m_ndim,m_ndim,m_ndim>());
