@@ -175,11 +175,11 @@ inline void QuadratureAxisymmetric::compute_dN()
         //   N.B. "dNx(m,i) += Jinv(i,j) * dNxi(m,j);"
         for (size_t m = 0; m < m_nne; ++m)
         {
-          B(m,0,0,0) = Jinv(0,0) * dNxi(m,0) + Jinv(0,1) * dNxi(m,1); // B(m, r, r, r) = dNdx(m,1)
+          B(m,0,0,0) = Jinv(1,0) * dNxi(m,0) + Jinv(1,1) * dNxi(m,1); // B(m, r, r, r) = dNdx(m,1)
           B(m,0,2,2) = Jinv(1,0) * dNxi(m,0) + Jinv(1,1) * dNxi(m,1); // B(m, r, z, z) = dNdx(m,1)
           B(m,1,1,0) = 1./rq * N(m);                                  // B(m, t, t, r)
           B(m,2,0,0) = Jinv(0,0) * dNxi(m,0) + Jinv(0,1) * dNxi(m,1); // B(m, z, r, r) = dNdx(m,0)
-          B(m,2,2,2) = Jinv(1,0) * dNxi(m,0) + Jinv(1,1) * dNxi(m,1); // B(m, z, z, z) = dNdx(m,0)
+          B(m,2,2,2) = Jinv(0,0) * dNxi(m,0) + Jinv(0,1) * dNxi(m,1); // B(m, z, z, z) = dNdx(m,0)
         }
 
         // - integration point volume
