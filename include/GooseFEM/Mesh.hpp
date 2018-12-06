@@ -78,7 +78,7 @@ inline xt::xtensor<size_t,1> reorder_index(const xt::xtensor<size_t,2> &dofs,
   auto old = xt::unique(dofs);
 
   // sanity check
-  assert( iiu.size() + iip.size() == dofs.size() );
+  assert( iiu.size() + iip.size() == xt::amax(dofs)[0]+1 );
 
   // list to renumber "dofs"
   // - allocate
