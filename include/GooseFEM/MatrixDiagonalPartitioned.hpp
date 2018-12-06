@@ -4,8 +4,8 @@
 
 ================================================================================================= */
 
-#ifndef GOOSEFEM_MATRIXDIAGONALPARTITIONED_CPP
-#define GOOSEFEM_MATRIXDIAGONALPARTITIONED_CPP
+#ifndef GOOSEFEM_MATRIXDIAGONALPARTITIONED_HPP
+#define GOOSEFEM_MATRIXDIAGONALPARTITIONED_HPP
 
 // -------------------------------------------------------------------------------------------------
 

@@ -38,7 +38,7 @@ public:
 
   QuadraturePlanar() = default;
 
-  QuadraturePlanar(const xt::xtensor<double,3> &x, double thick=1.) : QuadraturePlanar(x, Gauss::xi(), Gauss::w(), thick){};
+  QuadraturePlanar(const xt::xtensor<double,3> &x, double thick=1.);
 
   QuadraturePlanar(const xt::xtensor<double,3> &x, const xt::xtensor<double,2> &xi, const xt::xtensor<double,1> &w, double thick=1.);
 
@@ -48,10 +48,10 @@ public:
 
   // return dimensions
 
-  size_t nelem() const { return m_nelem; }; // number of elements
-  size_t nne()   const { return m_nne;   }; // number of nodes per element
-  size_t ndim()  const { return m_ndim;  }; // number of dimension
-  size_t nip()   const { return m_nip;   }; // number of integration points
+  size_t nelem() const; // number of elements
+  size_t nne()   const; // number of nodes per element
+  size_t ndim()  const; // number of dimension
+  size_t nip()   const; // number of integration points
 
   // return integration volume
 

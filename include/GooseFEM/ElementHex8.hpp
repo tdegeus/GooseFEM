@@ -4,8 +4,8 @@
 
 ================================================================================================= */
 
-#ifndef GOOSEFEM_ELEMENTHEX8_CPP
-#define GOOSEFEM_ELEMENTHEX8_CPP
+#ifndef GOOSEFEM_ELEMENTHEX8_HPP
+#define GOOSEFEM_ELEMENTHEX8_HPP
 
 // -------------------------------------------------------------------------------------------------
 

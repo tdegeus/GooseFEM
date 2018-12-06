@@ -4,8 +4,8 @@
 
 ================================================================================================= */
 
-#ifndef GOOSEFEM_VECTORPARTITIONED_CPP
-#define GOOSEFEM_VECTORPARTITIONED_CPP
+#ifndef GOOSEFEM_VECTORPARTITIONED_HPP
+#define GOOSEFEM_VECTORPARTITIONED_HPP
 
 // -------------------------------------------------------------------------------------------------
 

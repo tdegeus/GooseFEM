@@ -4,12 +4,12 @@
 
 ================================================================================================= */
 
-#ifndef GOOSEFEM_ELEMENTQUAD4_HPP
-#define GOOSEFEM_ELEMENTQUAD4_HPP
+#ifndef GOOSEFEM_ELEMENTQUADAXISYMMETRIC_HPP
+#define GOOSEFEM_ELEMENTQUADAXISYMMETRIC_HPP
 
 // -------------------------------------------------------------------------------------------------
 
-#include "ElementQuad4.h"
+#include "GooseFEM.h"
 
 // =================================================================================================
 
@@ -19,168 +19,14 @@ namespace Quad4 {
 
 // =================================================================================================
 
-inline double inv(const xt::xtensor_fixed<double, xt::xshape<2,2>> &A,
-  xt::xtensor_fixed<double, xt::xshape<2,2>> &Ainv)
-{
-  // compute determinant
-  double det = A(0,0) * A(1,1) - A(0,1) * A(1,0);
-
-  // compute inverse
-  Ainv(0,0) =       A(1,1) / det;
-  Ainv(0,1) = -1. * A(0,1) / det;
-  Ainv(1,0) = -1. * A(1,0) / det;
-  Ainv(1,1) =       A(0,0) / det;
-
-  return det;
-}
-
-// =================================================================================================
-
-namespace Gauss {
+inline QuadratureAxisymmetric::QuadratureAxisymmetric(const xt::xtensor<double,3> &x) :
+  QuadratureAxisymmetric(x, Gauss::xi(), Gauss::w()) {}
 
 // -------------------------------------------------------------------------------------------------
 
-inline size_t nip()
-{
-  return 4;
-}
-
-// -------------------------------------------------------------------------------------------------
-
-inline xt::xtensor<double,2> xi()
-{
-  size_t nip  = 4;
-  size_t ndim = 2;
-
-  xt::xtensor<double,2> xi = xt::empty<double>({nip,ndim});
-
-  xi(0,0) = -1./std::sqrt(3.);    xi(0,1) = -1./std::sqrt(3.);
-  xi(1,0) = +1./std::sqrt(3.);    xi(1,1) = -1./std::sqrt(3.);
-  xi(2,0) = +1./std::sqrt(3.);    xi(2,1) = +1./std::sqrt(3.);
-  xi(3,0) = -1./std::sqrt(3.);    xi(3,1) = +1./std::sqrt(3.);
-
-  return xi;
-}
-
-// -------------------------------------------------------------------------------------------------
-
-inline xt::xtensor<double,1> w()
-{
-  size_t nip = 4;
-
-  xt::xtensor<double,1> w = xt::empty<double>({nip});
-
-  w(0) = 1.;
-  w(1) = 1.;
-  w(2) = 1.;
-  w(3) = 1.;
-
-  return w;
-}
-
-// -------------------------------------------------------------------------------------------------
-
-}
-
-// =================================================================================================
-
-namespace Nodal {
-
-// -------------------------------------------------------------------------------------------------
-
-inline size_t nip()
-{
-  return 4;
-}
-
-// -------------------------------------------------------------------------------------------------
-
-inline xt::xtensor<double,2> xi()
-{
-  size_t nip  = 4;
-  size_t ndim = 2;
-
-  xt::xtensor<double,2> xi = xt::empty<double>({nip,ndim});
-
-  xi(0,0) = -1.;    xi(0,1) = -1.;
-  xi(1,0) = +1.;    xi(1,1) = -1.;
-  xi(2,0) = +1.;    xi(2,1) = +1.;
-  xi(3,0) = -1.;    xi(3,1) = +1.;
-
-  return xi;
-}
-
-// -------------------------------------------------------------------------------------------------
-
-inline xt::xtensor<double,1> w()
-{
-  size_t nip = 4;
-
-  xt::xtensor<double,1> w = xt::empty<double>({nip});
-
-  w(0) = 1.;
-  w(1) = 1.;
-  w(2) = 1.;
-  w(3) = 1.;
-
-  return w;
-}
-
-// -------------------------------------------------------------------------------------------------
-
-}
-
-// =================================================================================================
-
-namespace MidPoint {
-
-// -------------------------------------------------------------------------------------------------
-
-inline size_t nip()
-{
-  return 1;
-}
-
-// -------------------------------------------------------------------------------------------------
-
-inline xt::xtensor<double,2> xi()
-{
-  size_t nip  = 1;
-  size_t ndim = 2;
-
-  xt::xtensor<double,2> xi = xt::empty<double>({nip,ndim});
-
-  xi(0,0) = 0.;    xi(0,1) = 0.;
-
-  return xi;
-}
-
-// -------------------------------------------------------------------------------------------------
-
-inline xt::xtensor<double,1> w()
-{
-  size_t nip = 1;
-
-  xt::xtensor<double,1> w = xt::empty<double>({nip});
-
-  w(0) = 1.;
-
-  return w;
-}
-
-// -------------------------------------------------------------------------------------------------
-
-}
-
-// =================================================================================================
-
-inline Quadrature::Quadrature(const xt::xtensor<double,3> &x) :
-  Quadrature(x, Gauss::xi(), Gauss::w()) {};
-
-// -------------------------------------------------------------------------------------------------
-
-inline Quadrature::Quadrature(const xt::xtensor<double,3> &x, const xt::xtensor<double,2> &xi,
-  const xt::xtensor<double,1> &w) : m_x(x), m_w(w), m_xi(xi)
+inline QuadratureAxisymmetric::QuadratureAxisymmetric(const xt::xtensor<double,3> &x,
+  const xt::xtensor<double,2> &xi, const xt::xtensor<double,1> &w) :
+  m_x(x), m_w(w), m_xi(xi)
 {
   // check input
   assert( m_x.shape()[1] == m_nne  );
@@ -196,10 +42,10 @@ inline Quadrature::Quadrature(const xt::xtensor<double,3> &x, const xt::xtensor<
   assert( m_w .size()     == m_nip  );
 
   // allocate arrays
-  m_N    = xt::empty<double>({         m_nip, m_nne        });
-  m_dNxi = xt::empty<double>({         m_nip, m_nne, m_ndim});
-  m_dNx  = xt::empty<double>({m_nelem, m_nip, m_nne, m_ndim});
-  m_vol  = xt::empty<double>({m_nelem, m_nip               });
+  m_N    = xt::empty<double>({         m_nip, m_nne                        });
+  m_dNxi = xt::empty<double>({         m_nip, m_nne, m_ndim                });
+  m_B    = xt::empty<double>({m_nelem, m_nip, m_nne, m_tdim, m_tdim, m_tdim});
+  m_vol  = xt::empty<double>({m_nelem, m_nip                               });
 
   // shape functions
   for ( size_t q = 0 ; q < m_nip ; ++q )
@@ -231,17 +77,17 @@ inline Quadrature::Quadrature(const xt::xtensor<double,3> &x, const xt::xtensor<
 
 // -------------------------------------------------------------------------------------------------
 
-inline size_t Quadrature::nelem() const { return m_nelem; };
+inline size_t QuadratureAxisymmetric::nelem() const { return m_nelem; };
 
-inline size_t Quadrature::nne() const { return m_nne; };
+inline size_t QuadratureAxisymmetric::nne() const { return m_nne; };
 
-inline size_t Quadrature::ndim() const { return m_ndim; };
+inline size_t QuadratureAxisymmetric::ndim() const { return m_ndim; };
 
-inline size_t Quadrature::nip() const { return m_nip; };
+inline size_t QuadratureAxisymmetric::nip() const { return m_nip; };
 
 // -------------------------------------------------------------------------------------------------
 
-inline void Quadrature::dV(xt::xtensor<double,2> &qscalar) const
+inline void QuadratureAxisymmetric::dV(xt::xtensor<double,2> &qscalar) const
 {
   assert( qscalar.shape()[0] == m_nelem );
   assert( qscalar.shape()[1] == m_nip   );
@@ -254,24 +100,24 @@ inline void Quadrature::dV(xt::xtensor<double,2> &qscalar) const
 
 // -------------------------------------------------------------------------------------------------
 
-inline void Quadrature::dV(xt::xtensor<double,4> &qtensor) const
+inline void QuadratureAxisymmetric::dV(xt::xtensor<double,4> &qtensor) const
 {
   assert( qtensor.shape()[0] == m_nelem );
   assert( qtensor.shape()[1] == m_nne   );
-  assert( qtensor.shape()[2] == m_ndim  );
-  assert( qtensor.shape()[3] == m_ndim  );
+  assert( qtensor.shape()[2] == m_tdim  );
+  assert( qtensor.shape()[3] == m_tdim  );
 
   #pragma omp parallel for
   for ( size_t e = 0 ; e < m_nelem ; ++e )
     for ( size_t q = 0 ; q < m_nip ; ++q )
-      for ( size_t i = 0 ; i < m_ndim ; ++i )
-        for ( size_t j = 0 ; j < m_ndim ; ++j )
+      for ( size_t i = 0 ; i < m_tdim ; ++i )
+        for ( size_t j = 0 ; j < m_tdim ; ++j )
           qtensor(e,q,i,j) = m_vol(e,q);
 }
 
 // -------------------------------------------------------------------------------------------------
 
-inline void Quadrature::update_x(const xt::xtensor<double,3> &x)
+inline void QuadratureAxisymmetric::update_x(const xt::xtensor<double,3> &x)
 {
   assert( x.shape()[0] == m_nelem    );
   assert( x.shape()[1] == m_nne      );
@@ -287,8 +133,11 @@ inline void Quadrature::update_x(const xt::xtensor<double,3> &x)
 
 // -------------------------------------------------------------------------------------------------
 
-inline void Quadrature::compute_dN()
+inline void QuadratureAxisymmetric::compute_dN()
 {
+  // zero-initialize full B-matrix (most component remain zero, and are not written)
+  m_B.fill(0.0);
+
   #pragma omp parallel
   {
     // allocate local variables
@@ -305,8 +154,9 @@ inline void Quadrature::compute_dN()
       for ( size_t q = 0 ; q < m_nip ; ++q )
       {
         // - alias
-        auto dNxi = xt::adapt(&m_dNxi(  q,0,0), xt::xshape<m_nne,m_ndim>());
-        auto dNx  = xt::adapt(&m_dNx (e,q,0,0), xt::xshape<m_nne,m_ndim>());
+        auto dNxi = xt::adapt(&m_dNxi(  q,0,0    ), xt::xshape<m_nne,m_ndim>());
+        auto B    = xt::adapt(&m_B   (e,q,0,0,0,0), xt::xshape<m_nne,m_tdim,m_tdim,m_tdim>());
+        auto N    = xt::adapt(&m_N   (  q,0      ), xt::xshape<m_nne>());
 
         // - Jacobian (loops unrolled for efficiency)
         //   J(i,j) += dNxi(m,i) * x(m,j);
@@ -318,16 +168,22 @@ inline void Quadrature::compute_dN()
         // - determinant and inverse of the Jacobian
         double Jdet = inv(J, Jinv);
 
-        // - shape function gradients wrt global coordinates (loops partly unrolled for efficiency)
-        //   dNx(m,i) += Jinv(i,j) * dNxi(m,j);
-        for ( size_t m = 0 ; m < m_nne ; ++m )
+        // - get radius for computation of volume
+        double rq = N(0)*x(0,1) + N(1)*x(1,1) + N(2)*x(2,1) + N(3)*x(3,1);
+
+        // - compute the B matrix (loops partly unrolled for efficiency)
+        //   N.B. "dNx(m,i) += Jinv(i,j) * dNxi(m,j);"
+        for (size_t m = 0; m < m_nne; ++m)
         {
-          dNx(m,0) = Jinv(0,0) * dNxi(m,0) + Jinv(0,1) * dNxi(m,1);
-          dNx(m,1) = Jinv(1,0) * dNxi(m,0) + Jinv(1,1) * dNxi(m,1);
+          B(m,0,0,0) = Jinv(0,0) * dNxi(m,0) + Jinv(0,1) * dNxi(m,1); // B(m, r, r, r) = dNdx(m,1)
+          B(m,0,2,2) = Jinv(1,0) * dNxi(m,0) + Jinv(1,1) * dNxi(m,1); // B(m, r, z, z) = dNdx(m,1)
+          B(m,1,1,0) = 1./rq * N(m);                                  // B(m, t, t, r)
+          B(m,2,0,0) = Jinv(0,0) * dNxi(m,0) + Jinv(0,1) * dNxi(m,1); // B(m, z, r, r) = dNdx(m,0)
+          B(m,2,2,2) = Jinv(1,0) * dNxi(m,0) + Jinv(1,1) * dNxi(m,1); // B(m, z, z, z) = dNdx(m,0)
         }
 
         // - integration point volume
-        m_vol(e,q) = m_w(q) * Jdet;
+        m_vol(e, q) = m_w(q) * Jdet * 2. * M_PI * rq;
       }
     }
   }
@@ -335,7 +191,7 @@ inline void Quadrature::compute_dN()
 
 // -------------------------------------------------------------------------------------------------
 
-inline void Quadrature::gradN_vector(
+inline void QuadratureAxisymmetric::gradN_vector(
   const xt::xtensor<double,3> &elemvec, xt::xtensor<double,4> &qtensor) const
 {
   assert( elemvec.shape()[0] == m_nelem );
@@ -343,8 +199,11 @@ inline void Quadrature::gradN_vector(
   assert( elemvec.shape()[2] == m_ndim  );
   assert( qtensor.shape()[0] == m_nelem );
   assert( qtensor.shape()[1] == m_nne   );
-  assert( qtensor.shape()[2] == m_ndim  );
-  assert( qtensor.shape()[3] == m_ndim  );
+  assert( qtensor.shape()[2] == m_tdim  );
+  assert( qtensor.shape()[3] == m_tdim  );
+
+  // zero-initialize (zero components not written below)
+  qtensor.fill(0.0);
 
   // loop over all elements (in parallel)
   #pragma omp parallel for
@@ -357,22 +216,24 @@ inline void Quadrature::gradN_vector(
     for ( size_t q = 0 ; q < m_nip ; ++q )
     {
       // - alias
-      auto dNx   = xt::adapt(&m_dNx  (e,q,0,0), xt::xshape<m_nne ,m_ndim>());
-      auto gradu = xt::adapt(&qtensor(e,q,0,0), xt::xshape<m_ndim,m_ndim>());
+      auto B     = xt::adapt(&m_B    (e,q,0,0,0,0), xt::xshape<m_nne,m_tdim,m_tdim,m_tdim>());
+      auto gradu = xt::adapt(&qtensor(e,q,0,0    ), xt::xshape<m_tdim,m_tdim>());
 
       // - evaluate dyadic product (loops unrolled for efficiency)
-      //   gradu(i,j) += dNx(m,i) * u(m,j)
-      gradu(0,0) = dNx(0,0)*u(0,0) + dNx(1,0)*u(1,0) + dNx(2,0)*u(2,0) + dNx(3,0)*u(3,0);
-      gradu(0,1) = dNx(0,0)*u(0,1) + dNx(1,0)*u(1,1) + dNx(2,0)*u(2,1) + dNx(3,0)*u(3,1);
-      gradu(1,0) = dNx(0,1)*u(0,0) + dNx(1,1)*u(1,0) + dNx(2,1)*u(2,0) + dNx(3,1)*u(3,0);
-      gradu(1,1) = dNx(0,1)*u(0,1) + dNx(1,1)*u(1,1) + dNx(2,1)*u(2,1) + dNx(3,1)*u(3,1);
+      //   gradu(i,j) += B(m,i,j,k) * u(m,perm(k))
+      //   (where perm(0) = 1, perm(2) = 0)
+      gradu(0,0) = B(0,0,0,0)*u(0,1) + B(1,0,0,0)*u(1,1) + B(2,0,0,0)*u(2,1) + B(3,0,0,0)*u(3,1);
+      gradu(1,1) = B(0,1,1,0)*u(0,1) + B(1,1,1,0)*u(1,1) + B(2,1,1,0)*u(2,1) + B(3,1,1,0)*u(3,1);
+      gradu(2,2) = B(0,2,2,2)*u(0,0) + B(1,2,2,2)*u(1,0) + B(2,2,2,2)*u(2,0) + B(3,2,2,2)*u(3,0);
+      gradu(0,2) = B(0,0,2,2)*u(0,0) + B(1,0,2,2)*u(1,0) + B(2,0,2,2)*u(2,0) + B(3,0,2,2)*u(3,0);
+      gradu(2,0) = B(0,2,0,0)*u(0,1) + B(1,2,0,0)*u(1,1) + B(2,2,0,0)*u(2,1) + B(3,2,0,0)*u(3,1);
     }
   }
 }
 
 // -------------------------------------------------------------------------------------------------
 
-inline void Quadrature::gradN_vector_T(
+inline void QuadratureAxisymmetric::gradN_vector_T(
   const xt::xtensor<double,3> &elemvec, xt::xtensor<double,4> &qtensor) const
 {
   assert( elemvec.shape()[0] == m_nelem );
@@ -380,8 +241,11 @@ inline void Quadrature::gradN_vector_T(
   assert( elemvec.shape()[2] == m_ndim  );
   assert( qtensor.shape()[0] == m_nelem );
   assert( qtensor.shape()[1] == m_nne   );
-  assert( qtensor.shape()[2] == m_ndim  );
-  assert( qtensor.shape()[3] == m_ndim  );
+  assert( qtensor.shape()[2] == m_tdim  );
+  assert( qtensor.shape()[3] == m_tdim  );
+
+  // zero-initialize (zero components not written below)
+  qtensor.fill(0.0);
 
   // loop over all elements (in parallel)
   #pragma omp parallel for
@@ -394,22 +258,25 @@ inline void Quadrature::gradN_vector_T(
     for ( size_t q = 0 ; q < m_nip ; ++q )
     {
       // - alias
-      auto dNx   = xt::adapt(&m_dNx  (e,q,0,0), xt::xshape<m_nne ,m_ndim>());
-      auto gradu = xt::adapt(&qtensor(e,q,0,0), xt::xshape<m_ndim,m_ndim>());
+      auto B     = xt::adapt(&m_B    (e,q,0,0,0,0), xt::xshape<m_nne,m_tdim,m_tdim,m_tdim>());
+      auto gradu = xt::adapt(&qtensor(e,q,0,0    ), xt::xshape<m_tdim,m_tdim>());
 
       // - evaluate transpose of dyadic product (loops unrolled for efficiency)
-      //   gradu(j,i) += dNx(m,i) * u(m,j)
-      gradu(0,0) = dNx(0,0)*u(0,0) + dNx(1,0)*u(1,0) + dNx(2,0)*u(2,0) + dNx(3,0)*u(3,0);
-      gradu(1,0) = dNx(0,0)*u(0,1) + dNx(1,0)*u(1,1) + dNx(2,0)*u(2,1) + dNx(3,0)*u(3,1);
-      gradu(0,1) = dNx(0,1)*u(0,0) + dNx(1,1)*u(1,0) + dNx(2,1)*u(2,0) + dNx(3,1)*u(3,0);
-      gradu(1,1) = dNx(0,1)*u(0,1) + dNx(1,1)*u(1,1) + dNx(2,1)*u(2,1) + dNx(3,1)*u(3,1);
+      //   gradu(j,i) += B(m,i,j,k) * u(m,perm(k))
+      //   (where perm(0) = 1, perm(2) = 0)
+      gradu(0,0) = B(0,0,0,0)*u(0,1) + B(1,0,0,0)*u(1,1) + B(2,0,0,0)*u(2,1) + B(3,0,0,0)*u(3,1);
+      gradu(1,1) = B(0,1,1,0)*u(0,1) + B(1,1,1,0)*u(1,1) + B(2,1,1,0)*u(2,1) + B(3,1,1,0)*u(3,1);
+      gradu(2,2) = B(0,2,2,2)*u(0,0) + B(1,2,2,2)*u(1,0) + B(2,2,2,2)*u(2,0) + B(3,2,2,2)*u(3,0);
+      gradu(2,0) = B(0,0,2,2)*u(0,0) + B(1,0,2,2)*u(1,0) + B(2,0,2,2)*u(2,0) + B(3,0,2,2)*u(3,0);
+      gradu(0,2) = B(0,2,0,0)*u(0,1) + B(1,2,0,0)*u(1,1) + B(2,2,0,0)*u(2,1) + B(3,2,0,0)*u(3,1);
     }
   }
 }
 
 // -------------------------------------------------------------------------------------------------
 
-inline void Quadrature::symGradN_vector(
+
+inline void QuadratureAxisymmetric::symGradN_vector(
   const xt::xtensor<double,3> &elemvec, xt::xtensor<double,4> &qtensor) const
 {
   assert( elemvec.shape()[0] == m_nelem );
@@ -417,8 +284,11 @@ inline void Quadrature::symGradN_vector(
   assert( elemvec.shape()[2] == m_ndim  );
   assert( qtensor.shape()[0] == m_nelem );
   assert( qtensor.shape()[1] == m_nne   );
-  assert( qtensor.shape()[2] == m_ndim  );
-  assert( qtensor.shape()[3] == m_ndim  );
+  assert( qtensor.shape()[2] == m_tdim  );
+  assert( qtensor.shape()[3] == m_tdim  );
+
+  // zero-initialize (zero components not written below)
+  qtensor.fill(0.0);
 
   // loop over all elements (in parallel)
   #pragma omp parallel for
@@ -431,24 +301,26 @@ inline void Quadrature::symGradN_vector(
     for ( size_t q = 0 ; q < m_nip ; ++q )
     {
       // - alias
-      auto dNx = xt::adapt(&m_dNx  (e,q,0,0), xt::xshape<m_nne ,m_ndim>());
-      auto eps = xt::adapt(&qtensor(e,q,0,0), xt::xshape<m_ndim,m_ndim>());
+      auto B   = xt::adapt(&m_B    (e,q,0,0,0,0), xt::xshape<m_nne,m_tdim,m_tdim,m_tdim>());
+      auto eps = xt::adapt(&qtensor(e,q,0,0    ), xt::xshape<m_tdim,m_tdim>());
 
       // - evaluate symmetrized dyadic product (loops unrolled for efficiency)
-      //   gradu(i,j) += dNx(m,i) * u(m,j)
+      //   gradu(j,i) += B(m,i,j,k) * u(m,perm(k))
       //   eps  (j,i)  = 0.5 * ( gradu(i,j) + gradu(j,i) )
-      eps(0,0) =   dNx(0,0)*u(0,0) + dNx(1,0)*u(1,0) + dNx(2,0)*u(2,0) + dNx(3,0)*u(3,0);
-      eps(1,1) =   dNx(0,1)*u(0,1) + dNx(1,1)*u(1,1) + dNx(2,1)*u(2,1) + dNx(3,1)*u(3,1);
-      eps(0,1) = ( dNx(0,0)*u(0,1) + dNx(1,0)*u(1,1) + dNx(2,0)*u(2,1) + dNx(3,0)*u(3,1) +
-                   dNx(0,1)*u(0,0) + dNx(1,1)*u(1,0) + dNx(2,1)*u(2,0) + dNx(3,1)*u(3,0) ) * 0.5;
-      eps(1,0) =   eps(0,1);
+      //   (where perm(0) = 1, perm(2) = 0)
+      eps(0,0) =   B(0,0,0,0)*u(0,1) + B(1,0,0,0)*u(1,1) + B(2,0,0,0)*u(2,1) + B(3,0,0,0)*u(3,1);
+      eps(1,1) =   B(0,1,1,0)*u(0,1) + B(1,1,1,0)*u(1,1) + B(2,1,1,0)*u(2,1) + B(3,1,1,0)*u(3,1);
+      eps(2,2) =   B(0,2,2,2)*u(0,0) + B(1,2,2,2)*u(1,0) + B(2,2,2,2)*u(2,0) + B(3,2,2,2)*u(3,0);
+      eps(2,0) = ( B(0,0,2,2)*u(0,0) + B(1,0,2,2)*u(1,0) + B(2,0,2,2)*u(2,0) + B(3,0,2,2)*u(3,0) +
+                   B(0,2,0,0)*u(0,1) + B(1,2,0,0)*u(1,1) + B(2,2,0,0)*u(2,1) + B(3,2,0,0)*u(3,1) ) * 0.5;
+      eps(0,2) =   eps(2,0);
     }
   }
 }
 
 // -------------------------------------------------------------------------------------------------
 
-inline void Quadrature::int_N_scalar_NT_dV(
+inline void QuadratureAxisymmetric::int_N_scalar_NT_dV(
   const xt::xtensor<double,2> &qscalar, xt::xtensor<double,3> &elemmat) const
 {
   assert( qscalar.shape()[0] == m_nelem      );
@@ -489,13 +361,13 @@ inline void Quadrature::int_N_scalar_NT_dV(
 
 // -------------------------------------------------------------------------------------------------
 
-inline void Quadrature::int_gradN_dot_tensor2_dV(const xt::xtensor<double,4> &qtensor,
-  xt::xtensor<double,3> &elemvec) const
+inline void QuadratureAxisymmetric::int_gradN_dot_tensor2_dV(const xt::xtensor<double, 4> &qtensor,
+  xt::xtensor<double, 3> &elemvec) const
 {
   assert( qtensor.shape()[0] == m_nelem );
   assert( qtensor.shape()[1] == m_nip   );
-  assert( qtensor.shape()[2] == m_ndim  );
-  assert( qtensor.shape()[3] == m_ndim  );
+  assert( qtensor.shape()[2] == m_tdim  );
+  assert( qtensor.shape()[3] == m_tdim  );
   assert( elemvec.shape()[0] == m_nelem );
   assert( elemvec.shape()[1] == m_nne   );
   assert( elemvec.shape()[2] == m_ndim  );
@@ -514,15 +386,17 @@ inline void Quadrature::int_gradN_dot_tensor2_dV(const xt::xtensor<double,4> &qt
     for ( size_t q = 0 ; q < m_nip ; ++q )
     {
       // - alias
-      auto  dNx = xt::adapt(&m_dNx  (e,q,0,0), xt::xshape<m_nne ,m_ndim>());
-      auto  sig = xt::adapt(&qtensor(e,q,0,0), xt::xshape<m_ndim,m_ndim>());
+      auto  B   = xt::adapt(&m_B(e,q,0,0,0,0), xt::xshape<m_nne,m_tdim,m_tdim,m_tdim>());
+      auto  sig = xt::adapt(&qtensor(e,q,0,0), xt::xshape<m_tdim,m_tdim>());
       auto& vol = m_vol(e,q);
 
       // - evaluate dot product, and assemble
+      //   f(m,i) += B(m,i,j,perm(k)) * sig(i,j) * dV
+      //   (where perm(0) = 1, perm(2) = 0)
       for ( size_t m = 0 ; m < m_nne ; ++m )
       {
-        f(m,0) += ( dNx(m,0) * sig(0,0) + dNx(m,1) * sig(1,0) ) * vol;
-        f(m,1) += ( dNx(m,0) * sig(0,1) + dNx(m,1) * sig(1,1) ) * vol;
+        f(m,0) += ( B(m,2,2,2)*sig(2,2) + B(m,0,2,2)*sig(0,2)                       ) * vol;
+        f(m,1) += ( B(m,0,0,0)*sig(0,0) + B(m,1,1,0)*sig(1,1) + B(m,2,0,0)*sig(2,0) ) * vol;
       }
     }
   }
@@ -530,15 +404,15 @@ inline void Quadrature::int_gradN_dot_tensor2_dV(const xt::xtensor<double,4> &qt
 
 // -------------------------------------------------------------------------------------------------
 
-inline void Quadrature::int_gradN_dot_tensor4_dot_gradNT_dV(const xt::xtensor<double,6> &qtensor,
+inline void QuadratureAxisymmetric::int_gradN_dot_tensor4_dot_gradNT_dV(const xt::xtensor<double,6> &qtensor,
   xt::xtensor<double,3> &elemmat) const
 {
   assert( qtensor.shape()[0] == m_nelem );
   assert( qtensor.shape()[1] == m_nip   );
-  assert( qtensor.shape()[2] == m_ndim  );
-  assert( qtensor.shape()[3] == m_ndim  );
-  assert( qtensor.shape()[4] == m_ndim  );
-  assert( qtensor.shape()[5] == m_ndim  );
+  assert( qtensor.shape()[2] == m_tdim  );
+  assert( qtensor.shape()[3] == m_tdim  );
+  assert( qtensor.shape()[4] == m_tdim  );
+  assert( qtensor.shape()[5] == m_tdim  );
 
   assert( elemmat.shape()[0] == m_nelem      );
   assert( elemmat.shape()[1] == m_nne*m_ndim );
@@ -558,25 +432,55 @@ inline void Quadrature::int_gradN_dot_tensor4_dot_gradNT_dV(const xt::xtensor<do
     for ( size_t q = 0 ; q < m_nip ; ++q )
     {
       // - alias
-      auto  dNx = xt::adapt(&m_dNx(e,q,0,0), xt::xshape<m_nne,m_ndim>());
-      auto  C   = xt::adapt(&qtensor(e,q,0,0,0,0), xt::xshape<m_ndim,m_ndim,m_ndim,m_ndim>());
+      auto  B   = xt::adapt(&m_B(e,q,0,0,0,0), xt::xshape<m_nne,m_tdim,m_tdim,m_tdim>());
+      auto  C   = xt::adapt(&qtensor(e,q,0,0,0,0), xt::xshape<m_tdim,m_tdim,m_tdim,m_tdim>());
       auto& vol = m_vol(e,q);
 
-      // - evaluate dot product, and assemble
+      // - compute product:
+      //   K(m*m_ndim+perm(c), n*m_ndim+perm(f)) = B(m,a,b,c) * C(a,b,d,e) * B(n,e,d,f) * vol;
+      //   (where perm(0) = 1, perm(2) = 0)
       for ( size_t m = 0 ; m < m_nne ; ++m )
+      {
         for ( size_t n = 0 ; n < m_nne ; ++n )
-          for ( size_t i = 0 ; i < m_ndim ; ++i )
-            for ( size_t j = 0 ; j < m_ndim ; ++j )
-              for ( size_t k = 0 ; k < m_ndim ; ++k )
-                for ( size_t l = 0 ; l < m_ndim ; ++l )
-                  K(m*m_ndim+j, n*m_ndim+k) += dNx(m,i) * C(i,j,k,l) * dNx(n,l) * vol;
-     }
+        {
+          K(m*m_ndim+1, n*m_ndim+1) += B(m,0,0,0) * C(0,0,0,0) * B(n,0,0,0) * vol;
+          K(m*m_ndim+1, n*m_ndim+1) += B(m,0,0,0) * C(0,0,1,1) * B(n,1,1,0) * vol;
+          K(m*m_ndim+1, n*m_ndim+0) += B(m,0,0,0) * C(0,0,2,2) * B(n,2,2,2) * vol;
+          K(m*m_ndim+1, n*m_ndim+0) += B(m,0,0,0) * C(0,0,2,0) * B(n,0,2,2) * vol;
+          K(m*m_ndim+1, n*m_ndim+1) += B(m,0,0,0) * C(0,0,0,2) * B(n,2,0,0) * vol;
+
+          K(m*m_ndim+1, n*m_ndim+1) += B(m,1,1,0) * C(1,1,0,0) * B(n,0,0,0) * vol;
+          K(m*m_ndim+1, n*m_ndim+1) += B(m,1,1,0) * C(1,1,1,1) * B(n,1,1,0) * vol;
+          K(m*m_ndim+1, n*m_ndim+0) += B(m,1,1,0) * C(1,1,2,2) * B(n,2,2,2) * vol;
+          K(m*m_ndim+1, n*m_ndim+0) += B(m,1,1,0) * C(1,1,2,0) * B(n,0,2,2) * vol;
+          K(m*m_ndim+1, n*m_ndim+1) += B(m,1,1,0) * C(1,1,0,2) * B(n,2,0,0) * vol;
+
+          K(m*m_ndim+0, n*m_ndim+1) += B(m,2,2,2) * C(2,2,0,0) * B(n,0,0,0) * vol;
+          K(m*m_ndim+0, n*m_ndim+1) += B(m,2,2,2) * C(2,2,1,1) * B(n,1,1,0) * vol;
+          K(m*m_ndim+0, n*m_ndim+0) += B(m,2,2,2) * C(2,2,2,2) * B(n,2,2,2) * vol;
+          K(m*m_ndim+0, n*m_ndim+0) += B(m,2,2,2) * C(2,2,2,0) * B(n,0,2,2) * vol;
+          K(m*m_ndim+0, n*m_ndim+1) += B(m,2,2,2) * C(2,2,0,2) * B(n,2,0,0) * vol;
+
+          K(m*m_ndim+0, n*m_ndim+1) += B(m,0,2,2) * C(0,2,0,0) * B(n,0,0,0) * vol;
+          K(m*m_ndim+0, n*m_ndim+1) += B(m,0,2,2) * C(0,2,1,1) * B(n,1,1,0) * vol;
+          K(m*m_ndim+0, n*m_ndim+0) += B(m,0,2,2) * C(0,2,2,2) * B(n,2,2,2) * vol;
+          K(m*m_ndim+0, n*m_ndim+0) += B(m,0,2,2) * C(0,2,2,0) * B(n,0,2,2) * vol;
+          K(m*m_ndim+0, n*m_ndim+1) += B(m,0,2,2) * C(0,2,0,2) * B(n,2,0,0) * vol;
+
+          K(m*m_ndim+1, n*m_ndim+1) += B(m,2,0,0) * C(2,0,0,0) * B(n,0,0,0) * vol;
+          K(m*m_ndim+1, n*m_ndim+1) += B(m,2,0,0) * C(2,0,1,1) * B(n,1,1,0) * vol;
+          K(m*m_ndim+1, n*m_ndim+0) += B(m,2,0,0) * C(2,0,2,2) * B(n,2,2,2) * vol;
+          K(m*m_ndim+1, n*m_ndim+0) += B(m,2,0,0) * C(2,0,2,0) * B(n,0,2,2) * vol;
+          K(m*m_ndim+1, n*m_ndim+1) += B(m,2,0,0) * C(2,0,0,2) * B(n,2,0,0) * vol;
+        }
+      }
+    }
   }
 }
 
 // -------------------------------------------------------------------------------------------------
 
-inline xt::xtensor<double,2> Quadrature::dV() const
+inline xt::xtensor<double,2> QuadratureAxisymmetric::dV() const
 {
   xt::xtensor<double,2> out = xt::empty<double>({m_nelem, m_nip});
 
@@ -587,9 +491,9 @@ inline xt::xtensor<double,2> Quadrature::dV() const
 
 // -------------------------------------------------------------------------------------------------
 
-inline xt::xtensor<double,4> Quadrature::dVtensor() const
+inline xt::xtensor<double,4> QuadratureAxisymmetric::dVtensor() const
 {
-  xt::xtensor<double,4> out = xt::empty<double>({m_nelem, m_nip, m_ndim, m_ndim});
+  xt::xtensor<double,4> out = xt::empty<double>({m_nelem, m_nip, m_tdim, m_tdim});
 
   this->dV(out);
 
@@ -598,9 +502,9 @@ inline xt::xtensor<double,4> Quadrature::dVtensor() const
 
 // -------------------------------------------------------------------------------------------------
 
-inline xt::xtensor<double,4> Quadrature::gradN_vector(const xt::xtensor<double,3> &elemvec) const
+inline xt::xtensor<double,4> QuadratureAxisymmetric::gradN_vector(const xt::xtensor<double,3> &elemvec) const
 {
-  xt::xtensor<double,4> qtensor = xt::empty<double>({m_nelem, m_nip, m_ndim, m_ndim});
+  xt::xtensor<double,4> qtensor = xt::empty<double>({m_nelem, m_nip, m_tdim, m_tdim});
 
   this->gradN_vector(elemvec, qtensor);
 
@@ -609,9 +513,9 @@ inline xt::xtensor<double,4> Quadrature::gradN_vector(const xt::xtensor<double,3
 
 // -------------------------------------------------------------------------------------------------
 
-inline xt::xtensor<double,4> Quadrature::gradN_vector_T(const xt::xtensor<double,3> &elemvec) const
+inline xt::xtensor<double,4> QuadratureAxisymmetric::gradN_vector_T(const xt::xtensor<double,3> &elemvec) const
 {
-  xt::xtensor<double,4> qtensor = xt::empty<double>({m_nelem, m_nip, m_ndim, m_ndim});
+  xt::xtensor<double,4> qtensor = xt::empty<double>({m_nelem, m_nip, m_tdim, m_tdim});
 
   this->gradN_vector_T(elemvec, qtensor);
 
@@ -620,9 +524,9 @@ inline xt::xtensor<double,4> Quadrature::gradN_vector_T(const xt::xtensor<double
 
 // -------------------------------------------------------------------------------------------------
 
-inline xt::xtensor<double,4> Quadrature::symGradN_vector(const xt::xtensor<double,3> &elemvec) const
+inline xt::xtensor<double,4> QuadratureAxisymmetric::symGradN_vector(const xt::xtensor<double,3> &elemvec) const
 {
-  xt::xtensor<double,4> qtensor = xt::empty<double>({m_nelem, m_nip, m_ndim, m_ndim});
+  xt::xtensor<double,4> qtensor = xt::empty<double>({m_nelem, m_nip, m_tdim, m_tdim});
 
   this->symGradN_vector(elemvec, qtensor);
 
@@ -631,7 +535,7 @@ inline xt::xtensor<double,4> Quadrature::symGradN_vector(const xt::xtensor<doubl
 
 // -------------------------------------------------------------------------------------------------
 
-inline xt::xtensor<double,3> Quadrature::int_N_scalar_NT_dV(
+inline xt::xtensor<double,3> QuadratureAxisymmetric::int_N_scalar_NT_dV(
   const xt::xtensor<double,2> &qscalar) const
 {
   xt::xtensor<double,3> elemmat = xt::empty<double>({m_nelem, m_nne*m_ndim, m_nne*m_ndim});
@@ -643,7 +547,7 @@ inline xt::xtensor<double,3> Quadrature::int_N_scalar_NT_dV(
 
 // -------------------------------------------------------------------------------------------------
 
-inline xt::xtensor<double,3> Quadrature::int_gradN_dot_tensor2_dV(
+inline xt::xtensor<double,3> QuadratureAxisymmetric::int_gradN_dot_tensor2_dV(
   const xt::xtensor<double,4> &qtensor) const
 {
   xt::xtensor<double,3> elemvec = xt::empty<double>({m_nelem, m_nne, m_ndim});
@@ -655,7 +559,7 @@ inline xt::xtensor<double,3> Quadrature::int_gradN_dot_tensor2_dV(
 
 // -------------------------------------------------------------------------------------------------
 
-inline xt::xtensor<double,3> Quadrature::int_gradN_dot_tensor4_dot_gradNT_dV(
+inline xt::xtensor<double,3> QuadratureAxisymmetric::int_gradN_dot_tensor4_dot_gradNT_dV(
   const xt::xtensor<double,6> &qtensor) const
  {
    xt::xtensor<double,3> elemmat = xt::empty<double>({m_nelem, m_ndim*m_nne, m_ndim*m_nne});

@@ -4,8 +4,8 @@
 
 ================================================================================================= */
 
-#ifndef GOOSEFEM_MESHQUAD4_CPP
-#define GOOSEFEM_MESHQUAD4_CPP
+#ifndef GOOSEFEM_MESHQUAD4_HPP
+#define GOOSEFEM_MESHQUAD4_HPP
 
 // -------------------------------------------------------------------------------------------------
 

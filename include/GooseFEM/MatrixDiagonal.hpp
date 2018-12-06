@@ -4,8 +4,8 @@
 
 ================================================================================================= */
 
-#ifndef GOOSEFEM_MATRIXDIAGONAL_CPP
-#define GOOSEFEM_MATRIXDIAGONAL_CPP
+#ifndef GOOSEFEM_MATRIXDIAGONAL_HPP
+#define GOOSEFEM_MATRIXDIAGONAL_HPP
 
 // -------------------------------------------------------------------------------------------------
 

@@ -4,8 +4,8 @@
 
 ================================================================================================= */
 
-#ifndef GOOSEFEM_ELEMENTQUAD4PLANAR_CPP
-#define GOOSEFEM_ELEMENTQUAD4PLANAR_CPP
+#ifndef GOOSEFEM_ELEMENTQUAD4PLANAR_HPP
+#define GOOSEFEM_ELEMENTQUAD4PLANAR_HPP
 
 // -------------------------------------------------------------------------------------------------
 
@@ -18,6 +18,11 @@ namespace Element {
 namespace Quad4 {
 
 // =================================================================================================
+
+inline QuadraturePlanar::QuadraturePlanar(const xt::xtensor<double,3> &x, double thick) :
+  QuadraturePlanar(x, Gauss::xi(), Gauss::w(), thick) {}
+
+// -------------------------------------------------------------------------------------------------
 
 inline QuadraturePlanar::QuadraturePlanar(const xt::xtensor<double,3> &x,
   const xt::xtensor<double,2> &xi, const xt::xtensor<double,1> &w, double thick) :
@@ -72,6 +77,16 @@ inline QuadraturePlanar::QuadraturePlanar(const xt::xtensor<double,3> &x,
 
 // -------------------------------------------------------------------------------------------------
 
+inline size_t QuadraturePlanar::nelem() const { return m_nelem; };
+
+inline size_t QuadraturePlanar::nne() const { return m_nne; };
+
+inline size_t QuadraturePlanar::ndim() const { return m_ndim; };
+
+inline size_t QuadraturePlanar::nip() const { return m_nip; };
+
+// -------------------------------------------------------------------------------------------------
+
 inline void QuadraturePlanar::dV(xt::xtensor<double,2> &qscalar) const
 {
   assert( qscalar.shape()[0] == m_nelem );
@@ -120,12 +135,12 @@ inline void QuadraturePlanar::update_x(const xt::xtensor<double,3> &x)
 
 inline void QuadraturePlanar::compute_dN()
 {
-  // loop over all elements (in parallel)
   #pragma omp parallel
   {
     // allocate local variables
-    T2 J, Jinv;
+    xt::xtensor_fixed<double, xt::xshape<2,2>> J, Jinv;
 
+    // loop over all elements (in parallel)
     #pragma omp for
     for ( size_t e = 0 ; e < m_nelem ; ++e )
     {
@@ -177,7 +192,7 @@ inline void QuadraturePlanar::gradN_vector(
   assert( qtensor.shape()[2] == m_tdim  );
   assert( qtensor.shape()[3] == m_tdim  );
 
-  // zero-initialize output: matrix of tensors
+  // zero-initialize (zero z-components not written below)
   qtensor.fill(0.0);
 
   // loop over all elements (in parallel)
@@ -217,7 +232,7 @@ inline void QuadraturePlanar::gradN_vector_T(
   assert( qtensor.shape()[2] == m_tdim  );
   assert( qtensor.shape()[3] == m_tdim  );
 
-  // zero-initialize output: matrix of tensors
+  // zero-initialize (zero z-components not written below)
   qtensor.fill(0.0);
 
   // loop over all elements (in parallel)
@@ -257,7 +272,7 @@ inline void QuadraturePlanar::symGradN_vector(
   assert( qtensor.shape()[2] == m_tdim  );
   assert( qtensor.shape()[3] == m_tdim  );
 
-  // zero-initialize output: matrix of tensors
+  // zero-initialize (zero z-components not written below)
   qtensor.fill(0.0);
 
   // loop over all elements (in parallel)
@@ -395,8 +410,8 @@ inline void QuadraturePlanar::int_gradN_dot_tensor4_dot_gradNT_dV(const xt::xten
     auto K = xt::adapt(&elemmat(e,0,0), xt::xshape<m_nne*m_ndim,m_nne*m_ndim>());
 
     // loop over all integration points in element "e"
-    for ( size_t q = 0 ; q < m_nip ; ++q ){
-
+    for ( size_t q = 0 ; q < m_nip ; ++q )
+    {
       // - alias
       auto  dNx = xt::adapt(&m_dNx(e,q,0,0), xt::xshape<m_nne,m_ndim>());
       auto  C   = xt::adapt(&qtensor(e,q,0,0,0,0), xt::xshape<m_tdim,m_tdim,m_tdim,m_tdim>());

@@ -22,6 +22,7 @@
 #include "Element.h"
 #include "ElementQuad4.h"
 #include "ElementQuad4Planar.h"
+#include "ElementQuad4Axisymmetric.h"
 #include "ElementHex8.h"
 #include "Vector.h"
 #include "VectorPartitioned.h"
