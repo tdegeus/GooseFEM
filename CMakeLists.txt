@@ -45,6 +45,8 @@ set(headers
   include/GooseFEM/ElementQuad4.h
   include/GooseFEM/ElementQuad4Planar.hpp
   include/GooseFEM/ElementQuad4Planar.h
+  include/GooseFEM/ElementQuad4Axisymmetric.hpp
+  include/GooseFEM/ElementQuad4Axisymmetric.h
   include/GooseFEM/ElementHex8.hpp
   include/GooseFEM/ElementHex8.h
   include/GooseFEM/Vector.hpp
