@@ -239,6 +239,8 @@ inline size_t Quadrature::ndim() const { return m_ndim; };
 
 inline size_t Quadrature::nip() const { return m_nip; };
 
+inline xt::xtensor<double,4> Quadrature::gradN() const { return m_dNx; };
+
 // -------------------------------------------------------------------------------------------------
 
 inline void Quadrature::dV(xt::xtensor<double,2> &qscalar) const

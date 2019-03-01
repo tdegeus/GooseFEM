@@ -108,7 +108,7 @@ private:
 
   void factorize();
 
-  // convert arrays (see VectorPartitioned, which contains public functions)
+  // convert arrays (Eigen version of VectorPartitioned, which contains public functions)
 
   Eigen::VectorXd asDofs_u(const xt::xtensor<double,1> &dofval) const;
 

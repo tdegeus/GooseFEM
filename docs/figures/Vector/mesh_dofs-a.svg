@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0" y="0" width="423.479" height="218.059" viewBox="0, 0, 423.479, 218.059">
+  <g id="mesh">
+    <path d="M232.133,192.346 L420.765,192.346" fill-opacity="0" stroke="#000000" stroke-width="1"/>
+    <path d="M232.133,98.03 L420.765,98.03" fill-opacity="0" stroke="#000000" stroke-width="1"/>
+    <path d="M232.133,3.714 L420.765,3.714" fill-opacity="0" stroke="#000000" stroke-width="1"/>
+    <path d="M420.765,192.346 L420.765,3.714" fill-opacity="0" stroke="#000000" stroke-width="1"/>
+    <path d="M326.449,192.346 L326.449,3.714" fill-opacity="0" stroke="#000000" stroke-width="1"/>
+    <path d="M232.133,192.346 L232.133,3.714" fill-opacity="0" stroke="#000000" stroke-width="1"/>
+    <path d="M231.634,195.059 C229.859,195.059 228.42,193.621 228.42,191.846 C228.42,190.071 229.859,188.632 231.634,188.632 C233.408,188.632 234.847,190.071 234.847,191.846 C234.847,193.621 233.408,195.059 231.634,195.059 z" fill="#000000"/>
+    <path d="M231.634,100.744 C229.859,100.744 228.42,99.305 228.42,97.53 C228.42,95.755 229.859,94.316 231.634,94.316 C233.408,94.316 234.847,95.755 234.847,97.53 C234.847,99.305 233.408,100.744 231.634,100.744 z" fill="#000000"/>
+    <path d="M231.634,6.428 C229.859,6.428 228.42,4.989 228.42,3.214 C228.42,1.439 229.859,0 231.634,0 C233.408,0 234.847,1.439 234.847,3.214 C234.847,4.989 233.408,6.428 231.634,6.428 z" fill="#000000"/>
+    <path d="M325.949,195.059 C324.174,195.059 322.736,193.621 322.736,191.846 C322.736,190.071 324.174,188.632 325.949,188.632 C327.724,188.632 329.163,190.071 329.163,191.846 C329.163,193.621 327.724,195.059 325.949,195.059 z" fill="#000000"/>
+    <path d="M325.949,100.744 C324.174,100.744 322.736,99.305 322.736,97.53 C322.736,95.755 324.174,94.316 325.949,94.316 C327.724,94.316 329.163,95.755 329.163,97.53 C329.163,99.305 327.724,100.744 325.949,100.744 z" fill="#000000"/>
+    <path d="M325.949,6.428 C324.174,6.428 322.736,4.989 322.736,3.214 C322.736,1.439 324.174,0 325.949,0 C327.724,0 329.163,1.439 329.163,3.214 C329.163,4.989 327.724,6.428 325.949,6.428 z" fill="#000000"/>
+    <path d="M420.265,195.059 C418.49,195.059 417.051,193.621 417.051,191.846 C417.051,190.071 418.49,188.632 420.265,188.632 C422.04,188.632 423.479,190.071 423.479,191.846 C423.479,193.621 422.04,195.059 420.265,195.059 z" fill="#000000"/>
+    <path d="M420.265,100.744 C418.49,100.744 417.051,99.305 417.051,97.53 C417.051,95.755 418.49,94.316 420.265,94.316 C422.04,94.316 423.479,95.755 423.479,97.53 C423.479,99.305 422.04,100.744 420.265,100.744 z" fill="#000000"/>
+    <path d="M420.265,6.428 C418.49,6.428 417.051,4.989 417.051,3.214 C417.051,1.439 418.49,0 420.265,0 C422.04,0 423.479,1.439 423.479,3.214 C423.479,4.989 422.04,6.428 420.265,6.428 z" fill="#000000"/>
+  </g>
+  <g id="dof_numers">
+    <text transform="matrix(1, 0, 0, 1, 74.305, 29.861)">
+      <tspan x="-10.08" y="4.5" font-family="Avenir-Oblique" font-size="16" fill="#000000">(A)</tspan>
+    </text>
+    <text transform="matrix(1, 0, 0, 1, 217.3, 206.559)">
+      <tspan x="-11.12" y="4.5" font-family="Avenir-Oblique" font-size="16" fill="#6A0808">0</tspan>
+      <tspan x="-2.224" y="4.5" font-family="Avenir-Oblique" font-size="16" fill="#000000">,</tspan>
+      <tspan x="2.224" y="4.5" font-family="Avenir-Oblique" font-size="16" fill="#6A0808">1</tspan>
+    </text>
+    <text transform="matrix(1, 0, 0, 1, 311.513, 206.559)">
+      <tspan x="-11.12" y="4.5" font-family="Avenir-Oblique" font-size="16" fill="#000000">2,</tspan>
+      <tspan x="2.224" y="4.5" font-family="Avenir-Oblique" font-size="16" fill="#6A0808">3</tspan>
+    </text>
+    <text transform="matrix(1, 0, 0, 1, 406.305, 206.559)">
+      <tspan x="-11.12" y="4.5" font-family="Avenir-Oblique" font-size="16" fill="#6A0808">4</tspan>
+      <tspan x="-2.224" y="4.5" font-family="Avenir-Oblique" font-size="16" fill="#000000">,</tspan>
+      <tspan x="2.224" y="4.5" font-family="Avenir-Oblique" font-size="16" fill="#6A0808">5</tspan>
+    </text>
+    <text transform="matrix(1, 0, 0, 1, 217.3, 112.244)">
+      <tspan x="-11.12" y="4.5" font-family="Avenir-Oblique" font-size="16" fill="#6A0808">6</tspan>
+      <tspan x="-2.224" y="4.5" font-family="Avenir-Oblique" font-size="16" fill="#000000">,7</tspan>
+    </text>
+    <text transform="matrix(1, 0, 0, 1, 311.513, 112.244)">
+      <tspan x="-11.12" y="4.5" font-family="Avenir-Oblique" font-size="16" fill="#000000">8,9</tspan>
+    </text>
+    <text transform="matrix(1, 0, 0, 1, 397.035, 112.244)">
+      <tspan x="-20.016" y="4.5" font-family="Avenir-Oblique" font-size="16" fill="#6A0808">10</tspan>
+      <tspan x="-2.224" y="4.5" font-family="Avenir-Oblique" font-size="16" fill="#000000">,11</tspan>
+    </text>
+    <text transform="matrix(1, 0, 0, 1, 208.404, 17.928)">
+      <tspan x="-20.016" y="4.5" font-family="Avenir-Oblique" font-size="16" fill="#6A0808">12</tspan>
+      <tspan x="-2.224" y="4.5" font-family="Avenir-Oblique" font-size="16" fill="#000000">,13</tspan>
+    </text>
+    <text transform="matrix(1, 0, 0, 1, 302.617, 17.928)">
+      <tspan x="-20.016" y="4.5" font-family="Avenir-Oblique" font-size="16" fill="#000000">14,15</tspan>
+    </text>
+    <text transform="matrix(1, 0, 0, 1, 397.035, 17.928)">
+      <tspan x="-20.016" y="4.5" font-family="Avenir-Oblique" font-size="16" fill="#6A0808">16</tspan>
+      <tspan x="-2.224" y="4.5" font-family="Avenir-Oblique" font-size="16" fill="#000000">,17</tspan>
+    </text>
+  </g>
+  <g id="node_numbers"/>
+  <g id="element_numbers">
+    <g>
+      <path d="M20.344,49.265 L129.266,49.265 L129.266,158.186 L20.344,158.186 L20.344,49.265 z" fill="#E0E0E0"/>
+      <path d="M20.344,49.265 L129.266,49.265 L129.266,158.186 L20.344,158.186 L20.344,49.265 z" fill-opacity="0" stroke="#000000" stroke-width="1"/>
+    </g>
+    <g>
+      <path d="M129.266,49.265 L144.204,49.265" fill-opacity="0" stroke="#000000" stroke-width="1"/>
+      <path d="M144.204,52.265 L152.204,49.265 L144.204,46.265 M144.204,49.265 L152.204,49.265" fill-opacity="0" stroke="#000000" stroke-width="1" stroke-opacity="1"/>
+    </g>
+    <g>
+      <path d="M129.266,158.186 L144.204,158.186" fill-opacity="0" stroke="#000000" stroke-width="1"/>
+      <path d="M144.204,161.186 L152.204,158.186 L144.204,155.186 M144.204,158.186 L152.204,158.186" fill-opacity="0" stroke="#000000" stroke-width="1" stroke-opacity="1"/>
+    </g>
+    <g>
+      <path d="M129.266,103.726 L144.204,103.726" fill-opacity="0" stroke="#000000" stroke-width="1"/>
+      <path d="M144.204,106.726 L152.204,103.726 L144.204,100.726 M144.204,103.726 L152.204,103.726" fill-opacity="0" stroke="#000000" stroke-width="1" stroke-opacity="1"/>
+    </g>
+    <path d="M12.947,171.034 L20.388,158.186 L27.829,171.034 L12.947,171.034 z" fill-opacity="0" stroke="#000000" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M16.667,176.724 C15.096,176.724 13.822,175.451 13.822,173.879 C13.822,172.308 15.096,171.034 16.667,171.034 C18.239,171.034 19.513,172.308 19.513,173.879 C19.513,175.451 18.239,176.724 16.667,176.724 z" fill-opacity="0" stroke="#000000" stroke-width="1"/>
+    <path d="M24.108,176.724 C22.537,176.724 21.263,175.451 21.263,173.879 C21.263,172.308 22.537,171.034 24.108,171.034 C25.68,171.034 26.954,172.308 26.954,173.879 C26.954,175.451 25.68,176.724 24.108,176.724 z" fill-opacity="0" stroke="#000000" stroke-width="1"/>
+    <path d="M12.947,177.199 L27.829,177.199" fill-opacity="0" stroke="#000000" stroke-width="0.5"/>
+    <path d="M12.907,170.988 L12.907,170.988" fill-opacity="0" stroke="#000000" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M27.8,170.988 L27.8,170.988" fill-opacity="0" stroke="#000000" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M121.835,171.034 L129.276,158.186 L136.717,171.034 L121.835,171.034 z" fill-opacity="0" stroke="#000000" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M125.556,176.724 C123.984,176.724 122.71,175.451 122.71,173.879 C122.71,172.308 123.984,171.034 125.556,171.034 C127.127,171.034 128.401,172.308 128.401,173.879 C128.401,175.451 127.127,176.724 125.556,176.724 z" fill-opacity="0" stroke="#000000" stroke-width="1"/>
+    <path d="M132.997,176.724 C131.425,176.724 130.151,175.451 130.151,173.879 C130.151,172.308 131.425,171.034 132.997,171.034 C134.568,171.034 135.842,172.308 135.842,173.879 C135.842,175.451 134.568,176.724 132.997,176.724 z" fill-opacity="0" stroke="#000000" stroke-width="1"/>
+    <path d="M121.835,177.199 L136.717,177.199" fill-opacity="0" stroke="#000000" stroke-width="0.5"/>
+    <path d="M121.795,170.988 L121.795,170.988" fill-opacity="0" stroke="#000000" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M136.689,170.988 L136.689,170.988" fill-opacity="0" stroke="#000000" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M6.665,41.861 L19.513,49.302 L6.665,56.743 L6.665,41.861 z" fill-opacity="0" stroke="#000000" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M0.974,45.581 C0.974,44.01 2.248,42.736 3.82,42.736 C5.391,42.736 6.665,44.01 6.665,45.581 C6.665,47.152 5.391,48.426 3.82,48.426 C2.248,48.426 0.974,47.152 0.974,45.581 z" fill-opacity="0" stroke="#000000" stroke-width="1"/>
+    <path d="M0.974,53.022 C0.974,51.451 2.248,50.177 3.82,50.177 C5.391,50.177 6.665,51.451 6.665,53.022 C6.665,54.593 5.391,55.867 3.82,55.867 C2.248,55.867 0.974,54.593 0.974,53.022 z" fill-opacity="0" stroke="#000000" stroke-width="1"/>
+    <path d="M0.5,41.861 L0.5,56.743" fill-opacity="0" stroke="#000000" stroke-width="0.5"/>
+    <path d="M6.711,41.82 L6.711,41.82" fill-opacity="0" stroke="#000000" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M6.711,56.714 L6.711,56.714" fill-opacity="0" stroke="#000000" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M6.665,150.749 L19.513,158.19 L6.665,165.631 L6.665,150.749 z" fill-opacity="0" stroke="#000000" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M0.974,154.469 C0.974,152.898 2.248,151.624 3.82,151.624 C5.391,151.624 6.665,152.898 6.665,154.469 C6.665,156.041 5.391,157.315 3.82,157.315 C2.248,157.315 0.974,156.041 0.974,154.469 z" fill-opacity="0" stroke="#000000" stroke-width="1"/>
+    <path d="M0.974,161.91 C0.974,160.339 2.248,159.065 3.82,159.065 C5.391,159.065 6.665,160.339 6.665,161.91 C6.665,163.482 5.391,164.756 3.82,164.756 C2.248,164.756 0.974,163.482 0.974,161.91 z" fill-opacity="0" stroke="#000000" stroke-width="1"/>
+    <path d="M0.5,150.749 L0.5,165.631" fill-opacity="0" stroke="#000000" stroke-width="0.5"/>
+    <path d="M6.711,150.709 L6.711,150.709" fill-opacity="0" stroke="#000000" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M6.711,165.602 L6.711,165.602" fill-opacity="0" stroke="#000000" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+</svg>

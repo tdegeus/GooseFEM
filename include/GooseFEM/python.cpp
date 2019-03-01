@@ -28,6 +28,35 @@ m.doc() = "Some simple finite element meshes and operations";
 
 // =================================================================================================
 
+py::class_<GooseFEM::Vector>(m, "Vector")
+
+  .def(py::init<const xt::xtensor<size_t,2> &, const xt::xtensor<size_t,2> &>(), "Switch between dofval/nodevec/elemvec", py::arg("conn"), py::arg("dofs"))
+
+  .def("nelem", &M::Vector::nelem, "Return number of element")
+  .def("nne"  , &M::Vector::nne  , "Return number of nodes per element")
+  .def("nnode", &M::Vector::nnode, "Return number of nodes")
+  .def("ndim" , &M::Vector::ndim , "Return number of dimensions")
+  .def("ndof" , &M::Vector::ndof , "Return number of degrees-of-freedom")
+  .def("dofs" , &M::Vector::dofs , "Return degrees-of-freedom")
+
+  .def("asDofs"   , py::overload_cast<const xt::xtensor<double,2>&>(&M::Vector::asDofs   , py::const_), "Set 'dofval" , py::arg("nodevec"))
+  .def("asDofs"   , py::overload_cast<const xt::xtensor<double,3>&>(&M::Vector::asDofs   , py::const_), "Set 'dofval" , py::arg("elemvec"))
+
+  .def("asNode"   , py::overload_cast<const xt::xtensor<double,1>&>(&M::Vector::asNode   , py::const_), "Set 'nodevec", py::arg("dofval"))
+  .def("asNode"   , py::overload_cast<const xt::xtensor<double,3>&>(&M::Vector::asNode   , py::const_), "Set 'nodevec", py::arg("elemvec"))
+
+  .def("asElement", py::overload_cast<const xt::xtensor<double,1>&>(&M::Vector::asElement, py::const_), "Set 'elemvec", py::arg("dofval"))
+  .def("asElement", py::overload_cast<const xt::xtensor<double,2>&>(&M::Vector::asElement, py::const_), "Set 'elemvec", py::arg("nodevec"))
+
+  .def("assembleDofs", py::overload_cast<const xt::xtensor<double,2>&>(&M::Vector::assembleDofs, py::const_), "Assemble 'dofval'" , py::arg("nodevec"))
+  .def("assembleDofs", py::overload_cast<const xt::xtensor<double,3>&>(&M::Vector::assembleDofs, py::const_), "Assemble 'dofval'" , py::arg("elemvec"))
+
+  .def("assembleNode", py::overload_cast<const xt::xtensor<double,3>&>(&M::Vector::assembleNode, py::const_), "Assemble 'nodevec'", py::arg("elemvec"))
+
+  .def("__repr__", [](const GooseFEM::Vector &){ return "<GooseFEM.Vector>"; });
+
+// =================================================================================================
+
 py::class_<GooseFEM::VectorPartitioned>(m, "VectorPartitioned")
 
   .def(py::init<const xt::xtensor<size_t,2> &, const xt::xtensor<size_t,2> &, const xt::xtensor<size_t,1> &>(), "Switch between dofval/nodevec/elemvec", py::arg("conn"), py::arg("dofs"), py::arg("iip"))
@@ -69,7 +98,7 @@ py::class_<GooseFEM::VectorPartitioned>(m, "VectorPartitioned")
 
   .def("assembleNode"  , py::overload_cast<const xt::xtensor<double,3>&>(&M::VectorPartitioned::assembleNode  , py::const_), "Assemble 'nodevec'", py::arg("elemvec"))
 
-  .def("__repr__", [](const GooseFEM::VectorPartitioned &){ return "<GooseFEM.Vector>"; });
+  .def("__repr__", [](const GooseFEM::VectorPartitioned &){ return "<GooseFEM.VectorPartitioned>"; });
 
 // =================================================================================================
 

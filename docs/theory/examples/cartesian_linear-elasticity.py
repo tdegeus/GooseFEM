@@ -199,7 +199,7 @@ for e, nodes in enumerate(conn):
     #   fe[m*nd+j] += dNdx[m,i] * sig[i,j] * dV
     fe += ( np.einsum('mi,ij->mj', dNdxe, sig) * dV ).reshape(nne*ndim)
 
-  # assemble to global stiffness matrix
+  # assemble to global internal force column
   iie = dofs[nodes,:].ravel()
   fint[iie] += fe
 

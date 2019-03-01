@@ -81,6 +81,10 @@ public:
   size_t ndim()  const; // number of dimension
   size_t nip()   const; // number of integration points
 
+  // return shape function gradients
+
+  xt::xtensor<double,4> gradN() const;
+
   // return integration volume
 
   void dV(xt::xtensor<double,2> &qscalar) const;
