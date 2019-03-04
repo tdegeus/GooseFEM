@@ -21,7 +21,7 @@ __version__ = '.'.join([world,major,minor])
 ext_modules = [
   Extension(
     'GooseFEM',
-    ['include/GooseFEM/python.cpp'],
+    ['python/main.cpp'],
     include_dirs=[
       pybind11 .get_include(False),
       pybind11 .get_include(True ),

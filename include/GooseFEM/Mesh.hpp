@@ -18,106 +18,120 @@ namespace Mesh {
 
 // -------------------------------------------------------------------------------------------------
 
+inline Renumber::Renumber(const xt::xarray<size_t>& dofs)
+{
+  size_t n = xt::amax(dofs)[0]+1;
+  size_t i = 0;
+
+  xt::xtensor<size_t,1> unique = xt::unique(dofs);
+
+  m_renum = xt::empty<size_t>({n});
+
+  for (auto& j : unique)
+  {
+    m_renum(j) = i;
+    ++i;
+  }
+}
+
+// -------------------------------------------------------------------------------------------------
+
+// apply renumbering, e.g. for a matrix:
+//
+//   out(i,j) = renum(list(i,j))
+
+template <class T>
+T Renumber::apply(const T& list) const
+{
+  T out = T::from_shape(list.shape());
+
+  auto jt = out.begin();
+
+  for ( auto it = list.begin() ; it != list.end() ; ++it, ++jt )
+    *jt = m_renum(*it);
+
+  return out;
+}
+
+// -------------------------------------------------------------------------------------------------
+
+inline xt::xtensor<size_t,2> Renumber::get(const xt::xtensor<size_t,2>& dofs) const
+{
+  return this->apply(dofs);
+}
+
+// -------------------------------------------------------------------------------------------------
+
+inline xt::xtensor<size_t,1> Renumber::index() const
+{
+  return m_renum;
+}
+
+// -------------------------------------------------------------------------------------------------
+
+inline Reorder::Reorder(const std::initializer_list<xt::xtensor<size_t,1>> args)
+{
+  size_t n = 0;
+  size_t i = 0;
+
+  for (auto& arg : args)
+    n = std::max(n, xt::amax(arg)[0]+1);
+
+  #ifndef NDEBUG
+    for (auto& arg : args)
+      assert(xt::unique(arg) == xt::sort(arg));
+  #endif
+
+  m_renum = xt::empty<size_t>({n});
+
+  for (auto& arg : args)
+  {
+    for (auto& j : arg)
+    {
+      m_renum(j) = i;
+      ++i;
+    }
+  }
+}
+
+// -------------------------------------------------------------------------------------------------
+
+inline xt::xtensor<size_t,2> Reorder::get(const xt::xtensor<size_t,2>& dofs) const
+{
+  return this->apply(dofs);
+}
+
+// -------------------------------------------------------------------------------------------------
+
+inline xt::xtensor<size_t,1> Reorder::index() const
+{
+  return m_renum;
+}
+
+// -------------------------------------------------------------------------------------------------
+
+// apply renumbering, e.g. for a matrix:
+//
+//   out(i,j) = renum(list(i,j))
+
+template <class T>
+T Reorder::apply(const T& list) const
+{
+  T out = T::from_shape(list.shape());
+
+  auto jt = out.begin();
+
+  for ( auto it = list.begin() ; it != list.end() ; ++it, ++jt )
+    *jt = m_renum(*it);
+
+  return out;
+}
+
+// -------------------------------------------------------------------------------------------------
+
 inline xt::xtensor<size_t,2> dofs(size_t nnode, size_t ndim)
 {
   return xt::reshape_view(xt::arange<size_t>(nnode*ndim),{nnode,ndim});
-}
-
-// -------------------------------------------------------------------------------------------------
-
-inline xt::xtensor<size_t,1> renumber_index(const xt::xtensor<size_t,2> &dofs)
-{
-  // get unique list of DOFs
-  xt::xtensor<size_t,1> unique = xt::unique(dofs);
-
-  // allocate list to renumber "dofs"
-  xt::xtensor<size_t,1> renum = xt::empty<size_t>({xt::amax(dofs)[0]+1});
-
-  // define renumbering
-  for ( size_t i = 0 ; i < unique.size() ; ++i ) renum[unique[i]] = i;
-
-  return renum;
-}
-
-// -------------------------------------------------------------------------------------------------
-
-inline xt::xtensor<size_t,2> renumber(const xt::xtensor<size_t,2> &dofs)
-{
-  // list to renumber "dofs"
-  auto renum = renumber_index(dofs);
-
-  // allocate reordered DOFs
-  xt::xtensor<size_t,2> dofs_renumbered(dofs.shape());
-
-  // iterator for loop below
-  auto jt = dofs_renumbered.begin();
-
-  // loop to renumber: dofs_renumbered(i,j) = renum(dofs(i,j))
-  for ( auto it = dofs.begin() ; it != dofs.end() ; ++it, ++jt )
-    (*jt) = renum((*it));
-
-  return dofs_renumbered;
-}
-
-// -------------------------------------------------------------------------------------------------
-
-inline xt::xtensor<size_t,1> reorder_index(const xt::xtensor<size_t,2> &dofs,
-  const xt::xtensor<size_t,1> &iip, const std::string &location)
-{
-  // check "iip" to be a unique set
-  assert( xt::unique(iip).size() == iip.size() );
-
-  // get remaining DOFs
-  auto iiu = xt::setdiff1d(dofs, iip);
-
-  // get sizes
-  auto nnu = iiu.size();
-  auto nnp = iip.size();
-
-  // original set of DOFs
-  auto old = xt::unique(dofs);
-
-  // sanity check
-  assert( iiu.size() + iip.size() == xt::amax(dofs)[0]+1 );
-
-  // list to renumber "dofs"
-  // - allocate
-  xt::xtensor<size_t,1> renum = xt::empty<size_t>({xt::amax(dofs)[0]+1});
-  // - fill
-  if ( location == "end" ) {
-    for ( size_t i = 0 ; i < iiu.size() ; ++i ) renum(iiu(i)) = i    ;
-    for ( size_t i = 0 ; i < iip.size() ; ++i ) renum(iip(i)) = i+nnu;
-  }
-  else if ( location == "begin" or location == "beginning" ) {
-    for ( size_t i = 0 ; i < iip.size() ; ++i ) renum(iip(i)) = i    ;
-    for ( size_t i = 0 ; i < iiu.size() ; ++i ) renum(iiu(i)) = i+nnp;
-  }
-  else {
-    throw std::runtime_error("Unknown reorder location '" + location + "'");
-  }
-
-  return renum;
-}
-
-// -------------------------------------------------------------------------------------------------
-
-inline xt::xtensor<size_t,2> reorder(const xt::xtensor<size_t,2> &dofs,
-  const xt::xtensor<size_t,1> &iip, const std::string &location)
-{
-  // list to renumber "dofs"
-  auto renum = reorder_index(dofs, iip, location);
-
-  // allocate reordered DOFs
-  xt::xtensor<size_t,2> dofs_reordered(dofs.shape());
-
-  // iterator for loop below
-  auto jt = dofs_reordered.begin();
-
-  // loop to renumber: dofs_reordered(i,j) = renum(dofs(i,j))
-  for ( auto it = dofs.begin() ; it != dofs.end() ; ++it, ++jt )
-    *jt = renum(*it);
-
-  return dofs_reordered;
 }
 
 // -------------------------------------------------------------------------------------------------
@@ -160,6 +174,54 @@ inline std::vector<std::vector<size_t>> elem2node(const xt::xtensor<size_t,2> &c
       out[conn(e,m)].push_back(e);
 
   return out;
+}
+
+// -------------------------------------------------------------------------------------------------
+
+inline xt::xtensor<size_t,1> renumber_index(const xt::xtensor<size_t,2> &dofs)
+{
+  std::cout << "WARNING: 'GooseFEM::Mesh::renumber_index' is deprecated, use 'GooseFEM::Mesh::Renumber'" << std::endl;
+
+  return Renumber(dofs).index();
+}
+
+// -------------------------------------------------------------------------------------------------
+
+inline xt::xtensor<size_t,2> renumber(const xt::xtensor<size_t,2> &dofs)
+{
+  std::cout << "WARNING: 'GooseFEM::Mesh::renumber' is deprecated, use 'GooseFEM::Mesh::Renumber'" << std::endl;
+
+  return Renumber(dofs).get(dofs);
+}
+
+// -------------------------------------------------------------------------------------------------
+
+inline xt::xtensor<size_t,1> reorder_index(const xt::xtensor<size_t,2> &dofs,
+  const xt::xtensor<size_t,1> &iip, const std::string &location)
+{
+  std::cout << "WARNING: 'GooseFEM::Mesh::reorder_index' is deprecated, use 'GooseFEM::Mesh::Reorder'" << std::endl;
+
+  if ( location == "end" )
+    return Reorder({xt::setdiff1d(dofs,iip), iip}).index();
+  else if ( location == "begin" or location == "beginning" )
+    return Reorder({iip, xt::setdiff1d(dofs,iip)}).index();
+   else
+    throw std::runtime_error("Unknown reorder location '" + location + "'");
+}
+
+// -------------------------------------------------------------------------------------------------
+
+inline xt::xtensor<size_t,2> reorder(const xt::xtensor<size_t,2> &dofs,
+  const xt::xtensor<size_t,1> &iip, const std::string &location)
+{
+  std::cout << "WARNING: 'GooseFEM::Mesh::reorder' is deprecated, use 'GooseFEM::Mesh::Reorder'" << std::endl;
+
+  if ( location == "end" )
+    return Reorder({xt::setdiff1d(dofs,iip), iip}).get(dofs);
+  else if ( location == "begin" or location == "beginning" )
+    return Reorder({iip, xt::setdiff1d(dofs,iip)}).get(dofs);
+   else
+    throw std::runtime_error("Unknown reorder location '" + location + "'");
 }
 
 // -------------------------------------------------------------------------------------------------

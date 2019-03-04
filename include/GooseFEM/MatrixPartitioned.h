@@ -28,7 +28,10 @@ public:
   // constructors
 
   MatrixPartitioned() = default;
-  MatrixPartitioned(const xt::xtensor<size_t,2> &conn, const xt::xtensor<size_t,2> &dofs,
+
+  MatrixPartitioned(
+    const xt::xtensor<size_t,2> &conn,
+    const xt::xtensor<size_t,2> &dofs,
     const xt::xtensor<size_t,1> &iip);
 
   // dimensions
@@ -44,7 +47,7 @@ public:
   // DOF lists
 
   xt::xtensor<size_t,2> dofs() const; // DOFs
-  xt::xtensor<size_t,1> iiu()  const; // unknown    DOFs
+  xt::xtensor<size_t,1> iiu()  const; // unknown DOFs
   xt::xtensor<size_t,1> iip()  const; // prescribed DOFs
 
   // assemble from matrices stored per element [nelem, nne*ndim, nne*ndim]
@@ -61,12 +64,16 @@ public:
   void solve(xt::xtensor<double,1> &b,
     xt::xtensor<double,1> &x);
 
-  void solve_u(const xt::xtensor<double,1> &b_u, const xt::xtensor<double,1> &x_p,
+  void solve_u(
+    const xt::xtensor<double,1> &b_u,
+    const xt::xtensor<double,1> &x_p,
     xt::xtensor<double,1> &x_u);
 
   // auto allocation of the functions above
 
-  xt::xtensor<double,1> solve_u(const xt::xtensor<double,1> &b_u, const xt::xtensor<double,1> &x_p);
+  xt::xtensor<double,1> solve_u(
+    const xt::xtensor<double,1> &b_u,
+    const xt::xtensor<double,1> &x_p);
 
 private:
 
@@ -117,7 +124,6 @@ private:
   Eigen::VectorXd asDofs_p(const xt::xtensor<double,1> &dofval) const;
 
   Eigen::VectorXd asDofs_p(const xt::xtensor<double,2> &nodevec) const;
-
 
 };
 

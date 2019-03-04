@@ -17,9 +17,13 @@ namespace GooseFEM {
 
 // -------------------------------------------------------------------------------------------------
 
-inline VectorPartitioned::VectorPartitioned(const xt::xtensor<size_t,2> &conn,
-  const xt::xtensor<size_t,2> &dofs, const xt::xtensor<size_t,1> &iip) :
-  m_conn(conn), m_dofs(dofs), m_iip(iip)
+inline VectorPartitioned::VectorPartitioned(
+  const xt::xtensor<size_t,2> &conn,
+  const xt::xtensor<size_t,2> &dofs,
+  const xt::xtensor<size_t,1> &iip) :
+  m_conn(conn),
+  m_dofs(dofs),
+  m_iip(iip)
 {
   // mesh dimensions
   m_nelem = m_conn.shape()[0];
