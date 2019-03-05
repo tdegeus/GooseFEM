@@ -36,7 +36,7 @@ inline MatrixPartitioned::MatrixPartitioned(const xt::xtensor<size_t,2> &conn,
   m_nnu   = m_iiu.size();
 
   // DOFs per node, such that iiu = arange(nnu), iip = nnu + arange(nnp)
-  m_part  = Mesh::reorder(m_dofs, m_iip, "end");
+  m_part  = Mesh::Reorder({m_iiu, m_iip}).get(m_dofs);
 
   // allocate triplet list
   m_trip_uu.reserve(m_nelem*m_nne*m_ndim*m_nne*m_ndim);

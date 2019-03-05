@@ -36,7 +36,7 @@ inline MatrixDiagonalPartitioned::MatrixDiagonalPartitioned(const xt::xtensor<si
   m_nnu   = m_iiu.size();
 
   // DOFs per node, such that iiu = arange(nnu), iip = nnu + arange(nnp)
-  m_part  = Mesh::reorder(m_dofs, m_iip, "end");
+  m_part  = Mesh::Reorder({m_iiu, m_iip}).get(m_dofs);
 
   // allocate matrix and its inverse
   m_data_uu = xt::empty<double>({m_nnu});

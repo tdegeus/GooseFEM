@@ -129,6 +129,13 @@ T Reorder::apply(const T& list) const
 
 // -------------------------------------------------------------------------------------------------
 
+inline xt::xtensor<size_t,2> renumber(const xt::xtensor<size_t,2> &dofs)
+{
+  return Renumber(dofs).get(dofs);
+}
+
+// -------------------------------------------------------------------------------------------------
+
 inline xt::xtensor<size_t,2> dofs(size_t nnode, size_t ndim)
 {
   return xt::reshape_view(xt::arange<size_t>(nnode*ndim),{nnode,ndim});
@@ -174,54 +181,6 @@ inline std::vector<std::vector<size_t>> elem2node(const xt::xtensor<size_t,2> &c
       out[conn(e,m)].push_back(e);
 
   return out;
-}
-
-// -------------------------------------------------------------------------------------------------
-
-inline xt::xtensor<size_t,1> renumber_index(const xt::xtensor<size_t,2> &dofs)
-{
-  std::cout << "WARNING: 'GooseFEM::Mesh::renumber_index' is deprecated, use 'GooseFEM::Mesh::Renumber'" << std::endl;
-
-  return Renumber(dofs).index();
-}
-
-// -------------------------------------------------------------------------------------------------
-
-inline xt::xtensor<size_t,2> renumber(const xt::xtensor<size_t,2> &dofs)
-{
-  std::cout << "WARNING: 'GooseFEM::Mesh::renumber' is deprecated, use 'GooseFEM::Mesh::Renumber'" << std::endl;
-
-  return Renumber(dofs).get(dofs);
-}
-
-// -------------------------------------------------------------------------------------------------
-
-inline xt::xtensor<size_t,1> reorder_index(const xt::xtensor<size_t,2> &dofs,
-  const xt::xtensor<size_t,1> &iip, const std::string &location)
-{
-  std::cout << "WARNING: 'GooseFEM::Mesh::reorder_index' is deprecated, use 'GooseFEM::Mesh::Reorder'" << std::endl;
-
-  if ( location == "end" )
-    return Reorder({xt::setdiff1d(dofs,iip), iip}).index();
-  else if ( location == "begin" or location == "beginning" )
-    return Reorder({iip, xt::setdiff1d(dofs,iip)}).index();
-   else
-    throw std::runtime_error("Unknown reorder location '" + location + "'");
-}
-
-// -------------------------------------------------------------------------------------------------
-
-inline xt::xtensor<size_t,2> reorder(const xt::xtensor<size_t,2> &dofs,
-  const xt::xtensor<size_t,1> &iip, const std::string &location)
-{
-  std::cout << "WARNING: 'GooseFEM::Mesh::reorder' is deprecated, use 'GooseFEM::Mesh::Reorder'" << std::endl;
-
-  if ( location == "end" )
-    return Reorder({xt::setdiff1d(dofs,iip), iip}).get(dofs);
-  else if ( location == "begin" or location == "beginning" )
-    return Reorder({iip, xt::setdiff1d(dofs,iip)}).get(dofs);
-   else
-    throw std::runtime_error("Unknown reorder location '" + location + "'");
 }
 
 // -------------------------------------------------------------------------------------------------

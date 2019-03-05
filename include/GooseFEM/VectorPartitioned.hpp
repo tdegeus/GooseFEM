@@ -40,7 +40,7 @@ inline VectorPartitioned::VectorPartitioned(
   m_nnu   = m_iiu.size();
 
   // DOFs per node, such that iiu = arange(nnu), iip = nnu + arange(nnp)
-  m_part  = Mesh::reorder(m_dofs, m_iip, "end");
+  m_part  = Mesh::Reorder({m_iiu, m_iip}).get(m_dofs);
 
   // check consistency
   assert( xt::amax(m_conn)[0] + 1 == m_nnode             );
