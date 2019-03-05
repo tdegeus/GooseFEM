@@ -1,7 +1,7 @@
 
 #include <GooseFEM/GooseFEM.h>
 #include <GMatElastoPlasticQPot/Cartesian2d.h>
-#include <LowFive.h>
+#include <xtensor-io/xhighfive.hpp>
 
 // -------------------------------------------------------------------------------------------------
 
@@ -42,28 +42,28 @@ int main()
 
   GF::Vector vector(conn, dofs);
 
-  QD::Quadrature quad(vector.asElement(coor));
+  QD::Quadrature quad(vector.AsElement(coor));
 
-  size_t nnode = coor.shape()[0];
-  size_t ndim  = coor.shape()[1];
-  size_t nelem = conn.shape()[0];
+  size_t nnode = mesh.nnode();
+  size_t ndim  = mesh.ndim();
+  size_t nne   = mesh.nne();
+  size_t nelem = mesh.nelem();
   size_t nip   = quad.nip();
 
-  // nodal displacements, velocities, and accelerations (current and last increment)
-  xt::xtensor<double,2> u   = xt::zeros<double>(coor.shape());
-  xt::xtensor<double,2> v   = xt::zeros<double>(coor.shape());
-  xt::xtensor<double,2> a   = xt::zeros<double>(coor.shape());
-  xt::xtensor<double,2> v_n = xt::zeros<double>(coor.shape());
-  xt::xtensor<double,2> a_n = xt::zeros<double>(coor.shape());
-
-  // nodal forces
+  xt::xtensor<double,2> u    = xt::zeros<double>(coor.shape());
+  xt::xtensor<double,2> v    = xt::zeros<double>(coor.shape());
+  xt::xtensor<double,2> a    = xt::zeros<double>(coor.shape());
+  xt::xtensor<double,2> v_n  = xt::zeros<double>(coor.shape());
+  xt::xtensor<double,2> a_n  = xt::zeros<double>(coor.shape());
   xt::xtensor<double,2> fint = xt::zeros<double>(coor.shape());
   xt::xtensor<double,2> fext = xt::zeros<double>(coor.shape());
   xt::xtensor<double,2> fres = xt::zeros<double>(coor.shape());
 
-  // integration point strain and stress
-  xt::xtensor<double,4> Eps = xt::zeros<double>({nelem, nip, ndim, ndim});
-  xt::xtensor<double,4> Sig = xt::zeros<double>({nelem, nip, ndim, ndim});
+  xt::xtensor<double,3> ue   = xt::zeros<double>({nelem, nne, ndim});
+  xt::xtensor<double,3> fe   = xt::zeros<double>({nelem, nne, ndim});
+
+  xt::xtensor<double,4> Eps  = xt::zeros<double>({nelem, nip, ndim, ndim});
+  xt::xtensor<double,4> Sig  = xt::zeros<double>({nelem, nip, ndim, ndim});
 
   // material definition
 
@@ -85,15 +85,15 @@ int main()
 
   // mass matrix
 
-  QD::Quadrature nodalQuad(vector.asElement(coor), QD::Nodal::xi(), QD::Nodal::w());
+  QD::Quadrature nodalQuad(vector.AsElement(coor), QD::Nodal::xi(), QD::Nodal::w());
 
   xt::xtensor<double,2> rho = 1.0 * xt::ones<double>({nelem, nip});
 
   GF::MatrixDiagonal M(conn, dofs);
 
-  M.assemble( nodalQuad.int_N_scalar_NT_dV(rho) );
+  M.assemble(nodalQuad.Int_N_scalar_NT_dV(rho));
 
-  xt::xtensor<double,1> mass = M.asDiagonal();
+  xt::xtensor<double,1> mass = M.AsDiagonal();
 
   // update in macroscopic deformation gradient
 
@@ -112,6 +112,8 @@ int main()
   xt::xtensor<double,1> Ekin = xt::zeros<double>({static_cast<size_t>(T/dt)});
   xt::xtensor<double,1> t    = xt::zeros<double>({static_cast<size_t>(T/dt)});
 
+  xt::xtensor<double,2> dV = quad.DV();
+
   // loop over increments
 
   for ( size_t inc = 0 ; inc < static_cast<size_t>(Epot.size()) ; ++inc )
@@ -125,11 +127,13 @@ int main()
 
     xt::noalias(u) = u + dt * v + 0.5 * std::pow(dt,2.) * a;
 
-    // compute strain/strain, and corresponding force
+    // compute strain/strain, and corresponding internal force
 
-    quad.symGradN_vector(vector.asElement(u), Eps);
+    vector.asElement(u, ue);
+    quad.symGradN_vector(ue, Eps);
     material.Sig(Eps, Sig);
-    vector.assembleNode(quad.int_gradN_dot_tensor2_dV(Sig), fint);
+    quad.int_gradN_dot_tensor2_dV(Sig, fe);
+    vector.assembleNode(fe, fint);
 
     // estimate new velocity
 
@@ -163,9 +167,8 @@ int main()
 
     // store output variables
 
-    xt::xtensor<double,2> E  = material.energy(Eps);
-    xt::xtensor<double,2> dV = quad.dV();
-    xt::xtensor<double,1> V  = vector.asDofs(v);
+    xt::xtensor<double,2> E = material.energy(Eps);
+    xt::xtensor<double,1> V = vector.AsDofs(v);
 
     t   (inc) = static_cast<double>(inc) * dt;
     Ekin(inc) = 0.5 * sqdot(mass,V);
@@ -176,12 +179,12 @@ int main()
 
   HighFive::File file("example.hdf5", HighFive::File::Overwrite);
 
-  LowFive::xtensor::dump(file, "/global/Epot",Epot );
-  LowFive::xtensor::dump(file, "/global/Ekin",Ekin );
-  LowFive::xtensor::dump(file, "/global/t"   ,t    );
-  LowFive::xtensor::dump(file, "/mesh/conn"  ,conn );
-  LowFive::xtensor::dump(file, "/mesh/coor"  ,coor );
-  LowFive::xtensor::dump(file, "/mesh/disp"  ,u    );
+  xt::dump(file, "/global/Epot",Epot );
+  xt::dump(file, "/global/Ekin",Ekin );
+  xt::dump(file, "/global/t"   ,t    );
+  xt::dump(file, "/mesh/conn"  ,conn );
+  xt::dump(file, "/mesh/coor"  ,coor );
+  xt::dump(file, "/mesh/disp"  ,u    );
 
   return 0;
 }

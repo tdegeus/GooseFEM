@@ -29,7 +29,7 @@ SECTION( "dot" )
   A.set(a);
 
   // compute product
-  C = A.dot(b);
+  C = A.Dot(b);
 
   // check
   // - size
@@ -61,10 +61,10 @@ SECTION( "solve" )
   A.set(a);
 
   // compute product
-  C = A.dot(b);
+  C = A.Dot(b);
 
   // solve
-  B = A.solve(C);
+  B = A.Solve(C);
 
   // check
   // - size

@@ -24,27 +24,26 @@
 #include <math.h>
 
 #include <xtensor/xarray.hpp>
-#include <xtensor/xadapt.hpp>
 #include <xtensor/xtensor.hpp>
-#include <xtensor/xfixed.hpp>
-#include <xtensor/xview.hpp>
-#include <xtensor/xstrided_view.hpp>
-#include <xtensor/xio.hpp>
-#include <xtensor/xsort.hpp>
-#include <xtensor/xmath.hpp>
 #include <xtensor/xadapt.hpp>
-#include <xtensor/xutils.hpp>
-#include <xtensor/xlayout.hpp>
+#include <xtensor/xfixed.hpp>
 #include <xtensor/xinfo.hpp>
+#include <xtensor/xio.hpp>
+#include <xtensor/xlayout.hpp>
+#include <xtensor/xmath.hpp>
 #include <xtensor/xnoalias.hpp>
+#include <xtensor/xsort.hpp>
+#include <xtensor/xstrided_view.hpp>
+#include <xtensor/xutils.hpp>
+#include <xtensor/xview.hpp>
 
 using namespace xt::placeholders;
 
 // =================================================================================================
 
 #define GOOSEFEM_WORLD_VERSION 0
-#define GOOSEFEM_MAJOR_VERSION 1
-#define GOOSEFEM_MINOR_VERSION 1
+#define GOOSEFEM_MAJOR_VERSION 2
+#define GOOSEFEM_MINOR_VERSION 0
 
 #define GOOSEFEM_VERSION_AT_LEAST(x,y,z) \
   (GOOSEFEM_WORLD_VERSION>x || (GOOSEFEM_WORLD_VERSION>=x && \

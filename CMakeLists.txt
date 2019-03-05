@@ -53,16 +53,22 @@ set(headers
   include/GooseFEM/Vector.h
   include/GooseFEM/VectorPartitioned.hpp
   include/GooseFEM/VectorPartitioned.h
+  include/GooseFEM/VectorPartitionedTyings.hpp
+  include/GooseFEM/VectorPartitionedTyings.h
   include/GooseFEM/Matrix.hpp
   include/GooseFEM/Matrix.h
   include/GooseFEM/MatrixPartitioned.hpp
   include/GooseFEM/MatrixPartitioned.h
+  include/GooseFEM/MatrixPartitionedTyings.hpp
+  include/GooseFEM/MatrixPartitionedTyings.h
   include/GooseFEM/MatrixDiagonal.hpp
   include/GooseFEM/MatrixDiagonal.h
   include/GooseFEM/MatrixDiagonalPartitioned.hpp
   include/GooseFEM/MatrixDiagonalPartitioned.h
   include/GooseFEM/Iterate.hpp
   include/GooseFEM/Iterate.h
+  include/GooseFEM/TyingsPeriodic.hpp
+  include/GooseFEM/TyingsPeriodic.h
 )
 
 # automatically parse the version number
