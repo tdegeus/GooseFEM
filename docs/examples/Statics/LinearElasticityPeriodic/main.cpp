@@ -1,7 +1,5 @@
+#include <Eigen/Eigen>
 #include <GooseFEM/GooseFEM.h>
-#include <GooseFEM/TyingsPeriodic.h>
-#include <GooseFEM/MatrixPartitionedTyings.h>
-#include <GooseFEM/VectorPartitionedTyings.h>
 #include <GMatLinearElastic/Cartesian3d.h>
 #include <xtensor-io/xhighfive.hpp>
 

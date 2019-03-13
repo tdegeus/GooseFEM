@@ -166,7 +166,6 @@ private:
   // Dimensions (fixed for this element type)
   static const size_t m_nne=8;  // number of nodes per element
   static const size_t m_ndim=3; // number of dimensions
-  const size_t m_nd=3;          // number of dimensions (non-static, sometimes useful)
 
   // Data arrays
   xt::xtensor<double,3> m_x;    // nodal positions stored per element [nelem, nne, ndim]
