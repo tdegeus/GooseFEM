@@ -21,12 +21,15 @@ class MatrixDiagonal
 {
 public:
 
-  // constructors
+  // Constructors
 
   MatrixDiagonal() = default;
-  MatrixDiagonal(const xt::xtensor<size_t,2> &conn, const xt::xtensor<size_t,2> &dofs);
 
-  // dimensions
+  MatrixDiagonal(
+    const xt::xtensor<size_t,2> &conn,
+    const xt::xtensor<size_t,2> &dofs);
+
+  // Dimensions
 
   size_t nelem() const; // number of elements
   size_t nne()   const; // number of nodes per element
@@ -38,7 +41,7 @@ public:
 
   xt::xtensor<size_t,2> dofs() const; // DOFs
 
-  // set matrix components
+  // Set matrix components
 
   void set(const xt::xtensor<double,1> &A);
 
@@ -47,57 +50,63 @@ public:
 
   void assemble(const xt::xtensor<double,3> &elemmat);
 
-  // product: b_i = A_ij * x_j
+  // Dot-product:
+  // b_i = A_ij * x_j
 
-  void dot(const xt::xtensor<double,2> &x,
-    xt::xtensor<double,2> &b) const;
+  void dot(
+    const xt::xtensor<double,2> &x,
+          xt::xtensor<double,2> &b) const;
 
-  void dot(const xt::xtensor<double,1> &x,
-    xt::xtensor<double,1> &b) const;
+  void dot(
+    const xt::xtensor<double,1> &x,
+          xt::xtensor<double,1> &b) const;
 
-  // solve: x = A \ b
+  // Solve:
+  // x = A \ b
 
-  void solve(const xt::xtensor<double,2> &b,
-    xt::xtensor<double,2> &x);
+  void solve(
+    const xt::xtensor<double,2> &b,
+          xt::xtensor<double,2> &x);
 
-  void solve(const xt::xtensor<double,1> &b,
-    xt::xtensor<double,1> &x);
+  void solve(
+    const xt::xtensor<double,1> &b,
+          xt::xtensor<double,1> &x);
 
-  // return matrix as diagonal matrix (column)
+  // Return matrix as diagonal matrix (column)
 
-  xt::xtensor<double,1> asDiagonal() const;
+  xt::xtensor<double,1> AsDiagonal() const;
 
-  // auto allocation of the functions above
+  // Auto-allocation of the functions above
 
-  xt::xtensor<double,2> dot(const xt::xtensor<double,2> &x) const;
+  xt::xtensor<double,2> Dot(const xt::xtensor<double,2> &x) const;
 
-  xt::xtensor<double,1> dot(const xt::xtensor<double,1> &x) const;
+  xt::xtensor<double,1> Dot(const xt::xtensor<double,1> &x) const;
 
-  xt::xtensor<double,2> solve(const xt::xtensor<double,2> &b);
+  xt::xtensor<double,2> Solve(const xt::xtensor<double,2> &b);
 
-  xt::xtensor<double,1> solve(const xt::xtensor<double,1> &b);
+  xt::xtensor<double,1> Solve(const xt::xtensor<double,1> &b);
 
 private:
 
-  // the diagonal matrix, and its inverse (re-used to solve different RHS)
-  xt::xtensor<double,1> m_data;
+  // The diagonal matrix, and its inverse (re-used to solve different RHS)
+  xt::xtensor<double,1> m_A;
   xt::xtensor<double,1> m_inv;
 
-  // signal changes to data compare to the last inverse
-  bool m_change=false;
+  // Signal changes to data compare to the last inverse
+  bool m_factor=false;
 
-  // bookkeeping
+  // Bookkeeping
   xt::xtensor<size_t,2> m_conn; // connectivity         [nelem, nne ]
   xt::xtensor<size_t,2> m_dofs; // DOF-numbers per node [nnode, ndim]
 
-  // dimensions
+  // Dimensions
   size_t m_nelem; // number of elements
   size_t m_nne;   // number of nodes per element
   size_t m_nnode; // number of nodes
   size_t m_ndim;  // number of dimensions
   size_t m_ndof;  // number of DOFs
 
-  // compute inverse (automatically evaluated by "solve")
+  // Compute inverse (automatically evaluated by "solve")
   void factorize();
 };
 

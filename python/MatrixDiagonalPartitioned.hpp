@@ -40,11 +40,11 @@ py::class_<GooseFEM::MatrixDiagonalPartitioned>(m, "MatrixDiagonalPartitioned")
   .def("iiu"  , &GooseFEM::MatrixDiagonalPartitioned::iiu  , "Return unknown degrees-of-freedom")
   .def("iip"  , &GooseFEM::MatrixDiagonalPartitioned::iip  , "Return prescribed degrees-of-freedom")
 
-  .def("dot"  , py::overload_cast<const xt::xtensor<double,1>&                              >(&GooseFEM::MatrixDiagonalPartitioned::dot  , py::const_), "Dot product 'b_i = A_ij * x_j"                                              , py::arg("x"))
-  .def("dot_u", py::overload_cast<const xt::xtensor<double,1>&, const xt::xtensor<double,1>&>(&GooseFEM::MatrixDiagonalPartitioned::dot_u, py::const_), "Dot product 'b_i = A_ij * x_j (b_u = A_uu * x_u + A_up * x_p == A_uu * x_u)", py::arg("x_u"), py::arg("x_p"))
-  .def("dot_p", py::overload_cast<const xt::xtensor<double,1>&, const xt::xtensor<double,1>&>(&GooseFEM::MatrixDiagonalPartitioned::dot_p, py::const_), "Dot product 'b_i = A_ij * x_j (b_p = A_pu * x_u + A_pp * x_p == A_pp * x_p)", py::arg("x_u"), py::arg("x_p"))
+  .def("Dot"  , py::overload_cast<const xt::xtensor<double,1>&                              >(&GooseFEM::MatrixDiagonalPartitioned::Dot  , py::const_), "Dot product 'b_i = A_ij * x_j"                                              , py::arg("x"))
+  .def("Dot_u", py::overload_cast<const xt::xtensor<double,1>&, const xt::xtensor<double,1>&>(&GooseFEM::MatrixDiagonalPartitioned::Dot_u, py::const_), "Dot product 'b_i = A_ij * x_j (b_u = A_uu * x_u + A_up * x_p == A_uu * x_u)", py::arg("x_u"), py::arg("x_p"))
+  .def("Dot_p", py::overload_cast<const xt::xtensor<double,1>&, const xt::xtensor<double,1>&>(&GooseFEM::MatrixDiagonalPartitioned::Dot_p, py::const_), "Dot product 'b_i = A_ij * x_j (b_p = A_pu * x_u + A_pp * x_p == A_pp * x_p)", py::arg("x_u"), py::arg("x_p"))
 
-  .def("asDiagonal", &GooseFEM::MatrixDiagonalPartitioned::asDiagonal, "Return as diagonal matrix (column)")
+  .def("AsDiagonal", &GooseFEM::MatrixDiagonalPartitioned::AsDiagonal, "Return as diagonal matrix (column)")
 
   .def("__repr__", [](const GooseFEM::MatrixDiagonalPartitioned &){ return "<GooseFEM.MatrixDiagonalPartitioned>"; });
 

@@ -31,10 +31,17 @@ m_h(h), m_nelx(nelx), m_nely(nely)
 
 // -------------------------------------------------------------------------------------------------
 
-inline size_t Regular::nelem() const { return m_nelem; }
-inline size_t Regular::nnode() const { return m_nnode; }
-inline size_t Regular::nne()   const { return m_nne;   }
-inline size_t Regular::ndim()  const { return m_ndim;  }
+inline size_t Regular::nelem() const
+{ return m_nelem; }
+
+inline size_t Regular::nnode() const
+{ return m_nnode; }
+
+inline size_t Regular::nne() const
+{ return m_nne;   }
+
+inline size_t Regular::ndim() const
+{ return m_ndim;  }
 
 // -------------------------------------------------------------------------------------------------
 
@@ -208,10 +215,17 @@ inline size_t Regular::nodesTopRightCorner() const
 
 // -------------------------------------------------------------------------------------------------
 
-inline size_t Regular::nodesLeftBottomCorner() const  { return nodesBottomLeftCorner();  }
-inline size_t Regular::nodesLeftTopCorner() const     { return nodesTopLeftCorner();     }
-inline size_t Regular::nodesRightBottomCorner() const { return nodesBottomRightCorner(); }
-inline size_t Regular::nodesRightTopCorner() const    { return nodesTopRightCorner();    }
+inline size_t Regular::nodesLeftBottomCorner() const
+{ return nodesBottomLeftCorner(); }
+
+inline size_t Regular::nodesLeftTopCorner() const
+{ return nodesTopLeftCorner(); }
+
+inline size_t Regular::nodesRightBottomCorner() const
+{ return nodesBottomRightCorner(); }
+
+inline size_t Regular::nodesRightTopCorner() const
+{ return nodesTopRightCorner(); }
 
 // -------------------------------------------------------------------------------------------------
 

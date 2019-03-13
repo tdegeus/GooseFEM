@@ -20,11 +20,6 @@ namespace Iterate {
 
 class StopList
 {
-private:
-
-  // list with residuals
-  std::vector<double> m_res;
-
 public:
 
   // constructors
@@ -37,6 +32,10 @@ public:
   // update list of residuals, return true if all residuals are below the tolerance
   bool stop(double res, double tol);
 
+private:
+
+  // list with residuals
+  std::vector<double> m_res;
 };
 
 // -------------------------------------------------------------------------------------------------

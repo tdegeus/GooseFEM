@@ -21,7 +21,7 @@ SECTION( "int_N_scalar_NT_dV" )
 
   // element definition, with nodal quadrature
   GooseFEM::Element::Quad4::Quadrature quad(
-    vec.asElement(mesh.coor()),
+    vec.AsElement(mesh.coor()),
     GooseFEM::Element::Quad4::Nodal::xi(),
     GooseFEM::Element::Quad4::Nodal::w()
   );
@@ -30,11 +30,11 @@ SECTION( "int_N_scalar_NT_dV" )
   xt::xtensor<double,2> rho = xt::ones<double>({mesh.nelem(), quad.nip()});
 
   // evaluate integral and assemble diagonal matrix (e.g. mass matrix)
-  mat.assemble(quad.int_N_scalar_NT_dV(rho));
+  mat.assemble(quad.Int_N_scalar_NT_dV(rho));
 
   // check matrix
   // - get the matrix
-  xt::xtensor<double,1> M = mat.asDiagonal();
+  xt::xtensor<double,1> M = mat.AsDiagonal();
   // - check the size
   REQUIRE( M.size() == vec.ndof() );
   // - check each component
@@ -52,7 +52,7 @@ SECTION( "symGradN_vector" )
   GooseFEM::Vector vec(mesh.conn(), mesh.dofs());
 
   // element definition, with Gauss quadrature
-  GooseFEM::Element::Quad4::Quadrature quad( vec.asElement(mesh.coor()) );
+  GooseFEM::Element::Quad4::Quadrature quad( vec.AsElement(mesh.coor()) );
 
   // macroscopic deformation gradient and strain
   // - zero-initialize
@@ -74,7 +74,7 @@ SECTION( "symGradN_vector" )
         disp(n,i) += F(i,j) * coor(n,j);
 
   // compute quadrature point tensors
-  xt::xtensor<double,4> eps = quad.symGradN_vector(vec.asElement(disp));
+  xt::xtensor<double,4> eps = quad.SymGradN_vector(vec.AsElement(disp));
 
   // integration point volume
   xt::xtensor<double,4> dV = eps;
@@ -112,7 +112,7 @@ SECTION( "symGradN_vector, int_gradN_dot_tensor2s_dV" )
   GooseFEM::Vector vec(mesh.conn(), mesh.dofsPeriodic());
 
   // element definition, with Gauss quadrature
-  GooseFEM::Element::Quad4::Quadrature quad( vec.asElement(mesh.coor()) );
+  GooseFEM::Element::Quad4::Quadrature quad( vec.AsElement(mesh.coor()) );
 
   // macroscopic deformation gradient and strain
   // - zero-initialize
@@ -131,10 +131,10 @@ SECTION( "symGradN_vector, int_gradN_dot_tensor2s_dV" )
         disp(n,i) += F(i,j) * coor(n,j);
 
   // compute quadrature point tensors
-  xt::xtensor<double,4> eps = quad.symGradN_vector(vec.asElement(disp));
+  xt::xtensor<double,4> eps = quad.SymGradN_vector(vec.AsElement(disp));
 
   // nodal force vector (should be zero, as it is only sensitive to periodic fluctuations)
-  xt::xtensor<double,1> Fi = vec.assembleDofs(quad.int_gradN_dot_tensor2_dV(eps));
+  xt::xtensor<double,1> Fi = vec.AssembleDofs(quad.Int_gradN_dot_tensor2_dV(eps));
 
   // check
   // - size

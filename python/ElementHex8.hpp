@@ -33,15 +33,15 @@ py::class_<GooseFEM::Element::Hex8::Quadrature>(m, "Quadrature")
   .def("ndim" , &GooseFEM::Element::Hex8::Quadrature::ndim , "Return number of dimensions"        )
   .def("nip"  , &GooseFEM::Element::Hex8::Quadrature::nip  , "Return number of integration points")
 
-  .def("dV"      , py::overload_cast<>(&GooseFEM::Element::Hex8::Quadrature::dV      , py::const_), "Integration point volume (qscalar)")
-  .def("dVtensor", py::overload_cast<>(&GooseFEM::Element::Hex8::Quadrature::dVtensor, py::const_), "Integration point volume (qtensor)")
+  .def("DV", py::overload_cast<size_t>(&GooseFEM::Element::Hex8::Quadrature::DV, py::const_), "Integration point volume (qtensor)")
+  .def("DV", py::overload_cast<>      (&GooseFEM::Element::Hex8::Quadrature::DV, py::const_), "Integration point volume (qscalar)")
 
-  .def("gradN_vector"   , py::overload_cast<const xt::xtensor<double,3> &>(&GooseFEM::Element::Hex8::Quadrature::gradN_vector   , py::const_), "Dyadic product, returns 'qtensor'", py::arg("elemvec"))
-  .def("gradN_vector_T" , py::overload_cast<const xt::xtensor<double,3> &>(&GooseFEM::Element::Hex8::Quadrature::gradN_vector_T , py::const_), "Dyadic product, returns 'qtensor'", py::arg("elemvec"))
-  .def("symGradN_vector", py::overload_cast<const xt::xtensor<double,3> &>(&GooseFEM::Element::Hex8::Quadrature::symGradN_vector, py::const_), "Dyadic product, returns 'qtensor'", py::arg("elemvec"))
+  .def("GradN_vector"   , py::overload_cast<const xt::xtensor<double,3> &>(&GooseFEM::Element::Hex8::Quadrature::GradN_vector   , py::const_), "Dyadic product, returns 'qtensor'", py::arg("elemvec"))
+  .def("GradN_vector_T" , py::overload_cast<const xt::xtensor<double,3> &>(&GooseFEM::Element::Hex8::Quadrature::GradN_vector_T , py::const_), "Dyadic product, returns 'qtensor'", py::arg("elemvec"))
+  .def("SymGradN_vector", py::overload_cast<const xt::xtensor<double,3> &>(&GooseFEM::Element::Hex8::Quadrature::SymGradN_vector, py::const_), "Dyadic product, returns 'qtensor'", py::arg("elemvec"))
 
-  .def("int_N_scalar_NT_dV"      , py::overload_cast<const xt::xtensor<double,2> &>(&GooseFEM::Element::Hex8::Quadrature::int_N_scalar_NT_dV      , py::const_), "Integration, returns 'elemmat'", py::arg("qscalar"))
-  .def("int_gradN_dot_tensor2_dV", py::overload_cast<const xt::xtensor<double,4> &>(&GooseFEM::Element::Hex8::Quadrature::int_gradN_dot_tensor2_dV, py::const_), "Integration, returns 'elemvec'", py::arg("qtensor"))
+  .def("Int_N_scalar_NT_dV"      , py::overload_cast<const xt::xtensor<double,2> &>(&GooseFEM::Element::Hex8::Quadrature::Int_N_scalar_NT_dV      , py::const_), "Integration, returns 'elemmat'", py::arg("qscalar"))
+  .def("Int_gradN_dot_tensor2_dV", py::overload_cast<const xt::xtensor<double,4> &>(&GooseFEM::Element::Hex8::Quadrature::Int_gradN_dot_tensor2_dV, py::const_), "Integration, returns 'elemvec'", py::arg("qtensor"))
 
   .def("__repr__", [](const GooseFEM::Element::Hex8::Quadrature &){ return "<GooseFEM.Element.Hex8.Quadrature>"; });
 

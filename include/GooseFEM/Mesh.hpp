@@ -75,7 +75,10 @@ inline Reorder::Reorder(const std::initializer_list<xt::xtensor<size_t,1>> args)
   size_t i = 0;
 
   for (auto& arg : args)
+  {
+    if (arg.size() == 0) continue;
     n = std::max(n, xt::amax(arg)[0]+1);
+  }
 
   #ifndef NDEBUG
     for (auto& arg : args)

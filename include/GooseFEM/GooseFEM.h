@@ -15,24 +15,27 @@
 
 // =================================================================================================
 
-#include "Mesh.h"
-#include "MeshTri3.h"
-#include "MeshQuad4.h"
-#include "MeshHex8.h"
 #include "Element.h"
-#include "ElementQuad4.h"
-#include "ElementQuad4Planar.h"
-#include "ElementQuad4Axisymmetric.h"
 #include "ElementHex8.h"
-#include "Vector.h"
-#include "VectorPartitioned.h"
+#include "ElementQuad4.h"
+#include "ElementQuad4Axisymmetric.h"
+#include "ElementQuad4Planar.h"
+#include "Iterate.h"
 #include "MatrixDiagonal.h"
 #include "MatrixDiagonalPartitioned.h"
-#include "Iterate.h"
+#include "Mesh.h"
+#include "MeshHex8.h"
+#include "MeshQuad4.h"
+#include "MeshTri3.h"
+#include "Vector.h"
+#include "VectorPartitioned.h"
 
 #ifdef GOOSEFEM_EIGEN
 #include "Matrix.h"
 #include "MatrixPartitioned.h"
+#include "MatrixPartitionedTyings.h"
+#include "TyingsPeriodic.h"
+#include "VectorPartitionedTyings.h"
 #endif
 
 // =================================================================================================

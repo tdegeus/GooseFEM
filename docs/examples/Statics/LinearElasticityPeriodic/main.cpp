@@ -1,45 +1,93 @@
 #include <GooseFEM/GooseFEM.h>
+#include <GooseFEM/TyingsPeriodic.h>
+#include <GooseFEM/MatrixPartitionedTyings.h>
+#include <GooseFEM/VectorPartitionedTyings.h>
 #include <GMatLinearElastic/Cartesian3d.h>
-#include <LowFive.h>
+#include <xtensor-io/xhighfive.hpp>
 
 int main()
 {
   // mesh
   // ----
 
+  // define mesh
+
   GooseFEM::Mesh::Quad4::Regular mesh(5,5);
+
+  // mesh dimensions
+
+  size_t nelem = mesh.nelem();
+  size_t nne   = mesh.nne();
+  size_t ndim  = mesh.ndim();
+
+  // mesh definitions
 
   xt::xtensor<double,2> coor = mesh.coor();
   xt::xtensor<size_t,2> conn = mesh.conn();
-  xt::xtensor<size_t,2> dofs = mesh.dofsPeriodic();
+  xt::xtensor<size_t,2> dofs = mesh.dofs();
+
+  // periodicity and fixed displacements DOFs
+  // ----------------------------------------
+
+  // add control nodes/DOFs
+
+  xt::xtensor<size_t,2> control_dofs = xt::arange<size_t>(ndim*ndim).reshape({ndim,ndim});
+
+  control_dofs += xt::amax(dofs)[0] + 1;
+
+  xt::xtensor<size_t,1> control_nodes = mesh.nnode() + xt::arange(ndim);
+
+  coor = xt::concatenate(xt::xtuple(coor, xt::zeros<double>({ndim,ndim})));
+
+  dofs = xt::concatenate(xt::xtuple(dofs, control_dofs));
+
+  // extract fixed DOFs
+
+  xt::xtensor<size_t,1> iip = xt::concatenate(xt::xtuple(
+    xt::reshape_view(control_dofs, {ndim*ndim}),
+    xt::reshape_view(xt::view(dofs, xt::keep(mesh.nodesOrigin()), xt::all()), {ndim})
+  ));
+
+  // get DOF-tyings, reorganise system
+
+  GooseFEM::Tyings::Periodic tyings(coor, dofs, control_dofs, mesh.nodesPeriodic(), iip);
+
+  dofs = tyings.dofs();
+
+  // simulation variables
+  // --------------------
+
+  // vector definition
+
+  GooseFEM::VectorPartitionedTyings vector(conn, dofs, tyings.Cdu(), tyings.Cdp(), tyings.Cdi());
+
+  // nodal quantities
+
   xt::xtensor<double,2> disp = xt::zeros<double>(coor.shape());
   xt::xtensor<double,2> fint = xt::zeros<double>(coor.shape());
   xt::xtensor<double,2> fext = xt::zeros<double>(coor.shape());
   xt::xtensor<double,2> fres = xt::zeros<double>(coor.shape());
 
-  // element definition
-  // ------------------
+  // element vectors
 
-  xt::xtensor<double,4> Eps, Sig;
-  xt::xtensor<double,6> C;
+  xt::xtensor<double,3> ue = xt::empty<double>({nelem, nne, ndim});
+  xt::xtensor<double,3> fe = xt::empty<double>({nelem, nne, ndim});
+  xt::xtensor<double,3> Ke = xt::empty<double>({nelem, nne*ndim, nne*ndim});
 
-  GooseFEM::Vector vector(conn, dofs);
-  GooseFEM::Matrix K     (conn, dofs);
+  // element/material definition
+  // ---------------------------
 
-  GooseFEM::Element::Quad4::QuadraturePlanar elem(vector.asElement(coor));
+  GooseFEM::Element::Quad4::QuadraturePlanar elem(vector.AsElement(coor));
 
-  GMatLinearElastic::Cartesian3d::Matrix mat(mesh.nelem(), elem.nip());
+  size_t nip = elem.nip();
 
-  xt::xtensor<size_t,2> Ihard = xt::zeros<size_t>({mesh.nelem(), elem.nip()});
+  GMatLinearElastic::Cartesian3d::Matrix mat(nelem, nip);
 
-  for ( size_t q = 0 ; q < elem.nip() ; ++q ) {
-    Ihard(0,q) = 1;
-    Ihard(1,q) = 1;
-    Ihard(5,q) = 1;
-    Ihard(6,q) = 1;
-  }
+  xt::xtensor<size_t,2> Ihard = xt::zeros<size_t>({nelem, nip});
 
-  xt::xtensor<size_t,2> Isoft = xt::ones<size_t>({mesh.nelem(), elem.nip()}) - Ihard;
+  xt::view(Ihard, xt::keep(0,1,5,6), xt::all()) = 1;
+
+  xt::xtensor<size_t,2> Isoft = xt::ones<size_t>({nelem, nip}) - Ihard;
 
   mat.set(Isoft,10.,1. );
   mat.set(Ihard,10.,10.);
@@ -47,42 +95,77 @@ int main()
   // solve
   // -----
 
-  // introduce affine displacement
-  for ( size_t n = 0 ; n < coor.shape()[0] ; ++n )
-    disp(n,0) += 0.1 * ( coor(n,1) - coor(0,1) );
+  // allocate tensors
+  size_t d = 3;
+  xt::xtensor<double,4> Eps = xt::empty<double>({nelem, nip, d, d      });
+  xt::xtensor<double,4> Sig = xt::empty<double>({nelem, nip, d, d      });
+  xt::xtensor<double,6> C   = xt::empty<double>({nelem, nip, d, d, d, d});
+
+  // allocate system matrix
+  GooseFEM::MatrixPartitionedTyings K(conn, dofs, tyings.Cdu(), tyings.Cdp());
 
   // strain
-  Eps = elem.symGradN_vector(vector.asElement(disp));
+  vector.asElement(disp, ue);
+  elem.symGradN_vector(ue, Eps);
 
   // stress & tangent
-  std::tie(Sig,C) = mat.Tangent(Eps);
+  mat.Tangent(Eps, Sig, C);
 
   // internal force
-  fint = vector.assembleNode(elem.int_gradN_dot_tensor2_dV(Sig));
+  elem.int_gradN_dot_tensor2_dV(Sig, fe);
+  vector.assembleNode(fe, fint);
 
   // stiffness matrix
-  K.assemble(elem.int_gradN_dot_tensor4_dot_gradNT_dV(C));
+  elem.int_gradN_dot_tensor4_dot_gradNT_dV(C, Ke);
+  K.assemble(Ke);
 
-  // compute residual
+  // set fixed displacements
+  disp(control_nodes(0),1) = 0.1;
+
+  // residual
   xt::noalias(fres) = fext - fint;
 
   // solve
   K.solve(fres, disp);
 
-  // store result
+  // post-process
+  // ------------
 
-  Eps = elem.symGradN_vector(vector.asElement(disp));
-  Sig = mat.Sig(Eps);
+  // compute strain and stress
+  vector.asElement(disp, ue);
+  elem.symGradN_vector(ue, Eps);
+  mat.Sig(Eps, Sig);
 
-  xt::xtensor<double,4> dV = elem.dVtensor();
-  xt::xtensor<double,3> SigBar = xt::average(Sig, dV, {1});
+  // internal force
+  elem.int_gradN_dot_tensor2_dV(Sig, fe);
+  vector.assembleNode(fe, fint);
+
+  // allocate DOF-list
+  xt::xtensor<double,1> Fext = xt::zeros<double>({tyings.nni()});
+  xt::xtensor<double,1> Fint = xt::zeros<double>({tyings.nni()});
+
+  // internal/external force on DOFs
+  vector.asDofs_i(fext, Fext);
+  vector.asDofs_i(fint, Fint);
+
+  // apply reaction force
+  vector.copy_p(Fint, Fext);
+
+  // print residual
+  std::cout << xt::sum(xt::abs(Fext-Fint))[0] / xt::sum(xt::abs(Fext))[0] << std::endl;
+
+  // average stress per node
+  xt::xtensor<double,4> dV = elem.DV(2);
+  xt::xtensor<double,3> SigAv = xt::average(Sig, dV, {1});
+
+  // write output
 
   HighFive::File file("main.h5", HighFive::File::Overwrite);
 
-  LowFive::xtensor::dump(file, "/coor", coor);
-  LowFive::xtensor::dump(file, "/conn", conn);
-  LowFive::xtensor::dump(file, "/disp", disp);
-  LowFive::xtensor::dump(file, "/Sig" , SigBar);
+  xt::dump(file, "/coor", coor);
+  xt::dump(file, "/conn", conn);
+  xt::dump(file, "/disp", disp);
+  xt::dump(file, "/Sig" , SigAv);
 
   return 0;
 }

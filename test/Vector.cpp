@@ -31,7 +31,7 @@ SECTION( "asDofs - nodevec" )
   v(8,0) = 1.0;  v(8,1) = 0.0;
 
   // convert to DOFs
-  xt::xtensor<double,1> V = vector.asDofs(v);
+  xt::xtensor<double,1> V = vector.AsDofs(v);
 
   // check
   // - size
@@ -72,7 +72,7 @@ SECTION( "asDofs - elemvec" )
   v(8,0) = 1.0;  v(8,1) = 0.0;
 
   // convert to DOFs - element - DOFs
-  xt::xtensor<double,1> V = vector.asDofs(vector.asElement(vector.asDofs(v)));
+  xt::xtensor<double,1> V = vector.AsDofs(vector.AsElement(vector.AsDofs(v)));
 
   // check
   // - size
@@ -113,7 +113,7 @@ SECTION( "asDofs - assembleDofs" )
   f(8,0) =  1.0;  f(8,1) =  1.0;
 
   // assemble as DOFs
-  xt::xtensor<double,1> F = vector.assembleDofs(f);
+  xt::xtensor<double,1> F = vector.AssembleDofs(f);
 
   // check
   // - size
@@ -154,7 +154,7 @@ SECTION( "asDofs - assembleNode" )
   f(8,0) =  1.0;  f(8,1) =  1.0;
 
   // convert to element, assemble as DOFs
-  xt::xtensor<double,1> F = vector.assembleDofs( vector.asElement(f) );
+  xt::xtensor<double,1> F = vector.AssembleDofs( vector.AsElement(f) );
 
   // check
   // - size

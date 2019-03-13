@@ -25,12 +25,15 @@ class Matrix
 {
 public:
 
-  // constructors
+  // Constructors
 
   Matrix() = default;
-  Matrix(const xt::xtensor<size_t,2> &conn, const xt::xtensor<size_t,2> &dofs);
 
-  // dimensions
+  Matrix(
+    const xt::xtensor<size_t,2> &conn,
+    const xt::xtensor<size_t,2> &dofs);
+
+  // Dimensions
 
   size_t nelem() const; // number of elements
   size_t nne()   const; // number of nodes per element
@@ -42,56 +45,59 @@ public:
 
   xt::xtensor<size_t,2> dofs() const; // DOFs
 
-  // assemble from matrices stored per element [nelem, nne*ndim, nne*ndim]
+  // Assemble from matrices stored per element [nelem, nne*ndim, nne*ndim]
 
   void assemble(const xt::xtensor<double,3> &elemmat);
 
-  // solve: x = A \ b
-  //   x_u = A_uu \ ( b_u - A_up * x_p )
-  //   b_p = A_pu * x_u + A_pp * x_p
+  // Solve
+  // x_u = A_uu \ ( b_u - A_up * x_p )
 
-  void solve(const xt::xtensor<double,2> &b,
-    xt::xtensor<double,2> &x);
+  void solve(
+    const xt::xtensor<double,2> &b,
+          xt::xtensor<double,2> &x); // overwritten
 
-  void solve(const xt::xtensor<double,1> &b,
-    xt::xtensor<double,1> &x);
+  void solve(
+    const xt::xtensor<double,1> &b,
+          xt::xtensor<double,1> &x); // overwritten
 
-  // auto allocation of the functions above
+  // Auto-allocation of the functions above
 
-  xt::xtensor<double,2> solve(const xt::xtensor<double,2> &b);
+  xt::xtensor<double,2> Solve(
+    const xt::xtensor<double,2> &b);
 
-  xt::xtensor<double,1> solve(const xt::xtensor<double,1> &b);
+  xt::xtensor<double,1> Solve(
+    const xt::xtensor<double,1> &b);
 
 private:
 
-  // the matrix
-  Eigen::SparseMatrix<double> m_data;
+  // The matrix
+  Eigen::SparseMatrix<double> m_A;
 
-  // the matrix to assemble
-  std::vector<Eigen::Triplet<double>> m_trip;
+  // Matrix entries
+  std::vector<Eigen::Triplet<double>> m_T;
 
-  // solver (re-used to solve different RHS)
+  // Solver (re-used to solve different RHS)
   Eigen::SimplicialLDLT<Eigen::SparseMatrix<double>> m_solver;
 
-  // signal changes to data compare to the last inverse
-  bool m_change=false;
+  // Signal changes to data compare to the last inverse
+  bool m_factor=false;
 
-  // bookkeeping
+  // Bookkeeping
   xt::xtensor<size_t,2> m_conn; // connectivity         [nelem, nne ]
   xt::xtensor<size_t,2> m_dofs; // DOF-numbers per node [nnode, ndim]
 
-  // dimensions
+  // Dimensions
   size_t m_nelem; // number of elements
   size_t m_nne;   // number of nodes per element
   size_t m_nnode; // number of nodes
   size_t m_ndim;  // number of dimensions
   size_t m_ndof;  // number of DOFs
 
-  // compute inverse (automatically evaluated by "solve")
+  // Compute inverse (automatically evaluated by "solve")
 
   void factorize();
 
-  // convert arrays (see VectorPartitioned, which contains public functions)
+  // Convert arrays (Eigen version of Vector, which contains public functions)
 
   Eigen::VectorXd asDofs(const xt::xtensor<double,2> &nodevec) const;
 

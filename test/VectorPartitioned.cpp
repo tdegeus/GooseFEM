@@ -49,10 +49,10 @@ SECTION( "asDofs" )
 
   // convert
 
-  xt::xtensor<double,1> u_u = vector.asDofs_u(u);
-  xt::xtensor<double,1> u_p = vector.asDofs_p(u);
+  xt::xtensor<double,1> u_u = vector.AsDofs_u(u);
+  xt::xtensor<double,1> u_p = vector.AsDofs_p(u);
 
-  REQUIRE( xt::allclose(u, vector.asNode(u_u, u_p)) );
+  REQUIRE( xt::allclose(u, vector.AsNode(u_u, u_p)) );
 
 }
 
