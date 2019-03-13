@@ -639,7 +639,7 @@ inline xt::xarray<double> Quadrature::DV(size_t rank) const
   std::vector<size_t> shape = {m_nelem, m_nip};
 
   for (size_t i = 0; i < rank; ++i)
-    shape.push_back(m_nd);
+    shape.push_back(static_cast<size_t>(m_ndim));
 
   xt::xarray<double> out = xt::empty<double>(shape);
 

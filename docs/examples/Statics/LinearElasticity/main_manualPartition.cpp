@@ -1,5 +1,5 @@
+#include <Eigen/Eigen>
 #include <GooseFEM/GooseFEM.h>
-#include <GooseFEM/MatrixPartitioned.h>
 #include <GMatLinearElastic/Cartesian3d.h>
 #include <xtensor-io/xhighfive.hpp>
 
