@@ -87,7 +87,7 @@ int main()
   elem.symGradN_vector(ue, Eps);
 
   // stress & tangent
-  mat.Tangent(Eps, Sig, C);
+  mat.tangent(Eps, Sig, C);
 
   // internal force
   elem.int_gradN_dot_tensor2_dV(Sig, fe);
@@ -115,7 +115,7 @@ int main()
   // compute strain and stress
   vector.asElement(disp, ue);
   elem.symGradN_vector(ue, Eps);
-  mat.Sig(Eps, Sig);
+  mat.stress(Eps, Sig);
 
   // internal force
   elem.int_gradN_dot_tensor2_dV(Sig, fe);
