@@ -8,7 +8,7 @@ TEST_CASE("GooseFEM::Iterate", "Iterate.h")
 
 // =================================================================================================
 
-SECTION( "StopList" )
+SECTION("StopList")
 {
   GooseFEM::Iterate::StopList stop(5);
 

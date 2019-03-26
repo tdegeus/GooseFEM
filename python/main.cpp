@@ -11,6 +11,7 @@
 
 #include <pyxtensor/pyxtensor.hpp>
 
+#define GOOSEFEM_ENABLE_ASSERT
 #include "../include/GooseFEM/GooseFEM.h"
 
 // =================================================================================================

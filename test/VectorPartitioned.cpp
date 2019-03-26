@@ -8,7 +8,7 @@ TEST_CASE("GooseFEM::VectorPartitioned", "VectorPartitioned.h")
 
 // =================================================================================================
 
-SECTION( "asDofs" )
+SECTION("asDofs")
 {
   // mesh
 
@@ -58,7 +58,7 @@ SECTION( "asDofs" )
 
 // =================================================================================================
 
-SECTION( "copy_u, copy_p" )
+SECTION("copy_u, copy_p")
 {
   // mesh
 
