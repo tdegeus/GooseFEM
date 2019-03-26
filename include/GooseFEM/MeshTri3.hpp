@@ -22,8 +22,8 @@ namespace Tri3 {
 inline Regular::Regular(size_t nelx, size_t nely, double h):
 m_h(h), m_nelx(nelx), m_nely(nely)
 {
-  assert( m_nelx >= 1 );
-  assert( m_nely >= 1 );
+  GOOSEFEM_ASSERT(m_nelx >= 1ul);
+  GOOSEFEM_ASSERT(m_nely >= 1ul);
 
   m_nnode = (m_nelx+1) * (m_nely+1);
   m_nelem =  m_nelx    *  m_nely * 2;
@@ -296,8 +296,8 @@ inline xt::xtensor<size_t,2> Regular::dofsPeriodic() const
 
 inline xt::xtensor<int,1> getOrientation(const xt::xtensor<double,2> &coor, const xt::xtensor<size_t,2> &conn)
 {
-  assert( conn.shape()[1] == 3 );
-  assert( coor.shape()[1] == 2 );
+  GOOSEFEM_ASSERT(conn.shape()[1] == 3ul);
+  GOOSEFEM_ASSERT(coor.shape()[1] == 2ul);
 
   double k;
   size_t nelem = conn.shape()[0];
@@ -322,9 +322,9 @@ inline xt::xtensor<int,1> getOrientation(const xt::xtensor<double,2> &coor, cons
 
 inline xt::xtensor<size_t,2> setOrientation(const xt::xtensor<double,2> &coor, const xt::xtensor<size_t,2> &conn, int orientation)
 {
-  assert( conn.shape()[1] == 3 );
-  assert( coor.shape()[1] == 2 );
-  assert( orientation == -1 || orientation == +1 );
+  GOOSEFEM_ASSERT(conn.shape()[1] == 3ul);
+  GOOSEFEM_ASSERT(coor.shape()[1] == 2ul);
+  GOOSEFEM_ASSERT(orientation == -1 || orientation == +1);
 
   xt::xtensor<int,1> val = getOrientation(coor, conn);
 
@@ -335,10 +335,10 @@ inline xt::xtensor<size_t,2> setOrientation(const xt::xtensor<double,2> &coor, c
 
 inline xt::xtensor<size_t,2> setOrientation(const xt::xtensor<double,2> &coor, const xt::xtensor<size_t,2> &conn, const xt::xtensor<int,1> &val, int orientation)
 {
-  assert( conn.shape()[1] == 3 );
-  assert( coor.shape()[1] == 2 );
-  assert( conn.shape()[0] == val.size() );
-  assert( orientation == -1 || orientation == +1 );
+  GOOSEFEM_ASSERT(conn.shape()[1] == 3ul);
+  GOOSEFEM_ASSERT(coor.shape()[1] == 2ul);
+  GOOSEFEM_ASSERT(conn.shape()[0] == val.size());
+  GOOSEFEM_ASSERT(orientation == -1 || orientation == +1);
 
   // avoid compiler warning
   UNUSED(coor);
@@ -390,8 +390,8 @@ namespace Private {
 
 inline TriUpdate::TriUpdate(const xt::xtensor<double,2> &coor, const xt::xtensor<size_t,2> &conn): m_conn(conn), m_coor(coor)
 {
-  assert( conn.shape()[1] == 3 );
-  assert( coor.shape()[1] == 2 );
+  GOOSEFEM_ASSERT(conn.shape()[1] == 3ul);
+  GOOSEFEM_ASSERT(coor.shape()[1] == 2ul);
 
   // store shapes
   m_nnode = coor.shape()[0];

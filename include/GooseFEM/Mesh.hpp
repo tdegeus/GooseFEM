@@ -27,8 +27,7 @@ inline Renumber::Renumber(const xt::xarray<size_t>& dofs)
 
   m_renum = xt::empty<size_t>({n});
 
-  for (auto& j : unique)
-  {
+  for (auto& j : unique) {
     m_renum(j) = i;
     ++i;
   }
@@ -74,15 +73,14 @@ inline Reorder::Reorder(const std::initializer_list<xt::xtensor<size_t,1>> args)
   size_t n = 0;
   size_t i = 0;
 
-  for (auto& arg : args)
-  {
+  for (auto& arg : args) {
     if (arg.size() == 0) continue;
     n = std::max(n, xt::amax(arg)[0]+1);
   }
 
-  #ifndef NDEBUG
+  #ifdef GOOSEFEM_ENABLE_ASSERT
     for (auto& arg : args)
-      assert(xt::unique(arg) == xt::sort(arg));
+      GOOSEFEM_ASSERT(xt::unique(arg) == xt::sort(arg));
   #endif
 
   m_renum = xt::empty<size_t>({n});

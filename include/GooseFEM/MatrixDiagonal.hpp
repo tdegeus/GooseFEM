@@ -33,8 +33,8 @@ inline MatrixDiagonal::MatrixDiagonal(
 
   m_inv   = xt::empty<double>({m_ndof});
 
-  assert(xt::amax(m_conn)[0] + 1 == m_nnode);
-  assert(m_ndof <= m_nnode * m_ndim);
+  GOOSEFEM_ASSERT(xt::amax(m_conn)[0] + 1 == m_nnode);
+  GOOSEFEM_ASSERT(m_ndof <= m_nnode * m_ndim);
 }
 
 // -------------------------------------------------------------------------------------------------
@@ -74,10 +74,8 @@ inline void MatrixDiagonal::factorize()
 
 inline void MatrixDiagonal::set(const xt::xtensor<double,1> &A)
 {
-  assert(A.shape()[0] == m_ndof);
-
+  GOOSEFEM_ASSERT(A.size() == m_ndof);
   std::copy(A.begin(), A.end(), m_A.begin());
-
   m_factor = true;
 }
 
@@ -85,10 +83,9 @@ inline void MatrixDiagonal::set(const xt::xtensor<double,1> &A)
 
 inline void MatrixDiagonal::assemble(const xt::xtensor<double,3> &elemmat)
 {
-  assert(elemmat.shape()[0] == m_nelem     );
-  assert(elemmat.shape()[1] == m_nne*m_ndim);
-  assert(elemmat.shape()[2] == m_nne*m_ndim);
-  assert(Element::isDiagonal(elemmat));
+  GOOSEFEM_ASSERT(elemmat.shape() ==\
+    std::decay_t<decltype(elemmat)>::shape_type({m_nelem, m_nne*m_ndim, m_nne*m_ndim}));
+  GOOSEFEM_ASSERT(Element::isDiagonal(elemmat));
 
   m_A.fill(0.0);
 
@@ -106,10 +103,10 @@ inline void MatrixDiagonal::dot(
   const xt::xtensor<double,2> &x,
         xt::xtensor<double,2> &b) const
 {
-  assert(x.shape()[0] == m_nnode);
-  assert(x.shape()[1] == m_ndim );
-  assert(b.shape()[0] == m_nnode);
-  assert(b.shape()[1] == m_ndim );
+  GOOSEFEM_ASSERT(x.shape() ==\
+    std::decay_t<decltype(x)>::shape_type({m_nnode, m_ndim}));
+  GOOSEFEM_ASSERT(b.shape() ==\
+    std::decay_t<decltype(b)>::shape_type({m_nnode, m_ndim}));
 
   #pragma omp parallel for
   for (size_t m = 0 ; m < m_nnode ; ++m)
@@ -123,8 +120,8 @@ inline void MatrixDiagonal::dot(
   const xt::xtensor<double,1> &x,
         xt::xtensor<double,1> &b) const
 {
-  assert(x.size() == m_ndof);
-  assert(b.size() == m_ndof);
+  GOOSEFEM_ASSERT(x.size() == m_ndof);
+  GOOSEFEM_ASSERT(b.size() == m_ndof);
 
   xt::noalias(b) = m_A * x;
 }
@@ -135,10 +132,10 @@ inline void MatrixDiagonal::solve(
   const xt::xtensor<double,2> &b,
         xt::xtensor<double,2> &x)
 {
-  assert(b.shape()[0] == m_nnode);
-  assert(b.shape()[1] == m_ndim );
-  assert(x.shape()[0] == m_nnode);
-  assert(x.shape()[1] == m_ndim );
+  GOOSEFEM_ASSERT(b.shape() ==\
+    std::decay_t<decltype(b)>::shape_type({m_nnode, m_ndim}));
+  GOOSEFEM_ASSERT(x.shape() ==\
+    std::decay_t<decltype(x)>::shape_type({m_nnode, m_ndim}));
 
   this->factorize();
 
@@ -154,8 +151,8 @@ inline void MatrixDiagonal::solve(
   const xt::xtensor<double,1> &b,
         xt::xtensor<double,1> &x)
 {
-  assert(b.size() == m_ndof);
-  assert(x.size() == m_ndof);
+  GOOSEFEM_ASSERT(b.size() == m_ndof);
+  GOOSEFEM_ASSERT(x.size() == m_ndof);
 
   this->factorize();
 
@@ -174,9 +171,7 @@ inline xt::xtensor<double,1> MatrixDiagonal::AsDiagonal() const
 inline xt::xtensor<double,2> MatrixDiagonal::Dot(const xt::xtensor<double,2> &x) const
 {
   xt::xtensor<double,2> b = xt::empty<double>({m_nnode, m_ndim});
-
   this->dot(x, b);
-
   return b;
 }
 
@@ -185,9 +180,7 @@ inline xt::xtensor<double,2> MatrixDiagonal::Dot(const xt::xtensor<double,2> &x)
 inline xt::xtensor<double,1> MatrixDiagonal::Dot(const xt::xtensor<double,1> &x) const
 {
   xt::xtensor<double,1> b = xt::empty<double>({m_ndof});
-
   this->dot(x, b);
-
   return b;
 }
 
@@ -196,9 +189,7 @@ inline xt::xtensor<double,1> MatrixDiagonal::Dot(const xt::xtensor<double,1> &x)
 inline xt::xtensor<double,2> MatrixDiagonal::Solve(const xt::xtensor<double,2> &b)
 {
   xt::xtensor<double,2> x = xt::empty<double>({m_nnode, m_ndim});
-
   this->solve(b, x);
-
   return x;
 }
 
@@ -207,9 +198,7 @@ inline xt::xtensor<double,2> MatrixDiagonal::Solve(const xt::xtensor<double,2> &
 inline xt::xtensor<double,1> MatrixDiagonal::Solve(const xt::xtensor<double,1> &b)
 {
   xt::xtensor<double,1> x = xt::empty<double>({m_ndof});
-
   this->solve(b, x);
-
   return x;
 }
 

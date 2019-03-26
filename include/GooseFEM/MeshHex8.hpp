@@ -22,9 +22,9 @@ namespace Hex8 {
 inline Regular::Regular(size_t nelx, size_t nely, size_t nelz, double h):
 m_h(h), m_nelx(nelx), m_nely(nely), m_nelz(nelz)
 {
-  assert( m_nelx >= 1 );
-  assert( m_nely >= 1 );
-  assert( m_nelz >= 1 );
+  GOOSEFEM_ASSERT(m_nelx >= 1ul);
+  GOOSEFEM_ASSERT(m_nely >= 1ul);
+  GOOSEFEM_ASSERT(m_nelz >= 1ul);
 
   m_nnode = (m_nelx+1) * (m_nely+1) * (m_nelz+1);
   m_nelem =  m_nelx    *  m_nely    *  m_nelz   ;
@@ -776,9 +776,9 @@ inline FineLayer::FineLayer(size_t nelx, size_t nely, size_t nelz, double h, siz
 m_h(h)
 {
   // basic assumptions
-  assert( nelx >= 1 );
-  assert( nely >= 1 );
-  assert( nelz >= 1 );
+  GOOSEFEM_ASSERT(nelx >= 1ul);
+  GOOSEFEM_ASSERT(nely >= 1ul);
+  GOOSEFEM_ASSERT(nelz >= 1ul);
 
   // store basic info
   m_Lx = m_h * static_cast<double>(nelx);
@@ -991,7 +991,7 @@ inline size_t FineLayer::ndim() const
 
 inline size_t FineLayer::shape(size_t i) const
 {
-  assert( i >= 0 and i <= 2 );
+  GOOSEFEM_ASSERT(i <= 2ul);
 
   if      ( i == 0 ) return xt::amax(m_nelx)[0];
   else if ( i == 2 ) return xt::amax(m_nelz)[0];

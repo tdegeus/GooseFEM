@@ -8,7 +8,7 @@ TEST_CASE("GooseFEM::Vector", "Vector.h")
 
 // =================================================================================================
 
-SECTION( "asDofs - nodevec" )
+SECTION("asDofs - nodevec")
 {
   // mesh
   GooseFEM::Mesh::Quad4::Regular mesh(2,2);
@@ -49,7 +49,7 @@ SECTION( "asDofs - nodevec" )
 
 // -------------------------------------------------------------------------------------------------
 
-SECTION( "asDofs - elemvec" )
+SECTION("asDofs - elemvec")
 {
   // mesh
   GooseFEM::Mesh::Quad4::Regular mesh(2,2);
@@ -90,7 +90,7 @@ SECTION( "asDofs - elemvec" )
 
 // -------------------------------------------------------------------------------------------------
 
-SECTION( "asDofs - assembleDofs" )
+SECTION("asDofs - assembleDofs")
 {
   // mesh
   GooseFEM::Mesh::Quad4::Regular mesh(2,2);
@@ -131,7 +131,7 @@ SECTION( "asDofs - assembleDofs" )
 
 // -------------------------------------------------------------------------------------------------
 
-SECTION( "asDofs - assembleNode" )
+SECTION("asDofs - assembleNode")
 {
   // mesh
   GooseFEM::Mesh::Quad4::Regular mesh(2,2);

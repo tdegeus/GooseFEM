@@ -31,15 +31,15 @@ inline QuadraturePlanar::QuadraturePlanar(
   double thick) :
   m_x(x), m_w(w), m_xi(xi), m_thick(thick)
 {
-  assert(m_x.shape()[1] == m_nne );
-  assert(m_x.shape()[2] == m_ndim);
+  GOOSEFEM_ASSERT(m_x.shape()[1] == m_nne);
+  GOOSEFEM_ASSERT(m_x.shape()[2] == m_ndim);
 
   m_nelem = m_x.shape()[0];
   m_nip   = m_w.size();
 
-  assert(m_xi.shape()[0] == m_nip );
-  assert(m_xi.shape()[1] == m_ndim);
-  assert(m_w .size()     == m_nip );
+  GOOSEFEM_ASSERT(m_xi.shape()[0] == m_nip);
+  GOOSEFEM_ASSERT(m_xi.shape()[1] == m_ndim);
+  GOOSEFEM_ASSERT(m_w.size() == m_nip);
 
   m_N    = xt::empty<double>({         m_nip, m_nne        });
   m_dNxi = xt::empty<double>({         m_nip, m_nne, m_ndim});
@@ -77,26 +77,26 @@ inline QuadraturePlanar::QuadraturePlanar(
 // -------------------------------------------------------------------------------------------------
 
 inline size_t QuadraturePlanar::nelem() const
-{ return m_nelem; };
+{ return m_nelem; }
 
 inline size_t QuadraturePlanar::nne() const
-{ return m_nne; };
+{ return m_nne; }
 
 inline size_t QuadraturePlanar::ndim() const
-{ return m_ndim; };
+{ return m_ndim; }
 
 inline size_t QuadraturePlanar::nip() const
-{ return m_nip; };
+{ return m_nip; }
 
 inline xt::xtensor<double,4> QuadraturePlanar::gradN() const
-{ return m_dNx; };
+{ return m_dNx; }
 
 // -------------------------------------------------------------------------------------------------
 
 inline void QuadraturePlanar::dV(xt::xtensor<double,2>& qscalar) const
 {
-  assert(qscalar.shape()[0] == m_nelem);
-  assert(qscalar.shape()[1] == m_nip  );
+  GOOSEFEM_ASSERT(qscalar.shape() ==\
+    std::decay_t<decltype(qscalar)>::shape_type({m_nelem, m_nip}));
 
   #pragma omp parallel for
   for (size_t e = 0 ; e < m_nelem ; ++e)
@@ -108,10 +108,8 @@ inline void QuadraturePlanar::dV(xt::xtensor<double,2>& qscalar) const
 
 inline void QuadraturePlanar::dV(xt::xtensor<double,4>& qtensor) const
 {
-  assert(qtensor.shape()[0] == m_nelem);
-  assert(qtensor.shape()[1] == m_nne  );
-  assert(qtensor.shape()[2] == m_tdim );
-  assert(qtensor.shape()[3] == m_tdim );
+  GOOSEFEM_ASSERT(qtensor.shape() ==\
+    std::decay_t<decltype(qtensor)>::shape_type({m_nelem, m_nip, m_tdim, m_tdim}));
 
   #pragma omp parallel for
   for (size_t e = 0 ; e < m_nelem ; ++e)
@@ -125,8 +123,8 @@ inline void QuadraturePlanar::dV(xt::xtensor<double,4>& qtensor) const
 
 inline void QuadraturePlanar::dV(xt::xarray<double>& qtensor) const
 {
-  assert(qtensor.shape()[0] == m_nelem);
-  assert(qtensor.shape()[1] == m_nne  );
+  GOOSEFEM_ASSERT(qtensor.shape()[0] == m_nelem);
+  GOOSEFEM_ASSERT(qtensor.shape()[1] == m_nip);
 
   xt::dynamic_shape<ptrdiff_t> strides = {
     static_cast<ptrdiff_t>(m_vol.strides()[0]),
@@ -142,10 +140,7 @@ inline void QuadraturePlanar::dV(xt::xarray<double>& qtensor) const
 
 inline void QuadraturePlanar::update_x(const xt::xtensor<double,3>& x)
 {
-  assert(x.shape()[0] == m_nelem   );
-  assert(x.shape()[1] == m_nne     );
-  assert(x.shape()[2] == m_ndim    );
-  assert(x.size()     == m_x.size());
+  GOOSEFEM_ASSERT(x.shape() == m_x.shape());
 
   xt::noalias(m_x) = x;
 
@@ -207,13 +202,10 @@ inline void QuadraturePlanar::gradN_vector(
   const xt::xtensor<double,3>& elemvec,
         xt::xtensor<double,4>& qtensor) const
 {
-  assert(elemvec.shape()[0] == m_nelem);
-  assert(elemvec.shape()[1] == m_nne  );
-  assert(elemvec.shape()[2] == m_ndim );
-  assert(qtensor.shape()[0] == m_nelem);
-  assert(qtensor.shape()[1] == m_nne  );
-  assert(qtensor.shape()[2] == m_tdim );
-  assert(qtensor.shape()[3] == m_tdim );
+  GOOSEFEM_ASSERT(elemvec.shape() ==\
+    std::decay_t<decltype(elemvec)>::shape_type({m_nelem, m_nne, m_ndim}));
+  GOOSEFEM_ASSERT(qtensor.shape() ==\
+    std::decay_t<decltype(qtensor)>::shape_type({m_nelem, m_nip, m_tdim, m_tdim}));
 
   // zero-initialize (zero z-components not written below)
   qtensor.fill(0.0);
@@ -248,13 +240,10 @@ inline void QuadraturePlanar::gradN_vector_T(
   const xt::xtensor<double,3>& elemvec,
         xt::xtensor<double,4>& qtensor) const
 {
-  assert(elemvec.shape()[0] == m_nelem);
-  assert(elemvec.shape()[1] == m_nne  );
-  assert(elemvec.shape()[2] == m_ndim );
-  assert(qtensor.shape()[0] == m_nelem);
-  assert(qtensor.shape()[1] == m_nne  );
-  assert(qtensor.shape()[2] == m_tdim );
-  assert(qtensor.shape()[3] == m_tdim );
+  GOOSEFEM_ASSERT(elemvec.shape() ==\
+    std::decay_t<decltype(elemvec)>::shape_type({m_nelem, m_nne, m_ndim}));
+  GOOSEFEM_ASSERT(qtensor.shape() ==\
+    std::decay_t<decltype(qtensor)>::shape_type({m_nelem, m_nip, m_tdim, m_tdim}));
 
   // zero-initialize (zero z-components not written below)
   qtensor.fill(0.0);
@@ -289,13 +278,10 @@ inline void QuadraturePlanar::symGradN_vector(
   const xt::xtensor<double,3>& elemvec,
         xt::xtensor<double,4>& qtensor) const
 {
-  assert(elemvec.shape()[0] == m_nelem);
-  assert(elemvec.shape()[1] == m_nne  );
-  assert(elemvec.shape()[2] == m_ndim );
-  assert(qtensor.shape()[0] == m_nelem);
-  assert(qtensor.shape()[1] == m_nne  );
-  assert(qtensor.shape()[2] == m_tdim );
-  assert(qtensor.shape()[3] == m_tdim );
+  GOOSEFEM_ASSERT(elemvec.shape() ==\
+    std::decay_t<decltype(elemvec)>::shape_type({m_nelem, m_nne, m_ndim}));
+  GOOSEFEM_ASSERT(qtensor.shape() ==\
+    std::decay_t<decltype(qtensor)>::shape_type({m_nelem, m_nip, m_tdim, m_tdim}));
 
   // zero-initialize (zero z-components not written below)
   qtensor.fill(0.0);
@@ -332,11 +318,10 @@ inline void QuadraturePlanar::int_N_scalar_NT_dV(
   const xt::xtensor<double,2>& qscalar,
         xt::xtensor<double,3>& elemmat) const
 {
-  assert(qscalar.shape()[0] == m_nelem     );
-  assert(qscalar.shape()[1] == m_nip       );
-  assert(elemmat.shape()[0] == m_nelem     );
-  assert(elemmat.shape()[1] == m_nne*m_ndim);
-  assert(elemmat.shape()[2] == m_nne*m_ndim);
+  GOOSEFEM_ASSERT(qscalar.shape() ==\
+    std::decay_t<decltype(qscalar)>::shape_type({m_nelem, m_nip}));
+  GOOSEFEM_ASSERT(elemmat.shape() ==\
+    std::decay_t<decltype(elemmat)>::shape_type({m_nelem, m_nne*m_ndim, m_nne*m_ndim}));
 
   // zero-initialize: matrix of matrices
   elemmat.fill(0.0);
@@ -374,13 +359,10 @@ inline void QuadraturePlanar::int_gradN_dot_tensor2_dV(
   const xt::xtensor<double,4>& qtensor,
         xt::xtensor<double,3>& elemvec) const
 {
-  assert(qtensor.shape()[0] == m_nelem);
-  assert(qtensor.shape()[1] == m_nip  );
-  assert(qtensor.shape()[2] == m_tdim );
-  assert(qtensor.shape()[3] == m_tdim );
-  assert(elemvec.shape()[0] == m_nelem);
-  assert(elemvec.shape()[1] == m_nne  );
-  assert(elemvec.shape()[2] == m_ndim );
+  GOOSEFEM_ASSERT(qtensor.shape() ==\
+    std::decay_t<decltype(qtensor)>::shape_type({m_nelem, m_nip, m_tdim, m_tdim}));
+  GOOSEFEM_ASSERT(elemvec.shape() ==\
+    std::decay_t<decltype(elemvec)>::shape_type({m_nelem, m_nne, m_ndim}));
 
   // zero-initialize output: matrix of vectors
   elemvec.fill(0.0);
@@ -416,16 +398,10 @@ inline void QuadraturePlanar::int_gradN_dot_tensor4_dot_gradNT_dV(
   const xt::xtensor<double,6>& qtensor,
         xt::xtensor<double,3>& elemmat) const
 {
-  assert(qtensor.shape()[0] == m_nelem);
-  assert(qtensor.shape()[1] == m_nip  );
-  assert(qtensor.shape()[2] == m_tdim );
-  assert(qtensor.shape()[3] == m_tdim );
-  assert(qtensor.shape()[4] == m_tdim );
-  assert(qtensor.shape()[5] == m_tdim );
-
-  assert(elemmat.shape()[0] == m_nelem     );
-  assert(elemmat.shape()[1] == m_nne*m_ndim);
-  assert(elemmat.shape()[2] == m_nne*m_ndim);
+  GOOSEFEM_ASSERT(qtensor.shape() ==\
+    std::decay_t<decltype(qtensor)>::shape_type({m_nelem, m_nip, m_tdim, m_tdim, m_tdim, m_tdim}));
+  GOOSEFEM_ASSERT(elemmat.shape() ==\
+    std::decay_t<decltype(elemmat)>::shape_type({m_nelem, m_nne*m_ndim, m_nne*m_ndim}));
 
   // zero-initialize output: matrix of vector
   elemmat.fill(0.0);
@@ -462,9 +438,7 @@ inline void QuadraturePlanar::int_gradN_dot_tensor4_dot_gradNT_dV(
 inline xt::xtensor<double,2> QuadraturePlanar::DV() const
 {
   xt::xtensor<double,2> out = xt::empty<double>({m_nelem, m_nip});
-
   this->dV(out);
-
   return out;
 }
 
@@ -478,9 +452,7 @@ inline xt::xarray<double> QuadraturePlanar::DV(size_t rank) const
     shape.push_back(static_cast<size_t>(m_tdim));
 
   xt::xarray<double> out = xt::empty<double>(shape);
-
   this->dV(out);
-
   return out;
 }
 
@@ -490,9 +462,7 @@ inline xt::xtensor<double,4> QuadraturePlanar::GradN_vector(
   const xt::xtensor<double,3>& elemvec) const
 {
   xt::xtensor<double,4> qtensor = xt::empty<double>({m_nelem, m_nip, m_tdim, m_tdim});
-
   this->gradN_vector(elemvec, qtensor);
-
   return qtensor;
 }
 
@@ -502,9 +472,7 @@ inline xt::xtensor<double,4> QuadraturePlanar::GradN_vector_T(
   const xt::xtensor<double,3>& elemvec) const
 {
   xt::xtensor<double,4> qtensor = xt::empty<double>({m_nelem, m_nip, m_tdim, m_tdim});
-
   this->gradN_vector_T(elemvec, qtensor);
-
   return qtensor;
 }
 
@@ -514,9 +482,7 @@ inline xt::xtensor<double,4> QuadraturePlanar::SymGradN_vector(
   const xt::xtensor<double,3>& elemvec) const
 {
   xt::xtensor<double,4> qtensor = xt::empty<double>({m_nelem, m_nip, m_tdim, m_tdim});
-
   this->symGradN_vector(elemvec, qtensor);
-
   return qtensor;
 }
 
@@ -526,9 +492,7 @@ inline xt::xtensor<double,3> QuadraturePlanar::Int_N_scalar_NT_dV(
   const xt::xtensor<double,2>& qscalar) const
 {
   xt::xtensor<double,3> elemmat = xt::empty<double>({m_nelem, m_nne*m_ndim, m_nne*m_ndim});
-
   this->int_N_scalar_NT_dV(qscalar, elemmat);
-
   return elemmat;
 }
 
@@ -538,9 +502,7 @@ inline xt::xtensor<double,3> QuadraturePlanar::Int_gradN_dot_tensor2_dV(
   const xt::xtensor<double,4>& qtensor) const
 {
   xt::xtensor<double,3> elemvec = xt::empty<double>({m_nelem, m_nne, m_ndim});
-
   this->int_gradN_dot_tensor2_dV(qtensor, elemvec);
-
   return elemvec;
 }
 
@@ -550,9 +512,7 @@ inline xt::xtensor<double,3> QuadraturePlanar::Int_gradN_dot_tensor4_dot_gradNT_
   const xt::xtensor<double,6>& qtensor) const
  {
    xt::xtensor<double,3> elemmat = xt::empty<double>({m_nelem, m_ndim*m_nne, m_ndim*m_nne});
-
    this->int_gradN_dot_tensor4_dot_gradNT_dV(qtensor, elemmat);
-
    return elemmat;
  }
 

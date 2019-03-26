@@ -33,8 +33,8 @@ inline Matrix::Matrix(
 
   m_A.resize(m_ndof,m_ndof);
 
-  assert(xt::amax(m_conn)[0] + 1 == m_nnode);
-  assert(m_ndof <= m_nnode * m_ndim);
+  GOOSEFEM_ASSERT(xt::amax(m_conn)[0] + 1 == m_nnode);
+  GOOSEFEM_ASSERT(m_ndof <= m_nnode * m_ndim);
 }
 
 // -------------------------------------------------------------------------------------------------
@@ -64,7 +64,6 @@ inline void Matrix::factorize()
   if ( ! m_factor ) return;
 
   m_solver.compute(m_A);
-
   m_factor = false;
 }
 
@@ -72,9 +71,8 @@ inline void Matrix::factorize()
 
 inline void Matrix::assemble(const xt::xtensor<double,3> &elemmat)
 {
-  assert(elemmat.shape()[0] == m_nelem     );
-  assert(elemmat.shape()[1] == m_nne*m_ndim);
-  assert(elemmat.shape()[2] == m_nne*m_ndim);
+  GOOSEFEM_ASSERT(elemmat.shape() ==\
+    std::decay_t<decltype(elemmat)>::shape_type({m_nelem, m_nne*m_ndim, m_nne*m_ndim}));
 
   m_T.clear();
 
@@ -98,17 +96,14 @@ inline void Matrix::solve(
   const xt::xtensor<double,2> &b,
         xt::xtensor<double,2> &x)
 {
-  assert(b.shape()[0] == m_nnode);
-  assert(b.shape()[1] == m_ndim );
-  assert(x.shape()[0] == m_nnode);
-  assert(x.shape()[1] == m_ndim );
+  GOOSEFEM_ASSERT(b.shape() ==\
+    std::decay_t<decltype(b)>::shape_type({m_nnode, m_ndim}));
+  GOOSEFEM_ASSERT(x.shape() ==\
+    std::decay_t<decltype(x)>::shape_type({m_nnode, m_ndim}));
 
   this->factorize();
-
   Eigen::VectorXd B = this->asDofs(b);
-
   Eigen::VectorXd X = m_solver.solve(B);
-
   this->asNode(X, x);
 }
 
@@ -118,17 +113,13 @@ inline void Matrix::solve(
   const xt::xtensor<double,1> &b,
         xt::xtensor<double,1> &x)
 {
-  assert(b.size() == m_ndof);
-  assert(x.size() == m_ndof);
+  GOOSEFEM_ASSERT(b.size() == m_ndof);
+  GOOSEFEM_ASSERT(x.size() == m_ndof);
 
   this->factorize();
-
   Eigen::VectorXd B(m_ndof,1);
-
   std::copy(b.begin(), b.end(), B.data());
-
   Eigen::VectorXd X = m_solver.solve(B);
-
   std::copy(X.data(), X.data()+m_ndof, x.begin());
 }
 
@@ -138,9 +129,7 @@ inline xt::xtensor<double,2> Matrix::Solve(
   const xt::xtensor<double,2> &b)
 {
   xt::xtensor<double,2> x = xt::empty<double>({m_nnode, m_ndim});
-
   this->solve(b, x);
-
   return x;
 }
 
@@ -150,9 +139,7 @@ inline xt::xtensor<double,1> Matrix::Solve(
   const xt::xtensor<double,1> &b)
 {
   xt::xtensor<double,1> x = xt::empty<double>({m_ndof});
-
   this->solve(b, x);
-
   return x;
 }
 
@@ -160,8 +147,8 @@ inline xt::xtensor<double,1> Matrix::Solve(
 
 inline Eigen::VectorXd Matrix::asDofs(const xt::xtensor<double,2> &nodevec) const
 {
-  assert(nodevec.shape()[0] == m_nnode);
-  assert(nodevec.shape()[1] == m_ndim );
+  assert(nodevec.shape() ==\
+    std::decay_t<decltype(nodevec)>::shape_type({m_nnode, m_ndim}));
 
   Eigen::VectorXd dofval(m_ndof,1);
 
@@ -178,8 +165,8 @@ inline Eigen::VectorXd Matrix::asDofs(const xt::xtensor<double,2> &nodevec) cons
 inline void Matrix::asNode(const Eigen::VectorXd &dofval, xt::xtensor<double,2> &nodevec) const
 {
   assert(static_cast<size_t>(dofval.size()) == m_ndof);
-  assert(nodevec.shape()[0] == m_nnode);
-  assert(nodevec.shape()[1] == m_ndim );
+  assert(nodevec.shape() ==\
+    std::decay_t<decltype(nodevec)>::shape_type({m_nnode, m_ndim}));
 
   #pragma omp parallel for
   for (size_t m = 0 ; m < m_nnode ; ++m)

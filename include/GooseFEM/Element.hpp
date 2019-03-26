@@ -48,8 +48,8 @@ inline xt::xtensor<double,2> assembleNodeVector(
   size_t ndim  = elemvec.shape()[2];
   size_t nnode = xt::amax(conn)[0]+1;
 
-  assert(elemvec.shape()[0] == nelem);
-  assert(elemvec.shape()[1] == nne  );
+  GOOSEFEM_ASSERT(elemvec.shape()[0] == nelem);
+  GOOSEFEM_ASSERT(elemvec.shape()[1] == nne);
 
   xt::xtensor<double,2> nodevec = xt::zeros<double>({nnode, ndim});
 
@@ -84,7 +84,7 @@ inline bool isSequential(const E& dofs)
 
 inline bool isDiagonal(const xt::xtensor<double,3>& elemmat)
 {
-  assert(elemmat.shape()[1] == elemmat.shape()[2]);
+  GOOSEFEM_ASSERT(elemmat.shape()[1] == elemmat.shape()[2]);
 
   size_t nelem = elemmat.shape()[0];
   size_t N     = elemmat.shape()[1];

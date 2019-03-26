@@ -22,8 +22,8 @@ namespace Quad4 {
 inline Regular::Regular(size_t nelx, size_t nely, double h):
 m_h(h), m_nelx(nelx), m_nely(nely)
 {
-  assert( m_nelx >= 1 );
-  assert( m_nely >= 1 );
+  GOOSEFEM_ASSERT(m_nelx >= 1ul);
+  GOOSEFEM_ASSERT(m_nely >= 1ul);
 
   m_nnode = (m_nelx+1) * (m_nely+1);
   m_nelem =  m_nelx    *  m_nely   ;
@@ -302,8 +302,8 @@ inline FineLayer::FineLayer(size_t nelx, size_t nely, double h, size_t nfine):
 m_h(h)
 {
   // basic assumptions
-  assert( nelx >= 1 );
-  assert( nely >= 1 );
+  GOOSEFEM_ASSERT(nelx >= 1ul);
+  GOOSEFEM_ASSERT(nely >= 1ul);
 
   // store basic info
   m_Lx = m_h * static_cast<double>(nelx);
@@ -455,7 +455,7 @@ inline size_t FineLayer::ndim() const
 
 inline size_t FineLayer::shape(size_t i) const
 {
-  assert( i >= 0 and i <= 1 );
+  GOOSEFEM_ASSERT(i <= 1ul);
 
   if ( i == 0 ) return xt::amax(m_nelx)[0];
   else          return xt::sum (m_nhy )[0];

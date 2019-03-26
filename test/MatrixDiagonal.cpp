@@ -8,7 +8,7 @@ TEST_CASE("GooseFEM::MatrixDiagonal", "MatrixDiagonal.h")
 
 // =================================================================================================
 
-SECTION( "dot" )
+SECTION("dot")
 {
   // mesh
   GooseFEM::Mesh::Quad4::Regular mesh(2,2);
@@ -40,7 +40,7 @@ SECTION( "dot" )
 
 // -------------------------------------------------------------------------------------------------
 
-SECTION( "solve" )
+SECTION("solve")
 {
   // mesh
   GooseFEM::Mesh::Quad4::Regular mesh(2,2);
