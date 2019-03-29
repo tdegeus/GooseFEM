@@ -64,10 +64,10 @@ install:
     - conda config --set always_yes yes --set changeps1 no
     - conda update -q conda
     - conda install cmake -c conda-forge
-    - conda install xtl -c QuantStack
-    - conda install xsimd -c QuantStack
-    - conda install xtensor -c QuantStack
-    - conda install nlohmann_json -c QuantStack
+    - conda install xtl -c conda-forge
+    - conda install xsimd -c conda-forge
+    - conda install xtensor -c conda-forge
+    - conda install nlohmann_json -c conda-forge
     # build path
     - mkdir build
     - cd build
