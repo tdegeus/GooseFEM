@@ -1,6 +1,6 @@
 #include <Eigen/Eigen>
 #include <GooseFEM/GooseFEM.h>
-#include <GMatLinearElastic/Cartesian3d.h>
+#include <GMatElastic/Cartesian3d.h>
 #include <xtensor-io/xhighfive.hpp>
 
 int main()
@@ -26,19 +26,25 @@ int main()
 
   // node sets
 
-  xt::xtensor<size_t,1> nodesLeft   = mesh.nodesLeftEdge();
-  xt::xtensor<size_t,1> nodesRight  = mesh.nodesRightEdge();
+  xt::xtensor<size_t,1> nodesLeft   = mesh.nodesLeftOpenEdge();
+  xt::xtensor<size_t,1> nodesRight  = mesh.nodesRightOpenEdge();
   xt::xtensor<size_t,1> nodesTop    = mesh.nodesTopEdge();
   xt::xtensor<size_t,1> nodesBottom = mesh.nodesBottomEdge();
 
-  // fixed displacements DOFs
-  // ------------------------
+  // periodicity and fixed displacements DOFs
+  // ----------------------------------------
+
+  for ( size_t i = 0 ; i < nodesLeft.size() ; ++i )
+    for ( size_t j = 0 ; j < coor.shape()[1] ; ++j )
+      dofs(nodesRight(i),j) = dofs(nodesLeft(i),j);
+
+  dofs = GooseFEM::Mesh::renumber(dofs);
 
   xt::xtensor<size_t,1> iip = xt::concatenate(xt::xtuple(
-    xt::view(dofs, xt::keep(nodesRight ), 0),
-    xt::view(dofs, xt::keep(nodesTop   ), 1),
-    xt::view(dofs, xt::keep(nodesLeft  ), 0),
-    xt::view(dofs, xt::keep(nodesBottom), 1)
+    xt::view(dofs, xt::keep(nodesBottom), 0),
+    xt::view(dofs, xt::keep(nodesBottom), 1),
+    xt::view(dofs, xt::keep(nodesTop   ), 0),
+    xt::view(dofs, xt::keep(nodesTop   ), 1)
   ));
 
   // simulation variables
@@ -68,7 +74,16 @@ int main()
 
   size_t nip = elem.nip();
 
-  GMatLinearElastic::Cartesian3d::Matrix mat(nelem, nip, 1., 1.);
+  GMatElastic::Cartesian3d::Matrix mat(nelem, nip);
+
+  xt::xtensor<size_t,2> Ihard = xt::zeros<size_t>({nelem, nip});
+
+  xt::view(Ihard, xt::keep(0,1,5,6), xt::all()) = 1;
+
+  xt::xtensor<size_t,2> Isoft = xt::ones<size_t>({nelem, nip}) - Ihard;
+
+  mat.setElastic(Isoft,10.,1. );
+  mat.setElastic(Ihard,10.,10.);
 
   // solve
   // -----
@@ -98,10 +113,7 @@ int main()
   K.assemble(Ke);
 
   // set fixed displacements
-  xt::view(disp, xt::keep(nodesRight ), 0) = +0.1;
-  xt::view(disp, xt::keep(nodesTop   ), 1) = -0.1;
-  xt::view(disp, xt::keep(nodesLeft  ), 0) =  0.0;
-  xt::view(disp, xt::keep(nodesBottom), 1) =  0.0;
+  xt::view(disp, xt::keep(nodesTop), xt::keep(0)) = +0.1;
 
   // residual
   xt::noalias(fres) = fext - fint;

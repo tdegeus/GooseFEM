@@ -216,7 +216,7 @@ inline void MatrixPartitionedTyings::solve(
   #pragma omp parallel for
   for (size_t m = 0 ; m < m_nnode ; ++m) {
     for (size_t i = 0 ; i < m_ndim ; ++i) {
-      if      (m_dofs(m,i) < m_nnu)
+      if (m_dofs(m,i) < m_nnu)
         x(m,i) = X_u(m_dofs(m,i));
       else if (m_dofs(m,i) >= m_nni)
         x(m,i) = X_d(m_dofs(m,i)-m_nni);

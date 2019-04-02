@@ -193,6 +193,42 @@ inline Eigen::SparseMatrix<double> Periodic::Cdp() const
 
 // -------------------------------------------------------------------------------------------------
 
+inline Control::Control(
+  const xt::xtensor<double,2>& coor,
+  const xt::xtensor<size_t,2>& dofs) :
+  m_coor(coor), m_dofs(dofs)
+{
+  GOOSEFEM_ASSERT(coor.shape().size() == 2);
+  GOOSEFEM_ASSERT(coor.shape() == dofs.shape());
+
+  size_t nnode = coor.shape()[0];
+  size_t ndim = coor.shape()[1];
+
+  m_control_dofs = xt::arange<size_t>(ndim*ndim).reshape({ndim,ndim});
+  m_control_dofs += xt::amax(dofs)[0] + 1;
+
+  m_control_nodes = nnode + xt::arange<size_t>(ndim);
+
+  m_coor = xt::concatenate(xt::xtuple(coor, xt::zeros<double>({ndim,ndim})));
+  m_dofs = xt::concatenate(xt::xtuple(dofs, m_control_dofs));
+}
+
+// -------------------------------------------------------------------------------------------------
+
+inline xt::xtensor<double,2> Control::coor() const
+{ return m_coor; }
+
+inline xt::xtensor<size_t,2> Control::dofs() const
+{ return m_dofs; }
+
+inline xt::xtensor<size_t,2> Control::controlDofs() const
+{ return m_control_dofs; }
+
+inline xt::xtensor<size_t,1> Control::controlNodes() const
+{ return m_control_nodes; }
+
+// -------------------------------------------------------------------------------------------------
+
 }} // namespace ...
 
 // =================================================================================================

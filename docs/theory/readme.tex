@@ -334,6 +334,62 @@ and
   \mathrm{d}\Omega_0
 \end{equation}
 
+\subsection{Iterative solution -- large strain [work-in-progress]}
+
+\subsubsection{Definitions}
+
+\paragraph{Deformation gradient tensor}
+
+Deformation gradient tensor
+\begin{equation}
+  \bm{F} = (\vec{\nabla}_0 \vec{x})^T
+\end{equation}
+The gradient operation $\vec{\nabla}$ with respect to the current configuration is related to the gradient operator with respect to the undeformed configuration $\vec{\nabla}_0$ by the deformation gradient tensor $\bm{F}$ according to
+\begin{equation}
+  \vec{\nabla} = \bm{F}^{-T} \cdot \vec{\nabla}_0
+\end{equation}
+
+\paragraph{Discretisation}
+
+\begin{equation}
+  \vec{x}^h (\vec{X}_0, t) = \sum\limits_{m} N_m (\vec{X}_0) \vec{x}_m (t)
+\end{equation}
+
+\subsubsection{Updated Lagrange}
+
+Linearised system of equations:
+\begin{equation}
+  \int\limits_{\Omega_{(i)}^h} \vec{\nabla}_{(i)} N_m(\vec{X}_0) \cdot \big(
+    \bm{F}_{(i)} \cdot \delta \bm{F}^{-1} \cdot \bm{\tau}_{(i)} + \delta \bm{\tau}
+  \big) \frac{1}{J^i} d \Omega_{(i)}^h
+  =
+  \vec{f}_{m}^\mathrm{ext} - \vec{f}_{m,(i)}^\mathrm{int}
+\end{equation}
+with
+\begin{equation}
+  \vec{f}_{m,(i)}^\mathrm{int} = \int\limits_{\Omega_{(i)}^h} \vec{\nabla}_{(i)} N_m(\vec{X}_0) \cdot \bm{\tau}_{(i)} \frac{1}{J^i} d \Omega_{(i)}^h
+\end{equation}
+
+Introduce:
+\begin{equation}
+  \bm{L}_\delta
+  \equiv \delta \bm{F} \cdot \bm{F}_{(i)}^{-1}
+  = \left( \bm{F}_{(i)}^{-T} \cdot \delta \bm{F}^T \right)^T
+  = \left( \bm{F}_{(i)}^{-T} \cdot \vec{\nabla}_0 \delta \vec{x} \right)^T
+  = \left( \vec{\nabla}_{(i)} \delta \vec{x} \right)^T
+\end{equation}
+Hence
+\begin{equation}
+  \bm{L}_\delta^T \equiv \vec{\nabla}_{(i)} \delta \vec{x}
+\end{equation}
+and hence
+\begin{equation}
+  \bm{L}_\delta^T
+  \equiv \vec{\nabla}_{(i)} \delta \vec{x}
+  \approx \vec{\nabla}_{(i)} \delta \vec{x}^h
+  = \left( \vec{\nabla}_{(i)} N_m(\vec{X}_0) \right)^T \delta \vec{x}
+\end{equation}
+
 \section{Dynamics}
 
 \subsection{Momentum balance}

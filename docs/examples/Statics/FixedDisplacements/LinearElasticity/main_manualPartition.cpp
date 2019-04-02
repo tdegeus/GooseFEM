@@ -1,6 +1,6 @@
 #include <Eigen/Eigen>
 #include <GooseFEM/GooseFEM.h>
-#include <GMatLinearElastic/Cartesian3d.h>
+#include <GMatElastic/Cartesian3d.h>
 #include <xtensor-io/xhighfive.hpp>
 
 int main()
@@ -74,7 +74,7 @@ int main()
 
   size_t nip = elem.nip();
 
-  GMatLinearElastic::Cartesian3d::Matrix mat(nelem, nip, 1., 1.);
+  GMatElastic::Cartesian3d::Matrix mat(nelem, nip, 1., 1.);
 
   // solve
   // -----
