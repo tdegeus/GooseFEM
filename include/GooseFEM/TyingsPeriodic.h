@@ -83,6 +83,36 @@ private:
 
 // -------------------------------------------------------------------------------------------------
 
+class Control
+{
+public:
+
+  // Constructors
+
+  Control() = default;
+
+  Control(
+    const xt::xtensor<double,2>& coor,
+    const xt::xtensor<size_t,2>& dofs);
+
+  // Extract new lists
+
+  xt::xtensor<double,2> coor() const;
+  xt::xtensor<size_t,2> dofs() const;
+  xt::xtensor<size_t,2> controlDofs() const;
+  xt::xtensor<size_t,1> controlNodes() const;
+
+private:
+
+  xt::xtensor<double,2> m_coor;
+  xt::xtensor<size_t,2> m_dofs;
+  xt::xtensor<size_t,2> m_control_dofs;
+  xt::xtensor<size_t,1> m_control_nodes;
+
+};
+
+// -------------------------------------------------------------------------------------------------
+
 }} // namespace ...
 
 // -------------------------------------------------------------------------------------------------

@@ -95,13 +95,13 @@ private:
 inline xt::xtensor<size_t,2> dofs(size_t nnode, size_t ndim);
 
 // renumber to lowest possible index (see "GooseFEM::Mesh::Renumber")
-inline xt::xtensor<size_t,2> renumber(const xt::xtensor<size_t,2> &dofs);
+inline xt::xtensor<size_t,2> renumber(const xt::xtensor<size_t,2>& dofs);
 
 // number of elements connected to each node
-inline xt::xtensor<size_t,1> coordination(const xt::xtensor<size_t,2> &conn);
+inline xt::xtensor<size_t,1> coordination(const xt::xtensor<size_t,2>& conn);
 
 // elements connected to each node
-inline std::vector<std::vector<size_t>> elem2node(const xt::xtensor<size_t,2> &conn);
+inline std::vector<std::vector<size_t>> elem2node(const xt::xtensor<size_t,2>& conn);
 
 // -------------------------------------------------------------------------------------------------
 
