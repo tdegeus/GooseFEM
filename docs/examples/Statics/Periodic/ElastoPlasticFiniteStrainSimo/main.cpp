@@ -91,7 +91,7 @@ int main()
   // -----
 
   // allocate tensors
-  xt::xtensor<double,4> I   = mat.I();
+  xt::xtensor<double,4> I   = mat.I2();
   xt::xtensor<double,4> F   = xt::empty<double>({nelem, nip, tdim, tdim});
   xt::xtensor<double,4> Eps = xt::empty<double>({nelem, nip, tdim, tdim});
   xt::xtensor<double,4> Sig = xt::empty<double>({nelem, nip, tdim, tdim});
