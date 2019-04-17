@@ -18,8 +18,8 @@ namespace GooseFEM {
 // -------------------------------------------------------------------------------------------------
 
 inline VectorPartitionedTyings::VectorPartitionedTyings(
-  const xt::xtensor<size_t,2> &conn,
-  const xt::xtensor<size_t,2> &dofs,
+  const xt::xtensor<size_t,2>& conn,
+  const xt::xtensor<size_t,2>& dofs,
   const Eigen::SparseMatrix<double>& Cdu,
   const Eigen::SparseMatrix<double>& Cdp,
   const Eigen::SparseMatrix<double>& Cdi) :
@@ -39,8 +39,8 @@ inline VectorPartitionedTyings::VectorPartitionedTyings(
   m_ndof  = m_nni + m_nnd;
 
   m_iiu   = xt::arange<size_t>(m_nnu);
-  m_iip   = xt::arange<size_t>(m_nnp) + m_nnu;
-  m_iid   = xt::arange<size_t>(m_nnd) + m_nni;
+  m_iip   = xt::arange<size_t>(m_nnu, m_nnu + m_nnp);
+  m_iid   = xt::arange<size_t>(m_nni, m_nni + m_nnd);
 
   m_nelem = m_conn.shape()[0];
   m_nne   = m_conn.shape()[1];
@@ -60,46 +60,100 @@ inline VectorPartitionedTyings::VectorPartitionedTyings(
 // -------------------------------------------------------------------------------------------------
 
 inline size_t VectorPartitionedTyings::nelem() const
-{ return m_nelem; }
+{
+  return m_nelem;
+}
+
+// -------------------------------------------------------------------------------------------------
 
 inline size_t VectorPartitionedTyings::nne() const
-{ return m_nne; }
+{
+  return m_nne;
+}
+
+// -------------------------------------------------------------------------------------------------
 
 inline size_t VectorPartitionedTyings::nnode() const
-{ return m_nnode; }
+{
+  return m_nnode;
+}
+
+// -------------------------------------------------------------------------------------------------
 
 inline size_t VectorPartitionedTyings::ndim() const
-{ return m_ndim; }
+{
+  return m_ndim;
+}
+
+// -------------------------------------------------------------------------------------------------
 
 inline size_t VectorPartitionedTyings::ndof() const
-{ return m_ndof; }
+{
+  return m_ndof;
+}
+
+// -------------------------------------------------------------------------------------------------
 
 inline size_t VectorPartitionedTyings::nnu() const
-{ return m_nnu; }
+{
+  return m_nnu;
+}
+
+// -------------------------------------------------------------------------------------------------
 
 inline size_t VectorPartitionedTyings::nnp() const
-{ return m_nnp; }
+{
+  return m_nnp;
+}
+
+// -------------------------------------------------------------------------------------------------
 
 inline size_t VectorPartitionedTyings::nni() const
-{ return m_nni; }
+{
+  return m_nni;
+}
+
+// -------------------------------------------------------------------------------------------------
 
 inline size_t VectorPartitionedTyings::nnd() const
-{ return m_nnd; }
+{
+  return m_nnd;
+}
+
+// -------------------------------------------------------------------------------------------------
 
 inline xt::xtensor<size_t,2> VectorPartitionedTyings::dofs() const
-{ return m_dofs; }
+{
+  return m_dofs;
+}
+
+// -------------------------------------------------------------------------------------------------
 
 inline xt::xtensor<size_t,1> VectorPartitionedTyings::iiu() const
-{ return m_iiu; }
+{
+  return m_iiu;
+}
+
+// -------------------------------------------------------------------------------------------------
 
 inline xt::xtensor<size_t,1> VectorPartitionedTyings::iip() const
-{ return m_iip; }
+{
+  return m_iip;
+}
+
+// -------------------------------------------------------------------------------------------------
 
 inline xt::xtensor<size_t,1> VectorPartitionedTyings::iii() const
-{ return xt::arange<size_t>(m_nni); }
+{
+  return xt::arange<size_t>(m_nni);
+}
+
+// -------------------------------------------------------------------------------------------------
 
 inline xt::xtensor<size_t,1> VectorPartitionedTyings::iid() const
-{ return m_iid; }
+{
+  return m_iid;
+}
 
 // -------------------------------------------------------------------------------------------------
 

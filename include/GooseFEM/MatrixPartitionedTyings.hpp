@@ -18,8 +18,8 @@ namespace GooseFEM {
 // -------------------------------------------------------------------------------------------------
 
 inline MatrixPartitionedTyings::MatrixPartitionedTyings(
-  const xt::xtensor<size_t,2> &conn,
-  const xt::xtensor<size_t,2> &dofs,
+  const xt::xtensor<size_t,2>& conn,
+  const xt::xtensor<size_t,2>& dofs,
   const Eigen::SparseMatrix<double>& Cdu,
   const Eigen::SparseMatrix<double>& Cdp) :
   m_conn(conn),
@@ -36,8 +36,8 @@ inline MatrixPartitionedTyings::MatrixPartitionedTyings(
   m_ndof  = m_nni + m_nnd;
 
   m_iiu   = xt::arange<size_t>(m_nnu);
-  m_iip   = xt::arange<size_t>(m_nnp) + m_nnu;
-  m_iid   = xt::arange<size_t>(m_nnd) + m_nni;
+  m_iip   = xt::arange<size_t>(m_nnu, m_nnu + m_nnp);
+  m_iid   = xt::arange<size_t>(m_nni, m_nni + m_nnd);
 
   m_nelem = m_conn.shape()[0];
   m_nne   = m_conn.shape()[1];
@@ -128,7 +128,7 @@ inline void MatrixPartitionedTyings::factorize()
 
 // -------------------------------------------------------------------------------------------------
 
-inline void MatrixPartitionedTyings::assemble(const xt::xtensor<double,3> &elemmat)
+inline void MatrixPartitionedTyings::assemble(const xt::xtensor<double,3>& elemmat)
 {
   GOOSEFEM_ASSERT(elemmat.shape() ==\
     std::decay_t<decltype(elemmat)>::shape_type({m_nelem, m_nne*m_ndim, m_nne*m_ndim}));
@@ -194,8 +194,8 @@ inline void MatrixPartitionedTyings::assemble(const xt::xtensor<double,3> &elemm
 // -------------------------------------------------------------------------------------------------
 
 inline void MatrixPartitionedTyings::solve(
-  const xt::xtensor<double,2> &b,
-        xt::xtensor<double,2> &x)
+  const xt::xtensor<double,2>& b,
+        xt::xtensor<double,2>& x)
 {
   GOOSEFEM_ASSERT(b.shape() ==\
     std::decay_t<decltype(b)>::shape_type({m_nnode, m_ndim}));
@@ -227,8 +227,8 @@ inline void MatrixPartitionedTyings::solve(
 // -------------------------------------------------------------------------------------------------
 
 inline void MatrixPartitionedTyings::solve(
-  const xt::xtensor<double,1> &b,
-        xt::xtensor<double,1> &x)
+  const xt::xtensor<double,1>& b,
+        xt::xtensor<double,1>& x)
 {
   GOOSEFEM_ASSERT(b.size() == m_ndof);
   GOOSEFEM_ASSERT(x.size() == m_ndof);
@@ -254,10 +254,10 @@ inline void MatrixPartitionedTyings::solve(
 // -------------------------------------------------------------------------------------------------
 
 inline void MatrixPartitionedTyings::solve_u(
-  const xt::xtensor<double,1> &b_u,
-  const xt::xtensor<double,1> &b_d,
-  const xt::xtensor<double,1> &x_p,
-        xt::xtensor<double,1> &x_u)
+  const xt::xtensor<double,1>& b_u,
+  const xt::xtensor<double,1>& b_d,
+  const xt::xtensor<double,1>& x_p,
+        xt::xtensor<double,1>& x_u)
 {
   GOOSEFEM_ASSERT(b_u.size() == m_nnu);
   GOOSEFEM_ASSERT(b_d.size() == m_nnd);
@@ -282,7 +282,7 @@ inline void MatrixPartitionedTyings::solve_u(
 // -------------------------------------------------------------------------------------------------
 
 inline Eigen::VectorXd MatrixPartitionedTyings::asDofs_u(
-  const xt::xtensor<double,1> &dofval) const
+  const xt::xtensor<double,1>& dofval) const
 {
   assert(dofval.size() == m_ndof);
 
@@ -298,7 +298,7 @@ inline Eigen::VectorXd MatrixPartitionedTyings::asDofs_u(
 // -------------------------------------------------------------------------------------------------
 
 inline Eigen::VectorXd MatrixPartitionedTyings::asDofs_u(
-  const xt::xtensor<double,2> &nodevec) const
+  const xt::xtensor<double,2>& nodevec) const
 {
   assert(nodevec.shape() ==\
     std::decay_t<decltype(nodevec)>::shape_type({m_nnode, m_ndim}));
@@ -317,7 +317,7 @@ inline Eigen::VectorXd MatrixPartitionedTyings::asDofs_u(
 // -------------------------------------------------------------------------------------------------
 
 inline Eigen::VectorXd MatrixPartitionedTyings::asDofs_p(
-  const xt::xtensor<double,1> &dofval) const
+  const xt::xtensor<double,1>& dofval) const
 {
   assert(dofval.size() == m_ndof);
 
@@ -333,7 +333,7 @@ inline Eigen::VectorXd MatrixPartitionedTyings::asDofs_p(
 // -------------------------------------------------------------------------------------------------
 
 inline Eigen::VectorXd MatrixPartitionedTyings::asDofs_p(
-  const xt::xtensor<double,2> &nodevec) const
+  const xt::xtensor<double,2>& nodevec) const
 {
   assert(nodevec.shape() ==\
     std::decay_t<decltype(nodevec)>::shape_type({m_nnode, m_ndim}));
@@ -352,7 +352,7 @@ inline Eigen::VectorXd MatrixPartitionedTyings::asDofs_p(
 // -------------------------------------------------------------------------------------------------
 
 inline Eigen::VectorXd MatrixPartitionedTyings::asDofs_d(
-  const xt::xtensor<double,1> &dofval) const
+  const xt::xtensor<double,1>& dofval) const
 {
   assert(dofval.size() == m_ndof);
 
@@ -368,7 +368,7 @@ inline Eigen::VectorXd MatrixPartitionedTyings::asDofs_d(
 // -------------------------------------------------------------------------------------------------
 
 inline Eigen::VectorXd MatrixPartitionedTyings::asDofs_d(
-  const xt::xtensor<double,2> &nodevec) const
+  const xt::xtensor<double,2>& nodevec) const
 {
   assert(nodevec.shape() ==\
     std::decay_t<decltype(nodevec)>::shape_type({m_nnode, m_ndim}));

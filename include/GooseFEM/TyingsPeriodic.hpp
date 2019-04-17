@@ -46,8 +46,8 @@ inline Periodic::Periodic(
   m_nties = m_tyings.shape()[0];
 
   xt::xtensor<size_t,1> dependent = xt::view(m_tyings, xt::all(), 1);
-
-  xt::xtensor<size_t,1> iid = xt::flatten(xt::view(dofs, xt::keep(dependent), xt::all()));
+  xt::xtensor<size_t,2> dependent_dofs = xt::view(dofs, xt::keep(dependent), xt::all());
+  xt::xtensor<size_t,1> iid = xt::flatten(dependent_dofs);
   xt::xtensor<size_t,1> iii = xt::setdiff1d(dofs, iid);
   xt::xtensor<size_t,1> iiu = xt::setdiff1d(iii , iip);
 
@@ -65,34 +65,72 @@ inline Periodic::Periodic(
 // -------------------------------------------------------------------------------------------------
 
 inline xt::xtensor<size_t,2> Periodic::dofs() const
-{ return m_dofs; }
+{
+  return m_dofs;
+}
+
+// -------------------------------------------------------------------------------------------------
 
 inline xt::xtensor<size_t,2> Periodic::control() const
-{ return m_control; }
+{
+  return m_control;
+}
+
+// -------------------------------------------------------------------------------------------------
 
 inline size_t Periodic::nnu() const
-{ return m_nnu; }
+{
+  return m_nnu;
+}
+
+// -------------------------------------------------------------------------------------------------
 
 inline size_t Periodic::nnp() const
-{ return m_nnp; }
+{
+  return m_nnp;
+}
+
+// -------------------------------------------------------------------------------------------------
 
 inline size_t Periodic::nni() const
-{ return m_nni; }
+{
+  return m_nni;
+}
+
+// -------------------------------------------------------------------------------------------------
 
 inline size_t Periodic::nnd() const
-{ return m_nnd; }
+{
+  return m_nnd;
+}
+
+// -------------------------------------------------------------------------------------------------
 
 inline xt::xtensor<size_t,1> Periodic::iiu() const
-{ return xt::arange<size_t>(m_nnu); }
+{
+  return xt::arange<size_t>(m_nnu);
+}
+
+// -------------------------------------------------------------------------------------------------
 
 inline xt::xtensor<size_t,1> Periodic::iip() const
-{ return xt::arange<size_t>(m_nnp) + m_nnu; }
+{
+  return xt::arange<size_t>(m_nnp) + m_nnu;
+}
+
+// -------------------------------------------------------------------------------------------------
 
 inline xt::xtensor<size_t,1> Periodic::iii() const
-{ return xt::arange<size_t>(m_nni); }
+{
+  return xt::arange<size_t>(m_nni);
+}
+
+// -------------------------------------------------------------------------------------------------
 
 inline xt::xtensor<size_t,1> Periodic::iid() const
-{ return xt::arange<size_t>(m_nnd) + m_nni; }
+{
+  return xt::arange<size_t>(m_nni, m_nni + m_nnd);
+}
 
 // -------------------------------------------------------------------------------------------------
 
@@ -102,10 +140,9 @@ inline Eigen::SparseMatrix<double> Periodic::Cdi() const
 
   data.reserve(m_nties*m_ndim*(m_ndim+1));
 
-  for (size_t i = 0; i < m_nties; ++i)
-  {
-    for (size_t j = 0; j < m_ndim; ++j)
-    {
+  for (size_t i = 0; i < m_nties; ++i) {
+    for (size_t j = 0; j < m_ndim; ++j) {
+
       size_t ni = m_tyings(i,0);
       size_t nd = m_tyings(i,1);
 
@@ -133,18 +170,17 @@ inline Eigen::SparseMatrix<double> Periodic::Cdu() const
 
   data.reserve(m_nties*m_ndim*(m_ndim+1));
 
-  for (size_t i = 0; i < m_nties; ++i)
-  {
-    for (size_t j = 0; j < m_ndim; ++j)
-    {
+  for (size_t i = 0; i < m_nties; ++i) {
+    for (size_t j = 0; j < m_ndim; ++j) {
+
       size_t ni = m_tyings(i,0);
       size_t nd = m_tyings(i,1);
 
-      if ( m_dofs(ni,j) < m_nnu )
+      if (m_dofs(ni,j) < m_nnu)
         data.push_back(Eigen::Triplet<double>(i*m_ndim+j, m_dofs(ni,j), +1.));
 
       for (size_t k = 0; k < m_ndim; ++k)
-        if ( m_control(j,k) < m_nnu )
+        if (m_control(j,k) < m_nnu)
           data.push_back(Eigen::Triplet<double>(i*m_ndim+j, m_control(j,k), m_coor(nd,k)-m_coor(ni,k)));
     }
   }
@@ -166,18 +202,17 @@ inline Eigen::SparseMatrix<double> Periodic::Cdp() const
 
   data.reserve(m_nties*m_ndim*(m_ndim+1));
 
-  for (size_t i = 0; i < m_nties; ++i)
-  {
-    for (size_t j = 0; j < m_ndim; ++j)
-    {
+  for (size_t i = 0; i < m_nties; ++i) {
+    for (size_t j = 0; j < m_ndim; ++j) {
+
       size_t ni = m_tyings(i,0);
       size_t nd = m_tyings(i,1);
 
-      if ( m_dofs(ni,j) >= m_nnu )
+      if (m_dofs(ni,j) >= m_nnu)
         data.push_back(Eigen::Triplet<double>(i*m_ndim+j, m_dofs(ni,j)-m_nnu, +1.));
 
       for (size_t k = 0; k < m_ndim; ++k)
-        if ( m_control(j,k) >= m_nnu )
+        if (m_control(j,k) >= m_nnu)
           data.push_back(Eigen::Triplet<double>(i*m_ndim+j, m_control(j,k)-m_nnu, m_coor(nd,k)-m_coor(ni,k)));
     }
   }
@@ -216,16 +251,30 @@ inline Control::Control(
 // -------------------------------------------------------------------------------------------------
 
 inline xt::xtensor<double,2> Control::coor() const
-{ return m_coor; }
+{
+  return m_coor;
+}
+
+// -------------------------------------------------------------------------------------------------
 
 inline xt::xtensor<size_t,2> Control::dofs() const
-{ return m_dofs; }
+{
+  return m_dofs;
+}
+
+// -------------------------------------------------------------------------------------------------
 
 inline xt::xtensor<size_t,2> Control::controlDofs() const
-{ return m_control_dofs; }
+{
+  return m_control_dofs;
+}
+
+// -------------------------------------------------------------------------------------------------
 
 inline xt::xtensor<size_t,1> Control::controlNodes() const
-{ return m_control_nodes; }
+{
+  return m_control_nodes;
+}
 
 // -------------------------------------------------------------------------------------------------
 

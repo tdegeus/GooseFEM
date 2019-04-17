@@ -33,13 +33,13 @@ public:
     const xt::xtensor<double,2>& coor,
     const xt::xtensor<size_t,2>& dofs,
     const xt::xtensor<size_t,2>& control_dofs,
-    const xt::xtensor<size_t,2>& nodal_tyings);
+    const xt::xtensor<size_t,2>& nodal_tyings); // (independent, dependent)
 
   Periodic(
     const xt::xtensor<double,2>& coor,
     const xt::xtensor<size_t,2>& dofs,
     const xt::xtensor<size_t,2>& control_dofs,
-    const xt::xtensor<size_t,2>& nodal_tyings,
+    const xt::xtensor<size_t,2>& nodal_tyings, // (independent, dependent)
     const xt::xtensor<size_t,1>& iip);
 
   // Dimensions
@@ -73,10 +73,10 @@ private:
   size_t m_nni;
   size_t m_nnd;
   size_t m_ndim;
-  size_t m_nties;
+  size_t m_nties; // number of nodal ties
   xt::xtensor<size_t,2> m_dofs;
   xt::xtensor<size_t,2> m_control;
-  xt::xtensor<size_t,2> m_tyings;
+  xt::xtensor<size_t,2> m_tyings;  // nodal ties: (independent, dependent)
   xt::xtensor<double,2> m_coor;
 
 };
