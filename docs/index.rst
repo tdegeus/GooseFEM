@@ -31,9 +31,9 @@ GooseFEM
   :target: https://github.com/tdegeus/GooseFEM
   :alt: Github tdegeus/GooseFEM
 
-.. |badge8| image:: https://img.shields.io/badge/documentation-GooseFEM.geus.me-blue.svg
-  :target: http://GooseFEM.geus.me
-  :alt: Website GooseFEM.geus.me
+.. |badge8| image:: https://img.shields.io/badge/documentation-GooseFEM.rtfd.io-blue.svg
+  :target: http://GooseFEM.rtfd.io
+  :alt: Website GooseFEM.rtfd.io
 
 | |badge1| |badge2| |badge3| |badge4|
 | |badge5| |badge6| |badge7|
@@ -54,50 +54,24 @@ Data-types
 
 [:download:`GooseFEM/GooseFEM.h <../include/GooseFEM/GooseFEM.h>`]
 
-Beyond the default C++ types, GooseFEM use Eigen columns/matrices and cppmat multi-dimensional arrays. In particular:
-
-+------------+---------------------------------------------+
-| Type       | Description                                 |
-+============+=============================================+
-| ``MatD``   | row-major ``Eigen::matrix``                 |
-+------------+---------------------------------------------+
-| ``ColD``   | (column-major) ``Eigen::Matrix`` (column)   |
-+------------+---------------------------------------------+
-| ``SpMatD`` | row-major ``Eigen::SparseMatrix``           |
-+------------+---------------------------------------------+
-| ``ArrD``   | multi-dimensional ``cppmat::array``         |
-+------------+---------------------------------------------+
-
-The last letter thereby indicates the type specialisation:
-
-+------------+----------------+
-| Indicator  | Description    |
-+============+================+
-| ``D``      | ``double``     |
-+------------+----------------+
-| ``S``      | ``size_t``     |
-+------------+----------------+
-| ``I``      | ``int``        |
-+------------+----------------+
-
 Data-storage
 ============
 
-+-----------+------------------------------------------------+-------------+----------------------------------+
-|  Alias    | Description                                    | Type        | Shape                            |
-+===========+================================================+=============+==================================+
-| "dofval"  | degrees-of-freedom                             | ``ColD``    | [ndof]                           |
-+-----------+------------------------------------------------+-------------+----------------------------------+
-| "nodevec" | nodal vectors                                  | ``MatD``    | [nnode, ndim]                    |
-+-----------+------------------------------------------------+-------------+----------------------------------+
-| "elemvec" | nodal vectors stored per element               | ``ArrD``    | [nelem, nne, ndim]               |
-+-----------+------------------------------------------------+-------------+----------------------------------+
-| "elemmat" | matrices stored per element                    | ``ArrD``    | [nelem, nne*ndim, nne*ndim]      |
-+-----------+------------------------------------------------+-------------+----------------------------------+
-| "qtensor" | tensors stored (as list) per integration point | ``ArrD``    | [nelem, nip, #tensor-components] |
-+-----------+------------------------------------------------+-------------+----------------------------------+
-| "qscalar" | scalars stored per integration point           | ``ArrD``    | [nelem, nip]                     |
-+-----------+------------------------------------------------+-------------+----------------------------------+
++-----------+------------------------------------------------+----------------------------------+---------------------------+
+|  Alias    | Description                                    | Shape                            | Type                      |
++===========+================================================+==================================+===========================+
+| "dofval"  | degrees-of-freedom                             | [ndof]                           | ``xt::xtensor<double,1>`` |
++-----------+------------------------------------------------+----------------------------------+---------------------------+
+| "nodevec" | nodal vectors                                  | [nnode, ndim]                    | ``xt::xtensor<double,2>`` |
++-----------+------------------------------------------------+----------------------------------+---------------------------+
+| "elemvec" | nodal vectors stored per element               | [nelem, nne, ndim]               | ``xt::xtensor<double,3>`` |
++-----------+------------------------------------------------+----------------------------------+---------------------------+
+| "elemmat" | matrices stored per element                    | [nelem, nne*ndim, nne*ndim]      | ``xt::xtensor<double,3>`` |
++-----------+------------------------------------------------+----------------------------------+---------------------------+
+| "qtensor" | tensors stored (as list) per integration point | [nelem, nip, #tensor-components] | ``xt::xtensor<double,4>`` |
++-----------+------------------------------------------------+----------------------------------+---------------------------+
+| "qscalar" | scalars stored per integration point           | [nelem, nip]                     | ``xt::xtensor<double,2>`` |
++-----------+------------------------------------------------+----------------------------------+---------------------------+
 
 Contents
 ========
@@ -109,6 +83,7 @@ Contents
    Mesh.rst
    Element.rst
    Vector.rst
+   ParaView.rst
 
 .. toctree::
    :caption: INSTALLATION
@@ -122,6 +97,12 @@ Contents
    :maxdepth: 1
 
    examples/Dynamics/readme.rst
+
+.. toctree::
+   :caption: DETAILS
+   :maxdepth: 1
+
+   details/MeshQuad4.rst
 
 .. tip::
 

@@ -30,6 +30,7 @@ namespace py = pybind11;
 #include "MeshTri3.hpp"
 #include "MeshQuad4.hpp"
 #include "MeshHex8.hpp"
+#include "ParaView.hpp"
 
 // =================================================================================================
 
@@ -103,11 +104,26 @@ py::module mMeshQuad4 = mMesh.def_submodule("Quad4", "Linear quadrilateral eleme
 
 init_MeshQuad4(mMeshQuad4);
 
+py::module mMeshQuad4Map = mMeshQuad4.def_submodule("Map", "Map mesh objects");
+
+init_MeshQuad4Map(mMeshQuad4Map);
+
 // -------------------------------------------------------------------------------------------------
 
 py::module mMeshHex8 = mMesh.def_submodule("Hex8", "Linear hexahedron (brick) elements (3D)");
 
 init_MeshHex8(mMeshHex8);
+
+// -------------------------------------------------------------------------------------------------
+
+py::module mParaView = m.def_submodule("ParaView", "ParaView output files");
+
+// -------------------------------------------------------------------------------------------------
+
+py::module mParaViewHDF5 = mParaView.def_submodule("HDF5", "ParaView/HDF5 support using XDMF files");
+
+init_ParaViewHDF5(mParaViewHDF5);
+
 
 // =================================================================================================
 

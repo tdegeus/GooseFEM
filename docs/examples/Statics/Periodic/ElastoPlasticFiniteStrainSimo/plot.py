@@ -10,36 +10,16 @@ plt.style.use(['goose', 'goose-latex'])
 # open file
 file = h5py.File('main.h5', 'r')
 
+# read stored increments
+incs = file['/stored'][...]
+
 # read fields
 coor  = file['/coor' ][...]
 conn  = file['/conn' ][...]
-disp  = file['/disp' ][...]
-Sig   = file['/Sig'  ][...]
-sigeq = file['/sigeq'][...]
-epseq = file['/epseq'][...]
-
-# extract dimension
-nelem = conn.shape[0]
-
-# tensor products
-ddot22 = lambda A2,B2: np.einsum('eij  ,eji->e    ',A2,B2)
-ddot42 = lambda A4,B2: np.einsum('eijkl,elk->eij  ',A4,B2)
-dyad22 = lambda A2,B2: np.einsum('eij  ,ekl->eijkl',A2,B2)
-
-# identity tensor (single tensor)
-i    = np.eye(3)
-
-# identity tensors (grid)
-I    = np.einsum('ij  ,e'       ,                  i   ,np.ones([nelem]))
-I4   = np.einsum('ijkl,e->eijkl',np.einsum('il,jk',i,i),np.ones([nelem]))
-I4rt = np.einsum('ijkl,e->eijkl',np.einsum('ik,jl',i,i),np.ones([nelem]))
-I4s  = (I4+I4rt)/2.
-II   = dyad22(I,I)
-I4d  = I4s-II/3.
-
-# compute equivalent stress
-Sigd  = ddot42(I4d, Sig)
-Sigeq = np.sqrt(3./2.*ddot22(Sigd,Sigd))
+disp  = file['/disp' ][str(np.max(incs))][...][:,:2]
+Sigeq = file['/sigeq'][str(np.max(incs))][...]
+sigeq = file['/macroscopic/sigeq'][...]
+epseq = file['/macroscopic/epseq'][...]
 
 # plot
 
@@ -48,8 +28,6 @@ fig, axes = gplt.subplots(ncols=2)
 axes[0].plot(epseq, sigeq)
 
 gplt.patch(coor=coor+disp, conn=conn, cindex=Sigeq, cmap='jet', axis=axes[1], clim=(0.0, 0.1))
-
-gplt.patch(coor=coor, conn=conn, linestyle='--', axis=axes[1])
 
 plt.show()
 

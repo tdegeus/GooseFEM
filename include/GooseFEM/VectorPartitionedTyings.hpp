@@ -52,7 +52,6 @@ inline VectorPartitionedTyings::VectorPartitionedTyings(
   m_Cid   = m_Cdi.transpose();
 
   GOOSEFEM_ASSERT(static_cast<size_t>(m_Cdi.cols()) == m_nni);
-  GOOSEFEM_ASSERT(xt::amax(m_conn)[0] + 1 == m_nnode);
   GOOSEFEM_ASSERT(m_ndof <= m_nnode * m_ndim);
   GOOSEFEM_ASSERT(m_ndof == xt::amax(m_dofs)[0] + 1);
 }

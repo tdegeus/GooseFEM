@@ -9,9 +9,6 @@ project(main)
 # define empty list of libraries to link
 set(PROJECT_LIBS "")
 
-# copy files to build folder
-configure_file("plot.py" "plot.py" COPYONLY)
-
 # basic compiler options
 # ----------------------
 
@@ -34,8 +31,6 @@ if(NOT ASSERT)
   add_definitions(-DNDEBUG)
 else()
   add_definitions(-DXTENSOR_ENABLE_ASSERT=ON)
-  add_definitions(-DGOOSEFEM_ENABLE_ASSERT=ON)
-  add_definitions(-DGMATELASTOPLASTICFINITESTRAINSIMO_ENABLE_ASSERT=ON)
 endif()
 
 # load packages

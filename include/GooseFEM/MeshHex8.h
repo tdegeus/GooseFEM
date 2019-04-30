@@ -39,6 +39,8 @@ public:
   size_t nnode() const;                       // number of nodes
   size_t nne() const;                         // number of nodes-per-element
   size_t ndim() const;                        // number of dimensions
+  // type
+  ElementType getElementType() const;
   // mesh
   xt::xtensor<double,2> coor() const;                        // nodal positions [nnode ,ndim]
   xt::xtensor<size_t,2> conn() const;                        // connectivity    [nelem ,nne ]
@@ -192,6 +194,8 @@ public:
   size_t nne() const;                         // number of nodes-per-element
   size_t ndim() const;                        // number of dimensions
   size_t shape(size_t i) const;               // actual shape in a certain direction
+  // type
+  ElementType getElementType() const;
   // mesh
   xt::xtensor<double,2> coor() const;                        // nodal positions [nnode ,ndim]
   xt::xtensor<size_t,2> conn() const;                        // connectivity    [nelem ,nne ]

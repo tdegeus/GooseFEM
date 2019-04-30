@@ -47,7 +47,9 @@ using namespace xt::placeholders;
 // -------------------------------------------------------------------------------------------------
 
 #ifndef NDEBUG
+#ifndef GOOSEFEM_ENABLE_ASSERT
 #define GOOSEFEM_ENABLE_ASSERT
+#endif
 #endif
 
 #ifdef GOOSEFEM_ENABLE_ASSERT
@@ -60,6 +62,15 @@ using namespace xt::placeholders;
 #else
 #define GOOSEFEM_ASSERT(expr)
 #endif
+
+// -------------------------------------------------------------------------------------------------
+
+#define GOOSEFEM_CHECK(expr) GOOSEFEM_CHECK_IMPL(expr, __FILE__, __LINE__)
+#define GOOSEFEM_CHECK_IMPL(expr, file, line)                                                                            \
+    if (!(expr))                                                                                                          \
+    {                                                                                                                     \
+        throw std::runtime_error(std::string(file) + ':' + std::to_string(line) + ": assertion failed (" #expr ") \n\t"); \
+    }
 
 // -------------------------------------------------------------------------------------------------
 
