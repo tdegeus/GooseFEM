@@ -49,29 +49,9 @@ GooseFEM
 
 This header-only module provides C++ classes and several accompanying methods to work with n-d arrays and/or tensors. It's usage, programmatically and from a compilation perspective, is really simple. One just has to ``#include <GooseFEM/GooseFEM.h>`` and tell your compiler where GooseFEM is located (and to use the C++14 or younger standard). Really, that's it!
 
-Data-types
-==========
+.. tip::
 
-[:download:`GooseFEM/GooseFEM.h <../include/GooseFEM/GooseFEM.h>`]
-
-Data-storage
-============
-
-+-----------+------------------------------------------------+----------------------------------+---------------------------+
-|  Alias    | Description                                    | Shape                            | Type                      |
-+===========+================================================+==================================+===========================+
-| "dofval"  | degrees-of-freedom                             | [ndof]                           | ``xt::xtensor<double,1>`` |
-+-----------+------------------------------------------------+----------------------------------+---------------------------+
-| "nodevec" | nodal vectors                                  | [nnode, ndim]                    | ``xt::xtensor<double,2>`` |
-+-----------+------------------------------------------------+----------------------------------+---------------------------+
-| "elemvec" | nodal vectors stored per element               | [nelem, nne, ndim]               | ``xt::xtensor<double,3>`` |
-+-----------+------------------------------------------------+----------------------------------+---------------------------+
-| "elemmat" | matrices stored per element                    | [nelem, nne*ndim, nne*ndim]      | ``xt::xtensor<double,3>`` |
-+-----------+------------------------------------------------+----------------------------------+---------------------------+
-| "qtensor" | tensors stored (as list) per integration point | [nelem, nip, #tensor-components] | ``xt::xtensor<double,4>`` |
-+-----------+------------------------------------------------+----------------------------------+---------------------------+
-| "qscalar" | scalars stored per integration point           | [nelem, nip]                     | ``xt::xtensor<double,2>`` |
-+-----------+------------------------------------------------+----------------------------------+---------------------------+
+  A compact reader covering the basic theory is available `here <https://github.com/tdegeus/GooseFEM/docs/theory/readme.pdf>`_
 
 Contents
 ========
@@ -80,6 +60,7 @@ Contents
    :caption: USAGE
    :maxdepth: 1
 
+   conventions.rst
    Mesh.rst
    Element.rst
    Vector.rst
@@ -103,10 +84,6 @@ Contents
    :maxdepth: 1
 
    details/MeshQuad4.rst
-
-.. tip::
-
-  A compact reader covering the basic theory is available `here <https://github.com/tdegeus/GooseFEM/docs/theory/readme.pdf>`_
 
 Indices and tables
 ==================
