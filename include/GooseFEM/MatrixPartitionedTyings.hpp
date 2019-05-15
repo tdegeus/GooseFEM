@@ -67,7 +67,6 @@ inline MatrixPartitionedTyings::MatrixPartitionedTyings(
   m_Adp.resize(m_nnd,m_nnp);
   m_Add.resize(m_nnd,m_nnd);
 
-  GOOSEFEM_ASSERT(xt::amax(m_conn)[0] + 1 == m_nnode);
   GOOSEFEM_ASSERT(m_ndof <= m_nnode * m_ndim);
   GOOSEFEM_ASSERT(m_ndof == xt::amax(m_dofs)[0] + 1);
 }
@@ -75,40 +74,86 @@ inline MatrixPartitionedTyings::MatrixPartitionedTyings(
 // -------------------------------------------------------------------------------------------------
 
 inline size_t MatrixPartitionedTyings::nelem() const
-{ return m_nelem; }
+{
+  return m_nelem;
+}
+
+// -------------------------------------------------------------------------------------------------
 
 inline size_t MatrixPartitionedTyings::nne() const
-{ return m_nne; }
+{
+  return m_nne;
+}
+
+// -------------------------------------------------------------------------------------------------
 
 inline size_t MatrixPartitionedTyings::nnode() const
-{ return m_nnode; }
+{
+  return m_nnode;
+}
+
+// -------------------------------------------------------------------------------------------------
 
 inline size_t MatrixPartitionedTyings::ndim() const
-{ return m_ndim; }
+{
+  return m_ndim;
+}
+
+// -------------------------------------------------------------------------------------------------
 
 inline size_t MatrixPartitionedTyings::ndof() const
-{ return m_ndof; }
+{
+  return m_ndof;
+}
+
+// -------------------------------------------------------------------------------------------------
 
 inline size_t MatrixPartitionedTyings::nnu() const
-{ return m_nnu; }
+{
+  return m_nnu;
+}
+
+// -------------------------------------------------------------------------------------------------
 
 inline size_t MatrixPartitionedTyings::nnp() const
-{ return m_nnp; }
+{
+  return m_nnp;
+}
+
+// -------------------------------------------------------------------------------------------------
 
 inline xt::xtensor<size_t,2> MatrixPartitionedTyings::dofs() const
-{ return m_dofs; }
+{
+  return m_dofs;
+}
+
+// -------------------------------------------------------------------------------------------------
 
 inline xt::xtensor<size_t,1> MatrixPartitionedTyings::iiu() const
-{ return m_iiu; }
+{
+  return m_iiu;
+}
+
+// -------------------------------------------------------------------------------------------------
 
 inline xt::xtensor<size_t,1> MatrixPartitionedTyings::iip() const
-{ return m_iip; }
+{
+  return m_iip;
+}
+
+// -------------------------------------------------------------------------------------------------
 
 inline xt::xtensor<size_t,1> MatrixPartitionedTyings::iii() const
-{ return xt::arange<size_t>(m_nni); }
+{
+  return xt::arange<size_t>(m_nni);
+}
+
+// -------------------------------------------------------------------------------------------------
 
 inline xt::xtensor<size_t,1> MatrixPartitionedTyings::iid() const
-{ return m_iid; }
+{
+  return m_iid;
+}
 
 // -------------------------------------------------------------------------------------------------
 

@@ -46,6 +46,13 @@ inline size_t Regular::ndim() const
 
 // -------------------------------------------------------------------------------------------------
 
+inline ElementType Regular::getElementType() const
+{
+  return ElementType::Hex8;
+}
+
+// -------------------------------------------------------------------------------------------------
+
 inline xt::xtensor<double,2> Regular::coor() const
 {
   xt::xtensor<double,2> out = xt::empty<double>({m_nnode, m_ndim});
@@ -996,7 +1003,13 @@ inline size_t FineLayer::shape(size_t i) const
   if      ( i == 0 ) return xt::amax(m_nelx)[0];
   else if ( i == 2 ) return xt::amax(m_nelz)[0];
   else               return xt::sum (m_nhy )[0];
+}
 
+// -------------------------------------------------------------------------------------------------
+
+inline ElementType FineLayer::getElementType() const
+{
+  return ElementType::Hex8;
 }
 
 // -------------------------------------------------------------------------------------------------

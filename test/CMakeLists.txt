@@ -55,4 +55,5 @@ add_executable(${PROJECT_NAME}
   ElementQuad4.cpp
   ElementHex8.cpp
   Iterate.cpp
+  MeshQuad4.cpp
 )

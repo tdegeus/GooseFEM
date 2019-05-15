@@ -35,7 +35,7 @@ SECTION("asDofs - nodevec")
 
   // check
   // - size
-  REQUIRE( V.size() == mesh.nnodePeriodic() * mesh.ndim() );
+  REQUIRE( V.size() == (mesh.nnode() - mesh.nodesPeriodic().shape(0)) * mesh.ndim() );
   // - individual entries
   EQ( V(0), v(0,0) );
   EQ( V(1), v(0,1) );
@@ -76,7 +76,7 @@ SECTION("asDofs - elemvec")
 
   // check
   // - size
-  REQUIRE( V.size() == mesh.nnodePeriodic() * mesh.ndim() );
+  REQUIRE( V.size() == (mesh.nnode() - mesh.nodesPeriodic().shape(0)) * mesh.ndim() );
   // - individual entries
   EQ( V(0), v(0,0) );
   EQ( V(1), v(0,1) );
@@ -117,7 +117,7 @@ SECTION("asDofs - assembleDofs")
 
   // check
   // - size
-  REQUIRE( F.size() == mesh.nnodePeriodic() * mesh.ndim() );
+  REQUIRE( F.size() == (mesh.nnode() - mesh.nodesPeriodic().shape(0)) * mesh.ndim() );
   // - 'analytical' result
   EQ( F(0), 0 );
   EQ( F(1), 0 );
@@ -158,7 +158,7 @@ SECTION("asDofs - assembleNode")
 
   // check
   // - size
-  REQUIRE( F.size() == mesh.nnodePeriodic() * mesh.ndim() );
+  REQUIRE( F.size() == (mesh.nnode() - mesh.nodesPeriodic().shape(0)) * mesh.ndim() );
   // - 'analytical' result
   EQ( F(0), 0 );
   EQ( F(1), 0 );

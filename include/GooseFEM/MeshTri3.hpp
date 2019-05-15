@@ -45,6 +45,13 @@ inline size_t Regular::ndim() const
 
 // -------------------------------------------------------------------------------------------------
 
+inline ElementType Regular::getElementType() const
+{
+  return ElementType::Tri3;
+}
+
+// -------------------------------------------------------------------------------------------------
+
 inline xt::xtensor<double,2> Regular::coor() const
 {
   xt::xtensor<double,2> out = xt::empty<double>({m_nnode, m_ndim});

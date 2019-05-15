@@ -1,7 +1,13 @@
 #include <Eigen/Eigen>
 #include <GooseFEM/GooseFEM.h>
+#include <GooseFEM/ParaView.h>
 #include <GMatElastoPlasticFiniteStrainSimo/Cartesian3d.h>
-#include <xtensor-io/xhighfive.hpp>
+#include <highfive/H5Easy.hpp>
+
+namespace GM = GMatElastoPlasticFiniteStrainSimo::Cartesian3d;
+namespace GF = GooseFEM;
+namespace PV = GooseFEM::ParaView::HDF5;
+namespace H5 = H5Easy;
 
 int main()
 {
@@ -9,7 +15,7 @@ int main()
   // ----
 
   // define mesh
-  GooseFEM::Mesh::Quad4::Regular mesh(5,5);
+  GF::Mesh::Quad4::Regular mesh(5*10, 5*10);
 
   // mesh dimensions
   size_t nelem = mesh.nelem();
@@ -17,15 +23,16 @@ int main()
   size_t ndim  = mesh.ndim();
 
   // mesh definitions
-  xt::xtensor<double,2> coor = mesh.coor();
-  xt::xtensor<size_t,2> conn = mesh.conn();
-  xt::xtensor<size_t,2> dofs = mesh.dofs();
+  xt::xtensor<double,2> coor  = mesh.coor();
+  xt::xtensor<size_t,2> conn  = mesh.conn();
+  xt::xtensor<size_t,2> dofs  = mesh.dofs();
+  xt::xtensor<size_t,2> elmat = mesh.elementMatrix();
 
   // periodicity and fixed displacements DOFs
   // ----------------------------------------
 
   // add control nodes
-  GooseFEM::Tyings::Control control(coor, dofs);
+  GF::Tyings::Control control(coor, dofs);
   coor = control.coor();
   dofs = control.dofs();
   xt::xtensor<size_t,2> control_dofs = control.controlDofs();
@@ -40,7 +47,7 @@ int main()
   ));
 
   // get DOF-tyings, reorganise system
-  GooseFEM::Tyings::Periodic tyings(coor, dofs, control_dofs, mesh.nodesPeriodic(), iip);
+  GF::Tyings::Periodic tyings(coor, dofs, control_dofs, mesh.nodesPeriodic(), iip);
   dofs = tyings.dofs();
 
   // simulation variables
@@ -48,7 +55,7 @@ int main()
 
   // vector definition:
   // provides methods to switch between dofval/nodeval/elemvec, or to manipulate a part of them
-  GooseFEM::VectorPartitionedTyings vector(conn, dofs, tyings.Cdu(), tyings.Cdp(), tyings.Cdi());
+  GF::VectorPartitionedTyings vector(conn, dofs, tyings.Cdu(), tyings.Cdp(), tyings.Cdi());
 
   // nodal quantities
   xt::xtensor<double,2> disp = xt::zeros<double>(coor.shape()); // nodal displacement
@@ -70,18 +77,19 @@ int main()
   // ---------------------------
 
   // FEM quadrature
-  GooseFEM::Element::Quad4::QuadraturePlanar elem0(vector.AsElement(coor));
-  GooseFEM::Element::Quad4::QuadraturePlanar elem (vector.AsElement(coor));
+  GF::Element::Quad4::QuadraturePlanar elem0(vector.AsElement(coor));
+  GF::Element::Quad4::QuadraturePlanar elem (vector.AsElement(coor));
   size_t nip = elem0.nip();
 
   // material model
   // even though the problem is 2-d, the material model is 3-d, plane strain is implicitly assumed
-  GMatElastoPlasticFiniteStrainSimo::Cartesian3d::Matrix mat(nelem, nip);
+  GM::Matrix mat(nelem, nip);
   size_t tdim = mat.ndim();
 
   // some artificial material definition
+  xt::xtensor<size_t,1> ehard = xt::ravel(xt::view(elmat, xt::range(0,2*10), xt::range(0,2*10)));
   xt::xtensor<size_t,2> Ihard = xt::zeros<size_t>({nelem, nip});
-  xt::view(Ihard, xt::keep(0,1,5,6), xt::all()) = 1;
+  xt::view(Ihard, xt::keep(ehard), xt::all()) = 1ul;
   xt::xtensor<size_t,2> Isoft = xt::ones<size_t>({nelem, nip}) - Ihard;
 
   mat.setLinearHardening(Isoft, 1.0, 1.0, 0.05, 0.05);
@@ -98,7 +106,7 @@ int main()
   xt::xtensor<double,6> C   = xt::empty<double>({nelem, nip, tdim, tdim, tdim, tdim});
 
   // allocate system matrix
-  GooseFEM::MatrixPartitionedTyings K(conn, dofs, tyings.Cdu(), tyings.Cdp());
+  GF::MatrixPartitionedTyings K(conn, dofs, tyings.Cdu(), tyings.Cdp());
 
   // allocate internal variables
   double res;
@@ -107,9 +115,14 @@ int main()
   xt::xtensor<double,1> dgamma = 0.001 * xt::ones<double>({101});
   dgamma(0) = 0.0;
 
-  // allocate output variables
-  xt::xtensor<double,1> epseq = xt::empty<double>(dgamma.shape());
-  xt::xtensor<double,1> sigeq = xt::empty<double>(dgamma.shape());
+  // initialise output
+  // - output-file containing data
+  HighFive::File file("main.h5", HighFive::File::Overwrite);
+  // - ParaView meta-data
+  PV::TimeSeries xdmf;
+  // - write mesh
+  H5::dump(file, "/conn", conn);
+  H5::dump(file, "/coor", coor);
 
   // loop over increments
   for (size_t inc = 0; inc < dgamma.size(); ++inc)
@@ -182,45 +195,44 @@ int main()
       elem.update_x(vector.AsElement(coor+disp));
     }
 
-    // post-process:
+    // post-process
     // - compute strain and stress
     vector.asElement(disp, ue);
     elem0.gradN_vector_T(ue, F);
     F += I2;
-    GMatElastoPlasticFiniteStrainSimo::Cartesian3d::strain(F, Eps);
+    GM::strain(F, Eps);
     mat.stress(F, Sig);
     // - integration point volume
     xt::xtensor<double,4> dV = elem.DV(2);
-    // - average stress
+    // - element average stress
+    xt::xtensor<double,3> Sigelem = xt::average(Sig, dV, {1});
+    xt::xtensor<double,3> Epselem = xt::average(Eps, dV, {1});
+    // - macroscopic strain and stress
     xt::xtensor_fixed<double, xt::xshape<3,3>> Sigbar = xt::average(Sig, dV, {0,1});
     xt::xtensor_fixed<double, xt::xshape<3,3>> Epsbar = xt::average(Eps, dV, {0,1});
-    sigeq(inc) = GMatElastoPlasticFiniteStrainSimo::Cartesian3d::Sigeq(Sigbar);
-    epseq(inc) = GMatElastoPlasticFiniteStrainSimo::Cartesian3d::Epseq(Epsbar);
+    // - write to output-file: increment numbers
+    H5::dump(file, "/stored", inc, {inc});
+    // - write to output-file: macroscopic response
+    H5::dump(file, "/macroscopic/sigeq", GM::Sigeq(Sigbar), {inc});
+    H5::dump(file, "/macroscopic/epseq", GM::Epseq(Epsbar), {inc});
+    // - write to output-file: element quantities
+    H5::dump(file, "/sigeq/" + std::to_string(inc), GM::Sigeq(Sigelem));
+    H5::dump(file, "/epseq/" + std::to_string(inc), GM::Epseq(Epselem));
+    H5::dump(file, "/disp/"  + std::to_string(inc), PV::as3d(disp));
+    // - update ParaView meta-data
+    xdmf.push_back(PV::Increment(
+      PV::Connectivity(file, "/conn", mesh.getElementType()),
+      PV::Coordinates (file, "/coor"),
+      {
+        PV::Attribute(file, "/disp/"  + std::to_string(inc), "Displacement", PV::AttributeType::Node),
+        PV::Attribute(file, "/sigeq/" + std::to_string(inc), "Eq. stress"  , PV::AttributeType::Cell),
+        PV::Attribute(file, "/epseq/" + std::to_string(inc), "Eq. strain"  , PV::AttributeType::Cell),
+      }
+    ));
   }
 
-  // post-process
-  // ------------
-
-  // compute strain and stress
-  vector.asElement(disp, ue);
-  elem0.gradN_vector_T(ue, F);
-  F += I2;
-  GMatElastoPlasticFiniteStrainSimo::Cartesian3d::strain(F, Eps);
-  mat.stress(F, Sig);
-  //  integration point volume
-  xt::xtensor<double,4> dV = elem.DV(2);
-
-  // average stress per node
-  xt::xtensor<double,3> SigAv = xt::average(Sig, dV, {1});
-
-  // write output
-  HighFive::File file("main.h5", HighFive::File::Overwrite);
-  xt::dump(file, "/coor", coor);
-  xt::dump(file, "/conn", conn);
-  xt::dump(file, "/disp", disp);
-  xt::dump(file, "/Sig", SigAv);
-  xt::dump(file, "/sigeq", sigeq);
-  xt::dump(file, "/epseq", epseq);
+  // write ParaView meta-data
+  xdmf.write("main.xdmf");
 
   return 0;
 }

@@ -1,17 +1,18 @@
 
-import GooseFEM as gf
+import GooseFEM          as gf
 import matplotlib.pyplot as plt
-import goosempl as gplt
-import numpy as np
+import GooseMPL          as gplt
+import numpy             as np
 
 plt.style.use(['goose'])
 
-fig = plt.figure(figsize=(18,6))
-fig.set_tight_layout(True)
+# --------------------------------------------------------------------------------------------------
+
+fig, axes = plt.subplots(figsize=(18,6), ncols=3)
 
 # --------------------------------------------------------------------------------------------------
 
-mesh   = gf.Mesh.Quad4.FineLayer(6*9,51)
+mesh   = gf.Mesh.Quad4.FineLayer(6*9, 51)
 coor   = mesh.coor()
 conn   = mesh.conn()
 cindex = np.arange(conn.shape[0])
@@ -20,17 +21,19 @@ print(mesh.nelem())
 
 # --------------------------------------------------------------------------------------------------
 
-ax = fig.add_subplot(1,3,1)
+ax = axes[0]
 
-im = gplt.patch(coor=coor,conn=conn,cindex=cindex,cmap='jet')
+im = gplt.patch(coor=coor, conn=conn, cindex=cindex, cmap='jet', axis=ax)
 
 ax.set_aspect('equal')
 ax.get_xaxis().set_visible(False)
 ax.get_yaxis().set_visible(False)
 
+ax.set_title(r'$n_x = 6 \times 9$')
+
 # --------------------------------------------------------------------------------------------------
 
-mesh   = gf.Mesh.Quad4.FineLayer(6*9+3,51)
+mesh   = gf.Mesh.Quad4.FineLayer(6*9+3, 51)
 coor   = mesh.coor()
 conn   = mesh.conn()
 cindex = np.arange(conn.shape[0])
@@ -39,17 +42,19 @@ print(mesh.nelem())
 
 # --------------------------------------------------------------------------------------------------
 
-ax = fig.add_subplot(1,3,2)
+ax = axes[1]
 
-im = gplt.patch(coor=coor,conn=conn,cindex=cindex,cmap='jet')
+im = gplt.patch(coor=coor, conn=conn, cindex=cindex, cmap='jet', axis=ax)
 
 ax.set_aspect('equal')
 ax.get_xaxis().set_visible(False)
 ax.get_yaxis().set_visible(False)
 
+ax.set_title(r'$n_x = 6 \times 9 + 3$')
+
 # --------------------------------------------------------------------------------------------------
 
-mesh   = gf.Mesh.Quad4.FineLayer(6*9+1,51)
+mesh   = gf.Mesh.Quad4.FineLayer(6*9+1, 51)
 coor   = mesh.coor()
 conn   = mesh.conn()
 cindex = np.arange(conn.shape[0])
@@ -58,13 +63,15 @@ print(mesh.nelem())
 
 # --------------------------------------------------------------------------------------------------
 
-ax = fig.add_subplot(1,3,3)
+ax = axes[2]
 
-im = gplt.patch(coor=coor,conn=conn,cindex=cindex,cmap='jet')
+im = gplt.patch(coor=coor, conn=conn, cindex=cindex, cmap='jet', axis=ax)
 
 ax.set_aspect('equal')
 ax.get_xaxis().set_visible(False)
 ax.get_yaxis().set_visible(False)
+
+ax.set_title(r'$n_x = 6 \times 9 + 1$')
 
 plt.savefig('behavior.svg')
 plt.show()

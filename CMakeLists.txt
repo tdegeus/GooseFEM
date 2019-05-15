@@ -69,6 +69,8 @@ set(headers
   include/GooseFEM/Iterate.h
   include/GooseFEM/TyingsPeriodic.hpp
   include/GooseFEM/TyingsPeriodic.h
+  include/GooseFEM/ParaView.hpp
+  include/GooseFEM/ParaView.h
 )
 
 # automatically parse the version number

@@ -20,7 +20,8 @@ namespace GooseFEM {
 inline Vector::Vector(
   const xt::xtensor<size_t,2>& conn,
   const xt::xtensor<size_t,2>& dofs) :
-  m_conn(conn), m_dofs(dofs)
+  m_conn(conn),
+  m_dofs(dofs)
 {
   // mesh dimensions
   m_nelem = m_conn.shape()[0];
@@ -39,22 +40,44 @@ inline Vector::Vector(
 // -------------------------------------------------------------------------------------------------
 
 inline size_t Vector::nelem() const
-{ return m_nelem; }
+{
+  return m_nelem;
+}
+
+// -------------------------------------------------------------------------------------------------
 
 inline size_t Vector::nne() const
-{ return m_nne; }
+{
+  return m_nne;
+}
+
+// -------------------------------------------------------------------------------------------------
 
 inline size_t Vector::nnode() const
-{ return m_nnode; }
+{
+  return m_nnode;
+}
+
+// -------------------------------------------------------------------------------------------------
 
 inline size_t Vector::ndim() const
-{ return m_ndim; }
+{
+  return m_ndim;
+}
+
+// -------------------------------------------------------------------------------------------------
 
 inline size_t Vector::ndof() const
-{ return m_ndof; }
+{
+  return m_ndof;
+}
+
+// -------------------------------------------------------------------------------------------------
 
 inline xt::xtensor<size_t,2> Vector::dofs() const
-{ return m_dofs; }
+{
+  return m_dofs;
+}
 
 // -------------------------------------------------------------------------------------------------
 
