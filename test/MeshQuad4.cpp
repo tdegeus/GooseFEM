@@ -726,12 +726,12 @@ SECTION("Map::RefineRegular")
 
   REQUIRE(xt::allclose(a, xt::mean(a_, {1})));
 
-  xt::xtensor<double,2> b = xt::random::rand<double>({mesh.nelem(), 1ul});
+  xt::xtensor<double,2> b = xt::random::rand<double>({mesh.nelem(), 4ul});
   auto b_ = refine.mapToCoarse(refine.mapToFine(b));
 
   REQUIRE(xt::allclose(xt::mean(b, {1}), xt::mean(b_, {1})));
 
-  xt::xtensor<double,4> c = xt::random::rand<double>({mesh.nelem(), 1ul, 3ul, 3ul});
+  xt::xtensor<double,4> c = xt::random::rand<double>({mesh.nelem(), 4ul, 3ul, 3ul});
   auto c_ = refine.mapToCoarse(refine.mapToFine(c));
 
   REQUIRE(xt::allclose(xt::mean(c, {1}), xt::mean(c_, {1})));
