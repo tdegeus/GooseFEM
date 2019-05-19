@@ -98,7 +98,7 @@ int main()
   xt::xtensor<double,6> C   = xt::empty<double>({nelem, nip, tdim, tdim, tdim, tdim});
 
   // allocate system matrix
-  GF::MatrixPartitionedTyings K(conn, dofs, tyings.Cdu(), tyings.Cdp());
+  GF::MatrixPartitionedTyings<> K(conn, dofs, tyings.Cdu(), tyings.Cdp());
 
   // strain
   vector.asElement(disp, ue);
@@ -121,7 +121,7 @@ int main()
 
   // set fixed displacements
   disp(control_nodes(0),1) = 0.1;
-  
+
   // solve
   K.solve(fres, disp);
 

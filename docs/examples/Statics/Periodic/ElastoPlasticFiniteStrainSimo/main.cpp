@@ -106,7 +106,7 @@ int main()
   xt::xtensor<double,6> C   = xt::empty<double>({nelem, nip, tdim, tdim, tdim, tdim});
 
   // allocate system matrix
-  GF::MatrixPartitionedTyings K(conn, dofs, tyings.Cdu(), tyings.Cdp());
+  GF::MatrixPartitionedTyings<> K(conn, dofs, tyings.Cdu(), tyings.Cdp());
 
   // allocate internal variables
   double res;

@@ -80,7 +80,7 @@ int main()
   xt::xtensor<double,6> C   = xt::empty<double>({nelem, nip, d, d, d, d});
 
   // allocate system matrix
-  GooseFEM::MatrixPartitioned K(conn, dofs, iip);
+  GooseFEM::MatrixPartitioned<> K(conn, dofs, iip);
 
   // strain
   vector.asElement(disp, ue);
@@ -135,9 +135,7 @@ int main()
   xt::xtensor<double,3> SigAv = xt::average(Sig, dV, {1});
 
   // write output
-
   HighFive::File file("main.h5", HighFive::File::Overwrite);
-
   xt::dump(file, "/coor", coor);
   xt::dump(file, "/conn", conn);
   xt::dump(file, "/disp", disp);

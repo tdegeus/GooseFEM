@@ -95,7 +95,7 @@ int main()
   xt::xtensor<double,6> C   = xt::empty<double>({nelem, nip, d, d, d, d});
 
   // allocate system matrix
-  GooseFEM::MatrixPartitioned K(conn, dofs, iip);
+  GooseFEM::MatrixPartitioned<> K(conn, dofs, iip);
 
   // strain
   vector.asElement(disp, ue);

@@ -1,46 +1,25 @@
 
-import h5py
-import numpy      as np
-import GooseFEM   as gf
-import lxml.etree as etree
-
-# ====================== create fictitious configuration + store to HDF5-file ======================
+import h5py, os
+import numpy as np
+import GooseFEM as gf
+import GooseFEM.ParaView.HDF5 as pv
 
 # create mesh object
 mesh = gf.Mesh.Quad4.Regular(9,11)
 
-# open data file
-name = 'MeshQuad4-Regular'
-file = h5py.File(name+'.hdf5','w')
+# filename of the HDF5-file
+fname = 'MeshQuad4-Regular.hdf5'
 
-# write nodal coordinates and connectivity
-file['coor'] = mesh.coor()
-file['conn'] = mesh.conn()
+# write HDF-file containing the data
 
-# ======================================== write XDMF-file =========================================
+with h5py.File(fname, 'w') as data:
 
-# get mesh dimensions
-dims = dict(
-  nnode = mesh.nnode(),
-  ndim  = mesh.ndim(),
-  nelem = mesh.nelem(),
-  nne   = mesh.nne(),
-)
+  data['coor'] = mesh.coor()
+  data['conn'] = mesh.conn()
 
-# initialize file
-root   = etree.fromstring('<Xdmf Version="2.0"></Xdmf>')
-domain = etree.SubElement(root, "Domain")
-grid   = etree.SubElement(domain, "Grid", Name="Mesh")
+# write XDMF-file with metadata
 
-# add connectivity
-conn = etree.SubElement(grid, "Topology", TopologyType="Quadrilateral", NumberOfElements='{nelem:d}'.format(**dims))
-data = etree.SubElement(conn, "DataItem", Dimensions='{nelem:d} {nne:d}'.format(**dims), Format="HDF")
-data.text = "{0:s}.hdf5:/conn".format(name)
-
-# add coordinates
-coor = etree.SubElement(grid, "Geometry", GeometryType="XY")
-data = etree.SubElement(coor, "DataItem", Dimensions='{nnode:d} {ndim:d}'.format(**dims), Format="HDF")
-data.text = "{0:s}.hdf5:/coor".format(name)
-
-# write to file
-open(name+'.xdmf','wb').write(etree.tostring(root, pretty_print=True))
+pv.Mesh(
+  pv.Connectivity(fname, "/conn", pv.ElementType.Quadrilateral, mesh.conn().shape),
+  pv.Coordinates(fname, "/coor", mesh.coor().shape),
+).write(os.path.splitext(fname)[0] + '.xdmf')

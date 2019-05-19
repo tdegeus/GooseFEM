@@ -21,6 +21,7 @@ namespace GooseFEM {
 
 // -------------------------------------------------------------------------------------------------
 
+template <class Solver = Eigen::SimplicialLDLT<Eigen::SparseMatrix<double>>>
 class MatrixPartitioned
 {
 public:
@@ -127,7 +128,7 @@ private:
   std::vector<Eigen::Triplet<double>> m_Tpp;
 
   // Solver (re-used to solve different RHS)
-  Eigen::SimplicialLDLT<Eigen::SparseMatrix<double>> m_solver;
+  Solver m_solver;
 
   // Signal changes to data compare to the last inverse
   bool m_factor=false;

@@ -238,8 +238,15 @@ inline void Connectivity::init(
   GOOSEFEM_ASSERT(m_shape.size() == 2);
 
   #ifdef GOOSEFEM_ENABLE_ASSERT
-  if (m_type == ElementType::Quadrilateral)
+  if (m_type == ElementType::Triangle) {
+    GOOSEFEM_ASSERT(m_shape[1] == 3);
+  }
+  else if (m_type == ElementType::Quadrilateral) {
     GOOSEFEM_ASSERT(m_shape[1] == 4);
+  }
+  else if (m_type == ElementType::Hexahedron) {
+    GOOSEFEM_ASSERT(m_shape[1] == 8);
+  }
   #endif
 }
 
@@ -300,8 +307,15 @@ inline void Connectivity::readShape(const H5Easy::File& data)
   GOOSEFEM_ASSERT(m_shape.size() == 2);
 
   #ifdef GOOSEFEM_ENABLE_ASSERT
-  if (m_type == ElementType::Quadrilateral)
+  if (m_type == ElementType::Triangle) {
+    GOOSEFEM_ASSERT(m_shape[1] == 3);
+  }
+  else if (m_type == ElementType::Quadrilateral) {
     GOOSEFEM_ASSERT(m_shape[1] == 4);
+  }
+  else if (m_type == ElementType::Hexahedron) {
+    GOOSEFEM_ASSERT(m_shape[1] == 8);
+  }
   #endif
 
   m_verified = true;
@@ -433,7 +447,12 @@ inline std::vector<std::string> Coordinates::xdmf(size_t n_indent) const
 {
   std::vector<std::string> out;
 
-  out.push_back("<Geometry GeometryType=\"XY\">");
+  if (m_shape[1] == 1)
+    out.push_back("<Geometry GeometryType=\"X\">");
+  else if (m_shape[1] == 2)
+    out.push_back("<Geometry GeometryType=\"XY\">");
+  else if (m_shape[1] == 3)
+    out.push_back("<Geometry GeometryType=\"XYZ\">");
 
   out.push_back(indent(n_indent) +
     "<DataItem Dimensions=\"" + std::to_string(m_shape[0]) + " " + std::to_string(m_shape[1]) +
@@ -585,6 +604,13 @@ inline Mesh::Mesh(const Connectivity& conn, const Coordinates& coor) : m_conn(co
 
 // -------------------------------------------------------------------------------------------------
 
+inline void Mesh::push_back(const Attribute& data)
+{
+  m_attr.push_back(data);
+}
+
+// -------------------------------------------------------------------------------------------------
+
 inline std::vector<std::string> Mesh::xdmf(size_t n_indent) const
 {
   std::vector<std::string> out;
@@ -603,6 +629,14 @@ inline std::vector<std::string> Mesh::xdmf(size_t n_indent) const
       out.push_back(line);
   }
 
+  for (auto& i: m_attr)
+  {
+    std::vector<std::string> lines = i.xdmf(n_indent);
+
+    for (auto& line: lines)
+      out.push_back(line);
+  }
+
   return out;
 }
 
@@ -610,7 +644,7 @@ inline std::vector<std::string> Mesh::xdmf(size_t n_indent) const
 
 inline void Mesh::write(const std::string& fname, size_t n_indent) const
 {
-  TimeSeries({Increment(m_conn, m_coor)}).write(fname, n_indent);
+  TimeSeries({Increment(m_conn, m_coor, m_attr)}).write(fname, n_indent);
 }
 
 // -------------------------------------------------------------------------------------------------
@@ -628,7 +662,7 @@ inline Increment::Increment(
 inline Increment::Increment(
   const Connectivity& conn,
   const Coordinates& coor,
-    const std::vector<Attribute>& attr) :
+  const std::vector<Attribute>& attr) :
   m_attr(attr)
 {
   m_conn.push_back(conn);

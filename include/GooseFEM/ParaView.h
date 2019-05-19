@@ -314,6 +314,10 @@ public:
     const Connectivity& conn,
     const Coordinates& coor);
 
+  // add attribute to this increment
+
+  void push_back(const Attribute& data);
+
   // return lines of XDMF file (indented, indentation starts at 0)
 
   std::vector<std::string> xdmf(size_t indent=4) const;
@@ -327,7 +331,8 @@ private:
   // internal data
 
   Connectivity m_conn;
-  Coordinates  m_coor;
+  Coordinates m_coor;
+  std::vector<Attribute> m_attr;
 };
 
 // -------------------------------------------------------------------------------------------------
@@ -364,8 +369,8 @@ private:
   // internal data
 
   std::vector<Connectivity> m_conn;
-  std::vector<Coordinates>  m_coor;
-  std::vector<Attribute>    m_attr;
+  std::vector<Coordinates> m_coor;
+  std::vector<Attribute> m_attr;
 };
 
 // -------------------------------------------------------------------------------------------------
