@@ -86,14 +86,14 @@ int main()
   xt::xtensor<double,6> C   = xt::empty<double>({nelem, nip, d, d, d, d});
 
   // allocate system matrix
-  GooseFEM::MatrixPartitioned K(conn, dofs, iip);
+  GooseFEM::MatrixPartitioned<> K(conn, dofs, iip);
 
   // strain
   vector.asElement(disp, ue);
   elem.symGradN_vector(ue, Eps);
 
   // stress & tangent
-  mat.Tangent(Eps, Sig, C);
+  mat.tangent(Eps, Sig, C);
 
   // internal force
   elem.int_gradN_dot_tensor2_dV(Sig, fe);
@@ -129,7 +129,7 @@ int main()
   // compute strain and stress
   vector.asElement(disp, ue);
   elem.symGradN_vector(ue, Eps);
-  mat.Sig(Eps, Sig);
+  mat.stress(Eps, Sig);
 
   // internal force
   elem.int_gradN_dot_tensor2_dV(Sig, fe);
@@ -152,9 +152,7 @@ int main()
   xt::xtensor<double,3> SigAv = xt::average(Sig, dV, {1});
 
   // write output
-
   HighFive::File file("main.h5", HighFive::File::Overwrite);
-
   xt::dump(file, "/coor", coor);
   xt::dump(file, "/conn", conn);
   xt::dump(file, "/disp", disp);

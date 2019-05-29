@@ -1,13 +1,14 @@
 
 #include <GooseFEM/GooseFEM.h>
 #include <GMatElastoPlasticQPot/Cartesian2d.h>
-#include <xtensor-io/xhighfive.hpp>
+#include <highfive/H5Easy.hpp>
 
 // -------------------------------------------------------------------------------------------------
 
+namespace GM = GMatElastoPlasticQPot::Cartesian2d;
 namespace GF = GooseFEM;
 namespace QD = GooseFEM::Element::Quad4;
-namespace GM = GMatElastoPlasticQPot::Cartesian2d;
+namespace H5 = H5Easy;
 
 // -------------------------------------------------------------------------------------------------
 
@@ -15,7 +16,7 @@ inline double sqdot(const xt::xtensor<double,1> &M, const xt::xtensor<double,1> 
 {
   double out = 0.;
 
-  for ( size_t i = 0 ; i < M.size() ; ++i )
+  for (size_t i = 0; i < M.size(); ++i)
     out += M(i) * V(i) * V(i);
 
   return out;
@@ -44,7 +45,6 @@ int main()
 
   QD::Quadrature quad(vector.AsElement(coor));
 
-  size_t nnode = mesh.nnode();
   size_t ndim  = mesh.ndim();
   size_t nne   = mesh.nne();
   size_t nelem = mesh.nelem();
@@ -71,11 +71,7 @@ int main()
 
   xt::xtensor<size_t,2> Ihard = xt::zeros<size_t>({nelem, nip});
   xt::xtensor<size_t,2> Isoft = xt::ones <size_t>({nelem, nip});
-
-  for ( size_t e = 0 ; e < nx*nx/4 ; ++e )
-    for ( size_t q = 0 ; q < nip ; ++q )
-      Ihard(e,q) = 1;
-
+  xt::view(Ihard, xt::range(0, nx * nx / 4), xt::all()) = 1ul;
   Isoft -= Ihard;
 
   material.setElastic(Ihard, 100., 10.);
@@ -101,10 +97,9 @@ int main()
 
   dFbar(0,1) = gamma;
 
-  for ( size_t n = 0 ; n < nnode ; ++n )
-    for ( size_t j = 0 ; j < ndim ; ++j )
-      for ( size_t k = 0 ; k < ndim ; ++k )
-        u(n,j) += dFbar(j,k) * ( coor(n,k) - coor(0,k) );
+  for (size_t j = 0; j < ndim; ++j )
+    for (size_t k = 0; k < ndim; ++k )
+      xt::view(u, xt::all(), j) += dFbar(j, k) * (xt::view(coor, xt::all(), k) - coor(0, k));
 
   // output variables
 
@@ -116,7 +111,7 @@ int main()
 
   // loop over increments
 
-  for ( size_t inc = 0 ; inc < static_cast<size_t>(Epot.size()) ; ++inc )
+  for (size_t inc = 0; inc < static_cast<size_t>(Epot.size()); ++inc)
   {
     // store history
 
@@ -131,7 +126,7 @@ int main()
 
     vector.asElement(u, ue);
     quad.symGradN_vector(ue, Eps);
-    material.Sig(Eps, Sig);
+    material.stress(Eps, Sig);
     quad.int_gradN_dot_tensor2_dV(Sig, fe);
     vector.assembleNode(fe, fint);
 
@@ -143,28 +138,27 @@ int main()
 
     // new velocity
 
-    xt::noalias(v) = v_n + .5 * dt * ( a_n + a );
+    xt::noalias(v) = v_n + .5 * dt * (a_n + a);
 
     // store output variables
 
-    xt::xtensor<double,2> E = material.energy(Eps);
+    xt::xtensor<double,2> E = material.Energy(Eps);
     xt::xtensor<double,1> V = vector.AsDofs(v);
 
     t   (inc) = static_cast<double>(inc) * dt;
     Ekin(inc) = 0.5 * sqdot(mass,V);
     Epot(inc) = xt::sum(E*dV)[0];
+
   }
 
   // write output variables to file
-
-  HighFive::File file("example.hdf5", HighFive::File::Overwrite);
-
-  xt::dump(file, "/global/Epot",Epot );
-  xt::dump(file, "/global/Ekin",Ekin );
-  xt::dump(file, "/global/t"   ,t    );
-  xt::dump(file, "/mesh/conn"  ,conn );
-  xt::dump(file, "/mesh/coor"  ,coor );
-  xt::dump(file, "/mesh/disp"  ,u    );
+  H5::File file("example.hdf5", H5::File::Overwrite);
+  H5::dump(file, "/global/Epot", Epot);
+  H5::dump(file, "/global/Ekin", Ekin);
+  H5::dump(file, "/global/t"   , t   );
+  H5::dump(file, "/mesh/conn"  , conn);
+  H5::dump(file, "/mesh/coor"  , coor);
+  H5::dump(file, "/mesh/disp"  , u   );
 
   return 0;
 }

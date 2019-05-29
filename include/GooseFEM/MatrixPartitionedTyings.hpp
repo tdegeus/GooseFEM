@@ -17,7 +17,8 @@ namespace GooseFEM {
 
 // -------------------------------------------------------------------------------------------------
 
-inline MatrixPartitionedTyings::MatrixPartitionedTyings(
+template <class Solver>
+inline MatrixPartitionedTyings<Solver>::MatrixPartitionedTyings(
   const xt::xtensor<size_t,2>& conn,
   const xt::xtensor<size_t,2>& dofs,
   const Eigen::SparseMatrix<double>& Cdu,
@@ -73,91 +74,104 @@ inline MatrixPartitionedTyings::MatrixPartitionedTyings(
 
 // -------------------------------------------------------------------------------------------------
 
-inline size_t MatrixPartitionedTyings::nelem() const
+template <class Solver>
+inline size_t MatrixPartitionedTyings<Solver>::nelem() const
 {
   return m_nelem;
 }
 
 // -------------------------------------------------------------------------------------------------
 
-inline size_t MatrixPartitionedTyings::nne() const
+template <class Solver>
+inline size_t MatrixPartitionedTyings<Solver>::nne() const
 {
   return m_nne;
 }
 
 // -------------------------------------------------------------------------------------------------
 
-inline size_t MatrixPartitionedTyings::nnode() const
+template <class Solver>
+inline size_t MatrixPartitionedTyings<Solver>::nnode() const
 {
   return m_nnode;
 }
 
 // -------------------------------------------------------------------------------------------------
 
-inline size_t MatrixPartitionedTyings::ndim() const
+template <class Solver>
+inline size_t MatrixPartitionedTyings<Solver>::ndim() const
 {
   return m_ndim;
 }
 
 // -------------------------------------------------------------------------------------------------
 
-inline size_t MatrixPartitionedTyings::ndof() const
+template <class Solver>
+inline size_t MatrixPartitionedTyings<Solver>::ndof() const
 {
   return m_ndof;
 }
 
 // -------------------------------------------------------------------------------------------------
 
-inline size_t MatrixPartitionedTyings::nnu() const
+template <class Solver>
+inline size_t MatrixPartitionedTyings<Solver>::nnu() const
 {
   return m_nnu;
 }
 
 // -------------------------------------------------------------------------------------------------
 
-inline size_t MatrixPartitionedTyings::nnp() const
+template <class Solver>
+inline size_t MatrixPartitionedTyings<Solver>::nnp() const
 {
   return m_nnp;
 }
 
 // -------------------------------------------------------------------------------------------------
 
-inline xt::xtensor<size_t,2> MatrixPartitionedTyings::dofs() const
+template <class Solver>
+inline xt::xtensor<size_t,2> MatrixPartitionedTyings<Solver>::dofs() const
 {
   return m_dofs;
 }
 
 // -------------------------------------------------------------------------------------------------
 
-inline xt::xtensor<size_t,1> MatrixPartitionedTyings::iiu() const
+template <class Solver>
+inline xt::xtensor<size_t,1> MatrixPartitionedTyings<Solver>::iiu() const
 {
   return m_iiu;
 }
 
 // -------------------------------------------------------------------------------------------------
 
-inline xt::xtensor<size_t,1> MatrixPartitionedTyings::iip() const
+template <class Solver>
+inline xt::xtensor<size_t,1> MatrixPartitionedTyings<Solver>::iip() const
 {
   return m_iip;
 }
 
 // -------------------------------------------------------------------------------------------------
 
-inline xt::xtensor<size_t,1> MatrixPartitionedTyings::iii() const
+template <class Solver>
+inline xt::xtensor<size_t,1> MatrixPartitionedTyings<Solver>::iii() const
 {
   return xt::arange<size_t>(m_nni);
 }
 
 // -------------------------------------------------------------------------------------------------
 
-inline xt::xtensor<size_t,1> MatrixPartitionedTyings::iid() const
+template <class Solver>
+inline xt::xtensor<size_t,1> MatrixPartitionedTyings<Solver>::iid() const
 {
   return m_iid;
 }
 
 // -------------------------------------------------------------------------------------------------
 
-inline void MatrixPartitionedTyings::factorize()
+template <class Solver>
+inline void MatrixPartitionedTyings<Solver>::factorize()
 {
   if (!m_factor) return;
 
@@ -173,7 +187,8 @@ inline void MatrixPartitionedTyings::factorize()
 
 // -------------------------------------------------------------------------------------------------
 
-inline void MatrixPartitionedTyings::assemble(const xt::xtensor<double,3>& elemmat)
+template <class Solver>
+inline void MatrixPartitionedTyings<Solver>::assemble(const xt::xtensor<double,3>& elemmat)
 {
   GOOSEFEM_ASSERT(elemmat.shape() ==\
     std::decay_t<decltype(elemmat)>::shape_type({m_nelem, m_nne*m_ndim, m_nne*m_ndim}));
@@ -238,7 +253,8 @@ inline void MatrixPartitionedTyings::assemble(const xt::xtensor<double,3>& elemm
 
 // -------------------------------------------------------------------------------------------------
 
-inline void MatrixPartitionedTyings::solve(
+template <class Solver>
+inline void MatrixPartitionedTyings<Solver>::solve(
   const xt::xtensor<double,2>& b,
         xt::xtensor<double,2>& x)
 {
@@ -271,7 +287,8 @@ inline void MatrixPartitionedTyings::solve(
 
 // -------------------------------------------------------------------------------------------------
 
-inline void MatrixPartitionedTyings::solve(
+template <class Solver>
+inline void MatrixPartitionedTyings<Solver>::solve(
   const xt::xtensor<double,1>& b,
         xt::xtensor<double,1>& x)
 {
@@ -298,7 +315,8 @@ inline void MatrixPartitionedTyings::solve(
 
 // -------------------------------------------------------------------------------------------------
 
-inline void MatrixPartitionedTyings::solve_u(
+template <class Solver>
+inline void MatrixPartitionedTyings<Solver>::solve_u(
   const xt::xtensor<double,1>& b_u,
   const xt::xtensor<double,1>& b_d,
   const xt::xtensor<double,1>& x_p,
@@ -326,7 +344,8 @@ inline void MatrixPartitionedTyings::solve_u(
 
 // -------------------------------------------------------------------------------------------------
 
-inline Eigen::VectorXd MatrixPartitionedTyings::asDofs_u(
+template <class Solver>
+inline Eigen::VectorXd MatrixPartitionedTyings<Solver>::asDofs_u(
   const xt::xtensor<double,1>& dofval) const
 {
   assert(dofval.size() == m_ndof);
@@ -342,7 +361,8 @@ inline Eigen::VectorXd MatrixPartitionedTyings::asDofs_u(
 
 // -------------------------------------------------------------------------------------------------
 
-inline Eigen::VectorXd MatrixPartitionedTyings::asDofs_u(
+template <class Solver>
+inline Eigen::VectorXd MatrixPartitionedTyings<Solver>::asDofs_u(
   const xt::xtensor<double,2>& nodevec) const
 {
   assert(nodevec.shape() ==\
@@ -361,7 +381,8 @@ inline Eigen::VectorXd MatrixPartitionedTyings::asDofs_u(
 
 // -------------------------------------------------------------------------------------------------
 
-inline Eigen::VectorXd MatrixPartitionedTyings::asDofs_p(
+template <class Solver>
+inline Eigen::VectorXd MatrixPartitionedTyings<Solver>::asDofs_p(
   const xt::xtensor<double,1>& dofval) const
 {
   assert(dofval.size() == m_ndof);
@@ -377,7 +398,8 @@ inline Eigen::VectorXd MatrixPartitionedTyings::asDofs_p(
 
 // -------------------------------------------------------------------------------------------------
 
-inline Eigen::VectorXd MatrixPartitionedTyings::asDofs_p(
+template <class Solver>
+inline Eigen::VectorXd MatrixPartitionedTyings<Solver>::asDofs_p(
   const xt::xtensor<double,2>& nodevec) const
 {
   assert(nodevec.shape() ==\
@@ -396,7 +418,8 @@ inline Eigen::VectorXd MatrixPartitionedTyings::asDofs_p(
 
 // -------------------------------------------------------------------------------------------------
 
-inline Eigen::VectorXd MatrixPartitionedTyings::asDofs_d(
+template <class Solver>
+inline Eigen::VectorXd MatrixPartitionedTyings<Solver>::asDofs_d(
   const xt::xtensor<double,1>& dofval) const
 {
   assert(dofval.size() == m_ndof);
@@ -412,7 +435,8 @@ inline Eigen::VectorXd MatrixPartitionedTyings::asDofs_d(
 
 // -------------------------------------------------------------------------------------------------
 
-inline Eigen::VectorXd MatrixPartitionedTyings::asDofs_d(
+template <class Solver>
+inline Eigen::VectorXd MatrixPartitionedTyings<Solver>::asDofs_d(
   const xt::xtensor<double,2>& nodevec) const
 {
   assert(nodevec.shape() ==\

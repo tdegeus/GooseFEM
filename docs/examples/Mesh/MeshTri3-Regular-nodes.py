@@ -1,10 +1,8 @@
 
-import h5py
-import numpy      as np
-import GooseFEM   as gf
-import lxml.etree as etree
-
-# ====================== create fictitious configuration + store to HDF5-file ======================
+import h5py, os
+import numpy as np
+import GooseFEM as gf
+import GooseFEM.ParaView.HDF5 as pv
 
 # create mesh object
 mesh = gf.Mesh.Tri3.Regular(9,11)
@@ -42,46 +40,27 @@ nodesets['nodesTopRightCorner'   ][mesh.nodesTopRightCorner()   ] = 1
 # add DOF-numbers after eliminating periodicity
 nodesets['dofsPeriodic'] = mesh.dofsPeriodic()[:,0]
 
-# open data file
-name = 'MeshTri3-Regular-nodes'
-file = h5py.File(name+'.hdf5','w')
+# filename of the HDF5-file
+fname = 'MeshTri3-Regular-nodes.hdf5'
 
-# write nodal positions and a dummy connectivity
-file['coor'] = mesh.coor()
-file['conn'] = np.arange(mesh.nnode())
+# write HDF-file containing the data
 
-# write node-sets
-for key,value in nodesets.items():
-  file[key] = value
+with h5py.File(fname, 'w') as data:
 
-# ======================================== write XDMF-file =========================================
+  data.file['coor'] = mesh.coor()
+  data.file['conn'] = mesh.conn()
 
-# get mesh dimensions
-dims = dict(
-  nnode = mesh.nnode(),
-  ndim  = mesh.ndim(),
+  for key, value in nodesets.items():
+    data[key] = value
+
+# write XDMF-file with metadata
+
+xdmf = pv.Mesh(
+  pv.Connectivity(fname, "/conn", pv.ElementType.Triangle, mesh.conn().shape),
+  pv.Coordinates(fname, "/coor", mesh.coor().shape),
 )
 
-# initialize file
-root   = etree.fromstring('<Xdmf Version="2.0"></Xdmf>')
-domain = etree.SubElement(root, "Domain")
-grid   = etree.SubElement(domain, "Grid", Name="Nodes")
+for key, value in nodesets.items():
+  xdmf.push_back(pv.Attribute(fname, "/"+key, key, pv.AttributeType.Node, value.shape))
 
-# add connectivity
-conn = etree.SubElement(grid, "Topology", TopologyType="Polyvertex", NumberOfElements='{nnode:d}'.format(**dims), NodesPerElement="1")
-data = etree.SubElement(conn, "DataItem", Dimensions='{nnode:d} 1'.format(**dims), Format="HDF")
-data.text = "{0:s}.hdf5:/conn".format(name)
-
-# add coordinates
-coor = etree.SubElement(grid, "Geometry", GeometryType="XY")
-data = etree.SubElement(coor, "DataItem", Dimensions='{nnode:d} {ndim:d}'.format(**dims), Format="HDF")
-data.text = "{0:s}.hdf5:/coor".format(name)
-
-# add attributes
-for key in nodesets:
-  attr = etree.SubElement(grid, "Attribute", Name=key, AttributeType="Scalar", Center="Node")
-  data = etree.SubElement(attr, "DataItem", Dimensions='{nnode:d}'.format(**dims), Format="HDF")
-  data.text = "{name:s}.hdf5:/{key:s}".format(name=name,key=key)
-
-# write to file
-open(name+'.xdmf','wb').write(etree.tostring(root, pretty_print=True))
+xdmf.write(os.path.splitext(fname)[0] + '.xdmf')

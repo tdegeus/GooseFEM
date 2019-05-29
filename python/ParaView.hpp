@@ -128,6 +128,10 @@ py::class_<GooseFEM::ParaView::HDF5::Mesh>(m, "Mesh")
     py::arg("coor")
   )
 
+  .def("push_back",
+    py::overload_cast<const GooseFEM::ParaView::HDF5::Attribute&>(
+      &GooseFEM::ParaView::HDF5::Mesh::push_back))
+
   .def("xdmf", &GooseFEM::ParaView::HDF5::Mesh::xdmf, py::arg("indent")=4)
   .def("write", &GooseFEM::ParaView::HDF5::Mesh::write, py::arg("fname"), py::arg("indent")=4)
 
