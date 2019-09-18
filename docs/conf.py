@@ -41,7 +41,11 @@ release = ''
 # ones.
 extensions = [
     'sphinx.ext.imgmath',
+    'sphinx.ext.todo',
 ]
+
+# Show "..todo::" and ".. todolist::"
+todo_include_todos = True
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
