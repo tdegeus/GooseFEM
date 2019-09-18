@@ -3,6 +3,10 @@
 Statics
 *******
 
+.. tip::
+
+  A compact reader covering the basic theory is available `here <https://github.com/tdegeus/GooseFEM/docs/theory/readme.pdf>`_.
+
 Basic example
 =============
 

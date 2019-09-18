@@ -1,7 +1,7 @@
 
-*********
+********
 GooseFEM
-*********
+********
 
 .. |badge1| image:: https://img.shields.io/badge/license-GPLv3-brightgreen.svg
   :target: https://github.com/tdegeus/GooseFEM/blob/master/LICENSE
@@ -48,10 +48,6 @@ This header-only module provides C++ classes (including Python wrappers) to writ
 .. tip::
 
   This document should be considered as a quick-start guide. A lot effort has been spent on the readability of the code itself (in particular the ``*.h`` files should be instructive). One is highly encouraged to answer more advanced questions that arise from this guide directly using the code. Download buttons to the relevant files are included throughout this reader.
-
-.. tip::
-
-  A compact reader covering the basic theory is available `here <https://github.com/tdegeus/GooseFEM/docs/theory/readme.pdf>`_.
 
 Contents
 ========
