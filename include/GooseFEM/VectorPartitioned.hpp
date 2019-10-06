@@ -781,7 +781,7 @@ inline xt::xtensor<double,2> VectorPartitioned::AssembleNode(
 
 // -------------------------------------------------------------------------------------------------
 
-xt::xtensor<double,2> VectorPartitioned::Copy(
+inline xt::xtensor<double,2> VectorPartitioned::Copy(
   const xt::xtensor<double,2>& nodevec_src,
   const xt::xtensor<double,2>& nodevec_dest) const
 {
@@ -792,7 +792,7 @@ xt::xtensor<double,2> VectorPartitioned::Copy(
 
 // -------------------------------------------------------------------------------------------------
 
-xt::xtensor<double,2> VectorPartitioned::Copy_u(
+inline xt::xtensor<double,2> VectorPartitioned::Copy_u(
   const xt::xtensor<double,2>& nodevec_src,
   const xt::xtensor<double,2>& nodevec_dest) const
 {
@@ -803,7 +803,7 @@ xt::xtensor<double,2> VectorPartitioned::Copy_u(
 
 // -------------------------------------------------------------------------------------------------
 
-xt::xtensor<double,2> VectorPartitioned::Copy_p(
+inline xt::xtensor<double,2> VectorPartitioned::Copy_p(
   const xt::xtensor<double,2>& nodevec_src,
   const xt::xtensor<double,2>& nodevec_dest) const
 {
