@@ -36,6 +36,10 @@ py::class_<GooseFEM::Element::Hex8::Quadrature>(m, "Quadrature")
     py::arg("xi"),
     py::arg("w"))
 
+  .def("update_x",
+    &GooseFEM::Element::Hex8::Quadrature::update_x,
+    "Update the nodal positions")
+
   .def("nelem",
      &GooseFEM::Element::Hex8::Quadrature::nelem,
      "Number of elements")

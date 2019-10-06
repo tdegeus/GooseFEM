@@ -23,6 +23,7 @@ namespace py = pybind11;
 #include "Element.hpp"
 #include "ElementQuad4.hpp"
 #include "ElementQuad4Planar.hpp"
+#include "ElementQuad4Axisymmetric.hpp"
 #include "ElementHex8.hpp"
 #include "Mesh.hpp"
 #include "MeshTri3.hpp"
@@ -59,6 +60,7 @@ py::module mElementQuad4Nodal = mElementQuad4.def_submodule("Nodal", "Nodal quad
 
 init_ElementQuad4(mElementQuad4);
 init_ElementQuad4Planar(mElementQuad4);
+init_ElementQuad4Axisymmetric(mElementQuad4);
 init_ElementQuad4Gauss(mElementQuad4Gauss);
 init_ElementQuad4Nodal(mElementQuad4Nodal);
 
