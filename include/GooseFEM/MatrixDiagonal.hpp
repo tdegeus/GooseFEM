@@ -40,22 +40,44 @@ inline MatrixDiagonal::MatrixDiagonal(
 // -------------------------------------------------------------------------------------------------
 
 inline size_t MatrixDiagonal::nelem() const
-{ return m_nelem; }
+{
+  return m_nelem;
+}
+
+// -------------------------------------------------------------------------------------------------
 
 inline size_t MatrixDiagonal::nne() const
-{ return m_nne; }
+{
+  return m_nne;
+}
+
+// -------------------------------------------------------------------------------------------------
 
 inline size_t MatrixDiagonal::nnode() const
-{ return m_nnode; }
+{
+  return m_nnode;
+}
+
+// -------------------------------------------------------------------------------------------------
 
 inline size_t MatrixDiagonal::ndim() const
-{ return m_ndim; }
+{
+  return m_ndim;
+}
+
+// -------------------------------------------------------------------------------------------------
 
 inline size_t MatrixDiagonal::ndof() const
-{ return m_ndof; }
+{
+  return m_ndof;
+}
+
+// -------------------------------------------------------------------------------------------------
 
 inline xt::xtensor<size_t,2> MatrixDiagonal::dofs() const
-{ return m_dofs; }
+{
+  return m_dofs;
+}
 
 // -------------------------------------------------------------------------------------------------
 
