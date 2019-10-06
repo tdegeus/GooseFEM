@@ -14,17 +14,15 @@
 #define GOOSEFEM_ENABLE_ASSERT
 #include "../include/GooseFEM/GooseFEM.h"
 
-// =================================================================================================
-
 namespace py = pybind11;
-
-// =================================================================================================
 
 #include "Vector.hpp"
 #include "VectorPartitioned.hpp"
+#include "MatrixPartitioned.hpp"
 #include "MatrixDiagonalPartitioned.hpp"
 #include "Element.hpp"
 #include "ElementQuad4.hpp"
+#include "ElementQuad4Planar.hpp"
 #include "ElementHex8.hpp"
 #include "Mesh.hpp"
 #include "MeshTri3.hpp"
@@ -43,13 +41,8 @@ m.doc() = "Some simple finite element meshes and operations";
 // -------------------------------------------------------------------------------------------------
 
 init_Vector(m);
-
-// -------------------------------------------------------------------------------------------------
-
 init_VectorPartitioned(m);
-
-// -------------------------------------------------------------------------------------------------
-
+init_MatrixPartitioned(m);
 init_MatrixDiagonalPartitioned(m);
 
 // -------------------------------------------------------------------------------------------------
@@ -61,29 +54,22 @@ init_Element(mElement);
 // -------------------------------------------------------------------------------------------------
 
 py::module mElementQuad4 = mElement.def_submodule("Quad4", "Linear quadrilateral elements (2D)");
-
 py::module mElementQuad4Gauss = mElementQuad4.def_submodule("Gauss", "Gauss quadrature");
-
 py::module mElementQuad4Nodal = mElementQuad4.def_submodule("Nodal", "Nodal quadrature");
 
 init_ElementQuad4(mElementQuad4);
-
+init_ElementQuad4Planar(mElementQuad4);
 init_ElementQuad4Gauss(mElementQuad4Gauss);
-
 init_ElementQuad4Nodal(mElementQuad4Nodal);
 
 // -------------------------------------------------------------------------------------------------
 
 py::module mElementHex8 = mElement.def_submodule("Hex8", "Linear hexahedron (brick) elements (3D)");
-
 py::module mElementHex8Gauss = mElementHex8.def_submodule("Gauss", "Gauss quadrature");
-
 py::module mElementHex8Nodal = mElementHex8.def_submodule("Nodal", "Nodal quadrature");
 
 init_ElementHex8(mElementHex8);
-
 init_ElementHex8Gauss(mElementHex8Gauss);
-
 init_ElementHex8Nodal(mElementHex8Nodal);
 
 // -------------------------------------------------------------------------------------------------

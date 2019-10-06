@@ -10,15 +10,21 @@ Statics
 Basic example
 =============
 
+Consider a uniform linear elastic bar that is extended by a uniform fixed displacement on both sides. This problem can be modelled and discretised using symmetry as show below. In this example we will furthermore assume that the bar is sufficiently thick in the out-of-plane direction that it can be modelled using two-dimensional plane strain.
+
+.. image:: examples/Statics/FixedDisplacements/LinearElasticity/problem-sketch.svg
+  :width: 300px
+  :align: center
+
 .. todo::
 
   Description, compile, run, and view instructions
 
-:download:`main.cpp <./examples/Statics/FixedDisplacements/LinearElasticity/main.cpp>`
-:download:`CMakeLists.txt <./examples/Statics/FixedDisplacements/LinearElasticity/CMakeLists.txt>`
-:download:`plot.py <./examples/Statics/FixedDisplacements/LinearElasticity/plot.py>`
+:download:`main.cpp <examples/Statics/FixedDisplacements/LinearElasticity/main.cpp>`
+:download:`CMakeLists.txt <examples/Statics/FixedDisplacements/LinearElasticity/CMakeLists.txt>`
+:download:`plot.py <examples/Statics/FixedDisplacements/LinearElasticity/plot.py>`
 
-:download:`main.cpp <./examples/Statics/FixedDisplacements/LinearElasticity/main_manualPartition.cpp>`
+:download:`main.cpp <examples/Statics/FixedDisplacements/LinearElasticity/main_manualPartition.cpp>`
 
 Partially periodic boundary conditions
 ======================================

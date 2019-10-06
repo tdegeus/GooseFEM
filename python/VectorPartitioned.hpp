@@ -64,6 +64,10 @@ py::class_<GooseFEM::VectorPartitioned>(m, "VectorPartitioned")
 
   .def("AssembleNode"  , py::overload_cast<const xt::xtensor<double,3>&>(&GooseFEM::VectorPartitioned::AssembleNode  , py::const_), "Assemble 'nodevec'", py::arg("elemvec"))
 
+  .def("Copy"  , &GooseFEM::VectorPartitioned::Copy  , "Copy")
+  .def("Copy_u", &GooseFEM::VectorPartitioned::Copy_u, "Copy iiu")
+  .def("Copy_p", &GooseFEM::VectorPartitioned::Copy_p, "Copy iip")
+
   .def("__repr__", [](const GooseFEM::VectorPartitioned &){ return "<GooseFEM.VectorPartitioned>"; });
 
 }

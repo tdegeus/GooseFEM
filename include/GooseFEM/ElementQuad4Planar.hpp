@@ -77,19 +77,37 @@ inline QuadraturePlanar::QuadraturePlanar(
 // -------------------------------------------------------------------------------------------------
 
 inline size_t QuadraturePlanar::nelem() const
-{ return m_nelem; }
+{
+  return m_nelem;
+}
+
+// -------------------------------------------------------------------------------------------------
 
 inline size_t QuadraturePlanar::nne() const
-{ return m_nne; }
+{
+  return m_nne;
+}
+
+// -------------------------------------------------------------------------------------------------
 
 inline size_t QuadraturePlanar::ndim() const
-{ return m_ndim; }
+{
+  return m_ndim;
+}
+
+// -------------------------------------------------------------------------------------------------
 
 inline size_t QuadraturePlanar::nip() const
-{ return m_nip; }
+{
+  return m_nip;
+}
+
+// -------------------------------------------------------------------------------------------------
 
 inline xt::xtensor<double,4> QuadraturePlanar::gradN() const
-{ return m_dNx; }
+{
+  return m_dNx;
+}
 
 // -------------------------------------------------------------------------------------------------
 

@@ -57,43 +57,81 @@ inline MatrixPartitioned<Solver>::MatrixPartitioned(
 
 template <class Solver>
 inline size_t MatrixPartitioned<Solver>::nelem() const
-{ return m_nelem; }
+{
+  return m_nelem;
+}
+
+// -------------------------------------------------------------------------------------------------
 
 template <class Solver>
 inline size_t MatrixPartitioned<Solver>::nne() const
-{ return m_nne; }
+{
+  return m_nne;
+}
+
+// -------------------------------------------------------------------------------------------------
 
 template <class Solver>
 inline size_t MatrixPartitioned<Solver>::nnode() const
-{ return m_nnode; }
+{
+  return m_nnode;
+}
+
+// -------------------------------------------------------------------------------------------------
 
 template <class Solver>
 inline size_t MatrixPartitioned<Solver>::ndim() const
-{ return m_ndim; }
+{
+  return m_ndim;
+}
+
+// -------------------------------------------------------------------------------------------------
 
 template <class Solver>
 inline size_t MatrixPartitioned<Solver>::ndof() const
-{ return m_ndof; }
+{
+  return m_ndof;
+}
+
+// -------------------------------------------------------------------------------------------------
 
 template <class Solver>
 inline size_t MatrixPartitioned<Solver>::nnu() const
-{ return m_nnu; }
+{
+  return m_nnu;
+}
+
+// -------------------------------------------------------------------------------------------------
 
 template <class Solver>
 inline size_t MatrixPartitioned<Solver>::nnp() const
-{ return m_nnp; }
+{
+  return m_nnp;
+}
+
+// -------------------------------------------------------------------------------------------------
 
 template <class Solver>
 inline xt::xtensor<size_t,2> MatrixPartitioned<Solver>::dofs() const
-{ return m_dofs; }
+{
+  return m_dofs;
+}
+
+// -------------------------------------------------------------------------------------------------
 
 template <class Solver>
 inline xt::xtensor<size_t,1> MatrixPartitioned<Solver>::iiu() const
-{ return m_iiu; }
+{
+  return m_iiu;
+}
+
+// -------------------------------------------------------------------------------------------------
 
 template <class Solver>
 inline xt::xtensor<size_t,1> MatrixPartitioned<Solver>::iip() const
-{ return m_iip; }
+{
+  return m_iip;
+}
 
 // -------------------------------------------------------------------------------------------------
 

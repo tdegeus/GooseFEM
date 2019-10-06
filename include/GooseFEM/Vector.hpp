@@ -254,9 +254,7 @@ inline xt::xtensor<double,1> Vector::AsDofs(
   const xt::xtensor<double,2>& nodevec) const
 {
   xt::xtensor<double,1> dofval = xt::empty<double>({m_ndof});
-
   this->asDofs(nodevec, dofval);
-
   return dofval;
 }
 
@@ -266,9 +264,7 @@ inline xt::xtensor<double,1> Vector::AsDofs(
   const xt::xtensor<double,3>& elemvec) const
 {
   xt::xtensor<double,1> dofval = xt::empty<double>({m_ndof});
-
   this->asDofs(elemvec, dofval);
-
   return dofval;
 }
 
@@ -278,9 +274,7 @@ inline xt::xtensor<double,2> Vector::AsNode(
   const xt::xtensor<double,1>& dofval) const
 {
   xt::xtensor<double,2> nodevec = xt::empty<double>({m_nnode, m_ndim});
-
   this->asNode(dofval, nodevec);
-
   return nodevec;
 }
 
@@ -290,9 +284,7 @@ inline xt::xtensor<double,2> Vector::AsNode(
   const xt::xtensor<double,3>& elemvec) const
 {
   xt::xtensor<double,2> nodevec = xt::empty<double>({m_nnode, m_ndim});
-
   this->asNode(elemvec, nodevec);
-
   return nodevec;
 }
 
@@ -302,9 +294,7 @@ inline xt::xtensor<double,3> Vector::AsElement(
   const xt::xtensor<double,1>& dofval) const
 {
   xt::xtensor<double,3> elemvec = xt::empty<double>({m_nelem, m_nne, m_ndim});
-
   this->asElement(dofval, elemvec);
-
   return elemvec;
 }
 
@@ -314,9 +304,7 @@ inline xt::xtensor<double,3> Vector::AsElement(
   const xt::xtensor<double,2>& nodevec) const
 {
   xt::xtensor<double,3> elemvec = xt::empty<double>({m_nelem, m_nne, m_ndim});
-
   this->asElement(nodevec, elemvec);
-
   return elemvec;
 }
 
@@ -326,9 +314,7 @@ inline xt::xtensor<double,1> Vector::AssembleDofs(
   const xt::xtensor<double,2>& nodevec) const
 {
   xt::xtensor<double,1> dofval = xt::empty<double>({m_ndof});
-
   this->assembleDofs(nodevec, dofval);
-
   return dofval;
 }
 
@@ -338,9 +324,7 @@ inline xt::xtensor<double,1> Vector::AssembleDofs(
   const xt::xtensor<double,3>& elemvec) const
 {
   xt::xtensor<double,1> dofval = xt::empty<double>({m_ndof});
-
   this->assembleDofs(elemvec, dofval);
-
   return dofval;
 }
 
@@ -350,9 +334,7 @@ inline xt::xtensor<double,2> Vector::AssembleNode(
   const xt::xtensor<double,3>& elemvec) const
 {
   xt::xtensor<double,2> nodevec = xt::empty<double>({m_nnode, m_ndim});
-
   this->assembleNode(elemvec, nodevec);
-
   return nodevec;
 }
 

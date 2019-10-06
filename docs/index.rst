@@ -3,42 +3,6 @@
 GooseFEM
 ********
 
-.. |badge1| image:: https://img.shields.io/badge/license-GPLv3-brightgreen.svg
-  :target: https://github.com/tdegeus/GooseFEM/blob/master/LICENSE
-  :alt: GPLv3 license
-
-.. |badge2| image:: https://img.shields.io/badge/warranty-no-red.svg
-  :target: https://github.com/tdegeus/GooseFEM/blob/master/LICENSE
-  :alt: GPLv3 license
-
-.. |badge3| image:: https://img.shields.io/badge/download-.zip-lightgray.svg
-  :target: https://github.com/tdegeus/GooseFEM/zipball/master
-  :alt: Download as .zip
-
-.. |badge4| image:: https://img.shields.io/badge/download-.tar.gz-lightgray.svg
-  :target: https://github.com/tdegeus/GooseFEM/tarball/master
-  :alt: Download as .tar.gz
-
-.. |badge5| image:: https://img.shields.io/badge/contact-tom@geus.me-blue.svg
-  :target: mailto:tom@geus.me
-  :alt: Contact tom@geus.me
-
-.. |badge6| image:: https://img.shields.io/badge/contact-www.geus.me-blue.svg
-  :target: http://www.geus.me
-  :alt: Website www.geus.me
-
-.. |badge7| image:: https://img.shields.io/badge/GitHub-tdegeus/GooseFEM-blue.svg
-  :target: https://github.com/tdegeus/GooseFEM
-  :alt: Github tdegeus/GooseFEM
-
-.. |badge8| image:: https://img.shields.io/badge/documentation-GooseFEM.rtfd.io-blue.svg
-  :target: http://GooseFEM.rtfd.io
-  :alt: Website GooseFEM.rtfd.io
-
-| |badge1| |badge2| |badge3| |badge4|
-| |badge5| |badge6| |badge7|
-| |badge8|
-
 This header-only module provides C++ classes (including Python wrappers) to write simulations using the Finite Element Method.
 
 .. note::
@@ -60,7 +24,7 @@ Contents
    Dynamics.rst
 
 .. toctree::
-   :caption: USAGE - TODO
+   :caption: USAGE
    :maxdepth: 1
 
    conventions.rst
@@ -71,14 +35,14 @@ Contents
    ParaView.rst
 
 .. toctree::
-   :caption: INSTALLATION - TODO
+   :caption: INSTALLATION
    :maxdepth: 1
 
    compile.rst
    develop.rst
 
 .. toctree::
-   :caption: DETAILS - TODO
+   :caption: DETAILS
    :maxdepth: 1
 
    details/MeshQuad4.rst

@@ -76,16 +76,30 @@ inline QuadratureAxisymmetric::QuadratureAxisymmetric(
 // -------------------------------------------------------------------------------------------------
 
 inline size_t QuadratureAxisymmetric::nelem() const
-{ return m_nelem; }
+{
+  return m_nelem;
+}
+
+// -------------------------------------------------------------------------------------------------
 
 inline size_t QuadratureAxisymmetric::nne() const
-{ return m_nne; }
+{
+  return m_nne;
+}
+
+// -------------------------------------------------------------------------------------------------
 
 inline size_t QuadratureAxisymmetric::ndim() const
-{ return m_ndim; }
+{
+  return m_ndim;
+}
+
+// -------------------------------------------------------------------------------------------------
 
 inline size_t QuadratureAxisymmetric::nip() const
-{ return m_nip; }
+{
+  return m_nip;
+}
 
 // -------------------------------------------------------------------------------------------------
 
