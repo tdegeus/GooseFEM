@@ -24,10 +24,18 @@ Contents
    Dynamics.rst
 
 .. toctree::
-   :caption: USAGE
+   :caption: CONVENTIONS
    :maxdepth: 1
 
-   conventions.rst
+   conventions_terminology.rst
+   conventions_storage.rst
+   conventions_vector.rst
+   conventions_allocation.rst
+
+.. toctree::
+   :caption: DETAILS
+   :maxdepth: 1
+
    Mesh.rst
    Element.rst
    Vector.rst

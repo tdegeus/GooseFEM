@@ -3,17 +3,14 @@
 ParaView
 ********
 
-[:download:`GooseFEM/ParaView.h <../include/GooseFEM/ParaView.h>`, :download:`GooseFEM/ParaView.hpp <../include/GooseFEM/ParaView.hpp>`]
+.. seealso::
+
+  | :download:`GooseFEM/ParaView.h <../include/GooseFEM/ParaView.h>`
+  | :download:`GooseFEM/ParaView.hpp <../include/GooseFEM/ParaView.hpp>`
 
 .. note::
 
-  This header relies on HDF5 and HighFive as dependencies. To avoid such dependencies in usage without ParaView support, this header is not loaded by default. Therefore
-
-  .. code-block:: cpp
-
-    #include <GooseFEM/ParaView.h>
-
-  If you wish to use ParaView support without making use of HDF5 and HighFive, you have to  define ``GOOSEFEM_NO_HIGHFIVE`` before including ``ParaView.h`` for the first time:
+  This header relies on HDF5 and HighFive as dependencies. If you wish to use ParaView support without making use of HDF5 and HighFive, you have to  define ``GOOSEFEM_NO_HIGHFIVE`` before including ``ParaView.h`` for the first time:
 
   .. code-block:: cpp
 
@@ -32,7 +29,7 @@ A TimeSeries is constructed from a number of Increments. The consecutive Increme
 
 Consider this example
 
-[:download:`examples/ParaView/HDF5/main.cpp <examples/ParaView/HDF5/main.cpp>`]
+:download:`examples/ParaView/HDF5/main.cpp <examples/ParaView/HDF5/main.cpp>`
 
 .. literalinclude:: examples/ParaView/HDF5/main.cpp
    :language: cpp
@@ -45,7 +42,7 @@ Consider this example
 
   The Python interface avoids the HDF5 and HighFive dependencies. One therefore has to provide the datasets' shapes. Consider the following Python example:
 
-  [:download:`examples/ParaView/HDF5/main.py <examples/ParaView/HDF5/main.py>`]
+  :download:`examples/ParaView/HDF5/main.py <examples/ParaView/HDF5/main.py>`
 
   .. literalinclude:: examples/ParaView/HDF5/main.py
      :language: python
