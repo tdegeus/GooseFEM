@@ -36,10 +36,10 @@ namespace py = pybind11;
 PYBIND11_MODULE(GooseFEM, m) {
 
 // -------------------------------------------------------------------------------------------------
+// GooseFEM
+// -------------------------------------------------------------------------------------------------
 
 m.doc() = "Some simple finite element meshes and operations";
-
-// -------------------------------------------------------------------------------------------------
 
 init_Vector(m);
 init_VectorPartitioned(m);
@@ -47,11 +47,15 @@ init_MatrixPartitioned(m);
 init_MatrixDiagonalPartitioned(m);
 
 // -------------------------------------------------------------------------------------------------
+// GooseFEM.Element
+// -------------------------------------------------------------------------------------------------
 
 py::module mElement = m.def_submodule("Element", "Generic element routines");
 
 init_Element(mElement);
 
+// -------------------------------------------------------------------------------------------------
+// GooseFEM.Element.Quad4
 // -------------------------------------------------------------------------------------------------
 
 py::module mElementQuad4 = mElement.def_submodule("Quad4", "Linear quadrilateral elements (2D)");
@@ -65,6 +69,8 @@ init_ElementQuad4Gauss(mElementQuad4Gauss);
 init_ElementQuad4Nodal(mElementQuad4Nodal);
 
 // -------------------------------------------------------------------------------------------------
+// GooseFEM.Element.Hex8
+// -------------------------------------------------------------------------------------------------
 
 py::module mElementHex8 = mElement.def_submodule("Hex8", "Linear hexahedron (brick) elements (3D)");
 py::module mElementHex8Gauss = mElementHex8.def_submodule("Gauss", "Gauss quadrature");
@@ -75,17 +81,23 @@ init_ElementHex8Gauss(mElementHex8Gauss);
 init_ElementHex8Nodal(mElementHex8Nodal);
 
 // -------------------------------------------------------------------------------------------------
+// GooseFEM.Mesh
+// -------------------------------------------------------------------------------------------------
 
 py::module mMesh = m.def_submodule("Mesh", "Generic mesh routines");
 
 init_Mesh(mMesh);
 
 // -------------------------------------------------------------------------------------------------
+// GooseFEM.Mesh.Tri3
+// -------------------------------------------------------------------------------------------------
 
 py::module mMeshTri3 = mMesh.def_submodule("Tri3", "Linear triangular elements (2D)");
 
 init_MeshTri3(mMeshTri3);
 
+// -------------------------------------------------------------------------------------------------
+// GooseFEM.Mesh.Quad4
 // -------------------------------------------------------------------------------------------------
 
 py::module mMeshQuad4 = mMesh.def_submodule("Quad4", "Linear quadrilateral elements (2D)");
@@ -97,21 +109,22 @@ py::module mMeshQuad4Map = mMeshQuad4.def_submodule("Map", "Map mesh objects");
 init_MeshQuad4Map(mMeshQuad4Map);
 
 // -------------------------------------------------------------------------------------------------
+// GooseFEM.Mesh.Hex8
+// -------------------------------------------------------------------------------------------------
 
 py::module mMeshHex8 = mMesh.def_submodule("Hex8", "Linear hexahedron (brick) elements (3D)");
 
 init_MeshHex8(mMeshHex8);
 
 // -------------------------------------------------------------------------------------------------
+// GooseFEM.ParaView
+// -------------------------------------------------------------------------------------------------
 
 py::module mParaView = m.def_submodule("ParaView", "ParaView output files");
-
-// -------------------------------------------------------------------------------------------------
 
 py::module mParaViewHDF5 = mParaView.def_submodule("HDF5", "ParaView/HDF5 support using XDMF files");
 
 init_ParaViewHDF5(mParaViewHDF5);
-
 
 // =================================================================================================
 

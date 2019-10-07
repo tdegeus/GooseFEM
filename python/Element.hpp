@@ -23,16 +23,16 @@ void init_Element(py::module &m)
 {
 
 m.def("asElementVector",
-  &GooseFEM::Element::asElementVector,
-  "Convert nodal vector [nnode, ndim] to nodal vector stored per element [nelem, nne, ndim]",
-  py::arg("conn"),
-  py::arg("nodevec"));
+    &GooseFEM::Element::asElementVector,
+    "Convert nodal vector [nnode, ndim] to nodal vector stored per element [nelem, nne, ndim]",
+    py::arg("conn"),
+    py::arg("nodevec"));
 
 m.def("assembleElementVector",
-  &GooseFEM::Element::assembleNodeVector,
-  "Assemble nodal vector stored per element [nelem, nne, ndim] to nodal vector [nnode, ndim]",
-  py::arg("conn"),
-  py::arg("elemvec"));
+    &GooseFEM::Element::assembleNodeVector,
+    "Assemble nodal vector stored per element [nelem, nne, ndim] to nodal vector [nnode, ndim]",
+    py::arg("conn"),
+    py::arg("elemvec"));
 
 }
 
