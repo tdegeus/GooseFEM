@@ -40,6 +40,9 @@ iip = np.concatenate((
 # vector definition
 vector = GooseFEM.VectorPartitioned(conn, dofs, iip)
 
+# allocate system matrix
+K = GooseFEM.MatrixPartitioned(conn, dofs, iip)
+
 # nodal quantities
 disp = np.zeros(coor.shape)
 fint = np.zeros(coor.shape)
@@ -59,21 +62,21 @@ Ke = np.empty((nelem, nne*ndim, nne*ndim))
 # element/material definition
 # ---------------------------
 
+# element definition
 elem = GooseFEM.Element.Quad4.QuadraturePlanar(vector.AsElement(coor))
 nip = elem.nip()
+
+# material definition
 mat = GMatElastic.Cartesian3d.Matrix(nelem, nip, 1., 1.)
 
-# solve
-# -----
-
-# allocate tensors
+# integration point tensors
 d = 3
 Eps = np.empty((nelem, nip, d, d      ))
 Sig = np.empty((nelem, nip, d, d      ))
 C   = np.empty((nelem, nip, d, d, d, d))
 
-# allocate system matrix
-K = GooseFEM.MatrixPartitioned(conn, dofs, iip)
+# solve
+# -----
 
 # strain
 ue = vector.AsElement(disp)

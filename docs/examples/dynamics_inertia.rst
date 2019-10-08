@@ -6,9 +6,6 @@ Inertia
 Verlet
 ======
 
-Basic structure
----------------
-
 .. code-block:: cpp
 
   // position, velocity, acceleration (and history: last increment)
@@ -47,21 +44,22 @@ Basic structure
     xt::noalias(v) = v_n + .5 * dt * ( a_n + a );
   }
 
-Full example
-------------
+Example
+=======
 
 .. todo::
 
-  Compile, run, and view instructions
+  Compile, run, and view instructions:
 
-:download:`main.cpp <Dynamics/Elastic-Verlet/main.cpp>`
-:download:`CMakeLists.txt <Dynamics/Elastic-Verlet/CMakeLists.txt>`
-:download:`plot.py <Dynamics/Elastic-Verlet/plot.py>`
+  .. code-block:: bash
 
-.. code-block:: bash
+    mkdir build
+    cd build
+    make
+    ./main
+    python3 plot.py
 
-  mkdir build
-  cd build
-  make
-  ./main
-  python3 plot.py
+| :download:`main.cpp <Dynamics/Elastic-Verlet/main.cpp>`
+| :download:`CMakeLists.txt <Dynamics/Elastic-Verlet/CMakeLists.txt>`
+| :download:`plot.py <Dynamics/Elastic-Verlet/plot.py>`
+

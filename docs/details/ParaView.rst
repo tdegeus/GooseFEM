@@ -29,9 +29,9 @@ A TimeSeries is constructed from a number of Increments. The consecutive Increme
 
 Consider this example
 
-:download:`examples/ParaView/HDF5/main.cpp <examples/ParaView/HDF5/main.cpp>`
+:download:`figures/ParaView/HDF5/main.cpp <figures/ParaView/HDF5/main.cpp>`
 
-.. literalinclude:: examples/ParaView/HDF5/main.cpp
+.. literalinclude:: figures/ParaView/HDF5/main.cpp
    :language: cpp
 
 .. tip::
@@ -42,7 +42,7 @@ Consider this example
 
   The Python interface avoids the HDF5 and HighFive dependencies. One therefore has to provide the datasets' shapes. Consider the following Python example:
 
-  :download:`examples/ParaView/HDF5/main.py <examples/ParaView/HDF5/main.py>`
+  :download:`figures/ParaView/HDF5/main.py <figures/ParaView/HDF5/main.py>`
 
-  .. literalinclude:: examples/ParaView/HDF5/main.py
+  .. literalinclude:: figures/ParaView/HDF5/main.py
      :language: python

@@ -5,8 +5,45 @@
 Vector
 ******
 
-The vector class can be used to switch between three representations:
+Vector
+======
 
-* "dofval" ``[ndof]``: degrees-of-freedom.
-* "nodevec" ``[nnode, ndim]``: vectors per node.
-* "elemvec" ``[nelem, nne, ndim]``: vector per node for each element.
+Vector definition.
+
+.. todo::
+
+  Describe
+
+.. todo::
+
+  details/figures/Vector/mesh...
+
+.. todo::
+
+  details/figures/Vector/mesh_dofs-a...
+
+.. todo::
+
+  details/figures/Vector/mesh_dofs-b...
+
+.. todo::
+
+  Complete.
+
+VectorPartitioned
+=================
+
+Partitioned vector definition.
+
+.. todo::
+
+  Complete.
+
+VectorPartitionedTyings
+=======================
+
+Partitioned vector definition with nodal tyings.
+
+.. todo::
+
+  Complete.

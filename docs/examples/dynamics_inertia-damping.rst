@@ -65,13 +65,13 @@ Velocity Verlet
     M.solve(fr, a);
   }
 
-Full example
-============
+Example
+=======
 
 .. todo::
 
   Compile, run, and view instructions
 
-:download:`main.cpp <Dynamics/Elastic-VelocityVerlet/main.cpp>`
-:download:`CMakeLists.txt <Dynamics/Elastic-VelocityVerlet/CMakeLists.txt>`
-:download:`plot.py <Dynamics/Elastic-VelocityVerlet/plot.py>`
+| :download:`main.cpp <Dynamics/Elastic-VelocityVerlet/main.cpp>`
+| :download:`CMakeLists.txt <Dynamics/Elastic-VelocityVerlet/CMakeLists.txt>`
+| :download:`plot.py <Dynamics/Elastic-VelocityVerlet/plot.py>`

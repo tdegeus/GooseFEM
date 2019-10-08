@@ -3,9 +3,6 @@
 GooseFEM
 ********
 
-Contents
-========
-
 .. toctree::
    :caption: INTRODUCTION
    :maxdepth: 1
@@ -40,12 +37,19 @@ Contents
    :caption: DETAILS
    :maxdepth: 1
 
+   details/macros.rst
    details/Mesh.rst
+   details/MeshTri3.rst
    details/MeshQuad4.rst
+   details/MeshHex8.rst
    details/Element.rst
+   details/ElementQuad4.rst
+   details/ElementHex8.rst
    details/Vector.rst
    details/Matrix.rst
+   details/Tyings.rst
    details/ParaView.rst
+   details/Iterate.rst
 
 .. toctree::
    :caption: INSTALLATION

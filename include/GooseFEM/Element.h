@@ -29,7 +29,8 @@ inline xt::xtensor<double,2> assembleNodeVector(
   const xt::xtensor<double,3>& elemvec);
 
 // Check that DOFs leave no holes
-template<class E> inline bool isSequential(const E& dofs);
+template <class E>
+inline bool isSequential(const E& dofs);
 
 // Check structure of the matrices stored per element [nelem, nne*ndim, nne*ndim]
 bool isDiagonal(const xt::xtensor<double,3>& elemmat);

@@ -67,7 +67,7 @@ int main()
   // material definition
   GMatElastic::Cartesian3d::Matrix mat(nelem, nip, 1., 1.);
 
-  // integration point tensors tensors
+  // integration point tensors
   size_t d = 3;
   xt::xtensor<double,4> Eps = xt::empty<double>({nelem, nip, d, d      });
   xt::xtensor<double,4> Sig = xt::empty<double>({nelem, nip, d, d      });

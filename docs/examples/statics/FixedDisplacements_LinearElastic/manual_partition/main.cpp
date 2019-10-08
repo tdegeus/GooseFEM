@@ -43,6 +43,9 @@ int main()
   // vector definition
   GooseFEM::VectorPartitioned vector(conn, dofs, iip);
 
+  // allocate system matrix
+  GooseFEM::MatrixPartitioned<> K(conn, dofs, iip);
+
   // nodal quantities
   xt::xtensor<double,2> disp = xt::zeros<double>(coor.shape());
   xt::xtensor<double,2> fint = xt::zeros<double>(coor.shape());
@@ -62,21 +65,21 @@ int main()
   // element/material definition
   // ---------------------------
 
+  // element definition
   GooseFEM::Element::Quad4::QuadraturePlanar elem(vector.AsElement(coor));
   size_t nip = elem.nip();
+
+  // material definition
   GMatElastic::Cartesian3d::Matrix mat(nelem, nip, 1., 1.);
 
-  // solve
-  // -----
-
-  // allocate tensors
+  // integration point tensors
   size_t d = 3;
   xt::xtensor<double,4> Eps = xt::empty<double>({nelem, nip, d, d      });
   xt::xtensor<double,4> Sig = xt::empty<double>({nelem, nip, d, d      });
   xt::xtensor<double,6> C   = xt::empty<double>({nelem, nip, d, d, d, d});
 
-  // allocate system matrix
-  GooseFEM::MatrixPartitioned<> K(conn, dofs, iip);
+  // solve
+  // -----
 
   // strain
   vector.asElement(disp, ue);

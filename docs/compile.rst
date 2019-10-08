@@ -10,11 +10,13 @@ Introduction
 
 This module is header only. So one just has to ``#include <GooseFEM/GooseFEM.h>``. somewhere in the source code, and to tell the compiler where the header-files are. For the latter, several ways are described below.
 
-Before proceeding, a words about optimization. Of course one should use optimization when compiling the release of the code (``-O2`` or ``-O3``). But it is also a good idea to switch off the assertions in the code (mostly checks on size) that facilitate easy debugging, but do cost time. Therefore, include the flag ``-DNDEBUG``. Note that this is all C++ standard. I.e. it should be no surprise, and it always a good idea to do.
+.. tip::
+
+  Optimisation of crucial importance if you do not want to wait forever. Please `use the strategies provided by xtensor <https://xtensor.readthedocs.io/en/latest/build-options.html>`_. In particular, it is highly advice to use `xsimd <https://github.com/QuantStack/xsimd>`_ in addition to the usual optimisation flags.
 
 .. note::
 
-  This code depends on `eigen3 <https://github.com/RLovelett/eigen>`_ and `cppmat <https://github.com/tdegeus/cppmat>`_. Both are also header-only libraries. Both can be 'installed' using identical steps as described below.
+  This code depends on `eigen3 <https://github.com/RLovelett/eigen>`_ and `xtensor <https://github.com/QuantStack/xtensor>`_. Both are also header-only libraries. Both can be 'installed' using identical steps as described below.
 
 Manual compiler flags
 =====================
@@ -22,11 +24,11 @@ Manual compiler flags
 GNU / Clang
 -----------
 
-Add the following compiler's arguments:
+Add the following compiler's arguments (in addition to the arguments to include `xtensor <https://github.com/QuantStack/xtensor>`_):
 
 .. code-block:: bash
 
-  -I${PATH_TO_GOOSEFEM}/src -std=c++14
+  -I${PATH_TO_GOOSEFEM}/src
 
 .. note:: **(Not recommended)**
 
@@ -34,7 +36,7 @@ Add the following compiler's arguments:
 
   1.  Include this module as a submodule using ``git submodule add https://github.com/tdegeus/GooseFEM.git``.
 
-  2.  Replace the first line of this example by ``#include "GooseFEM/src/GooseFEM/GooseFEM.h"``.
+  2.  Replace the first line of this example by ``#include "GooseFEM/include/GooseFEM/GooseFEM.h"``.
 
       *If you decide to manually copy the header file, you might need to modify this relative path to your liking.*
 
@@ -97,7 +99,7 @@ Install in custom location (user)
 
   If you do not wish to use ``CMake`` for the installation, or you want to do something custom. You can of course. Follow these steps:
 
-  1.  Copy the file ``src/GooseFEM.pc.in`` to ``GooseFEM.pc`` to some location that can be found by ``pkg_config`` (for example by adding ``export PKG_CONFIG_PATH=/path/to/GooseFEM.pc:$PKG_CONFIG_PATH`` to the ``.bashrc``).
+  1.  Copy the file ``include/GooseFEM.pc.in`` to ``GooseFEM.pc`` to some location that can be found by ``pkg_config`` (for example by adding ``export PKG_CONFIG_PATH=/path/to/GooseFEM.pc:$PKG_CONFIG_PATH`` to the ``.bashrc``).
 
   2.  Modify the line ``prefix=@CMAKE_INSTALL_PREFIX@`` to ``prefix=/path/to/GooseFEM``.
 

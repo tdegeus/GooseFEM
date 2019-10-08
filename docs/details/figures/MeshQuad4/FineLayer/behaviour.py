@@ -73,5 +73,5 @@ ax.get_yaxis().set_visible(False)
 
 ax.set_title(r'$n_x = 6 \times 9 + 1$')
 
-plt.savefig('behavior.svg')
+plt.savefig('behaviour.svg')
 plt.show()

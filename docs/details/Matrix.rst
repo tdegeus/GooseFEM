@@ -1,8 +1,53 @@
+******
+Matrix
+******
+
 .. _sparse:
 
-*************
-Sparse Matrix
-*************
+Matrix
+======
+
+Matrix definition.
+
+.. todo::
+
+  Complete.
+
+MatrixPartitioned
+=================
+
+Partitioned matrix definition.
+
+.. todo::
+
+  Complete.
+
+MatrixPartitionedTyings
+=======================
+
+Partitioned matrix definition with nodal tyings.
+
+.. todo::
+
+  Complete.
+
+MatrixDiagonal
+==============
+
+Diagonal matrix definition.
+
+.. todo::
+
+  Complete.
+
+MatrixDiagonalPartitioned
+=========================
+
+Diagonal and partitioned matrix definition.
+
+.. todo::
+
+  Complete.
 
 Linear solver
 =============
@@ -44,36 +89,20 @@ The default solver can, however, be quite slow. Therefore Eigen has quite some `
         return 0;
     }
 
-SuiteSparse
------------
+.. todo::
 
-Preparation
-^^^^^^^^^^^
+    1.  `Download SuiteSparse <http://faculty.cse.tamu.edu/davis/suitesparse.html>`_.
 
-1.  `Download SuiteSparse <http://faculty.cse.tamu.edu/davis/suitesparse.html>`_.
+    2.  Extract the downloaded ``SuiteSparse-X.X.X.tar.gz```.
 
-2.  Extract the downloaded ``SuiteSparse-X.X.X.tar.gz```.
+    3.  Compile the library by:
 
-3.  Compile the library by:
+        .. code-block:: bash
+
+            cd /path/to/SuiteSparse
+            make
 
     .. code-block:: bash
 
-        cd /path/to/SuiteSparse
-        make
-
-Compiling GooseFEM code manually
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-.. code-block:: bash
-
-    clang++ -I/path/to/include/eigen3 -I/path/to/lapack/include -L/path/to/lapack/lib -I/path/to/openblas/include -L/path/to/openblas/lib -lopenblas -I/path/to/SuiteSparse/include -L/path/to/SuiteSparse/lib -lumfpack -lamd -lcholmod -lsuitesparseconfig -lm -std=c++14 -Wall -Wextra -pedantic -march=native -O3  -o example example.cpp
-
-.. tip::
-
-  *   Replace ``-I/path/to/include/eigen3`` with
-
-      .. code-block:: bash
-
-          `pkg-config --cflags eigen3`
-
+        clang++ -I/path/to/include/eigen3 -I/path/to/lapack/include -L/path/to/lapack/lib -I/path/to/openblas/include -L/path/to/openblas/lib -lopenblas -I/path/to/SuiteSparse/include -L/path/to/SuiteSparse/lib -lumfpack -lamd -lcholmod -lsuitesparseconfig -lm -std=c++14 -Wall -Wextra -pedantic -march=native -O3  -o example example.cpp
 

@@ -1,4 +1,4 @@
-.. _conventions_representation:
+.. _conventions_vector:
 
 Vector representation
 =====================
@@ -11,7 +11,7 @@ In GooseFEM there are three ways to represent vectors. In particular, a vector f
 
 .. warning::
 
-  Care has to be taken in the conversion from one representation to the other as 'down-sizing' can be done in more than one way, see :ref:`conventions_representation_conversion`.
+  Care has to be taken in the conversion from one representation to the other as 'down-sizing' can be done in more than one way, see :ref:`conventions_vector_conversion`.
 
 Consider a simple two-dimensional mesh of just two elements, and a displacement vector per node:
 
@@ -208,7 +208,7 @@ and
     u_x^{(4)} & u_y^{(4)} \\
   \end{bmatrix}
 
-.. _conventions_representation_conversion:
+.. _conventions_vector_conversion:
 
 Conversion
 ----------
