@@ -26,7 +26,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -pedantic -g")
 
 # enable optimisation
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -march=native")
+# set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -march=native")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DXTENSOR_USE_XSIMD=ON")
 
 # assertions
@@ -59,7 +59,6 @@ include_directories(SYSTEM ${EIGEN3_INCLUDE_DIRS})
 # -----------------
 
 add_executable(${PROJECT_NAME} main.cpp)
-# add_executable(${PROJECT_NAME} main_manualPartition.cpp)
 
 target_link_libraries(${PROJECT_NAME} ${PROJECT_LIBS})
 
