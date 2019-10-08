@@ -65,7 +65,74 @@ For our example, we will therefore first collect all degrees-of-freedom that are
    :language: cpp
    :lines: 33-38
 
+(Avoid) Book-keeping
+====================
 
+To switch between the three of GooseFEM's data-representations, we will now allocate an instance of the "Vector" class.
+
+.. literalinclude:: statics/FixedDisplacements_LinearElastic/example/main.cpp
+   :language: cpp
+   :lines: 44
+   :emphasize-lines: 1
+
+This instance, "vector", will enable us to switch between a vector field (e.g. the displacement) collected:
+
+1. per node
+2. per degree-of-freedom
+3. per element
+
+Note that the "Vector" class collects all the burden of book-keeping, and it is here that "conn", "dofs", and "iip" are used. In particular,
+
+* 1 :math:`\leftrightarrow` 2 using "dofs" and "iip",
+* 1 :math:`\leftrightarrow` 3 using "conn".
+
+By contrast, most of GooseFEM's other methods receive the relevant representation, and consequently require no problem specific knowledge.
+
+.. seealso::
+
+  :ref:`conventions_representation`
+
+We now also allocate the linear system (stored as sparse matrix):
+
+.. literalinclude:: statics/FixedDisplacements_LinearElastic/example/main.cpp
+   :language: cpp
+   :lines: 47
+   :emphasize-lines: 1
+
+Like vector, it allows can accept and return different representations.
+
+.. seealso::
+
+  * :ref:`conventions_matrix`
+  * :ref:`sparse`
+
+Allocate simulation variables
+=============================
+
+We now allocate several nodal vectors:
+
+* "disp": nodal displacements
+* "fint": nodal internal forces
+* "fext": nodal external forces
+* "fres": nodal residual forces
+
+.. literalinclude:: statics/FixedDisplacements_LinearElastic/example/main.cpp
+   :language: cpp
+   :lines: 50-53
+
+And several nodal vectors stored per element:
+
+* "ue": displacement
+* "fe": force
+* "Ke": tangent matrix
+
+.. literalinclude:: statics/FixedDisplacements_LinearElastic/example/main.cpp
+   :language: cpp
+   :lines: 56-58
+
+.. warning::
+
+  Upsizing (e.g. from "disp" to "ue") can be done uniquely, but downsizing (e.g. from "fe" to "fint") can be done in more than one way, see :ref:`conventions_representation_conversion`. We will get back to this point below.
 
 
 .. todo::

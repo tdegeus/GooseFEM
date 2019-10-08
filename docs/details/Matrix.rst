@@ -1,3 +1,4 @@
+.. _sparse:
 
 *************
 Sparse Matrix

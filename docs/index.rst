@@ -33,6 +33,7 @@ Contents
    conventions/terminology.rst
    conventions/storage.rst
    conventions/vector.rst
+   conventions/matrix.rst
    conventions/allocation.rst
 
 .. toctree::
