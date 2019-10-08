@@ -1,9 +1,9 @@
 
 .. _vector:
 
-****************
-GooseFEM::Vector
-****************
+******
+Vector
+******
 
 The vector class can be used to switch between three representations:
 

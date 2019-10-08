@@ -20,27 +20,28 @@ Contents
    :caption: EXAMPLES
    :maxdepth: 1
 
-   Statics.rst
-   Dynamics.rst
+   statics.rst
+   dynamics.rst
 
 .. toctree::
    :caption: CONVENTIONS
    :maxdepth: 1
 
-   conventions_terminology.rst
-   conventions_storage.rst
-   conventions_vector.rst
-   conventions_allocation.rst
+   conventions/terminology.rst
+   conventions/storage.rst
+   conventions/vector.rst
+   conventions/allocation.rst
 
 .. toctree::
    :caption: DETAILS
    :maxdepth: 1
 
-   Mesh.rst
-   Element.rst
-   Vector.rst
-   Matrix.rst
-   ParaView.rst
+   details/Mesh.rst
+   details/MeshQuad4.rst
+   details/Element.rst
+   details/Vector.rst
+   details/Matrix.rst
+   details/ParaView.rst
 
 .. toctree::
    :caption: INSTALLATION
@@ -48,12 +49,6 @@ Contents
 
    compile.rst
    develop.rst
-
-.. toctree::
-   :caption: DETAILS
-   :maxdepth: 1
-
-   details/MeshQuad4.rst
 
 Indices and tables
 ==================

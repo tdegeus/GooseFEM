@@ -1,7 +1,7 @@
-#include <Eigen/Eigen>
 #include <GooseFEM/GooseFEM.h>
+#include <GooseFEM/MatrixPartitioned.h>
 #include <GMatElastic/Cartesian3d.h>
-#include <xtensor-io/xhighfive.hpp>
+#include <highfive/H5Easy.hpp>
 
 int main()
 {
@@ -9,23 +9,19 @@ int main()
   // ----
 
   // define mesh
-
   GooseFEM::Mesh::Quad4::Regular mesh(5,5);
 
   // mesh dimensions
-
   size_t nelem = mesh.nelem();
   size_t nne   = mesh.nne();
   size_t ndim  = mesh.ndim();
 
   // mesh definitions
-
   xt::xtensor<double,2> coor = mesh.coor();
   xt::xtensor<size_t,2> conn = mesh.conn();
   xt::xtensor<size_t,2> dofs = mesh.dofs();
 
   // node sets
-
   xt::xtensor<size_t,1> nodesLeft   = mesh.nodesLeftEdge();
   xt::xtensor<size_t,1> nodesRight  = mesh.nodesRightEdge();
   xt::xtensor<size_t,1> nodesTop    = mesh.nodesTopEdge();
@@ -45,24 +41,20 @@ int main()
   // --------------------
 
   // vector definition
-
   GooseFEM::VectorPartitioned vector(conn, dofs, iip);
 
   // nodal quantities
-
   xt::xtensor<double,2> disp = xt::zeros<double>(coor.shape());
   xt::xtensor<double,2> fint = xt::zeros<double>(coor.shape());
   xt::xtensor<double,2> fext = xt::zeros<double>(coor.shape());
   xt::xtensor<double,2> fres = xt::zeros<double>(coor.shape());
 
   // DOF values
-
   xt::xtensor<double,1> u_u    = xt::zeros<double>({vector.nnu()});
   xt::xtensor<double,1> fres_u = xt::zeros<double>({vector.nnu()});
   xt::xtensor<double,1> fext_p = xt::zeros<double>({vector.nnp()});
 
   // element vectors
-
   xt::xtensor<double,3> ue = xt::empty<double>({nelem, nne, ndim});
   xt::xtensor<double,3> fe = xt::empty<double>({nelem, nne, ndim});
   xt::xtensor<double,3> Ke = xt::empty<double>({nelem, nne*ndim, nne*ndim});
@@ -71,9 +63,7 @@ int main()
   // ---------------------------
 
   GooseFEM::Element::Quad4::QuadraturePlanar elem(vector.AsElement(coor));
-
   size_t nip = elem.nip();
-
   GMatElastic::Cartesian3d::Matrix mat(nelem, nip, 1., 1.);
 
   // solve
@@ -152,11 +142,11 @@ int main()
   xt::xtensor<double,3> SigAv = xt::average(Sig, dV, {1});
 
   // write output
-  HighFive::File file("main.h5", HighFive::File::Overwrite);
-  xt::dump(file, "/coor", coor);
-  xt::dump(file, "/conn", conn);
-  xt::dump(file, "/disp", disp);
-  xt::dump(file, "/Sig" , SigAv);
+  H5Easy::File file("main.h5", H5Easy::File::Overwrite);
+  H5Easy::dump(file, "/coor", coor);
+  H5Easy::dump(file, "/conn", conn);
+  H5Easy::dump(file, "/disp", disp);
+  H5Easy::dump(file, "/Sig" , SigAv);
 
   return 0;
 }
