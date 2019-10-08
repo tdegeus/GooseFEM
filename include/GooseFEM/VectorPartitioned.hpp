@@ -47,34 +47,72 @@ inline VectorPartitioned::VectorPartitioned(
 // -------------------------------------------------------------------------------------------------
 
 inline size_t VectorPartitioned::nelem() const
-{ return m_nelem; }
+{
+  return m_nelem;
+}
+
+// -------------------------------------------------------------------------------------------------
 
 inline size_t VectorPartitioned::nne() const
-{ return m_nne; }
+{
+  return m_nne;
+}
+
+// -------------------------------------------------------------------------------------------------
 
 inline size_t VectorPartitioned::nnode() const
-{ return m_nnode; }
+{
+  return m_nnode;
+}
+
+// -------------------------------------------------------------------------------------------------
 
 inline size_t VectorPartitioned::ndim() const
-{ return m_ndim; }
+{
+  return m_ndim;
+}
+
+// -------------------------------------------------------------------------------------------------
 
 inline size_t VectorPartitioned::ndof() const
-{ return m_ndof; }
+{
+  return m_ndof;
+}
+
+// -------------------------------------------------------------------------------------------------
 
 inline size_t VectorPartitioned::nnu() const
-{ return m_nnu; }
+{
+  return m_nnu;
+}
+
+// -------------------------------------------------------------------------------------------------
 
 inline size_t VectorPartitioned::nnp() const
-{ return m_nnp; }
+{
+  return m_nnp;
+}
+
+// -------------------------------------------------------------------------------------------------
 
 inline xt::xtensor<size_t,2> VectorPartitioned::dofs() const
-{ return m_dofs; }
+{
+  return m_dofs;
+}
+
+// -------------------------------------------------------------------------------------------------
 
 inline xt::xtensor<size_t,1> VectorPartitioned::iiu() const
-{ return m_iiu; }
+{
+  return m_iiu;
+}
+
+// -------------------------------------------------------------------------------------------------
 
 inline xt::xtensor<size_t,1> VectorPartitioned::iip() const
-{ return m_iip; }
+{
+  return m_iip;
+}
 
 // -------------------------------------------------------------------------------------------------
 
@@ -515,7 +553,6 @@ inline void VectorPartitioned::assembleNode(
     std::decay_t<decltype(nodevec)>::shape_type({m_nnode, m_ndim}));
 
   xt::xtensor<double,1> dofval = this->AssembleDofs(elemvec);
-
   this->asNode(dofval, nodevec);
 }
 
@@ -526,9 +563,7 @@ inline xt::xtensor<double,1> VectorPartitioned::AsDofs(
   const xt::xtensor<double,1>& dofval_p) const
 {
   xt::xtensor<double,1> dofval = xt::empty<double>({m_ndof});
-
   this->asDofs(dofval_u, dofval_p, dofval);
-
   return dofval;
 }
 
@@ -538,9 +573,7 @@ inline xt::xtensor<double,1> VectorPartitioned::AsDofs(
   const xt::xtensor<double,2>& nodevec) const
 {
   xt::xtensor<double,1> dofval = xt::empty<double>({m_ndof});
-
   this->asDofs(nodevec, dofval);
-
   return dofval;
 }
 
@@ -550,9 +583,7 @@ inline xt::xtensor<double,1> VectorPartitioned::AsDofs_u(
   const xt::xtensor<double,1>& dofval) const
 {
   xt::xtensor<double,1> dofval_u = xt::empty<double>({m_nnu});
-
   this->asDofs_u(dofval, dofval_u);
-
   return dofval_u;
 }
 
@@ -562,9 +593,7 @@ inline xt::xtensor<double,1> VectorPartitioned::AsDofs_u(
   const xt::xtensor<double,2>& nodevec) const
 {
   xt::xtensor<double,1> dofval_u = xt::empty<double>({m_nnu});
-
   this->asDofs_u(nodevec, dofval_u);
-
   return dofval_u;
 }
 
@@ -574,9 +603,7 @@ inline xt::xtensor<double,1> VectorPartitioned::AsDofs_p(
   const xt::xtensor<double,1>& dofval) const
 {
   xt::xtensor<double,1> dofval_p = xt::empty<double>({m_nnp});
-
   this->asDofs_p(dofval, dofval_p);
-
   return dofval_p;
 }
 
@@ -586,9 +613,7 @@ inline xt::xtensor<double,1> VectorPartitioned::AsDofs_p(
   const xt::xtensor<double,2>& nodevec) const
 {
   xt::xtensor<double,1> dofval_p = xt::empty<double>({m_nnp});
-
   this->asDofs_p(nodevec, dofval_p);
-
   return dofval_p;
 }
 
@@ -598,9 +623,7 @@ inline xt::xtensor<double,1> VectorPartitioned::AsDofs(
   const xt::xtensor<double,3>& elemvec) const
 {
   xt::xtensor<double,1> dofval = xt::empty<double>({m_ndof});
-
   this->asDofs(elemvec, dofval);
-
   return dofval;
 }
 
@@ -610,9 +633,7 @@ inline xt::xtensor<double,1> VectorPartitioned::AsDofs_u(
   const xt::xtensor<double,3>& elemvec) const
 {
   xt::xtensor<double,1> dofval_u = xt::empty<double>({m_nnu});
-
   this->asDofs_u(elemvec, dofval_u);
-
   return dofval_u;
 }
 
@@ -622,9 +643,7 @@ inline xt::xtensor<double,1> VectorPartitioned::AsDofs_p(
   const xt::xtensor<double,3>& elemvec) const
 {
   xt::xtensor<double,1> dofval_p = xt::empty<double>({m_nnp});
-
   this->asDofs_p(elemvec, dofval_p);
-
   return dofval_p;
 }
 
@@ -634,9 +653,7 @@ inline xt::xtensor<double,2> VectorPartitioned::AsNode(
   const xt::xtensor<double,1>& dofval) const
 {
   xt::xtensor<double,2> nodevec = xt::empty<double>({m_nnode, m_ndim});
-
   this->asNode(dofval, nodevec);
-
   return nodevec;
 }
 
@@ -647,9 +664,7 @@ inline xt::xtensor<double,2> VectorPartitioned::AsNode(
   const xt::xtensor<double,1>& dofval_p) const
 {
   xt::xtensor<double,2> nodevec = xt::empty<double>({m_nnode, m_ndim});
-
   this->asNode(dofval_u, dofval_p, nodevec);
-
   return nodevec;
 }
 
@@ -659,9 +674,7 @@ inline xt::xtensor<double,2> VectorPartitioned::AsNode(
   const xt::xtensor<double,3>& elemvec) const
 {
   xt::xtensor<double,2> nodevec = xt::empty<double>({m_nnode, m_ndim});
-
   this->asNode(elemvec, nodevec);
-
   return nodevec;
 }
 
@@ -671,9 +684,7 @@ inline xt::xtensor<double,3> VectorPartitioned::AsElement(
   const xt::xtensor<double,1>& dofval) const
 {
   xt::xtensor<double,3> elemvec = xt::empty<double>({m_nelem, m_nne, m_ndim});
-
   this->asElement(dofval, elemvec);
-
   return elemvec;
 }
 
@@ -684,9 +695,7 @@ inline xt::xtensor<double,3> VectorPartitioned::AsElement(
   const xt::xtensor<double,1>& dofval_p) const
 {
   xt::xtensor<double,3> elemvec = xt::empty<double>({m_nelem, m_nne, m_ndim});
-
   this->asElement(dofval_u, dofval_p, elemvec);
-
   return elemvec;
 }
 
@@ -696,9 +705,7 @@ inline xt::xtensor<double,3> VectorPartitioned::AsElement(
   const xt::xtensor<double,2>& nodevec) const
 {
   xt::xtensor<double,3> elemvec = xt::empty<double>({m_nelem, m_nne, m_ndim});
-
   this->asElement(nodevec, elemvec);
-
   return elemvec;
 }
 
@@ -708,9 +715,7 @@ inline xt::xtensor<double,1> VectorPartitioned::AssembleDofs(
   const xt::xtensor<double,2>& nodevec) const
 {
   xt::xtensor<double,1> dofval = xt::empty<double>({m_ndof});
-
   this->assembleDofs(nodevec, dofval);
-
   return dofval;
 }
 
@@ -720,9 +725,7 @@ inline xt::xtensor<double,1> VectorPartitioned::AssembleDofs_u(
   const xt::xtensor<double,2>& nodevec) const
 {
   xt::xtensor<double,1> dofval_u = xt::empty<double>({m_nnu});
-
   this->assembleDofs_u(nodevec, dofval_u);
-
   return dofval_u;
 }
 
@@ -732,9 +735,7 @@ inline xt::xtensor<double,1> VectorPartitioned::AssembleDofs_p(
   const xt::xtensor<double,2>& nodevec) const
 {
   xt::xtensor<double,1> dofval_p = xt::empty<double>({m_nnp});
-
   this->assembleDofs_p(nodevec, dofval_p);
-
   return dofval_p;
 }
 
@@ -744,9 +745,7 @@ inline xt::xtensor<double,1> VectorPartitioned::AssembleDofs(
   const xt::xtensor<double,3>& elemvec) const
 {
   xt::xtensor<double,1> dofval = xt::empty<double>({m_ndof});
-
   this->assembleDofs(elemvec, dofval);
-
   return dofval;
 }
 
@@ -756,9 +755,7 @@ inline xt::xtensor<double,1> VectorPartitioned::AssembleDofs_u(
   const xt::xtensor<double,3>& elemvec) const
 {
   xt::xtensor<double,1> dofval_u = xt::empty<double>({m_nnu});
-
   this->assembleDofs_u(elemvec, dofval_u);
-
   return dofval_u;
 }
 
@@ -768,9 +765,7 @@ inline xt::xtensor<double,1> VectorPartitioned::AssembleDofs_p(
   const xt::xtensor<double,3>& elemvec) const
 {
   xt::xtensor<double,1> dofval_p = xt::empty<double>({m_nnp});
-
   this->assembleDofs_p(elemvec, dofval_p);
-
   return dofval_p;
 }
 
@@ -780,10 +775,41 @@ inline xt::xtensor<double,2> VectorPartitioned::AssembleNode(
   const xt::xtensor<double,3>& elemvec) const
 {
   xt::xtensor<double,2> nodevec = xt::empty<double>({m_nnode, m_ndim});
-
   this->assembleNode(elemvec, nodevec);
-
   return nodevec;
+}
+
+// -------------------------------------------------------------------------------------------------
+
+inline xt::xtensor<double,2> VectorPartitioned::Copy(
+  const xt::xtensor<double,2>& nodevec_src,
+  const xt::xtensor<double,2>& nodevec_dest) const
+{
+  xt::xtensor<double,2> out = nodevec_dest;
+  this->copy(nodevec_src, out);
+  return out;
+}
+
+// -------------------------------------------------------------------------------------------------
+
+inline xt::xtensor<double,2> VectorPartitioned::Copy_u(
+  const xt::xtensor<double,2>& nodevec_src,
+  const xt::xtensor<double,2>& nodevec_dest) const
+{
+  xt::xtensor<double,2> out = nodevec_dest;
+  this->copy_u(nodevec_src, out);
+  return out;
+}
+
+// -------------------------------------------------------------------------------------------------
+
+inline xt::xtensor<double,2> VectorPartitioned::Copy_p(
+  const xt::xtensor<double,2>& nodevec_src,
+  const xt::xtensor<double,2>& nodevec_dest) const
+{
+  xt::xtensor<double,2> out = nodevec_dest;
+  this->copy_p(nodevec_src, out);
+  return out;
 }
 
 // -------------------------------------------------------------------------------------------------

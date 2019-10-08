@@ -3,17 +3,13 @@
 Notes for developers
 ********************
 
-Create a new release
-====================
+Testing
+=======
 
-1.  Update the version number as follows in ``src/GooseFEM/Macros.h``. The C++ and Python distributions will read from this.
+Please add relevant tests to ``test/``. To run all tests:
 
-2.  Upload the changes to GitHub and create a new release there (with the correct version number).
+.. code-block:: cpp
 
-3.  Upload the package to PyPi:
-
-    .. code-block:: bash
-
-      $ python3 setup.py bdist_wheel --universal
-      $ twine upload dist/*
-
+  mkdir build/
+  cmake .. -DBUILD_TESTS=ON
+  ./test/test

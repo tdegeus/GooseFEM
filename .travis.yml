@@ -67,7 +67,6 @@ install:
     - conda install xtl -c conda-forge
     - conda install xsimd -c conda-forge
     - conda install xtensor -c conda-forge
-    - conda install nlohmann_json -c conda-forge
     # build path
     - mkdir build
     - cd build

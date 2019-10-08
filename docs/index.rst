@@ -1,89 +1,55 @@
 
-*********
+********
 GooseFEM
-*********
-
-.. |badge1| image:: https://img.shields.io/badge/license-GPLv3-brightgreen.svg
-  :target: https://github.com/tdegeus/GooseFEM/blob/master/LICENSE
-  :alt: GPLv3 license
-
-.. |badge2| image:: https://img.shields.io/badge/warranty-no-red.svg
-  :target: https://github.com/tdegeus/GooseFEM/blob/master/LICENSE
-  :alt: GPLv3 license
-
-.. |badge3| image:: https://img.shields.io/badge/download-.zip-lightgray.svg
-  :target: https://github.com/tdegeus/GooseFEM/zipball/master
-  :alt: Download as .zip
-
-.. |badge4| image:: https://img.shields.io/badge/download-.tar.gz-lightgray.svg
-  :target: https://github.com/tdegeus/GooseFEM/tarball/master
-  :alt: Download as .tar.gz
-
-.. |badge5| image:: https://img.shields.io/badge/contact-tom@geus.me-blue.svg
-  :target: mailto:tom@geus.me
-  :alt: Contact tom@geus.me
-
-.. |badge6| image:: https://img.shields.io/badge/contact-www.geus.me-blue.svg
-  :target: http://www.geus.me
-  :alt: Website www.geus.me
-
-.. |badge7| image:: https://img.shields.io/badge/GitHub-tdegeus/GooseFEM-blue.svg
-  :target: https://github.com/tdegeus/GooseFEM
-  :alt: Github tdegeus/GooseFEM
-
-.. |badge8| image:: https://img.shields.io/badge/documentation-GooseFEM.rtfd.io-blue.svg
-  :target: http://GooseFEM.rtfd.io
-  :alt: Website GooseFEM.rtfd.io
-
-| |badge1| |badge2| |badge3| |badge4|
-| |badge5| |badge6| |badge7|
-| |badge8|
-
-.. note::
-
-  This library is free to use under the `GPLv3 license <https://github.com/tdegeus/GooseFEM/blob/master/LICENSE>`_. Any additions are very much appreciated, in terms of suggested functionality, code, documentation, testimonials, word of mouth advertisement, .... Bugs or feature requests can be filed on `GitHub <http://github.com/tdegeus/GooseFEM>`_. As always, the code comes with no guarantee. None of the developers can be held responsible for possible mistakes.
-
-.. tip::
-
-  This document should be considered as a quick-start guide. A lot effort has been spent on the readability of the code itself (in particular the ``*.h`` files should be instructive). One is highly encouraged to answer more advanced questions that arise from this guide directly using the code. Download buttons to the relevant files are included throughout this reader.
-
-This header-only module provides C++ classes and several accompanying methods to work with n-d arrays and/or tensors. It's usage, programmatically and from a compilation perspective, is really simple. One just has to ``#include <GooseFEM/GooseFEM.h>`` and tell your compiler where GooseFEM is located (and to use the C++14 or younger standard). Really, that's it!
-
-Data-types
-==========
-
-[:download:`GooseFEM/GooseFEM.h <../include/GooseFEM/GooseFEM.h>`]
-
-Data-storage
-============
-
-+-----------+------------------------------------------------+----------------------------------+---------------------------+
-|  Alias    | Description                                    | Shape                            | Type                      |
-+===========+================================================+==================================+===========================+
-| "dofval"  | degrees-of-freedom                             | [ndof]                           | ``xt::xtensor<double,1>`` |
-+-----------+------------------------------------------------+----------------------------------+---------------------------+
-| "nodevec" | nodal vectors                                  | [nnode, ndim]                    | ``xt::xtensor<double,2>`` |
-+-----------+------------------------------------------------+----------------------------------+---------------------------+
-| "elemvec" | nodal vectors stored per element               | [nelem, nne, ndim]               | ``xt::xtensor<double,3>`` |
-+-----------+------------------------------------------------+----------------------------------+---------------------------+
-| "elemmat" | matrices stored per element                    | [nelem, nne*ndim, nne*ndim]      | ``xt::xtensor<double,3>`` |
-+-----------+------------------------------------------------+----------------------------------+---------------------------+
-| "qtensor" | tensors stored (as list) per integration point | [nelem, nip, #tensor-components] | ``xt::xtensor<double,4>`` |
-+-----------+------------------------------------------------+----------------------------------+---------------------------+
-| "qscalar" | scalars stored per integration point           | [nelem, nip]                     | ``xt::xtensor<double,2>`` |
-+-----------+------------------------------------------------+----------------------------------+---------------------------+
-
-Contents
-========
+********
 
 .. toctree::
-   :caption: USAGE
+   :caption: INTRODUCTION
    :maxdepth: 1
 
-   Mesh.rst
-   Element.rst
-   Vector.rst
-   ParaView.rst
+   introduction.rst
+
+.. toctree::
+   :caption: EXAMPLES - STATICS
+   :maxdepth: 1
+
+   examples/statics_linear.rst
+
+.. toctree::
+   :caption: EXAMPLES - DYNAMICS
+   :maxdepth: 1
+
+   examples/dynamics_inertia.rst
+   examples/dynamics_inertia-damping.rst
+   examples/dynamics_overdamped.rst
+
+.. toctree::
+   :caption: CONVENTIONS
+   :maxdepth: 1
+
+   conventions/terminology.rst
+   conventions/storage.rst
+   conventions/vector.rst
+   conventions/matrix.rst
+   conventions/allocation.rst
+
+.. toctree::
+   :caption: DETAILS
+   :maxdepth: 1
+
+   details/macros.rst
+   details/Mesh.rst
+   details/MeshTri3.rst
+   details/MeshQuad4.rst
+   details/MeshHex8.rst
+   details/Element.rst
+   details/ElementQuad4.rst
+   details/ElementHex8.rst
+   details/Vector.rst
+   details/Matrix.rst
+   details/Tyings.rst
+   details/ParaView.rst
+   details/Iterate.rst
 
 .. toctree::
    :caption: INSTALLATION
@@ -91,22 +57,6 @@ Contents
 
    compile.rst
    develop.rst
-
-.. toctree::
-   :caption: EXAMPLES
-   :maxdepth: 1
-
-   examples/Dynamics/readme.rst
-
-.. toctree::
-   :caption: DETAILS
-   :maxdepth: 1
-
-   details/MeshQuad4.rst
-
-.. tip::
-
-  A compact reader covering the basic theory is available `here <https://github.com/tdegeus/GooseFEM/docs/theory/readme.pdf>`_
 
 Indices and tables
 ==================

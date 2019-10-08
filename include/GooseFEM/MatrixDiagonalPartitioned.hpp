@@ -50,34 +50,72 @@ inline MatrixDiagonalPartitioned::MatrixDiagonalPartitioned(
 // -------------------------------------------------------------------------------------------------
 
 inline size_t MatrixDiagonalPartitioned::nelem() const
-{ return m_nelem; }
+{
+  return m_nelem;
+}
+
+// -------------------------------------------------------------------------------------------------
 
 inline size_t MatrixDiagonalPartitioned::nne() const
-{ return m_nne; }
+{
+  return m_nne;
+}
+
+// -------------------------------------------------------------------------------------------------
 
 inline size_t MatrixDiagonalPartitioned::nnode() const
-{ return m_nnode; }
+{
+  return m_nnode;
+}
+
+// -------------------------------------------------------------------------------------------------
 
 inline size_t MatrixDiagonalPartitioned::ndim() const
-{ return m_ndim; }
+{
+  return m_ndim;
+}
+
+// -------------------------------------------------------------------------------------------------
 
 inline size_t MatrixDiagonalPartitioned::ndof() const
-{ return m_ndof; }
+{
+  return m_ndof;
+}
+
+// -------------------------------------------------------------------------------------------------
 
 inline size_t MatrixDiagonalPartitioned::nnu() const
-{ return m_nnu; }
+{
+  return m_nnu;
+}
+
+// -------------------------------------------------------------------------------------------------
 
 inline size_t MatrixDiagonalPartitioned::nnp() const
-{ return m_nnp; }
+{
+  return m_nnp;
+}
+
+// -------------------------------------------------------------------------------------------------
 
 inline xt::xtensor<size_t,2> MatrixDiagonalPartitioned::dofs() const
-{ return m_dofs; }
+{
+  return m_dofs;
+}
+
+// -------------------------------------------------------------------------------------------------
 
 inline xt::xtensor<size_t,1> MatrixDiagonalPartitioned::iiu() const
-{ return m_iiu; }
+{
+  return m_iiu;
+}
+
+// -------------------------------------------------------------------------------------------------
 
 inline xt::xtensor<size_t,1> MatrixDiagonalPartitioned::iip() const
-{ return m_iip; }
+{
+  return m_iip;
+}
 
 // -------------------------------------------------------------------------------------------------
 

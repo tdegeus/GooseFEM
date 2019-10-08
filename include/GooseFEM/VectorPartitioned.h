@@ -58,7 +58,7 @@ public:
 
   void copy(
     const xt::xtensor<double,2>& nodevec_src,
-          xt::xtensor<double,2>& nodevec_dest) const; // overwritted
+          xt::xtensor<double,2>& nodevec_dest) const; // overwritten
 
   void copy_u(
     const xt::xtensor<double,2>& nodevec_src,
@@ -239,6 +239,18 @@ public:
 
   xt::xtensor<double,2> AssembleNode(
     const xt::xtensor<double,3>& elemvec) const;
+
+  xt::xtensor<double,2> Copy(
+    const xt::xtensor<double,2>& nodevec_src,
+    const xt::xtensor<double,2>& nodevec_dest) const;
+
+  xt::xtensor<double,2> Copy_u(
+    const xt::xtensor<double,2>& nodevec_src,
+    const xt::xtensor<double,2>& nodevec_dest) const;
+
+  xt::xtensor<double,2> Copy_p(
+    const xt::xtensor<double,2>& nodevec_src,
+    const xt::xtensor<double,2>& nodevec_dest) const;
 
 private:
 
