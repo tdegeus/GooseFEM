@@ -315,7 +315,9 @@ inline xt::xtensor<size_t,2> Regular::dofsPeriodic() const
 
 // -------------------------------------------------------------------------------------------------
 
-inline xt::xtensor<int,1> getOrientation(const xt::xtensor<double,2> &coor, const xt::xtensor<size_t,2> &conn)
+inline xt::xtensor<int,1> getOrientation(
+  const xt::xtensor<double,2> &coor,
+  const xt::xtensor<size_t,2> &conn)
 {
   GOOSEFEM_ASSERT(conn.shape()[1] == 3ul);
   GOOSEFEM_ASSERT(coor.shape()[1] == 2ul);
@@ -341,7 +343,10 @@ inline xt::xtensor<int,1> getOrientation(const xt::xtensor<double,2> &coor, cons
 
 // -------------------------------------------------------------------------------------------------
 
-inline xt::xtensor<size_t,2> setOrientation(const xt::xtensor<double,2> &coor, const xt::xtensor<size_t,2> &conn, int orientation)
+inline xt::xtensor<size_t,2> setOrientation(
+  const xt::xtensor<double,2> &coor,
+  const xt::xtensor<size_t,2> &conn,
+  int orientation)
 {
   GOOSEFEM_ASSERT(conn.shape()[1] == 3ul);
   GOOSEFEM_ASSERT(coor.shape()[1] == 2ul);
@@ -354,7 +359,11 @@ inline xt::xtensor<size_t,2> setOrientation(const xt::xtensor<double,2> &coor, c
 
 // -------------------------------------------------------------------------------------------------
 
-inline xt::xtensor<size_t,2> setOrientation(const xt::xtensor<double,2> &coor, const xt::xtensor<size_t,2> &conn, const xt::xtensor<int,1> &val, int orientation)
+inline xt::xtensor<size_t,2> setOrientation(
+  const xt::xtensor<double,2> &coor,
+  const xt::xtensor<size_t,2> &conn,
+  const xt::xtensor<int,1> &val,
+  int orientation)
 {
   GOOSEFEM_ASSERT(conn.shape()[1] == 3ul);
   GOOSEFEM_ASSERT(coor.shape()[1] == 2ul);
@@ -367,243 +376,12 @@ inline xt::xtensor<size_t,2> setOrientation(const xt::xtensor<double,2> &coor, c
   size_t nelem = conn.shape()[0];
   xt::xtensor<size_t,2> out = conn;
 
-  for ( size_t ielem = 0 ; ielem < nelem ; ++ielem )
-    if ( ( orientation == -1 and val(ielem) > 0 ) or ( orientation == +1 and val(ielem) < 0 ) )
-      std::swap( out(ielem,2) , out(ielem,1) );
+  for (size_t ielem = 0; ielem < nelem; ++ielem)
+    if ((orientation == -1 && val(ielem) > 0) || (orientation == +1 && val(ielem) < 0))
+      std::swap(out(ielem,2) , out(ielem,1));
 
   return out;
 }
-
-// -------------------------------------------------------------------------------------------------
-
-inline xt::xtensor<size_t,2> retriangulate(const xt::xtensor<double,2> &coor, const xt::xtensor<size_t,2> &conn, int orientation)
-{
-  // get the orientation of all elements
-  xt::xtensor<int,1> dir = getOrientation(coor, conn);
-  // check the orientation
-  bool eq = static_cast<size_t>(std::abs(xt::sum(dir)[0])) == conn.shape()[0];
-
-  // new connectivity
-  xt::xtensor<size_t,2> out;
-
-  // perform re-triangulation
-  // - use "TriUpdate"
-  if ( eq )
-  {
-    Private::TriUpdate obj(coor,conn);
-    obj.eval();
-    out = obj.conn();
-  }
-  // - using TriCompute
-  else
-  {
-    throw std::runtime_error("Work-in-progress, has to be re-triangulated using 'TriCompute'");
-  }
-
-  return setOrientation(coor,out,orientation);
-}
-
-// =================================================================================================
-
-namespace Private {
-
-// -------------------------------------------------------------------------------------------------
-
-inline TriUpdate::TriUpdate(const xt::xtensor<double,2> &coor, const xt::xtensor<size_t,2> &conn): m_conn(conn), m_coor(coor)
-{
-  GOOSEFEM_ASSERT(conn.shape()[1] == 3ul);
-  GOOSEFEM_ASSERT(coor.shape()[1] == 2ul);
-
-  // store shapes
-  m_nnode = coor.shape()[0];
-  m_ndim  = coor.shape()[1];
-  m_nelem = conn.shape()[0];
-  m_nne   = conn.shape()[1];
-
-  // set default to out-of-bounds, to make clear that nothing happened yet
-  m_elem = m_nelem * xt::ones<size_t>({2});
-  m_node = m_nnode * xt::ones<size_t>({4});
-
-  edge();
-}
-
-// -------------------------------------------------------------------------------------------------
-
-inline void TriUpdate::edge()
-{
-  // signal that nothing has been set
-  m_edge = m_nelem * xt::ones<size_t>({m_nelem , m_nne});
-
-  std::vector<size_t> idx = {0,1,2}; // lists to convert connectivity -> edges
-  std::vector<size_t> jdx = {1,2,0}; // lists to convert connectivity -> edges
-
-  std::vector<Edge> edge;
-  edge.reserve(m_nelem*idx.size());
-
-  for ( size_t e = 0 ; e < m_nelem ; ++e )
-    for ( size_t i = 0 ; i < m_nne ; ++i )
-      edge.push_back( Edge( m_conn(e,idx[i]), m_conn(e,jdx[i]) , e , i , true ) );
-
-  std::sort( edge.begin() , edge.end() , Edge_sort );
-
-  for ( size_t i = 0 ; i < edge.size()-1 ; ++i )
-  {
-    if ( edge[i].n1 == edge[i+1].n1 and edge[i].n2 == edge[i+1].n2 )
-    {
-      m_edge( edge[i  ].elem , edge[i  ].edge ) = edge[i+1].elem;
-      m_edge( edge[i+1].elem , edge[i+1].edge ) = edge[i  ].elem;
-    }
-  }
-}
-
-// -------------------------------------------------------------------------------------------------
-
-inline void TriUpdate::chedge(size_t edge, size_t old_elem, size_t new_elem)
-{
-  size_t m;
-  size_t neigh = m_edge(old_elem , edge);
-
-  if ( neigh >= m_nelem ) return;
-
-  for ( m = 0 ; m < m_nne ; ++m )
-    if ( m_edge( neigh , m ) == old_elem )
-      break;
-
-  m_edge( neigh , m ) = new_elem;
-}
-
-// -------------------------------------------------------------------------------------------------
-
-inline bool TriUpdate::eval()
-{
-  bool change = false;
-
-  while ( increment() ) { change = true; }
-
-  return change;
-}
-
-// -------------------------------------------------------------------------------------------------
-
-inline bool TriUpdate::increment()
-{
-  size_t ielem,jelem,iedge,jedge;
-  double phi1,phi2;
-
-  xt::xtensor_fixed<size_t,xt::xshape<4>> c = xt::empty<size_t>({4});
-  xt::xtensor_fixed<size_t,xt::xshape<4>> n = xt::empty<size_t>({4});
-
-  // loop over all elements
-  for ( ielem = 0 ; ielem < m_nelem ; ++ielem )
-  {
-    // loop over all edges
-    for ( iedge = 0 ; iedge < m_nne ; ++iedge )
-    {
-      // only proceed if the edge is shared with another element
-      if ( m_edge(ielem,iedge) >= m_nelem )
-        continue;
-
-      // read "jelem"
-      jelem = m_edge(ielem,iedge);
-
-      // find the edge involved for "jelem"
-      for ( jedge=0; jedge<m_nne; ++jedge ) if ( m_edge(jelem,jedge) == ielem ) break;
-
-      // convert to four static nodes
-      // - read first three from "ielem"
-      if      ( iedge==0 ) { c(0)=m_conn(ielem,2); c(1)=m_conn(ielem,0); c(2)=m_conn(ielem,1); }
-      else if ( iedge==1 ) { c(0)=m_conn(ielem,0); c(1)=m_conn(ielem,1); c(2)=m_conn(ielem,2); }
-      else if ( iedge==2 ) { c(0)=m_conn(ielem,1); c(1)=m_conn(ielem,2); c(2)=m_conn(ielem,0); }
-      // - read last from "jelem"
-      if      ( jedge==0 ) { c(3)=m_conn(jelem,2); }
-      else if ( jedge==1 ) { c(3)=m_conn(jelem,0); }
-      else if ( jedge==2 ) { c(3)=m_conn(jelem,1); }
-
-      // construct edge vectors
-      auto a1 = xt::view(m_coor, c(1), xt::all()) - xt::view(m_coor, c(0), xt::all());
-      auto b1 = xt::view(m_coor, c(2), xt::all()) - xt::view(m_coor, c(0), xt::all());
-      auto a2 = xt::view(m_coor, c(1), xt::all()) - xt::view(m_coor, c(3), xt::all());
-      auto b2 = xt::view(m_coor, c(2), xt::all()) - xt::view(m_coor, c(3), xt::all());
-
-      // compute angles of the relevant corners
-      phi1 = std::acos((a1(0)*b1(0)+a1(1)*b1(1))/(std::pow((a1(0)*a1(0)+a1(1)*a1(1)),0.5)*std::pow((b1(0)*b1(0)+b1(1)*b1(1)),0.5)));
-      phi2 = std::acos((a2(0)*b2(0)+a2(1)*b2(1))/(std::pow((a2(0)*a2(0)+a2(1)*a2(1)),0.5)*std::pow((b2(0)*b2(0)+b2(1)*b2(1)),0.5)));
-
-      // update mesh if needed
-      if ( phi1+phi2 > M_PI )
-      {
-        // update connectivity
-        m_conn(ielem,0) = c(0); m_conn(ielem,1) = c(3); m_conn(ielem,2) = c(2);
-        m_conn(jelem,0) = c(0); m_conn(jelem,1) = c(1); m_conn(jelem,2) = c(3);
-
-        // change list with neighbors for the elements around (only two neighbors change)
-        if      ( iedge==0 ) { chedge(2,ielem,jelem); }
-        else if ( iedge==1 ) { chedge(0,ielem,jelem); }
-        else if ( iedge==2 ) { chedge(1,ielem,jelem); }
-
-        if      ( jedge==0 ) { chedge(2,jelem,ielem); }
-        else if ( jedge==1 ) { chedge(0,jelem,ielem); }
-        else if ( jedge==2 ) { chedge(1,jelem,ielem); }
-
-        // convert to four static nodes
-        if      ( iedge==0 ) { n(0)=m_edge(ielem,2); n(3)=m_edge(ielem,1); }
-        else if ( iedge==1 ) { n(0)=m_edge(ielem,0); n(3)=m_edge(ielem,2); }
-        else if ( iedge==2 ) { n(0)=m_edge(ielem,1); n(3)=m_edge(ielem,0); }
-
-        if      ( jedge==0 ) { n(1)=m_edge(jelem,1); n(2)=m_edge(jelem,2); }
-        else if ( jedge==1 ) { n(1)=m_edge(jelem,2); n(2)=m_edge(jelem,0); }
-        else if ( jedge==2 ) { n(1)=m_edge(jelem,0); n(2)=m_edge(jelem,1); }
-
-        // store the neighbors for the changed elements
-        m_edge(ielem,0) = jelem; m_edge(jelem,0) = n(0) ;
-        m_edge(ielem,1) = n(2) ; m_edge(jelem,1) = n(1) ;
-        m_edge(ielem,2) = n(3) ; m_edge(jelem,2) = ielem;
-
-        // store information for transfer algorithm
-        m_node    = c;
-        m_elem(0) = ielem;
-        m_elem(1) = jelem;
-
-        return true;
-      }
-    }
-  }
-
-  return false;
-}
-
-// -------------------------------------------------------------------------------------------------
-
-inline Edge::Edge(size_t i, size_t j, size_t el, size_t ed, bool sort):
-n1(i), n2(j), elem(el), edge(ed)
-{
-  if ( sort && n1>n2 )
-    std::swap(n1,n2);
-}
-
-// -------------------------------------------------------------------------------------------------
-
-inline bool Edge_cmp(Edge a, Edge b)
-{
-  if ( a.n1 == b.n1 and a.n2 == b.n2 )
-    return true;
-
-  return false;
-}
-
-// -------------------------------------------------------------------------------------------------
-
-inline bool Edge_sort(Edge a, Edge b)
-{
-  if ( a.n1 < b.n1 or a.n2 < b.n2 )
-    return true;
-
-  return false;
-}
-
-// -------------------------------------------------------------------------------------------------
-
-} // namespace Private
 
 // -------------------------------------------------------------------------------------------------
 
