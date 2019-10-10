@@ -23,7 +23,7 @@ Below an example is described line-by-line. The full example can be downloaded:
 
 .. note::
 
-  This example is also available using the Python interface (:download:`main.py <statics/FixedDisplacements_LinearElastic/example/main.py>`). Note that compared to the C++ API, the Python API requires more data-allocation, in particular in the functions "AsElement" and "AssembleNode". See :ref:`conventions_allocation`.
+  This example is also available using the Python interface (:download:`main.py <statics/FixedDisplacements_LinearElastic/example/main.py>`). Note that compared to the C++ API, the Python API requires more data-allocation, in particular for the functions "AsElement" and "AssembleNode". See :ref:`conventions_allocation`.
 
 Include library
 ===============
@@ -52,7 +52,8 @@ Note that:
 
 .. seealso::
 
-  :ref:`conventions_terminology`
+  * :ref:`conventions_terminology`
+  * Details: :ref:`MeshQuad4`
 
 Define partitioning
 ===================
@@ -100,6 +101,7 @@ To switch between the three of GooseFEM's data-representations, an instance of t
 
   * :ref:`conventions_vector`
   * :ref:`conventions_storage`
+  * Details: :ref:`Vector`
 
 System matrix
 =============
@@ -114,7 +116,8 @@ We now also allocate the system/stiffness system (stored as sparse matrix). Like
 .. seealso::
 
   * :ref:`conventions_matrix`
-  * :ref:`sparse`
+  * Details: :ref:`Matrix`
+  * Details: :ref:`linear_solver`
 
 Allocate nodal vectors
 ======================
@@ -150,11 +153,18 @@ Element definition
    :language: cpp
    :lines: 64-65
 
-At this moment the interpolation and quadrature is allocated. The shape functions and integration points (that can be customised) are stored in this class. As observed, no further information is needed that the number of elements and the nodal coordinates per element. Both are contained in the output of "vector.AsElement(coor)", which is an "elemvec" of shape "[nelem, nne, ndim]". This illustrates that problem specific book-keeping is isolated to the main program, using "Vector" as tool.
+At this moment the interpolation and quadrature is allocated. The shape functions and integration points (that can be customised) are stored in this class. As observed, no further information is needed than the number of elements and the nodal coordinates per element. Both are contained in the output of "vector.AsElement(coor)", which is an "elemvec" of shape "[nelem, nne, ndim]". This illustrates that problem specific book-keeping is isolated to the main program, using "Vector" as tool.
 
 .. note::
 
   The shape functions are computed when constructing this class, they are not recomputed when evaluating them. One can recompute them if the nodal coordinates change using ".update_x(...)", however, this is only relevant in a large deformation setting.
+
+.. seealso::
+
+  * :ref:`conventions_vector`
+  * :ref:`conventions_storage`
+  * Details: :ref:`Vector`
+  * Details: :ref:`ElementQuad4`
 
 Material definition
 ===================
@@ -194,6 +204,20 @@ Compute strain
 
 The strain per integration point is now computed using the current nodal displacements (stored as "elemvec" in "ue") and the gradient of the shape functions.
 
+.. note::
+
+  "ue" is the output of "vector.asElement(disp, ue)". Using this syntax re-allocation of "ue" is avoided. If this optimisation is irrelevant for you problem (or if you are using the Python interface), please use the same function, but starting with a capital:
+
+  .. code-block:: cpp
+
+    ue = vector.AElement(disp);
+
+  Note that this allows the one-liner
+
+  .. code-block:: cpp
+
+    Eps = elem.SymGradN_vector(vector.AElement(disp));
+
 Compute stress and tangent
 ==========================
 
@@ -214,7 +238,19 @@ The stress stored per integration point ("Sig") is now converted to nodal intern
 
 .. warning::
 
-  Please note that downsizing ("fe" to "fint" and "Ke" to "K") can be done in two ways, and that "assemble..." is the right function here as it adds entries that occur more than once. In contrast "as..." be false here.
+  Please note that downsizing ("fe" to "fint" and "Ke" to "K") can be done in two ways, and that "assemble..." is the right function here as it adds entries that occur more than once. In contrast "as..." would not result in what we want here.
+
+.. note::
+
+  Once more, "fe", "fint", and "Ke" are output variables. Less efficient, but shorter, is:
+
+  .. code-block:: cpp
+
+    // internal force
+    fint = vector.AssembleNode(elem.Int_gradN_dot_tensor2_dV(Sig));
+
+    // stiffness matrix
+    K.assemble(elem.Int_gradN_dot_tensor4_dot_gradNT_dV(C));
 
 Solve
 =====
@@ -244,7 +280,7 @@ Residual force
    :language: cpp
    :lines: 114-125
 
-We now convince ourselves that the solution is indeed in mechanical equilibrium.
+We convince ourselves that the solution is indeed in mechanical equilibrium.
 
 Store & plot
 ------------
@@ -260,7 +296,7 @@ Manual partitioning
 
 To verify how partitioning and solving is done internally using the "Vector" and "MatrixPartitioned" classes, the same example is provided where partitioning is done manually:
 
-:download:`main.cpp <statics/FixedDisplacements_LinearElastic/manual_partition/main.cpp>`
-:download:`CMakeLists.txt <statics/FixedDisplacements_LinearElastic/manual_partition/CMakeLists.txt>`
-:download:`plot.py <statics/FixedDisplacements_LinearElastic/manual_partition/plot.py>`
-:download:`main.py <statics/FixedDisplacements_LinearElastic/manual_partition/main.py>`
+| :download:`main.cpp <statics/FixedDisplacements_LinearElastic/manual_partition/main.cpp>`
+| :download:`CMakeLists.txt <statics/FixedDisplacements_LinearElastic/manual_partition/CMakeLists.txt>`
+| :download:`plot.py <statics/FixedDisplacements_LinearElastic/manual_partition/plot.py>`
+| :download:`main.py <statics/FixedDisplacements_LinearElastic/manual_partition/main.py>`

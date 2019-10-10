@@ -1,3 +1,4 @@
+.. _MeshTri3:
 
 **********
 Mesh::Tri3

@@ -1,3 +1,4 @@
+.. _ElementHex8:
 
 *************
 Element::Hex8

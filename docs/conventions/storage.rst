@@ -26,14 +26,14 @@ dofval
 ------
 
 * Degrees-of-freedom
-* [ndof]
+* Shape [ndof]
 * :code:`xt::xtensor<double,1>`
 
 nodevec
 -------
 
 * Nodal vectors
-* [nnode, ndim]
+* Shape [nnode, ndim]
 * :code:`xt::xtensor<double,2>`
 
 elemvec
@@ -41,21 +41,21 @@ elemvec
 
 * Nodal vectors stored per element
 * Allows treatment of all elements independently, no connectivity needed
-* [nelem, nne, ndim]
+* Shape [nelem, nne, ndim]
 * :code:`xt::xtensor<double,3>`
 
 elemmat
 -------
 
 * Matrices stored per element
-* [nelem, nne*ndim, nne*ndim]
+* Shape [nelem, nne*ndim, nne*ndim]
 * :code:`xt::xtensor<double,3>`
 
 qscalar
 -------
 
 * Scalars stored per integration point
-* [nelem, nip]
+* Shape [nelem, nip]
 * :code:`xt::xtensor<double,2>`
 
 
@@ -63,15 +63,15 @@ qtensor (2nd order)
 -------------------
 
 * 2nd-order tensors stored per integration point
-* For certain element the number of dimensions of the tensor can be larger than the number of dimensions of the element
-* [nelem, nip, tdim, tdim]
+* For certain elements, the number of dimensions of the tensor can be larger than the number of dimensions of the element (tdim >= ndim)
+* Shape [nelem, nip, tdim, tdim]
 * :code:`xt::xtensor<double,4>`
 
 qtensor (4th order)
 -------------------
 
 * 4th-order tensors stored per integration point
-* For certain element the number of dimensions of the tensor can be larger than the number of dimensions of the element
-* [nelem, nip, tdim, tdim, tdim, tdim]
+* For certain elements, the number of dimensions of the tensor can be larger than the number of dimensions of the element (tdim >= ndim)
+* Shape [nelem, nip, tdim, tdim, tdim, tdim]
 * :code:`xt::xtensor<double,4>`
 

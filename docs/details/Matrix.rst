@@ -1,8 +1,8 @@
+.. _Matrix:
+
 ******
 Matrix
 ******
-
-.. _sparse:
 
 Matrix
 ======
@@ -48,6 +48,8 @@ Diagonal and partitioned matrix definition.
 .. todo::
 
   Complete.
+
+.. _linear_solver:
 
 Linear solver
 =============

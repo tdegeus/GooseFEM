@@ -1,3 +1,4 @@
+.. _MeshHex8:
 
 **********
 Mesh::Hex8

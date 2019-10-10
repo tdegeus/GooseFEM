@@ -1,3 +1,4 @@
+.. _ElementQuad4:
 
 **************
 Element::Quad4

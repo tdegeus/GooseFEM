@@ -19,4 +19,4 @@ Most of GooseFEM's functions provided an interface to:
 
 .. note::
 
-    The Python API only option 1. Option 2 is only available in the C++ API.
+    The Python API only provides option 1. Option 2 is only available in the C++ API.

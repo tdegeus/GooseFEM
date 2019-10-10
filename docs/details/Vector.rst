@@ -1,5 +1,4 @@
-
-.. _vector:
+.. _Vector:
 
 ******
 Vector

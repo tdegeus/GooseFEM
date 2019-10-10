@@ -1,3 +1,4 @@
+.. _MeshQuad4:
 
 ***********
 Mesh::Quad4
