@@ -264,7 +264,7 @@ inline size_t Quadrature::nip() const
 
 // -------------------------------------------------------------------------------------------------
 
-inline xt::xtensor<double,4> Quadrature::gradN() const
+inline xt::xtensor<double,4> Quadrature::GradN() const
 {
   return m_dNx;
 }

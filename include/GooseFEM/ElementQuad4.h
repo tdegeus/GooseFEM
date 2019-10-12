@@ -88,7 +88,7 @@ public:
 
   // Return shape function gradients
 
-  xt::xtensor<double,4> gradN() const;
+  xt::xtensor<double,4> GradN() const;
 
   // Return integration volume
 

@@ -104,7 +104,7 @@ inline size_t QuadraturePlanar::nip() const
 
 // -------------------------------------------------------------------------------------------------
 
-inline xt::xtensor<double,4> QuadraturePlanar::gradN() const
+inline xt::xtensor<double,4> QuadraturePlanar::GradN() const
 {
   return m_dNx;
 }
