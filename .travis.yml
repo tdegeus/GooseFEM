@@ -85,6 +85,6 @@ install:
     - cd "${build_dir}"
     - cmake .. -DBUILD_TESTS=ON
     - make
-    - cd test
 script:
+    - cd "${build_dir}/test"
     - ./test
