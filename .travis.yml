@@ -86,13 +86,7 @@ install:
     - cd "${build_dir}"
     - cmake .. -DBUILD_TESTS=ON
     - make
-    # make examples
-    - cd "${example_dir}"
-    - source buid_all.sh
 script:
     # run tests
     - cd "${build_dir}/test"
     - ./test
-    # run examples
-    - cd "${example_dir}"
-    - source run_all.sh
