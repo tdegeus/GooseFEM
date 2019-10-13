@@ -67,9 +67,12 @@ install:
     - conda install xtl -c conda-forge
     - conda install xsimd -c conda-forge
     - conda install xtensor -c conda-forge
+    # store working directory
+    - root_dir="${PWD}"
+    - build_dir="${PWD}/build"
     # build path
-    - mkdir build
-    - cd build
+    - mkdir "$build_dir"
+    - cd "$build_dir"
     # install catch
     - git clone https://github.com/catchorg/Catch2.git
     - cd Catch2
@@ -79,10 +82,9 @@ install:
     - cmake .. -DCATCH_BUILD_TESTING=OFF -DCMAKE_INSTALL_PREFIX:PATH="${PWD}"/opt
     - make install
     - export INCLUDE_PATH="${PWD}"/opt/include:"${INCLUDE_PATH}"
-    - cd ../..
     # make test-cases
+    - cd "$build_dir"
     - cmake .. -DBUILD_TESTS=ON
     - make
-    - cd test
 script:
-    - ./test
+    - "${build_dir}"/test/test

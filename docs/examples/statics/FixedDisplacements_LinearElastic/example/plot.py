@@ -42,10 +42,8 @@ sigeq = np.sqrt(3./2.*ddot22(Sigd,Sigd))
 # plot
 
 fig, ax = plt.subplots()
-
 gplt.patch(coor=coor+disp, conn=conn, cindex=sigeq, cmap='jet', axis=ax, clim=(0,0.1))
-
 gplt.patch(coor=coor, conn=conn, linestyle='--', axis=ax)
-
-plt.show()
+plt.savefig('plot.pdf')
+plt.close()
 
