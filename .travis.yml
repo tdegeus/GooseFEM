@@ -67,8 +67,7 @@ install:
     - conda install xtl -c conda-forge
     - conda install xsimd -c conda-forge
     - conda install xtensor -c conda-forge
-    # store working directory
-    - root_dir="${PWD}"
+    # store relevant
     - build_dir="${PWD}/build"
     # build path
     - mkdir "${build_dir}"
@@ -86,5 +85,6 @@ install:
     - cd "${build_dir}"
     - cmake .. -DBUILD_TESTS=ON
     - make
+    - cd test
 script:
-    - "${build_dir}"/test/test
+    - ./test
