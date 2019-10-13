@@ -4,6 +4,9 @@
 Tyings
 ******
 
+| :download:`GooseFEM/TyingsPeriodic.h <../../include/GooseFEM/TyingsPeriodic.h>`
+| :download:`GooseFEM/TyingsPeriodic.hpp <../../include/GooseFEM/TyingsPeriodic.hpp>`
+
 Tyings::Periodic
 ================
 

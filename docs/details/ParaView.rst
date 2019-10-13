@@ -4,10 +4,8 @@
 ParaView
 ********
 
-.. seealso::
-
-  | :download:`GooseFEM/ParaView.h <../../include/GooseFEM/ParaView.h>`
-  | :download:`GooseFEM/ParaView.hpp <../../include/GooseFEM/ParaView.hpp>`
+| :download:`GooseFEM/ParaView.h <../../include/GooseFEM/ParaView.h>`
+| :download:`GooseFEM/ParaView.hpp <../../include/GooseFEM/ParaView.hpp>`
 
 .. note::
 

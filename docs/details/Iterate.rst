@@ -4,6 +4,9 @@
 Iterate
 *******
 
+| :download:`GooseFEM/Iterate.h <../../include/GooseFEM/Iterate.h>`
+| :download:`GooseFEM/Iterate.hpp <../../include/GooseFEM/Iterate.hpp>`
+
 Iterate::StopList
 =================
 

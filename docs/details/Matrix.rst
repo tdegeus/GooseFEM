@@ -4,6 +4,17 @@
 Matrix
 ******
 
+| :download:`GooseFEM/Matrix.h <../../include/GooseFEM/Matrix.h>`
+| :download:`GooseFEM/Matrix.hpp <../../include/GooseFEM/Matrix.hpp>`
+| :download:`GooseFEM/MatrixPartitioned.h <../../include/GooseFEM/MatrixPartitioned.h>`
+| :download:`GooseFEM/MatrixPartitioned.hpp <../../include/GooseFEM/MatrixPartitioned.hpp>`
+| :download:`GooseFEM/MatrixPartitionedTyings.h <../../include/GooseFEM/MatrixPartitionedTyings.h>`
+| :download:`GooseFEM/MatrixPartitionedTyings.hpp <../../include/GooseFEM/MatrixPartitionedTyings.hpp>`
+| :download:`GooseFEM/MatrixDiagonal.h <../../include/GooseFEM/MatrixDiagonal.h>`
+| :download:`GooseFEM/MatrixDiagonal.hpp <../../include/GooseFEM/MatrixDiagonal.hpp>`
+| :download:`GooseFEM/MatrixDiagonalPartitioned.h <../../include/GooseFEM/MatrixDiagonalPartitioned.h>`
+| :download:`GooseFEM/MatrixDiagonalPartitioned.hpp <../../include/GooseFEM/MatrixDiagonalPartitioned.hpp>`
+
 Matrix
 ======
 

@@ -27,21 +27,3 @@ Regular mesh.
 .. todo::
 
   figures/MeshTri3/Regular/nodes...
-
-Mesh::Tri3::getOrientation
---------------------------
-
-Get the orientation of all triangles.
-
-.. todo::
-
-  Describe
-
-Mesh::Tri3::setOrientation
---------------------------
-
-Modify the orientation of all triangles.
-
-.. todo::
-
-  Describe
