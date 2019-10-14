@@ -1,29 +1,36 @@
 
+import numpy as np
 import GooseFEM as gf
 import matplotlib.pyplot as plt
-import goosempl as gplt
-import numpy as np
+import GooseMPL as gplt
 
 plt.style.use(['goose'])
 
 # --------------------------------------------------------------------------------------------------
 
-mesh   = gf.Mesh.Tri3.Regular(6*9,51)
-coor   = mesh.coor()
-conn   = mesh.conn()
-cindex = np.arange(conn.shape[0])
+mesh = gf.Mesh.Tri3.Regular(5, 6)
+coor = mesh.coor()
+conn = mesh.conn()
+
+cindex = np.arange(mesh.nelem())
+
+Left   = mesh.nodesLeftEdge()
+Right  = mesh.nodesRightEdge()
+Bottom = mesh.nodesBottomEdge()
+Top    = mesh.nodesTopEdge()
 
 # --------------------------------------------------------------------------------------------------
 
 fig,ax = plt.subplots(figsize=(10,10))
 
-im = gplt.patch(coor=coor,conn=conn,cindex=cindex,cmap='jet')
+im = gplt.patch(coor=coor, conn=conn, cindex=cindex, cmap='jet')
 
-ax.plot(coor[:                 ,0],coor[:                 ,1],marker='o',linestyle='none')
-ax.plot(coor[mesh.nodesLeft  (),0],coor[mesh.nodesLeft  (),1],marker='o',linestyle='none',color='g')
-ax.plot(coor[mesh.nodesRight (),0],coor[mesh.nodesRight (),1],marker='o',linestyle='none',color='b')
-ax.plot(coor[mesh.nodesBottom(),0],coor[mesh.nodesBottom(),1],marker='o',linestyle='none',color='r')
-ax.plot(coor[mesh.nodesTop   (),0],coor[mesh.nodesTop   (),1],marker='o',linestyle='none',color='y')
+ax.plot(coor[:,0], coor[:,1], marker='o', linestyle='none')
+
+ax.plot(coor[Left  ,0], coor[Left  ,1], marker='o', linestyle='none', color='g')
+ax.plot(coor[Right ,0], coor[Right ,1], marker='o', linestyle='none', color='b')
+ax.plot(coor[Bottom,0], coor[Bottom,1], marker='o', linestyle='none', color='r')
+ax.plot(coor[Top   ,0], coor[Top   ,1], marker='o', linestyle='none', color='y')
 
 ax.set_aspect('equal')
 ax.get_xaxis().set_visible(False)

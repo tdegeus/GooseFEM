@@ -41,12 +41,10 @@ nodesets['nodesTopRightCorner'   ][mesh.nodesTopRightCorner()   ] = 1
 nodesets['dofsPeriodic'] = mesh.dofsPeriodic()[:,0]
 
 # filename of the HDF5-file
-fname = 'MeshTri3-Regular-nodes.hdf5'
+fname = 'paraview_nodesets.hdf5'
 
 # write HDF-file containing the data
-
 with h5py.File(fname, 'w') as data:
-
   data.file['coor'] = mesh.coor()
   data.file['conn'] = mesh.conn()
 
@@ -54,7 +52,6 @@ with h5py.File(fname, 'w') as data:
     data[key] = value
 
 # write XDMF-file with metadata
-
 xdmf = pv.Mesh(
   pv.Connectivity(fname, "/conn", pv.ElementType.Triangle, mesh.conn().shape),
   pv.Coordinates(fname, "/coor", mesh.coor().shape),
