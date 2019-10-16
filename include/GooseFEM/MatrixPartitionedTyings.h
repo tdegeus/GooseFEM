@@ -58,7 +58,7 @@ public:
 
   // Assemble from matrices stored per element [nelem, nne*ndim, nne*ndim]
 
-  void assemble(const xt::xtensor<double,3> &elemmat);
+  void assemble(const xt::xtensor<double,3>& elemmat);
 
   // Solve:
   // A' = A_ii + K_id * C_di + C_di^T * K_di + C_di^T * K_dd * C_di
@@ -68,18 +68,33 @@ public:
   // x_d = C_di * x_i
 
   void solve(
-    const xt::xtensor<double,2> &b,
-          xt::xtensor<double,2> &x); // modified with "x_u", "x_d"
+    const xt::xtensor<double,2>& b,
+          xt::xtensor<double,2>& x); // modified with "x_u", "x_d"
 
   void solve(
-    const xt::xtensor<double,1> &b,
-          xt::xtensor<double,1> &x); // modified with "x_u", "x_d"
+    const xt::xtensor<double,1>& b,
+          xt::xtensor<double,1>& x); // modified with "x_u", "x_d"
 
   void solve_u(
-    const xt::xtensor<double,1> &b_u,
-    const xt::xtensor<double,1> &b_d,
-    const xt::xtensor<double,1> &x_p,
-          xt::xtensor<double,1> &x_u); // overwritten
+    const xt::xtensor<double,1>& b_u,
+    const xt::xtensor<double,1>& b_d,
+    const xt::xtensor<double,1>& x_p,
+          xt::xtensor<double,1>& x_u); // overwritten
+
+  // Auto-allocation of the functions above
+
+  xt::xtensor<double,2> Solve(
+    const xt::xtensor<double,2>& b,
+    const xt::xtensor<double,2>& x);
+
+  xt::xtensor<double,1> Solve(
+    const xt::xtensor<double,1>& b,
+    const xt::xtensor<double,1>& x);
+
+  xt::xtensor<double,1> Solve_u(
+    const xt::xtensor<double,1>& b_u,
+    const xt::xtensor<double,1>& b_d,
+    const xt::xtensor<double,1>& x_p);
 
 private:
 
@@ -145,12 +160,12 @@ private:
   void factorize();
 
   // Convert arrays (Eigen version of VectorPartitioned, which contains public functions)
-  Eigen::VectorXd asDofs_u(const xt::xtensor<double,1> &dofval ) const;
-  Eigen::VectorXd asDofs_u(const xt::xtensor<double,2> &nodevec) const;
-  Eigen::VectorXd asDofs_p(const xt::xtensor<double,1> &dofval ) const;
-  Eigen::VectorXd asDofs_p(const xt::xtensor<double,2> &nodevec) const;
-  Eigen::VectorXd asDofs_d(const xt::xtensor<double,1> &dofval ) const;
-  Eigen::VectorXd asDofs_d(const xt::xtensor<double,2> &nodevec) const;
+  Eigen::VectorXd asDofs_u(const xt::xtensor<double,1>& dofval ) const;
+  Eigen::VectorXd asDofs_u(const xt::xtensor<double,2>& nodevec) const;
+  Eigen::VectorXd asDofs_p(const xt::xtensor<double,1>& dofval ) const;
+  Eigen::VectorXd asDofs_p(const xt::xtensor<double,2>& nodevec) const;
+  Eigen::VectorXd asDofs_d(const xt::xtensor<double,1>& dofval ) const;
+  Eigen::VectorXd asDofs_d(const xt::xtensor<double,2>& nodevec) const;
 
 };
 
