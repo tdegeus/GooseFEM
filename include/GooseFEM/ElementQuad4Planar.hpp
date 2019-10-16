@@ -31,20 +31,20 @@ inline QuadraturePlanar::QuadraturePlanar(
   double thick) :
   m_x(x), m_w(w), m_xi(xi), m_thick(thick)
 {
-  GOOSEFEM_ASSERT(m_x.shape()[1] == m_nne);
-  GOOSEFEM_ASSERT(m_x.shape()[2] == m_ndim);
+  GOOSEFEM_ASSERT(m_x.shape(1) == m_nne);
+  GOOSEFEM_ASSERT(m_x.shape(2) == m_ndim);
 
-  m_nelem = m_x.shape()[0];
-  m_nip   = m_w.size();
+  m_nelem = m_x.shape(0);
+  m_nip = m_w.size();
 
-  GOOSEFEM_ASSERT(m_xi.shape()[0] == m_nip);
-  GOOSEFEM_ASSERT(m_xi.shape()[1] == m_ndim);
+  GOOSEFEM_ASSERT(m_xi.shape(0) == m_nip);
+  GOOSEFEM_ASSERT(m_xi.shape(1) == m_ndim);
   GOOSEFEM_ASSERT(m_w.size() == m_nip);
 
-  m_N    = xt::empty<double>({         m_nip, m_nne        });
-  m_dNxi = xt::empty<double>({         m_nip, m_nne, m_ndim});
-  m_dNx  = xt::empty<double>({m_nelem, m_nip, m_nne, m_ndim});
-  m_vol  = xt::empty<double>({m_nelem, m_nip               });
+  m_N = xt::empty<double>({m_nip, m_nne});
+  m_dNxi = xt::empty<double>({m_nip, m_nne, m_ndim});
+  m_dNx = xt::empty<double>({m_nelem, m_nip, m_nne, m_ndim});
+  m_vol = xt::empty<double>({m_nelem, m_nip});
 
   // shape functions
   for (size_t q = 0 ; q < m_nip ; ++q)
@@ -141,8 +141,8 @@ inline void QuadraturePlanar::dV(xt::xtensor<double,4>& qtensor) const
 
 inline void QuadraturePlanar::dV(xt::xarray<double>& qtensor) const
 {
-  GOOSEFEM_ASSERT(qtensor.shape()[0] == m_nelem);
-  GOOSEFEM_ASSERT(qtensor.shape()[1] == m_nip);
+  GOOSEFEM_ASSERT(qtensor.shape(0) == m_nelem);
+  GOOSEFEM_ASSERT(qtensor.shape(1) == m_nip);
 
   xt::dynamic_shape<ptrdiff_t> strides = {
     static_cast<ptrdiff_t>(m_vol.strides()[0]),
