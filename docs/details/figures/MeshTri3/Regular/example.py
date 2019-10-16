@@ -21,7 +21,7 @@ Top    = mesh.nodesTopEdge()
 
 # --------------------------------------------------------------------------------------------------
 
-fig,ax = plt.subplots(figsize=(10,10))
+fig, ax = plt.subplots(figsize=(10,10))
 
 im = gplt.patch(coor=coor, conn=conn, cindex=cindex, cmap='jet')
 
@@ -37,4 +37,4 @@ ax.get_xaxis().set_visible(False)
 ax.get_yaxis().set_visible(False)
 
 plt.savefig('example.svg')
-plt.show()
+plt.close()

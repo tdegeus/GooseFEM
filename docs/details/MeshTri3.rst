@@ -7,6 +7,13 @@ Mesh::Tri3
 | :download:`GooseFEM/MeshTri3.h <../../include/GooseFEM/MeshTri3.h>`
 | :download:`GooseFEM/MeshTri3.hpp <../../include/GooseFEM/MeshTri3.hpp>`
 
+Naming convention
+=================
+
+.. image:: figures/MeshTri3/naming_convention.svg
+  :width: 350px
+  :align: center
+
 Mesh::Tri3::Regular
 ===================
 
@@ -14,13 +21,9 @@ Regular mesh.
 
 .. seealso::
 
-  | :download:`Python example <figures/MeshTri3/Regular/example.py>`
-  | :download:`Python/ParaView example <figures/MeshTri3/Regular/paraview.py>`
-  | :download:`Python/ParaView nodesets <figures/MeshTri3/Regular/paraview_nodesets.py>`
-
-.. todo::
-
-  Illustrate
+  | :download:`Python - example <figures/MeshTri3/Regular/example.py>`
+  | :download:`Python/ParaView - example <figures/MeshTri3/Regular/paraview.py>`
+  | :download:`Python/ParaView - nodesets <figures/MeshTri3/Regular/paraview_nodesets.py>`
 
 Mesh::Tri3::Regular::nelem()
 ----------------------------
