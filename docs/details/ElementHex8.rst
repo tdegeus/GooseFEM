@@ -10,9 +10,15 @@ Element::Hex8
 Element::Hex8::Quadrature
 =========================
 
-Element definition to numerically interpolate and integrate. Note that this function evaluates the shape function gradients upon construction, they are not recomputed upon evaluation. To evaluate them with respect to updated coordinates (e.g. to do updated Lagrange), use ".update_x(...)" to update the nodal coordinates and re-evaluate the shape function gradients and integration volumes.
+Element definition to numerically interpolate and integrate.
 
-Note that by default integration is done using Gauss points. To use a different scheme one has to supply the position (in isoparametric coordinates) and weight of the integration points (their number is inferred from the input).
+.. note::
+
+  This function evaluates the shape function gradients upon construction, they are not recomputed upon evaluation. To evaluate them with respect to updated coordinates (e.g. to do updated Lagrange), use ".update_x(...)" to update the nodal coordinates and re-evaluate the shape function gradients and integration volumes.
+
+.. note::
+
+  By default integration is done using Gauss points. To use a different scheme one has to supply the position (in isoparametric coordinates) and weight of the integration points (their number is inferred from the input).
 
 .. note::
 
