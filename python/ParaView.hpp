@@ -4,13 +4,8 @@
 
 ================================================================================================= */
 
-#include <Eigen/Eigen>
-
 #include <pybind11/pybind11.h>
-#include <pybind11/eigen.h>
-
 #include <pyxtensor/pyxtensor.hpp>
-
 #define GOOSEFEM_NO_HIGHFIVE
 #include "../include/GooseFEM/GooseFEM.h"
 #include "../include/GooseFEM/ParaView.h"

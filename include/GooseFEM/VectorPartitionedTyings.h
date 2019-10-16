@@ -102,6 +102,12 @@ public:
 
   // Auto-allocation of the functions above
 
+  xt::xtensor<double,1> AsDofs_i(
+    const xt::xtensor<double,2>& nodevec) const;
+
+  xt::xtensor<double,2> AsNode(
+    const xt::xtensor<double,1>& dofval) const;
+
   xt::xtensor<double,3> AsElement(
     const xt::xtensor<double,2>& nodevec) const;
 

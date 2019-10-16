@@ -18,7 +18,11 @@ namespace py = pybind11;
 
 #include "Vector.hpp"
 #include "VectorPartitioned.hpp"
+#include "VectorPartitionedTyings.hpp"
+#include "Matrix.hpp"
 #include "MatrixPartitioned.hpp"
+#include "MatrixPartitionedTyings.hpp"
+#include "MatrixDiagonal.hpp"
 #include "MatrixDiagonalPartitioned.hpp"
 #include "Element.hpp"
 #include "ElementQuad4.hpp"
@@ -43,7 +47,11 @@ m.doc() = "Some simple finite element meshes and operations";
 
 init_Vector(m);
 init_VectorPartitioned(m);
+init_VectorPartitionedTyings(m);
+init_Matrix(m);
 init_MatrixPartitioned(m);
+init_MatrixPartitionedTyings(m);
+init_MatrixDiagonal(m);
 init_MatrixDiagonalPartitioned(m);
 
 // -------------------------------------------------------------------------------------------------

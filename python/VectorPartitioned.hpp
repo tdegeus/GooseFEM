@@ -4,13 +4,8 @@
 
 ================================================================================================= */
 
-#include <Eigen/Eigen>
-
 #include <pybind11/pybind11.h>
-#include <pybind11/eigen.h>
-
 #include <pyxtensor/pyxtensor.hpp>
-
 #include "../include/GooseFEM/GooseFEM.h"
 
 // =================================================================================================
@@ -158,13 +153,13 @@ py::class_<GooseFEM::VectorPartitioned>(m, "VectorPartitioned")
 
     .def("AssembleDofs",
         py::overload_cast<const xt::xtensor<double,2>&>(
-            &GooseFEM::VectorPartitioned::AssembleDofs  , py::const_),
+            &GooseFEM::VectorPartitioned::AssembleDofs, py::const_),
         "Assemble 'dofval'",
         py::arg("nodevec"))
 
     .def("AssembleDofs",
         py::overload_cast<const xt::xtensor<double,3>&>(
-            &GooseFEM::VectorPartitioned::AssembleDofs  , py::const_),
+            &GooseFEM::VectorPartitioned::AssembleDofs, py::const_),
         "Assemble 'dofval'",
         py::arg("elemvec"))
 
