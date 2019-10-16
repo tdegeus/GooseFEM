@@ -22,6 +22,16 @@ namespace py = pybind11;
 void init_Mesh(py::module& m)
 {
 
+// -------------------------------------------------------------------------------------------------
+
+py::enum_<GooseFEM::Mesh::ElementType>(m, "ElementType", "ElementType")
+    .value("Tri3", GooseFEM::Mesh::ElementType::Tri3)
+    .value("Quad4", GooseFEM::Mesh::ElementType::Quad4)
+    .value("Hex8", GooseFEM::Mesh::ElementType::Hex8)
+    .export_values();
+
+// -------------------------------------------------------------------------------------------------
+
 py::class_<GooseFEM::Mesh::Renumber>(m, "Renumber")
 
     .def(py::init<const xt::xarray<size_t>&>(),

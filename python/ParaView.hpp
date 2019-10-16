@@ -56,6 +56,17 @@ py::class_<GooseFEM::ParaView::HDF5::Connectivity>(m, "Connectivity")
         py::arg("ElementType"),
         py::arg("shape"))
 
+    .def(py::init<
+            const std::string&,
+            const std::string&,
+            GooseFEM::Mesh::ElementType,
+            const std::vector<size_t>&>(),
+        "Connectivity",
+        py::arg("fname"),
+        py::arg("dataset"),
+        py::arg("ElementType"),
+        py::arg("shape"))
+
     .def("nelem",
         &GooseFEM::ParaView::HDF5::Connectivity::nelem)
 
