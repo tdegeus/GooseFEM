@@ -22,10 +22,10 @@ inline MatrixDiagonal::MatrixDiagonal(
   const xt::xtensor<size_t,2> &dofs) :
   m_conn(conn), m_dofs(dofs)
 {
-  m_nelem = m_conn.shape()[0];
-  m_nne   = m_conn.shape()[1];
-  m_nnode = m_dofs.shape()[0];
-  m_ndim  = m_dofs.shape()[1];
+  m_nelem = m_conn.shape(0);
+  m_nne   = m_conn.shape(1);
+  m_nnode = m_dofs.shape(0);
+  m_ndim  = m_dofs.shape(1);
 
   m_ndof  = xt::amax(m_dofs)[0] + 1;
 
