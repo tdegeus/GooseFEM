@@ -26,10 +26,10 @@ inline VectorPartitioned::VectorPartitioned(
   m_dofs(dofs),
   m_iip(iip)
 {
-  m_nelem = m_conn.shape()[0];
-  m_nne   = m_conn.shape()[1];
-  m_nnode = m_dofs.shape()[0];
-  m_ndim  = m_dofs.shape()[1];
+  m_nelem = m_conn.shape(0);
+  m_nne   = m_conn.shape(1);
+  m_nnode = m_dofs.shape(0);
+  m_ndim  = m_dofs.shape(1);
 
   m_iiu   = xt::setdiff1d(dofs, iip);
 

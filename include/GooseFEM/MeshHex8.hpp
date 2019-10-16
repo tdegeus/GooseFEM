@@ -783,8 +783,8 @@ inline xt::xtensor<size_t,2> Regular::dofsPeriodic() const
   xt::xtensor<size_t,2> nodePer = nodesPeriodic();
 
   // eliminate 'dependent' DOFs; renumber "out" to be sequential for the remaining DOFs
-  for ( size_t i = 0 ; i < nodePer.shape()[0] ; ++i )
-    for ( size_t j = 0 ; j < m_ndim ; ++j )
+  for (size_t i = 0; i < nodePer.shape(0); ++i)
+    for (size_t j = 0; j < m_ndim; ++j)
       out(nodePer(i,1),j) = out(nodePer(i,0),j);
 
   // renumber "out" to be sequential
@@ -2616,8 +2616,8 @@ inline xt::xtensor<size_t,2> FineLayer::dofsPeriodic() const
   xt::xtensor<size_t,2>   nodePer = nodesPeriodic();
 
   // eliminate 'dependent' DOFs; renumber "out" to be sequential for the remaining DOFs
-  for ( size_t i = 0 ; i < nodePer.shape()[0] ; ++i )
-    for ( size_t j = 0 ; j < m_ndim ; ++j )
+  for (size_t i = 0; i < nodePer.shape(0); ++i)
+    for (size_t j = 0; j < m_ndim; ++j)
       out(nodePer(i,1),j) = out(nodePer(i,0),j);
 
   // renumber "out" to be sequential

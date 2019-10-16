@@ -42,8 +42,8 @@ inline Periodic::Periodic(
   m_tyings(nodal_tyings),
   m_coor(coor)
 {
-  m_ndim  = m_coor  .shape()[1];
-  m_nties = m_tyings.shape()[0];
+  m_ndim = m_coor.shape(1);
+  m_nties = m_tyings.shape(0);
 
   xt::xtensor<size_t,1> dependent = xt::view(m_tyings, xt::all(), 1);
   xt::xtensor<size_t,2> dependent_dofs = xt::view(dofs, xt::keep(dependent), xt::all());
@@ -236,8 +236,8 @@ inline Control::Control(
   GOOSEFEM_ASSERT(coor.shape().size() == 2);
   GOOSEFEM_ASSERT(coor.shape() == dofs.shape());
 
-  size_t nnode = coor.shape()[0];
-  size_t ndim = coor.shape()[1];
+  size_t nnode = coor.shape(0);
+  size_t ndim = coor.shape(1);
 
   m_control_dofs = xt::arange<size_t>(ndim*ndim).reshape({ndim,ndim});
   m_control_dofs += xt::amax(dofs)[0] + 1;
