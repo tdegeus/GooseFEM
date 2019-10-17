@@ -14,9 +14,7 @@ This header-only module provides C++ classes (including Python wrappers) to writ
 Hallmark feature
 ----------------
 
-The hallmark feature of GooseFEM is that data is not stored in GooseFEM's classes but in multi-dimensional arrays with certain storage conventions. Consequently one is entirely free to mix and match routines, from GooseFEM or even from somewhere else.
-
-This design choice also has resulted in a very simple library: As very little problem specific information is needed all classes are transparent single functionality classes.
+The hallmark feature of GooseFEM is that data is not stored in GooseFEM's classes but only in multi-dimensional arrays with certain :ref:`storage conventions <conventions_storage>`. Consequently one is entirely free to mix and match routines, from GooseFEM or even from somewhere else. Consequently the readability of the end-user's code and of the library remains high: Only the main function combines different ingredients, there is no dependence between GooseFEM's classes.
 
 Documentation
 -------------

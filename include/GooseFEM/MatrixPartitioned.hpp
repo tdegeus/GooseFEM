@@ -167,7 +167,7 @@ inline void MatrixPartitioned<Solver>::assemble(const xt::xtensor<double,3> &ele
 
             size_t dj = m_part(m_conn(e,n),j);
 
-            if (di < m_nnu and dj < m_nnu) {
+            if (di < m_nnu && dj < m_nnu) {
               m_Tuu.push_back(Eigen::Triplet<double>(
                 di,
                 dj,

@@ -214,13 +214,13 @@ inline void MatrixPartitionedTyings<Solver>::assemble(const xt::xtensor<double,3
 
             size_t dj = m_dofs(m_conn(e,n),j);
 
-            if (di < m_nnu and dj < m_nnu) {
+            if (di < m_nnu && dj < m_nnu) {
               m_Tuu.push_back(Eigen::Triplet<double>(
                 di,
                 dj,
                 elemmat(e, m * m_ndim + i, n * m_ndim + j)));
             }
-            else if (di < m_nnu and dj < m_nni) {
+            else if (di < m_nnu && dj < m_nni) {
               m_Tup.push_back(Eigen::Triplet<double>(
                 di,
                 dj - m_nnu,
@@ -232,13 +232,13 @@ inline void MatrixPartitionedTyings<Solver>::assemble(const xt::xtensor<double,3
                 dj - m_nni,
                 elemmat(e, m * m_ndim + i, n * m_ndim + j)));
             }
-            else if (di < m_nni and dj < m_nnu) {
+            else if (di < m_nni && dj < m_nnu) {
               m_Tpu.push_back(Eigen::Triplet<double>(
                 di - m_nnu,
                 dj,
                 elemmat(e, m * m_ndim + i, n * m_ndim + j)));
             }
-            else if (di < m_nni and dj < m_nni) {
+            else if (di < m_nni && dj < m_nni) {
               m_Tpp.push_back(Eigen::Triplet<double>(
                 di - m_nnu,
                 dj - m_nnu,
@@ -485,7 +485,7 @@ inline Eigen::VectorXd MatrixPartitionedTyings<Solver>::asDofs_p(
   #pragma omp parallel for
   for (size_t m = 0 ; m < m_nnode ; ++m)
     for (size_t i = 0 ; i < m_ndim ; ++i)
-      if (m_dofs(m,i) >= m_nnu and m_dofs(m,i) < m_nni)
+      if (m_dofs(m,i) >= m_nnu && m_dofs(m,i) < m_nni)
         dofval_p(m_dofs(m,i)-m_nnu) = nodevec(m,i);
 
   return dofval_p;
