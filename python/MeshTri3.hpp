@@ -4,13 +4,8 @@
 
 ================================================================================================= */
 
-#include <Eigen/Eigen>
-
 #include <pybind11/pybind11.h>
-#include <pybind11/eigen.h>
-
 #include <pyxtensor/pyxtensor.hpp>
-
 #include "../include/GooseFEM/GooseFEM.h"
 
 // =================================================================================================
@@ -48,6 +43,9 @@ py::class_<GooseFEM::Mesh::Tri3::Regular>(m, "Regular")
 
     .def("ndim",
         &GooseFEM::Mesh::Tri3::Regular::ndim)
+
+    .def("getElementType",
+        &GooseFEM::Mesh::Tri3::Regular::getElementType)
 
     .def("nodesBottomEdge",
         &GooseFEM::Mesh::Tri3::Regular::nodesBottomEdge)
@@ -120,13 +118,27 @@ m.def("getOrientation",
     py::arg("coor"),
     py::arg("conn"));
 
-m.def("retriangulate",
-    &GooseFEM::Mesh::Tri3::retriangulate,
-    "Re-triangulate existing mesh",
+m.def("setOrientation",
+    py::overload_cast<
+        const xt::xtensor<double,2>&,
+        const xt::xtensor<size_t,2>&,
+        int>(&GooseFEM::Mesh::Tri3::setOrientation),
+    "Set the orientation of each element",
     py::arg("coor"),
     py::arg("conn"),
-    py::arg("orientation")=-1);
+    py::arg("orientation"));
 
+m.def("setOrientation",
+    py::overload_cast<
+        const xt::xtensor<double,2>&,
+        const xt::xtensor<size_t,2>&,
+        const xt::xtensor<int,1>&,
+        int>(&GooseFEM::Mesh::Tri3::setOrientation),
+    "Set the orientation of each element",
+    py::arg("coor"),
+    py::arg("conn"),
+    py::arg("val"),
+    py::arg("orientation"));
 }
 
 // =================================================================================================

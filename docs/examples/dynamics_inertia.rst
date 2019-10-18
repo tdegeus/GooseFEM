@@ -59,7 +59,7 @@ Example
     ./main
     python3 plot.py
 
-| :download:`main.cpp <Dynamics/Elastic-Verlet/main.cpp>`
-| :download:`CMakeLists.txt <Dynamics/Elastic-Verlet/CMakeLists.txt>`
-| :download:`plot.py <Dynamics/Elastic-Verlet/plot.py>`
+| :download:`main.cpp <dynamics/Elastic-Verlet/main.cpp>`
+| :download:`CMakeLists.txt <dynamics/Elastic-Verlet/CMakeLists.txt>`
+| :download:`plot.py <dynamics/Elastic-Verlet/plot.py>`
 

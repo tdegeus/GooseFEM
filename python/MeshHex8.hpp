@@ -4,13 +4,8 @@
 
 ================================================================================================= */
 
-#include <Eigen/Eigen>
-
 #include <pybind11/pybind11.h>
-#include <pybind11/eigen.h>
-
 #include <pyxtensor/pyxtensor.hpp>
-
 #include "../include/GooseFEM/GooseFEM.h"
 
 // =================================================================================================
@@ -48,6 +43,9 @@ py::class_<GooseFEM::Mesh::Hex8::Regular>(m, "Regular")
 
     .def("conn",
         &GooseFEM::Mesh::Hex8::Regular::conn)
+
+    .def("getElementType",
+        &GooseFEM::Mesh::Hex8::Regular::getElementType)
 
     .def("nodesFront",
         &GooseFEM::Mesh::Hex8::Regular::nodesFront)
@@ -373,7 +371,6 @@ py::class_<GooseFEM::Mesh::Hex8::Regular>(m, "Regular")
     .def("nodesRightTopBackCorner",
         &GooseFEM::Mesh::Hex8::Regular::nodesRightTopBackCorner)
 
-
     .def("nodesPeriodic",
         &GooseFEM::Mesh::Hex8::Regular::nodesPeriodic)
 
@@ -421,6 +418,9 @@ py::class_<GooseFEM::Mesh::Hex8::FineLayer>(m, "FineLayer")
 
     .def("conn",
         &GooseFEM::Mesh::Hex8::FineLayer::conn)
+
+    .def("getElementType",
+        &GooseFEM::Mesh::Hex8::FineLayer::getElementType)
 
     .def("elementsMiddleLayer",
         &GooseFEM::Mesh::Hex8::FineLayer::elementsMiddleLayer)

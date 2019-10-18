@@ -4,13 +4,8 @@
 
 ================================================================================================= */
 
-#include <Eigen/Eigen>
-
 #include <pybind11/pybind11.h>
-#include <pybind11/eigen.h>
-
 #include <pyxtensor/pyxtensor.hpp>
-
 #include "../include/GooseFEM/GooseFEM.h"
 
 // =================================================================================================
@@ -21,6 +16,16 @@ namespace py = pybind11;
 
 void init_Mesh(py::module& m)
 {
+
+// -------------------------------------------------------------------------------------------------
+
+py::enum_<GooseFEM::Mesh::ElementType>(m, "ElementType", "ElementType")
+    .value("Tri3", GooseFEM::Mesh::ElementType::Tri3)
+    .value("Quad4", GooseFEM::Mesh::ElementType::Quad4)
+    .value("Hex8", GooseFEM::Mesh::ElementType::Hex8)
+    .export_values();
+
+// -------------------------------------------------------------------------------------------------
 
 py::class_<GooseFEM::Mesh::Renumber>(m, "Renumber")
 

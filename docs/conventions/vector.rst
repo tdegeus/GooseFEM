@@ -11,7 +11,7 @@ In GooseFEM there are three ways to represent vectors. In particular, a vector f
 
 .. warning::
 
-  Care has to be taken in the conversion from one representation to the other as 'down-sizing' can be done in more than one way, see :ref:`conventions_vector_conversion`.
+  Watch out with the conversion from one representation to the other as downsizing can be done in more than one way, see :ref:`conventions_vector_conversion`.
 
 Consider a simple two-dimensional mesh of just two elements, and a displacement vector per node:
 
@@ -21,8 +21,8 @@ Consider a simple two-dimensional mesh of just two elements, and a displacement 
 
 |
 
-Collected per node
-------------------
+Collected per node (nodevec)
+----------------------------
 
 .. math::
 
@@ -36,8 +36,8 @@ Collected per node
     u_x^{(5)} & u_y^{(5)}
   \end{bmatrix}
 
-Collected per degree-of-freedom
--------------------------------
+Collected per degree-of-freedom (dofval)
+----------------------------------------
 
 The following definition
 
@@ -161,9 +161,12 @@ Whereby "dofs" can be used to:
       u_4 & u_5
     \end{bmatrix}
 
+.. note::
 
-Collected per element
----------------------
+  :ref:`Vector` applies the reordering itself. One does not need to change "dofs", but one simply supplies "iip".
+
+Collected per element (elemvec)
+-------------------------------
 
 For this example:
 
@@ -213,7 +216,7 @@ and
 Conversion
 ----------
 
-Conversion to a larger representation (up-sizing) can always be done uniquely, however, conversion to a more compact representation (down-sizing) can be done in two ways. In particular:
+Conversion to a larger representation (upsizing) can always be done uniquely, however, conversion to a more compact representation (downsizing) can be done in two ways. In particular:
 
 +---------+---------+-------------------+------------------------------+
 | From    | To      | Function          | Remarks                      |

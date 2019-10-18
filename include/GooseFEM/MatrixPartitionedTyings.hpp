@@ -30,23 +30,23 @@ inline MatrixPartitionedTyings<Solver>::MatrixPartitionedTyings(
 {
   GOOSEFEM_ASSERT(Cdu.rows() == Cdp.rows());
 
-  m_nnu   = static_cast<size_t>(m_Cdu.cols());
-  m_nnp   = static_cast<size_t>(m_Cdp.cols());
-  m_nnd   = static_cast<size_t>(m_Cdp.rows());
-  m_nni   = m_nnu + m_nnp;
-  m_ndof  = m_nni + m_nnd;
+  m_nnu = static_cast<size_t>(m_Cdu.cols());
+  m_nnp = static_cast<size_t>(m_Cdp.cols());
+  m_nnd = static_cast<size_t>(m_Cdp.rows());
+  m_nni = m_nnu + m_nnp;
+  m_ndof = m_nni + m_nnd;
 
-  m_iiu   = xt::arange<size_t>(m_nnu);
-  m_iip   = xt::arange<size_t>(m_nnu, m_nnu + m_nnp);
-  m_iid   = xt::arange<size_t>(m_nni, m_nni + m_nnd);
+  m_iiu = xt::arange<size_t>(m_nnu);
+  m_iip = xt::arange<size_t>(m_nnu, m_nnu + m_nnp);
+  m_iid = xt::arange<size_t>(m_nni, m_nni + m_nnd);
 
-  m_nelem = m_conn.shape()[0];
-  m_nne   = m_conn.shape()[1];
-  m_nnode = m_dofs.shape()[0];
-  m_ndim  = m_dofs.shape()[1];
+  m_nelem = m_conn.shape(0);
+  m_nne = m_conn.shape(1);
+  m_nnode = m_dofs.shape(0);
+  m_ndim = m_dofs.shape(1);
 
-  m_Cud   = m_Cdu.transpose();
-  m_Cpd   = m_Cdp.transpose();
+  m_Cud = m_Cdu.transpose();
+  m_Cpd = m_Cdp.transpose();
 
   m_Tuu.reserve(m_nelem*m_nne*m_ndim*m_nne*m_ndim);
   m_Tup.reserve(m_nelem*m_nne*m_ndim*m_nne*m_ndim);
@@ -214,24 +214,60 @@ inline void MatrixPartitionedTyings<Solver>::assemble(const xt::xtensor<double,3
 
             size_t dj = m_dofs(m_conn(e,n),j);
 
-            if      (di < m_nnu and dj < m_nnu)
-              m_Tuu.push_back(Eigen::Triplet<double>(di      ,dj      ,elemmat(e,m*m_ndim+i,n*m_ndim+j)));
-            else if (di < m_nnu and dj < m_nni)
-              m_Tup.push_back(Eigen::Triplet<double>(di      ,dj-m_nnu,elemmat(e,m*m_ndim+i,n*m_ndim+j)));
-            else if (di < m_nnu)
-              m_Tud.push_back(Eigen::Triplet<double>(di      ,dj-m_nni,elemmat(e,m*m_ndim+i,n*m_ndim+j)));
-            else if (di < m_nni and dj < m_nnu)
-              m_Tpu.push_back(Eigen::Triplet<double>(di-m_nnu,dj      ,elemmat(e,m*m_ndim+i,n*m_ndim+j)));
-            else if (di < m_nni and dj < m_nni)
-              m_Tpp.push_back(Eigen::Triplet<double>(di-m_nnu,dj-m_nnu,elemmat(e,m*m_ndim+i,n*m_ndim+j)));
-            else if (di < m_nni)
-              m_Tpd.push_back(Eigen::Triplet<double>(di-m_nnu,dj-m_nni,elemmat(e,m*m_ndim+i,n*m_ndim+j)));
-            else if (dj < m_nnu)
-              m_Tdu.push_back(Eigen::Triplet<double>(di-m_nni,dj      ,elemmat(e,m*m_ndim+i,n*m_ndim+j)));
-            else if (dj < m_nni)
-              m_Tdp.push_back(Eigen::Triplet<double>(di-m_nni,dj-m_nnu,elemmat(e,m*m_ndim+i,n*m_ndim+j)));
-            else
-              m_Tdd.push_back(Eigen::Triplet<double>(di-m_nni,dj-m_nni,elemmat(e,m*m_ndim+i,n*m_ndim+j)));
+            if (di < m_nnu && dj < m_nnu) {
+              m_Tuu.push_back(Eigen::Triplet<double>(
+                di,
+                dj,
+                elemmat(e, m * m_ndim + i, n * m_ndim + j)));
+            }
+            else if (di < m_nnu && dj < m_nni) {
+              m_Tup.push_back(Eigen::Triplet<double>(
+                di,
+                dj - m_nnu,
+                elemmat(e, m * m_ndim + i, n * m_ndim + j)));
+            }
+            else if (di < m_nnu) {
+              m_Tud.push_back(Eigen::Triplet<double>(
+                di,
+                dj - m_nni,
+                elemmat(e, m * m_ndim + i, n * m_ndim + j)));
+            }
+            else if (di < m_nni && dj < m_nnu) {
+              m_Tpu.push_back(Eigen::Triplet<double>(
+                di - m_nnu,
+                dj,
+                elemmat(e, m * m_ndim + i, n * m_ndim + j)));
+            }
+            else if (di < m_nni && dj < m_nni) {
+              m_Tpp.push_back(Eigen::Triplet<double>(
+                di - m_nnu,
+                dj - m_nnu,
+                elemmat(e, m * m_ndim + i, n * m_ndim + j)));
+            }
+            else if (di < m_nni) {
+              m_Tpd.push_back(Eigen::Triplet<double>(
+                di - m_nnu,
+                dj - m_nni,
+                elemmat(e, m * m_ndim + i, n * m_ndim + j)));
+            }
+            else if (dj < m_nnu) {
+              m_Tdu.push_back(Eigen::Triplet<double>(
+                di - m_nni,
+                dj,
+                elemmat(e, m * m_ndim + i, n * m_ndim + j)));
+            }
+            else if (dj < m_nni) {
+              m_Tdp.push_back(Eigen::Triplet<double>(
+                di - m_nni,
+                dj - m_nnu,
+                elemmat(e, m * m_ndim + i, n * m_ndim + j)));
+            }
+            else {
+              m_Tdd.push_back(Eigen::Triplet<double>(
+                di - m_nni,
+                dj - m_nni,
+                elemmat(e, m * m_ndim + i, n * m_ndim + j)));
+            }
           }
         }
       }
@@ -344,6 +380,45 @@ inline void MatrixPartitionedTyings<Solver>::solve_u(
 
 // -------------------------------------------------------------------------------------------------
 
+// -------------------------------------------------------------------------------------------------
+
+template <class Solver>
+inline xt::xtensor<double,2> MatrixPartitionedTyings<Solver>::Solve(
+  const xt::xtensor<double,2> &b,
+  const xt::xtensor<double,2> &x)
+{
+  xt::xtensor<double,2> out = x;
+  this->solve(b, out);
+  return out;
+}
+
+// -------------------------------------------------------------------------------------------------
+
+template <class Solver>
+inline xt::xtensor<double,1> MatrixPartitionedTyings<Solver>::Solve(
+  const xt::xtensor<double,1> &b,
+  const xt::xtensor<double,1> &x)
+{
+  xt::xtensor<double,1> out = x;
+  this->solve(b, out);
+  return out;
+}
+
+// -------------------------------------------------------------------------------------------------
+
+template <class Solver>
+inline xt::xtensor<double,1> MatrixPartitionedTyings<Solver>::Solve_u(
+  const xt::xtensor<double,1> &b_u,
+  const xt::xtensor<double,1> &b_d,
+  const xt::xtensor<double,1> &x_p)
+{
+  xt::xtensor<double,1> x_u = xt::empty<double>({m_nnu});
+  this->solve_u(b_u, b_d, x_p, x_u);
+  return x_u;
+}
+
+// -------------------------------------------------------------------------------------------------
+
 template <class Solver>
 inline Eigen::VectorXd MatrixPartitionedTyings<Solver>::asDofs_u(
   const xt::xtensor<double,1>& dofval) const
@@ -410,7 +485,7 @@ inline Eigen::VectorXd MatrixPartitionedTyings<Solver>::asDofs_p(
   #pragma omp parallel for
   for (size_t m = 0 ; m < m_nnode ; ++m)
     for (size_t i = 0 ; i < m_ndim ; ++i)
-      if (m_dofs(m,i) >= m_nnu and m_dofs(m,i) < m_nni)
+      if (m_dofs(m,i) >= m_nnu && m_dofs(m,i) < m_nni)
         dofval_p(m_dofs(m,i)-m_nnu) = nodevec(m,i);
 
   return dofval_p;

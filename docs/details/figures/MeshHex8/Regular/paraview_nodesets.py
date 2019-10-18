@@ -5,7 +5,7 @@ import GooseFEM as gf
 import GooseFEM.ParaView.HDF5 as pv
 
 # create mesh object
-mesh = gf.Mesh.Hex8.FineLayer(9,17,27)
+mesh = gf.Mesh.Hex8.Regular(6,8,12)
 
 # initialize all node sets
 nodesets = dict(
@@ -105,12 +105,10 @@ nodesets['nodesBackTopRightCorner'    ][mesh.nodesBackTopRightCorner()    ] = 1
 nodesets['dofsPeriodic'] = mesh.dofsPeriodic()[:,0]
 
 # filename of the HDF5-file
-fname = 'MeshHex8-FineLayer-nodes.hdf5'
+fname = 'paraview_nodesets.hdf5'
 
 # write HDF-file containing the data
-
 with h5py.File(fname, 'w') as data:
-
   data.file['coor'] = mesh.coor()
   data.file['conn'] = mesh.conn()
 
@@ -118,9 +116,8 @@ with h5py.File(fname, 'w') as data:
     data[key] = value
 
 # write XDMF-file with metadata
-
 xdmf = pv.Mesh(
-  pv.Connectivity(fname, "/conn", pv.ElementType.Hexahedron, mesh.conn().shape),
+  pv.Connectivity(fname, "/conn", mesh.getElementType(), mesh.conn().shape),
   pv.Coordinates(fname, "/coor", mesh.coor().shape),
 )
 

@@ -4,13 +4,8 @@
 
 ================================================================================================= */
 
-#include <Eigen/Eigen>
-
 #include <pybind11/pybind11.h>
-#include <pybind11/eigen.h>
-
 #include <pyxtensor/pyxtensor.hpp>
-
 #include "../include/GooseFEM/GooseFEM.h"
 
 // =================================================================================================
@@ -56,6 +51,9 @@ py::class_<GooseFEM::Mesh::Quad4::Regular>(m, "Regular")
 
     .def("h",
         &GooseFEM::Mesh::Quad4::Regular::h)
+
+    .def("getElementType",
+        &GooseFEM::Mesh::Quad4::Regular::getElementType)
 
     .def("nodesBottomEdge",
         &GooseFEM::Mesh::Quad4::Regular::nodesBottomEdge)
@@ -160,6 +158,9 @@ py::class_<GooseFEM::Mesh::Quad4::FineLayer>(m, "FineLayer")
 
     .def("h",
         &GooseFEM::Mesh::Quad4::FineLayer::h)
+
+    .def("getElementType",
+        &GooseFEM::Mesh::Quad4::FineLayer::getElementType)
 
     .def("elementsMiddleLayer",
         &GooseFEM::Mesh::Quad4::FineLayer::elementsMiddleLayer)

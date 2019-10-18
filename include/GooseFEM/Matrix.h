@@ -21,6 +21,7 @@ namespace GooseFEM {
 
 // -------------------------------------------------------------------------------------------------
 
+template <class Solver = Eigen::SimplicialLDLT<Eigen::SparseMatrix<double>>>
 class Matrix
 {
 public:
@@ -30,8 +31,8 @@ public:
   Matrix() = default;
 
   Matrix(
-    const xt::xtensor<size_t,2> &conn,
-    const xt::xtensor<size_t,2> &dofs);
+    const xt::xtensor<size_t,2>& conn,
+    const xt::xtensor<size_t,2>& dofs);
 
   // Dimensions
 
@@ -47,26 +48,26 @@ public:
 
   // Assemble from matrices stored per element [nelem, nne*ndim, nne*ndim]
 
-  void assemble(const xt::xtensor<double,3> &elemmat);
+  void assemble(const xt::xtensor<double,3>& elemmat);
 
   // Solve
   // x_u = A_uu \ ( b_u - A_up * x_p )
 
   void solve(
-    const xt::xtensor<double,2> &b,
-          xt::xtensor<double,2> &x); // overwritten
+    const xt::xtensor<double,2>& b,
+          xt::xtensor<double,2>& x); // overwritten
 
   void solve(
-    const xt::xtensor<double,1> &b,
-          xt::xtensor<double,1> &x); // overwritten
+    const xt::xtensor<double,1>& b,
+          xt::xtensor<double,1>& x); // overwritten
 
   // Auto-allocation of the functions above
 
   xt::xtensor<double,2> Solve(
-    const xt::xtensor<double,2> &b);
+    const xt::xtensor<double,2>& b);
 
   xt::xtensor<double,1> Solve(
-    const xt::xtensor<double,1> &b);
+    const xt::xtensor<double,1>& b);
 
 private:
 
@@ -77,7 +78,7 @@ private:
   std::vector<Eigen::Triplet<double>> m_T;
 
   // Solver (re-used to solve different RHS)
-  Eigen::SimplicialLDLT<Eigen::SparseMatrix<double>> m_solver;
+  Solver m_solver;
 
   // Signal changes to data compare to the last inverse
   bool m_factor=false;
@@ -94,14 +95,13 @@ private:
   size_t m_ndof;  // number of DOFs
 
   // Compute inverse (automatically evaluated by "solve")
-
   void factorize();
 
   // Convert arrays (Eigen version of Vector, which contains public functions)
 
-  Eigen::VectorXd asDofs(const xt::xtensor<double,2> &nodevec) const;
+  Eigen::VectorXd asDofs(const xt::xtensor<double,2>& nodevec) const;
 
-  void asNode(const Eigen::VectorXd &dofval, xt::xtensor<double,2> &nodevec) const;
+  void asNode(const Eigen::VectorXd& dofval, xt::xtensor<double,2>& nodevec) const;
 
 };
 

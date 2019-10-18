@@ -8,14 +8,15 @@ plt.style.use(['goose'])
 
 # --------------------------------------------------------------------------------------------------
 
-mesh   = gf.Mesh.Quad4.FineLayer(6, 18)
-coor   = mesh.coor()
-conn   = mesh.conn()
-cindex = np.arange(conn.shape[0])
+mesh = gf.Mesh.Quad4.FineLayer(6, 18)
+coor = mesh.coor()
+conn = mesh.conn()
+
+cindex = np.arange(mesh.nelem())
 
 # --------------------------------------------------------------------------------------------------
 
-fig,ax = plt.subplots(figsize=(10,10))
+fig, ax = plt.subplots(figsize=(10,10))
 
 im = gplt.patch(coor=coor, conn=conn, cindex=cindex, cmap='jet')
 
@@ -29,4 +30,4 @@ ax.get_xaxis().set_visible(False)
 ax.get_yaxis().set_visible(False)
 
 plt.savefig('element_numbers.svg')
-plt.show()
+plt.close()

@@ -3,7 +3,7 @@
 Linear elastic
 **************
 
-Consider a uniform linear elastic bar that is extended by a uniform fixed displacement on both sides. This problem can be modelled and discretised using symmetry as show below. In this example we will furthermore assume that the bar is sufficiently thick in the out-of-plane direction that it can be modelled using two-dimensional plane strain.
+Consider a uniform linear elastic bar that is extended by a uniform fixed displacement on both sides. This problem can be modelled and discretised using symmetry as show below. In this example we will furthermore assume that the bar is sufficiently thick in the out-of-plane direction to be modelled using two-dimensional plane strain.
 
 .. image:: statics/FixedDisplacements_LinearElastic/problem-sketch.svg
   :width: 300px
@@ -23,7 +23,7 @@ Below an example is described line-by-line. The full example can be downloaded:
 
 .. note::
 
-  This example is also available using the Python interface (:download:`main.py <statics/FixedDisplacements_LinearElastic/example/main.py>`). Note that compared to the C++ API, the Python API requires more data-allocation, in particular in the functions "AsElement" and "AssembleNode". See :ref:`conventions_allocation`.
+  This example is also available using the Python interface (:download:`main.py <statics/FixedDisplacements_LinearElastic/example/main.py>`). Compared to the C++ API, the Python API requires more data-allocation, in particular for the functions "AsElement" and "AssembleNode". See: :ref:`conventions_allocation`.
 
 Include library
 ===============
@@ -52,7 +52,8 @@ Note that:
 
 .. seealso::
 
-  :ref:`conventions_terminology`
+  * :ref:`conventions_terminology`
+  * Details: :ref:`MeshQuad4`
 
 Define partitioning
 ===================
@@ -91,8 +92,8 @@ To switch between the three of GooseFEM's data-representations, an instance of t
 
   The "Vector" class collects most, if not all, the burden of book-keeping. It is thus here that "conn", "dofs", and "iip" are used. In particular,
 
-  * "nodevec" :math:`\leftrightarrow` "dofval" using "dofs" and "iip",
-  * "nodevec" :math:`\leftrightarrow` "elemvec" using "conn".
+  * 'nodevec' :math:`\leftrightarrow` 'dofval' using "dofs" and "iip",
+  * 'nodevec' :math:`\leftrightarrow` 'elemvec' using "conn".
 
   By contrast, most of GooseFEM's other methods receive the relevant representation, and consequently require no problem specific knowledge. They thus do not have to supplied with "conn", "dofs", or "iip".
 
@@ -100,6 +101,7 @@ To switch between the three of GooseFEM's data-representations, an instance of t
 
   * :ref:`conventions_vector`
   * :ref:`conventions_storage`
+  * Details: :ref:`Vector`
 
 System matrix
 =============
@@ -111,10 +113,14 @@ System matrix
 
 We now also allocate the system/stiffness system (stored as sparse matrix). Like vector, it can accept and return different vector representations, in addition to the ability to assemble from element system matrices.
 
+.. note::
+
+  Here, the default solver is used (which is the default template, hence the "<>"). To use other solvers see: :ref:`linear_solver`.
+
 .. seealso::
 
   * :ref:`conventions_matrix`
-  * :ref:`sparse`
+  * Details: :ref:`Matrix`
 
 Allocate nodal vectors
 ======================
@@ -141,7 +147,7 @@ Allocate element vectors
 
 .. warning::
 
-  Upsizing (e.g. from "disp" to "ue") can be done uniquely, but downsizing (e.g. from "fe" to "fint") can be done in more than one way, see :ref:`conventions_vector_conversion`. We will get back to this point below.
+  Upsizing (e.g. "disp" :math:`\rightarrow` "ue") can be done uniquely, but downsizing (e.g. "fe" :math:`\rightarrow` "fint") can be done in more than one way, see :ref:`conventions_vector_conversion`. We will get back to this point below.
 
 Element definition
 ==================
@@ -150,11 +156,18 @@ Element definition
    :language: cpp
    :lines: 64-65
 
-At this moment the interpolation and quadrature is allocated. The shape functions and integration points (that can be customised) are stored in this class. As observed, no further information is needed that the number of elements and the nodal coordinates per element. Both are contained in the output of "vector.AsElement(coor)", which is an "elemvec" of shape "[nelem, nne, ndim]". This illustrates that problem specific book-keeping is isolated to the main program, using "Vector" as tool.
+At this moment the interpolation and quadrature is allocated. The shape functions and integration points (that can be customised) are stored in this class. As observed, no further information is needed than the number of elements and the nodal coordinates per element. Both are contained in the output of "vector.AsElement(coor)", which is an 'elemvec' of shape "[nelem, nne, ndim]". This illustrates that problem specific book-keeping is isolated to the main program, using "Vector" as tool.
 
 .. note::
 
   The shape functions are computed when constructing this class, they are not recomputed when evaluating them. One can recompute them if the nodal coordinates change using ".update_x(...)", however, this is only relevant in a large deformation setting.
+
+.. seealso::
+
+  * :ref:`conventions_vector`
+  * :ref:`conventions_storage`
+  * Details: :ref:`Vector`
+  * Details: :ref:`ElementQuad4`
 
 Material definition
 ===================
@@ -176,6 +189,8 @@ We now define a uniform linear elastic material, using an external library that 
   * `GMatElastoPlasticQPot3d <https:://www.github.com/tdegeus/GMatElastoPlasticQPot3d>`__
   * `GMatNonLinearElastic <https:://www.github.com/tdegeus/GMatNonLinearElastic>`__
 
+  But other libraries can also be easily used with (simple) wrappers.
+
 Integration point tensors
 =========================
 
@@ -192,7 +207,21 @@ Compute strain
    :language: cpp
    :lines: 80-81
 
-The strain per integration point is now computed using the current nodal displacements (stored as "elemvec" in "ue") and the gradient of the shape functions.
+The strain per integration point is now computed using the current nodal displacements (stored as 'elemvec' in "ue") and the gradient of the shape functions.
+
+.. note::
+
+  "ue" is the output of "vector.asElement(disp, ue)". Using this syntax re-allocation of "ue" is avoided. If this optimisation is irrelevant for you problem (or if you are using the Python interface), please use the same function, but starting with a capital:
+
+  .. code-block:: cpp
+
+    ue = vector.AsElement(disp);
+
+  Note that this allows the one-liner
+
+  .. code-block:: cpp
+
+    Eps = elem.SymGradN_vector(vector.AElement(disp));
 
 Compute stress and tangent
 ==========================
@@ -203,6 +232,10 @@ Compute stress and tangent
 
 The stress and stiffness tensors are now computed for each integration point (completely independently) using the external material model.
 
+.. note::
+
+  "Sig" and "C" are the output variables that were preallocated in the main.
+
 Assemble system
 ===============
 
@@ -210,11 +243,23 @@ Assemble system
    :language: cpp
    :lines: 86-92
 
-The stress stored per integration point ("Sig") is now converted to nodal internal force vectors stored per element ("fe"). Using "vector" this "elemvec" representation is then converted of a "nodevec" representation in "fint". Likewise, the stiffness tensor stored for integration point ("C") are converted to system matrices stored per element ("elemmat") and finally assembled to the global stiffness matrix.
+The stress stored per integration point ("Sig") is now converted to nodal internal force vectors stored per element ("fe"). Using "vector" this 'elemvec' representation is then converted of a 'nodevec' representation in "fint". Likewise, the stiffness tensor stored for integration point ("C") are converted to system matrices stored per element ('elemmat') and finally assembled to the global stiffness matrix.
 
 .. warning::
 
-  Please note that downsizing ("fe" to "fint" and "Ke" to "K") can be done in two ways, and that "assemble..." is the right function here as it adds entries that occur more than once. In contrast "as..." be false here.
+  Please note that downsizing ("fe" :math:`\rightarrow` "fint" and "Ke" :math:`\rightarrow` "K") can be done in two ways, and that "assemble..." is the right function here as it adds entries that occur more than once. In contrast "as..." would not result in what we want here.
+
+.. note::
+
+  Once more, "fe", "fint", and "Ke" are output variables. Less efficient, but shorter, is:
+
+  .. code-block:: cpp
+
+    // internal force
+    fint = vector.AssembleNode(elem.Int_gradN_dot_tensor2_dV(Sig));
+
+    // stiffness matrix
+    K.assemble(elem.Int_gradN_dot_tensor4_dot_gradNT_dV(C));
 
 Solve
 =====
@@ -223,7 +268,7 @@ Solve
    :language: cpp
    :lines: 94-104
 
-We now prescribe the displacement of the Prescribed degrees-of-freedom directly of "disp" and compute the residual force. This is follows by partitioning and solving, all done internally in the "MatrixPartitioned" class.
+We now prescribe the displacement of the Prescribed degrees-of-freedom directly in the nodal displacements "disp" and compute the residual force. This is follows by partitioning and solving, all done internally in the "MatrixPartitioned" class.
 
 Post-process
 ============
@@ -244,7 +289,7 @@ Residual force
    :language: cpp
    :lines: 114-125
 
-We now convince ourselves that the solution is indeed in mechanical equilibrium.
+We convince ourselves that the solution is indeed in mechanical equilibrium.
 
 Store & plot
 ------------
@@ -258,9 +303,9 @@ Finally we store some fields for plotting using :download:`plot.py <statics/Fixe
 Manual partitioning
 ===================
 
-To verify how partitioning and solving is done internally using the "Vector" and "MatrixPartitioned" classes, the same example is provided where partitioning is done manually:
+To verify how partitioning and solving is done internally using the "MatrixPartitioned" class, the same example is provided where partitioning is done manually:
 
-:download:`main.cpp <statics/FixedDisplacements_LinearElastic/manual_partition/main.cpp>`
-:download:`CMakeLists.txt <statics/FixedDisplacements_LinearElastic/manual_partition/CMakeLists.txt>`
-:download:`plot.py <statics/FixedDisplacements_LinearElastic/manual_partition/plot.py>`
-:download:`main.py <statics/FixedDisplacements_LinearElastic/manual_partition/main.py>`
+| :download:`main.cpp <statics/FixedDisplacements_LinearElastic/manual_partition/main.cpp>`
+| :download:`CMakeLists.txt <statics/FixedDisplacements_LinearElastic/manual_partition/CMakeLists.txt>`
+| :download:`plot.py <statics/FixedDisplacements_LinearElastic/manual_partition/plot.py>`
+| :download:`main.py <statics/FixedDisplacements_LinearElastic/manual_partition/main.py>`

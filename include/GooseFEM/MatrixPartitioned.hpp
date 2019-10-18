@@ -25,28 +25,28 @@ inline MatrixPartitioned<Solver>::MatrixPartitioned(
   const xt::xtensor<size_t,1> &iip) :
   m_conn(conn), m_dofs(dofs), m_iip(iip)
 {
-  m_nelem = m_conn.shape()[0];
-  m_nne   = m_conn.shape()[1];
-  m_nnode = m_dofs.shape()[0];
-  m_ndim  = m_dofs.shape()[1];
+  m_nelem = m_conn.shape(0);
+  m_nne = m_conn.shape(1);
+  m_nnode = m_dofs.shape(0);
+  m_ndim = m_dofs.shape(1);
 
-  m_iiu   = xt::setdiff1d(dofs, iip);
+  m_iiu = xt::setdiff1d(dofs, iip);
 
-  m_ndof  = xt::amax(m_dofs)[0] + 1;
-  m_nnp   = m_iip.size();
-  m_nnu   = m_iiu.size();
+  m_ndof = xt::amax(m_dofs)[0] + 1;
+  m_nnp = m_iip.size();
+  m_nnu = m_iiu.size();
 
-  m_part  = Mesh::Reorder({m_iiu, m_iip}).get(m_dofs);
+  m_part = Mesh::Reorder({m_iiu, m_iip}).get(m_dofs);
 
-  m_Tuu.reserve(m_nelem*m_nne*m_ndim*m_nne*m_ndim);
-  m_Tup.reserve(m_nelem*m_nne*m_ndim*m_nne*m_ndim);
-  m_Tpu.reserve(m_nelem*m_nne*m_ndim*m_nne*m_ndim);
-  m_Tpp.reserve(m_nelem*m_nne*m_ndim*m_nne*m_ndim);
+  m_Tuu.reserve(m_nelem * m_nne * m_ndim * m_nne * m_ndim);
+  m_Tup.reserve(m_nelem * m_nne * m_ndim * m_nne * m_ndim);
+  m_Tpu.reserve(m_nelem * m_nne * m_ndim * m_nne * m_ndim);
+  m_Tpp.reserve(m_nelem * m_nne * m_ndim * m_nne * m_ndim);
 
-  m_Auu.resize(m_nnu,m_nnu);
-  m_Aup.resize(m_nnu,m_nnp);
-  m_Apu.resize(m_nnp,m_nnu);
-  m_App.resize(m_nnp,m_nnp);
+  m_Auu.resize(m_nnu, m_nnu);
+  m_Aup.resize(m_nnu, m_nnp);
+  m_Apu.resize(m_nnp, m_nnu);
+  m_App.resize(m_nnp, m_nnp);
 
   GOOSEFEM_ASSERT(xt::amax(m_conn)[0] + 1 == m_nnode);
   GOOSEFEM_ASSERT(xt::amax(m_iip)[0] <= xt::amax(m_dofs)[0]);
@@ -139,10 +139,7 @@ template <class Solver>
 inline void MatrixPartitioned<Solver>::factorize()
 {
   if (!m_factor) return;
-
-
   m_solver.compute(m_Auu);
-
   m_factor = false;
 }
 
@@ -170,14 +167,30 @@ inline void MatrixPartitioned<Solver>::assemble(const xt::xtensor<double,3> &ele
 
             size_t dj = m_part(m_conn(e,n),j);
 
-            if      (di < m_nnu and dj < m_nnu)
-              m_Tuu.push_back(Eigen::Triplet<double>(di      ,dj      ,elemmat(e,m*m_ndim+i,n*m_ndim+j)));
-            else if (di < m_nnu)
-              m_Tup.push_back(Eigen::Triplet<double>(di      ,dj-m_nnu,elemmat(e,m*m_ndim+i,n*m_ndim+j)));
-            else if (dj < m_nnu)
-              m_Tpu.push_back(Eigen::Triplet<double>(di-m_nnu,dj      ,elemmat(e,m*m_ndim+i,n*m_ndim+j)));
-            else
-              m_Tpp.push_back(Eigen::Triplet<double>(di-m_nnu,dj-m_nnu,elemmat(e,m*m_ndim+i,n*m_ndim+j)));
+            if (di < m_nnu && dj < m_nnu) {
+              m_Tuu.push_back(Eigen::Triplet<double>(
+                di,
+                dj,
+                elemmat(e, m * m_ndim + i, n * m_ndim + j)));
+            }
+            else if (di < m_nnu) {
+              m_Tup.push_back(Eigen::Triplet<double>(
+                di,
+                dj - m_nnu,
+                elemmat(e, m * m_ndim + i, n * m_ndim + j)));
+            }
+            else if (dj < m_nnu) {
+              m_Tpu.push_back(Eigen::Triplet<double>(
+                di - m_nnu,
+                dj,
+                elemmat(e, m * m_ndim + i, n * m_ndim + j)));
+            }
+            else {
+              m_Tpp.push_back(Eigen::Triplet<double>(
+                di - m_nnu,
+                dj - m_nnu,
+                elemmat(e, m * m_ndim + i, n * m_ndim + j)));
+            }
           }
         }
       }

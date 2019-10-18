@@ -1,3 +1,4 @@
+.. _MeshHex8:
 
 **********
 Mesh::Hex8
@@ -34,36 +35,182 @@ Mesh::Hex8::Regular
 
 Regular mesh.
 
-.. todo::
+.. seealso::
 
-  Describe, illustrate
+  | :download:`Python/ParaView - example <figures/MeshHex8/Regular/paraview.py>`
+  | :download:`Python/ParaView - nodesets <figures/MeshHex8/Regular/paraview_nodesets.py>`
 
-.. todo::
+Mesh::Hex8::Regular::nelem()
+----------------------------
 
-  More methods and classes
+Return number of elements.
 
-.. todo::
+Mesh::Hex8::Regular::nnode()
+----------------------------
 
-  figures/MeshHex8/Regular/example...
+Return number of nodes.
 
-.. todo::
+Mesh::Hex8::Regular::nne()
+--------------------------
 
-  figures/MeshHex8/Regular/nodes...
+Return number of nodes-per-element (= 3).
 
+Mesh::Hex8::Regular::ndim()
+---------------------------
+
+Return number of dimensions (= 2).
+
+Mesh::Hex8::Regular::getElementType()
+-------------------------------------
+
+Return element-type. For example used in the :ref:`ParaView` module.
+
+Mesh::Hex8::Regular::coor()
+---------------------------
+
+Return nodal coordinates [nnode, ndim].
+
+Mesh::Hex8::Regular::conn()
+---------------------------
+
+Return connectivity [nelem, nne].
+
+Mesh::Hex8::Regular::nodesXXXEdge()
+-----------------------------------
+
+Node numbers along the "Bottom", "Top", "Left", or "Right" edge.
+
+Mesh::Hex8::Regular::nodesXXXOpenEdge()
+---------------------------------------
+
+Node numbers along the "Bottom", "Top", "Left", or "Right" edge, excluding the corners.
+
+Mesh::Hex8::Regular::nodesXXXCorner()
+-------------------------------------
+
+Node number of one of the corners (e.g. "BottomLeft").
+
+Mesh::Hex8::Regular::nodesPeriodic()
+------------------------------------
+
+Periodic node pairs. Each row contains on pair of (independent, dependent) node numbers. The output shape is thus [n_pairs, 2].
+
+Mesh::Hex8::Regular::nodesOrigin()
+----------------------------------
+
+Bottom-left node, used as reference for periodicity.
+
+Mesh::Hex8::Regular::dofs()
+---------------------------
+
+DOF-numbers for each component of each node (sequential). The output shape is thus [nnode, ndim].
+
+Mesh::Hex8::Regular::dofsPeriodic()
+-----------------------------------
+
+DOF-numbers for each component of each node, for the case that the periodicity if fully eliminated. The output shape is thus [nnode, ndim].
+
+Mesh::Hex8::Regular::elementMatrix()
+------------------------------------
+
+Return element numbers as matrix [nely, nelx].
 
 Mesh::Hex8::FineLayer
 =====================
 
-Mesh with a middle plane that is fine the middle, and becomes course away from this plane.
+Mesh with a fine layer in the middle, and that becomes course away from this plane (see image below). Note coursening can only be done if the number of elements in x- and y-direction is dividable by 3, and that it is only optimal if the number of elements in x- and y-direction is a factor of 3. Note that the number of elements in the vertical direction is specified as the number of times the unit element (the number of times "h" the height should be), and that this number is only a target: the algorithm chooses in accordance with the applied coursing.
 
-.. todo::
+.. seealso::
 
-  Describe, illustrate
+  | :download:`Python/ParaView - example <figures/MeshHex8/FineLayer/paraview.py>`
+  | :download:`Python/ParaView - nodesets <figures/MeshHex8/FineLayer/paraview_nodesets.py>`
 
-.. todo::
+Mesh::Hex8::FineLayer::nelem()
+------------------------------
 
-  figures/MeshHex8/FineLayer/example...
+Return number of elements.
 
-.. todo::
+Mesh::Hex8::FineLayer::nnode()
+------------------------------
 
-  figures/MeshHex8/FineLayer/nodes...
+Return number of nodes.
+
+Mesh::Hex8::FineLayer::nne()
+----------------------------
+
+Return number of nodes-per-element (= 3).
+
+Mesh::Hex8::FineLayer::ndim()
+-----------------------------
+
+Return number of dimensions (= 2).
+
+Mesh::Hex8::FineLayer::nelx()
+-----------------------------
+
+Number of elements in horizontal direction (along the weak layer) (matches input).
+
+Mesh::Hex8::FineLayer::nely()
+-----------------------------
+
+Actual number of elements unit elements in vertical direction (actual number of times "h" the mesh is heigh).
+
+Mesh::Hex8::FineLayer::h()
+--------------------------
+
+Unit edge size (matches input).
+
+Mesh::Hex8::FineLayer::getElementType()
+---------------------------------------
+
+Return element-type. For example used in the :ref:`ParaView` module.
+
+Mesh::Hex8::FineLayer::coor()
+-----------------------------
+
+Return nodal coordinates [nnode, ndim].
+
+Mesh::Hex8::FineLayer::conn()
+-----------------------------
+
+Return connectivity [nelem, nne].
+
+Mesh::Hex8::FineLayer::nodesXXXEdge()
+-------------------------------------
+
+Node numbers along the "Bottom", "Top", "Left", "Right", "Front", or "Back" edge.
+
+Mesh::Hex8::FineLayer::nodesXXXOpenEdge()
+-----------------------------------------
+
+Node numbers along the "Bottom", "Top", "Left", "Right", "Front", or "Back" edge, excluding the corners.
+
+Mesh::Hex8::FineLayer::nodesXXXCorner()
+---------------------------------------
+
+Node number of one of the corners (e.g. "FrontBottomLeft").
+
+Mesh::Hex8::FineLayer::nodesPeriodic()
+--------------------------------------
+
+Periodic node pairs. Each row contains on pair of (independent, dependent) node numbers. The output shape is thus [n_pairs, 2].
+
+Mesh::Hex8::FineLayer::nodesOrigin()
+------------------------------------
+
+Bottom-left node, used as reference for periodicity.
+
+Mesh::Hex8::FineLayer::dofs()
+-----------------------------
+
+DOF-numbers for each component of each node (sequential). The output shape is thus [nnode, ndim].
+
+Mesh::Hex8::FineLayer::dofsPeriodic()
+-------------------------------------
+
+DOF-numbers for each component of each node, for the case that the periodicity if fully eliminated. The output shape is thus [nnode, ndim].
+
+Mesh::Hex8::FineLayer::elementsMiddleLayer()
+--------------------------------------------
+
+Element numbers of the middle, fine, layer

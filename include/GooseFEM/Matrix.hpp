@@ -17,19 +17,20 @@ namespace GooseFEM {
 
 // -------------------------------------------------------------------------------------------------
 
-inline Matrix::Matrix(
+template <class Solver>
+inline Matrix<Solver>::Matrix(
   const xt::xtensor<size_t,2> &conn,
   const xt::xtensor<size_t,2> &dofs) :
   m_conn(conn), m_dofs(dofs)
 {
-  m_nelem = m_conn.shape()[0];
-  m_nne   = m_conn.shape()[1];
-  m_nnode = m_dofs.shape()[0];
-  m_ndim  = m_dofs.shape()[1];
+  m_nelem = m_conn.shape(0);
+  m_nne = m_conn.shape(1);
+  m_nnode = m_dofs.shape(0);
+  m_ndim = m_dofs.shape(1);
 
-  m_ndof  = xt::amax(m_dofs)[0] + 1;
+  m_ndof = xt::amax(m_dofs)[0] + 1;
 
-  m_T.reserve(m_nelem*m_nne*m_ndim*m_nne*m_ndim);
+  m_T.reserve(m_nelem * m_nne * m_ndim * m_nne * m_ndim);
 
   m_A.resize(m_ndof,m_ndof);
 
@@ -39,49 +40,56 @@ inline Matrix::Matrix(
 
 // -------------------------------------------------------------------------------------------------
 
-inline size_t Matrix::nelem() const
+template <class Solver>
+inline size_t Matrix<Solver>::nelem() const
 {
   return m_nelem;
 }
 
 // -------------------------------------------------------------------------------------------------
 
-inline size_t Matrix::nne() const
+template <class Solver>
+inline size_t Matrix<Solver>::nne() const
 {
   return m_nne;
 }
 
 // -------------------------------------------------------------------------------------------------
 
-inline size_t Matrix::nnode() const
+template <class Solver>
+inline size_t Matrix<Solver>::nnode() const
 {
   return m_nnode;
 }
 
 // -------------------------------------------------------------------------------------------------
 
-inline size_t Matrix::ndim() const
+template <class Solver>
+inline size_t Matrix<Solver>::ndim() const
 {
   return m_ndim;
 }
 
 // -------------------------------------------------------------------------------------------------
 
-inline size_t Matrix::ndof() const
+template <class Solver>
+inline size_t Matrix<Solver>::ndof() const
 {
   return m_ndof;
 }
 
 // -------------------------------------------------------------------------------------------------
 
-inline xt::xtensor<size_t,2> Matrix::dofs() const
+template <class Solver>
+inline xt::xtensor<size_t,2> Matrix<Solver>::dofs() const
 {
   return m_dofs;
 }
 
 // -------------------------------------------------------------------------------------------------
 
-inline void Matrix::factorize()
+template <class Solver>
+inline void Matrix<Solver>::factorize()
 {
   if ( ! m_factor ) return;
 
@@ -91,7 +99,8 @@ inline void Matrix::factorize()
 
 // -------------------------------------------------------------------------------------------------
 
-inline void Matrix::assemble(const xt::xtensor<double,3> &elemmat)
+template <class Solver>
+inline void Matrix<Solver>::assemble(const xt::xtensor<double,3> &elemmat)
 {
   GOOSEFEM_ASSERT(elemmat.shape() ==\
     std::decay_t<decltype(elemmat)>::shape_type({m_nelem, m_nne*m_ndim, m_nne*m_ndim}));
@@ -114,7 +123,8 @@ inline void Matrix::assemble(const xt::xtensor<double,3> &elemmat)
 
 // -------------------------------------------------------------------------------------------------
 
-inline void Matrix::solve(
+template <class Solver>
+inline void Matrix<Solver>::solve(
   const xt::xtensor<double,2> &b,
         xt::xtensor<double,2> &x)
 {
@@ -131,7 +141,8 @@ inline void Matrix::solve(
 
 // -------------------------------------------------------------------------------------------------
 
-inline void Matrix::solve(
+template <class Solver>
+inline void Matrix<Solver>::solve(
   const xt::xtensor<double,1> &b,
         xt::xtensor<double,1> &x)
 {
@@ -147,7 +158,8 @@ inline void Matrix::solve(
 
 // -------------------------------------------------------------------------------------------------
 
-inline xt::xtensor<double,2> Matrix::Solve(
+template <class Solver>
+inline xt::xtensor<double,2> Matrix<Solver>::Solve(
   const xt::xtensor<double,2> &b)
 {
   xt::xtensor<double,2> x = xt::empty<double>({m_nnode, m_ndim});
@@ -157,7 +169,8 @@ inline xt::xtensor<double,2> Matrix::Solve(
 
 // -------------------------------------------------------------------------------------------------
 
-inline xt::xtensor<double,1> Matrix::Solve(
+template <class Solver>
+inline xt::xtensor<double,1> Matrix<Solver>::Solve(
   const xt::xtensor<double,1> &b)
 {
   xt::xtensor<double,1> x = xt::empty<double>({m_ndof});
@@ -167,7 +180,8 @@ inline xt::xtensor<double,1> Matrix::Solve(
 
 // -------------------------------------------------------------------------------------------------
 
-inline Eigen::VectorXd Matrix::asDofs(const xt::xtensor<double,2> &nodevec) const
+template <class Solver>
+inline Eigen::VectorXd Matrix<Solver>::asDofs(const xt::xtensor<double,2> &nodevec) const
 {
   assert(nodevec.shape() ==\
     std::decay_t<decltype(nodevec)>::shape_type({m_nnode, m_ndim}));
@@ -184,7 +198,10 @@ inline Eigen::VectorXd Matrix::asDofs(const xt::xtensor<double,2> &nodevec) cons
 
 // -------------------------------------------------------------------------------------------------
 
-inline void Matrix::asNode(const Eigen::VectorXd &dofval, xt::xtensor<double,2> &nodevec) const
+template <class Solver>
+inline void Matrix<Solver>::asNode(
+  const Eigen::VectorXd &dofval,
+  xt::xtensor<double,2> &nodevec) const
 {
   assert(static_cast<size_t>(dofval.size()) == m_ndof);
   assert(nodevec.shape() ==\

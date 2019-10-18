@@ -4,13 +4,8 @@
 
 ================================================================================================= */
 
-#include <Eigen/Eigen>
-
 #include <pybind11/pybind11.h>
-#include <pybind11/eigen.h>
-
 #include <pyxtensor/pyxtensor.hpp>
-
 #define GOOSEFEM_NO_HIGHFIVE
 #include "../include/GooseFEM/GooseFEM.h"
 #include "../include/GooseFEM/ParaView.h"
@@ -49,6 +44,17 @@ py::class_<GooseFEM::ParaView::HDF5::Connectivity>(m, "Connectivity")
             const std::string&,
             const std::string&,
             GooseFEM::ParaView::HDF5::ElementType,
+            const std::vector<size_t>&>(),
+        "Connectivity",
+        py::arg("fname"),
+        py::arg("dataset"),
+        py::arg("ElementType"),
+        py::arg("shape"))
+
+    .def(py::init<
+            const std::string&,
+            const std::string&,
+            GooseFEM::Mesh::ElementType,
             const std::vector<size_t>&>(),
         "Connectivity",
         py::arg("fname"),

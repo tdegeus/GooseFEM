@@ -783,8 +783,8 @@ inline xt::xtensor<size_t,2> Regular::dofsPeriodic() const
   xt::xtensor<size_t,2> nodePer = nodesPeriodic();
 
   // eliminate 'dependent' DOFs; renumber "out" to be sequential for the remaining DOFs
-  for ( size_t i = 0 ; i < nodePer.shape()[0] ; ++i )
-    for ( size_t j = 0 ; j < m_ndim ; ++j )
+  for (size_t i = 0; i < nodePer.shape(0); ++i)
+    for (size_t j = 0; j < m_ndim; ++j)
       out(nodePer(i,1),j) = out(nodePer(i,0),j);
 
   // renumber "out" to be sequential
@@ -834,10 +834,10 @@ m_h(h)
     // initialize current size in y-direction
     if ( iy == nfine ) ntot = nfine;
     // check to stop
-    if ( iy >= nely or ntot >= nmin ) { nely = iy; break; }
+    if ( iy >= nely || ntot >= nmin ) { nely = iy; break; }
 
     // rules (1,2) satisfied: coarsen in x-direction (and z-direction)
-    if ( 3*nhy(iy) <= ntot and nelx%(3*nhx(iy)) == 0 and ntot+nhy(iy) < nmin )
+    if ( 3*nhy(iy) <= ntot && nelx%(3*nhx(iy)) == 0 && ntot+nhy(iy) < nmin )
     {
       // - process refinement in x-direction
       refine(iy)  = 0;
@@ -848,7 +848,7 @@ m_h(h)
       vnhx *= 3;
 
       // - rule (2) satisfied: coarsen next element layer in z-direction
-      if ( iy+1 < nely and ntot+2*nhy(iy) < nmin )
+      if ( iy+1 < nely && ntot+2*nhy(iy) < nmin )
       {
         if ( nelz%(3*nhz(iy+1)) == 0 )
         {
@@ -866,7 +866,7 @@ m_h(h)
     }
 
     // rules (1,2) satisfied: coarse in z-direction
-    else if ( 3*nhy(iy) <= ntot and nelz%(3*nhz(iy)) == 0 and ntot+nhy(iy) < nmin )
+    else if ( 3*nhy(iy) <= ntot && nelz%(3*nhz(iy)) == 0 && ntot+nhy(iy) < nmin )
     {
       // - process refinement in z-direction
       refine(iy)  = 2;
@@ -882,7 +882,7 @@ m_h(h)
     // proceed to next element layer in y-direction
     ++iy;
     // check to stop
-    if ( iy >= nely or ntot >= nmin ) { nely = iy; break; }
+    if ( iy >= nely || ntot >= nmin ) { nely = iy; break; }
   }
 
   // symmetrize, compute full information
@@ -1208,7 +1208,7 @@ inline xt::xtensor<size_t,2> FineLayer::conn() const
     }
 
     // - define connectivity: refinement along the x-direction (below the middle layer)
-    else if ( m_refine(iy) == 0 and iy <= (nely-1)/2 )
+    else if ( m_refine(iy) == 0 && iy <= (nely-1)/2 )
     {
       for ( size_t iz = 0 ; iz < m_nelz(iy) ; ++iz ) {
         for ( size_t ix = 0 ; ix < m_nelx(iy) ; ++ix ) {
@@ -1257,7 +1257,7 @@ inline xt::xtensor<size_t,2> FineLayer::conn() const
     }
 
     // - define connectivity: coarsening along the x-direction (above the middle layer)
-    else if ( m_refine(iy) == 0 and iy > (nely-1)/2 )
+    else if ( m_refine(iy) == 0 && iy > (nely-1)/2 )
     {
       for ( size_t iz = 0 ; iz < m_nelz(iy) ; ++iz ) {
         for ( size_t ix = 0 ; ix < m_nelx(iy) ; ++ix ) {
@@ -1306,7 +1306,7 @@ inline xt::xtensor<size_t,2> FineLayer::conn() const
     }
 
     // - define connectivity: refinement along the z-direction (below the middle layer)
-    else if ( m_refine(iy) == 2 and iy <= (nely-1)/2 )
+    else if ( m_refine(iy) == 2 && iy <= (nely-1)/2 )
     {
       for ( size_t iz = 0 ; iz < m_nelz(iy) ; ++iz ) {
         for ( size_t ix = 0 ; ix < m_nelx(iy) ; ++ix ) {
@@ -1355,7 +1355,7 @@ inline xt::xtensor<size_t,2> FineLayer::conn() const
     }
 
     // - define connectivity: coarsening along the z-direction (above the middle layer)
-    else if ( m_refine(iy) == 2 and iy > (nely-1)/2 )
+    else if ( m_refine(iy) == 2 && iy > (nely-1)/2 )
     {
       for ( size_t iz = 0 ; iz < m_nelz(iy) ; ++iz ) {
         for ( size_t ix = 0 ; ix < m_nelx(iy) ; ++ix ) {
@@ -2616,8 +2616,8 @@ inline xt::xtensor<size_t,2> FineLayer::dofsPeriodic() const
   xt::xtensor<size_t,2>   nodePer = nodesPeriodic();
 
   // eliminate 'dependent' DOFs; renumber "out" to be sequential for the remaining DOFs
-  for ( size_t i = 0 ; i < nodePer.shape()[0] ; ++i )
-    for ( size_t j = 0 ; j < m_ndim ; ++j )
+  for (size_t i = 0; i < nodePer.shape(0); ++i)
+    for (size_t j = 0; j < m_ndim; ++j)
       out(nodePer(i,1),j) = out(nodePer(i,0),j);
 
   // renumber "out" to be sequential

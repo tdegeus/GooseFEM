@@ -24,10 +24,10 @@ inline Vector::Vector(
   m_dofs(dofs)
 {
   // mesh dimensions
-  m_nelem = m_conn.shape()[0];
-  m_nne   = m_conn.shape()[1];
-  m_nnode = m_dofs.shape()[0];
-  m_ndim  = m_dofs.shape()[1];
+  m_nelem = m_conn.shape(0);
+  m_nne   = m_conn.shape(1);
+  m_nnode = m_dofs.shape(0);
+  m_ndim  = m_dofs.shape(1);
 
   // dimensions of the system
   m_ndof  = xt::amax(m_dofs)[0] + 1;

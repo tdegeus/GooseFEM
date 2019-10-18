@@ -20,7 +20,9 @@ obeys the following convention:
 
 where
 
-  \underline{f_(n + i d)} = f_i^{(n)}
+.. math::
+
+  f_{(n + i d)} \equiv f_i^{(n)}
 
 with :math:`n` the node number, :math:`i` the dimension, and :math:`d` the number of dimensions. For example for a two-dimensional quadrilateral element
 

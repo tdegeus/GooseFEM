@@ -17,7 +17,7 @@ Glossary
 +---------+---------+-------------------------------------+
 | nne     | size    | number of nodes per element         |
 +---------+---------+-------------------------------------+
-| tdim    | size    | number of dimensions of tensor      |
+| tdim    | size    | number of dimensions of a tensor    |
 +---------+---------+-------------------------------------+
 | ---     | ---     | ---                                 |
 +---------+---------+-------------------------------------+
@@ -52,30 +52,30 @@ Coordinates
 -----------
 
 * Nodal coordinates: each node has one row
-* Shape :math:`\left[ n_\text{node} \times n_\text{dim} \right]`
+* Shape [nnode, ndim]
 * Denoted: *coor*
 
 Connectivity
 ------------
 
 * Node numbers per element: each element has one row
-* Shape :math:`\left[ n_\text{elem} \times n_\text{nodes-per-element} \right]`
+* Shape [nelem, nne]
 * Denoted: *conn*
 
 Sizes
 -----
 
-+-------+---------------------------------+------------------------------------+
-| Alias | Description                     |                                    |
-+=======+=================================+====================================+
-| nnode | number of nodes                 | :math:`n_\text{nodes}`             |
-+-------+---------------------------------+------------------------------------+
-| ndim  | number of dimensions            | :math:`n_\text{ndim}`              |
-+-------+---------------------------------+------------------------------------+
-| nelem | number of elements              | :math:`n_\text{elements}`          |
-+-------+---------------------------------+------------------------------------+
-| nne   | number of nodes per element     | :math:`n_\text{nodes-per-element}` |
-+-------+---------------------------------+------------------------------------+
-| tdim  | number of dimensions of tensor  | :math:`n_\text{ndim}`              |
-+-------+---------------------------------+------------------------------------+
++-------+---------------------------------+
+| Alias | Description                     |
++=======+=================================+
+| nnode | number of nodes                 |
++-------+---------------------------------+
+| ndim  | number of dimensions            |
++-------+---------------------------------+
+| nelem | number of elements              |
++-------+---------------------------------+
+| nne   | number of nodes per element     |
++-------+---------------------------------+
+| tdim  | number of dimensions of tensor  |
++-------+---------------------------------+
 

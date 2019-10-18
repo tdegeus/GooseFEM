@@ -26,8 +26,8 @@ public:
   MatrixDiagonal() = default;
 
   MatrixDiagonal(
-    const xt::xtensor<size_t,2> &conn,
-    const xt::xtensor<size_t,2> &dofs);
+    const xt::xtensor<size_t,2>& conn,
+    const xt::xtensor<size_t,2>& dofs);
 
   // Dimensions
 
@@ -43,34 +43,34 @@ public:
 
   // Set matrix components
 
-  void set(const xt::xtensor<double,1> &A);
+  void set(const xt::xtensor<double,1>& A);
 
   // assemble from matrices stored per element [nelem, nne*ndim, nne*ndim]
   // WARNING: ignores any off-diagonal terms
 
-  void assemble(const xt::xtensor<double,3> &elemmat);
+  void assemble(const xt::xtensor<double,3>& elemmat);
 
   // Dot-product:
   // b_i = A_ij * x_j
 
   void dot(
-    const xt::xtensor<double,2> &x,
-          xt::xtensor<double,2> &b) const;
+    const xt::xtensor<double,2>& x,
+          xt::xtensor<double,2>& b) const;
 
   void dot(
-    const xt::xtensor<double,1> &x,
-          xt::xtensor<double,1> &b) const;
+    const xt::xtensor<double,1>& x,
+          xt::xtensor<double,1>& b) const;
 
   // Solve:
   // x = A \ b
 
   void solve(
-    const xt::xtensor<double,2> &b,
-          xt::xtensor<double,2> &x);
+    const xt::xtensor<double,2>& b,
+          xt::xtensor<double,2>& x);
 
   void solve(
-    const xt::xtensor<double,1> &b,
-          xt::xtensor<double,1> &x);
+    const xt::xtensor<double,1>& b,
+          xt::xtensor<double,1>& x);
 
   // Return matrix as diagonal matrix (column)
 
@@ -78,13 +78,13 @@ public:
 
   // Auto-allocation of the functions above
 
-  xt::xtensor<double,2> Dot(const xt::xtensor<double,2> &x) const;
+  xt::xtensor<double,2> Dot(const xt::xtensor<double,2>& x) const;
 
-  xt::xtensor<double,1> Dot(const xt::xtensor<double,1> &x) const;
+  xt::xtensor<double,1> Dot(const xt::xtensor<double,1>& x) const;
 
-  xt::xtensor<double,2> Solve(const xt::xtensor<double,2> &b);
+  xt::xtensor<double,2> Solve(const xt::xtensor<double,2>& b);
 
-  xt::xtensor<double,1> Solve(const xt::xtensor<double,1> &b);
+  xt::xtensor<double,1> Solve(const xt::xtensor<double,1>& b);
 
 private:
 
