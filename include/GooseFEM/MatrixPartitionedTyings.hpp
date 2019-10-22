@@ -157,7 +157,8 @@ inline xt::xtensor<size_t,1> MatrixPartitionedTyings<Solver>::iip() const
 template <class Solver>
 inline xt::xtensor<size_t,1> MatrixPartitionedTyings<Solver>::iii() const
 {
-  return xt::arange<size_t>(m_nni);
+  xt::xtensor<size_t,1> out = xt::arange<size_t>(m_nni);
+  return out;
 }
 
 // -------------------------------------------------------------------------------------------------

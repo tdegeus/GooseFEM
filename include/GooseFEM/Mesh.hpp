@@ -139,7 +139,8 @@ inline xt::xtensor<size_t,2> renumber(const xt::xtensor<size_t,2> &dofs)
 
 inline xt::xtensor<size_t,2> dofs(size_t nnode, size_t ndim)
 {
-  return xt::reshape_view(xt::arange<size_t>(nnode*ndim),{nnode,ndim});
+  xt::xtensor<size_t,2> out = xt::arange<size_t>(nnode * ndim).reshape({nnode, ndim});
+  return out;
 }
 
 // -------------------------------------------------------------------------------------------------
