@@ -108,28 +108,33 @@ inline size_t Periodic::nnd() const
 
 inline xt::xtensor<size_t,1> Periodic::iiu() const
 {
-  return xt::arange<size_t>(m_nnu);
+  xt::xtensor<size_t,1> out = xt::arange<size_t>(m_nnu);
+  return out;
 }
 
 // -------------------------------------------------------------------------------------------------
 
 inline xt::xtensor<size_t,1> Periodic::iip() const
 {
-  return xt::arange<size_t>(m_nnp) + m_nnu;
+  xt::xtensor<size_t,1> out = xt::arange<size_t>(m_nnp);
+  out += m_nnu;
+  return out;
 }
 
 // -------------------------------------------------------------------------------------------------
 
 inline xt::xtensor<size_t,1> Periodic::iii() const
 {
-  return xt::arange<size_t>(m_nni);
+  xt::xtensor<size_t,1> out = xt::arange<size_t>(m_nni);
+  return out;
 }
 
 // -------------------------------------------------------------------------------------------------
 
 inline xt::xtensor<size_t,1> Periodic::iid() const
 {
-  return xt::arange<size_t>(m_nni, m_nni + m_nnd);
+  xt::xtensor<size_t,1> out = xt::arange<size_t>(m_nni, m_nni + m_nnd);
+  return out;
 }
 
 // -------------------------------------------------------------------------------------------------
@@ -239,12 +244,18 @@ inline Control::Control(
   size_t nnode = coor.shape(0);
   size_t ndim = coor.shape(1);
 
-  m_control_dofs = xt::arange<size_t>(ndim*ndim).reshape({ndim,ndim});
-  m_control_dofs += xt::amax(dofs)[0] + 1;
+  {
+    xt::xtensor<size_t,2> idx = xt::arange<size_t>(ndim * ndim).reshape({ndim, ndim});
+    m_control_dofs = idx + xt::amax(dofs)(0) + 1;
+  }
 
-  m_control_nodes = nnode + xt::arange<size_t>(ndim);
+  {
+    xt::xtensor<size_t,1> idx = xt::arange<size_t>(ndim);
+    m_control_nodes = idx + nnode;
+  }
 
-  m_coor = xt::concatenate(xt::xtuple(coor, xt::zeros<double>({ndim,ndim})));
+  xt::xtensor<double,2> zeros = xt::zeros<double>({ndim, ndim});
+  m_coor = xt::concatenate(xt::xtuple(coor, zeros));
   m_dofs = xt::concatenate(xt::xtuple(dofs, m_control_dofs));
 }
 

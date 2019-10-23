@@ -144,7 +144,8 @@ inline xt::xtensor<size_t,1> VectorPartitionedTyings::iip() const
 
 inline xt::xtensor<size_t,1> VectorPartitionedTyings::iii() const
 {
-  return xt::arange<size_t>(m_nni);
+  xt::xtensor<size_t,1> out = xt::arange<size_t>(m_nni);
+  return out;
 }
 
 // -------------------------------------------------------------------------------------------------

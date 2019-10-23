@@ -840,7 +840,9 @@ inline xt::xtensor<size_t,1> FineLayer::nodesRightEdge() const
 
 inline xt::xtensor<size_t,1> FineLayer::nodesBottomOpenEdge() const
 {
-  return m_startNode(0) + xt::arange<size_t>(1, m_nelx(0));
+  xt::xtensor<size_t,1> out = xt::arange<size_t>(1, m_nelx(0));
+  out += m_startNode(0);
+  return out;
 }
 
 // -------------------------------------------------------------------------------------------------
@@ -848,8 +850,9 @@ inline xt::xtensor<size_t,1> FineLayer::nodesBottomOpenEdge() const
 inline xt::xtensor<size_t,1> FineLayer::nodesTopOpenEdge() const
 {
   size_t nely = m_nhy.size();
-
-  return m_startNode(nely) + xt::arange<size_t>(1, m_nelx(nely-1));
+  xt::xtensor<size_t,1> out = xt::arange<size_t>(1, m_nelx(nely - 1));
+  out += m_startNode(nely);
+  return out;
 }
 
 // -------------------------------------------------------------------------------------------------
@@ -858,15 +861,15 @@ inline xt::xtensor<size_t,1> FineLayer::nodesLeftOpenEdge() const
 {
   size_t nely = m_nhy.size();
 
-  xt::xtensor<size_t,1> out = xt::empty<size_t>({nely-1});
+  xt::xtensor<size_t,1> out = xt::empty<size_t>({nely - 1});
 
-  size_t i =  0;
-  size_t j = (nely+1)/2;
-  size_t k = (nely-1)/2;
-  size_t l =  nely;
+  size_t i = 0;
+  size_t j = (nely + 1) / 2;
+  size_t k = (nely - 1) / 2;
+  size_t l = nely;
 
-  xt::view(out, xt::range(i, j-1)) = xt::view(m_startNode, xt::range(i+1, j));
-  xt::view(out, xt::range(k, l-1)) = xt::view(m_startNode, xt::range(k+1, l));
+  xt::view(out, xt::range(i, j - 1)) = xt::view(m_startNode, xt::range(i + 1, j));
+  xt::view(out, xt::range(k, l - 1)) = xt::view(m_startNode, xt::range(k + 1, l));
 
   return out;
 }
@@ -879,16 +882,16 @@ inline xt::xtensor<size_t,1> FineLayer::nodesRightOpenEdge() const
 
   xt::xtensor<size_t,1> out = xt::empty<size_t>({nely-1});
 
-  size_t i =  0;
-  size_t j = (nely+1)/2;
-  size_t k = (nely-1)/2;
-  size_t l =  nely;
+  size_t i = 0;
+  size_t j = (nely + 1) / 2;
+  size_t k = (nely - 1) / 2;
+  size_t l = nely;
 
-  xt::view(out, xt::range(i, j-1)) =
-    xt::view(m_startNode, xt::range(i+1, j)) + xt::view(m_nelx, xt::range(i+1, j));
+  xt::view(out, xt::range(i, j - 1)) =
+    xt::view(m_startNode, xt::range(i + 1, j)) + xt::view(m_nelx, xt::range(i + 1, j));
 
-  xt::view(out, xt::range(k, l-1)) =
-    xt::view(m_startNode, xt::range(k+1, l)) + xt::view(m_nelx, xt::range(k, l-1));
+  xt::view(out, xt::range(k, l - 1)) =
+    xt::view(m_startNode, xt::range(k + 1, l)) + xt::view(m_nelx, xt::range(k, l - 1));
 
   return out;
 }
@@ -921,7 +924,6 @@ inline size_t FineLayer::nodesTopLeftCorner() const
 inline size_t FineLayer::nodesTopRightCorner() const
 {
   size_t nely = m_nhy.size();
-
   return m_startNode(nely) + m_nelx(nely-1);
 }
 
@@ -1013,7 +1015,7 @@ inline xt::xtensor<size_t,2> FineLayer::dofsPeriodic() const
 
   // node sets
   xt::xtensor<size_t,1> independent = xt::view(nodePer, xt::all(), 0);
-  xt::xtensor<size_t,1> dependent   = xt::view(nodePer, xt::all(), 1);
+  xt::xtensor<size_t,1> dependent = xt::view(nodePer, xt::all(), 1);
 
   // eliminate 'dependent' DOFs; renumber "out" to be sequential for the remaining DOFs
   for (size_t j = 0; j < m_ndim; ++j)
@@ -1218,8 +1220,8 @@ inline FineLayer2Regular::FineLayer2Regular(const GooseFEM::Mesh::Quad4::FineLay
   xt::xtensor<size_t,2> elementMatrix = m_regular.elementMatrix();
 
   // cumulative number of element-rows of the Regular-mesh per layer of the FineLayer-mesh
-  xt::xtensor<size_t,1> cum_nhy =
-    xt::concatenate(xt::xtuple(xt::zeros<size_t>({1}), xt::cumsum(nhy)));
+  xt::xtensor<size_t,1> zero = xt::zeros<size_t>({1});
+  xt::xtensor<size_t,1> cum_nhy = xt::concatenate(xt::xtuple(zero, xt::cumsum(nhy)));
 
   // number of element layers in y-direction of the FineLayer-mesh
   size_t nely = nhy.size();
@@ -1236,7 +1238,8 @@ inline FineLayer2Regular::FineLayer2Regular(const GooseFEM::Mesh::Quad4::FineLay
     if (m_finelayer.m_refine(iy) == -1)
     {
       // element numbers of the FineLayer-mesh along this layer
-      xt::xtensor<size_t,1> el_old = start(iy) + xt::arange<size_t>(nelx(iy));
+      xt::xtensor<size_t,1> idx = xt::arange<size_t>(nelx(iy))
+      xt::xtensor<size_t,1> el_old = start(iy) + idx;
 
       // loop along this layer of the FineLayer-mesh
       for (size_t ix = 0; ix < nelx(iy); ++ix)
@@ -1259,7 +1262,8 @@ inline FineLayer2Regular::FineLayer2Regular(const GooseFEM::Mesh::Quad4::FineLay
     {
       // element numbers of the FineLayer-mesh along this layer
       // rows: coarse block, columns element numbers per block
-      xt::xtensor<size_t,2> el_old = start(iy) + xt::arange<size_t>(nelx(iy)*4ul).reshape({-1, 4});
+      xt::xtensor<size_t,2> idx = xt::arange<size_t>(nelx(iy) * 4ul).reshape({-1, 4});
+      xt::xtensor<size_t,2> el_old = start(iy) + idx;
 
       // loop along this layer of the FineLayer-mesh
       for (size_t ix = 0; ix < nelx(iy); ++ix)
@@ -1363,7 +1367,8 @@ inline FineLayer2Regular::FineLayer2Regular(const GooseFEM::Mesh::Quad4::FineLay
     {
       // element numbers of the FineLayer-mesh along this layer
       // rows: coarse block, columns element numbers per block
-      xt::xtensor<size_t,2> el_old = start(iy) + xt::arange<size_t>(nelx(iy)*4ul).reshape({-1, 4});
+      xt::xtensor<size_t,2> idx = xt::arange<size_t>(nelx(iy) * 4ul).reshape({-1, 4});
+      xt::xtensor<size_t,2> el_old = start(iy) + idx;
 
       // loop along this layer of the FineLayer-mesh
       for (size_t ix = 0; ix < nelx(iy); ++ix)

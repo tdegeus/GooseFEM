@@ -122,11 +122,11 @@ inline xt::xtensor<size_t,2> Regular::conn() const
 
 inline xt::xtensor<size_t,1> Regular::nodesFront() const
 {
-  xt::xtensor<size_t,1> out = xt::empty<size_t>({(m_nelx+1)*(m_nely+1)});
+  xt::xtensor<size_t,1> out = xt::empty<size_t>({(m_nelx + 1) * (m_nely + 1)});
 
-  for ( size_t iy = 0 ; iy < m_nely+1 ; ++iy )
-    for ( size_t ix = 0 ; ix < m_nelx+1 ; ++ix )
-      out(iy*(m_nelx+1)+ix) = iy*(m_nelx+1) + ix;
+  for (size_t iy = 0; iy < m_nely + 1; ++iy)
+    for (size_t ix = 0; ix < m_nelx + 1; ++ix)
+      out(iy * (m_nelx + 1) + ix) = iy * (m_nelx + 1) + ix;
 
   return out;
 }
@@ -135,11 +135,14 @@ inline xt::xtensor<size_t,1> Regular::nodesFront() const
 
 inline xt::xtensor<size_t,1> Regular::nodesBack() const
 {
-  xt::xtensor<size_t,1> out = xt::empty<size_t>({(m_nelx+1)*(m_nely+1)});
+  xt::xtensor<size_t,1> out = xt::empty<size_t>({(m_nelx + 1) * (m_nely + 1)});
 
-  for ( size_t iy = 0 ; iy < m_nely+1 ; ++iy )
-    for ( size_t ix = 0 ; ix < m_nelx+1 ; ++ix )
-      out(iy*(m_nelx+1)+ix) = iy*(m_nelx+1) + ix + m_nelz*(m_nely+1)*(m_nelx+1);
+  for (size_t iy = 0; iy < m_nely + 1; ++iy) {
+    for (size_t ix = 0; ix < m_nelx + 1; ++ix) {
+      out(iy * (m_nelx + 1) + ix) =
+        iy * (m_nelx + 1) + ix + m_nelz * (m_nely + 1) * (m_nelx + 1);
+    }
+  }
 
   return out;
 }
@@ -148,11 +151,13 @@ inline xt::xtensor<size_t,1> Regular::nodesBack() const
 
 inline xt::xtensor<size_t,1> Regular::nodesLeft() const
 {
-  xt::xtensor<size_t,1> out = xt::empty<size_t>({(m_nely+1)*(m_nelz+1)});
+  xt::xtensor<size_t,1> out = xt::empty<size_t>({(m_nely + 1) * (m_nelz + 1)});
 
-  for ( size_t iz = 0 ; iz < m_nelz+1 ; ++iz )
-    for ( size_t iy = 0 ; iy < m_nely+1 ; ++iy )
-      out(iz*(m_nely+1)+iy) = iy*(m_nelx+1) + iz*(m_nelx+1)*(m_nely+1);
+  for (size_t iz = 0; iz < m_nelz + 1; ++iz) {
+    for (size_t iy = 0; iy < m_nely + 1; ++iy) {
+      out(iz * (m_nely + 1) + iy) = iy * (m_nelx + 1) + iz * (m_nelx + 1) * (m_nely + 1);
+    }
+  }
 
   return out;
 }
@@ -161,11 +166,13 @@ inline xt::xtensor<size_t,1> Regular::nodesLeft() const
 
 inline xt::xtensor<size_t,1> Regular::nodesRight() const
 {
-  xt::xtensor<size_t,1> out = xt::empty<size_t>({(m_nely+1)*(m_nelz+1)});
+  xt::xtensor<size_t,1> out = xt::empty<size_t>({(m_nely + 1) * (m_nelz + 1)});
 
-  for ( size_t iz = 0 ; iz < m_nelz+1 ; ++iz )
-    for ( size_t iy = 0 ; iy < m_nely+1 ; ++iy )
-      out(iz*(m_nely+1)+iy) = iy*(m_nelx+1) + iz*(m_nelx+1)*(m_nely+1) + m_nelx;
+  for (size_t iz = 0; iz < m_nelz + 1; ++iz) {
+    for (size_t iy = 0; iy < m_nely + 1; ++iy) {
+      out(iz * (m_nely + 1) + iy) = iy * (m_nelx + 1) + iz * (m_nelx + 1) * (m_nely + 1) + m_nelx;
+    }
+  }
 
   return out;
 }
@@ -174,11 +181,13 @@ inline xt::xtensor<size_t,1> Regular::nodesRight() const
 
 inline xt::xtensor<size_t,1> Regular::nodesBottom() const
 {
-  xt::xtensor<size_t,1> out = xt::empty<size_t>({(m_nelx+1)*(m_nelz+1)});
+  xt::xtensor<size_t,1> out = xt::empty<size_t>({(m_nelx + 1) * (m_nelz + 1)});
 
-  for ( size_t iz = 0 ; iz < m_nelz+1 ; ++iz )
-    for ( size_t ix = 0 ; ix < m_nelx+1 ; ++ix )
-      out(iz*(m_nelx+1)+ix) = ix + iz*(m_nelx+1)*(m_nely+1);
+  for (size_t iz = 0; iz < m_nelz + 1; ++iz) {
+    for (size_t ix = 0; ix < m_nelx + 1; ++ix) {
+      out(iz * (m_nelx + 1) + ix) = ix + iz * (m_nelx + 1) * (m_nely + 1);
+    }
+  }
 
   return out;
 }
@@ -187,11 +196,13 @@ inline xt::xtensor<size_t,1> Regular::nodesBottom() const
 
 inline xt::xtensor<size_t,1> Regular::nodesTop() const
 {
-  xt::xtensor<size_t,1> out = xt::empty<size_t>({(m_nelx+1)*(m_nelz+1)});
+  xt::xtensor<size_t,1> out = xt::empty<size_t>({(m_nelx + 1) * (m_nelz + 1)});
 
-  for ( size_t iz = 0 ; iz < m_nelz+1 ; ++iz )
-    for ( size_t ix = 0 ; ix < m_nelx+1 ; ++ix )
-      out(iz*(m_nelx+1)+ix) = ix + m_nely*(m_nelx+1) + iz*(m_nelx+1)*(m_nely+1);
+  for (size_t iz = 0; iz < m_nelz + 1; ++iz) {
+    for (size_t ix = 0; ix < m_nelx + 1; ++ix) {
+      out(iz * (m_nelx + 1) + ix) = ix + m_nely * (m_nelx + 1) + iz * (m_nelx + 1) * (m_nely + 1);
+    }
+  }
 
   return out;
 }
@@ -200,11 +211,13 @@ inline xt::xtensor<size_t,1> Regular::nodesTop() const
 
 inline xt::xtensor<size_t,1> Regular::nodesFrontFace() const
 {
-  xt::xtensor<size_t,1> out = xt::empty<size_t>({(m_nelx-1)*(m_nely-1)});
+  xt::xtensor<size_t,1> out = xt::empty<size_t>({(m_nelx - 1) * (m_nely - 1)});
 
-  for ( size_t iy = 1 ; iy < m_nely ; ++iy )
-    for ( size_t ix = 1 ; ix < m_nelx ; ++ix )
-      out((iy-1)*(m_nelx-1)+(ix-1)) = iy*(m_nelx+1) + ix;
+  for (size_t iy = 1; iy < m_nely; ++iy) {
+    for (size_t ix = 1; ix < m_nelx; ++ix) {
+      out((iy - 1) * (m_nelx - 1) + (ix - 1)) = iy * (m_nelx + 1) + ix;
+    }
+  }
 
   return out;
 }
@@ -213,11 +226,12 @@ inline xt::xtensor<size_t,1> Regular::nodesFrontFace() const
 
 inline xt::xtensor<size_t,1> Regular::nodesBackFace() const
 {
-  xt::xtensor<size_t,1> out = xt::empty<size_t>({(m_nelx-1)*(m_nely-1)});
+  xt::xtensor<size_t,1> out = xt::empty<size_t>({(m_nelx - 1) * (m_nely - 1)});
 
-  for ( size_t iy = 1 ; iy < m_nely ; ++iy ) {
-    for ( size_t ix = 1 ; ix < m_nelx ; ++ix ) {
-      out((iy-1)*(m_nelx-1)+(ix-1)) = iy*(m_nelx+1) + ix + m_nelz*(m_nely+1)*(m_nelx+1);
+  for (size_t iy = 1; iy < m_nely; ++iy) {
+    for (size_t ix = 1; ix < m_nelx; ++ix) {
+      out((iy - 1) * (m_nelx - 1) + (ix - 1)) =
+        iy * (m_nelx + 1) + ix + m_nelz * (m_nely + 1) * (m_nelx + 1);
     }
   }
 
@@ -228,11 +242,14 @@ inline xt::xtensor<size_t,1> Regular::nodesBackFace() const
 
 inline xt::xtensor<size_t,1> Regular::nodesLeftFace() const
 {
-  xt::xtensor<size_t,1> out = xt::empty<size_t>({(m_nely-1)*(m_nelz-1)});
+  xt::xtensor<size_t,1> out = xt::empty<size_t>({(m_nely - 1) * (m_nelz - 1)});
 
-  for ( size_t iz = 1 ; iz < m_nelz ; ++iz )
-    for ( size_t iy = 1 ; iy < m_nely ; ++iy )
-      out((iz-1)*(m_nely-1)+(iy-1)) = iy*(m_nelx+1) + iz*(m_nelx+1)*(m_nely+1);
+  for (size_t iz = 1; iz < m_nelz; ++iz) {
+    for (size_t iy = 1; iy < m_nely; ++iy) {
+      out((iz - 1) * (m_nely - 1) + (iy - 1)) =
+        iy * (m_nelx + 1) + iz * (m_nelx + 1) * (m_nely + 1);
+    }
+  }
 
   return out;
 }
@@ -241,11 +258,14 @@ inline xt::xtensor<size_t,1> Regular::nodesLeftFace() const
 
 inline xt::xtensor<size_t,1> Regular::nodesRightFace() const
 {
-  xt::xtensor<size_t,1> out = xt::empty<size_t>({(m_nely-1)*(m_nelz-1)});
+  xt::xtensor<size_t,1> out = xt::empty<size_t>({(m_nely - 1) * (m_nelz - 1)});
 
-  for ( size_t iz = 1 ; iz < m_nelz ; ++iz )
-    for ( size_t iy = 1 ; iy < m_nely ; ++iy )
-      out((iz-1)*(m_nely-1)+(iy-1)) = iy*(m_nelx+1) + iz*(m_nelx+1)*(m_nely+1) + m_nelx;
+  for (size_t iz = 1; iz < m_nelz; ++iz) {
+    for (size_t iy = 1; iy < m_nely; ++iy) {
+      out((iz - 1) * (m_nely - 1) + (iy - 1)) =
+        iy * (m_nelx + 1) + iz * (m_nelx + 1) * (m_nely + 1) + m_nelx;
+    }
+  }
 
   return out;
 }
@@ -254,11 +274,13 @@ inline xt::xtensor<size_t,1> Regular::nodesRightFace() const
 
 inline xt::xtensor<size_t,1> Regular::nodesBottomFace() const
 {
-  xt::xtensor<size_t,1> out = xt::empty<size_t>({(m_nelx-1)*(m_nelz-1)});
+  xt::xtensor<size_t,1> out = xt::empty<size_t>({(m_nelx - 1) * (m_nelz - 1)});
 
-  for ( size_t iz = 1 ; iz < m_nelz ; ++iz )
-    for ( size_t ix = 1 ; ix < m_nelx ; ++ix )
-      out((iz-1)*(m_nelx-1)+(ix-1)) = ix + iz*(m_nelx+1)*(m_nely+1);
+  for (size_t iz = 1; iz < m_nelz; ++iz) {
+    for (size_t ix = 1; ix < m_nelx; ++ix) {
+      out((iz - 1) * (m_nelx - 1) + (ix - 1)) = ix + iz * (m_nelx + 1) * (m_nely + 1);
+    }
+  }
 
   return out;
 }
@@ -267,11 +289,14 @@ inline xt::xtensor<size_t,1> Regular::nodesBottomFace() const
 
 inline xt::xtensor<size_t,1> Regular::nodesTopFace() const
 {
-  xt::xtensor<size_t,1> out = xt::empty<size_t>({(m_nelx-1)*(m_nelz-1)});
+  xt::xtensor<size_t,1> out = xt::empty<size_t>({(m_nelx - 1) * (m_nelz - 1)});
 
-  for ( size_t iz = 1 ; iz < m_nelz ; ++iz )
-    for ( size_t ix = 1 ; ix < m_nelx ; ++ix )
-      out((iz-1)*(m_nelx-1)+(ix-1)) = ix + m_nely*(m_nelx+1) + iz*(m_nelx+1)*(m_nely+1);
+  for (size_t iz = 1; iz < m_nelz; ++iz) {
+    for (size_t ix = 1; ix < m_nelx; ++ix) {
+      out((iz - 1) * (m_nelx - 1) + (ix - 1)) =
+        ix + m_nely * (m_nelx + 1) + iz * (m_nelx + 1) * (m_nely + 1);
+    }
+  }
 
   return out;
 }
@@ -280,10 +305,11 @@ inline xt::xtensor<size_t,1> Regular::nodesTopFace() const
 
 inline xt::xtensor<size_t,1> Regular::nodesFrontBottomEdge() const
 {
-  xt::xtensor<size_t,1> out = xt::empty<size_t>({m_nelx+1});
+  xt::xtensor<size_t,1> out = xt::empty<size_t>({m_nelx + 1});
 
-  for ( size_t ix = 0 ; ix < m_nelx+1 ; ++ix )
+  for (size_t ix = 0; ix < m_nelx + 1; ++ix) {
     out(ix) = ix;
+  }
 
   return out;
 }
@@ -292,10 +318,11 @@ inline xt::xtensor<size_t,1> Regular::nodesFrontBottomEdge() const
 
 inline xt::xtensor<size_t,1> Regular::nodesFrontTopEdge() const
 {
-  xt::xtensor<size_t,1> out = xt::empty<size_t>({m_nelx+1});
+  xt::xtensor<size_t,1> out = xt::empty<size_t>({m_nelx + 1});
 
-  for ( size_t ix = 0 ; ix < m_nelx+1 ; ++ix )
-    out(ix) = ix + m_nely*(m_nelx+1);
+  for (size_t ix = 0; ix < m_nelx + 1; ++ix) {
+    out(ix) = ix + m_nely * (m_nelx + 1);
+  }
 
   return out;
 }
@@ -304,10 +331,11 @@ inline xt::xtensor<size_t,1> Regular::nodesFrontTopEdge() const
 
 inline xt::xtensor<size_t,1> Regular::nodesFrontLeftEdge() const
 {
-  xt::xtensor<size_t,1> out = xt::empty<size_t>({m_nely+1});
+  xt::xtensor<size_t,1> out = xt::empty<size_t>({m_nely + 1});
 
-  for ( size_t iy = 0 ; iy < m_nely+1 ; ++iy )
-    out(iy) = iy*(m_nelx+1);
+  for (size_t iy = 0; iy < m_nely + 1; ++iy) {
+    out(iy) = iy * (m_nelx + 1);
+  }
 
   return out;
 }
@@ -316,10 +344,11 @@ inline xt::xtensor<size_t,1> Regular::nodesFrontLeftEdge() const
 
 inline xt::xtensor<size_t,1> Regular::nodesFrontRightEdge() const
 {
-  xt::xtensor<size_t,1> out = xt::empty<size_t>({m_nely+1});
+  xt::xtensor<size_t,1> out = xt::empty<size_t>({m_nely + 1});
 
-  for ( size_t iy = 0 ; iy < m_nely+1 ; ++iy )
-    out(iy) = iy*(m_nelx+1) + m_nelx;
+  for (size_t iy = 0; iy < m_nely + 1; ++iy) {
+    out(iy) = iy * (m_nelx + 1) + m_nelx;
+  }
 
   return out;
 }
@@ -328,10 +357,11 @@ inline xt::xtensor<size_t,1> Regular::nodesFrontRightEdge() const
 
 inline xt::xtensor<size_t,1> Regular::nodesBackBottomEdge() const
 {
-  xt::xtensor<size_t,1> out = xt::empty<size_t>({m_nelx+1});
+  xt::xtensor<size_t,1> out = xt::empty<size_t>({m_nelx + 1});
 
-  for ( size_t ix = 0 ; ix < m_nelx+1 ; ++ix )
-    out(ix) = ix + m_nelz*(m_nely+1)*(m_nelx+1);
+  for (size_t ix = 0; ix < m_nelx + 1; ++ix) {
+    out(ix) = ix + m_nelz * (m_nely + 1) * (m_nelx + 1);
+  }
 
   return out;
 }
@@ -340,10 +370,11 @@ inline xt::xtensor<size_t,1> Regular::nodesBackBottomEdge() const
 
 inline xt::xtensor<size_t,1> Regular::nodesBackTopEdge() const
 {
-  xt::xtensor<size_t,1> out = xt::empty<size_t>({m_nelx+1});
+  xt::xtensor<size_t,1> out = xt::empty<size_t>({m_nelx + 1});
 
-  for ( size_t ix = 0 ; ix < m_nelx+1 ; ++ix )
-    out(ix) = m_nely*(m_nelx+1) + ix + m_nelz*(m_nely+1)*(m_nelx+1);
+  for (size_t ix = 0; ix < m_nelx + 1; ++ix) {
+    out(ix) = m_nely * (m_nelx + 1) + ix + m_nelz * (m_nely + 1) * (m_nelx + 1);
+  }
 
   return out;
 }
@@ -352,10 +383,11 @@ inline xt::xtensor<size_t,1> Regular::nodesBackTopEdge() const
 
 inline xt::xtensor<size_t,1> Regular::nodesBackLeftEdge() const
 {
-  xt::xtensor<size_t,1> out = xt::empty<size_t>({m_nely+1});
+  xt::xtensor<size_t,1> out = xt::empty<size_t>({m_nely + 1});
 
-  for ( size_t iy = 0 ; iy < m_nely+1 ; ++iy )
-    out(iy) = iy*(m_nelx+1) + m_nelz*(m_nelx+1)*(m_nely+1);
+  for (size_t iy = 0; iy < m_nely + 1; ++iy) {
+    out(iy) = iy * (m_nelx + 1) + m_nelz * (m_nelx + 1) * (m_nely + 1);
+  }
 
   return out;
 }
@@ -364,10 +396,11 @@ inline xt::xtensor<size_t,1> Regular::nodesBackLeftEdge() const
 
 inline xt::xtensor<size_t,1> Regular::nodesBackRightEdge() const
 {
-  xt::xtensor<size_t,1> out = xt::empty<size_t>({m_nely+1});
+  xt::xtensor<size_t,1> out = xt::empty<size_t>({m_nely + 1});
 
-  for ( size_t iy = 0 ; iy < m_nely+1 ; ++iy )
-    out(iy) = iy*(m_nelx+1) + m_nelz*(m_nelx+1)*(m_nely+1) + m_nelx;
+  for (size_t iy = 0; iy < m_nely + 1; ++iy) {
+    out(iy) = iy * (m_nelx + 1) + m_nelz * (m_nelx + 1) * (m_nely + 1) + m_nelx;
+  }
 
   return out;
 }
@@ -376,10 +409,11 @@ inline xt::xtensor<size_t,1> Regular::nodesBackRightEdge() const
 
 inline xt::xtensor<size_t,1> Regular::nodesBottomLeftEdge() const
 {
-  xt::xtensor<size_t,1> out = xt::empty<size_t>({m_nelz+1});
+  xt::xtensor<size_t,1> out = xt::empty<size_t>({m_nelz + 1});
 
-  for ( size_t iz = 0 ; iz < m_nelz+1 ; ++iz )
-    out(iz) = iz*(m_nelx+1)*(m_nely+1);
+  for (size_t iz = 0; iz < m_nelz + 1; ++iz) {
+    out(iz) = iz * (m_nelx + 1) * (m_nely + 1);
+  }
 
   return out;
 }
@@ -388,10 +422,11 @@ inline xt::xtensor<size_t,1> Regular::nodesBottomLeftEdge() const
 
 inline xt::xtensor<size_t,1> Regular::nodesBottomRightEdge() const
 {
-  xt::xtensor<size_t,1> out = xt::empty<size_t>({m_nelz+1});
+  xt::xtensor<size_t,1> out = xt::empty<size_t>({m_nelz + 1});
 
-  for ( size_t iz = 0 ; iz < m_nelz+1 ; ++iz )
-    out(iz) = iz*(m_nelx+1)*(m_nely+1) + m_nelx;
+  for (size_t iz = 0; iz < m_nelz + 1; ++iz) {
+    out(iz) = iz * (m_nelx + 1) * (m_nely + 1) + m_nelx;
+  }
 
   return out;
 }
@@ -400,10 +435,11 @@ inline xt::xtensor<size_t,1> Regular::nodesBottomRightEdge() const
 
 inline xt::xtensor<size_t,1> Regular::nodesTopLeftEdge() const
 {
-  xt::xtensor<size_t,1> out = xt::empty<size_t>({m_nelz+1});
+  xt::xtensor<size_t,1> out = xt::empty<size_t>({m_nelz + 1});
 
-  for ( size_t iz = 0 ; iz < m_nelz+1 ; ++iz )
-    out(iz) = m_nely*(m_nelx+1) + iz*(m_nelx+1)*(m_nely+1);
+  for (size_t iz = 0; iz < m_nelz + 1; ++iz) {
+    out(iz) = m_nely * (m_nelx + 1) + iz * (m_nelx + 1) * (m_nely + 1);
+  }
 
   return out;
 }
@@ -412,37 +448,108 @@ inline xt::xtensor<size_t,1> Regular::nodesTopLeftEdge() const
 
 inline xt::xtensor<size_t,1> Regular::nodesTopRightEdge() const
 {
-  xt::xtensor<size_t,1> out = xt::empty<size_t>({m_nelz+1});
+  xt::xtensor<size_t,1> out = xt::empty<size_t>({m_nelz + 1});
 
-  for ( size_t iz = 0 ; iz < m_nelz+1 ; ++iz )
-    out(iz) = m_nely*(m_nelx+1) + iz*(m_nelx+1)*(m_nely+1) + m_nelx;
+  for (size_t iz = 0; iz < m_nelz + 1; ++iz) {
+    out(iz) = m_nely * (m_nelx + 1) + iz * (m_nelx + 1) * (m_nely + 1) + m_nelx;
+  }
 
   return out;
 }
 
 // -------------------------------------------------------------------------------------------------
 
-inline xt::xtensor<size_t,1> Regular::nodesBottomFrontEdge() const { return nodesFrontBottomEdge(); }
-inline xt::xtensor<size_t,1> Regular::nodesBottomBackEdge()  const { return nodesBackBottomEdge();  }
-inline xt::xtensor<size_t,1> Regular::nodesTopFrontEdge()    const { return nodesFrontTopEdge();    }
-inline xt::xtensor<size_t,1> Regular::nodesTopBackEdge()     const { return nodesBackTopEdge();     }
-inline xt::xtensor<size_t,1> Regular::nodesLeftBottomEdge()  const { return nodesBottomLeftEdge();  }
-inline xt::xtensor<size_t,1> Regular::nodesLeftFrontEdge()   const { return nodesFrontLeftEdge();   }
-inline xt::xtensor<size_t,1> Regular::nodesLeftBackEdge()    const { return nodesBackLeftEdge();    }
-inline xt::xtensor<size_t,1> Regular::nodesLeftTopEdge()     const { return nodesTopLeftEdge();     }
-inline xt::xtensor<size_t,1> Regular::nodesRightBottomEdge() const { return nodesBottomRightEdge(); }
-inline xt::xtensor<size_t,1> Regular::nodesRightTopEdge()    const { return nodesTopRightEdge();    }
-inline xt::xtensor<size_t,1> Regular::nodesRightFrontEdge()  const { return nodesFrontRightEdge();  }
-inline xt::xtensor<size_t,1> Regular::nodesRightBackEdge()   const { return nodesBackRightEdge();   }
+inline xt::xtensor<size_t,1> Regular::nodesBottomFrontEdge() const
+{
+  return nodesFrontBottomEdge();
+}
+
+// -------------------------------------------------------------------------------------------------
+
+inline xt::xtensor<size_t,1> Regular::nodesBottomBackEdge() const
+{
+  return nodesBackBottomEdge();
+}
+
+// -------------------------------------------------------------------------------------------------
+
+inline xt::xtensor<size_t,1> Regular::nodesTopFrontEdge() const
+{
+  return nodesFrontTopEdge();
+}
+
+// -------------------------------------------------------------------------------------------------
+
+inline xt::xtensor<size_t,1> Regular::nodesTopBackEdge() const
+{
+  return nodesBackTopEdge();
+}
+
+// -------------------------------------------------------------------------------------------------
+
+inline xt::xtensor<size_t,1> Regular::nodesLeftBottomEdge() const
+{
+  return nodesBottomLeftEdge();
+}
+
+// -------------------------------------------------------------------------------------------------
+
+inline xt::xtensor<size_t,1> Regular::nodesLeftFrontEdge() const
+{
+  return nodesFrontLeftEdge();
+}
+
+// -------------------------------------------------------------------------------------------------
+
+inline xt::xtensor<size_t,1> Regular::nodesLeftBackEdge() const
+{
+  return nodesBackLeftEdge();
+}
+
+// -------------------------------------------------------------------------------------------------
+
+inline xt::xtensor<size_t,1> Regular::nodesLeftTopEdge() const
+{
+  return nodesTopLeftEdge();
+}
+
+// -------------------------------------------------------------------------------------------------
+
+inline xt::xtensor<size_t,1> Regular::nodesRightBottomEdge() const
+{
+  return nodesBottomRightEdge();
+}
+
+// -------------------------------------------------------------------------------------------------
+
+inline xt::xtensor<size_t,1> Regular::nodesRightTopEdge() const
+{
+  return nodesTopRightEdge();
+}
+
+// -------------------------------------------------------------------------------------------------
+
+inline xt::xtensor<size_t,1> Regular::nodesRightFrontEdge() const
+{
+  return nodesFrontRightEdge();
+}
+
+// -------------------------------------------------------------------------------------------------
+
+inline xt::xtensor<size_t,1> Regular::nodesRightBackEdge() const
+{
+  return nodesBackRightEdge();
+}
 
 // ------------------- node-numbers along the front-bottom edge, without corners -------------------
 
 inline xt::xtensor<size_t,1> Regular::nodesFrontBottomOpenEdge() const
 {
-  xt::xtensor<size_t,1> out = xt::empty<size_t>({m_nelx-1});
+  xt::xtensor<size_t,1> out = xt::empty<size_t>({m_nelx - 1});
 
-  for ( size_t ix = 1 ; ix < m_nelx ; ++ix )
-    out(ix-1) = ix;
+  for (size_t ix = 1; ix < m_nelx; ++ix) {
+    out(ix - 1) = ix;
+  }
 
   return out;
 }
@@ -451,10 +558,11 @@ inline xt::xtensor<size_t,1> Regular::nodesFrontBottomOpenEdge() const
 
 inline xt::xtensor<size_t,1> Regular::nodesFrontTopOpenEdge() const
 {
-  xt::xtensor<size_t,1> out = xt::empty<size_t>({m_nelx-1});
+  xt::xtensor<size_t,1> out = xt::empty<size_t>({m_nelx - 1});
 
-  for ( size_t ix = 1 ; ix < m_nelx ; ++ix )
-    out(ix-1) = ix + m_nely*(m_nelx+1);
+  for (size_t ix = 1; ix < m_nelx; ++ix) {
+    out(ix - 1) = ix + m_nely * (m_nelx + 1);
+  }
 
   return out;
 }
@@ -463,10 +571,11 @@ inline xt::xtensor<size_t,1> Regular::nodesFrontTopOpenEdge() const
 
 inline xt::xtensor<size_t,1> Regular::nodesFrontLeftOpenEdge() const
 {
-  xt::xtensor<size_t,1> out = xt::empty<size_t>({m_nely-1});
+  xt::xtensor<size_t,1> out = xt::empty<size_t>({m_nely - 1});
 
-  for ( size_t iy = 1 ; iy < m_nely ; ++iy )
-    out(iy-1) = iy*(m_nelx+1);
+  for (size_t iy = 1; iy < m_nely; ++iy) {
+    out(iy - 1) = iy * (m_nelx + 1);
+  }
 
   return out;
 }
@@ -475,10 +584,11 @@ inline xt::xtensor<size_t,1> Regular::nodesFrontLeftOpenEdge() const
 
 inline xt::xtensor<size_t,1> Regular::nodesFrontRightOpenEdge() const
 {
-  xt::xtensor<size_t,1> out = xt::empty<size_t>({m_nely-1});
+  xt::xtensor<size_t,1> out = xt::empty<size_t>({m_nely - 1});
 
-  for ( size_t iy = 1 ; iy < m_nely ; ++iy )
-    out(iy-1) = iy*(m_nelx+1) + m_nelx;
+  for (size_t iy = 1; iy < m_nely; ++iy) {
+    out(iy - 1) = iy * (m_nelx + 1) + m_nelx;
+  }
 
   return out;
 }
@@ -487,10 +597,11 @@ inline xt::xtensor<size_t,1> Regular::nodesFrontRightOpenEdge() const
 
 inline xt::xtensor<size_t,1> Regular::nodesBackBottomOpenEdge() const
 {
-  xt::xtensor<size_t,1> out = xt::empty<size_t>({m_nelx-1});
+  xt::xtensor<size_t,1> out = xt::empty<size_t>({m_nelx - 1});
 
-  for ( size_t ix = 1 ; ix < m_nelx ; ++ix )
-    out(ix-1) = ix + m_nelz*(m_nely+1)*(m_nelx+1);
+  for (size_t ix = 1; ix < m_nelx; ++ix) {
+    out(ix - 1) = ix + m_nelz * (m_nely + 1) * (m_nelx + 1);
+  }
 
   return out;
 }
@@ -499,10 +610,11 @@ inline xt::xtensor<size_t,1> Regular::nodesBackBottomOpenEdge() const
 
 inline xt::xtensor<size_t,1> Regular::nodesBackTopOpenEdge() const
 {
-  xt::xtensor<size_t,1> out = xt::empty<size_t>({m_nelx-1});
+  xt::xtensor<size_t,1> out = xt::empty<size_t>({m_nelx - 1});
 
-  for ( size_t ix = 1 ; ix < m_nelx ; ++ix )
-    out(ix-1) = m_nely*(m_nelx+1) + ix + m_nelz*(m_nely+1)*(m_nelx+1);
+  for (size_t ix = 1; ix < m_nelx; ++ix) {
+    out(ix - 1) = m_nely * (m_nelx + 1) + ix + m_nelz * (m_nely + 1) * (m_nelx + 1);
+  }
 
   return out;
 }
@@ -511,10 +623,11 @@ inline xt::xtensor<size_t,1> Regular::nodesBackTopOpenEdge() const
 
 inline xt::xtensor<size_t,1> Regular::nodesBackLeftOpenEdge() const
 {
-  xt::xtensor<size_t,1> out = xt::empty<size_t>({m_nely-1});
+  xt::xtensor<size_t,1> out = xt::empty<size_t>({m_nely - 1});
 
-  for ( size_t iy = 1 ; iy < m_nely ; ++iy )
-    out(iy-1) = iy*(m_nelx+1) + m_nelz*(m_nelx+1)*(m_nely+1);
+  for (size_t iy = 1; iy < m_nely; ++iy) {
+    out(iy - 1) = iy * (m_nelx + 1) + m_nelz * (m_nelx + 1) * (m_nely + 1);
+  }
 
   return out;
 }
@@ -523,10 +636,11 @@ inline xt::xtensor<size_t,1> Regular::nodesBackLeftOpenEdge() const
 
 inline xt::xtensor<size_t,1> Regular::nodesBackRightOpenEdge() const
 {
-  xt::xtensor<size_t,1> out = xt::empty<size_t>({m_nely-1});
+  xt::xtensor<size_t,1> out = xt::empty<size_t>({m_nely - 1});
 
-  for ( size_t iy = 1 ; iy < m_nely ; ++iy )
-    out(iy-1) = iy*(m_nelx+1) + m_nelz*(m_nelx+1)*(m_nely+1) + m_nelx;
+  for (size_t iy = 1; iy < m_nely; ++iy) {
+    out(iy - 1) = iy * (m_nelx + 1) + m_nelz * (m_nelx + 1) * (m_nely + 1) + m_nelx;
+  }
 
   return out;
 }
@@ -535,10 +649,11 @@ inline xt::xtensor<size_t,1> Regular::nodesBackRightOpenEdge() const
 
 inline xt::xtensor<size_t,1> Regular::nodesBottomLeftOpenEdge() const
 {
-  xt::xtensor<size_t,1> out = xt::empty<size_t>({m_nelz-1});
+  xt::xtensor<size_t,1> out = xt::empty<size_t>({m_nelz - 1});
 
-  for ( size_t iz = 1 ; iz < m_nelz ; ++iz )
-    out(iz-1) = iz*(m_nelx+1)*(m_nely+1);
+  for (size_t iz = 1; iz < m_nelz; ++iz) {
+    out(iz - 1) = iz * (m_nelx + 1) * (m_nely + 1);
+  }
 
   return out;
 }
@@ -547,10 +662,11 @@ inline xt::xtensor<size_t,1> Regular::nodesBottomLeftOpenEdge() const
 
 inline xt::xtensor<size_t,1> Regular::nodesBottomRightOpenEdge() const
 {
-  xt::xtensor<size_t,1> out = xt::empty<size_t>({m_nelz-1});
+  xt::xtensor<size_t,1> out = xt::empty<size_t>({m_nelz - 1});
 
-  for ( size_t iz = 1 ; iz < m_nelz ; ++iz )
-    out(iz-1) = iz*(m_nelx+1)*(m_nely+1) + m_nelx;
+  for (size_t iz = 1; iz < m_nelz; ++iz) {
+    out(iz - 1) = iz * (m_nelx + 1) * (m_nely + 1) + m_nelx;
+  }
 
   return out;
 }
@@ -559,10 +675,11 @@ inline xt::xtensor<size_t,1> Regular::nodesBottomRightOpenEdge() const
 
 inline xt::xtensor<size_t,1> Regular::nodesTopLeftOpenEdge() const
 {
-  xt::xtensor<size_t,1> out = xt::empty<size_t>({m_nelz-1});
+  xt::xtensor<size_t,1> out = xt::empty<size_t>({m_nelz - 1});
 
-  for ( size_t iz = 1 ; iz < m_nelz ; ++iz )
-    out(iz-1) = m_nely*(m_nelx+1) + iz*(m_nelx+1)*(m_nely+1);
+  for (size_t iz = 1; iz < m_nelz; ++iz) {
+    out(iz - 1) = m_nely * (m_nelx + 1) + iz * (m_nelx + 1) * (m_nely + 1);
+  }
 
   return out;
 }
@@ -571,10 +688,11 @@ inline xt::xtensor<size_t,1> Regular::nodesTopLeftOpenEdge() const
 
 inline xt::xtensor<size_t,1> Regular::nodesTopRightOpenEdge() const
 {
-  xt::xtensor<size_t,1> out = xt::empty<size_t>({m_nelz-1});
+  xt::xtensor<size_t,1> out = xt::empty<size_t>({m_nelz - 1});
 
-  for ( size_t iz = 1 ; iz < m_nelz ; ++iz )
-    out(iz-1) = m_nely*(m_nelx+1) + iz*(m_nelx+1)*(m_nely+1) + m_nelx;
+  for (size_t iz = 1; iz < m_nelz; ++iz) {
+    out(iz - 1) = m_nely * (m_nelx + 1) + iz * (m_nelx + 1) * (m_nely + 1) + m_nelx;
+  }
 
   return out;
 }
