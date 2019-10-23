@@ -132,7 +132,7 @@ inline xt::xtensor<size_t,2> Regular::conn() const
 
 inline xt::xtensor<size_t,1> Regular::nodesBottomEdge() const
 {
-  xt::xtensor<size_t,1> out = xt::arange<size_t>(m_nelx + 1);
+  xt::xtensor<size_t,1> out = xt::arange<size_t>(m_nelx + 1ul);
   return out;
 }
 
@@ -140,31 +140,34 @@ inline xt::xtensor<size_t,1> Regular::nodesBottomEdge() const
 
 inline xt::xtensor<size_t,1> Regular::nodesTopEdge() const
 {
-  xt::xtensor<size_t,1> out = xt::arange<size_t>(m_nelx + 1);
-  return out + m_nely * (m_nelx + 1);
+  xt::xtensor<size_t,1> out = xt::arange<size_t>(m_nelx + 1ul);
+  out += m_nely * (m_nelx + 1ul);
+  return out;
 }
 
 // -------------------------------------------------------------------------------------------------
 
 inline xt::xtensor<size_t,1> Regular::nodesLeftEdge() const
 {
-  xt::xtensor<size_t,1> out = xt::arange<size_t>(m_nely + 1);
-  return out * (m_nelx + 1);
+  xt::xtensor<size_t,1> out = xt::arange<size_t>(m_nely + 1ul);
+  out *= (m_nelx + 1ul);
+  return out;
 }
 
 // -------------------------------------------------------------------------------------------------
 
 inline xt::xtensor<size_t,1> Regular::nodesRightEdge() const
 {
-  xt::xtensor<size_t,1> out = xt::arange<size_t>(m_nely + 1);
-  return out * (m_nelx + 1) + m_nelx;
+  xt::xtensor<size_t,1> out = xt::arange<size_t>(m_nely + 1ul);
+  out = out * (m_nelx + 1ul) + m_nelx;
+  return out;
 }
 
 // -------------------------------------------------------------------------------------------------
 
 inline xt::xtensor<size_t,1> Regular::nodesBottomOpenEdge() const
 {
-  xt::xtensor<size_t,1> out = xt::arange<size_t>(1, m_nelx);
+  xt::xtensor<size_t,1> out = xt::arange<size_t>(1ul, m_nelx);
   return out;
 }
 
@@ -173,23 +176,26 @@ inline xt::xtensor<size_t,1> Regular::nodesBottomOpenEdge() const
 inline xt::xtensor<size_t,1> Regular::nodesTopOpenEdge() const
 {
   xt::xtensor<size_t,1> out = xt::arange<size_t>(1, m_nelx);
-  return out + m_nely * (m_nelx + 1);
+  out += m_nely * (m_nelx + 1);
+  return out;
 }
 
 // -------------------------------------------------------------------------------------------------
 
 inline xt::xtensor<size_t,1> Regular::nodesLeftOpenEdge() const
 {
-  xt::xtensor<size_t,1> out = xt::arange<size_t>(1, m_nely);
-  return out * (m_nelx + 1);
+  xt::xtensor<size_t,1> out = xt::arange<size_t>(1ul, m_nely);
+  out *= (m_nelx + 1ul);
+  return out;
 }
 
 // -------------------------------------------------------------------------------------------------
 
 inline xt::xtensor<size_t,1> Regular::nodesRightOpenEdge() const
 {
-  xt::xtensor<size_t,1> out = xt::arange<size_t>(1, m_nely);
-  return out * (m_nelx + 1) + m_nelx;
+  xt::xtensor<size_t,1> out = xt::arange<size_t>(1ul, m_nely);
+  out = out * (m_nelx + 1ul) + m_nelx;
+  return out;
 }
 
 // -------------------------------------------------------------------------------------------------
@@ -1238,7 +1244,7 @@ inline FineLayer2Regular::FineLayer2Regular(const GooseFEM::Mesh::Quad4::FineLay
     if (m_finelayer.m_refine(iy) == -1)
     {
       // element numbers of the FineLayer-mesh along this layer
-      xt::xtensor<size_t,1> idx = xt::arange<size_t>(nelx(iy))
+      xt::xtensor<size_t,1> idx = xt::arange<size_t>(nelx(iy));
       xt::xtensor<size_t,1> el_old = start(iy) + idx;
 
       // loop along this layer of the FineLayer-mesh
