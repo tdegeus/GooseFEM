@@ -770,14 +770,18 @@ inline xt::xtensor<size_t,1> FineLayer::elementsMiddleLayer() const
   size_t iy = (nely-1)/2;
 
   // element indices
-  return m_startElem(iy) + xt::arange<size_t>(m_nelx(iy));
+  xt::xtensor<size_t,1> out = xt::arange<size_t>(m_nelx(iy));
+  out += m_startElem(iy);
+  return out;
 }
 
 // -------------------------------------------------------------------------------------------------
 
 inline xt::xtensor<size_t,1> FineLayer::nodesBottomEdge() const
 {
-  return m_startNode(0) + xt::arange<size_t>(m_nelx(0)+1);
+  xt::xtensor<size_t,1> out = xt::arange<size_t>(m_nelx(0) + 1);
+  out += m_startNode(0);
+  return out;
 }
 
 // -------------------------------------------------------------------------------------------------
@@ -786,7 +790,9 @@ inline xt::xtensor<size_t,1> FineLayer::nodesTopEdge() const
 {
   size_t nely = m_nhy.size();
 
-  return m_startNode(nely) + xt::arange<size_t>(m_nelx(nely-1)+1);
+  xt::xtensor<size_t,1> out = xt::arange<size_t>(m_nelx(nely - 1) + 1);
+  out += m_startNode(nely);
+  return out;
 }
 
 // -------------------------------------------------------------------------------------------------
@@ -795,15 +801,15 @@ inline xt::xtensor<size_t,1> FineLayer::nodesLeftEdge() const
 {
   size_t nely = m_nhy.size();
 
-  xt::xtensor<size_t,1> out = xt::empty<size_t>({nely+1});
+  xt::xtensor<size_t,1> out = xt::empty<size_t>({nely + 1});
 
-  size_t i =  0;
-  size_t j = (nely+1)/2;
-  size_t k = (nely-1)/2;
-  size_t l =  nely;
+  size_t i = 0;
+  size_t j = (nely + 1) / 2;
+  size_t k = (nely - 1) / 2;
+  size_t l = nely;
 
-  xt::view(out, xt::range(i  , j  )) = xt::view(m_startNode, xt::range(i  , j  ));
-  xt::view(out, xt::range(k+1, l+1)) = xt::view(m_startNode, xt::range(k+1, l+1));
+  xt::view(out, xt::range(i, j)) = xt::view(m_startNode, xt::range(i, j));
+  xt::view(out, xt::range(k + 1, l + 1)) = xt::view(m_startNode, xt::range(k + 1, l + 1));
 
   return out;
 }
@@ -814,12 +820,12 @@ inline xt::xtensor<size_t,1> FineLayer::nodesRightEdge() const
 {
   size_t nely = m_nhy.size();
 
-  xt::xtensor<size_t,1> out = xt::empty<size_t>({nely+1});
+  xt::xtensor<size_t,1> out = xt::empty<size_t>({nely + 1});
 
-  size_t i =  0;
-  size_t j = (nely+1)/2;
-  size_t k = (nely-1)/2;
-  size_t l =  nely;
+  size_t i = 0;
+  size_t j = (nely + 1) / 2;
+  size_t k = (nely - 1) / 2;
+  size_t l = nely;
 
   xt::view(out, xt::range(i, j)) =
     xt::view(m_startNode, xt::range(i, j)) + xt::view(m_nelx, xt::range(i, j));
