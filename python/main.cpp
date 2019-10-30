@@ -21,7 +21,7 @@ namespace py = pybind11;
 #include "VectorPartitionedTyings.hpp"
 #include "Matrix.hpp"
 #include "MatrixPartitioned.hpp"
-#include "MatrixPartitionedTyings.hpp"
+// #include "MatrixPartitionedTyings.hpp"
 #include "MatrixDiagonal.hpp"
 #include "MatrixDiagonalPartitioned.hpp"
 #include "Element.hpp"
@@ -50,7 +50,7 @@ init_VectorPartitioned(m);
 init_VectorPartitionedTyings(m);
 init_Matrix(m);
 init_MatrixPartitioned(m);
-init_MatrixPartitionedTyings(m);
+// init_MatrixPartitionedTyings(m);
 init_MatrixDiagonal(m);
 init_MatrixDiagonalPartitioned(m);
 
