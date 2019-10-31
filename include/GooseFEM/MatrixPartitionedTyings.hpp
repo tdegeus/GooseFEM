@@ -131,6 +131,22 @@ inline size_t MatrixPartitionedTyings<Solver>::nnp() const
 // -------------------------------------------------------------------------------------------------
 
 template <class Solver>
+inline size_t MatrixPartitionedTyings<Solver>::nni() const
+{
+  return m_nni;
+}
+
+// -------------------------------------------------------------------------------------------------
+
+template <class Solver>
+inline size_t MatrixPartitionedTyings<Solver>::nnd() const
+{
+  return m_nnd;
+}
+
+// -------------------------------------------------------------------------------------------------
+
+template <class Solver>
 inline xt::xtensor<size_t,2> MatrixPartitionedTyings<Solver>::dofs() const
 {
   return m_dofs;
