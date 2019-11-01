@@ -7,14 +7,12 @@ import numpy             as np
 
 plt.style.use(['goose', 'goose-latex'])
 
-# open file
-file = h5py.File('main.h5', 'r')
-
 # read fields
-coor = file['/coor'][...]
-conn = file['/conn'][...]
-disp = file['/disp'][...]
-Sig  = file['/Sig' ][...]
+with h5py.File('output.h5', 'r') as data:
+  coor = data['/coor'][...]
+  conn = data['/conn'][...]
+  disp = data['/disp'][...]
+  Sig  = data['/Sig' ][...]
 
 # extract dimension
 nelem = conn.shape[0]
@@ -42,10 +40,8 @@ sigeq = np.sqrt(3./2.*ddot22(Sigd,Sigd))
 # plot
 
 fig, ax = plt.subplots()
-
 gplt.patch(coor=coor+disp, conn=conn, cindex=sigeq, cmap='jet', axis=ax, clim=(0,0.1))
-
 gplt.patch(coor=coor, conn=conn, linestyle='--', axis=ax)
-
-plt.show()
+plt.savefig('plot.pdf')
+plt.close()
 

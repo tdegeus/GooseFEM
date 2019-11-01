@@ -52,11 +52,6 @@ int main()
   xt::xtensor<double,2> fext = xt::zeros<double>(coor.shape());
   xt::xtensor<double,2> fres = xt::zeros<double>(coor.shape());
 
-  // DOF values
-  xt::xtensor<double,1> u_u    = xt::zeros<double>({vector.nnu()});
-  xt::xtensor<double,1> fres_u = xt::zeros<double>({vector.nnu()});
-  xt::xtensor<double,1> fext_p = xt::zeros<double>({vector.nnp()});
-
   // element vectors
   xt::xtensor<double,3> ue = xt::empty<double>({nelem, nne, ndim});
   xt::xtensor<double,3> fe = xt::empty<double>({nelem, nne, ndim});
@@ -97,24 +92,16 @@ int main()
   K.assemble(Ke);
 
   // set fixed displacements
-  xt::xtensor<double,1> u_p = xt::concatenate(xt::xtuple(
-    +0.1 * xt::ones<double>({nodesRight .size()}),
-    -0.1 * xt::ones<double>({nodesTop   .size()}),
-     0.0 * xt::ones<double>({nodesLeft  .size()}),
-     0.0 * xt::ones<double>({nodesBottom.size()})
-  ));
+  xt::view(disp, xt::keep(nodesRight ), 0) = +0.1;
+  xt::view(disp, xt::keep(nodesTop   ), 1) = -0.1;
+  xt::view(disp, xt::keep(nodesLeft  ), 0) =  0.0;
+  xt::view(disp, xt::keep(nodesBottom), 1) =  0.0;
 
   // residual
   xt::noalias(fres) = fext - fint;
 
-  // partition
-  vector.asDofs_u(fres, fres_u);
-
   // solve
-  K.solve_u(fres_u, u_p, u_u);
-
-  // assemble to nodal vector
-  vector.asNode(u_u, u_p, disp);
+  K.solve(fres, disp);
 
   // post-process
   // ------------
@@ -129,23 +116,20 @@ int main()
   vector.assembleNode(fe, fint);
 
   // apply reaction force
-  vector.asDofs_p(fint, fext_p);
+  vector.copy_p(fint, fext);
 
   // residual
   xt::noalias(fres) = fext - fint;
 
-  // partition
-  vector.asDofs_u(fres, fres_u);
-
   // print residual
-  std::cout << xt::sum(xt::abs(fres_u))[0] / xt::sum(xt::abs(fext_p))[0] << std::endl;
+  std::cout << xt::sum(xt::abs(fres))[0] / xt::sum(xt::abs(fext))[0] << std::endl;
 
   // average stress per node
   xt::xtensor<double,4> dV = elem.DV(2);
   xt::xtensor<double,3> SigAv = xt::average(Sig, dV, {1});
 
   // write output
-  H5Easy::File file("main.h5", H5Easy::File::Overwrite);
+  H5Easy::File file("output.h5", H5Easy::File::Overwrite);
   H5Easy::dump(file, "/coor", coor);
   H5Easy::dump(file, "/conn", conn);
   H5Easy::dump(file, "/disp", disp);

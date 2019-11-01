@@ -16,7 +16,8 @@ include(GNUInstallDirs)
 
 # options
 option(PKGCONFIG "Build pkg-config" ON)
-option(BUILD_TESTS "${PROJECT_NAME} test suite" OFF)
+option(BUILD_TESTS "${PROJECT_NAME} Build tests" OFF)
+option(BUILD_EXAMPLES "${PROJECT_NAME} Build examples" OFF)
 
 # project settings
 # ----------------
@@ -111,9 +112,14 @@ configure_package_config_file(
 # install/build
 # -------------
 
-# build test cases
+# build tests
 if(BUILD_TESTS)
   add_subdirectory(test)
+endif()
+
+# build examples
+if(BUILD_EXAMPLES)
+  add_subdirectory(docs/examples)
 endif()
 
 # disable pkg-config for native Windows builds
