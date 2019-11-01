@@ -12,7 +12,6 @@ matrix:
           packages:
             - g++-5
             - python3
-            - libeigen3-dev
       env: COMPILER=gcc GCC=5
     - os: linux
       addons:
@@ -22,7 +21,6 @@ matrix:
           packages:
             - g++-6
             - python3
-            - libeigen3-dev
       env: COMPILER=gcc GCC=6
     - os: linux
       addons:
@@ -32,7 +30,6 @@ matrix:
           packages:
             - g++-7
             - python3
-            - libeigen3-dev
       env: COMPILER=gcc GCC=7
 env:
   global:
@@ -41,6 +38,7 @@ env:
     - MINCONDA_OSX="MacOSX-x86_64"
 before_install:
     - sudo apt-get -qq update
+    - sudo apt-get install libeigen3-dev
     - sudo apt-get install -y texlive-base texlive-latex-base texlive-latex-extra texlive-fonts-recommended texlive-fonts-extra
     - sudo apt-get install dvipng
     - |
@@ -88,12 +86,28 @@ install:
     - rm -r "${build_dir}"
     - mkdir "${build_dir}"
     - cd "${build_dir}"
+    # install HighFive
+    - git clone https://github.com/BlueBrain/HighFive.git
+    - cd HighFive
+    - mkdir build
+    - cd build
+    - cmake .. -DHIGHFIVE_EXAMPLES=OFF -DUSE_BOOST=OFF
+    - sudo make install
+    # install HighFive
+    - git clone https://github.com/tdegeus/GMatElastic.git
+    - cd GMatElastic
+    - mkdir build
+    - cd build
+    - cmake ..
+    - sudo make install
+    - cd ..
+    - python3 setup.py build
+    - python3 setup.py install
     # install catch
     - git clone https://github.com/catchorg/Catch2.git
     - cd Catch2
     - mkdir build
     - cd build
-    - mkdir opt
     - cmake .. -DCATCH_BUILD_TESTING=OFF
     - sudo make install
     # make test-cases

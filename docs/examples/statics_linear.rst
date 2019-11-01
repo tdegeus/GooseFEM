@@ -13,9 +13,8 @@ Consider a uniform linear elastic bar that is extended by a uniform fixed displa
 
 Below an example is described line-by-line. The full example can be downloaded:
 
-| :download:`main.cpp <statics/FixedDisplacements_LinearElastic/example/main.cpp>`
-| :download:`CMakeLists.txt <statics/FixedDisplacements_LinearElastic/example/CMakeLists.txt>`
-| :download:`plot.py <statics/FixedDisplacements_LinearElastic/example/plot.py>`
+| :download:`example.cpp <statics/FixedDisplacements_LinearElastic/example.cpp>`
+| :download:`plot.py <statics/FixedDisplacements_LinearElastic/plot.py>`
 
 .. todo::
 
@@ -23,12 +22,12 @@ Below an example is described line-by-line. The full example can be downloaded:
 
 .. note::
 
-  This example is also available using the Python interface (:download:`main.py <statics/FixedDisplacements_LinearElastic/example/main.py>`). Compared to the C++ API, the Python API requires more data-allocation, in particular for the functions "AsElement" and "AssembleNode". See: :ref:`conventions_allocation`.
+  This example is also available using the Python interface (:download:`example.py <statics/FixedDisplacements_LinearElastic/example.py>`). Compared to the C++ API, the Python API requires more data-allocation, in particular for the functions "AsElement" and "AssembleNode". See: :ref:`conventions_allocation`.
 
 Include library
 ===============
 
-.. literalinclude:: statics/FixedDisplacements_LinearElastic/example/main.cpp
+.. literalinclude:: statics/FixedDisplacements_LinearElastic/example.cpp
    :language: cpp
    :lines: 1-4
    :emphasize-lines: 1-2
@@ -38,7 +37,7 @@ The first step is to include the header-only library. Note that for this example
 Define mesh
 ===========
 
-.. literalinclude:: statics/FixedDisplacements_LinearElastic/example/main.cpp
+.. literalinclude:: statics/FixedDisplacements_LinearElastic/example.cpp
    :language: cpp
    :lines: 11-28
    :emphasize-lines: 2
@@ -58,7 +57,7 @@ Note that:
 Define partitioning
 ===================
 
-.. literalinclude:: statics/FixedDisplacements_LinearElastic/example/main.cpp
+.. literalinclude:: statics/FixedDisplacements_LinearElastic/example.cpp
    :language: cpp
    :lines: 33-38
 
@@ -77,7 +76,7 @@ where the subscript :math:`u` and :math:`p` respectively denote *Unknown* and *P
 (Avoid) Book-keeping
 ====================
 
-.. literalinclude:: statics/FixedDisplacements_LinearElastic/example/main.cpp
+.. literalinclude:: statics/FixedDisplacements_LinearElastic/example.cpp
    :language: cpp
    :lines: 44
    :emphasize-lines: 1
@@ -106,7 +105,7 @@ To switch between the three of GooseFEM's data-representations, an instance of t
 System matrix
 =============
 
-.. literalinclude:: statics/FixedDisplacements_LinearElastic/example/main.cpp
+.. literalinclude:: statics/FixedDisplacements_LinearElastic/example.cpp
    :language: cpp
    :lines: 47
    :emphasize-lines: 1
@@ -125,7 +124,7 @@ We now also allocate the system/stiffness system (stored as sparse matrix). Like
 Allocate nodal vectors
 ======================
 
-.. literalinclude:: statics/FixedDisplacements_LinearElastic/example/main.cpp
+.. literalinclude:: statics/FixedDisplacements_LinearElastic/example.cpp
    :language: cpp
    :lines: 50-53
 
@@ -137,7 +136,7 @@ Allocate nodal vectors
 Allocate element vectors
 ========================
 
-.. literalinclude:: statics/FixedDisplacements_LinearElastic/example/main.cpp
+.. literalinclude:: statics/FixedDisplacements_LinearElastic/example.cpp
    :language: cpp
    :lines: 56-58
 
@@ -152,7 +151,7 @@ Allocate element vectors
 Element definition
 ==================
 
-.. literalinclude:: statics/FixedDisplacements_LinearElastic/example/main.cpp
+.. literalinclude:: statics/FixedDisplacements_LinearElastic/example.cpp
    :language: cpp
    :lines: 64-65
 
@@ -172,7 +171,7 @@ At this moment the interpolation and quadrature is allocated. The shape function
 Material definition
 ===================
 
-.. literalinclude:: statics/FixedDisplacements_LinearElastic/example/main.cpp
+.. literalinclude:: statics/FixedDisplacements_LinearElastic/example.cpp
    :language: cpp
    :lines: 68
 
@@ -194,7 +193,7 @@ We now define a uniform linear elastic material, using an external library that 
 Integration point tensors
 =========================
 
-.. literalinclude:: statics/FixedDisplacements_LinearElastic/example/main.cpp
+.. literalinclude:: statics/FixedDisplacements_LinearElastic/example.cpp
    :language: cpp
    :lines: 71-74
 
@@ -203,7 +202,7 @@ These strain, stress, and stiffness tensors per integration point are now alloca
 Compute strain
 ==============
 
-.. literalinclude:: statics/FixedDisplacements_LinearElastic/example/main.cpp
+.. literalinclude:: statics/FixedDisplacements_LinearElastic/example.cpp
    :language: cpp
    :lines: 80-81
 
@@ -226,7 +225,7 @@ The strain per integration point is now computed using the current nodal displac
 Compute stress and tangent
 ==========================
 
-.. literalinclude:: statics/FixedDisplacements_LinearElastic/example/main.cpp
+.. literalinclude:: statics/FixedDisplacements_LinearElastic/example.cpp
    :language: cpp
    :lines: 84
 
@@ -239,7 +238,7 @@ The stress and stiffness tensors are now computed for each integration point (co
 Assemble system
 ===============
 
-.. literalinclude:: statics/FixedDisplacements_LinearElastic/example/main.cpp
+.. literalinclude:: statics/FixedDisplacements_LinearElastic/example.cpp
    :language: cpp
    :lines: 86-92
 
@@ -264,7 +263,7 @@ The stress stored per integration point ("Sig") is now converted to nodal intern
 Solve
 =====
 
-.. literalinclude:: statics/FixedDisplacements_LinearElastic/example/main.cpp
+.. literalinclude:: statics/FixedDisplacements_LinearElastic/example.cpp
    :language: cpp
    :lines: 94-104
 
@@ -276,7 +275,7 @@ Post-process
 Strain and stress
 -----------------
 
-.. literalinclude:: statics/FixedDisplacements_LinearElastic/example/main.cpp
+.. literalinclude:: statics/FixedDisplacements_LinearElastic/example.cpp
    :language: cpp
    :lines: 110-112
 
@@ -285,7 +284,7 @@ The strain and stress per integration point are recomputed for post-processing.
 Residual force
 --------------
 
-.. literalinclude:: statics/FixedDisplacements_LinearElastic/example/main.cpp
+.. literalinclude:: statics/FixedDisplacements_LinearElastic/example.cpp
    :language: cpp
    :lines: 114-125
 
@@ -294,18 +293,15 @@ We convince ourselves that the solution is indeed in mechanical equilibrium.
 Store & plot
 ------------
 
-.. literalinclude:: statics/FixedDisplacements_LinearElastic/example/main.cpp
+.. literalinclude:: statics/FixedDisplacements_LinearElastic/example.cpp
    :language: cpp
    :lines: 127-136
 
-Finally we store some fields for plotting using :download:`plot.py <statics/FixedDisplacements_LinearElastic/example/plot.py>`.
+Finally we store some fields for plotting using :download:`plot.py <statics/FixedDisplacements_LinearElastic/plot.py>`.
 
 Manual partitioning
 ===================
 
 To verify how partitioning and solving is done internally using the "MatrixPartitioned" class, the same example is provided where partitioning is done manually:
 
-| :download:`main.cpp <statics/FixedDisplacements_LinearElastic/manual_partition/main.cpp>`
-| :download:`CMakeLists.txt <statics/FixedDisplacements_LinearElastic/manual_partition/CMakeLists.txt>`
-| :download:`plot.py <statics/FixedDisplacements_LinearElastic/manual_partition/plot.py>`
-| :download:`main.py <statics/FixedDisplacements_LinearElastic/manual_partition/main.py>`
+| :download:`manual_partition.cpp <statics/FixedDisplacements_LinearElastic/manual_partition.cpp>`
