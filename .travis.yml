@@ -76,16 +76,12 @@ install:
     # store relevant
     - root_dir="${PWD}"
     - build_dir="${PWD}/build"
-    # make Python library
-    - cd "${root_dir}"
-    - python3 setup.py build
-    - python3 setup.py install
-    # build path
-    - cd "${root_dir}"
-    - rm -r "${build_dir}"
+    - lib_dir="${PWD}/libs"
     - mkdir "${build_dir}"
+    - mkdir "${lib_dir}"
     # install Eigen
-    - cd "${build_dir}"
+    - rm -r "${lib_dir}"/*
+    - cd "${lib_dir}"
     - git clone https://github.com/eigenteam/eigen-git-mirror.git
     - cd eigen-git-mirror
     - mkdir build
@@ -93,15 +89,26 @@ install:
     - cmake .. -DBUILD_TESTING=OFF
     - sudo make install
     # install HighFive
-    - cd "${build_dir}"
+    - rm -r "${lib_dir}"/*
+    - cd "${lib_dir}"
     - git clone https://github.com/BlueBrain/HighFive.git
     - cd HighFive
     - mkdir build
     - cd build
     - cmake .. -DHIGHFIVE_EXAMPLES=OFF -DUSE_BOOST=OFF
     - sudo make install
-    # install HighFive
-    - cd "${build_dir}"
+    # install Catch2
+    - rm -r "${lib_dir}"/*
+    - cd "${lib_dir}"
+    - git clone https://github.com/catchorg/Catch2.git
+    - cd Catch2
+    - mkdir build
+    - cd build
+    - cmake .. -DCATCH_BUILD_TESTING=OFF
+    - sudo make install
+    # install GMatElastic
+    - rm -r "${lib_dir}"/*
+    - cd "${lib_dir}"
     - git clone https://github.com/tdegeus/GMatElastic.git
     - cd GMatElastic
     - mkdir build
@@ -111,15 +118,11 @@ install:
     - cd ..
     - python3 setup.py build
     - python3 setup.py install
-    # install catch
-    - cd "${build_dir}"
-    - git clone https://github.com/catchorg/Catch2.git
-    - cd Catch2
-    - mkdir build
-    - cd build
-    - cmake .. -DCATCH_BUILD_TESTING=OFF
-    - sudo make install
-    # make test-cases
+    # make Python library
+    - cd "${root_dir}"
+    - python3 setup.py build
+    - python3 setup.py install
+    # make test-cases and examples
     - cd "${build_dir}"
     - cmake .. -DBUILD_TESTS=ON -DBUILD_EXAMPLES=ON
     - make
