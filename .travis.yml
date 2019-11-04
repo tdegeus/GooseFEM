@@ -80,7 +80,7 @@ install:
     - mkdir "${build_dir}"
     - mkdir "${lib_dir}"
     # install Eigen
-    - rm -r "${lib_dir}"
+    - rm -rf "${lib_dir}"
     - mkdir "${lib_dir}"
     - cd "${lib_dir}"
     - git clone https://github.com/eigenteam/eigen-git-mirror.git
@@ -90,7 +90,7 @@ install:
     - cmake .. -DBUILD_TESTING=OFF
     - sudo make install
     # install HighFive
-    - rm -r "${lib_dir}"
+    - rm -rf "${lib_dir}"
     - mkdir "${lib_dir}"
     - cd "${lib_dir}"
     - git clone https://github.com/BlueBrain/HighFive.git
@@ -100,7 +100,7 @@ install:
     - cmake .. -DHIGHFIVE_EXAMPLES=OFF -DUSE_BOOST=OFF
     - sudo make install
     # install Catch2
-    - rm -r "${lib_dir}"
+    - rm -rf "${lib_dir}"
     - mkdir "${lib_dir}"
     - cd "${lib_dir}"
     - git clone https://github.com/catchorg/Catch2.git
@@ -110,7 +110,7 @@ install:
     - cmake .. -DCATCH_BUILD_TESTING=OFF
     - sudo make install
     # install GMatElastic
-    - rm -r "${lib_dir}"
+    - rm -rf "${lib_dir}"
     - mkdir "${lib_dir}"
     - cd "${lib_dir}"
     - git clone https://github.com/tdegeus/GMatElastic.git
@@ -127,7 +127,7 @@ install:
     - python3 setup.py build
     - python3 setup.py install
     # make test-cases and examples
-    - rm -r "${build_dir}"
+    - rm -rf "${build_dir}"
     - mkdir "${build_dir}"
     - cd "${build_dir}"
     - cmake .. -DBUILD_TESTS=ON -DBUILD_EXAMPLES=ON
