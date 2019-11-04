@@ -67,6 +67,7 @@ install:
     - conda config --set always_yes yes --set changeps1 no
     - conda update -q conda
     - conda install cmake -c conda-forge
+    - conda install highfive -c conda-forge
     - conda install xtl -c conda-forge
     - conda install xsimd -c conda-forge
     - conda install xtensor -c conda-forge
@@ -88,16 +89,6 @@ install:
     - mkdir build
     - cd build
     - cmake .. -DBUILD_TESTING=OFF
-    - sudo make install
-    # install HighFive
-    - rm -rf "${lib_dir}"
-    - mkdir "${lib_dir}"
-    - cd "${lib_dir}"
-    - git clone https://github.com/BlueBrain/HighFive.git
-    - cd HighFive
-    - mkdir build
-    - cd build
-    - cmake .. -DHIGHFIVE_EXAMPLES=OFF -DUSE_BOOST=OFF
     - sudo make install
     # install Catch2
     - rm -rf "${lib_dir}"
