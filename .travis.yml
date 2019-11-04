@@ -38,7 +38,6 @@ env:
     - MINCONDA_OSX="MacOSX-x86_64"
 before_install:
     - sudo apt-get -qq update
-    - sudo apt-get install libeigen3-dev
     - sudo apt-get install -y texlive-base texlive-latex-base texlive-latex-extra texlive-fonts-recommended texlive-fonts-extra
     - sudo apt-get install dvipng
     - |
@@ -85,8 +84,16 @@ install:
     - cd "${root_dir}"
     - rm -r "${build_dir}"
     - mkdir "${build_dir}"
+    # install Eigen
     - cd "${build_dir}"
+    - git clone https://github.com/eigenteam/eigen-git-mirror.git
+    - cd eigen-git-mirror
+    - mkdir build
+    - cd build
+    - cmake .. -DBUILD_TESTING=OFF
+    - sudo make install
     # install HighFive
+    - cd "${build_dir}"
     - git clone https://github.com/BlueBrain/HighFive.git
     - cd HighFive
     - mkdir build
@@ -94,6 +101,7 @@ install:
     - cmake .. -DHIGHFIVE_EXAMPLES=OFF -DUSE_BOOST=OFF
     - sudo make install
     # install HighFive
+    - cd "${build_dir}"
     - git clone https://github.com/tdegeus/GMatElastic.git
     - cd GMatElastic
     - mkdir build
@@ -104,6 +112,7 @@ install:
     - python3 setup.py build
     - python3 setup.py install
     # install catch
+    - cd "${build_dir}"
     - git clone https://github.com/catchorg/Catch2.git
     - cd Catch2
     - mkdir build
