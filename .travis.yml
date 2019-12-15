@@ -11,7 +11,6 @@ matrix:
             - ubuntu-toolchain-r-test
           packages:
             - g++-5
-            - python3
       env: COMPILER=gcc GCC=5
     - os: linux
       addons:
@@ -20,7 +19,6 @@ matrix:
             - ubuntu-toolchain-r-test
           packages:
             - g++-6
-            - python3
       env: COMPILER=gcc GCC=6
     - os: linux
       addons:
@@ -29,17 +27,25 @@ matrix:
             - ubuntu-toolchain-r-test
           packages:
             - g++-7
-            - python3
       env: COMPILER=gcc GCC=7
+    - os: linux
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+            - llvm-toolchain-trusty-6.0
+          packages:
+            - clang-6.0
+      env: COMPILER=clang CLANG=6.0
+    - os: osx
+      osx_image: xcode8
+      compiler: clang
 env:
   global:
     - MINCONDA_VERSION="latest"
     - MINCONDA_LINUX="Linux-x86_64"
     - MINCONDA_OSX="MacOSX-x86_64"
 before_install:
-    - sudo apt-get -qq update
-    - sudo apt-get install -y texlive-base texlive-latex-base texlive-latex-extra texlive-fonts-recommended texlive-fonts-extra
-    - sudo apt-get install dvipng
     - |
       # Configure build variables
       if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then
@@ -53,7 +59,7 @@ before_install:
         export CXX=clang++ CC=clang;
       fi
 install:
-    # Define the version of miniconda to download
+    # Set environment using Conda
     - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then
         MINCONDA_OS=$MINCONDA_LINUX;
       elif [[ "$TRAVIS_OS_NAME" == "osx" ]]; then
@@ -61,77 +67,31 @@ install:
       fi
     - wget "http://repo.continuum.io/miniconda/Miniconda3-$MINCONDA_VERSION-$MINCONDA_OS.sh" -O miniconda.sh;
     - bash miniconda.sh -b -p $HOME/miniconda
-    - export PATH="$HOME/miniconda/bin:${PATH}"
-    - export INCLUDE_PATH="$HOME/miniconda/include:${INCLUDE_PATH}"
+    - export PATH="$HOME/miniconda/bin:$PATH"
     - hash -r
     - conda config --set always_yes yes --set changeps1 no
     - conda update -q conda
     - conda install cmake -c conda-forge
-    - conda install highfive -c conda-forge
-    - conda install xtl -c conda-forge
     - conda install xsimd -c conda-forge
     - conda install xtensor -c conda-forge
-    - pip install numpy matplotlib GooseMPL pybind11 pyxtensor
-    - export MPLBACKEND=Agg
-    - python -c "import GooseMPL; GooseMPL.copy_style()"
-    # store relevant
-    - root_dir="${PWD}"
-    - build_dir="${PWD}/build"
-    - lib_dir="${PWD}/libs"
-    - mkdir "${build_dir}"
-    - mkdir "${lib_dir}"
-    # install Eigen
-    - rm -rf "${lib_dir}"
-    - mkdir "${lib_dir}"
-    - cd "${lib_dir}"
-    - git clone https://github.com/eigenteam/eigen-git-mirror.git
-    - cd eigen-git-mirror
-    - mkdir build
-    - cd build
-    - cmake .. -DBUILD_TESTING=OFF
-    - sudo make install
-    # install Catch2
-    - rm -rf "${lib_dir}"
-    - mkdir "${lib_dir}"
-    - cd "${lib_dir}"
-    - git clone https://github.com/catchorg/Catch2.git
-    - cd Catch2
-    - mkdir build
-    - cd build
-    - cmake .. -DCATCH_BUILD_TESTING=OFF
-    - sudo make install
-    # install GMatElastic
-    - rm -rf "${lib_dir}"
-    - mkdir "${lib_dir}"
-    - cd "${lib_dir}"
-    - git clone https://github.com/tdegeus/GMatElastic.git
-    - cd GMatElastic
-    - mkdir build
-    - cd build
-    - cmake ..
-    - sudo make install
-    - cd ..
-    - python3 setup.py build
-    - python3 setup.py install
-    # make Python library
-    - cd "${root_dir}"
-    - python3 setup.py build
-    - python3 setup.py install
-    # make test-cases and examples
-    - rm -rf "${build_dir}"
-    - mkdir "${build_dir}"
-    - cd "${build_dir}"
-    - cmake .. -DBUILD_TESTS=ON -DBUILD_EXAMPLES=ON
+    - conda install python -c conda-forge
+    - conda install numpy -c conda-forge
+    - conda install pyxtensor -c conda-forge
+    - conda install catch2 -c conda-forge
+    - conda install eigen -c conda-forge
+    - conda install gmatelastic -c conda-forge
+    - conda install highfive -c conda-forge
+    # Build/install the library
+    - cmake . -DBUILD_TESTS=ON -DBUILD_EXAMPLES=ON
     - make
+    - sudo make install
+    - python setup.py build
+    - python setup.py install
 script:
     # run tests
-    - cd "${build_dir}/test"
-    - ./test
+    - ./test/test
     # run examples
-    - cd "${build_dir}/docs/examples"
-    - ./statics_FixedDisplacements_LinearElastic_example
-    - python3 statics_FixedDisplacements_LinearElastic_plot.py
-    - python3 statics_FixedDisplacements_LinearElastic_example.py
-    - ./statics_FixedDisplacements_LinearElastic_manual_partition
-    - python3 statics_FixedDisplacements_LinearElastic_plot.py
-    - python3 statics_FixedDisplacements_LinearElastic_manual_partition.py
+    - ./docs/examples/statics_FixedDisplacements_LinearElastic_example
+    - python docs/examples/statics_FixedDisplacements_LinearElastic_example.py --no-plot
+    - ./docs/examples/statics_FixedDisplacements_LinearElastic_manual_partition
+    - python docs/examples/statics_FixedDisplacements_LinearElastic_manual_partition.py --no-plot

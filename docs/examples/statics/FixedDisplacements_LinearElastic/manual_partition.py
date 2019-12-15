@@ -28,10 +28,10 @@ nodesBottom = mesh.nodesBottomEdge()
 # ------------------------
 
 iip = np.concatenate((
-  dofs[nodesRight , 0],
-  dofs[nodesTop   , 1],
-  dofs[nodesLeft  , 0],
-  dofs[nodesBottom, 1]
+    dofs[nodesRight , 0],
+    dofs[nodesTop   , 1],
+    dofs[nodesLeft  , 0],
+    dofs[nodesBottom, 1]
 ))
 
 # simulation variables
@@ -95,10 +95,10 @@ K.assemble(Ke)
 
 # set fixed displacements
 u_p = np.concatenate((
-  +0.1 * np.ones(nodesRight .size),
-  -0.1 * np.ones(nodesTop   .size),
-   0.0 * np.ones(nodesLeft  .size),
-   0.0 * np.ones(nodesBottom.size)
+    +0.1 * np.ones(nodesRight .size),
+    -0.1 * np.ones(nodesTop   .size),
+     0.0 * np.ones(nodesLeft  .size),
+     0.0 * np.ones(nodesBottom.size)
 ))
 
 # residual
@@ -140,6 +140,15 @@ print(np.sum(np.abs(fres_u)) / np.sum(np.abs(fext_p)))
 # average stress per node
 dV = elem.DV(2)
 Sig = np.average(Sig, weights=dV, axis=1)
+
+# skip plot with "--no-plot" command line argument
+# ------------------------------------------------
+
+import sys
+
+if len(sys.argv) == 2:
+    if sys.argv[1] == "--no-plot":
+        sys.exit(0)
 
 # plot
 # ----

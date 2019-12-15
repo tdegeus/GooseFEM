@@ -28,10 +28,10 @@ nodesBottom = mesh.nodesBottomEdge()
 # ------------------------
 
 iip = np.concatenate((
-  dofs[nodesRight , 0],
-  dofs[nodesTop   , 1],
-  dofs[nodesLeft  , 0],
-  dofs[nodesBottom, 1]
+    dofs[nodesRight , 0],
+    dofs[nodesTop   , 1],
+    dofs[nodesLeft  , 0],
+    dofs[nodesBottom, 1]
 ))
 
 # simulation variables
@@ -124,6 +124,15 @@ print(np.sum(np.abs(fres)) / np.sum(np.abs(fext)))
 # average stress per node
 dV = elem.DV(2)
 Sig = np.average(Sig, weights=dV, axis=1)
+
+# skip plot with "--no-plot" command line argument
+# ------------------------------------------------
+
+import sys
+
+if len(sys.argv) == 2:
+    if sys.argv[1] == "--no-plot":
+        sys.exit(0)
 
 # plot
 # ----
