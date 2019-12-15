@@ -28,10 +28,10 @@ nodesBottom = mesh.nodesBottomEdge()
 # ------------------------
 
 iip = np.concatenate((
-  dofs[nodesRight , 0],
-  dofs[nodesTop   , 1],
-  dofs[nodesLeft  , 0],
-  dofs[nodesBottom, 1]
+    dofs[nodesRight , 0],
+    dofs[nodesTop   , 1],
+    dofs[nodesLeft  , 0],
+    dofs[nodesBottom, 1]
 ))
 
 # simulation variables
@@ -125,6 +125,15 @@ print(np.sum(np.abs(fres)) / np.sum(np.abs(fext)))
 dV = elem.DV(2)
 Sig = np.average(Sig, weights=dV, axis=1)
 
+# skip plot with "--no-plot" command line argument
+# ------------------------------------------------
+
+import sys
+
+if len(sys.argv) == 2:
+    if sys.argv[1] == "--no-plot":
+        sys.exit(0)
+
 # plot
 # ----
 
@@ -160,5 +169,5 @@ sigeq = np.sqrt(3./2.*ddot22(Sigd,Sigd))
 fig, ax = plt.subplots()
 gplt.patch(coor=coor+disp, conn=conn, cindex=sigeq, cmap='jet', axis=ax, clim=(0,0.1))
 gplt.patch(coor=coor, conn=conn, linestyle='--', axis=ax)
-plt.savefig('main.pdf')
+plt.savefig('plot.pdf')
 plt.close()

@@ -1,9 +1,7 @@
 prefix=@CMAKE_INSTALL_PREFIX@
-exec_prefix=${prefix}
+includedir=${prefix}/include
 
-Name: GooseFEM
-Description: Several Finite Element simulation, and some simple meshes and operations (C++/Python)
-Requires:
+Name: @PROJECT_NAME@
+Description: Finite Element simulation, some simple meshes and operations.
 Version: @GOOSEFEM_VERSION@
-Libs:
-Cflags: -I${prefix}/@GOOSEFEM_INCLUDE_DIR@
+Cflags: -I${includedir}

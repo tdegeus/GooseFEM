@@ -4,153 +4,115 @@
 #                                                                                                  #
 #==================================================================================================#
 
-# initialization
-# --------------
-
-# required to specify the c++ standard
 cmake_minimum_required(VERSION 3.0)
 
-# required for install
+# Basic settings
+# ==============
+
+project(GooseFEM)
+
+option(BUILD_TESTS "Build tests" OFF)
+option(BUILD_EXAMPLES "Build examples" OFF)
+
+# Version
+# =======
+
+file(
+    STRINGS
+        "${CMAKE_CURRENT_SOURCE_DIR}/include/GooseFEM/config.h"
+        GooseFEM_version_defines
+    REGEX
+        "#define GOOSEFEM_VERSION_(MAJOR|MINOR|PATCH)")
+
+foreach(ver ${GooseFEM_version_defines})
+    if(ver MATCHES "#define GOOSEFEM_VERSION_(MAJOR|MINOR|PATCH) +([^ ]+)$")
+        set(GOOSEFEM_VERSION_${CMAKE_MATCH_1} "${CMAKE_MATCH_2}" CACHE INTERNAL "")
+    endif()
+endforeach()
+
+set(GOOSEFEM_VERSION
+    ${GOOSEFEM_VERSION_MAJOR}.${GOOSEFEM_VERSION_MINOR}.${GOOSEFEM_VERSION_PATCH})
+
+message(STATUS "Building GooseFEM v${GOOSEFEM_VERSION}")
+
+# Set target
+# ==========
+
+find_package(xtensor REQUIRED)
+
+add_library(GooseFEM INTERFACE)
+
+target_include_directories(GooseFEM INTERFACE
+    $<INSTALL_INTERFACE:include>
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>)
+
+target_link_libraries(GooseFEM INTERFACE xtensor)
+
+# Installation
+# ============
+
 include(CMakePackageConfigHelpers)
 include(GNUInstallDirs)
 
-# options
-option(PKGCONFIG "Build pkg-config" ON)
-option(BUILD_TESTS "${PROJECT_NAME} test suite" OFF)
+install(
+    DIRECTORY
+        "${CMAKE_CURRENT_SOURCE_DIR}/include/"
+    DESTINATION
+        include)
 
-# project settings
-# ----------------
+install(
+    TARGETS
+        GooseFEM
+    EXPORT
+        GooseFEM-targets)
 
-# name
-project(GooseFEM)
+install(
+    EXPORT
+        GooseFEM-targets
+    FILE
+        GooseFEMTargets.cmake
+    DESTINATION
+        "${CMAKE_INSTALL_LIBDIR}/cmake/GooseFEM")
 
-# file that contains the version information
-set(parse_version include/GooseFEM/config.h)
+set(_GOOSEFEM ${CMAKE_SIZEOF_VOID_P})
+unset(CMAKE_SIZEOF_VOID_P)
 
-# header files
-set(headers
-  include/GooseFEM/config.h
-  include/GooseFEM/GooseFEM.h
-  include/GooseFEM/Mesh.hpp
-  include/GooseFEM/Mesh.h
-  include/GooseFEM/MeshTri3.hpp
-  include/GooseFEM/MeshTri3.h
-  include/GooseFEM/MeshQuad4.hpp
-  include/GooseFEM/MeshQuad4.h
-  include/GooseFEM/MeshHex8.hpp
-  include/GooseFEM/MeshHex8.h
-  include/GooseFEM/Element.hpp
-  include/GooseFEM/Element.h
-  include/GooseFEM/ElementQuad4.hpp
-  include/GooseFEM/ElementQuad4.h
-  include/GooseFEM/ElementQuad4Planar.hpp
-  include/GooseFEM/ElementQuad4Planar.h
-  include/GooseFEM/ElementQuad4Axisymmetric.hpp
-  include/GooseFEM/ElementQuad4Axisymmetric.h
-  include/GooseFEM/ElementHex8.hpp
-  include/GooseFEM/ElementHex8.h
-  include/GooseFEM/Vector.hpp
-  include/GooseFEM/Vector.h
-  include/GooseFEM/VectorPartitioned.hpp
-  include/GooseFEM/VectorPartitioned.h
-  include/GooseFEM/VectorPartitionedTyings.hpp
-  include/GooseFEM/VectorPartitionedTyings.h
-  include/GooseFEM/Matrix.hpp
-  include/GooseFEM/Matrix.h
-  include/GooseFEM/MatrixPartitioned.hpp
-  include/GooseFEM/MatrixPartitioned.h
-  include/GooseFEM/MatrixPartitionedTyings.hpp
-  include/GooseFEM/MatrixPartitionedTyings.h
-  include/GooseFEM/MatrixDiagonal.hpp
-  include/GooseFEM/MatrixDiagonal.h
-  include/GooseFEM/MatrixDiagonalPartitioned.hpp
-  include/GooseFEM/MatrixDiagonalPartitioned.h
-  include/GooseFEM/Iterate.hpp
-  include/GooseFEM/Iterate.h
-  include/GooseFEM/TyingsPeriodic.hpp
-  include/GooseFEM/TyingsPeriodic.h
-  include/GooseFEM/ParaView.hpp
-  include/GooseFEM/ParaView.h
-)
+write_basic_package_version_file(
+        "${CMAKE_CURRENT_BINARY_DIR}/GooseFEMConfigVersion.cmake"
+    VERSION
+        ${GOOSEFEM_VERSION}
+    COMPATIBILITY
+        AnyNewerVersion)
 
-# automatically parse the version number
-file(READ "${parse_version}" version)
-string(REGEX MATCH "define[ \t]+GOOSEFEM_WORLD_VERSION[ \t]+([0-9]+)" _ "${version}")
-set(world_version "${CMAKE_MATCH_1}")
-string(REGEX MATCH "define[ \t]+GOOSEFEM_MAJOR_VERSION[ \t]+([0-9]+)" _ "${version}")
-set(major_version "${CMAKE_MATCH_1}")
-string(REGEX MATCH "define[ \t]+GOOSEFEM_MINOR_VERSION[ \t]+([0-9]+)" _ "${version}")
-set(minor_version "${CMAKE_MATCH_1}")
-set(GOOSEFEM_VERSION ${world_version}.${major_version}.${minor_version})
+set(CMAKE_SIZEOF_VOID_P ${_GOOSEFEM})
 
-# print information to screen
-message(STATUS "Building ${PROJECT_NAME} v${GOOSEFEM_VERSION}")
+install(
+    FILES
+        "${CMAKE_CURRENT_SOURCE_DIR}/GooseFEMConfig.cmake"
+        "${CMAKE_CURRENT_BINARY_DIR}/GooseFEMConfigVersion.cmake"
+    DESTINATION
+        "${CMAKE_INSTALL_LIBDIR}/cmake/GooseFEM")
 
-# paths
-# -----
+configure_file(
+    "${CMAKE_CURRENT_SOURCE_DIR}/GooseFEM.pc.in"
+    "${CMAKE_CURRENT_BINARY_DIR}/GooseFEM.pc"
+     @ONLY)
 
-set(GOOSEFEM_ROOT_DIR        "${CMAKE_INSTALL_PREFIX}")
-set(GOOSEFEM_INCLUDE_DIR     "${CMAKE_INSTALL_PREFIX}/${INCLUDE_INSTALL_DIR}")
-set(INCLUDE_INSTALL_DIR      "${CMAKE_INSTALL_INCLUDEDIR}/${PROJECT_NAME}")
-set(CMAKEPACKAGE_INSTALL_DIR "${CMAKE_INSTALL_DATADIR}/${PROJECT_NAME}")
-set(PKGCONFIG_INSTALL_DIR    "${CMAKE_INSTALL_DATADIR}/pkgconfig")
-set(fcmake                   "GooseFEMConfig.cmake")
-set(fpkg                     "GooseFEM.pc")
+install(
+    FILES
+        "${CMAKE_CURRENT_BINARY_DIR}/GooseFEM.pc"
+    DESTINATION
+        "${CMAKE_INSTALL_LIBDIR}/pkgconfig/")
 
-# configure CMake
-# ---------------
+# Add builds
+# ==========
 
-configure_package_config_file(
-  ${CMAKE_CURRENT_SOURCE_DIR}/GooseFEMConfig.cmake.in
-  ${CMAKE_CURRENT_BINARY_DIR}/GooseFEMConfig.cmake
-  PATH_VARS GOOSEFEM_INCLUDE_DIR GOOSEFEM_ROOT_DIR
-  INSTALL_DESTINATION ${CMAKEPACKAGE_INSTALL_DIR}
-  NO_CHECK_REQUIRED_COMPONENTS_MACRO
-)
+include("GooseFEMConfig.cmake")
 
-# install/build
-# -------------
-
-# build test cases
 if(BUILD_TESTS)
-  add_subdirectory(test)
+    add_subdirectory(test)
 endif()
 
-# disable pkg-config for native Windows builds
-if(WIN32 OR CMAKE_HOST_SYSTEM_NAME MATCHES Windows)
-  option(PKGCONFIG "Build pkg-config ${fpkg} file" OFF)
+if(BUILD_EXAMPLES)
+    add_subdirectory(docs/examples)
 endif()
-
-# pkg-config
-if(PKGCONFIG)
-  configure_file(${fpkg}.in ${fpkg} @ONLY)
-  install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${fpkg} DESTINATION ${PKGCONFIG_INSTALL_DIR})
-endif()
-
-# CMake
-install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${fcmake} DESTINATION ${CMAKEPACKAGE_INSTALL_DIR})
-
-# header files
-install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/${headers} DESTINATION ${INCLUDE_INSTALL_DIR})
-
-# print information to screen
-# ---------------------------
-
-message(STATUS "")
-message(STATUS "+---------------------------------------------------------------------------------")
-message(STATUS "|")
-message(STATUS "| Use 'make install' to install in")
-message(STATUS "|   ${CMAKE_INSTALL_PREFIX}")
-if(BUILD_TESTS)
-  message(STATUS "|")
-  message(STATUS "| Use 'make' and './test/test' to run the tests")
-endif()
-message(STATUS "|")
-message(STATUS "| To specify a custom directory call")
-message(STATUS "|   cmake /path/to/${PROJECT_NAME} -DCMAKE_INSTALL_PREFIX=yourprefix")
-message(STATUS "|")
-message(STATUS "| For custom paths, add the following line to your '~/.bashrc'")
-message(STATUS "|   export PKG_CONFIG_PATH=${CMAKE_INSTALL_PREFIX}/share/pkgconfig:$PKG_CONFIG_PATH")
-message(STATUS "|")
-message(STATUS "+---------------------------------------------------------------------------------")
-message(STATUS "")

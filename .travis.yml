@@ -10,17 +10,7 @@ matrix:
           sources:
             - ubuntu-toolchain-r-test
           packages:
-            - g++-4.9
-            - libeigen3-dev
-      env: COMPILER=gcc GCC=4.9
-    - os: linux
-      addons:
-        apt:
-          sources:
-            - ubuntu-toolchain-r-test
-          packages:
             - g++-5
-            - libeigen3-dev
       env: COMPILER=gcc GCC=5
     - os: linux
       addons:
@@ -29,8 +19,27 @@ matrix:
             - ubuntu-toolchain-r-test
           packages:
             - g++-6
-            - libeigen3-dev
       env: COMPILER=gcc GCC=6
+    - os: linux
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+          packages:
+            - g++-7
+      env: COMPILER=gcc GCC=7
+    - os: linux
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+            - llvm-toolchain-trusty-6.0
+          packages:
+            - clang-6.0
+      env: COMPILER=clang CLANG=6.0
+    - os: osx
+      osx_image: xcode8
+      compiler: clang
 env:
   global:
     - MINCONDA_VERSION="latest"
@@ -50,7 +59,7 @@ before_install:
         export CXX=clang++ CC=clang;
       fi
 install:
-    # Define the version of miniconda to download
+    # Set environment using Conda
     - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then
         MINCONDA_OS=$MINCONDA_LINUX;
       elif [[ "$TRAVIS_OS_NAME" == "osx" ]]; then
@@ -58,35 +67,32 @@ install:
       fi
     - wget "http://repo.continuum.io/miniconda/Miniconda3-$MINCONDA_VERSION-$MINCONDA_OS.sh" -O miniconda.sh;
     - bash miniconda.sh -b -p $HOME/miniconda
-    - export PATH="$HOME/miniconda/bin:${PATH}"
-    - export INCLUDE_PATH="$HOME/miniconda/include:${INCLUDE_PATH}"
+    - export PATH="$HOME/miniconda/bin:$PATH"
     - hash -r
     - conda config --set always_yes yes --set changeps1 no
     - conda update -q conda
     - conda install cmake -c conda-forge
-    - conda install xtl -c conda-forge
     - conda install xsimd -c conda-forge
     - conda install xtensor -c conda-forge
-    # store relevant
-    - build_dir="${PWD}/build"
-    - example_dir="${PWD}/docs/examples"
-    # build path
-    - mkdir "${build_dir}"
-    - cd "${build_dir}"
-    # install catch
-    - git clone https://github.com/catchorg/Catch2.git
-    - cd Catch2
-    - mkdir build
-    - cd build
-    - mkdir opt
-    - cmake .. -DCATCH_BUILD_TESTING=OFF -DCMAKE_INSTALL_PREFIX:PATH="${PWD}"/opt
-    - make install
-    - export INCLUDE_PATH="${PWD}"/opt/include:"${INCLUDE_PATH}"
-    # make test-cases
-    - cd "${build_dir}"
-    - cmake .. -DBUILD_TESTS=ON
+    - conda install python -c conda-forge
+    - conda install numpy -c conda-forge
+    - conda install pyxtensor -c conda-forge
+    - conda install catch2 -c conda-forge
+    - conda install eigen -c conda-forge
+    - conda install gmatelastic -c conda-forge
+    - conda install python-gmatelastic -c conda-forge
+    - conda install highfive -c conda-forge
+    # Build/install the library
+    - cmake . -DBUILD_TESTS=ON -DBUILD_EXAMPLES=ON
     - make
+    - sudo make install
+    - python setup.py build
+    - python setup.py install
 script:
     # run tests
-    - cd "${build_dir}/test"
-    - ./test
+    - ./test/main
+    # run examples
+    - ./docs/examples/statics_FixedDisplacements_LinearElastic_example
+    - python docs/examples/statics_FixedDisplacements_LinearElastic_example.py --no-plot
+    - ./docs/examples/statics_FixedDisplacements_LinearElastic_manual_partition
+    - python docs/examples/statics_FixedDisplacements_LinearElastic_manual_partition.py --no-plot
