@@ -12,6 +12,23 @@ option(DEBUG "Enable all assertions" ON)
 
 find_package(HDF5 REQUIRED)
 
+add_library(libraries INTERFACE IMPORTED)
+
+target_link_libraries(libraries INTERFACE GooseFEM ${HDF5_LIBRARIES})
+
+if (SIMD)
+    target_link_libraries(libraries INTERFACE xtensor::optimize xtensor::use_xsimd)
+endif()
+
+if (WARNINGS)
+    target_link_libraries(libraries INTERFACE GooseFEM::compiler_warnings)
+endif()
+
+if (DEBUG)
+    target_link_libraries(libraries INTERFACE GooseFEM::debug)
+endif()
+
+
 # create executable
 
 set(exec "statics_FixedDisplacements_LinearElastic_example")
@@ -19,19 +36,7 @@ set(source "statics/FixedDisplacements_LinearElastic/example.cpp")
 
 add_executable(${exec} ${source})
 
-target_link_libraries(${exec} PRIVATE GooseFEM ${HDF5_LIBRARIES})
-
-if (SIMD)
-    target_link_libraries(${exec} PRIVATE xtensor::optimize xtensor::use_xsimd)
-endif()
-
-if (WARNINGS)
-    target_link_libraries(${exec} PRIVATE GooseFEM::compiler_warnings)
-endif()
-
-if (DEBUG)
-    target_link_libraries(${exec} PRIVATE GooseFEM::debug)
-endif()
+target_link_libraries(${exec} PRIVATE libraries)
 
 configure_file(
      "statics/FixedDisplacements_LinearElastic/example.py"
@@ -48,19 +53,7 @@ set(source "statics/FixedDisplacements_LinearElastic/manual_partition.cpp")
 
 add_executable(${exec} ${source})
 
-target_link_libraries(${exec} PRIVATE GooseFEM ${HDF5_LIBRARIES})
-
-if (SIMD)
-    target_link_libraries(${exec} PRIVATE xtensor::optimize xtensor::use_xsimd)
-endif()
-
-if (WARNINGS)
-    target_link_libraries(${exec} PRIVATE GooseFEM::compiler_warnings)
-endif()
-
-if (DEBUG)
-    target_link_libraries(${exec} PRIVATE GooseFEM::debug)
-endif()
+target_link_libraries(${exec} PRIVATE libraries)
 
 configure_file(
      "statics/FixedDisplacements_LinearElastic/manual_partition.py"
