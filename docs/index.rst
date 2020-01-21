@@ -8,6 +8,7 @@ GooseFEM
    :maxdepth: 1
 
    introduction.rst
+   install.rst
 
 .. toctree::
    :caption: EXAMPLES - STATICS
