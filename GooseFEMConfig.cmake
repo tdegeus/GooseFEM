@@ -45,32 +45,38 @@ endif()
 # Define support target "GooseFEM::compiler_warnings"
 # ===================================================
 
-if(NOT TARGET GooseFEM::compiler_warnings)
-    add_library(GooseFEM::compiler_warnings INTERFACE IMPORTED)
-    if(MSVC)
-        target_compile_options(GooseFEM::compiler_warnings INTERFACE
-            /W4)
-    else()
-        target_compile_options(GooseFEM::compiler_warnings INTERFACE
-            -Wall
-            -Wextra
-            -pedantic
-            -Wno-unknown-pragmas)
+if (${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION} VERSION_GREATER_EQUAL 3.11)
+    if(NOT TARGET GooseFEM::compiler_warnings)
+        add_library(GooseFEM::compiler_warnings INTERFACE IMPORTED)
+        if(MSVC)
+            target_compile_options(GooseFEM::compiler_warnings INTERFACE
+                /W4)
+        else()
+            target_compile_options(GooseFEM::compiler_warnings INTERFACE
+                -Wall
+                -Wextra
+                -pedantic
+                -Wno-unknown-pragmas)
+        endif()
     endif()
 endif()
 
 # Define support target "GooseFEM::assert"
 # ========================================
 
-if(NOT TARGET GooseFEM::assert)
-    add_library(GooseFEM::assert INTERFACE IMPORTED)
-    target_compile_definitions(GooseFEM::assert INTERFACE GOOSEFEM_ENABLE_ASSERT)
+if (${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION} VERSION_GREATER_EQUAL 3.11)
+    if(NOT TARGET GooseFEM::assert)
+        add_library(GooseFEM::assert INTERFACE IMPORTED)
+        target_compile_definitions(GooseFEM::assert INTERFACE GOOSEFEM_ENABLE_ASSERT)
+    endif()
 endif()
 
 # Define support target "GooseEYE::debug"
 # =======================================
 
-if(NOT TARGET GooseFEM::debug)
-    add_library(GooseFEM::debug INTERFACE IMPORTED)
-    target_compile_definitions(GooseFEM::debug INTERFACE GOOSEFEM_DEBUG)
+if (${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION} VERSION_GREATER_EQUAL 3.11)
+    if(NOT TARGET GooseFEM::debug)
+        add_library(GooseFEM::debug INTERFACE IMPORTED)
+        target_compile_definitions(GooseFEM::debug INTERFACE GOOSEFEM_DEBUG)
+    endif()
 endif()
