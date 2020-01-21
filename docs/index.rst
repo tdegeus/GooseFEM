@@ -9,6 +9,7 @@ GooseFEM
 
    introduction.rst
    install.rst
+   compile.rst
 
 .. toctree::
    :caption: EXAMPLES - STATICS
@@ -53,10 +54,9 @@ GooseFEM
    details/Iterate.rst
 
 .. toctree::
-   :caption: INSTALLATION
+   :caption: DEVELOPMENT
    :maxdepth: 1
 
-   compile.rst
    develop.rst
 
 Indices and tables
