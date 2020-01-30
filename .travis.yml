@@ -71,17 +71,17 @@ install:
     - hash -r
     - conda config --set always_yes yes --set changeps1 no
     - conda update -q conda
-    - conda install cmake -c conda-forge
-    - conda install xsimd -c conda-forge
-    - conda install xtensor -c conda-forge
-    - conda install python -c conda-forge
-    - conda install numpy -c conda-forge
-    - conda install pyxtensor -c conda-forge
-    - conda install catch2 -c conda-forge
-    - conda install eigen -c conda-forge
-    - conda install gmatelastic -c conda-forge
-    - conda install python-gmatelastic -c conda-forge
-    - conda install highfive -c conda-forge
+    - conda install -c conda-forge cmake
+    - conda install -c conda-forge xsimd
+    - conda install -c conda-forge xtensor
+    - conda install -c conda-forge python
+    - conda install -c conda-forge numpy
+    - conda install -c conda-forge pyxtensor
+    - conda install -c conda-forge catch2
+    - conda install -c conda-forge eigen
+    - conda install -c conda-forge gmatelastic
+    - conda install -c conda-forge python-gmatelastic
+    - conda install -c conda-forge highfive
     # Build/install the library
     - cmake . -DBUILD_TESTS=ON -DBUILD_EXAMPLES=ON
     - make
