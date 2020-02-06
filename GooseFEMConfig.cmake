@@ -19,7 +19,6 @@
 include(CMakeFindDependencyMacro)
 
 # Define target "GooseFEM"
-# ========================
 
 if(NOT TARGET GooseFEM)
     include("${CMAKE_CURRENT_LIST_DIR}/GooseFEMTargets.cmake")
@@ -27,7 +26,6 @@ if(NOT TARGET GooseFEM)
 endif()
 
 # Find dependencies
-# =================
 
 find_dependency(xtensor)
 
@@ -43,40 +41,38 @@ if(Eigen3_FOUND)
 endif()
 
 # Define support target "GooseFEM::compiler_warnings"
-# ===================================================
 
-if (${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION} VERSION_GREATER_EQUAL 3.11)
-    if(NOT TARGET GooseFEM::compiler_warnings)
-        add_library(GooseFEM::compiler_warnings INTERFACE IMPORTED)
-        if(MSVC)
-            target_compile_options(GooseFEM::compiler_warnings INTERFACE
-                /W4)
-        else()
-            target_compile_options(GooseFEM::compiler_warnings INTERFACE
-                -Wall
-                -Wextra
-                -pedantic
-                -Wno-unknown-pragmas)
-        endif()
+if(NOT TARGET GooseFEM::compiler_warnings)
+    add_library(GooseFEM::compiler_warnings INTERFACE IMPORTED)
+    if(MSVC)
+        set_property(
+            TARGET GooseFEM::compiler_warnings
+            PROPERTY INTERFACE_COMPILE_OPTIONS
+            /W4)
+    else()
+        set_property(
+            TARGET GooseFEM::compiler_warnings
+            PROPERTY INTERFACE_COMPILE_OPTIONS
+            -Wall -Wextra -pedantic -Wno-unknown-pragmas)
     endif()
 endif()
 
 # Define support target "GooseFEM::assert"
-# ========================================
 
-if (${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION} VERSION_GREATER_EQUAL 3.11)
-    if(NOT TARGET GooseFEM::assert)
-        add_library(GooseFEM::assert INTERFACE IMPORTED)
-        target_compile_definitions(GooseFEM::assert INTERFACE GOOSEFEM_ENABLE_ASSERT)
-    endif()
+if(NOT TARGET GooseFEM::assert)
+    add_library(GooseFEM::assert INTERFACE IMPORTED)
+    set_property(
+        TARGET GooseFEM::assert
+        PROPERTY INTERFACE_COMPILE_DEFINITIONS
+        GOOSEFEM_ENABLE_ASSERT)
 endif()
 
-# Define support target "GooseEYE::debug"
-# =======================================
+# Define support target "GooseFEM::debug"
 
-if (${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION} VERSION_GREATER_EQUAL 3.11)
-    if(NOT TARGET GooseFEM::debug)
-        add_library(GooseFEM::debug INTERFACE IMPORTED)
-        target_compile_definitions(GooseFEM::debug INTERFACE GOOSEFEM_DEBUG)
-    endif()
+if(NOT TARGET GooseFEM::debug)
+    add_library(GooseFEM::debug INTERFACE IMPORTED)
+    set_property(
+        TARGET GooseFEM::debug
+        PROPERTY INTERFACE_COMPILE_DEFINITIONS
+        XTENSOR_ENABLE_ASSERT GOOSEFEM_ENABLE_ASSERT)
 endif()
