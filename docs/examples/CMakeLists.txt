@@ -58,3 +58,20 @@ target_link_libraries(${exec} PRIVATE libraries)
 configure_file(
      "statics/FixedDisplacements_LinearElastic/manual_partition.py"
      "statics_FixedDisplacements_LinearElastic_manual_partition.py" COPYONLY)
+
+# create executable
+
+set(exec "statics_MixedPeriodic_LinearElastic_example")
+set(source "statics/MixedPeriodic_LinearElastic/example.cpp")
+
+add_executable(${exec} ${source})
+
+target_link_libraries(${exec} PRIVATE libraries)
+
+configure_file(
+     "statics/MixedPeriodic_LinearElastic/example.py"
+     "statics_MixedPeriodic_LinearElastic_example.py" COPYONLY)
+
+configure_file(
+     "statics/MixedPeriodic_LinearElastic/plot.py"
+     "statics_MixedPeriodic_LinearElastic_plot.py" COPYONLY)
