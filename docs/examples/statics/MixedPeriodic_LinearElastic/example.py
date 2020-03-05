@@ -72,8 +72,8 @@ mat = GMatElastic.Cartesian3d.Matrix(nelem, nip)
 Ihard = np.zeros((nelem, nip), dtype='int')
 Ihard[[0, 1, 5, 6], :] = 1
 Isoft = np.ones((nelem, nip), dtype='int') - Ihard
-mat.setElastic(Isoft, 10.0, 1.0);
-mat.setElastic(Ihard, 10.0, 10.0);
+mat.setElastic(Isoft, 10.0, 1.0)
+mat.setElastic(Ihard, 10.0, 10.0)
 
 # integration point tensors
 Eps = np.empty((nelem, nip, 3, 3))
