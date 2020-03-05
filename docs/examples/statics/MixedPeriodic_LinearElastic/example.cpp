@@ -78,10 +78,9 @@ int main()
     mat.setElastic(Ihard, 10.0, 10.0);
 
     // integration point tensors
-    size_t d = 3;
-    xt::xtensor<double,4> Eps = xt::empty<double>({nelem, nip, d, d});
-    xt::xtensor<double,4> Sig = xt::empty<double>({nelem, nip, d, d});
-    xt::xtensor<double,6> C = xt::empty<double>({nelem, nip, d, d, d, d});
+    xt::xtensor<double,4> Eps = xt::empty<double>({nelem, nip, 3ul, 3ul});
+    xt::xtensor<double,4> Sig = xt::empty<double>({nelem, nip, 3ul, 3ul});
+    xt::xtensor<double,6> C = xt::empty<double>({nelem, nip, 3ul, 3ul, 3ul, 3ul});
 
     // solve
     // -----

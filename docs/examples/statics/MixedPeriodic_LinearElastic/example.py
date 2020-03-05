@@ -76,10 +76,9 @@ mat.setElastic(Isoft, 10.0, 1.0);
 mat.setElastic(Ihard, 10.0, 10.0);
 
 # integration point tensors
-d = 3
-Eps = np.empty((nelem, nip, d, d))
-Sig = np.empty((nelem, nip, d, d))
-C = np.empty((nelem, nip, d, d, d, d))
+Eps = np.empty((nelem, nip, 3, 3))
+Sig = np.empty((nelem, nip, 3, 3))
+C = np.empty((nelem, nip, 3, 3, 3, 3))
 
 # solve
 # -----
