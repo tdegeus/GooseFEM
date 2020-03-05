@@ -64,7 +64,7 @@ int main()
     size_t nip = elem.nip();
 
     // material definition
-    GMatElastic::Cartesian3d::Matrix mat(nelem, nip, 1., 1.);
+    GMatElastic::Cartesian3d::Matrix mat(nelem, nip, 1.0, 1.0);
 
     // integration point tensors
     size_t d = 3;
