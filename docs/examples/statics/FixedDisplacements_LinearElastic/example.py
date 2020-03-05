@@ -66,10 +66,9 @@ nip = elem.nip()
 mat = GMatElastic.Cartesian3d.Matrix(nelem, nip, 1.0, 1.0)
 
 # integration point tensors
-d = 3
-Eps = np.empty((nelem, nip, d, d))
-Sig = np.empty((nelem, nip, d, d))
-C = np.empty((nelem, nip, d, d, d, d))
+Eps = np.empty((nelem, nip, 3, 3))
+Sig = np.empty((nelem, nip, 3, 3))
+C = np.empty((nelem, nip, 3, 3, 3, 3))
 
 # solve
 # -----
