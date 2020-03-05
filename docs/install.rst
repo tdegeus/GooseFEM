@@ -37,7 +37,9 @@ The quickest (but not the most efficient!) is to use *conda* to install *GooseFE
 
 .. warning::
 
-    This package does not benefit from *xsimd* optimisation, as it is not compiled on your hardware. Therefore compiling by hand is recommended.
+    This package does not benefit from *xsimd* optimisation,
+    as it is not compiled on your hardware.
+    Therefore compiling by hand is recommended.
 
 From source
 ^^^^^^^^^^^
@@ -54,7 +56,8 @@ Note that *xsimd* is optional, but recommended.
 
         python -m pip install pyxtensor pybind11
 
-    for use without *conda*. Note that you install *Eigen* and *xsimd* yourself in such a way that Python can find it in order to use it.
+    for use without *conda*. Note that you install *Eigen* and *xsimd* yourself
+    in such a way that Python can find it in order to use it.
 
 Then, download the package::
 
