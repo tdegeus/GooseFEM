@@ -16,6 +16,7 @@ GooseFEM
    :maxdepth: 1
 
    examples/statics_linear.rst
+   examples/statics_mixed-periodic.rst
 
 .. toctree::
    :caption: EXAMPLES - DYNAMICS

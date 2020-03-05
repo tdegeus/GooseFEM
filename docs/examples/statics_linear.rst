@@ -15,7 +15,8 @@ in the out-of-plane direction to be modelled using two-dimensional plane strain.
 
 |
 
-Below an example is described line-by-line. The full example can be downloaded:
+Below an example is described line-by-line.
+The full example can be downloaded:
 
 | :download:`CMakeLists.txt <statics/FixedDisplacements_LinearElastic/CMakeLists.txt>`
 | :download:`example.cpp <statics/FixedDisplacements_LinearElastic/example.cpp>`
@@ -30,7 +31,7 @@ Below an example is described line-by-line. The full example can be downloaded:
     This example is also available using the Python interface
     (:download:`example.py <statics/FixedDisplacements_LinearElastic/example.py>`).
     Compared to the C++ API, the Python API requires more data-allocation,
-    in particular for the functions "AsElement" and "AssembleNode".
+    in particular for the functions *AsElement* and *AssembleNode*.
     See: :ref:`conventions_allocation`.
 
 Include library
@@ -56,18 +57,18 @@ Define mesh
     :emphasize-lines: 2
 
 A mesh is defined using GooseFEM.
-As observed the "mesh" is a class that has methods to extract the relevant information
-such as the nodal coordinates ("coor"), the connectivity ("conn"),
-the degrees-of-freedom per node ("dofs") and several node-sets that
+As observed the *mesh* is a class that has methods to extract the relevant information
+such as the nodal coordinates (*coor*), the connectivity (*conn*),
+the degrees-of-freedom per node (*dofs*) and several node-sets that
 will be used to impose the sketched boundary conditions
-("nodesLeft", "nodesRight", "nodesTop", "nodesBottom").
+(*nodesLeft*, *nodesRight*, *nodesTop*, *nodesBottom*).
 
 Note that:
 
-*   The connectivity ("conn") contains information of which nodes, in which order,
+*   The connectivity (*conn*) contains information of which nodes, in which order,
     belong to which element.
 
-*   The degrees-of-freedom per node ("dofs") contains information of how a nodal vector
+*   The degrees-of-freedom per node (*dofs*) contains information of how a nodal vector
     (a vector stored per node) can be transformed to a list of degrees-of-freedom as used
     in the linear system (although this can be mostly done automatically as we will see below).
 
@@ -96,7 +97,7 @@ We will reorder such that degrees-of-freedom are ordered such that
 where the subscript :math:`u` and :math:`p` respectively denote
 *Unknown* and *Prescribed*
 degrees-of-freedom.
-To achieve this we start by collecting all prescribed degrees-of-freedom in "iip".
+To achieve this we start by collecting all prescribed degrees-of-freedom in *iip*.
 
 (Avoid) Book-keeping
 ====================
@@ -107,8 +108,8 @@ To achieve this we start by collecting all prescribed degrees-of-freedom in "iip
     :emphasize-lines: 1
 
 To switch between the three of GooseFEM's data-representations,
-an instance of the "Vector" class is used.
-This instance, "vector", will enable us to switch between a vector field (e.g. the displacement)
+an instance of the *Vector* class is used.
+This instance, *vector*, will enable us to switch between a vector field (e.g. the displacement)
 
 1.  collected per node,
 2.  collected per degree-of-freedom, or
@@ -116,15 +117,15 @@ This instance, "vector", will enable us to switch between a vector field (e.g. t
 
 .. note::
 
-    The "Vector" class collects most, if not all, the burden of book-keeping.
-    It is thus here that "conn", "dofs", and "iip" are used. In particular,
+    The *Vector* class collects most, if not all, the burden of book-keeping.
+    It is thus here that *conn*, *dofs*, and *iip* are used. In particular,
 
-    *   'nodevec' :math:`\leftrightarrow` 'dofval' using "dofs" and "iip",
-    *   'nodevec' :math:`\leftrightarrow` 'elemvec' using "conn".
+    *   'nodevec' :math:`\leftrightarrow` 'dofval' using *dofs* and *iip*,
+    *   'nodevec' :math:`\leftrightarrow` 'elemvec' using *conn*.
 
     By contrast, most of GooseFEM's other methods receive the relevant representation,
     and consequently require no problem specific knowledge.
-    They thus do not have to supplied with "conn", "dofs", or "iip".
+    They thus do not have to supplied with *conn*, *dofs*, or *iip*.
 
 .. seealso::
 
@@ -161,10 +162,10 @@ Allocate nodal vectors
     :language: cpp
     :lines: 49-52
 
-*   "disp": nodal displacements
-*   "fint": nodal internal forces
-*   "fext": nodal external forces
-*   "fres": nodal residual forces
+*   *disp*: nodal displacements
+*   *fint*: nodal internal forces
+*   *fext*: nodal external forces
+*   *fres*: nodal residual forces
 
 Allocate element vectors
 ========================
@@ -173,14 +174,14 @@ Allocate element vectors
     :language: cpp
     :lines: 55-57
 
-*   "ue": displacement
-*   "fe": force
-*   "Ke": tangent matrix
+*   *ue*: displacement
+*   *fe*: force
+*   *Ke*: tangent matrix
 
 .. warning::
 
-    Upsizing (e.g. "disp" :math:`\rightarrow` "ue") can be done uniquely,
-    but downsizing (e.g. "fe" :math:`\rightarrow` "fint") can be done in more than one way,
+    Upsizing (e.g. *disp* :math:`\rightarrow` *ue*) can be done uniquely,
+    but downsizing (e.g. *fe* :math:`\rightarrow` *fint*) can be done in more than one way,
     see :ref:`conventions_vector_conversion`.
     We will get back to this point below.
 
@@ -198,7 +199,7 @@ the nodal coordinates per element.
 Both are contained in the output of "vector.AsElement(coor)", which is an 'elemvec' of
 shape "[nelem, nne, ndim]".
 This illustrates that problem specific book-keeping is isolated to the main program,
-using "Vector" as tool.
+using *Vector* as tool.
 
 .. note::
 
@@ -260,12 +261,12 @@ Compute strain
     :emphasize-lines: 2
 
 The strain per integration point is now computed using the current nodal displacements
-(stored as 'elemvec' in "ue") and the gradient of the shape functions.
+(stored as 'elemvec' in *ue*) and the gradient of the shape functions.
 
 .. note::
 
-    "ue" is the output of "vector.asElement(disp, ue)".
-    Using this syntax re-allocation of "ue" is avoided.
+    *ue* is the output of "vector.asElement(disp, ue)".
+    Using this syntax re-allocation of *ue* is avoided.
     If this optimisation is irrelevant for you problem (or if you are using the Python interface),
     please use the same function, but starting with a capital:
 
@@ -291,7 +292,7 @@ The stress and stiffness tensors are now computed for each integration point
 
 .. note::
 
-    "Sig" and "C" are the output variables that were preallocated in the main.
+    *Sig* and *C* are the output variables that were preallocated in the main.
 
 Assemble system
 ===============
@@ -300,25 +301,25 @@ Assemble system
     :language: cpp
     :lines: 84-91
 
-The stress stored per integration point ("Sig") is now converted to
-nodal internal force vectors stored per element ("fe").
-Using "vector" this 'elemvec' representation is then converted of a
-'nodevec' representation in "fint".
-Likewise, the stiffness tensor stored for integration point ("C") are converted
+The stress stored per integration point (*Sig*) is now converted to
+nodal internal force vectors stored per element (*fe*).
+Using *vector* this 'elemvec' representation is then converted of a
+'nodevec' representation in *fint*.
+Likewise, the stiffness tensor stored for integration point (*C*) are converted
 to system matrices stored per element ('elemmat') and finally assembled to
 the global stiffness matrix.
 
 .. warning::
 
     Please note that downsizing
-    ("fe" :math:`\rightarrow` "fint" and "Ke" :math:`\rightarrow` "K") can be done in two ways,
+    (*fe* :math:`\rightarrow` *fint* and *Ke* :math:`\rightarrow` *K*) can be done in two ways,
     and that "assemble..." is the right function here as it adds entries that occur
     more than once.
     In contrast "as..." would not result in what we want here.
 
 .. note::
 
-    Once more, "fe", "fint", and "Ke" are output variables. Less efficient, but shorter, is:
+    Once more, *fe*, *fint*, and *Ke* are output variables. Less efficient, but shorter, is:
 
     .. code-block:: cpp
 
@@ -336,8 +337,8 @@ Solve
     :lines: 92-103
 
 We now prescribe the displacement of the Prescribed degrees-of-freedom directly
-in the nodal displacements "disp" and compute the residual force.
-This is follows by partitioning and solving, all done internally in the "MatrixPartitioned" class.
+in the nodal displacements *disp* and compute the residual force.
+This is follows by partitioning and solving, all done internally in the *MatrixPartitioned* class.
 
 Post-process
 ============
@@ -373,7 +374,7 @@ Finally we store some fields for plotting using
 Manual partitioning
 ===================
 
-To verify how partitioning and solving is done internally using the "MatrixPartitioned" class,
+To verify how partitioning and solving is done internally using the *MatrixPartitioned* class,
 the same example is provided where partitioning is done manually:
 
 | :download:`manual_partition.cpp <statics/FixedDisplacements_LinearElastic/manual_partition.cpp>`
