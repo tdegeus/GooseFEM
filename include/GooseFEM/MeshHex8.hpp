@@ -1010,13 +1010,19 @@ inline size_t FineLayer::ndim() const
 
 // -------------------------------------------------------------------------------------------------
 
-inline size_t FineLayer::shape(size_t i) const
+inline size_t FineLayer::nelx() const
 {
-  GOOSEFEM_ASSERT(i <= 2ul);
+  return xt::amax(m_nelx)[0];
+}
 
-  if      ( i == 0 ) return xt::amax(m_nelx)[0];
-  else if ( i == 2 ) return xt::amax(m_nelz)[0];
-  else               return xt::sum (m_nhy )[0];
+inline size_t FineLayer::nely() const
+{
+  return xt::sum(m_nhy)[0];
+}
+
+inline size_t FineLayer::nelz() const
+{
+  return xt::amax(m_nelz)[0];
 }
 
 // -------------------------------------------------------------------------------------------------

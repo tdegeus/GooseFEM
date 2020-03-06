@@ -58,7 +58,7 @@ private:
     bool m_factor = false;
 
     // Bookkeeping
-    xt::xtensor<size_t,2> m_conn; // connectivity         [nelem, nne ]
+    xt::xtensor<size_t,2> m_conn; // connectivity [nelem, nne]
     xt::xtensor<size_t,2> m_dofs; // DOF-numbers per node [nnode, ndim]
 
     // Dimensions
