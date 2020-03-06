@@ -395,7 +395,7 @@ py::class_<GooseFEM::Mesh::Hex8::FineLayer>(m, "FineLayer")
         py::arg("nx"),
         py::arg("ny"),
         py::arg("nz"),
-        py::arg("h")=1.,
+        py::arg("h")=1.0,
         py::arg("nfine")=1)
 
     .def("nelem",
@@ -410,8 +410,14 @@ py::class_<GooseFEM::Mesh::Hex8::FineLayer>(m, "FineLayer")
     .def("ndim",
         &GooseFEM::Mesh::Hex8::FineLayer::ndim)
 
-    .def("shape",
-        &GooseFEM::Mesh::Hex8::FineLayer::shape)
+    .def("nelx",
+        &GooseFEM::Mesh::Hex8::FineLayer::nelx)
+
+    .def("nely",
+        &GooseFEM::Mesh::Hex8::FineLayer::nely)
+
+    .def("nelz",
+        &GooseFEM::Mesh::Hex8::FineLayer::nelz)
 
     .def("coor",
         &GooseFEM::Mesh::Hex8::FineLayer::coor)
