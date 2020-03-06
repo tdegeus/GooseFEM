@@ -54,33 +54,33 @@ public:
     // qtensor(i,j) += B(m,i,j,k) * elemvec(m,k)
     void gradN_vector(
         const xt::xtensor<double,3>& elemvec,
-              xt::xtensor<double,4>& qtensor) const;
+              xt::xtensor<double,4>& qtensor) const; // overwritten
 
     void gradN_vector_T(
         const xt::xtensor<double,3>& elemvec,
-              xt::xtensor<double,4>& qtensor) const;
+              xt::xtensor<double,4>& qtensor) const; // overwritten
 
     void symGradN_vector(
         const xt::xtensor<double,3>& elemvec,
-              xt::xtensor<double,4>& qtensor) const;
+              xt::xtensor<double,4>& qtensor) const; // overwritten
 
     // Integral of the scalar product
     // elemmat(m*ndim+i,n*ndim+i) += N(m) * qscalar * N(n) * dV
     void int_N_scalar_NT_dV(
         const xt::xtensor<double,2>& qscalar,
-              xt::xtensor<double,3>& elemmat) const;
+              xt::xtensor<double,3>& elemmat) const; // overwritten
 
     // Integral of the assembled product
     // fm = ( Bm^T : qtensor ) dV
     void int_gradN_dot_tensor2_dV(
         const xt::xtensor<double,4>& qtensor,
-              xt::xtensor<double,3>& elemvec) const;
+              xt::xtensor<double,3>& elemvec) const; // overwritten
 
     // Integral of the assembled product
     // Kmn = ( Bm^T : qtensor : Bn ) dV
     void int_gradN_dot_tensor4_dot_gradNT_dV(
         const xt::xtensor<double,6>& qtensor,
-              xt::xtensor<double,3>& elemmat) const;
+              xt::xtensor<double,3>& elemmat) const; // overwritten
 
     // Auto-allocation of the functions above
     xt::xtensor<double,2> DV() const;
