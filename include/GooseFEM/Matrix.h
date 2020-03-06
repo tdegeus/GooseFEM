@@ -19,13 +19,10 @@ template <class Solver = Eigen::SimplicialLDLT<Eigen::SparseMatrix<double>>>
 class Matrix {
 public:
     // Constructors
-
     Matrix() = default;
-
     Matrix(const xt::xtensor<size_t,2>& conn, const xt::xtensor<size_t,2>& dofs);
 
     // Dimensions
-
     size_t nelem() const; // number of elements
     size_t nne() const;   // number of nodes per element
     size_t nnode() const; // number of nodes
@@ -33,28 +30,18 @@ public:
     size_t ndof() const;  // number of DOFs
 
     // DOF lists
-
     xt::xtensor<size_t,2> dofs() const; // DOFs
 
     // Assemble from matrices stored per element [nelem, nne*ndim, nne*ndim]
-
     void assemble(const xt::xtensor<double,3>& elemmat);
 
     // Solve
     // x_u = A_uu \ ( b_u - A_up * x_p )
-
-    void solve(
-        const xt::xtensor<double,2>& b,
-              xt::xtensor<double,2>& x); // overwritten
-
-    void solve(
-        const xt::xtensor<double,1>& b,
-              xt::xtensor<double,1>& x); // overwritten
+    void solve(const xt::xtensor<double,2>& b, xt::xtensor<double,2>& x);
+    void solve(const xt::xtensor<double,1>& b, xt::xtensor<double,1>& x);
 
     // Auto-allocation of the functions above
-
     xt::xtensor<double,2> Solve(const xt::xtensor<double,2>& b);
-
     xt::xtensor<double,1> Solve(const xt::xtensor<double,1>& b);
 
 private:
@@ -85,7 +72,6 @@ private:
     void factorize();
 
     // Convert arrays (Eigen version of Vector, which contains public functions)
-
     Eigen::VectorXd asDofs(const xt::xtensor<double,2>& nodevec) const;
 
     void asNode(const Eigen::VectorXd& dofval, xt::xtensor<double,2>& nodevec) const;

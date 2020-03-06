@@ -27,7 +27,6 @@ public:
     //    "qscalar"  -  integration point scalar          -  [nelem, nip]
 
     // Constructor: integration point coordinates and weights are optional (default: Gauss)
-
     QuadratureAxisymmetric() = default;
 
     QuadratureAxisymmetric(const xt::xtensor<double,3>& x);
@@ -38,76 +37,59 @@ public:
         const xt::xtensor<double,1>& w);
 
     // Update the nodal positions (shape of "x" should match the earlier definition)
-
     void update_x(const xt::xtensor<double,3>& x);
 
     // Return dimensions
-
     size_t nelem() const; // number of elements
     size_t nne() const;   // number of nodes per element
     size_t ndim() const;  // number of dimension
     size_t nip() const;   // number of integration points
 
     // Return integration volume
-
     void dV(xt::xtensor<double,2>& qscalar) const;
-
     void dV(xt::xtensor<double,4>& qtensor) const; // same volume for all tensor components
-
     void dV(xt::xarray<double>& qtensor) const; // same volume for all tensor components
 
     // Dyadic product (and its transpose and symmetric part)
-    //      qtensor(i,j) += B(m,i,j,k) * elemvec(m,k)
-
+    // qtensor(i,j) += B(m,i,j,k) * elemvec(m,k)
     void gradN_vector(
         const xt::xtensor<double,3>& elemvec,
-              xt::xtensor<double,4>& qtensor) const; // overwritten
+              xt::xtensor<double,4>& qtensor) const;
 
     void gradN_vector_T(
         const xt::xtensor<double,3>& elemvec,
-              xt::xtensor<double,4>& qtensor) const; // overwritten
+              xt::xtensor<double,4>& qtensor) const;
 
     void symGradN_vector(
         const xt::xtensor<double,3>& elemvec,
-              xt::xtensor<double,4>& qtensor) const; // overwritten
+              xt::xtensor<double,4>& qtensor) const;
 
     // Integral of the scalar product
-    //      elemmat(m*ndim+i,n*ndim+i) += N(m) * qscalar * N(n) * dV
-
+    // elemmat(m*ndim+i,n*ndim+i) += N(m) * qscalar * N(n) * dV
     void int_N_scalar_NT_dV(
         const xt::xtensor<double,2>& qscalar,
-              xt::xtensor<double,3>& elemmat) const; // overwritten
+              xt::xtensor<double,3>& elemmat) const;
 
     // Integral of the assembled product
-    //      fm = ( Bm^T : qtensor ) dV
-
+    // fm = ( Bm^T : qtensor ) dV
     void int_gradN_dot_tensor2_dV(
         const xt::xtensor<double,4>& qtensor,
-              xt::xtensor<double,3>& elemvec) const; // overwritten
+              xt::xtensor<double,3>& elemvec) const;
 
     // Integral of the assembled product
-    //      Kmn = ( Bm^T : qtensor : Bn ) dV
-
+    // Kmn = ( Bm^T : qtensor : Bn ) dV
     void int_gradN_dot_tensor4_dot_gradNT_dV(
         const xt::xtensor<double,6>& qtensor,
-              xt::xtensor<double,3>& elemmat) const; // overwritten
+              xt::xtensor<double,3>& elemmat) const;
 
     // Auto-allocation of the functions above
-
     xt::xtensor<double,2> DV() const;
-
     xt::xarray<double> DV(size_t rank) const;
-
     xt::xtensor<double,4> GradN_vector(const xt::xtensor<double,3>& elemvec) const;
-
     xt::xtensor<double,4> GradN_vector_T(const xt::xtensor<double,3>& elemvec) const;
-
     xt::xtensor<double,4> SymGradN_vector(const xt::xtensor<double,3>& elemvec) const;
-
     xt::xtensor<double,3> Int_N_scalar_NT_dV(const xt::xtensor<double,2>& qscalar) const;
-
     xt::xtensor<double,3> Int_gradN_dot_tensor2_dV(const xt::xtensor<double,4>& qtensor) const;
-
     xt::xtensor<double,3> Int_gradN_dot_tensor4_dot_gradNT_dV(
         const xt::xtensor<double,6>& qtensor) const;
 
