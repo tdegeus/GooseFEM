@@ -130,7 +130,7 @@ private:
     xt::xtensor<double,1> m_w;    // weight of each integration point [nip]
     xt::xtensor<double,2> m_xi;   // local coordinate of each integration point [nip, ndim]
     xt::xtensor<double,2> m_N;    // shape functions [nip, nne]
-    xt::xtensor<double,3> m_dNxi; // shape function grad. w.r.t. local  coor. [nip, nne, ndim]
+    xt::xtensor<double,3> m_dNxi; // shape function grad. wrt local  coor. [nip, nne, ndim]
     xt::xtensor<double,6> m_B;    // B-matrix [nelem, nne, tdim, tdim, tdim]
     xt::xtensor<double,2> m_vol;  // integration point volume [nelem, nip]
 };
