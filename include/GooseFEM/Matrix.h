@@ -1,13 +1,11 @@
-/* =================================================================================================
+/*
 
 (c - GPLv3) T.W.J. de Geus (Tom) | tom@geus.me | www.geus.me | github.com/tdegeus/GooseFEM
 
-================================================================================================= */
+*/
 
 #ifndef GOOSEFEM_MATRIX_H
 #define GOOSEFEM_MATRIX_H
-
-// -------------------------------------------------------------------------------------------------
 
 #include "config.h"
 
@@ -15,104 +13,86 @@
 #include <Eigen/Sparse>
 #include <Eigen/SparseCholesky>
 
-// =================================================================================================
-
 namespace GooseFEM {
 
-// -------------------------------------------------------------------------------------------------
-
 template <class Solver = Eigen::SimplicialLDLT<Eigen::SparseMatrix<double>>>
-class Matrix
-{
+class Matrix {
 public:
+    // Constructors
 
-  // Constructors
+    Matrix() = default;
 
-  Matrix() = default;
+    Matrix(const xt::xtensor<size_t,2>& conn, const xt::xtensor<size_t,2>& dofs);
 
-  Matrix(
-    const xt::xtensor<size_t,2>& conn,
-    const xt::xtensor<size_t,2>& dofs);
+    // Dimensions
 
-  // Dimensions
+    size_t nelem() const; // number of elements
+    size_t nne() const;   // number of nodes per element
+    size_t nnode() const; // number of nodes
+    size_t ndim() const;  // number of dimensions
+    size_t ndof() const;  // number of DOFs
 
-  size_t nelem() const; // number of elements
-  size_t nne()   const; // number of nodes per element
-  size_t nnode() const; // number of nodes
-  size_t ndim()  const; // number of dimensions
-  size_t ndof()  const; // number of DOFs
+    // DOF lists
 
-  // DOF lists
+    xt::xtensor<size_t,2> dofs() const; // DOFs
 
-  xt::xtensor<size_t,2> dofs() const; // DOFs
+    // Assemble from matrices stored per element [nelem, nne*ndim, nne*ndim]
 
-  // Assemble from matrices stored per element [nelem, nne*ndim, nne*ndim]
+    void assemble(const xt::xtensor<double,3>& elemmat);
 
-  void assemble(const xt::xtensor<double,3>& elemmat);
+    // Solve
+    // x_u = A_uu \ ( b_u - A_up * x_p )
 
-  // Solve
-  // x_u = A_uu \ ( b_u - A_up * x_p )
+    void solve(
+        const xt::xtensor<double,2>& b,
+              xt::xtensor<double,2>& x); // overwritten
 
-  void solve(
-    const xt::xtensor<double,2>& b,
-          xt::xtensor<double,2>& x); // overwritten
+    void solve(
+        const xt::xtensor<double,1>& b,
+              xt::xtensor<double,1>& x); // overwritten
 
-  void solve(
-    const xt::xtensor<double,1>& b,
-          xt::xtensor<double,1>& x); // overwritten
+    // Auto-allocation of the functions above
 
-  // Auto-allocation of the functions above
+    xt::xtensor<double,2> Solve(const xt::xtensor<double,2>& b);
 
-  xt::xtensor<double,2> Solve(
-    const xt::xtensor<double,2>& b);
-
-  xt::xtensor<double,1> Solve(
-    const xt::xtensor<double,1>& b);
+    xt::xtensor<double,1> Solve(const xt::xtensor<double,1>& b);
 
 private:
+    // The matrix
+    Eigen::SparseMatrix<double> m_A;
 
-  // The matrix
-  Eigen::SparseMatrix<double> m_A;
+    // Matrix entries
+    std::vector<Eigen::Triplet<double>> m_T;
 
-  // Matrix entries
-  std::vector<Eigen::Triplet<double>> m_T;
+    // Solver (re-used to solve different RHS)
+    Solver m_solver;
 
-  // Solver (re-used to solve different RHS)
-  Solver m_solver;
+    // Signal changes to data compare to the last inverse
+    bool m_factor = false;
 
-  // Signal changes to data compare to the last inverse
-  bool m_factor=false;
+    // Bookkeeping
+    xt::xtensor<size_t,2> m_conn; // connectivity         [nelem, nne ]
+    xt::xtensor<size_t,2> m_dofs; // DOF-numbers per node [nnode, ndim]
 
-  // Bookkeeping
-  xt::xtensor<size_t,2> m_conn; // connectivity         [nelem, nne ]
-  xt::xtensor<size_t,2> m_dofs; // DOF-numbers per node [nnode, ndim]
+    // Dimensions
+    size_t m_nelem; // number of elements
+    size_t m_nne;   // number of nodes per element
+    size_t m_nnode; // number of nodes
+    size_t m_ndim;  // number of dimensions
+    size_t m_ndof;  // number of DOFs
 
-  // Dimensions
-  size_t m_nelem; // number of elements
-  size_t m_nne;   // number of nodes per element
-  size_t m_nnode; // number of nodes
-  size_t m_ndim;  // number of dimensions
-  size_t m_ndof;  // number of DOFs
+    // Compute inverse (automatically evaluated by "solve")
+    void factorize();
 
-  // Compute inverse (automatically evaluated by "solve")
-  void factorize();
+    // Convert arrays (Eigen version of Vector, which contains public functions)
 
-  // Convert arrays (Eigen version of Vector, which contains public functions)
+    Eigen::VectorXd asDofs(const xt::xtensor<double,2>& nodevec) const;
 
-  Eigen::VectorXd asDofs(const xt::xtensor<double,2>& nodevec) const;
-
-  void asNode(const Eigen::VectorXd& dofval, xt::xtensor<double,2>& nodevec) const;
-
+    void asNode(const Eigen::VectorXd& dofval, xt::xtensor<double,2>& nodevec) const;
 };
 
-// -------------------------------------------------------------------------------------------------
-
-} // namespace ...
-
-// =================================================================================================
+} // namespace GooseFEM
 
 #include "Matrix.hpp"
-
-// =================================================================================================
 
 #endif
