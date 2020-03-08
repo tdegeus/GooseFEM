@@ -61,7 +61,7 @@ public:
     void asDofs_i(
         const xt::xtensor<double,2>& nodevec,
               xt::xtensor<double,1>& dofval_i,
-              bool apply_tyings = true) const; // overwritten
+              bool apply_tyings = true) const;
 
     // Convert to "nodevec" (overwrite entries that occur more than once) -- (auto allocation below)
     void asNode(const xt::xtensor<double,1>& dofval, xt::xtensor<double,2>& nodevec) const;
@@ -84,11 +84,11 @@ public:
 
 private:
     // Bookkeeping
-    xt::xtensor<size_t,2> m_conn; // connectivity          [nelem, nne ]
+    xt::xtensor<size_t,2> m_conn; // connectivity [nelem, nne]
     xt::xtensor<size_t,2> m_dofs; // DOF-numbers per node  [nnode, ndim]
-    xt::xtensor<size_t,1> m_iiu;  // unknown     DOFs      [nnu]
-    xt::xtensor<size_t,1> m_iip;  // prescribed  DOFs      [nnp]
-    xt::xtensor<size_t,1> m_iid;  // dependent   DOFs      [nnd]
+    xt::xtensor<size_t,1> m_iiu;  // unknown DOFs [nnu]
+    xt::xtensor<size_t,1> m_iip;  // prescribed DOFs [nnp]
+    xt::xtensor<size_t,1> m_iid;  // dependent DOFs [nnd]
 
     // Dimensions
     size_t m_nelem; // number of elements

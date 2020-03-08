@@ -61,7 +61,7 @@ public:
         const xt::xtensor<double,1>& b_u,
         const xt::xtensor<double,1>& b_d,
         const xt::xtensor<double,1>& x_p,
-              xt::xtensor<double,1>& x_u); // overwritten
+              xt::xtensor<double,1>& x_u);
 
     // Auto-allocation of the functions above
     xt::xtensor<double,2> Solve(const xt::xtensor<double,2>& b, const xt::xtensor<double,2>& x);

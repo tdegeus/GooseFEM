@@ -41,18 +41,18 @@ public:
 
     // Dot-product:
     // b_i = A_ij * x_j
-    void dot(const xt::xtensor<double,2>& x, xt::xtensor<double,2>& b) const; // overwritten
-    void dot(const xt::xtensor<double,1>& x, xt::xtensor<double,1>& b) const; // overwritten
+    void dot(const xt::xtensor<double,2>& x, xt::xtensor<double,2>& b) const;
+    void dot(const xt::xtensor<double,1>& x, xt::xtensor<double,1>& b) const;
 
     void dot_u(
         const xt::xtensor<double,1>& x_u,
         const xt::xtensor<double,1>& x_p,
-        xt::xtensor<double,1>& b_u) const; // overwritten
+              xt::xtensor<double,1>& b_u) const;
 
     void dot_p(
         const xt::xtensor<double,1>& x_u,
         const xt::xtensor<double,1>& x_p,
-        xt::xtensor<double,1>& b_p) const; // overwritten
+              xt::xtensor<double,1>& b_p) const;
 
     // Solve:
     // x_u = A_uu \ ( b_u - A_up * x_p ) = A_uu \ b_u
@@ -63,7 +63,7 @@ public:
     void solve_u(
         const xt::xtensor<double,1>& b_u,
         const xt::xtensor<double,1>& x_p,
-        xt::xtensor<double,1>& x_u); // overwritten
+              xt::xtensor<double,1>& x_u);
 
     // Get right-hand-size for corresponding to the prescribed DOFs:
     // b_p = A_pu * x_u + A_pp * x_p = A_pp * x_p
@@ -76,7 +76,7 @@ public:
     void reaction_p(
         const xt::xtensor<double,1>& x_u,
         const xt::xtensor<double,1>& x_p,
-        xt::xtensor<double,1>& b_p) const; // overwritten
+              xt::xtensor<double,1>& b_p) const;
 
     // Return matrix as diagonal matrix (column)
     xt::xtensor<double,1> AsDiagonal() const;

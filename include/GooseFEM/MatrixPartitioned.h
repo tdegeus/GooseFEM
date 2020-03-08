@@ -51,7 +51,7 @@ public:
     void solve_u(
         const xt::xtensor<double,1>& b_u,
         const xt::xtensor<double,1>& x_p,
-              xt::xtensor<double,1>& x_u); // overwritten
+              xt::xtensor<double,1>& x_u);
 
     // Get right-hand-size for corresponding to the prescribed DOFs:
     // b_p = A_pu * x_u + A_pp * x_p = A_pp * x_p
@@ -66,7 +66,7 @@ public:
     void reaction_p(
         const xt::xtensor<double,1>& x_u,
         const xt::xtensor<double,1>& x_p,
-              xt::xtensor<double,1>& b_p) const; // overwritten
+              xt::xtensor<double,1>& b_p) const;
 
     // Auto-allocation of the functions above
     xt::xtensor<double,2> Solve(const xt::xtensor<double,2>& b, const xt::xtensor<double,2>& x);

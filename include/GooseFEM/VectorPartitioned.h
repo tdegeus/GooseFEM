@@ -46,7 +46,7 @@ public:
     // Copy (part of) nodevec/dofval to another nodevec/dofval
     void copy(
         const xt::xtensor<double,2>& nodevec_src,
-              xt::xtensor<double,2>& nodevec_dest) const; // overwritten
+              xt::xtensor<double,2>& nodevec_dest) const;
 
     void copy_u(
         const xt::xtensor<double,2>& nodevec_src,
