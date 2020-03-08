@@ -1,191 +1,148 @@
-/* =================================================================================================
+/*
 
 (c - GPLv3) T.W.J. de Geus (Tom) | tom@geus.me | www.geus.me | github.com/tdegeus/GooseFEM
 
-================================================================================================= */
+*/
 
 #ifndef GOOSEFEM_MATRIXDIAGONALPARTITIONED_H
 #define GOOSEFEM_MATRIXDIAGONALPARTITIONED_H
 
-// -------------------------------------------------------------------------------------------------
-
 #include "config.h"
-
-// =================================================================================================
 
 namespace GooseFEM {
 
-// -------------------------------------------------------------------------------------------------
-
-class MatrixDiagonalPartitioned
-{
+class MatrixDiagonalPartitioned {
 public:
+    // Constructors
+    MatrixDiagonalPartitioned() = default;
 
-  // Constructors
+    MatrixDiagonalPartitioned(
+        const xt::xtensor<size_t,2>& conn,
+        const xt::xtensor<size_t,2>& dofs,
+        const xt::xtensor<size_t,1>& iip);
 
-  MatrixDiagonalPartitioned() = default;
+    // Dimensions
+    size_t nelem() const; // number of elements
+    size_t nne() const;   // number of nodes per element
+    size_t nnode() const; // number of nodes
+    size_t ndim() const;  // number of dimensions
+    size_t ndof() const;  // number of DOFs
+    size_t nnu() const;   // number of unknown DOFs
+    size_t nnp() const;   // number of prescribed DOFs
 
-  MatrixDiagonalPartitioned(
-    const xt::xtensor<size_t,2>& conn,
-    const xt::xtensor<size_t,2>& dofs,
-    const xt::xtensor<size_t,1>& iip);
+    // DOF lists
+    xt::xtensor<size_t,2> dofs() const; // DOFs
+    xt::xtensor<size_t,1> iiu() const;  // unknown DOFs
+    xt::xtensor<size_t,1> iip() const;  // prescribed DOFs
 
-  // Dimensions
+    // Assemble from matrices stored per element [nelem, nne*ndim, nne*ndim]
+    // WARNING: ignores any off-diagonal terms
+    void assemble(const xt::xtensor<double,3>& elemmat);
 
-  size_t nelem() const; // number of elements
-  size_t nne()   const; // number of nodes per element
-  size_t nnode() const; // number of nodes
-  size_t ndim()  const; // number of dimensions
-  size_t ndof()  const; // number of DOFs
-  size_t nnu()   const; // number of unknown DOFs
-  size_t nnp()   const; // number of prescribed DOFs
+    // Dot-product:
+    // b_i = A_ij * x_j
+    void dot(const xt::xtensor<double,2>& x, xt::xtensor<double,2>& b) const;
+    void dot(const xt::xtensor<double,1>& x, xt::xtensor<double,1>& b) const;
 
-  // DOF lists
+    void dot_u(
+        const xt::xtensor<double,1>& x_u,
+        const xt::xtensor<double,1>& x_p,
+              xt::xtensor<double,1>& b_u) const;
 
-  xt::xtensor<size_t,2> dofs() const; // DOFs
-  xt::xtensor<size_t,1> iiu()  const; // unknown DOFs
-  xt::xtensor<size_t,1> iip()  const; // prescribed DOFs
+    void dot_p(
+        const xt::xtensor<double,1>& x_u,
+        const xt::xtensor<double,1>& x_p,
+              xt::xtensor<double,1>& b_p) const;
 
-  // Assemble from matrices stored per element [nelem, nne*ndim, nne*ndim]
-  // WARNING: ignores any off-diagonal terms
+    // Solve:
+    // x_u = A_uu \ ( b_u - A_up * x_p ) = A_uu \ b_u
+    void solve(const xt::xtensor<double,2>& b, xt::xtensor<double,2>& x); // modified with "x_u"
 
-  void assemble(const xt::xtensor<double,3>& elemmat);
+    void solve(const xt::xtensor<double,1>& b, xt::xtensor<double,1>& x); // modified with "x_u"
 
-  // Dot-product:
-  // b_i = A_ij * x_j
+    void solve_u(
+        const xt::xtensor<double,1>& b_u,
+        const xt::xtensor<double,1>& x_p,
+              xt::xtensor<double,1>& x_u);
 
-  void dot(
-    const xt::xtensor<double,2>& x,
-          xt::xtensor<double,2>& b) const; // overwritten
+    // Get right-hand-size for corresponding to the prescribed DOFs:
+    // b_p = A_pu * x_u + A_pp * x_p = A_pp * x_p
+    void reaction(
+        const xt::xtensor<double,2>& x, xt::xtensor<double,2>& b) const; // modified with "b_p"
 
-  void dot(
-    const xt::xtensor<double,1>& x,
-          xt::xtensor<double,1>& b) const; // overwritten
+    void reaction(
+        const xt::xtensor<double,1>& x, xt::xtensor<double,1>& b) const; // modified with "b_p"
 
-  void dot_u(
-    const xt::xtensor<double,1>& x_u,
-    const xt::xtensor<double,1>& x_p,
-          xt::xtensor<double,1>& b_u) const; // overwritten
+    void reaction_p(
+        const xt::xtensor<double,1>& x_u,
+        const xt::xtensor<double,1>& x_p,
+              xt::xtensor<double,1>& b_p) const;
 
-  void dot_p(
-    const xt::xtensor<double,1>& x_u,
-    const xt::xtensor<double,1>& x_p,
-          xt::xtensor<double,1>& b_p) const; // overwritten
+    // Return matrix as diagonal matrix (column)
+    xt::xtensor<double,1> AsDiagonal() const;
 
-  // Solve:
-  // x_u = A_uu \ ( b_u - A_up * x_p ) = A_uu \ b_u
+    // Auto-allocation of the functions above
+    xt::xtensor<double,2> Dot(const xt::xtensor<double,2>& x) const;
+    xt::xtensor<double,1> Dot(const xt::xtensor<double,1>& x) const;
 
-  void solve(
-    const xt::xtensor<double,2>& b,
-          xt::xtensor<double,2>& x); // modified with "x_u"
+    xt::xtensor<double,1> Dot_u(
+        const xt::xtensor<double,1>& x_u,
+        const xt::xtensor<double,1>& x_p) const;
 
-  void solve(
-    const xt::xtensor<double,1>& b,
-          xt::xtensor<double,1>& x); // modified with "x_u"
+    xt::xtensor<double,1> Dot_p(
+        const xt::xtensor<double,1>& x_u,
+        const xt::xtensor<double,1>& x_p) const;
 
-  void solve_u(
-    const xt::xtensor<double,1>& b_u,
-    const xt::xtensor<double,1>& x_p,
-          xt::xtensor<double,1>& x_u); // overwritten
+    xt::xtensor<double,2> Solve(const xt::xtensor<double,2>& b, const xt::xtensor<double,2>& x);
+    xt::xtensor<double,1> Solve(const xt::xtensor<double,1>& b, const xt::xtensor<double,1>& x);
 
-  // Get right-hand-size for corresponding to the prescribed DOFs:
-  // b_p = A_pu * x_u + A_pp * x_p = A_pp * x_p
+    xt::xtensor<double,1> Solve_u(
+        const xt::xtensor<double,1>& b_u,
+        const xt::xtensor<double,1>& x_p);
 
-  void reaction(
-    const xt::xtensor<double,2>& x,
-          xt::xtensor<double,2>& b) const; // modified with "b_p"
+    xt::xtensor<double,2> Reaction(
+        const xt::xtensor<double,2>& x,
+        const xt::xtensor<double,2>& b) const;
 
-  void reaction(
-    const xt::xtensor<double,1>& x,
-          xt::xtensor<double,1>& b) const; // modified with "b_p"
+    xt::xtensor<double,1> Reaction(
+        const xt::xtensor<double,1>& x,
+        const xt::xtensor<double,1>& b) const;
 
-  void reaction_p(
-    const xt::xtensor<double,1>& x_u,
-    const xt::xtensor<double,1>& x_p,
-          xt::xtensor<double,1>& b_p) const; // overwritten
-
-  // Return matrix as diagonal matrix (column)
-
-  xt::xtensor<double,1> AsDiagonal() const;
-
-  // Auto-allocation of the functions above
-
-  xt::xtensor<double,2> Dot(
-    const xt::xtensor<double,2>& x) const;
-
-  xt::xtensor<double,1> Dot(
-    const xt::xtensor<double,1>& x) const;
-
-  xt::xtensor<double,1> Dot_u(
-    const xt::xtensor<double,1>& x_u,
-    const xt::xtensor<double,1>& x_p) const;
-
-  xt::xtensor<double,1> Dot_p(
-    const xt::xtensor<double,1>& x_u,
-    const xt::xtensor<double,1>& x_p) const;
-
-  xt::xtensor<double,2> Solve(
-    const xt::xtensor<double,2>& b,
-    const xt::xtensor<double,2>& x);
-
-  xt::xtensor<double,1> Solve(
-    const xt::xtensor<double,1>& b,
-    const xt::xtensor<double,1>& x);
-
-  xt::xtensor<double,1> Solve_u(
-    const xt::xtensor<double,1>& b_u,
-    const xt::xtensor<double,1>& x_p);
-
-  xt::xtensor<double,2> Reaction(
-    const xt::xtensor<double,2>& x,
-    const xt::xtensor<double,2>& b) const;
-
-  xt::xtensor<double,1> Reaction(
-    const xt::xtensor<double,1>& x,
-    const xt::xtensor<double,1>& b) const;
-
-  xt::xtensor<double,1> Reaction_p(
-    const xt::xtensor<double,1>& x_u,
-    const xt::xtensor<double,1>& x_p) const;
+    xt::xtensor<double,1> Reaction_p(
+        const xt::xtensor<double,1>& x_u,
+        const xt::xtensor<double,1>& x_p) const;
 
 private:
+    // The diagonal matrix, and its inverse (re-used to solve different RHS)
+    xt::xtensor<double,1> m_Auu;
+    xt::xtensor<double,1> m_App;
+    xt::xtensor<double,1> m_inv_uu;
 
-  // The diagonal matrix, and its inverse (re-used to solve different RHS)
-  xt::xtensor<double,1> m_Auu;
-  xt::xtensor<double,1> m_App;
-  xt::xtensor<double,1> m_inv_uu;
+    // Signal changes to data compare to the last inverse
+    bool m_factor = false;
 
-  // Signal changes to data compare to the last inverse
-  bool m_factor=false;
+    // Bookkeeping
+    xt::xtensor<size_t,2> m_conn; // connectivity                      [nelem, nne ]
+    xt::xtensor<size_t,2> m_dofs; // DOF-numbers per node              [nnode, ndim]
+    xt::xtensor<size_t,2> m_part; // DOF-numbers per node, renumbered  [nnode, ndim]
+    xt::xtensor<size_t,1> m_iiu;  // DOF-numbers that are unknown      [nnu]
+    xt::xtensor<size_t,1> m_iip;  // DOF-numbers that are prescribed   [nnp]
 
-  // Bookkeeping
-  xt::xtensor<size_t,2> m_conn; // connectivity                      [nelem, nne ]
-  xt::xtensor<size_t,2> m_dofs; // DOF-numbers per node              [nnode, ndim]
-  xt::xtensor<size_t,2> m_part; // DOF-numbers per node, renumbered  [nnode, ndim]
-  xt::xtensor<size_t,1> m_iiu;  // DOF-numbers that are unknown      [nnu]
-  xt::xtensor<size_t,1> m_iip;  // DOF-numbers that are prescribed   [nnp]
+    // Dimensions
+    size_t m_nelem; // number of elements
+    size_t m_nne;   // number of nodes per element
+    size_t m_nnode; // number of nodes
+    size_t m_ndim;  // number of dimensions
+    size_t m_ndof;  // number of DOFs
+    size_t m_nnu;   // number of unknown DOFs
+    size_t m_nnp;   // number of prescribed DOFs
 
-  // Dimensions
-  size_t m_nelem; // number of elements
-  size_t m_nne;   // number of nodes per element
-  size_t m_nnode; // number of nodes
-  size_t m_ndim;  // number of dimensions
-  size_t m_ndof;  // number of DOFs
-  size_t m_nnu;   // number of unknown DOFs
-  size_t m_nnp;   // number of prescribed DOFs
-
-  // Compute inverse (automatically evaluated by "solve")
-  void factorize();
+    // Compute inverse (automatically evaluated by "solve")
+    void factorize();
 };
 
-// -------------------------------------------------------------------------------------------------
-
-} // namespace ...
-
-// =================================================================================================
+} // namespace GooseFEM
 
 #include "MatrixDiagonalPartitioned.hpp"
-
-// =================================================================================================
 
 #endif
