@@ -435,7 +435,7 @@ inline void QuadratureAxisymmetric::int_gradN_dot_tensor4_dot_gradNT_dV(
     const xt::xtensor<double,6>& qtensor, xt::xtensor<double,3>& elemmat) const
 {
     GOOSEFEM_ASSERT(
-        qtensor.shape() == 
+        qtensor.shape() ==
         std::decay_t<decltype(qtensor)>::shape_type({m_nelem,m_nip,m_tdim,m_tdim,m_tdim,m_tdim}));
     GOOSEFEM_ASSERT(
         elemmat.shape() ==
@@ -530,7 +530,7 @@ inline xt::xarray<double> QuadratureAxisymmetric::DV(size_t rank) const
     std::vector<size_t> shape = {m_nelem, m_nip};
 
     for (size_t i = 0; i < rank; ++i) {
-        shape.push_back(m_tdim);
+        shape.push_back(static_cast<size_t>(m_tdim));
     }
 
     xt::xarray<double> out = xt::empty<double>(shape);

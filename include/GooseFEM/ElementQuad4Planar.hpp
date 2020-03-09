@@ -450,7 +450,7 @@ inline xt::xarray<double> QuadraturePlanar::DV(size_t rank) const
     std::vector<size_t> shape = {m_nelem, m_nip};
 
     for (size_t i = 0; i < rank; ++i) {
-        shape.push_back(m_tdim);
+        shape.push_back(static_cast<size_t>(m_tdim));
     }
 
     xt::xarray<double> out = xt::empty<double>(shape);
