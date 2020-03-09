@@ -12,9 +12,8 @@
 namespace GooseFEM {
 namespace Element {
 
-inline xt::xtensor<double,3> asElementVector(
-    const xt::xtensor<size_t,2>& conn, 
-    const xt::xtensor<double,2>& nodevec)
+inline xt::xtensor<double,3>
+asElementVector(const xt::xtensor<size_t,2>& conn,  const xt::xtensor<double,2>& nodevec)
 {
     size_t nelem = conn.shape(0);
     size_t nne = conn.shape(1);
@@ -34,9 +33,8 @@ inline xt::xtensor<double,3> asElementVector(
     return elemvec;
 }
 
-inline xt::xtensor<double,2> assembleNodeVector(
-    const xt::xtensor<size_t,2>& conn, 
-    const xt::xtensor<double,3>& elemvec)
+inline xt::xtensor<double,2>
+assembleNodeVector(const xt::xtensor<size_t,2>& conn, const xt::xtensor<double,3>& elemvec)
 {
     size_t nelem = conn.shape(0);
     size_t nne = conn.shape(1);
