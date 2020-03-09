@@ -559,9 +559,8 @@ inline void Quadrature::int_gradN_dot_tensor4_dot_gradNT_dV(
 
         for (size_t q = 0; q < m_nip; ++q) {
 
-            auto dNx = xt::adapt(&m_dNx(e, q, 0, 0), xt::xshape<m_nne, m_ndim>());
-            auto C =
-                xt::adapt(&qtensor(e, q, 0, 0, 0, 0), xt::xshape<m_ndim, m_ndim, m_ndim, m_ndim>());
+            auto dNx = xt::adapt(&m_dNx(e,q,0,0), xt::xshape<m_nne, m_ndim>());
+            auto C = xt::adapt(&qtensor(e,q,0,0,0,0), xt::xshape<m_ndim, m_ndim, m_ndim, m_ndim>());
             auto& vol = m_vol(e, q);
 
             for (size_t m = 0; m < m_nne; ++m) {
