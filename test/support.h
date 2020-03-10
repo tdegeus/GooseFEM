@@ -9,8 +9,7 @@
 
 #include <Eigen/Eigen>
 
-#define GOOSEFEM_ENABLE_ASSERT
-#include "../include/GooseFEM/GooseFEM.h"
+#include <GooseFEM/GooseFEM.h>
 
 #define EQ(a,b) REQUIRE_THAT((a), Catch::WithinAbs((b), 1.e-12));
 
