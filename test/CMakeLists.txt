@@ -8,11 +8,20 @@ endif()
 
 option(WARNINGS "Show build warnings" ON)
 option(SIMD "Enable xsimd" ON)
+option(ASSERT "Enable assertions" ON)
 option(DEBUG "Enable all assertions" ON)
 
 find_package(Catch2 REQUIRED)
 
-add_executable(main main.cpp)
+add_executable(main
+    main.cpp
+    ElementHex8.cpp
+    ElementQuad4.cpp
+    Iterate.cpp
+    MatrixDiagonal.cpp
+    MeshQuad4.cpp
+    Vector.cpp
+    VectorPartitioned.cpp)
 
 target_link_libraries(main PRIVATE Catch2::Catch2 GooseFEM)
 
@@ -22,6 +31,10 @@ endif()
 
 if (WARNINGS)
     target_link_libraries(main PRIVATE GooseFEM::compiler_warnings)
+endif()
+
+if (ASSERT)
+    target_link_libraries(main PRIVATE GooseFEM::assert)
 endif()
 
 if (DEBUG)
