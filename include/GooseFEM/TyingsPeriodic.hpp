@@ -115,7 +115,7 @@ inline Eigen::SparseMatrix<double> Periodic::Cdi() const
             size_t ni = m_tyings(i, 0);
             size_t nd = m_tyings(i, 1);
 
-            data.push_back(Eigen::Triplet<double>(i * m_ndim + j, m_dofs(ni, j), +1.));
+            data.push_back(Eigen::Triplet<double>(i * m_ndim + j, m_dofs(ni, j), +1.0));
 
             for (size_t k = 0; k < m_ndim; ++k) {
                 data.push_back(Eigen::Triplet<double>(
@@ -146,7 +146,7 @@ inline Eigen::SparseMatrix<double> Periodic::Cdu() const
             size_t nd = m_tyings(i, 1);
 
             if (m_dofs(ni, j) < m_nnu) {
-                data.push_back(Eigen::Triplet<double>(i * m_ndim + j, m_dofs(ni, j), +1.));
+                data.push_back(Eigen::Triplet<double>(i * m_ndim + j, m_dofs(ni, j), +1.0));
             }
 
             for (size_t k = 0; k < m_ndim; ++k) {
@@ -180,7 +180,7 @@ inline Eigen::SparseMatrix<double> Periodic::Cdp() const
             size_t nd = m_tyings(i, 1);
 
             if (m_dofs(ni, j) >= m_nnu) {
-                data.push_back(Eigen::Triplet<double>(i * m_ndim + j, m_dofs(ni, j) - m_nnu, +1.));
+                data.push_back(Eigen::Triplet<double>(i * m_ndim + j, m_dofs(ni, j) - m_nnu, +1.0));
             }
 
             for (size_t k = 0; k < m_ndim; ++k) {

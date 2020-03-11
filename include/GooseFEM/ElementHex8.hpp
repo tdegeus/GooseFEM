@@ -356,17 +356,17 @@ inline void Quadrature::compute_dN()
                 // dNx(m,i) += Jinv(i,j) * dNxi(m,j);
                 for (size_t m = 0; m < m_nne; ++m) {
                     dNx(m, 0)
-                        = Jinv(0,0) * dNxi(m,0)
-                        + Jinv(0,1) * dNxi(m,1)
-                        + Jinv(0,2) * dNxi(m,2);
+                        = Jinv(0, 0) * dNxi(m, 0)
+                        + Jinv(0, 1) * dNxi(m, 1)
+                        + Jinv(0, 2) * dNxi(m, 2);
                     dNx(m, 1)
-                        = Jinv(1,0) * dNxi(m,0)
-                        + Jinv(1,1) * dNxi(m,1)
-                        + Jinv(1,2) * dNxi(m,2);
+                        = Jinv(1, 0) * dNxi(m, 0)
+                        + Jinv(1, 1) * dNxi(m, 1)
+                        + Jinv(1, 2) * dNxi(m, 2);
                     dNx(m, 2)
-                        = Jinv(2,0) * dNxi(m,0)
-                        + Jinv(2,1) * dNxi(m,1)
-                        + Jinv(2,2) * dNxi(m,2);
+                        = Jinv(2, 0) * dNxi(m, 0)
+                        + Jinv(2, 1) * dNxi(m, 1)
+                        + Jinv(2, 2) * dNxi(m, 2);
                 }
 
                 m_vol(e, q) = m_w(q) * Jdet;
@@ -463,8 +463,8 @@ inline void Quadrature::symGradN_vector(
             for (size_t m = 0; m < m_nne; ++m) {
                 for (size_t i = 0; i < m_ndim; ++i) {
                     for (size_t j = 0; j < m_ndim; ++j) {
-                        eps(i, j) += dNx(m, i) * u(m, j) / 2.0;
-                        eps(j, i) += dNx(m, i) * u(m, j) / 2.0;
+                        eps(i, j) += 0.5 * dNx(m, i) * u(m, j);
+                        eps(j, i) += 0.5 * dNx(m, i) * u(m, j);
                     }
                 }
             }

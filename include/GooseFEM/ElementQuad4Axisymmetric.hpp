@@ -198,7 +198,7 @@ inline void QuadratureAxisymmetric::compute_dN()
                     B(m, 2, 2, 2) = Jinv(0, 0) * dNxi(m, 0) + Jinv(0, 1) * dNxi(m, 1);
                 }
 
-                m_vol(e, q) = m_w(q) * Jdet * 2. * M_PI * rq;
+                m_vol(e, q) = m_w(q) * Jdet * 2.0 * M_PI * rq;
             }
         }
     }

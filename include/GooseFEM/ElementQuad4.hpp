@@ -127,8 +127,8 @@ inline xt::xtensor<double,2> xi()
 
     xt::xtensor<double,2> xi = xt::empty<double>({nip, ndim});
 
-    xi(0, 0) = 0.;
-    xi(0, 1) = 0.;
+    xi(0, 0) = 0.0;
+    xi(0, 1) = 0.0;
 
     return xi;
 }
