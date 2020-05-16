@@ -80,6 +80,17 @@ inline xt::xtensor<size_t,1> coordination(const xt::xtensor<size_t,2>& conn);
 // elements connected to each node
 inline std::vector<std::vector<size_t>> elem2node(const xt::xtensor<size_t,2>& conn);
 
+// return size of each element edge
+inline xt::xtensor<double,2> edgesize(
+    const xt::xtensor<double,2>& coor,
+    const xt::xtensor<size_t,2>& conn,
+    ElementType type);
+
+// return size of each element edge: extract element-type based on shape of "conn"
+inline xt::xtensor<double,2> edgesize(
+    const xt::xtensor<double,2>& coor,
+    const xt::xtensor<size_t,2>& conn);
+
 } // namespace Mesh
 } // namespace GooseFEM
 
