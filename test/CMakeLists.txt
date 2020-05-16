@@ -19,6 +19,7 @@ add_executable(main
     ElementQuad4.cpp
     Iterate.cpp
     MatrixDiagonal.cpp
+    Mesh.cpp
     MeshQuad4.cpp
     Vector.cpp
     VectorPartitioned.cpp)

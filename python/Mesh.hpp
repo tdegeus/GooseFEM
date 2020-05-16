@@ -94,6 +94,23 @@ m.def("elem2node",
     "Element-numbers connected to each node",
     py::arg("conn"));
 
+m.def("edgesize",
+    py::overload_cast<const xt::xtensor<double,2>&, const xt::xtensor<size_t,2>&>(
+        &GooseFEM::Mesh::edgesize),
+    "Get the edge size of all elements",
+    py::arg("coor"),
+    py::arg("conn"));
+
+m.def("edgesize",
+    py::overload_cast<
+        const xt::xtensor<double,2>&,
+        const xt::xtensor<size_t,2>&,
+        GooseFEM::Mesh::ElementType>(&GooseFEM::Mesh::edgesize),
+    "Get the edge size of all elements",
+    py::arg("coor"),
+    py::arg("conn"),
+    py::arg("type"));
+
 }
 
 // =================================================================================================

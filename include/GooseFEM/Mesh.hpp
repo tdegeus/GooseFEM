@@ -150,6 +150,56 @@ inline std::vector<std::vector<size_t>> elem2node(const xt::xtensor<size_t,2>& c
     return out;
 }
 
+inline xt::xtensor<double,2> edgesize(
+    const xt::xtensor<double,2>& coor,
+    const xt::xtensor<size_t,2>& conn,
+    ElementType type)
+{
+    GOOSEFEM_ASSERT(xt::amax(conn)() < coor.shape(0));
+
+    if (type == ElementType::Quad4) {
+        GOOSEFEM_ASSERT(coor.shape(1) == 2ul);
+        GOOSEFEM_ASSERT(conn.shape(1) == 4ul);
+        xt::xtensor<size_t,1> n0 = xt::view(conn, xt::all(), 0);
+        xt::xtensor<size_t,1> n1 = xt::view(conn, xt::all(), 1);
+        xt::xtensor<size_t,1> n2 = xt::view(conn, xt::all(), 2);
+        xt::xtensor<size_t,1> n3 = xt::view(conn, xt::all(), 3);
+        xt::xtensor<double,1> x0 = xt::view(coor, xt::keep(n0), 0);
+        xt::xtensor<double,1> x1 = xt::view(coor, xt::keep(n1), 0);
+        xt::xtensor<double,1> x2 = xt::view(coor, xt::keep(n2), 0);
+        xt::xtensor<double,1> x3 = xt::view(coor, xt::keep(n3), 0);
+        xt::xtensor<double,1> y0 = xt::view(coor, xt::keep(n0), 1);
+        xt::xtensor<double,1> y1 = xt::view(coor, xt::keep(n1), 1);
+        xt::xtensor<double,1> y2 = xt::view(coor, xt::keep(n2), 1);
+        xt::xtensor<double,1> y3 = xt::view(coor, xt::keep(n3), 1);
+        xt::xtensor<double,2> out = xt::empty<double>(conn.shape());
+        xt::view(out, xt::all(), 0) = xt::sqrt(xt::pow(x1 - x0, 2.0) + xt::pow(y1 - y0, 2.0));
+        xt::view(out, xt::all(), 1) = xt::sqrt(xt::pow(x2 - x1, 2.0) + xt::pow(y2 - y1, 2.0));
+        xt::view(out, xt::all(), 2) = xt::sqrt(xt::pow(x3 - x2, 2.0) + xt::pow(y3 - y2, 2.0));
+        xt::view(out, xt::all(), 3) = xt::sqrt(xt::pow(x0 - x3, 2.0) + xt::pow(y0 - y3, 2.0));
+        return out;
+    }
+
+    throw std::runtime_error("Element-type not implemented");
+}
+
+inline xt::xtensor<double,2> edgesize(
+    const xt::xtensor<double,2>& coor,
+    const xt::xtensor<size_t,2>& conn)
+{
+    if (coor.shape(1) == 2ul && conn.shape(1) == 3ul) {
+        return edgesize(coor, conn, ElementType::Tri3);
+    }
+    if (coor.shape(1) == 2ul && conn.shape(1) == 4ul) {
+        return edgesize(coor, conn, ElementType::Quad4);
+    }
+    if (coor.shape(1) == 3ul && conn.shape(1) == 8ul) {
+        return edgesize(coor, conn, ElementType::Hex8);
+    }
+
+    throw std::runtime_error("Element-type not implemented");
+}
+
 } // namespace Mesh
 } // namespace GooseFEM
 
