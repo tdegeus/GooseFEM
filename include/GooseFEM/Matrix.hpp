@@ -29,6 +29,35 @@ inline Matrix<Solver>::Matrix(
 }
 
 template <class Solver>
+inline Matrix<Solver>::Matrix(const Matrix<Solver>& other)
+{
+    m_conn = other.m_conn;
+    m_dofs = other.m_dofs;
+    m_nelem = other.m_nelem;
+    m_nne = other.m_nne;
+    m_nnode = other.m_nnode;
+    m_ndim = other.m_ndim;
+    m_ndof = other.m_ndof;
+    m_T.reserve(m_nelem * m_nne * m_ndim * m_nne * m_ndim);
+    m_A.resize(m_ndof, m_ndof);
+}
+
+template <class Solver>
+inline Matrix<Solver>& Matrix<Solver>::operator=(const Matrix<Solver>& other)
+{
+    m_conn = other.m_conn;
+    m_dofs = other.m_dofs;
+    m_nelem = other.m_nelem;
+    m_nne = other.m_nne;
+    m_nnode = other.m_nnode;
+    m_ndim = other.m_ndim;
+    m_ndof = other.m_ndof;
+    m_T.reserve(m_nelem * m_nne * m_ndim * m_nne * m_ndim);
+    m_A.resize(m_ndof, m_ndof);
+    return *this;
+}
+
+template <class Solver>
 inline size_t Matrix<Solver>::nelem() const
 {
     return m_nelem;
