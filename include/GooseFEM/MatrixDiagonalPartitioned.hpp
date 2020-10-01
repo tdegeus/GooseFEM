@@ -13,9 +13,9 @@
 namespace GooseFEM {
 
 inline MatrixDiagonalPartitioned::MatrixDiagonalPartitioned(
-    const xt::xtensor<size_t,2>& conn,
-    const xt::xtensor<size_t,2>& dofs,
-    const xt::xtensor<size_t,1>& iip)
+    const xt::xtensor<size_t, 2>& conn,
+    const xt::xtensor<size_t, 2>& dofs,
+    const xt::xtensor<size_t, 1>& iip)
     : m_conn(conn), m_dofs(dofs), m_iip(iip)
 {
     m_nelem = m_conn.shape(0);
@@ -71,17 +71,17 @@ inline size_t MatrixDiagonalPartitioned::nnp() const
     return m_nnp;
 }
 
-inline xt::xtensor<size_t,2> MatrixDiagonalPartitioned::dofs() const
+inline xt::xtensor<size_t, 2> MatrixDiagonalPartitioned::dofs() const
 {
     return m_dofs;
 }
 
-inline xt::xtensor<size_t,1> MatrixDiagonalPartitioned::iiu() const
+inline xt::xtensor<size_t, 1> MatrixDiagonalPartitioned::iiu() const
 {
     return m_iiu;
 }
 
-inline xt::xtensor<size_t,1> MatrixDiagonalPartitioned::iip() const
+inline xt::xtensor<size_t, 1> MatrixDiagonalPartitioned::iip() const
 {
     return m_iip;
 }
@@ -100,7 +100,7 @@ inline void MatrixDiagonalPartitioned::factorize()
     m_factor = false;
 }
 
-inline void MatrixDiagonalPartitioned::assemble(const xt::xtensor<double,3>& elemmat)
+inline void MatrixDiagonalPartitioned::assemble(const xt::xtensor<double, 3>& elemmat)
 {
     GOOSEFEM_ASSERT(
         elemmat.shape() ==
@@ -130,7 +130,7 @@ inline void MatrixDiagonalPartitioned::assemble(const xt::xtensor<double,3>& ele
 }
 
 inline void
-MatrixDiagonalPartitioned::dot(const xt::xtensor<double,2>& x, xt::xtensor<double,2>& b) const
+MatrixDiagonalPartitioned::dot(const xt::xtensor<double, 2>& x, xt::xtensor<double, 2>& b) const
 {
     GOOSEFEM_ASSERT(x.shape() == std::decay_t<decltype(x)>::shape_type({m_nnode, m_ndim}));
     GOOSEFEM_ASSERT(b.shape() == std::decay_t<decltype(b)>::shape_type({m_nnode, m_ndim}));
@@ -152,7 +152,7 @@ MatrixDiagonalPartitioned::dot(const xt::xtensor<double,2>& x, xt::xtensor<doubl
 }
 
 inline void
-MatrixDiagonalPartitioned::dot(const xt::xtensor<double,1>& x, xt::xtensor<double,1>& b) const
+MatrixDiagonalPartitioned::dot(const xt::xtensor<double, 1>& x, xt::xtensor<double, 1>& b) const
 {
     GOOSEFEM_ASSERT(x.size() == m_ndof);
     GOOSEFEM_ASSERT(b.size() == m_ndof);
@@ -169,9 +169,9 @@ MatrixDiagonalPartitioned::dot(const xt::xtensor<double,1>& x, xt::xtensor<doubl
 }
 
 inline void MatrixDiagonalPartitioned::dot_u(
-    const xt::xtensor<double,1>& x_u,
-    const xt::xtensor<double,1>& x_p,
-    xt::xtensor<double,1>& b_u) const
+    const xt::xtensor<double, 1>& x_u,
+    const xt::xtensor<double, 1>& x_p,
+    xt::xtensor<double, 1>& b_u) const
 {
     UNUSED(x_p);
 
@@ -186,9 +186,9 @@ inline void MatrixDiagonalPartitioned::dot_u(
 }
 
 inline void MatrixDiagonalPartitioned::dot_p(
-    const xt::xtensor<double,1>& x_u,
-    const xt::xtensor<double,1>& x_p,
-    xt::xtensor<double,1>& b_p) const
+    const xt::xtensor<double, 1>& x_u,
+    const xt::xtensor<double, 1>& x_p,
+    xt::xtensor<double, 1>& b_p) const
 {
     UNUSED(x_u);
 
@@ -203,7 +203,7 @@ inline void MatrixDiagonalPartitioned::dot_p(
 }
 
 inline void
-MatrixDiagonalPartitioned::solve(const xt::xtensor<double,2>& b, xt::xtensor<double,2>& x)
+MatrixDiagonalPartitioned::solve(const xt::xtensor<double, 2>& b, xt::xtensor<double, 2>& x)
 {
     GOOSEFEM_ASSERT(b.shape() == std::decay_t<decltype(b)>::shape_type({m_nnode, m_ndim}));
     GOOSEFEM_ASSERT(x.shape() == std::decay_t<decltype(x)>::shape_type({m_nnode, m_ndim}));
@@ -221,7 +221,7 @@ MatrixDiagonalPartitioned::solve(const xt::xtensor<double,2>& b, xt::xtensor<dou
 }
 
 inline void
-MatrixDiagonalPartitioned::solve(const xt::xtensor<double,1>& b, xt::xtensor<double,1>& x)
+MatrixDiagonalPartitioned::solve(const xt::xtensor<double, 1>& b, xt::xtensor<double, 1>& x)
 {
     GOOSEFEM_ASSERT(b.size() == m_ndof);
     GOOSEFEM_ASSERT(x.size() == m_ndof);
@@ -235,9 +235,9 @@ MatrixDiagonalPartitioned::solve(const xt::xtensor<double,1>& b, xt::xtensor<dou
 }
 
 inline void MatrixDiagonalPartitioned::solve_u(
-    const xt::xtensor<double,1>& b_u,
-    const xt::xtensor<double,1>& x_p,
-    xt::xtensor<double,1>& x_u)
+    const xt::xtensor<double, 1>& b_u,
+    const xt::xtensor<double, 1>& x_p,
+    xt::xtensor<double, 1>& x_u)
 {
     UNUSED(x_p);
 
@@ -254,7 +254,7 @@ inline void MatrixDiagonalPartitioned::solve_u(
 }
 
 inline void MatrixDiagonalPartitioned::reaction(
-    const xt::xtensor<double,2>& x, xt::xtensor<double,2>& b) const
+    const xt::xtensor<double, 2>& x, xt::xtensor<double, 2>& b) const
 {
     GOOSEFEM_ASSERT(x.shape() == std::decay_t<decltype(x)>::shape_type({m_nnode, m_ndim}));
     GOOSEFEM_ASSERT(b.shape() == std::decay_t<decltype(b)>::shape_type({m_nnode, m_ndim}));
@@ -270,7 +270,7 @@ inline void MatrixDiagonalPartitioned::reaction(
 }
 
 inline void MatrixDiagonalPartitioned::reaction(
-    const xt::xtensor<double,1>& x, xt::xtensor<double,1>& b) const
+    const xt::xtensor<double, 1>& x, xt::xtensor<double, 1>& b) const
 {
     GOOSEFEM_ASSERT(x.size() == m_ndof);
     GOOSEFEM_ASSERT(b.size() == m_ndof);
@@ -282,9 +282,9 @@ inline void MatrixDiagonalPartitioned::reaction(
 }
 
 inline void MatrixDiagonalPartitioned::reaction_p(
-    const xt::xtensor<double,1>& x_u,
-    const xt::xtensor<double,1>& x_p,
-    xt::xtensor<double,1>& b_p) const
+    const xt::xtensor<double, 1>& x_u,
+    const xt::xtensor<double, 1>& x_p,
+    xt::xtensor<double, 1>& b_p) const
 {
     UNUSED(x_u);
 
@@ -298,9 +298,9 @@ inline void MatrixDiagonalPartitioned::reaction_p(
     }
 }
 
-inline xt::xtensor<double,1> MatrixDiagonalPartitioned::AsDiagonal() const
+inline xt::xtensor<double, 1> MatrixDiagonalPartitioned::AsDiagonal() const
 {
-    xt::xtensor<double,1> out = xt::zeros<double>({m_ndof});
+    xt::xtensor<double, 1> out = xt::zeros<double>({m_ndof});
 
     #pragma omp parallel for
     for (size_t d = 0; d < m_nnu; ++d) {
@@ -315,80 +315,80 @@ inline xt::xtensor<double,1> MatrixDiagonalPartitioned::AsDiagonal() const
     return out;
 }
 
-inline xt::xtensor<double,2> MatrixDiagonalPartitioned::Dot(const xt::xtensor<double,2>& x) const
+inline xt::xtensor<double, 2> MatrixDiagonalPartitioned::Dot(const xt::xtensor<double, 2>& x) const
 {
-    xt::xtensor<double,2> b = xt::empty<double>({m_nnode, m_ndim});
+    xt::xtensor<double, 2> b = xt::empty<double>({m_nnode, m_ndim});
     this->dot(x, b);
     return b;
 }
 
-inline xt::xtensor<double,1> MatrixDiagonalPartitioned::Dot(const xt::xtensor<double,1>& x) const
+inline xt::xtensor<double, 1> MatrixDiagonalPartitioned::Dot(const xt::xtensor<double, 1>& x) const
 {
-    xt::xtensor<double,1> b = xt::empty<double>({m_ndof});
+    xt::xtensor<double, 1> b = xt::empty<double>({m_ndof});
     this->dot(x, b);
     return b;
 }
 
-inline xt::xtensor<double,1> MatrixDiagonalPartitioned::Dot_u(
-    const xt::xtensor<double,1>& x_u, const xt::xtensor<double,1>& x_p) const
+inline xt::xtensor<double, 1> MatrixDiagonalPartitioned::Dot_u(
+    const xt::xtensor<double, 1>& x_u, const xt::xtensor<double, 1>& x_p) const
 {
-    xt::xtensor<double,1> b_u = xt::empty<double>({m_nnu});
+    xt::xtensor<double, 1> b_u = xt::empty<double>({m_nnu});
     this->dot_u(x_u, x_p, b_u);
     return b_u;
 }
 
-inline xt::xtensor<double,1> MatrixDiagonalPartitioned::Dot_p(
-    const xt::xtensor<double,1>& x_u, const xt::xtensor<double,1>& x_p) const
+inline xt::xtensor<double, 1> MatrixDiagonalPartitioned::Dot_p(
+    const xt::xtensor<double, 1>& x_u, const xt::xtensor<double, 1>& x_p) const
 {
-    xt::xtensor<double,1> b_p = xt::empty<double>({m_nnp});
+    xt::xtensor<double, 1> b_p = xt::empty<double>({m_nnp});
     this->dot_p(x_u, x_p, b_p);
     return b_p;
 }
 
-inline xt::xtensor<double,2>
-MatrixDiagonalPartitioned::Solve(const xt::xtensor<double,2>& b, const xt::xtensor<double,2>& x)
+inline xt::xtensor<double, 2>
+MatrixDiagonalPartitioned::Solve(const xt::xtensor<double, 2>& b, const xt::xtensor<double, 2>& x)
 {
-    xt::xtensor<double,2> out = x;
+    xt::xtensor<double, 2> out = x;
     this->solve(b, out);
     return out;
 }
 
-inline xt::xtensor<double,1>
-MatrixDiagonalPartitioned::Solve(const xt::xtensor<double,1>& b, const xt::xtensor<double,1>& x)
+inline xt::xtensor<double, 1>
+MatrixDiagonalPartitioned::Solve(const xt::xtensor<double, 1>& b, const xt::xtensor<double, 1>& x)
 {
-    xt::xtensor<double,1> out = x;
+    xt::xtensor<double, 1> out = x;
     this->solve(b, out);
     return out;
 }
 
-inline xt::xtensor<double,1> MatrixDiagonalPartitioned::Solve_u(
-    const xt::xtensor<double,1>& b_u, const xt::xtensor<double,1>& x_p)
+inline xt::xtensor<double, 1> MatrixDiagonalPartitioned::Solve_u(
+    const xt::xtensor<double, 1>& b_u, const xt::xtensor<double, 1>& x_p)
 {
-    xt::xtensor<double,1> x_u = xt::empty<double>({m_nnu});
+    xt::xtensor<double, 1> x_u = xt::empty<double>({m_nnu});
     this->solve_u(b_u, x_p, x_u);
     return x_u;
 }
 
-inline xt::xtensor<double,2> MatrixDiagonalPartitioned::Reaction(
-    const xt::xtensor<double,2>& x, const xt::xtensor<double,2>& b) const
+inline xt::xtensor<double, 2> MatrixDiagonalPartitioned::Reaction(
+    const xt::xtensor<double, 2>& x, const xt::xtensor<double, 2>& b) const
 {
-    xt::xtensor<double,2> out = b;
+    xt::xtensor<double, 2> out = b;
     this->reaction(x, out);
     return out;
 }
 
-inline xt::xtensor<double,1> MatrixDiagonalPartitioned::Reaction(
-    const xt::xtensor<double,1>& x, const xt::xtensor<double,1>& b) const
+inline xt::xtensor<double, 1> MatrixDiagonalPartitioned::Reaction(
+    const xt::xtensor<double, 1>& x, const xt::xtensor<double, 1>& b) const
 {
-    xt::xtensor<double,1> out = b;
+    xt::xtensor<double, 1> out = b;
     this->reaction(x, out);
     return out;
 }
 
-inline xt::xtensor<double,1> MatrixDiagonalPartitioned::Reaction_p(
-    const xt::xtensor<double,1>& x_u, const xt::xtensor<double,1>& x_p) const
+inline xt::xtensor<double, 1> MatrixDiagonalPartitioned::Reaction_p(
+    const xt::xtensor<double, 1>& x_u, const xt::xtensor<double, 1>& x_p) const
 {
-    xt::xtensor<double,1> b_p = xt::empty<double>({m_nnp});
+    xt::xtensor<double, 1> b_p = xt::empty<double>({m_nnp});
     this->reaction_p(x_u, x_p, b_p);
     return b_p;
 }

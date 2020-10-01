@@ -25,9 +25,9 @@ public:
     VectorPartitioned() = default;
 
     VectorPartitioned(
-        const xt::xtensor<size_t,2>& conn,
-        const xt::xtensor<size_t,2>& dofs,
-        const xt::xtensor<size_t,1>& iip);
+        const xt::xtensor<size_t, 2>& conn,
+        const xt::xtensor<size_t, 2>& dofs,
+        const xt::xtensor<size_t, 1>& iip);
 
     // Dimensions
     size_t nelem() const; // number of elements
@@ -39,136 +39,118 @@ public:
     size_t nnp() const;   // number of prescribed DOFs
 
     // DOF lists
-    xt::xtensor<size_t,2> dofs() const; // DOFs
-    xt::xtensor<size_t,1> iiu() const;  // unknown    DOFs
-    xt::xtensor<size_t,1> iip() const;  // prescribed DOFs
+    xt::xtensor<size_t, 2> dofs() const; // DOFs
+    xt::xtensor<size_t, 1> iiu() const;  // unknown    DOFs
+    xt::xtensor<size_t, 1> iip() const;  // prescribed DOFs
 
     // Copy (part of) nodevec/dofval to another nodevec/dofval
     void copy(
-        const xt::xtensor<double,2>& nodevec_src,
-              xt::xtensor<double,2>& nodevec_dest) const;
+        const xt::xtensor<double, 2>& nodevec_src, xt::xtensor<double, 2>& nodevec_dest) const;
 
     void copy_u(
-        const xt::xtensor<double,2>& nodevec_src,
-              xt::xtensor<double,2>& nodevec_dest) const; // "iiu" updated
+        const xt::xtensor<double, 2>& nodevec_src, xt::xtensor<double, 2>& nodevec_dest) const; // "iiu" updated
 
     void copy_p(
-        const xt::xtensor<double,2>& nodevec_src,
-              xt::xtensor<double,2>& nodevec_dest) const; // "iip"  updated
+        const xt::xtensor<double, 2>& nodevec_src, xt::xtensor<double, 2>& nodevec_dest) const; // "iip"  updated
 
     // Convert to "dofval" (overwrite entries that occur more than once)
     void asDofs(
-        const xt::xtensor<double,1>& dofval_u,
-        const xt::xtensor<double,1>& dofval_p,
-              xt::xtensor<double,1>& dofval) const;
+        const xt::xtensor<double, 1>& dofval_u,
+        const xt::xtensor<double, 1>& dofval_p,
+        xt::xtensor<double, 1>& dofval) const;
 
-    void asDofs(const xt::xtensor<double,2>& nodevec, xt::xtensor<double,1>& dofval) const;
-    void asDofs(const xt::xtensor<double,3>& elemvec, xt::xtensor<double,1>& dofval) const;
-    void asDofs_u(const xt::xtensor<double,1>& dofval, xt::xtensor<double,1>& dofval_u) const;
-    void asDofs_u(const xt::xtensor<double,2>& nodevec, xt::xtensor<double,1>& dofval_u) const;
-    void asDofs_u(const xt::xtensor<double,3>& elemvec, xt::xtensor<double,1>& dofval_u) const;
-    void asDofs_p(const xt::xtensor<double,1>& dofval, xt::xtensor<double,1>& dofval_p) const;
-    void asDofs_p(const xt::xtensor<double,2>& nodevec, xt::xtensor<double,1>& dofval_p) const;
-    void asDofs_p(const xt::xtensor<double,3>& elemvec, xt::xtensor<double,1>& dofval_p) const;
+    void asDofs(const xt::xtensor<double, 2>& nodevec, xt::xtensor<double, 1>& dofval) const;
+    void asDofs(const xt::xtensor<double, 3>& elemvec, xt::xtensor<double, 1>& dofval) const;
+    void asDofs_u(const xt::xtensor<double, 1>& dofval, xt::xtensor<double, 1>& dofval_u) const;
+    void asDofs_u(const xt::xtensor<double, 2>& nodevec, xt::xtensor<double, 1>& dofval_u) const;
+    void asDofs_u(const xt::xtensor<double, 3>& elemvec, xt::xtensor<double, 1>& dofval_u) const;
+    void asDofs_p(const xt::xtensor<double, 1>& dofval, xt::xtensor<double, 1>& dofval_p) const;
+    void asDofs_p(const xt::xtensor<double, 2>& nodevec, xt::xtensor<double, 1>& dofval_p) const;
+    void asDofs_p(const xt::xtensor<double, 3>& elemvec, xt::xtensor<double, 1>& dofval_p) const;
 
     // Convert to "nodevec" (overwrite entries that occur more than once) -- (auto allocation below)
     void asNode(
-        const xt::xtensor<double,1>& dofval_u,
-        const xt::xtensor<double,1>& dofval_p,
-        xt::xtensor<double,2>& nodevec) const;
+        const xt::xtensor<double, 1>& dofval_u,
+        const xt::xtensor<double, 1>& dofval_p,
+        xt::xtensor<double, 2>& nodevec) const;
 
-    void asNode(const xt::xtensor<double,1>& dofval, xt::xtensor<double,2>& nodevec) const;
+    void asNode(const xt::xtensor<double, 1>& dofval, xt::xtensor<double, 2>& nodevec) const;
 
-    void asNode(const xt::xtensor<double,3>& elemvec, xt::xtensor<double,2>& nodevec) const;
+    void asNode(const xt::xtensor<double, 3>& elemvec, xt::xtensor<double, 2>& nodevec) const;
 
     // Convert to "elemvec" (overwrite entries that occur more than once) -- (auto allocation below)
     void asElement(
-        const xt::xtensor<double,1>& dofval_u,
-        const xt::xtensor<double,1>& dofval_p,
-        xt::xtensor<double,3>& elemvec) const;
+        const xt::xtensor<double, 1>& dofval_u,
+        const xt::xtensor<double, 1>& dofval_p,
+        xt::xtensor<double, 3>& elemvec) const;
 
-    void asElement(const xt::xtensor<double,1>& dofval, xt::xtensor<double,3>& elemvec) const;
-    void asElement(const xt::xtensor<double,2>& nodevec, xt::xtensor<double,3>& elemvec) const;
+    void asElement(const xt::xtensor<double, 1>& dofval, xt::xtensor<double, 3>& elemvec) const;
+    void asElement(const xt::xtensor<double, 2>& nodevec, xt::xtensor<double, 3>& elemvec) const;
 
     // Assemble "dofval" (adds entries that occur more that once) -- (auto allocation below)
-    void assembleDofs(const xt::xtensor<double,2>& nodevec, xt::xtensor<double,1>& dofval) const;
-    void assembleDofs(const xt::xtensor<double,3>& elemvec, xt::xtensor<double,1>& dofval) const;
-
-    void assembleDofs_u(
-        const xt::xtensor<double,2>& nodevec,
-              xt::xtensor<double,1>& dofval_u) const;
-
-    void assembleDofs_u(
-        const xt::xtensor<double,3>& elemvec,
-              xt::xtensor<double,1>& dofval_u) const;
-
-    void assembleDofs_p(
-        const xt::xtensor<double,2>& nodevec,
-              xt::xtensor<double,1>& dofval_p) const;
-
-    void assembleDofs_p(
-        const xt::xtensor<double,3>& elemvec,
-              xt::xtensor<double,1>& dofval_p) const;
+    void assembleDofs(const xt::xtensor<double, 2>& nodevec, xt::xtensor<double, 1>& dofval) const;
+    void assembleDofs(const xt::xtensor<double, 3>& elemvec, xt::xtensor<double, 1>& dofval) const;
+    void assembleDofs_u(const xt::xtensor<double, 2>& nodevec, xt::xtensor<double, 1>& dofval_u) const;
+    void assembleDofs_u(const xt::xtensor<double, 3>& elemvec, xt::xtensor<double, 1>& dofval_u) const;
+    void assembleDofs_p(const xt::xtensor<double, 2>& nodevec, xt::xtensor<double, 1>& dofval_p) const;
+    void assembleDofs_p(const xt::xtensor<double, 3>& elemvec, xt::xtensor<double, 1>& dofval_p) const;
 
     // Assemble "nodevec" (adds entries that occur more that once) -- (auto allocation below)
-    void assembleNode(const xt::xtensor<double,3>& elemvec, xt::xtensor<double,2>& nodevec) const;
+    void assembleNode(const xt::xtensor<double, 3>& elemvec, xt::xtensor<double, 2>& nodevec) const;
 
     // Auto-allocation of the functions above
-    xt::xtensor<double,1> AsDofs(
-        const xt::xtensor<double,1>& dofval_u,
-        const xt::xtensor<double,1>& dofval_p) const;
+    xt::xtensor<double, 1> AsDofs(
+        const xt::xtensor<double, 1>& dofval_u, const xt::xtensor<double, 1>& dofval_p) const;
 
-    xt::xtensor<double,1> AsDofs(const xt::xtensor<double,2>& nodevec) const;
-    xt::xtensor<double,1> AsDofs(const xt::xtensor<double,3>& elemvec) const;
-    xt::xtensor<double,1> AsDofs_u(const xt::xtensor<double,1>& dofval) const;
-    xt::xtensor<double,1> AsDofs_u(const xt::xtensor<double,2>& nodevec) const;
-    xt::xtensor<double,1> AsDofs_u(const xt::xtensor<double,3>& elemvec) const;
-    xt::xtensor<double,1> AsDofs_p(const xt::xtensor<double,1>& dofval) const;
-    xt::xtensor<double,1> AsDofs_p(const xt::xtensor<double,2>& nodevec) const;
-    xt::xtensor<double,1> AsDofs_p(const xt::xtensor<double,3>& elemvec) const;
+    xt::xtensor<double, 1> AsDofs(const xt::xtensor<double, 2>& nodevec) const;
+    xt::xtensor<double, 1> AsDofs(const xt::xtensor<double, 3>& elemvec) const;
+    xt::xtensor<double, 1> AsDofs_u(const xt::xtensor<double, 1>& dofval) const;
+    xt::xtensor<double, 1> AsDofs_u(const xt::xtensor<double, 2>& nodevec) const;
+    xt::xtensor<double, 1> AsDofs_u(const xt::xtensor<double, 3>& elemvec) const;
+    xt::xtensor<double, 1> AsDofs_p(const xt::xtensor<double, 1>& dofval) const;
+    xt::xtensor<double, 1> AsDofs_p(const xt::xtensor<double, 2>& nodevec) const;
+    xt::xtensor<double, 1> AsDofs_p(const xt::xtensor<double, 3>& elemvec) const;
 
-    xt::xtensor<double,2> AsNode(
-        const xt::xtensor<double,1>& dofval_u,
-        const xt::xtensor<double,1>& dofval_p) const;
+    xt::xtensor<double, 2> AsNode(
+        const xt::xtensor<double, 1>& dofval_u, const xt::xtensor<double, 1>& dofval_p) const;
 
-    xt::xtensor<double,2> AsNode(const xt::xtensor<double,1>& dofval) const;
-    xt::xtensor<double,2> AsNode(const xt::xtensor<double,3>& elemvec) const;
+    xt::xtensor<double, 2> AsNode(const xt::xtensor<double, 1>& dofval) const;
+    xt::xtensor<double, 2> AsNode(const xt::xtensor<double, 3>& elemvec) const;
 
-    xt::xtensor<double,3> AsElement(
-        const xt::xtensor<double,1>& dofval_u,
-        const xt::xtensor<double,1>& dofval_p) const;
+    xt::xtensor<double, 3> AsElement(
+        const xt::xtensor<double, 1>& dofval_u, const xt::xtensor<double, 1>& dofval_p) const;
 
-    xt::xtensor<double,3> AsElement(const xt::xtensor<double,1>& dofval) const;
-    xt::xtensor<double,3> AsElement(const xt::xtensor<double,2>& nodevec) const;
-    xt::xtensor<double,1> AssembleDofs(const xt::xtensor<double,2>& nodevec) const;
-    xt::xtensor<double,1> AssembleDofs(const xt::xtensor<double,3>& elemvec) const;
-    xt::xtensor<double,1> AssembleDofs_u(const xt::xtensor<double,2>& nodevec) const;
-    xt::xtensor<double,1> AssembleDofs_u(const xt::xtensor<double,3>& elemvec) const;
-    xt::xtensor<double,1> AssembleDofs_p(const xt::xtensor<double,2>& nodevec) const;
-    xt::xtensor<double,1> AssembleDofs_p(const xt::xtensor<double,3>& elemvec) const;
-    xt::xtensor<double,2> AssembleNode(const xt::xtensor<double,3>& elemvec) const;
+    xt::xtensor<double, 3> AsElement(const xt::xtensor<double, 1>& dofval) const;
+    xt::xtensor<double, 3> AsElement(const xt::xtensor<double, 2>& nodevec) const;
+    xt::xtensor<double, 1> AssembleDofs(const xt::xtensor<double, 2>& nodevec) const;
+    xt::xtensor<double, 1> AssembleDofs(const xt::xtensor<double, 3>& elemvec) const;
+    xt::xtensor<double, 1> AssembleDofs_u(const xt::xtensor<double, 2>& nodevec) const;
+    xt::xtensor<double, 1> AssembleDofs_u(const xt::xtensor<double, 3>& elemvec) const;
+    xt::xtensor<double, 1> AssembleDofs_p(const xt::xtensor<double, 2>& nodevec) const;
+    xt::xtensor<double, 1> AssembleDofs_p(const xt::xtensor<double, 3>& elemvec) const;
+    xt::xtensor<double, 2> AssembleNode(const xt::xtensor<double, 3>& elemvec) const;
 
-    xt::xtensor<double,2> Copy(
-        const xt::xtensor<double,2>& nodevec_src,
-        const xt::xtensor<double,2>& nodevec_dest) const;
+    xt::xtensor<double, 2> Copy(
+        const xt::xtensor<double, 2>& nodevec_src,
+        const xt::xtensor<double, 2>& nodevec_dest) const;
 
-    xt::xtensor<double,2> Copy_u(
-        const xt::xtensor<double,2>& nodevec_src,
-        const xt::xtensor<double,2>& nodevec_dest) const;
+    xt::xtensor<double, 2> Copy_u(
+        const xt::xtensor<double, 2>& nodevec_src,
+        const xt::xtensor<double, 2>& nodevec_dest) const;
 
-    xt::xtensor<double,2> Copy_p(
-        const xt::xtensor<double,2>& nodevec_src,
-        const xt::xtensor<double,2>& nodevec_dest) const;
+    xt::xtensor<double, 2> Copy_p(
+        const xt::xtensor<double, 2>& nodevec_src,
+        const xt::xtensor<double, 2>& nodevec_dest) const;
 
 private:
     // Bookkeeping
-    xt::xtensor<size_t,2> m_conn; // connectivity                    [nelem, nne ]
-    xt::xtensor<size_t,2> m_dofs; // DOF-numbers per node            [nnode, ndim]
-    xt::xtensor<size_t,1> m_iiu;  // DOF-numbers that are unknown    [nnu]
-    xt::xtensor<size_t,1> m_iip;  // DOF-numbers that are prescribed [nnp]
+    xt::xtensor<size_t, 2> m_conn; // connectivity                    [nelem, nne ]
+    xt::xtensor<size_t, 2> m_dofs; // DOF-numbers per node            [nnode, ndim]
+    xt::xtensor<size_t, 1> m_iiu;  // DOF-numbers that are unknown    [nnu]
+    xt::xtensor<size_t, 1> m_iip;  // DOF-numbers that are prescribed [nnp]
 
     // DOFs per node, such that iiu = arange(nnu), iip = nnu + arange(nnp)
-    xt::xtensor<size_t,2> m_part;
+    xt::xtensor<size_t, 2> m_part;
 
     // Dimensions
     size_t m_nelem; // number of elements

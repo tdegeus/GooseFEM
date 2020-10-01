@@ -22,8 +22,8 @@ public:
     MatrixPartitionedTyings() = default;
 
     MatrixPartitionedTyings(
-        const xt::xtensor<size_t,2>& conn,
-        const xt::xtensor<size_t,2>& dofs,
+        const xt::xtensor<size_t, 2>& conn,
+        const xt::xtensor<size_t, 2>& dofs,
         const Eigen::SparseMatrix<double>& Cdu,
         const Eigen::SparseMatrix<double>& Cdp);
 
@@ -39,14 +39,14 @@ public:
     size_t nnd() const;   // number of dependent DOFs
 
     // DOF lists
-    xt::xtensor<size_t,2> dofs() const; // DOFs
-    xt::xtensor<size_t,1> iiu() const;  // independent, unknown DOFs
-    xt::xtensor<size_t,1> iip() const;  // independent, prescribed DOFs
-    xt::xtensor<size_t,1> iii() const;  // independent DOFs
-    xt::xtensor<size_t,1> iid() const;  // dependent DOFs
+    xt::xtensor<size_t, 2> dofs() const; // DOFs
+    xt::xtensor<size_t, 1> iiu() const;  // independent, unknown DOFs
+    xt::xtensor<size_t, 1> iip() const;  // independent, prescribed DOFs
+    xt::xtensor<size_t, 1> iii() const;  // independent DOFs
+    xt::xtensor<size_t, 1> iid() const;  // dependent DOFs
 
     // Assemble from matrices stored per element [nelem, nne*ndim, nne*ndim]
-    void assemble(const xt::xtensor<double,3>& elemmat);
+    void assemble(const xt::xtensor<double, 3>& elemmat);
 
     // Solve:
     // A' = A_ii + K_id * C_di + C_di^T * K_di + C_di^T * K_dd * C_di
@@ -54,23 +54,23 @@ public:
     // x_u = A'_uu \ ( b'_u - A'_up * x_p )
     // x_i = [x_u, x_p]
     // x_d = C_di * x_i
-    void solve(const xt::xtensor<double,2>& b, xt::xtensor<double,2>& x); // updates x_u and x_d
-    void solve(const xt::xtensor<double,1>& b, xt::xtensor<double,1>& x); // updates x_u and x_d
+    void solve(const xt::xtensor<double, 2>& b, xt::xtensor<double, 2>& x); // updates x_u and x_d
+    void solve(const xt::xtensor<double, 1>& b, xt::xtensor<double, 1>& x); // updates x_u and x_d
 
     void solve_u(
-        const xt::xtensor<double,1>& b_u,
-        const xt::xtensor<double,1>& b_d,
-        const xt::xtensor<double,1>& x_p,
-              xt::xtensor<double,1>& x_u);
+        const xt::xtensor<double, 1>& b_u,
+        const xt::xtensor<double, 1>& b_d,
+        const xt::xtensor<double, 1>& x_p,
+        xt::xtensor<double, 1>& x_u);
 
     // Auto-allocation of the functions above
-    xt::xtensor<double,2> Solve(const xt::xtensor<double,2>& b, const xt::xtensor<double,2>& x);
-    xt::xtensor<double,1> Solve(const xt::xtensor<double,1>& b, const xt::xtensor<double,1>& x);
+    xt::xtensor<double, 2> Solve(const xt::xtensor<double, 2>& b, const xt::xtensor<double, 2>& x);
+    xt::xtensor<double, 1> Solve(const xt::xtensor<double, 1>& b, const xt::xtensor<double, 1>& x);
 
-    xt::xtensor<double,1> Solve_u(
-        const xt::xtensor<double,1>& b_u,
-        const xt::xtensor<double,1>& b_d,
-        const xt::xtensor<double,1>& x_p);
+    xt::xtensor<double, 1> Solve_u(
+        const xt::xtensor<double, 1>& b_u,
+        const xt::xtensor<double, 1>& b_d,
+        const xt::xtensor<double, 1>& x_p);
 
 private:
     // The matrix
@@ -108,11 +108,11 @@ private:
     bool m_factor = false;
 
     // Bookkeeping
-    xt::xtensor<size_t,2> m_conn; // connectivity          [nelem, nne ]
-    xt::xtensor<size_t,2> m_dofs; // DOF-numbers per node  [nnode, ndim]
-    xt::xtensor<size_t,1> m_iiu;  // unknown     DOFs      [nnu]
-    xt::xtensor<size_t,1> m_iip;  // prescribed  DOFs      [nnp]
-    xt::xtensor<size_t,1> m_iid;  // dependent   DOFs      [nnd]
+    xt::xtensor<size_t, 2> m_conn; // connectivity          [nelem, nne ]
+    xt::xtensor<size_t, 2> m_dofs; // DOF-numbers per node  [nnode, ndim]
+    xt::xtensor<size_t, 1> m_iiu;  // unknown     DOFs      [nnu]
+    xt::xtensor<size_t, 1> m_iip;  // prescribed  DOFs      [nnp]
+    xt::xtensor<size_t, 1> m_iid;  // dependent   DOFs      [nnd]
 
     // Dimensions
     size_t m_nelem; // number of elements
@@ -135,12 +135,12 @@ private:
     void factorize();
 
     // Convert arrays (Eigen version of VectorPartitioned, which contains public functions)
-    Eigen::VectorXd asDofs_u(const xt::xtensor<double,1>& dofval) const;
-    Eigen::VectorXd asDofs_u(const xt::xtensor<double,2>& nodevec) const;
-    Eigen::VectorXd asDofs_p(const xt::xtensor<double,1>& dofval) const;
-    Eigen::VectorXd asDofs_p(const xt::xtensor<double,2>& nodevec) const;
-    Eigen::VectorXd asDofs_d(const xt::xtensor<double,1>& dofval) const;
-    Eigen::VectorXd asDofs_d(const xt::xtensor<double,2>& nodevec) const;
+    Eigen::VectorXd asDofs_u(const xt::xtensor<double, 1>& dofval) const;
+    Eigen::VectorXd asDofs_u(const xt::xtensor<double, 2>& nodevec) const;
+    Eigen::VectorXd asDofs_p(const xt::xtensor<double, 1>& dofval) const;
+    Eigen::VectorXd asDofs_p(const xt::xtensor<double, 2>& nodevec) const;
+    Eigen::VectorXd asDofs_d(const xt::xtensor<double, 1>& dofval) const;
+    Eigen::VectorXd asDofs_d(const xt::xtensor<double, 2>& nodevec) const;
 };
 
 } // namespace GooseFEM

@@ -49,15 +49,15 @@ inline ElementType Regular::getElementType() const
     return ElementType::Hex8;
 }
 
-inline xt::xtensor<double,2> Regular::coor() const
+inline xt::xtensor<double, 2> Regular::coor() const
 {
-    xt::xtensor<double,2> out = xt::empty<double>({m_nnode, m_ndim});
+    xt::xtensor<double, 2> out = xt::empty<double>({m_nnode, m_ndim});
 
-    xt::xtensor<double,1> x =
+    xt::xtensor<double, 1> x =
         xt::linspace<double>(0.0, m_h * static_cast<double>(m_nelx), m_nelx + 1);
-    xt::xtensor<double,1> y =
+    xt::xtensor<double, 1> y =
         xt::linspace<double>(0.0, m_h * static_cast<double>(m_nely), m_nely + 1);
-    xt::xtensor<double,1> z =
+    xt::xtensor<double, 1> z =
         xt::linspace<double>(0.0, m_h * static_cast<double>(m_nelz), m_nelz + 1);
 
     size_t inode = 0;
@@ -76,25 +76,21 @@ inline xt::xtensor<double,2> Regular::coor() const
     return out;
 }
 
-inline xt::xtensor<size_t,2> Regular::conn() const
+inline xt::xtensor<size_t, 2> Regular::conn() const
 {
-    xt::xtensor<size_t,2> out = xt::empty<size_t>({m_nelem, m_nne});
+    xt::xtensor<size_t, 2> out = xt::empty<size_t>({m_nelem, m_nne});
 
     size_t ielem = 0;
 
     for (size_t iz = 0; iz < m_nelz; ++iz) {
         for (size_t iy = 0; iy < m_nely; ++iy) {
             for (size_t ix = 0; ix < m_nelx; ++ix) {
-                out(ielem, 0) =
-                    iy * (m_nelx + 1) + ix + iz * (m_nely + 1) * (m_nelx + 1);
-                out(ielem, 1) =
-                    iy * (m_nelx + 1) + (ix + 1) + iz * (m_nely + 1) * (m_nelx + 1);
-                out(ielem, 3) =
-                    (iy + 1) * (m_nelx + 1) + ix + iz * (m_nely + 1) * (m_nelx + 1);
+                out(ielem, 0) = iy * (m_nelx + 1) + ix + iz * (m_nely + 1) * (m_nelx + 1);
+                out(ielem, 1) = iy * (m_nelx + 1) + (ix + 1) + iz * (m_nely + 1) * (m_nelx + 1);
+                out(ielem, 3) = (iy + 1) * (m_nelx + 1) + ix + iz * (m_nely + 1) * (m_nelx + 1);
                 out(ielem, 2) =
                     (iy + 1) * (m_nelx + 1) + (ix + 1) + iz * (m_nely + 1) * (m_nelx + 1);
-                out(ielem, 4) =
-                    iy * (m_nelx + 1) + ix + (iz + 1) * (m_nely + 1) * (m_nelx + 1);
+                out(ielem, 4) = iy * (m_nelx + 1) + ix + (iz + 1) * (m_nely + 1) * (m_nelx + 1);
                 out(ielem, 5) =
                     (iy) * (m_nelx + 1) + (ix + 1) + (iz + 1) * (m_nely + 1) * (m_nelx + 1);
                 out(ielem, 7) =
@@ -109,9 +105,9 @@ inline xt::xtensor<size_t,2> Regular::conn() const
     return out;
 }
 
-inline xt::xtensor<size_t,1> Regular::nodesFront() const
+inline xt::xtensor<size_t, 1> Regular::nodesFront() const
 {
-    xt::xtensor<size_t,1> out = xt::empty<size_t>({(m_nelx + 1) * (m_nely + 1)});
+    xt::xtensor<size_t, 1> out = xt::empty<size_t>({(m_nelx + 1) * (m_nely + 1)});
 
     for (size_t iy = 0; iy < m_nely + 1; ++iy) {
         for (size_t ix = 0; ix < m_nelx + 1; ++ix) {
@@ -122,9 +118,9 @@ inline xt::xtensor<size_t,1> Regular::nodesFront() const
     return out;
 }
 
-inline xt::xtensor<size_t,1> Regular::nodesBack() const
+inline xt::xtensor<size_t, 1> Regular::nodesBack() const
 {
-    xt::xtensor<size_t,1> out = xt::empty<size_t>({(m_nelx + 1) * (m_nely + 1)});
+    xt::xtensor<size_t, 1> out = xt::empty<size_t>({(m_nelx + 1) * (m_nely + 1)});
 
     for (size_t iy = 0; iy < m_nely + 1; ++iy) {
         for (size_t ix = 0; ix < m_nelx + 1; ++ix) {
@@ -136,9 +132,9 @@ inline xt::xtensor<size_t,1> Regular::nodesBack() const
     return out;
 }
 
-inline xt::xtensor<size_t,1> Regular::nodesLeft() const
+inline xt::xtensor<size_t, 1> Regular::nodesLeft() const
 {
-    xt::xtensor<size_t,1> out = xt::empty<size_t>({(m_nely + 1) * (m_nelz + 1)});
+    xt::xtensor<size_t, 1> out = xt::empty<size_t>({(m_nely + 1) * (m_nelz + 1)});
 
     for (size_t iz = 0; iz < m_nelz + 1; ++iz) {
         for (size_t iy = 0; iy < m_nely + 1; ++iy) {
@@ -149,9 +145,9 @@ inline xt::xtensor<size_t,1> Regular::nodesLeft() const
     return out;
 }
 
-inline xt::xtensor<size_t,1> Regular::nodesRight() const
+inline xt::xtensor<size_t, 1> Regular::nodesRight() const
 {
-    xt::xtensor<size_t,1> out = xt::empty<size_t>({(m_nely + 1) * (m_nelz + 1)});
+    xt::xtensor<size_t, 1> out = xt::empty<size_t>({(m_nely + 1) * (m_nelz + 1)});
 
     for (size_t iz = 0; iz < m_nelz + 1; ++iz) {
         for (size_t iy = 0; iy < m_nely + 1; ++iy) {
@@ -163,9 +159,9 @@ inline xt::xtensor<size_t,1> Regular::nodesRight() const
     return out;
 }
 
-inline xt::xtensor<size_t,1> Regular::nodesBottom() const
+inline xt::xtensor<size_t, 1> Regular::nodesBottom() const
 {
-    xt::xtensor<size_t,1> out = xt::empty<size_t>({(m_nelx + 1) * (m_nelz + 1)});
+    xt::xtensor<size_t, 1> out = xt::empty<size_t>({(m_nelx + 1) * (m_nelz + 1)});
 
     for (size_t iz = 0; iz < m_nelz + 1; ++iz) {
         for (size_t ix = 0; ix < m_nelx + 1; ++ix) {
@@ -176,9 +172,9 @@ inline xt::xtensor<size_t,1> Regular::nodesBottom() const
     return out;
 }
 
-inline xt::xtensor<size_t,1> Regular::nodesTop() const
+inline xt::xtensor<size_t, 1> Regular::nodesTop() const
 {
-    xt::xtensor<size_t,1> out = xt::empty<size_t>({(m_nelx + 1) * (m_nelz + 1)});
+    xt::xtensor<size_t, 1> out = xt::empty<size_t>({(m_nelx + 1) * (m_nelz + 1)});
 
     for (size_t iz = 0; iz < m_nelz + 1; ++iz) {
         for (size_t ix = 0; ix < m_nelx + 1; ++ix) {
@@ -190,9 +186,9 @@ inline xt::xtensor<size_t,1> Regular::nodesTop() const
     return out;
 }
 
-inline xt::xtensor<size_t,1> Regular::nodesFrontFace() const
+inline xt::xtensor<size_t, 1> Regular::nodesFrontFace() const
 {
-    xt::xtensor<size_t,1> out = xt::empty<size_t>({(m_nelx - 1) * (m_nely - 1)});
+    xt::xtensor<size_t, 1> out = xt::empty<size_t>({(m_nelx - 1) * (m_nely - 1)});
 
     for (size_t iy = 1; iy < m_nely; ++iy) {
         for (size_t ix = 1; ix < m_nelx; ++ix) {
@@ -203,9 +199,9 @@ inline xt::xtensor<size_t,1> Regular::nodesFrontFace() const
     return out;
 }
 
-inline xt::xtensor<size_t,1> Regular::nodesBackFace() const
+inline xt::xtensor<size_t, 1> Regular::nodesBackFace() const
 {
-    xt::xtensor<size_t,1> out = xt::empty<size_t>({(m_nelx - 1) * (m_nely - 1)});
+    xt::xtensor<size_t, 1> out = xt::empty<size_t>({(m_nelx - 1) * (m_nely - 1)});
 
     for (size_t iy = 1; iy < m_nely; ++iy) {
         for (size_t ix = 1; ix < m_nelx; ++ix) {
@@ -217,9 +213,9 @@ inline xt::xtensor<size_t,1> Regular::nodesBackFace() const
     return out;
 }
 
-inline xt::xtensor<size_t,1> Regular::nodesLeftFace() const
+inline xt::xtensor<size_t, 1> Regular::nodesLeftFace() const
 {
-    xt::xtensor<size_t,1> out = xt::empty<size_t>({(m_nely - 1) * (m_nelz - 1)});
+    xt::xtensor<size_t, 1> out = xt::empty<size_t>({(m_nely - 1) * (m_nelz - 1)});
 
     for (size_t iz = 1; iz < m_nelz; ++iz) {
         for (size_t iy = 1; iy < m_nely; ++iy) {
@@ -231,9 +227,9 @@ inline xt::xtensor<size_t,1> Regular::nodesLeftFace() const
     return out;
 }
 
-inline xt::xtensor<size_t,1> Regular::nodesRightFace() const
+inline xt::xtensor<size_t, 1> Regular::nodesRightFace() const
 {
-    xt::xtensor<size_t,1> out = xt::empty<size_t>({(m_nely - 1) * (m_nelz - 1)});
+    xt::xtensor<size_t, 1> out = xt::empty<size_t>({(m_nely - 1) * (m_nelz - 1)});
 
     for (size_t iz = 1; iz < m_nelz; ++iz) {
         for (size_t iy = 1; iy < m_nely; ++iy) {
@@ -245,9 +241,9 @@ inline xt::xtensor<size_t,1> Regular::nodesRightFace() const
     return out;
 }
 
-inline xt::xtensor<size_t,1> Regular::nodesBottomFace() const
+inline xt::xtensor<size_t, 1> Regular::nodesBottomFace() const
 {
-    xt::xtensor<size_t,1> out = xt::empty<size_t>({(m_nelx - 1) * (m_nelz - 1)});
+    xt::xtensor<size_t, 1> out = xt::empty<size_t>({(m_nelx - 1) * (m_nelz - 1)});
 
     for (size_t iz = 1; iz < m_nelz; ++iz) {
         for (size_t ix = 1; ix < m_nelx; ++ix) {
@@ -258,9 +254,9 @@ inline xt::xtensor<size_t,1> Regular::nodesBottomFace() const
     return out;
 }
 
-inline xt::xtensor<size_t,1> Regular::nodesTopFace() const
+inline xt::xtensor<size_t, 1> Regular::nodesTopFace() const
 {
-    xt::xtensor<size_t,1> out = xt::empty<size_t>({(m_nelx - 1) * (m_nelz - 1)});
+    xt::xtensor<size_t, 1> out = xt::empty<size_t>({(m_nelx - 1) * (m_nelz - 1)});
 
     for (size_t iz = 1; iz < m_nelz; ++iz) {
         for (size_t ix = 1; ix < m_nelx; ++ix) {
@@ -272,9 +268,9 @@ inline xt::xtensor<size_t,1> Regular::nodesTopFace() const
     return out;
 }
 
-inline xt::xtensor<size_t,1> Regular::nodesFrontBottomEdge() const
+inline xt::xtensor<size_t, 1> Regular::nodesFrontBottomEdge() const
 {
-    xt::xtensor<size_t,1> out = xt::empty<size_t>({m_nelx + 1});
+    xt::xtensor<size_t, 1> out = xt::empty<size_t>({m_nelx + 1});
 
     for (size_t ix = 0; ix < m_nelx + 1; ++ix) {
         out(ix) = ix;
@@ -283,9 +279,9 @@ inline xt::xtensor<size_t,1> Regular::nodesFrontBottomEdge() const
     return out;
 }
 
-inline xt::xtensor<size_t,1> Regular::nodesFrontTopEdge() const
+inline xt::xtensor<size_t, 1> Regular::nodesFrontTopEdge() const
 {
-    xt::xtensor<size_t,1> out = xt::empty<size_t>({m_nelx + 1});
+    xt::xtensor<size_t, 1> out = xt::empty<size_t>({m_nelx + 1});
 
     for (size_t ix = 0; ix < m_nelx + 1; ++ix) {
         out(ix) = ix + m_nely * (m_nelx + 1);
@@ -294,9 +290,9 @@ inline xt::xtensor<size_t,1> Regular::nodesFrontTopEdge() const
     return out;
 }
 
-inline xt::xtensor<size_t,1> Regular::nodesFrontLeftEdge() const
+inline xt::xtensor<size_t, 1> Regular::nodesFrontLeftEdge() const
 {
-    xt::xtensor<size_t,1> out = xt::empty<size_t>({m_nely + 1});
+    xt::xtensor<size_t, 1> out = xt::empty<size_t>({m_nely + 1});
 
     for (size_t iy = 0; iy < m_nely + 1; ++iy) {
         out(iy) = iy * (m_nelx + 1);
@@ -305,9 +301,9 @@ inline xt::xtensor<size_t,1> Regular::nodesFrontLeftEdge() const
     return out;
 }
 
-inline xt::xtensor<size_t,1> Regular::nodesFrontRightEdge() const
+inline xt::xtensor<size_t, 1> Regular::nodesFrontRightEdge() const
 {
-    xt::xtensor<size_t,1> out = xt::empty<size_t>({m_nely + 1});
+    xt::xtensor<size_t, 1> out = xt::empty<size_t>({m_nely + 1});
 
     for (size_t iy = 0; iy < m_nely + 1; ++iy) {
         out(iy) = iy * (m_nelx + 1) + m_nelx;
@@ -316,9 +312,9 @@ inline xt::xtensor<size_t,1> Regular::nodesFrontRightEdge() const
     return out;
 }
 
-inline xt::xtensor<size_t,1> Regular::nodesBackBottomEdge() const
+inline xt::xtensor<size_t, 1> Regular::nodesBackBottomEdge() const
 {
-    xt::xtensor<size_t,1> out = xt::empty<size_t>({m_nelx + 1});
+    xt::xtensor<size_t, 1> out = xt::empty<size_t>({m_nelx + 1});
 
     for (size_t ix = 0; ix < m_nelx + 1; ++ix) {
         out(ix) = ix + m_nelz * (m_nely + 1) * (m_nelx + 1);
@@ -327,9 +323,9 @@ inline xt::xtensor<size_t,1> Regular::nodesBackBottomEdge() const
     return out;
 }
 
-inline xt::xtensor<size_t,1> Regular::nodesBackTopEdge() const
+inline xt::xtensor<size_t, 1> Regular::nodesBackTopEdge() const
 {
-    xt::xtensor<size_t,1> out = xt::empty<size_t>({m_nelx + 1});
+    xt::xtensor<size_t, 1> out = xt::empty<size_t>({m_nelx + 1});
 
     for (size_t ix = 0; ix < m_nelx + 1; ++ix) {
         out(ix) = m_nely * (m_nelx + 1) + ix + m_nelz * (m_nely + 1) * (m_nelx + 1);
@@ -338,9 +334,9 @@ inline xt::xtensor<size_t,1> Regular::nodesBackTopEdge() const
     return out;
 }
 
-inline xt::xtensor<size_t,1> Regular::nodesBackLeftEdge() const
+inline xt::xtensor<size_t, 1> Regular::nodesBackLeftEdge() const
 {
-    xt::xtensor<size_t,1> out = xt::empty<size_t>({m_nely + 1});
+    xt::xtensor<size_t, 1> out = xt::empty<size_t>({m_nely + 1});
 
     for (size_t iy = 0; iy < m_nely + 1; ++iy) {
         out(iy) = iy * (m_nelx + 1) + m_nelz * (m_nelx + 1) * (m_nely + 1);
@@ -349,9 +345,9 @@ inline xt::xtensor<size_t,1> Regular::nodesBackLeftEdge() const
     return out;
 }
 
-inline xt::xtensor<size_t,1> Regular::nodesBackRightEdge() const
+inline xt::xtensor<size_t, 1> Regular::nodesBackRightEdge() const
 {
-    xt::xtensor<size_t,1> out = xt::empty<size_t>({m_nely + 1});
+    xt::xtensor<size_t, 1> out = xt::empty<size_t>({m_nely + 1});
 
     for (size_t iy = 0; iy < m_nely + 1; ++iy) {
         out(iy) = iy * (m_nelx + 1) + m_nelz * (m_nelx + 1) * (m_nely + 1) + m_nelx;
@@ -360,9 +356,9 @@ inline xt::xtensor<size_t,1> Regular::nodesBackRightEdge() const
     return out;
 }
 
-inline xt::xtensor<size_t,1> Regular::nodesBottomLeftEdge() const
+inline xt::xtensor<size_t, 1> Regular::nodesBottomLeftEdge() const
 {
-    xt::xtensor<size_t,1> out = xt::empty<size_t>({m_nelz + 1});
+    xt::xtensor<size_t, 1> out = xt::empty<size_t>({m_nelz + 1});
 
     for (size_t iz = 0; iz < m_nelz + 1; ++iz) {
         out(iz) = iz * (m_nelx + 1) * (m_nely + 1);
@@ -371,9 +367,9 @@ inline xt::xtensor<size_t,1> Regular::nodesBottomLeftEdge() const
     return out;
 }
 
-inline xt::xtensor<size_t,1> Regular::nodesBottomRightEdge() const
+inline xt::xtensor<size_t, 1> Regular::nodesBottomRightEdge() const
 {
-    xt::xtensor<size_t,1> out = xt::empty<size_t>({m_nelz + 1});
+    xt::xtensor<size_t, 1> out = xt::empty<size_t>({m_nelz + 1});
 
     for (size_t iz = 0; iz < m_nelz + 1; ++iz) {
         out(iz) = iz * (m_nelx + 1) * (m_nely + 1) + m_nelx;
@@ -382,9 +378,9 @@ inline xt::xtensor<size_t,1> Regular::nodesBottomRightEdge() const
     return out;
 }
 
-inline xt::xtensor<size_t,1> Regular::nodesTopLeftEdge() const
+inline xt::xtensor<size_t, 1> Regular::nodesTopLeftEdge() const
 {
-    xt::xtensor<size_t,1> out = xt::empty<size_t>({m_nelz + 1});
+    xt::xtensor<size_t, 1> out = xt::empty<size_t>({m_nelz + 1});
 
     for (size_t iz = 0; iz < m_nelz + 1; ++iz) {
         out(iz) = m_nely * (m_nelx + 1) + iz * (m_nelx + 1) * (m_nely + 1);
@@ -393,9 +389,9 @@ inline xt::xtensor<size_t,1> Regular::nodesTopLeftEdge() const
     return out;
 }
 
-inline xt::xtensor<size_t,1> Regular::nodesTopRightEdge() const
+inline xt::xtensor<size_t, 1> Regular::nodesTopRightEdge() const
 {
-    xt::xtensor<size_t,1> out = xt::empty<size_t>({m_nelz + 1});
+    xt::xtensor<size_t, 1> out = xt::empty<size_t>({m_nelz + 1});
 
     for (size_t iz = 0; iz < m_nelz + 1; ++iz) {
         out(iz) = m_nely * (m_nelx + 1) + iz * (m_nelx + 1) * (m_nely + 1) + m_nelx;
@@ -404,58 +400,58 @@ inline xt::xtensor<size_t,1> Regular::nodesTopRightEdge() const
     return out;
 }
 
-inline xt::xtensor<size_t,1> Regular::nodesBottomFrontEdge() const
+inline xt::xtensor<size_t, 1> Regular::nodesBottomFrontEdge() const
 {
     return nodesFrontBottomEdge();
 }
-inline xt::xtensor<size_t,1> Regular::nodesBottomBackEdge() const
+inline xt::xtensor<size_t, 1> Regular::nodesBottomBackEdge() const
 {
     return nodesBackBottomEdge();
 }
-inline xt::xtensor<size_t,1> Regular::nodesTopFrontEdge() const
+inline xt::xtensor<size_t, 1> Regular::nodesTopFrontEdge() const
 {
     return nodesFrontTopEdge();
 }
-inline xt::xtensor<size_t,1> Regular::nodesTopBackEdge() const
+inline xt::xtensor<size_t, 1> Regular::nodesTopBackEdge() const
 {
     return nodesBackTopEdge();
 }
-inline xt::xtensor<size_t,1> Regular::nodesLeftBottomEdge() const
+inline xt::xtensor<size_t, 1> Regular::nodesLeftBottomEdge() const
 {
     return nodesBottomLeftEdge();
 }
-inline xt::xtensor<size_t,1> Regular::nodesLeftFrontEdge() const
+inline xt::xtensor<size_t, 1> Regular::nodesLeftFrontEdge() const
 {
     return nodesFrontLeftEdge();
 }
-inline xt::xtensor<size_t,1> Regular::nodesLeftBackEdge() const
+inline xt::xtensor<size_t, 1> Regular::nodesLeftBackEdge() const
 {
     return nodesBackLeftEdge();
 }
-inline xt::xtensor<size_t,1> Regular::nodesLeftTopEdge() const
+inline xt::xtensor<size_t, 1> Regular::nodesLeftTopEdge() const
 {
     return nodesTopLeftEdge();
 }
-inline xt::xtensor<size_t,1> Regular::nodesRightBottomEdge() const
+inline xt::xtensor<size_t, 1> Regular::nodesRightBottomEdge() const
 {
     return nodesBottomRightEdge();
 }
-inline xt::xtensor<size_t,1> Regular::nodesRightTopEdge() const
+inline xt::xtensor<size_t, 1> Regular::nodesRightTopEdge() const
 {
     return nodesTopRightEdge();
 }
-inline xt::xtensor<size_t,1> Regular::nodesRightFrontEdge() const
+inline xt::xtensor<size_t, 1> Regular::nodesRightFrontEdge() const
 {
     return nodesFrontRightEdge();
 }
-inline xt::xtensor<size_t,1> Regular::nodesRightBackEdge() const
+inline xt::xtensor<size_t, 1> Regular::nodesRightBackEdge() const
 {
     return nodesBackRightEdge();
 }
 
-inline xt::xtensor<size_t,1> Regular::nodesFrontBottomOpenEdge() const
+inline xt::xtensor<size_t, 1> Regular::nodesFrontBottomOpenEdge() const
 {
-    xt::xtensor<size_t,1> out = xt::empty<size_t>({m_nelx - 1});
+    xt::xtensor<size_t, 1> out = xt::empty<size_t>({m_nelx - 1});
 
     for (size_t ix = 1; ix < m_nelx; ++ix) {
         out(ix - 1) = ix;
@@ -464,9 +460,9 @@ inline xt::xtensor<size_t,1> Regular::nodesFrontBottomOpenEdge() const
     return out;
 }
 
-inline xt::xtensor<size_t,1> Regular::nodesFrontTopOpenEdge() const
+inline xt::xtensor<size_t, 1> Regular::nodesFrontTopOpenEdge() const
 {
-    xt::xtensor<size_t,1> out = xt::empty<size_t>({m_nelx - 1});
+    xt::xtensor<size_t, 1> out = xt::empty<size_t>({m_nelx - 1});
 
     for (size_t ix = 1; ix < m_nelx; ++ix) {
         out(ix - 1) = ix + m_nely * (m_nelx + 1);
@@ -475,9 +471,9 @@ inline xt::xtensor<size_t,1> Regular::nodesFrontTopOpenEdge() const
     return out;
 }
 
-inline xt::xtensor<size_t,1> Regular::nodesFrontLeftOpenEdge() const
+inline xt::xtensor<size_t, 1> Regular::nodesFrontLeftOpenEdge() const
 {
-    xt::xtensor<size_t,1> out = xt::empty<size_t>({m_nely - 1});
+    xt::xtensor<size_t, 1> out = xt::empty<size_t>({m_nely - 1});
 
     for (size_t iy = 1; iy < m_nely; ++iy) {
         out(iy - 1) = iy * (m_nelx + 1);
@@ -486,9 +482,9 @@ inline xt::xtensor<size_t,1> Regular::nodesFrontLeftOpenEdge() const
     return out;
 }
 
-inline xt::xtensor<size_t,1> Regular::nodesFrontRightOpenEdge() const
+inline xt::xtensor<size_t, 1> Regular::nodesFrontRightOpenEdge() const
 {
-    xt::xtensor<size_t,1> out = xt::empty<size_t>({m_nely - 1});
+    xt::xtensor<size_t, 1> out = xt::empty<size_t>({m_nely - 1});
 
     for (size_t iy = 1; iy < m_nely; ++iy) {
         out(iy - 1) = iy * (m_nelx + 1) + m_nelx;
@@ -497,9 +493,9 @@ inline xt::xtensor<size_t,1> Regular::nodesFrontRightOpenEdge() const
     return out;
 }
 
-inline xt::xtensor<size_t,1> Regular::nodesBackBottomOpenEdge() const
+inline xt::xtensor<size_t, 1> Regular::nodesBackBottomOpenEdge() const
 {
-    xt::xtensor<size_t,1> out = xt::empty<size_t>({m_nelx - 1});
+    xt::xtensor<size_t, 1> out = xt::empty<size_t>({m_nelx - 1});
 
     for (size_t ix = 1; ix < m_nelx; ++ix) {
         out(ix - 1) = ix + m_nelz * (m_nely + 1) * (m_nelx + 1);
@@ -508,9 +504,9 @@ inline xt::xtensor<size_t,1> Regular::nodesBackBottomOpenEdge() const
     return out;
 }
 
-inline xt::xtensor<size_t,1> Regular::nodesBackTopOpenEdge() const
+inline xt::xtensor<size_t, 1> Regular::nodesBackTopOpenEdge() const
 {
-    xt::xtensor<size_t,1> out = xt::empty<size_t>({m_nelx - 1});
+    xt::xtensor<size_t, 1> out = xt::empty<size_t>({m_nelx - 1});
 
     for (size_t ix = 1; ix < m_nelx; ++ix) {
         out(ix - 1) = m_nely * (m_nelx + 1) + ix + m_nelz * (m_nely + 1) * (m_nelx + 1);
@@ -519,9 +515,9 @@ inline xt::xtensor<size_t,1> Regular::nodesBackTopOpenEdge() const
     return out;
 }
 
-inline xt::xtensor<size_t,1> Regular::nodesBackLeftOpenEdge() const
+inline xt::xtensor<size_t, 1> Regular::nodesBackLeftOpenEdge() const
 {
-    xt::xtensor<size_t,1> out = xt::empty<size_t>({m_nely - 1});
+    xt::xtensor<size_t, 1> out = xt::empty<size_t>({m_nely - 1});
 
     for (size_t iy = 1; iy < m_nely; ++iy) {
         out(iy - 1) = iy * (m_nelx + 1) + m_nelz * (m_nelx + 1) * (m_nely + 1);
@@ -530,9 +526,9 @@ inline xt::xtensor<size_t,1> Regular::nodesBackLeftOpenEdge() const
     return out;
 }
 
-inline xt::xtensor<size_t,1> Regular::nodesBackRightOpenEdge() const
+inline xt::xtensor<size_t, 1> Regular::nodesBackRightOpenEdge() const
 {
-    xt::xtensor<size_t,1> out = xt::empty<size_t>({m_nely - 1});
+    xt::xtensor<size_t, 1> out = xt::empty<size_t>({m_nely - 1});
 
     for (size_t iy = 1; iy < m_nely; ++iy) {
         out(iy - 1) = iy * (m_nelx + 1) + m_nelz * (m_nelx + 1) * (m_nely + 1) + m_nelx;
@@ -541,9 +537,9 @@ inline xt::xtensor<size_t,1> Regular::nodesBackRightOpenEdge() const
     return out;
 }
 
-inline xt::xtensor<size_t,1> Regular::nodesBottomLeftOpenEdge() const
+inline xt::xtensor<size_t, 1> Regular::nodesBottomLeftOpenEdge() const
 {
-    xt::xtensor<size_t,1> out = xt::empty<size_t>({m_nelz - 1});
+    xt::xtensor<size_t, 1> out = xt::empty<size_t>({m_nelz - 1});
 
     for (size_t iz = 1; iz < m_nelz; ++iz) {
         out(iz - 1) = iz * (m_nelx + 1) * (m_nely + 1);
@@ -552,9 +548,9 @@ inline xt::xtensor<size_t,1> Regular::nodesBottomLeftOpenEdge() const
     return out;
 }
 
-inline xt::xtensor<size_t,1> Regular::nodesBottomRightOpenEdge() const
+inline xt::xtensor<size_t, 1> Regular::nodesBottomRightOpenEdge() const
 {
-    xt::xtensor<size_t,1> out = xt::empty<size_t>({m_nelz - 1});
+    xt::xtensor<size_t, 1> out = xt::empty<size_t>({m_nelz - 1});
 
     for (size_t iz = 1; iz < m_nelz; ++iz) {
         out(iz - 1) = iz * (m_nelx + 1) * (m_nely + 1) + m_nelx;
@@ -563,9 +559,9 @@ inline xt::xtensor<size_t,1> Regular::nodesBottomRightOpenEdge() const
     return out;
 }
 
-inline xt::xtensor<size_t,1> Regular::nodesTopLeftOpenEdge() const
+inline xt::xtensor<size_t, 1> Regular::nodesTopLeftOpenEdge() const
 {
-    xt::xtensor<size_t,1> out = xt::empty<size_t>({m_nelz - 1});
+    xt::xtensor<size_t, 1> out = xt::empty<size_t>({m_nelz - 1});
 
     for (size_t iz = 1; iz < m_nelz; ++iz) {
         out(iz - 1) = m_nely * (m_nelx + 1) + iz * (m_nelx + 1) * (m_nely + 1);
@@ -574,9 +570,9 @@ inline xt::xtensor<size_t,1> Regular::nodesTopLeftOpenEdge() const
     return out;
 }
 
-inline xt::xtensor<size_t,1> Regular::nodesTopRightOpenEdge() const
+inline xt::xtensor<size_t, 1> Regular::nodesTopRightOpenEdge() const
 {
-    xt::xtensor<size_t,1> out = xt::empty<size_t>({m_nelz - 1});
+    xt::xtensor<size_t, 1> out = xt::empty<size_t>({m_nelz - 1});
 
     for (size_t iz = 1; iz < m_nelz; ++iz) {
         out(iz - 1) = m_nely * (m_nelx + 1) + iz * (m_nelx + 1) * (m_nely + 1) + m_nelx;
@@ -585,51 +581,51 @@ inline xt::xtensor<size_t,1> Regular::nodesTopRightOpenEdge() const
     return out;
 }
 
-inline xt::xtensor<size_t,1> Regular::nodesBottomFrontOpenEdge() const
+inline xt::xtensor<size_t, 1> Regular::nodesBottomFrontOpenEdge() const
 {
     return nodesFrontBottomOpenEdge();
 }
-inline xt::xtensor<size_t,1> Regular::nodesBottomBackOpenEdge() const
+inline xt::xtensor<size_t, 1> Regular::nodesBottomBackOpenEdge() const
 {
     return nodesBackBottomOpenEdge();
 }
-inline xt::xtensor<size_t,1> Regular::nodesTopFrontOpenEdge() const
+inline xt::xtensor<size_t, 1> Regular::nodesTopFrontOpenEdge() const
 {
     return nodesFrontTopOpenEdge();
 }
-inline xt::xtensor<size_t,1> Regular::nodesTopBackOpenEdge() const
+inline xt::xtensor<size_t, 1> Regular::nodesTopBackOpenEdge() const
 {
     return nodesBackTopOpenEdge();
 }
-inline xt::xtensor<size_t,1> Regular::nodesLeftBottomOpenEdge() const
+inline xt::xtensor<size_t, 1> Regular::nodesLeftBottomOpenEdge() const
 {
     return nodesBottomLeftOpenEdge();
 }
-inline xt::xtensor<size_t,1> Regular::nodesLeftFrontOpenEdge() const
+inline xt::xtensor<size_t, 1> Regular::nodesLeftFrontOpenEdge() const
 {
     return nodesFrontLeftOpenEdge();
 }
-inline xt::xtensor<size_t,1> Regular::nodesLeftBackOpenEdge() const
+inline xt::xtensor<size_t, 1> Regular::nodesLeftBackOpenEdge() const
 {
     return nodesBackLeftOpenEdge();
 }
-inline xt::xtensor<size_t,1> Regular::nodesLeftTopOpenEdge() const
+inline xt::xtensor<size_t, 1> Regular::nodesLeftTopOpenEdge() const
 {
     return nodesTopLeftOpenEdge();
 }
-inline xt::xtensor<size_t,1> Regular::nodesRightBottomOpenEdge() const
+inline xt::xtensor<size_t, 1> Regular::nodesRightBottomOpenEdge() const
 {
     return nodesBottomRightOpenEdge();
 }
-inline xt::xtensor<size_t,1> Regular::nodesRightTopOpenEdge() const
+inline xt::xtensor<size_t, 1> Regular::nodesRightTopOpenEdge() const
 {
     return nodesTopRightOpenEdge();
 }
-inline xt::xtensor<size_t,1> Regular::nodesRightFrontOpenEdge() const
+inline xt::xtensor<size_t, 1> Regular::nodesRightFrontOpenEdge() const
 {
     return nodesFrontRightOpenEdge();
 }
-inline xt::xtensor<size_t,1> Regular::nodesRightBackOpenEdge() const
+inline xt::xtensor<size_t, 1> Regular::nodesRightBackOpenEdge() const
 {
     return nodesBackRightOpenEdge();
 }
@@ -835,32 +831,32 @@ inline size_t Regular::nodesRightTopBackCorner() const
     return nodesBackTopRightCorner();
 }
 
-inline xt::xtensor<size_t,2> Regular::nodesPeriodic() const
+inline xt::xtensor<size_t, 2> Regular::nodesPeriodic() const
 {
-    xt::xtensor<size_t,1> fro = nodesFrontFace();
-    xt::xtensor<size_t,1> bck = nodesBackFace();
-    xt::xtensor<size_t,1> lft = nodesLeftFace();
-    xt::xtensor<size_t,1> rgt = nodesRightFace();
-    xt::xtensor<size_t,1> bot = nodesBottomFace();
-    xt::xtensor<size_t,1> top = nodesTopFace();
+    xt::xtensor<size_t, 1> fro = nodesFrontFace();
+    xt::xtensor<size_t, 1> bck = nodesBackFace();
+    xt::xtensor<size_t, 1> lft = nodesLeftFace();
+    xt::xtensor<size_t, 1> rgt = nodesRightFace();
+    xt::xtensor<size_t, 1> bot = nodesBottomFace();
+    xt::xtensor<size_t, 1> top = nodesTopFace();
 
-    xt::xtensor<size_t,1> froBot = nodesFrontBottomOpenEdge();
-    xt::xtensor<size_t,1> froTop = nodesFrontTopOpenEdge();
-    xt::xtensor<size_t,1> froLft = nodesFrontLeftOpenEdge();
-    xt::xtensor<size_t,1> froRgt = nodesFrontRightOpenEdge();
-    xt::xtensor<size_t,1> bckBot = nodesBackBottomOpenEdge();
-    xt::xtensor<size_t,1> bckTop = nodesBackTopOpenEdge();
-    xt::xtensor<size_t,1> bckLft = nodesBackLeftOpenEdge();
-    xt::xtensor<size_t,1> bckRgt = nodesBackRightOpenEdge();
-    xt::xtensor<size_t,1> botLft = nodesBottomLeftOpenEdge();
-    xt::xtensor<size_t,1> botRgt = nodesBottomRightOpenEdge();
-    xt::xtensor<size_t,1> topLft = nodesTopLeftOpenEdge();
-    xt::xtensor<size_t,1> topRgt = nodesTopRightOpenEdge();
+    xt::xtensor<size_t, 1> froBot = nodesFrontBottomOpenEdge();
+    xt::xtensor<size_t, 1> froTop = nodesFrontTopOpenEdge();
+    xt::xtensor<size_t, 1> froLft = nodesFrontLeftOpenEdge();
+    xt::xtensor<size_t, 1> froRgt = nodesFrontRightOpenEdge();
+    xt::xtensor<size_t, 1> bckBot = nodesBackBottomOpenEdge();
+    xt::xtensor<size_t, 1> bckTop = nodesBackTopOpenEdge();
+    xt::xtensor<size_t, 1> bckLft = nodesBackLeftOpenEdge();
+    xt::xtensor<size_t, 1> bckRgt = nodesBackRightOpenEdge();
+    xt::xtensor<size_t, 1> botLft = nodesBottomLeftOpenEdge();
+    xt::xtensor<size_t, 1> botRgt = nodesBottomRightOpenEdge();
+    xt::xtensor<size_t, 1> topLft = nodesTopLeftOpenEdge();
+    xt::xtensor<size_t, 1> topRgt = nodesTopRightOpenEdge();
 
     size_t tface = fro.size() + lft.size() + bot.size();
     size_t tedge = 3 * froBot.size() + 3 * froLft.size() + 3 * botLft.size();
     size_t tnode = 7;
-    xt::xtensor<size_t,2> out = xt::empty<size_t>({tface + tedge + tnode, std::size_t(2)});
+    xt::xtensor<size_t, 2> out = xt::empty<size_t>({tface + tedge + tnode, std::size_t(2)});
 
     size_t i = 0;
 
@@ -956,15 +952,15 @@ inline size_t Regular::nodesOrigin() const
     return nodesFrontBottomLeftCorner();
 }
 
-inline xt::xtensor<size_t,2> Regular::dofs() const
+inline xt::xtensor<size_t, 2> Regular::dofs() const
 {
     return GooseFEM::Mesh::dofs(m_nnode, m_ndim);
 }
 
-inline xt::xtensor<size_t,2> Regular::dofsPeriodic() const
+inline xt::xtensor<size_t, 2> Regular::dofsPeriodic() const
 {
-    xt::xtensor<size_t,2> out = GooseFEM::Mesh::dofs(m_nnode, m_ndim);
-    xt::xtensor<size_t,2> nodePer = nodesPeriodic();
+    xt::xtensor<size_t, 2> out = GooseFEM::Mesh::dofs(m_nnode, m_ndim);
+    xt::xtensor<size_t, 2> nodePer = nodesPeriodic();
 
     for (size_t i = 0; i < nodePer.shape(0); ++i) {
         for (size_t j = 0; j < m_ndim; ++j) {
@@ -990,10 +986,10 @@ inline FineLayer::FineLayer(size_t nelx, size_t nely, size_t nelz, double h, siz
 
     // temporary variables
     size_t nmin, ntot;
-    xt::xtensor<size_t,1> nhx = xt::ones<size_t>({nely});
-    xt::xtensor<size_t,1> nhy = xt::ones<size_t>({nely});
-    xt::xtensor<size_t,1> nhz = xt::ones<size_t>({nely});
-    xt::xtensor<int,1> refine = -1 * xt::ones<int>({nely});
+    xt::xtensor<size_t, 1> nhx = xt::ones<size_t>({nely});
+    xt::xtensor<size_t, 1> nhy = xt::ones<size_t>({nely});
+    xt::xtensor<size_t, 1> nhz = xt::ones<size_t>({nely});
+    xt::xtensor<int, 1> refine = -1 * xt::ones<int>({nely});
 
     // minimum height in y-direction (half of the height because of symmetry)
     if (nely % 2 == 0) {
@@ -1234,10 +1230,10 @@ inline ElementType FineLayer::getElementType() const
     return ElementType::Hex8;
 }
 
-inline xt::xtensor<double,2> FineLayer::coor() const
+inline xt::xtensor<double, 2> FineLayer::coor() const
 {
     // allocate output
-    xt::xtensor<double,2> out = xt::empty<double>({m_nnode, m_ndim});
+    xt::xtensor<double, 2> out = xt::empty<double>({m_nnode, m_ndim});
 
     // current node, number of element layers
     size_t inode = 0;
@@ -1245,7 +1241,7 @@ inline xt::xtensor<double,2> FineLayer::coor() const
 
     // y-position of each main node layer (i.e. excluding node layers for refinement/coarsening)
     // - allocate
-    xt::xtensor<double,1> y = xt::empty<double>({nely + 1});
+    xt::xtensor<double, 1> y = xt::empty<double>({nely + 1});
     // - initialize
     y(0) = 0.0;
     // - compute
@@ -1257,8 +1253,8 @@ inline xt::xtensor<double,2> FineLayer::coor() const
 
     for (size_t iy = 0;; ++iy) {
         // get positions along the x- and z-axis
-        xt::xtensor<double,1> x = xt::linspace<double>(0.0, m_Lx, m_nelx(iy) + 1);
-        xt::xtensor<double,1> z = xt::linspace<double>(0.0, m_Lz, m_nelz(iy) + 1);
+        xt::xtensor<double, 1> x = xt::linspace<double>(0.0, m_Lx, m_nelx(iy) + 1);
+        xt::xtensor<double, 1> z = xt::linspace<double>(0.0, m_Lz, m_nelz(iy) + 1);
 
         // add nodes of the bottom layer of this element
         for (size_t iz = 0; iz < m_nelz(iy) + 1; ++iz) {
@@ -1316,8 +1312,8 @@ inline xt::xtensor<double,2> FineLayer::coor() const
 
     for (size_t iy = (nely - 1) / 2; iy < nely; ++iy) {
         // get positions along the x- and z-axis
-        xt::xtensor<double,1> x = xt::linspace<double>(0.0, m_Lx, m_nelx(iy) + 1);
-        xt::xtensor<double,1> z = xt::linspace<double>(0.0, m_Lz, m_nelz(iy) + 1);
+        xt::xtensor<double, 1> x = xt::linspace<double>(0.0, m_Lx, m_nelx(iy) + 1);
+        xt::xtensor<double, 1> z = xt::linspace<double>(0.0, m_Lz, m_nelz(iy) + 1);
 
         // add extra nodes of the intermediate layer, for refinement in x-direction
         if (m_refine(iy) == 0) {
@@ -1369,10 +1365,10 @@ inline xt::xtensor<double,2> FineLayer::coor() const
     return out;
 }
 
-inline xt::xtensor<size_t,2> FineLayer::conn() const
+inline xt::xtensor<size_t, 2> FineLayer::conn() const
 {
     // allocate output
-    xt::xtensor<size_t,2> out = xt::empty<size_t>({m_nelem, m_nne});
+    xt::xtensor<size_t, 2> out = xt::empty<size_t>({m_nelem, m_nne});
 
     // current element, number of element layers, starting nodes of each node layer
     size_t ielem = 0;
@@ -1599,12 +1595,12 @@ inline xt::xtensor<size_t,2> FineLayer::conn() const
     return out;
 }
 
-inline xt::xtensor<size_t,1> FineLayer::elementsMiddleLayer() const
+inline xt::xtensor<size_t, 1> FineLayer::elementsMiddleLayer() const
 {
     size_t nely = static_cast<size_t>(m_nhy.size());
     size_t iy = (nely - 1) / 2;
 
-    xt::xtensor<size_t,1> out = xt::empty<size_t>({m_nelx(iy) * m_nelz(iy)});
+    xt::xtensor<size_t, 1> out = xt::empty<size_t>({m_nelx(iy) * m_nelz(iy)});
 
     for (size_t ix = 0; ix < m_nelx(iy); ++ix) {
         for (size_t iz = 0; iz < m_nelz(iy); ++iz) {
@@ -1615,7 +1611,7 @@ inline xt::xtensor<size_t,1> FineLayer::elementsMiddleLayer() const
     return out;
 }
 
-inline xt::xtensor<size_t,1> FineLayer::nodesFront() const
+inline xt::xtensor<size_t, 1> FineLayer::nodesFront() const
 {
     // number of element layers in y-direction
     size_t nely = static_cast<size_t>(m_nhy.size());
@@ -1643,7 +1639,7 @@ inline xt::xtensor<size_t,1> FineLayer::nodesFront() const
     }
 
     // allocate node-list
-    xt::xtensor<size_t,1> out = xt::empty<size_t>({n});
+    xt::xtensor<size_t, 1> out = xt::empty<size_t>({n});
 
     // initialize counter: current index in the node-list "out"
     size_t j = 0;
@@ -1683,7 +1679,7 @@ inline xt::xtensor<size_t,1> FineLayer::nodesFront() const
     return out;
 }
 
-inline xt::xtensor<size_t,1> FineLayer::nodesBack() const
+inline xt::xtensor<size_t, 1> FineLayer::nodesBack() const
 {
     // number of element layers in y-direction
     size_t nely = static_cast<size_t>(m_nhy.size());
@@ -1711,7 +1707,7 @@ inline xt::xtensor<size_t,1> FineLayer::nodesBack() const
     }
 
     // allocate node-list
-    xt::xtensor<size_t,1> out = xt::empty<size_t>({n});
+    xt::xtensor<size_t, 1> out = xt::empty<size_t>({n});
 
     // initialize counter: current index in the node-list "out"
     size_t j = 0;
@@ -1751,7 +1747,7 @@ inline xt::xtensor<size_t,1> FineLayer::nodesBack() const
     return out;
 }
 
-inline xt::xtensor<size_t,1> FineLayer::nodesLeft() const
+inline xt::xtensor<size_t, 1> FineLayer::nodesLeft() const
 {
     // number of element layers in y-direction
     size_t nely = static_cast<size_t>(m_nhy.size());
@@ -1779,7 +1775,7 @@ inline xt::xtensor<size_t,1> FineLayer::nodesLeft() const
     }
 
     // allocate node-list
-    xt::xtensor<size_t,1> out = xt::empty<size_t>({n});
+    xt::xtensor<size_t, 1> out = xt::empty<size_t>({n});
 
     // initialize counter: current index in the node-list "out"
     size_t j = 0;
@@ -1819,7 +1815,7 @@ inline xt::xtensor<size_t,1> FineLayer::nodesLeft() const
     return out;
 }
 
-inline xt::xtensor<size_t,1> FineLayer::nodesRight() const
+inline xt::xtensor<size_t, 1> FineLayer::nodesRight() const
 {
     // number of element layers in y-direction
     size_t nely = static_cast<size_t>(m_nhy.size());
@@ -1843,7 +1839,7 @@ inline xt::xtensor<size_t,1> FineLayer::nodesRight() const
     }
 
     // allocate node-list
-    xt::xtensor<size_t,1> out = xt::empty<size_t>({n});
+    xt::xtensor<size_t, 1> out = xt::empty<size_t>({n});
 
     // initialize counter: current index in the node-list "out"
     size_t j = 0;
@@ -1883,13 +1879,13 @@ inline xt::xtensor<size_t,1> FineLayer::nodesRight() const
     return out;
 }
 
-inline xt::xtensor<size_t,1> FineLayer::nodesBottom() const
+inline xt::xtensor<size_t, 1> FineLayer::nodesBottom() const
 {
     // number of element layers in y-direction
     size_t nely = static_cast<size_t>(m_nhy.size());
 
     // allocate node list
-    xt::xtensor<size_t,1> out = xt::empty<size_t>({m_nnd(nely)});
+    xt::xtensor<size_t, 1> out = xt::empty<size_t>({m_nnd(nely)});
 
     // counter
     size_t j = 0;
@@ -1905,13 +1901,13 @@ inline xt::xtensor<size_t,1> FineLayer::nodesBottom() const
     return out;
 }
 
-inline xt::xtensor<size_t,1> FineLayer::nodesTop() const
+inline xt::xtensor<size_t, 1> FineLayer::nodesTop() const
 {
     // number of element layers in y-direction
     size_t nely = static_cast<size_t>(m_nhy.size());
 
     // allocate node list
-    xt::xtensor<size_t,1> out = xt::empty<size_t>({m_nnd(nely)});
+    xt::xtensor<size_t, 1> out = xt::empty<size_t>({m_nnd(nely)});
 
     // counter
     size_t j = 0;
@@ -1927,7 +1923,7 @@ inline xt::xtensor<size_t,1> FineLayer::nodesTop() const
     return out;
 }
 
-inline xt::xtensor<size_t,1> FineLayer::nodesFrontFace() const
+inline xt::xtensor<size_t, 1> FineLayer::nodesFrontFace() const
 {
     // number of element layers in y-direction
     size_t nely = static_cast<size_t>(m_nhy.size());
@@ -1955,7 +1951,7 @@ inline xt::xtensor<size_t,1> FineLayer::nodesFrontFace() const
     }
 
     // allocate node-list
-    xt::xtensor<size_t,1> out = xt::empty<size_t>({n});
+    xt::xtensor<size_t, 1> out = xt::empty<size_t>({n});
 
     // initialize counter: current index in the node-list "out"
     size_t j = 0;
@@ -1995,7 +1991,7 @@ inline xt::xtensor<size_t,1> FineLayer::nodesFrontFace() const
     return out;
 }
 
-inline xt::xtensor<size_t,1> FineLayer::nodesBackFace() const
+inline xt::xtensor<size_t, 1> FineLayer::nodesBackFace() const
 {
     // number of element layers in y-direction
     size_t nely = static_cast<size_t>(m_nhy.size());
@@ -2023,7 +2019,7 @@ inline xt::xtensor<size_t,1> FineLayer::nodesBackFace() const
     }
 
     // allocate node-list
-    xt::xtensor<size_t,1> out = xt::empty<size_t>({n});
+    xt::xtensor<size_t, 1> out = xt::empty<size_t>({n});
 
     // initialize counter: current index in the node-list "out"
     size_t j = 0;
@@ -2063,7 +2059,7 @@ inline xt::xtensor<size_t,1> FineLayer::nodesBackFace() const
     return out;
 }
 
-inline xt::xtensor<size_t,1> FineLayer::nodesLeftFace() const
+inline xt::xtensor<size_t, 1> FineLayer::nodesLeftFace() const
 {
     // number of element layers in y-direction
     size_t nely = static_cast<size_t>(m_nhy.size());
@@ -2091,7 +2087,7 @@ inline xt::xtensor<size_t,1> FineLayer::nodesLeftFace() const
     }
 
     // allocate node-list
-    xt::xtensor<size_t,1> out = xt::empty<size_t>({n});
+    xt::xtensor<size_t, 1> out = xt::empty<size_t>({n});
 
     // initialize counter: current index in the node-list "out"
     size_t j = 0;
@@ -2131,7 +2127,7 @@ inline xt::xtensor<size_t,1> FineLayer::nodesLeftFace() const
     return out;
 }
 
-inline xt::xtensor<size_t,1> FineLayer::nodesRightFace() const
+inline xt::xtensor<size_t, 1> FineLayer::nodesRightFace() const
 {
     // number of element layers in y-direction
     size_t nely = static_cast<size_t>(m_nhy.size());
@@ -2159,7 +2155,7 @@ inline xt::xtensor<size_t,1> FineLayer::nodesRightFace() const
     }
 
     // allocate node-list
-    xt::xtensor<size_t,1> out = xt::empty<size_t>({n});
+    xt::xtensor<size_t, 1> out = xt::empty<size_t>({n});
 
     // initialize counter: current index in the node-list "out"
     size_t j = 0;
@@ -2199,10 +2195,10 @@ inline xt::xtensor<size_t,1> FineLayer::nodesRightFace() const
     return out;
 }
 
-inline xt::xtensor<size_t,1> FineLayer::nodesBottomFace() const
+inline xt::xtensor<size_t, 1> FineLayer::nodesBottomFace() const
 {
     // allocate node list
-    xt::xtensor<size_t,1> out = xt::empty<size_t>({(m_nelx(0) - 1) * (m_nelz(0) - 1)});
+    xt::xtensor<size_t, 1> out = xt::empty<size_t>({(m_nelx(0) - 1) * (m_nelz(0) - 1)});
 
     // counter
     size_t j = 0;
@@ -2218,13 +2214,13 @@ inline xt::xtensor<size_t,1> FineLayer::nodesBottomFace() const
     return out;
 }
 
-inline xt::xtensor<size_t,1> FineLayer::nodesTopFace() const
+inline xt::xtensor<size_t, 1> FineLayer::nodesTopFace() const
 {
     // number of element layers in y-direction
     size_t nely = static_cast<size_t>(m_nhy.size());
 
     // allocate node list
-    xt::xtensor<size_t,1> out =
+    xt::xtensor<size_t, 1> out =
         xt::empty<size_t>({(m_nelx(nely - 1) - 1) * (m_nelz(nely - 1) - 1)});
 
     // counter
@@ -2241,9 +2237,9 @@ inline xt::xtensor<size_t,1> FineLayer::nodesTopFace() const
     return out;
 }
 
-inline xt::xtensor<size_t,1> FineLayer::nodesFrontBottomEdge() const
+inline xt::xtensor<size_t, 1> FineLayer::nodesFrontBottomEdge() const
 {
-    xt::xtensor<size_t,1> out = xt::empty<size_t>({m_nelx(0) + 1});
+    xt::xtensor<size_t, 1> out = xt::empty<size_t>({m_nelx(0) + 1});
 
     for (size_t ix = 0; ix < m_nelx(0) + 1; ++ix) {
         out(ix) = m_startNode(0) + ix;
@@ -2252,11 +2248,11 @@ inline xt::xtensor<size_t,1> FineLayer::nodesFrontBottomEdge() const
     return out;
 }
 
-inline xt::xtensor<size_t,1> FineLayer::nodesFrontTopEdge() const
+inline xt::xtensor<size_t, 1> FineLayer::nodesFrontTopEdge() const
 {
     size_t nely = static_cast<size_t>(m_nhy.size());
 
-    xt::xtensor<size_t,1> out = xt::empty<size_t>({m_nelx(nely - 1) + 1});
+    xt::xtensor<size_t, 1> out = xt::empty<size_t>({m_nelx(nely - 1) + 1});
 
     for (size_t ix = 0; ix < m_nelx(nely - 1) + 1; ++ix) {
         out(ix) = m_startNode(nely) + ix;
@@ -2265,11 +2261,11 @@ inline xt::xtensor<size_t,1> FineLayer::nodesFrontTopEdge() const
     return out;
 }
 
-inline xt::xtensor<size_t,1> FineLayer::nodesFrontLeftEdge() const
+inline xt::xtensor<size_t, 1> FineLayer::nodesFrontLeftEdge() const
 {
     size_t nely = static_cast<size_t>(m_nhy.size());
 
-    xt::xtensor<size_t,1> out = xt::empty<size_t>({nely + 1});
+    xt::xtensor<size_t, 1> out = xt::empty<size_t>({nely + 1});
 
     for (size_t iy = 0; iy < (nely + 1) / 2; ++iy) {
         out(iy) = m_startNode(iy);
@@ -2282,11 +2278,11 @@ inline xt::xtensor<size_t,1> FineLayer::nodesFrontLeftEdge() const
     return out;
 }
 
-inline xt::xtensor<size_t,1> FineLayer::nodesFrontRightEdge() const
+inline xt::xtensor<size_t, 1> FineLayer::nodesFrontRightEdge() const
 {
     size_t nely = static_cast<size_t>(m_nhy.size());
 
-    xt::xtensor<size_t,1> out = xt::empty<size_t>({nely + 1});
+    xt::xtensor<size_t, 1> out = xt::empty<size_t>({nely + 1});
 
     for (size_t iy = 0; iy < (nely + 1) / 2; ++iy) {
         out(iy) = m_startNode(iy) + m_nelx(iy);
@@ -2299,9 +2295,9 @@ inline xt::xtensor<size_t,1> FineLayer::nodesFrontRightEdge() const
     return out;
 }
 
-inline xt::xtensor<size_t,1> FineLayer::nodesBackBottomEdge() const
+inline xt::xtensor<size_t, 1> FineLayer::nodesBackBottomEdge() const
 {
-    xt::xtensor<size_t,1> out = xt::empty<size_t>({m_nelx(0) + 1});
+    xt::xtensor<size_t, 1> out = xt::empty<size_t>({m_nelx(0) + 1});
 
     for (size_t ix = 0; ix < m_nelx(0) + 1; ++ix) {
         out(ix) = m_startNode(0) + ix + (m_nelx(0) + 1) * (m_nelz(0));
@@ -2310,11 +2306,11 @@ inline xt::xtensor<size_t,1> FineLayer::nodesBackBottomEdge() const
     return out;
 }
 
-inline xt::xtensor<size_t,1> FineLayer::nodesBackTopEdge() const
+inline xt::xtensor<size_t, 1> FineLayer::nodesBackTopEdge() const
 {
     size_t nely = static_cast<size_t>(m_nhy.size());
 
-    xt::xtensor<size_t,1> out = xt::empty<size_t>({m_nelx(nely - 1) + 1});
+    xt::xtensor<size_t, 1> out = xt::empty<size_t>({m_nelx(nely - 1) + 1});
 
     for (size_t ix = 0; ix < m_nelx(nely - 1) + 1; ++ix) {
         out(ix) = m_startNode(nely) + ix + (m_nelx(nely - 1) + 1) * (m_nelz(nely - 1));
@@ -2323,11 +2319,11 @@ inline xt::xtensor<size_t,1> FineLayer::nodesBackTopEdge() const
     return out;
 }
 
-inline xt::xtensor<size_t,1> FineLayer::nodesBackLeftEdge() const
+inline xt::xtensor<size_t, 1> FineLayer::nodesBackLeftEdge() const
 {
     size_t nely = static_cast<size_t>(m_nhy.size());
 
-    xt::xtensor<size_t,1> out = xt::empty<size_t>({nely + 1});
+    xt::xtensor<size_t, 1> out = xt::empty<size_t>({nely + 1});
 
     for (size_t iy = 0; iy < (nely + 1) / 2; ++iy) {
         out(iy) = m_startNode(iy) + (m_nelx(iy) + 1) * (m_nelz(iy));
@@ -2340,11 +2336,11 @@ inline xt::xtensor<size_t,1> FineLayer::nodesBackLeftEdge() const
     return out;
 }
 
-inline xt::xtensor<size_t,1> FineLayer::nodesBackRightEdge() const
+inline xt::xtensor<size_t, 1> FineLayer::nodesBackRightEdge() const
 {
     size_t nely = static_cast<size_t>(m_nhy.size());
 
-    xt::xtensor<size_t,1> out = xt::empty<size_t>({nely + 1});
+    xt::xtensor<size_t, 1> out = xt::empty<size_t>({nely + 1});
 
     for (size_t iy = 0; iy < (nely + 1) / 2; ++iy) {
         out(iy) = m_startNode(iy) + m_nelx(iy) + (m_nelx(iy) + 1) * (m_nelz(iy));
@@ -2357,9 +2353,9 @@ inline xt::xtensor<size_t,1> FineLayer::nodesBackRightEdge() const
     return out;
 }
 
-inline xt::xtensor<size_t,1> FineLayer::nodesBottomLeftEdge() const
+inline xt::xtensor<size_t, 1> FineLayer::nodesBottomLeftEdge() const
 {
-    xt::xtensor<size_t,1> out = xt::empty<size_t>({m_nelz(0) + 1});
+    xt::xtensor<size_t, 1> out = xt::empty<size_t>({m_nelz(0) + 1});
 
     for (size_t iz = 0; iz < m_nelz(0) + 1; ++iz) {
         out(iz) = m_startNode(0) + iz * (m_nelx(0) + 1);
@@ -2368,9 +2364,9 @@ inline xt::xtensor<size_t,1> FineLayer::nodesBottomLeftEdge() const
     return out;
 }
 
-inline xt::xtensor<size_t,1> FineLayer::nodesBottomRightEdge() const
+inline xt::xtensor<size_t, 1> FineLayer::nodesBottomRightEdge() const
 {
-    xt::xtensor<size_t,1> out = xt::empty<size_t>({m_nelz(0) + 1});
+    xt::xtensor<size_t, 1> out = xt::empty<size_t>({m_nelz(0) + 1});
 
     for (size_t iz = 0; iz < m_nelz(0) + 1; ++iz) {
         out(iz) = m_startNode(0) + m_nelx(0) + iz * (m_nelx(0) + 1);
@@ -2379,11 +2375,11 @@ inline xt::xtensor<size_t,1> FineLayer::nodesBottomRightEdge() const
     return out;
 }
 
-inline xt::xtensor<size_t,1> FineLayer::nodesTopLeftEdge() const
+inline xt::xtensor<size_t, 1> FineLayer::nodesTopLeftEdge() const
 {
     size_t nely = static_cast<size_t>(m_nhy.size());
 
-    xt::xtensor<size_t,1> out = xt::empty<size_t>({m_nelz(nely - 1) + 1});
+    xt::xtensor<size_t, 1> out = xt::empty<size_t>({m_nelz(nely - 1) + 1});
 
     for (size_t iz = 0; iz < m_nelz(nely - 1) + 1; ++iz) {
         out(iz) = m_startNode(nely) + iz * (m_nelx(nely - 1) + 1);
@@ -2392,11 +2388,11 @@ inline xt::xtensor<size_t,1> FineLayer::nodesTopLeftEdge() const
     return out;
 }
 
-inline xt::xtensor<size_t,1> FineLayer::nodesTopRightEdge() const
+inline xt::xtensor<size_t, 1> FineLayer::nodesTopRightEdge() const
 {
     size_t nely = static_cast<size_t>(m_nhy.size());
 
-    xt::xtensor<size_t,1> out = xt::empty<size_t>({m_nelz(nely - 1) + 1});
+    xt::xtensor<size_t, 1> out = xt::empty<size_t>({m_nelz(nely - 1) + 1});
 
     for (size_t iz = 0; iz < m_nelz(nely - 1) + 1; ++iz) {
         out(iz) = m_startNode(nely) + m_nelx(nely - 1) + iz * (m_nelx(nely - 1) + 1);
@@ -2405,58 +2401,58 @@ inline xt::xtensor<size_t,1> FineLayer::nodesTopRightEdge() const
     return out;
 }
 
-inline xt::xtensor<size_t,1> FineLayer::nodesBottomFrontEdge() const
+inline xt::xtensor<size_t, 1> FineLayer::nodesBottomFrontEdge() const
 {
     return nodesFrontBottomEdge();
 }
-inline xt::xtensor<size_t,1> FineLayer::nodesBottomBackEdge() const
+inline xt::xtensor<size_t, 1> FineLayer::nodesBottomBackEdge() const
 {
     return nodesBackBottomEdge();
 }
-inline xt::xtensor<size_t,1> FineLayer::nodesTopFrontEdge() const
+inline xt::xtensor<size_t, 1> FineLayer::nodesTopFrontEdge() const
 {
     return nodesFrontTopEdge();
 }
-inline xt::xtensor<size_t,1> FineLayer::nodesTopBackEdge() const
+inline xt::xtensor<size_t, 1> FineLayer::nodesTopBackEdge() const
 {
     return nodesBackTopEdge();
 }
-inline xt::xtensor<size_t,1> FineLayer::nodesLeftBottomEdge() const
+inline xt::xtensor<size_t, 1> FineLayer::nodesLeftBottomEdge() const
 {
     return nodesBottomLeftEdge();
 }
-inline xt::xtensor<size_t,1> FineLayer::nodesLeftFrontEdge() const
+inline xt::xtensor<size_t, 1> FineLayer::nodesLeftFrontEdge() const
 {
     return nodesFrontLeftEdge();
 }
-inline xt::xtensor<size_t,1> FineLayer::nodesLeftBackEdge() const
+inline xt::xtensor<size_t, 1> FineLayer::nodesLeftBackEdge() const
 {
     return nodesBackLeftEdge();
 }
-inline xt::xtensor<size_t,1> FineLayer::nodesLeftTopEdge() const
+inline xt::xtensor<size_t, 1> FineLayer::nodesLeftTopEdge() const
 {
     return nodesTopLeftEdge();
 }
-inline xt::xtensor<size_t,1> FineLayer::nodesRightBottomEdge() const
+inline xt::xtensor<size_t, 1> FineLayer::nodesRightBottomEdge() const
 {
     return nodesBottomRightEdge();
 }
-inline xt::xtensor<size_t,1> FineLayer::nodesRightTopEdge() const
+inline xt::xtensor<size_t, 1> FineLayer::nodesRightTopEdge() const
 {
     return nodesTopRightEdge();
 }
-inline xt::xtensor<size_t,1> FineLayer::nodesRightFrontEdge() const
+inline xt::xtensor<size_t, 1> FineLayer::nodesRightFrontEdge() const
 {
     return nodesFrontRightEdge();
 }
-inline xt::xtensor<size_t,1> FineLayer::nodesRightBackEdge() const
+inline xt::xtensor<size_t, 1> FineLayer::nodesRightBackEdge() const
 {
     return nodesBackRightEdge();
 }
 
-inline xt::xtensor<size_t,1> FineLayer::nodesFrontBottomOpenEdge() const
+inline xt::xtensor<size_t, 1> FineLayer::nodesFrontBottomOpenEdge() const
 {
-    xt::xtensor<size_t,1> out = xt::empty<size_t>({m_nelx(0) - 1});
+    xt::xtensor<size_t, 1> out = xt::empty<size_t>({m_nelx(0) - 1});
 
     for (size_t ix = 1; ix < m_nelx(0); ++ix) {
         out(ix - 1) = m_startNode(0) + ix;
@@ -2465,11 +2461,11 @@ inline xt::xtensor<size_t,1> FineLayer::nodesFrontBottomOpenEdge() const
     return out;
 }
 
-inline xt::xtensor<size_t,1> FineLayer::nodesFrontTopOpenEdge() const
+inline xt::xtensor<size_t, 1> FineLayer::nodesFrontTopOpenEdge() const
 {
     size_t nely = static_cast<size_t>(m_nhy.size());
 
-    xt::xtensor<size_t,1> out = xt::empty<size_t>({m_nelx(nely - 1) - 1});
+    xt::xtensor<size_t, 1> out = xt::empty<size_t>({m_nelx(nely - 1) - 1});
 
     for (size_t ix = 1; ix < m_nelx(nely - 1); ++ix) {
         out(ix - 1) = m_startNode(nely) + ix;
@@ -2478,11 +2474,11 @@ inline xt::xtensor<size_t,1> FineLayer::nodesFrontTopOpenEdge() const
     return out;
 }
 
-inline xt::xtensor<size_t,1> FineLayer::nodesFrontLeftOpenEdge() const
+inline xt::xtensor<size_t, 1> FineLayer::nodesFrontLeftOpenEdge() const
 {
     size_t nely = static_cast<size_t>(m_nhy.size());
 
-    xt::xtensor<size_t,1> out = xt::empty<size_t>({nely - 1});
+    xt::xtensor<size_t, 1> out = xt::empty<size_t>({nely - 1});
 
     for (size_t iy = 1; iy < (nely + 1) / 2; ++iy) {
         out(iy - 1) = m_startNode(iy);
@@ -2495,11 +2491,11 @@ inline xt::xtensor<size_t,1> FineLayer::nodesFrontLeftOpenEdge() const
     return out;
 }
 
-inline xt::xtensor<size_t,1> FineLayer::nodesFrontRightOpenEdge() const
+inline xt::xtensor<size_t, 1> FineLayer::nodesFrontRightOpenEdge() const
 {
     size_t nely = static_cast<size_t>(m_nhy.size());
 
-    xt::xtensor<size_t,1> out = xt::empty<size_t>({nely - 1});
+    xt::xtensor<size_t, 1> out = xt::empty<size_t>({nely - 1});
 
     for (size_t iy = 1; iy < (nely + 1) / 2; ++iy) {
         out(iy - 1) = m_startNode(iy) + m_nelx(iy);
@@ -2512,9 +2508,9 @@ inline xt::xtensor<size_t,1> FineLayer::nodesFrontRightOpenEdge() const
     return out;
 }
 
-inline xt::xtensor<size_t,1> FineLayer::nodesBackBottomOpenEdge() const
+inline xt::xtensor<size_t, 1> FineLayer::nodesBackBottomOpenEdge() const
 {
-    xt::xtensor<size_t,1> out = xt::empty<size_t>({m_nelx(0) - 1});
+    xt::xtensor<size_t, 1> out = xt::empty<size_t>({m_nelx(0) - 1});
 
     for (size_t ix = 1; ix < m_nelx(0); ++ix) {
         out(ix - 1) = m_startNode(0) + ix + (m_nelx(0) + 1) * (m_nelz(0));
@@ -2523,11 +2519,11 @@ inline xt::xtensor<size_t,1> FineLayer::nodesBackBottomOpenEdge() const
     return out;
 }
 
-inline xt::xtensor<size_t,1> FineLayer::nodesBackTopOpenEdge() const
+inline xt::xtensor<size_t, 1> FineLayer::nodesBackTopOpenEdge() const
 {
     size_t nely = static_cast<size_t>(m_nhy.size());
 
-    xt::xtensor<size_t,1> out = xt::empty<size_t>({m_nelx(nely - 1) - 1});
+    xt::xtensor<size_t, 1> out = xt::empty<size_t>({m_nelx(nely - 1) - 1});
 
     for (size_t ix = 1; ix < m_nelx(nely - 1); ++ix) {
         out(ix - 1) = m_startNode(nely) + ix + (m_nelx(nely - 1) + 1) * (m_nelz(nely - 1));
@@ -2536,11 +2532,11 @@ inline xt::xtensor<size_t,1> FineLayer::nodesBackTopOpenEdge() const
     return out;
 }
 
-inline xt::xtensor<size_t,1> FineLayer::nodesBackLeftOpenEdge() const
+inline xt::xtensor<size_t, 1> FineLayer::nodesBackLeftOpenEdge() const
 {
     size_t nely = static_cast<size_t>(m_nhy.size());
 
-    xt::xtensor<size_t,1> out = xt::empty<size_t>({nely - 1});
+    xt::xtensor<size_t, 1> out = xt::empty<size_t>({nely - 1});
 
     for (size_t iy = 1; iy < (nely + 1) / 2; ++iy) {
         out(iy - 1) = m_startNode(iy) + (m_nelx(iy) + 1) * (m_nelz(iy));
@@ -2553,11 +2549,11 @@ inline xt::xtensor<size_t,1> FineLayer::nodesBackLeftOpenEdge() const
     return out;
 }
 
-inline xt::xtensor<size_t,1> FineLayer::nodesBackRightOpenEdge() const
+inline xt::xtensor<size_t, 1> FineLayer::nodesBackRightOpenEdge() const
 {
     size_t nely = static_cast<size_t>(m_nhy.size());
 
-    xt::xtensor<size_t,1> out = xt::empty<size_t>({nely - 1});
+    xt::xtensor<size_t, 1> out = xt::empty<size_t>({nely - 1});
 
     for (size_t iy = 1; iy < (nely + 1) / 2; ++iy) {
         out(iy - 1) = m_startNode(iy) + m_nelx(iy) + (m_nelx(iy) + 1) * (m_nelz(iy));
@@ -2570,9 +2566,9 @@ inline xt::xtensor<size_t,1> FineLayer::nodesBackRightOpenEdge() const
     return out;
 }
 
-inline xt::xtensor<size_t,1> FineLayer::nodesBottomLeftOpenEdge() const
+inline xt::xtensor<size_t, 1> FineLayer::nodesBottomLeftOpenEdge() const
 {
-    xt::xtensor<size_t,1> out = xt::empty<size_t>({m_nelz(0) - 1});
+    xt::xtensor<size_t, 1> out = xt::empty<size_t>({m_nelz(0) - 1});
 
     for (size_t iz = 1; iz < m_nelz(0); ++iz) {
         out(iz - 1) = m_startNode(0) + iz * (m_nelx(0) + 1);
@@ -2581,9 +2577,9 @@ inline xt::xtensor<size_t,1> FineLayer::nodesBottomLeftOpenEdge() const
     return out;
 }
 
-inline xt::xtensor<size_t,1> FineLayer::nodesBottomRightOpenEdge() const
+inline xt::xtensor<size_t, 1> FineLayer::nodesBottomRightOpenEdge() const
 {
-    xt::xtensor<size_t,1> out = xt::empty<size_t>({m_nelz(0) - 1});
+    xt::xtensor<size_t, 1> out = xt::empty<size_t>({m_nelz(0) - 1});
 
     for (size_t iz = 1; iz < m_nelz(0); ++iz) {
         out(iz - 1) = m_startNode(0) + m_nelx(0) + iz * (m_nelx(0) + 1);
@@ -2592,11 +2588,11 @@ inline xt::xtensor<size_t,1> FineLayer::nodesBottomRightOpenEdge() const
     return out;
 }
 
-inline xt::xtensor<size_t,1> FineLayer::nodesTopLeftOpenEdge() const
+inline xt::xtensor<size_t, 1> FineLayer::nodesTopLeftOpenEdge() const
 {
     size_t nely = static_cast<size_t>(m_nhy.size());
 
-    xt::xtensor<size_t,1> out = xt::empty<size_t>({m_nelz(nely - 1) - 1});
+    xt::xtensor<size_t, 1> out = xt::empty<size_t>({m_nelz(nely - 1) - 1});
 
     for (size_t iz = 1; iz < m_nelz(nely - 1); ++iz) {
         out(iz - 1) = m_startNode(nely) + iz * (m_nelx(nely - 1) + 1);
@@ -2605,11 +2601,11 @@ inline xt::xtensor<size_t,1> FineLayer::nodesTopLeftOpenEdge() const
     return out;
 }
 
-inline xt::xtensor<size_t,1> FineLayer::nodesTopRightOpenEdge() const
+inline xt::xtensor<size_t, 1> FineLayer::nodesTopRightOpenEdge() const
 {
     size_t nely = static_cast<size_t>(m_nhy.size());
 
-    xt::xtensor<size_t,1> out = xt::empty<size_t>({m_nelz(nely - 1) - 1});
+    xt::xtensor<size_t, 1> out = xt::empty<size_t>({m_nelz(nely - 1) - 1});
 
     for (size_t iz = 1; iz < m_nelz(nely - 1); ++iz) {
         out(iz - 1) = m_startNode(nely) + m_nelx(nely - 1) + iz * (m_nelx(nely - 1) + 1);
@@ -2618,51 +2614,51 @@ inline xt::xtensor<size_t,1> FineLayer::nodesTopRightOpenEdge() const
     return out;
 }
 
-inline xt::xtensor<size_t,1> FineLayer::nodesBottomFrontOpenEdge() const
+inline xt::xtensor<size_t, 1> FineLayer::nodesBottomFrontOpenEdge() const
 {
     return nodesFrontBottomOpenEdge();
 }
-inline xt::xtensor<size_t,1> FineLayer::nodesBottomBackOpenEdge() const
+inline xt::xtensor<size_t, 1> FineLayer::nodesBottomBackOpenEdge() const
 {
     return nodesBackBottomOpenEdge();
 }
-inline xt::xtensor<size_t,1> FineLayer::nodesTopFrontOpenEdge() const
+inline xt::xtensor<size_t, 1> FineLayer::nodesTopFrontOpenEdge() const
 {
     return nodesFrontTopOpenEdge();
 }
-inline xt::xtensor<size_t,1> FineLayer::nodesTopBackOpenEdge() const
+inline xt::xtensor<size_t, 1> FineLayer::nodesTopBackOpenEdge() const
 {
     return nodesBackTopOpenEdge();
 }
-inline xt::xtensor<size_t,1> FineLayer::nodesLeftBottomOpenEdge() const
+inline xt::xtensor<size_t, 1> FineLayer::nodesLeftBottomOpenEdge() const
 {
     return nodesBottomLeftOpenEdge();
 }
-inline xt::xtensor<size_t,1> FineLayer::nodesLeftFrontOpenEdge() const
+inline xt::xtensor<size_t, 1> FineLayer::nodesLeftFrontOpenEdge() const
 {
     return nodesFrontLeftOpenEdge();
 }
-inline xt::xtensor<size_t,1> FineLayer::nodesLeftBackOpenEdge() const
+inline xt::xtensor<size_t, 1> FineLayer::nodesLeftBackOpenEdge() const
 {
     return nodesBackLeftOpenEdge();
 }
-inline xt::xtensor<size_t,1> FineLayer::nodesLeftTopOpenEdge() const
+inline xt::xtensor<size_t, 1> FineLayer::nodesLeftTopOpenEdge() const
 {
     return nodesTopLeftOpenEdge();
 }
-inline xt::xtensor<size_t,1> FineLayer::nodesRightBottomOpenEdge() const
+inline xt::xtensor<size_t, 1> FineLayer::nodesRightBottomOpenEdge() const
 {
     return nodesBottomRightOpenEdge();
 }
-inline xt::xtensor<size_t,1> FineLayer::nodesRightTopOpenEdge() const
+inline xt::xtensor<size_t, 1> FineLayer::nodesRightTopOpenEdge() const
 {
     return nodesTopRightOpenEdge();
 }
-inline xt::xtensor<size_t,1> FineLayer::nodesRightFrontOpenEdge() const
+inline xt::xtensor<size_t, 1> FineLayer::nodesRightFrontOpenEdge() const
 {
     return nodesFrontRightOpenEdge();
 }
-inline xt::xtensor<size_t,1> FineLayer::nodesRightBackOpenEdge() const
+inline xt::xtensor<size_t, 1> FineLayer::nodesRightBackOpenEdge() const
 {
     return nodesBackRightOpenEdge();
 }
@@ -2872,32 +2868,32 @@ inline size_t FineLayer::nodesRightTopBackCorner() const
     return nodesBackTopRightCorner();
 }
 
-inline xt::xtensor<size_t,2> FineLayer::nodesPeriodic() const
+inline xt::xtensor<size_t, 2> FineLayer::nodesPeriodic() const
 {
-    xt::xtensor<size_t,1> fro = nodesFrontFace();
-    xt::xtensor<size_t,1> bck = nodesBackFace();
-    xt::xtensor<size_t,1> lft = nodesLeftFace();
-    xt::xtensor<size_t,1> rgt = nodesRightFace();
-    xt::xtensor<size_t,1> bot = nodesBottomFace();
-    xt::xtensor<size_t,1> top = nodesTopFace();
+    xt::xtensor<size_t, 1> fro = nodesFrontFace();
+    xt::xtensor<size_t, 1> bck = nodesBackFace();
+    xt::xtensor<size_t, 1> lft = nodesLeftFace();
+    xt::xtensor<size_t, 1> rgt = nodesRightFace();
+    xt::xtensor<size_t, 1> bot = nodesBottomFace();
+    xt::xtensor<size_t, 1> top = nodesTopFace();
 
-    xt::xtensor<size_t,1> froBot = nodesFrontBottomOpenEdge();
-    xt::xtensor<size_t,1> froTop = nodesFrontTopOpenEdge();
-    xt::xtensor<size_t,1> froLft = nodesFrontLeftOpenEdge();
-    xt::xtensor<size_t,1> froRgt = nodesFrontRightOpenEdge();
-    xt::xtensor<size_t,1> bckBot = nodesBackBottomOpenEdge();
-    xt::xtensor<size_t,1> bckTop = nodesBackTopOpenEdge();
-    xt::xtensor<size_t,1> bckLft = nodesBackLeftOpenEdge();
-    xt::xtensor<size_t,1> bckRgt = nodesBackRightOpenEdge();
-    xt::xtensor<size_t,1> botLft = nodesBottomLeftOpenEdge();
-    xt::xtensor<size_t,1> botRgt = nodesBottomRightOpenEdge();
-    xt::xtensor<size_t,1> topLft = nodesTopLeftOpenEdge();
-    xt::xtensor<size_t,1> topRgt = nodesTopRightOpenEdge();
+    xt::xtensor<size_t, 1> froBot = nodesFrontBottomOpenEdge();
+    xt::xtensor<size_t, 1> froTop = nodesFrontTopOpenEdge();
+    xt::xtensor<size_t, 1> froLft = nodesFrontLeftOpenEdge();
+    xt::xtensor<size_t, 1> froRgt = nodesFrontRightOpenEdge();
+    xt::xtensor<size_t, 1> bckBot = nodesBackBottomOpenEdge();
+    xt::xtensor<size_t, 1> bckTop = nodesBackTopOpenEdge();
+    xt::xtensor<size_t, 1> bckLft = nodesBackLeftOpenEdge();
+    xt::xtensor<size_t, 1> bckRgt = nodesBackRightOpenEdge();
+    xt::xtensor<size_t, 1> botLft = nodesBottomLeftOpenEdge();
+    xt::xtensor<size_t, 1> botRgt = nodesBottomRightOpenEdge();
+    xt::xtensor<size_t, 1> topLft = nodesTopLeftOpenEdge();
+    xt::xtensor<size_t, 1> topRgt = nodesTopRightOpenEdge();
 
     size_t tface = fro.size() + lft.size() + bot.size();
     size_t tedge = 3 * froBot.size() + 3 * froLft.size() + 3 * botLft.size();
     size_t tnode = 7;
-    xt::xtensor<size_t,2> out = xt::empty<size_t>({tface + tedge + tnode, std::size_t(2)});
+    xt::xtensor<size_t, 2> out = xt::empty<size_t>({tface + tedge + tnode, std::size_t(2)});
 
     size_t i = 0;
 
@@ -2993,15 +2989,15 @@ inline size_t FineLayer::nodesOrigin() const
     return nodesFrontBottomLeftCorner();
 }
 
-inline xt::xtensor<size_t,2> FineLayer::dofs() const
+inline xt::xtensor<size_t, 2> FineLayer::dofs() const
 {
     return GooseFEM::Mesh::dofs(m_nnode, m_ndim);
 }
 
-inline xt::xtensor<size_t,2> FineLayer::dofsPeriodic() const
+inline xt::xtensor<size_t, 2> FineLayer::dofsPeriodic() const
 {
-    xt::xtensor<size_t,2> out = GooseFEM::Mesh::dofs(m_nnode, m_ndim);
-    xt::xtensor<size_t,2> nodePer = nodesPeriodic();
+    xt::xtensor<size_t, 2> out = GooseFEM::Mesh::dofs(m_nnode, m_ndim);
+    xt::xtensor<size_t, 2> nodePer = nodesPeriodic();
 
     for (size_t i = 0; i < nodePer.shape(0); ++i) {
         for (size_t j = 0; j < m_ndim; ++j) {

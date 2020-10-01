@@ -12,14 +12,14 @@
 namespace GooseFEM {
 namespace Element {
 
-inline xt::xtensor<double,3>
-asElementVector(const xt::xtensor<size_t,2>& conn,  const xt::xtensor<double,2>& nodevec)
+inline xt::xtensor<double, 3> asElementVector(
+    const xt::xtensor<size_t, 2>& conn, const xt::xtensor<double, 2>& nodevec)
 {
     size_t nelem = conn.shape(0);
     size_t nne = conn.shape(1);
     size_t ndim = nodevec.shape(1);
 
-    xt::xtensor<double,3> elemvec = xt::empty<double>({nelem, nne, ndim});
+    xt::xtensor<double, 3> elemvec = xt::empty<double>({nelem, nne, ndim});
 
     #pragma omp parallel for
     for (size_t e = 0; e < nelem; ++e) {
@@ -33,8 +33,8 @@ asElementVector(const xt::xtensor<size_t,2>& conn,  const xt::xtensor<double,2>&
     return elemvec;
 }
 
-inline xt::xtensor<double,2>
-assembleNodeVector(const xt::xtensor<size_t,2>& conn, const xt::xtensor<double,3>& elemvec)
+inline xt::xtensor<double, 2> assembleNodeVector(
+    const xt::xtensor<size_t, 2>& conn, const xt::xtensor<double, 3>& elemvec)
 {
     size_t nelem = conn.shape(0);
     size_t nne = conn.shape(1);
@@ -44,7 +44,7 @@ assembleNodeVector(const xt::xtensor<size_t,2>& conn, const xt::xtensor<double,3
     GOOSEFEM_ASSERT(elemvec.shape(0) == nelem);
     GOOSEFEM_ASSERT(elemvec.shape(1) == nne);
 
-    xt::xtensor<double,2> nodevec = xt::zeros<double>({nnode, ndim});
+    xt::xtensor<double, 2> nodevec = xt::zeros<double>({nnode, ndim});
 
     for (size_t e = 0; e < nelem; ++e) {
         for (size_t m = 0; m < nne; ++m) {
@@ -62,7 +62,7 @@ inline bool isSequential(const E& dofs)
 {
     size_t ndof = xt::amax(dofs)[0] + 1;
 
-    xt::xtensor<int,1> exists = xt::zeros<int>({ndof});
+    xt::xtensor<int, 1> exists = xt::zeros<int>({ndof});
 
     for (auto& i : dofs) {
         exists[i]++;
@@ -77,7 +77,7 @@ inline bool isSequential(const E& dofs)
     return true;
 }
 
-inline bool isDiagonal(const xt::xtensor<double,3>& elemmat)
+inline bool isDiagonal(const xt::xtensor<double, 3>& elemmat)
 {
     GOOSEFEM_ASSERT(elemmat.shape(1) == elemmat.shape(2));
 

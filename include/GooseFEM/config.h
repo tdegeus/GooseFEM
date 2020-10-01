@@ -9,21 +9,20 @@
 
 #define _USE_MATH_DEFINES // to use "M_PI" from "math.h"
 
+#include <algorithm>
 #include <assert.h>
 #include <cstdlib>
-#include <vector>
-#include <string>
-#include <memory>
-#include <iostream>
 #include <iomanip>
-#include <numeric>
+#include <iostream>
 #include <limits>
-#include <algorithm>
 #include <math.h>
+#include <memory>
+#include <numeric>
+#include <string>
+#include <vector>
 
-#include <xtensor/xarray.hpp>
-#include <xtensor/xtensor.hpp>
 #include <xtensor/xadapt.hpp>
+#include <xtensor/xarray.hpp>
 #include <xtensor/xfixed.hpp>
 #include <xtensor/xinfo.hpp>
 #include <xtensor/xio.hpp>
@@ -32,6 +31,7 @@
 #include <xtensor/xnoalias.hpp>
 #include <xtensor/xsort.hpp>
 #include <xtensor/xstrided_view.hpp>
+#include <xtensor/xtensor.hpp>
 #include <xtensor/xutils.hpp>
 #include <xtensor/xview.hpp>
 
@@ -40,15 +40,15 @@ using namespace xt::placeholders;
 #define UNUSED(p) ((void)(p))
 
 #ifdef GOOSEFEM_ENABLE_ASSERT
-    #define GOOSEFEM_ASSERT(expr) GOOSEFEM_ASSERT_IMPL(expr, __FILE__, __LINE__)
-    #define GOOSEFEM_ASSERT_IMPL(expr, file, line) \
-        if (!(expr)) { \
-            throw std::runtime_error( \
-                std::string(file) + ':' + std::to_string(line) + \
-                ": assertion failed (" #expr ") \n\t"); \
-        }
+#define GOOSEFEM_ASSERT(expr) GOOSEFEM_ASSERT_IMPL(expr, __FILE__, __LINE__)
+#define GOOSEFEM_ASSERT_IMPL(expr, file, line) \
+    if (!(expr)) { \
+        throw std::runtime_error( \
+            std::string(file) + ':' + std::to_string(line) + \
+            ": assertion failed (" #expr ") \n\t"); \
+    }
 #else
-    #define GOOSEFEM_ASSERT(expr)
+#define GOOSEFEM_ASSERT(expr)
 #endif
 
 #define GOOSEFEM_CHECK(expr) GOOSEFEM_CHECK_IMPL(expr, __FILE__, __LINE__)

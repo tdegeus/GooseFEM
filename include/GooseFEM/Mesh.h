@@ -26,7 +26,7 @@ public:
     Renumber(const xt::xarray<size_t>& dofs);
 
     // get renumbered DOFs (same as "Renumber::apply(dofs)")
-    xt::xtensor<size_t,2> get(const xt::xtensor<size_t,2>& dofs) const;
+    xt::xtensor<size_t, 2> get(const xt::xtensor<size_t, 2>& dofs) const;
 
     // apply renumbering to other set
     template <class T>
@@ -34,10 +34,10 @@ public:
 
     // get the list needed to renumber, e.g.:
     //   dofs_renumbered(i,j) = index(dofs(i,j))
-    xt::xtensor<size_t,1> index() const;
+    xt::xtensor<size_t, 1> index() const;
 
 private:
-    xt::xtensor<size_t,1> m_renum;
+    xt::xtensor<size_t, 1> m_renum;
 };
 
 // Reorder to lowest possible index, in specific order.
@@ -51,10 +51,10 @@ class Reorder {
 public:
     // constructors
     Reorder() = default;
-    Reorder(const std::initializer_list<xt::xtensor<size_t,1>> args);
+    Reorder(const std::initializer_list<xt::xtensor<size_t, 1>> args);
 
     // get reordered DOFs (same as "Reorder::apply(dofs)")
-    xt::xtensor<size_t,2> get(const xt::xtensor<size_t,2>& dofs) const;
+    xt::xtensor<size_t, 2> get(const xt::xtensor<size_t, 2>& dofs) const;
 
     // apply renumbering to other set
     template <class T>
@@ -62,34 +62,31 @@ public:
 
     // get the list needed to reorder, e.g.:
     // dofs_reordered(i,j) = index(dofs(i,j))
-    xt::xtensor<size_t,1> index() const;
+    xt::xtensor<size_t, 1> index() const;
 
 private:
-    xt::xtensor<size_t,1> m_renum;
+    xt::xtensor<size_t, 1> m_renum;
 };
 
 // list with DOF-numbers in sequential order
-inline xt::xtensor<size_t,2> dofs(size_t nnode, size_t ndim);
+inline xt::xtensor<size_t, 2> dofs(size_t nnode, size_t ndim);
 
 // renumber to lowest possible index (see "GooseFEM::Mesh::Renumber")
-inline xt::xtensor<size_t,2> renumber(const xt::xtensor<size_t,2>& dofs);
+inline xt::xtensor<size_t, 2> renumber(const xt::xtensor<size_t, 2>& dofs);
 
 // number of elements connected to each node
-inline xt::xtensor<size_t,1> coordination(const xt::xtensor<size_t,2>& conn);
+inline xt::xtensor<size_t, 1> coordination(const xt::xtensor<size_t, 2>& conn);
 
 // elements connected to each node
-inline std::vector<std::vector<size_t>> elem2node(const xt::xtensor<size_t,2>& conn);
+inline std::vector<std::vector<size_t>> elem2node(const xt::xtensor<size_t, 2>& conn);
 
 // return size of each element edge
-inline xt::xtensor<double,2> edgesize(
-    const xt::xtensor<double,2>& coor,
-    const xt::xtensor<size_t,2>& conn,
-    ElementType type);
+inline xt::xtensor<double, 2> edgesize(
+    const xt::xtensor<double, 2>& coor, const xt::xtensor<size_t, 2>& conn, ElementType type);
 
 // return size of each element edge: extract element-type based on shape of "conn"
-inline xt::xtensor<double,2> edgesize(
-    const xt::xtensor<double,2>& coor,
-    const xt::xtensor<size_t,2>& conn);
+inline xt::xtensor<double, 2> edgesize(
+    const xt::xtensor<double, 2>& coor, const xt::xtensor<size_t, 2>& conn);
 
 } // namespace Mesh
 } // namespace GooseFEM

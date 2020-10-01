@@ -47,13 +47,13 @@ inline ElementType Regular::getElementType() const
     return ElementType::Tri3;
 }
 
-inline xt::xtensor<double,2> Regular::coor() const
+inline xt::xtensor<double, 2> Regular::coor() const
 {
-    xt::xtensor<double,2> out = xt::empty<double>({m_nnode, m_ndim});
+    xt::xtensor<double, 2> out = xt::empty<double>({m_nnode, m_ndim});
 
-    xt::xtensor<double,1> x =
+    xt::xtensor<double, 1> x =
         xt::linspace<double>(0.0, m_h * static_cast<double>(m_nelx), m_nelx + 1);
-    xt::xtensor<double,1> y =
+    xt::xtensor<double, 1> y =
         xt::linspace<double>(0.0, m_h * static_cast<double>(m_nely), m_nely + 1);
 
     size_t inode = 0;
@@ -69,9 +69,9 @@ inline xt::xtensor<double,2> Regular::coor() const
     return out;
 }
 
-inline xt::xtensor<size_t,2> Regular::conn() const
+inline xt::xtensor<size_t, 2> Regular::conn() const
 {
-    xt::xtensor<size_t,2> out = xt::empty<size_t>({m_nelem, m_nne});
+    xt::xtensor<size_t, 2> out = xt::empty<size_t>({m_nelem, m_nne});
 
     size_t ielem = 0;
 
@@ -91,9 +91,9 @@ inline xt::xtensor<size_t,2> Regular::conn() const
     return out;
 }
 
-inline xt::xtensor<size_t,1> Regular::nodesBottomEdge() const
+inline xt::xtensor<size_t, 1> Regular::nodesBottomEdge() const
 {
-    xt::xtensor<size_t,1> out = xt::empty<size_t>({m_nelx + 1});
+    xt::xtensor<size_t, 1> out = xt::empty<size_t>({m_nelx + 1});
 
     for (size_t ix = 0; ix < m_nelx + 1; ++ix) {
         out(ix) = ix;
@@ -102,9 +102,9 @@ inline xt::xtensor<size_t,1> Regular::nodesBottomEdge() const
     return out;
 }
 
-inline xt::xtensor<size_t,1> Regular::nodesTopEdge() const
+inline xt::xtensor<size_t, 1> Regular::nodesTopEdge() const
 {
-    xt::xtensor<size_t,1> out = xt::empty<size_t>({m_nelx + 1});
+    xt::xtensor<size_t, 1> out = xt::empty<size_t>({m_nelx + 1});
 
     for (size_t ix = 0; ix < m_nelx + 1; ++ix) {
         out(ix) = ix + m_nely * (m_nelx + 1);
@@ -113,9 +113,9 @@ inline xt::xtensor<size_t,1> Regular::nodesTopEdge() const
     return out;
 }
 
-inline xt::xtensor<size_t,1> Regular::nodesLeftEdge() const
+inline xt::xtensor<size_t, 1> Regular::nodesLeftEdge() const
 {
-    xt::xtensor<size_t,1> out = xt::empty<size_t>({m_nely + 1});
+    xt::xtensor<size_t, 1> out = xt::empty<size_t>({m_nely + 1});
 
     for (size_t iy = 0; iy < m_nely + 1; ++iy) {
         out(iy) = iy * (m_nelx + 1);
@@ -124,9 +124,9 @@ inline xt::xtensor<size_t,1> Regular::nodesLeftEdge() const
     return out;
 }
 
-inline xt::xtensor<size_t,1> Regular::nodesRightEdge() const
+inline xt::xtensor<size_t, 1> Regular::nodesRightEdge() const
 {
-    xt::xtensor<size_t,1> out = xt::empty<size_t>({m_nely + 1});
+    xt::xtensor<size_t, 1> out = xt::empty<size_t>({m_nely + 1});
 
     for (size_t iy = 0; iy < m_nely + 1; ++iy) {
         out(iy) = iy * (m_nelx + 1) + m_nelx;
@@ -135,9 +135,9 @@ inline xt::xtensor<size_t,1> Regular::nodesRightEdge() const
     return out;
 }
 
-inline xt::xtensor<size_t,1> Regular::nodesBottomOpenEdge() const
+inline xt::xtensor<size_t, 1> Regular::nodesBottomOpenEdge() const
 {
-    xt::xtensor<size_t,1> out = xt::empty<size_t>({m_nelx - 1});
+    xt::xtensor<size_t, 1> out = xt::empty<size_t>({m_nelx - 1});
 
     for (size_t ix = 1; ix < m_nelx; ++ix) {
         out(ix - 1) = ix;
@@ -146,9 +146,9 @@ inline xt::xtensor<size_t,1> Regular::nodesBottomOpenEdge() const
     return out;
 }
 
-inline xt::xtensor<size_t,1> Regular::nodesTopOpenEdge() const
+inline xt::xtensor<size_t, 1> Regular::nodesTopOpenEdge() const
 {
-    xt::xtensor<size_t,1> out = xt::empty<size_t>({m_nelx - 1});
+    xt::xtensor<size_t, 1> out = xt::empty<size_t>({m_nelx - 1});
 
     for (size_t ix = 1; ix < m_nelx; ++ix) {
         out(ix - 1) = ix + m_nely * (m_nelx + 1);
@@ -157,9 +157,9 @@ inline xt::xtensor<size_t,1> Regular::nodesTopOpenEdge() const
     return out;
 }
 
-inline xt::xtensor<size_t,1> Regular::nodesLeftOpenEdge() const
+inline xt::xtensor<size_t, 1> Regular::nodesLeftOpenEdge() const
 {
-    xt::xtensor<size_t,1> out = xt::empty<size_t>({m_nely - 1});
+    xt::xtensor<size_t, 1> out = xt::empty<size_t>({m_nely - 1});
 
     for (size_t iy = 1; iy < m_nely; ++iy) {
         out(iy - 1) = iy * (m_nelx + 1);
@@ -168,9 +168,9 @@ inline xt::xtensor<size_t,1> Regular::nodesLeftOpenEdge() const
     return out;
 }
 
-inline xt::xtensor<size_t,1> Regular::nodesRightOpenEdge() const
+inline xt::xtensor<size_t, 1> Regular::nodesRightOpenEdge() const
 {
-    xt::xtensor<size_t,1> out = xt::empty<size_t>({m_nely - 1});
+    xt::xtensor<size_t, 1> out = xt::empty<size_t>({m_nely - 1});
 
     for (size_t iy = 1; iy < m_nely; ++iy) {
         out(iy - 1) = iy * (m_nelx + 1) + m_nelx;
@@ -219,16 +219,16 @@ inline size_t Regular::nodesRightTopCorner() const
     return nodesTopRightCorner();
 }
 
-inline xt::xtensor<size_t,2> Regular::nodesPeriodic() const
+inline xt::xtensor<size_t, 2> Regular::nodesPeriodic() const
 {
-    xt::xtensor<size_t,1> bot = nodesBottomOpenEdge();
-    xt::xtensor<size_t,1> top = nodesTopOpenEdge();
-    xt::xtensor<size_t,1> lft = nodesLeftOpenEdge();
-    xt::xtensor<size_t,1> rgt = nodesRightOpenEdge();
+    xt::xtensor<size_t, 1> bot = nodesBottomOpenEdge();
+    xt::xtensor<size_t, 1> top = nodesTopOpenEdge();
+    xt::xtensor<size_t, 1> lft = nodesLeftOpenEdge();
+    xt::xtensor<size_t, 1> rgt = nodesRightOpenEdge();
 
     size_t tedge = bot.size() + lft.size();
     size_t tnode = 3;
-    xt::xtensor<size_t,2> out = xt::empty<size_t>({tedge + tnode, std::size_t(2)});
+    xt::xtensor<size_t, 2> out = xt::empty<size_t>({tedge + tnode, std::size_t(2)});
 
     size_t i = 0;
 
@@ -261,15 +261,15 @@ inline size_t Regular::nodesOrigin() const
     return nodesBottomLeftCorner();
 }
 
-inline xt::xtensor<size_t,2> Regular::dofs() const
+inline xt::xtensor<size_t, 2> Regular::dofs() const
 {
     return GooseFEM::Mesh::dofs(m_nnode, m_ndim);
 }
 
-inline xt::xtensor<size_t,2> Regular::dofsPeriodic() const
+inline xt::xtensor<size_t, 2> Regular::dofsPeriodic() const
 {
-    xt::xtensor<size_t,2> out = GooseFEM::Mesh::dofs(m_nnode, m_ndim);
-    xt::xtensor<size_t,2> nodePer = nodesPeriodic();
+    xt::xtensor<size_t, 2> out = GooseFEM::Mesh::dofs(m_nnode, m_ndim);
+    xt::xtensor<size_t, 2> nodePer = nodesPeriodic();
 
     for (size_t i = 0; i < nodePer.shape(0); ++i) {
         for (size_t j = 0; j < m_ndim; ++j) {
@@ -280,8 +280,8 @@ inline xt::xtensor<size_t,2> Regular::dofsPeriodic() const
     return GooseFEM::Mesh::renumber(out);
 }
 
-inline xt::xtensor<int,1>
-getOrientation(const xt::xtensor<double,2>& coor, const xt::xtensor<size_t,2>& conn)
+inline xt::xtensor<int, 1>
+getOrientation(const xt::xtensor<double, 2>& coor, const xt::xtensor<size_t, 2>& conn)
 {
     GOOSEFEM_ASSERT(conn.shape(1) == 3ul);
     GOOSEFEM_ASSERT(coor.shape(1) == 2ul);
@@ -289,7 +289,7 @@ getOrientation(const xt::xtensor<double,2>& coor, const xt::xtensor<size_t,2>& c
     double k;
     size_t nelem = conn.shape(0);
 
-    xt::xtensor<int,1> out = xt::empty<int>({nelem});
+    xt::xtensor<int, 1> out = xt::empty<int>({nelem});
 
     for (size_t ielem = 0; ielem < nelem; ++ielem) {
         auto v1 =
@@ -310,22 +310,22 @@ getOrientation(const xt::xtensor<double,2>& coor, const xt::xtensor<size_t,2>& c
     return out;
 }
 
-inline xt::xtensor<size_t,2> setOrientation(
-    const xt::xtensor<double,2>& coor, const xt::xtensor<size_t,2>& conn, int orientation)
+inline xt::xtensor<size_t, 2> setOrientation(
+    const xt::xtensor<double, 2>& coor, const xt::xtensor<size_t, 2>& conn, int orientation)
 {
     GOOSEFEM_ASSERT(conn.shape(1) == 3ul);
     GOOSEFEM_ASSERT(coor.shape(1) == 2ul);
     GOOSEFEM_ASSERT(orientation == -1 || orientation == +1);
 
-    xt::xtensor<int,1> val = getOrientation(coor, conn);
+    xt::xtensor<int, 1> val = getOrientation(coor, conn);
 
     return setOrientation(coor, conn, val, orientation);
 }
 
-inline xt::xtensor<size_t,2> setOrientation(
-    const xt::xtensor<double,2>& coor,
-    const xt::xtensor<size_t,2>& conn,
-    const xt::xtensor<int,1>& val,
+inline xt::xtensor<size_t, 2> setOrientation(
+    const xt::xtensor<double, 2>& coor,
+    const xt::xtensor<size_t, 2>& conn,
+    const xt::xtensor<int, 1>& val,
     int orientation)
 {
     GOOSEFEM_ASSERT(conn.shape(1) == 3ul);
@@ -336,7 +336,7 @@ inline xt::xtensor<size_t,2> setOrientation(
     UNUSED(coor);
 
     size_t nelem = conn.shape(0);
-    xt::xtensor<size_t,2> out = conn;
+    xt::xtensor<size_t, 2> out = conn;
 
     for (size_t ielem = 0; ielem < nelem; ++ielem) {
         if ((orientation == -1 && val(ielem) > 0) || (orientation == +1 && val(ielem) < 0)) {

@@ -14,9 +14,9 @@ namespace GooseFEM {
 
 template <class Solver>
 inline MatrixPartitioned<Solver>::MatrixPartitioned(
-    const xt::xtensor<size_t,2>& conn,
-    const xt::xtensor<size_t,2>& dofs,
-    const xt::xtensor<size_t,1>& iip)
+    const xt::xtensor<size_t, 2>& conn,
+    const xt::xtensor<size_t, 2>& dofs,
+    const xt::xtensor<size_t, 1>& iip)
     : m_conn(conn), m_dofs(dofs), m_iip(iip)
 {
     m_nelem = m_conn.shape(0);
@@ -85,19 +85,19 @@ inline size_t MatrixPartitioned<Solver>::nnp() const
 }
 
 template <class Solver>
-inline xt::xtensor<size_t,2> MatrixPartitioned<Solver>::dofs() const
+inline xt::xtensor<size_t, 2> MatrixPartitioned<Solver>::dofs() const
 {
     return m_dofs;
 }
 
 template <class Solver>
-inline xt::xtensor<size_t,1> MatrixPartitioned<Solver>::iiu() const
+inline xt::xtensor<size_t, 1> MatrixPartitioned<Solver>::iiu() const
 {
     return m_iiu;
 }
 
 template <class Solver>
-inline xt::xtensor<size_t,1> MatrixPartitioned<Solver>::iip() const
+inline xt::xtensor<size_t, 1> MatrixPartitioned<Solver>::iip() const
 {
     return m_iip;
 }
@@ -113,7 +113,7 @@ inline void MatrixPartitioned<Solver>::factorize()
 }
 
 template <class Solver>
-inline void MatrixPartitioned<Solver>::assemble(const xt::xtensor<double,3>& elemmat)
+inline void MatrixPartitioned<Solver>::assemble(const xt::xtensor<double, 3>& elemmat)
 {
     GOOSEFEM_ASSERT(
         elemmat.shape() ==
@@ -137,21 +137,15 @@ inline void MatrixPartitioned<Solver>::assemble(const xt::xtensor<double,3>& ele
 
                         if (di < m_nnu && dj < m_nnu) {
                             m_Tuu.push_back(Eigen::Triplet<double>(
-                                di,
-                                dj,
-                                elemmat(e, m * m_ndim + i, n * m_ndim + j)));
+                                di, dj, elemmat(e, m * m_ndim + i, n * m_ndim + j)));
                         }
                         else if (di < m_nnu) {
                             m_Tup.push_back(Eigen::Triplet<double>(
-                                di,
-                                dj - m_nnu,
-                                elemmat(e, m * m_ndim + i, n * m_ndim + j)));
+                                di, dj - m_nnu, elemmat(e, m * m_ndim + i, n * m_ndim + j)));
                         }
                         else if (dj < m_nnu) {
                             m_Tpu.push_back(Eigen::Triplet<double>(
-                                di - m_nnu,
-                                dj,
-                                elemmat(e, m * m_ndim + i, n * m_ndim + j)));
+                                di - m_nnu, dj, elemmat(e, m * m_ndim + i, n * m_ndim + j)));
                         }
                         else {
                             m_Tpp.push_back(Eigen::Triplet<double>(
@@ -175,7 +169,7 @@ inline void MatrixPartitioned<Solver>::assemble(const xt::xtensor<double,3>& ele
 
 template <class Solver>
 inline void
-MatrixPartitioned<Solver>::solve(const xt::xtensor<double,2>& b, xt::xtensor<double,2>& x)
+MatrixPartitioned<Solver>::solve(const xt::xtensor<double, 2>& b, xt::xtensor<double, 2>& x)
 {
     GOOSEFEM_ASSERT(b.shape() == std::decay_t<decltype(b)>::shape_type({m_nnode, m_ndim}));
     GOOSEFEM_ASSERT(x.shape() == std::decay_t<decltype(x)>::shape_type({m_nnode, m_ndim}));
@@ -199,7 +193,7 @@ MatrixPartitioned<Solver>::solve(const xt::xtensor<double,2>& b, xt::xtensor<dou
 
 template <class Solver>
 inline void
-MatrixPartitioned<Solver>::solve(const xt::xtensor<double,1>& b, xt::xtensor<double,1>& x)
+MatrixPartitioned<Solver>::solve(const xt::xtensor<double, 1>& b, xt::xtensor<double, 1>& x)
 {
     GOOSEFEM_ASSERT(b.size() == m_ndof);
     GOOSEFEM_ASSERT(x.size() == m_ndof);
@@ -219,9 +213,9 @@ MatrixPartitioned<Solver>::solve(const xt::xtensor<double,1>& b, xt::xtensor<dou
 
 template <class Solver>
 inline void MatrixPartitioned<Solver>::solve_u(
-    const xt::xtensor<double,1>& b_u,
-    const xt::xtensor<double,1>& x_p,
-    xt::xtensor<double,1>& x_u)
+    const xt::xtensor<double, 1>& b_u,
+    const xt::xtensor<double, 1>& x_p,
+    xt::xtensor<double, 1>& x_u)
 {
     GOOSEFEM_ASSERT(b_u.size() == m_nnu);
     GOOSEFEM_ASSERT(x_p.size() == m_nnp);
@@ -242,7 +236,7 @@ inline void MatrixPartitioned<Solver>::solve_u(
 
 template <class Solver>
 inline void MatrixPartitioned<Solver>::reaction(
-    const xt::xtensor<double,2>& x, xt::xtensor<double,2>& b) const
+    const xt::xtensor<double, 2>& x, xt::xtensor<double, 2>& b) const
 {
     GOOSEFEM_ASSERT(x.shape() == std::decay_t<decltype(x)>::shape_type({m_nnode, m_ndim}));
     GOOSEFEM_ASSERT(b.shape() == std::decay_t<decltype(b)>::shape_type({m_nnode, m_ndim}));
@@ -264,7 +258,7 @@ inline void MatrixPartitioned<Solver>::reaction(
 
 template <class Solver>
 inline void MatrixPartitioned<Solver>::reaction(
-    const xt::xtensor<double,1>& x, xt::xtensor<double,1>& b) const
+    const xt::xtensor<double, 1>& x, xt::xtensor<double, 1>& b) const
 {
     GOOSEFEM_ASSERT(x.size() == m_ndof);
     GOOSEFEM_ASSERT(b.size() == m_ndof);
@@ -282,9 +276,9 @@ inline void MatrixPartitioned<Solver>::reaction(
 
 template <class Solver>
 inline void MatrixPartitioned<Solver>::reaction_p(
-    const xt::xtensor<double,1>& x_u,
-    const xt::xtensor<double,1>& x_p,
-    xt::xtensor<double,1>& b_p) const
+    const xt::xtensor<double, 1>& x_u,
+    const xt::xtensor<double, 1>& x_p,
+    xt::xtensor<double, 1>& b_p) const
 {
     GOOSEFEM_ASSERT(x_u.size() == m_nnu);
     GOOSEFEM_ASSERT(x_p.size() == m_nnp);
@@ -302,62 +296,62 @@ inline void MatrixPartitioned<Solver>::reaction_p(
 }
 
 template <class Solver>
-inline xt::xtensor<double,2>
-MatrixPartitioned<Solver>::Solve(const xt::xtensor<double,2>& b, const xt::xtensor<double,2>& x)
+inline xt::xtensor<double, 2>
+MatrixPartitioned<Solver>::Solve(const xt::xtensor<double, 2>& b, const xt::xtensor<double, 2>& x)
 {
-    xt::xtensor<double,2> out = x;
+    xt::xtensor<double, 2> out = x;
     this->solve(b, out);
     return out;
 }
 
 template <class Solver>
-inline xt::xtensor<double,1>
-MatrixPartitioned<Solver>::Solve(const xt::xtensor<double,1>& b, const xt::xtensor<double,1>& x)
+inline xt::xtensor<double, 1>
+MatrixPartitioned<Solver>::Solve(const xt::xtensor<double, 1>& b, const xt::xtensor<double, 1>& x)
 {
-    xt::xtensor<double,1> out = x;
+    xt::xtensor<double, 1> out = x;
     this->solve(b, out);
     return out;
 }
 
 template <class Solver>
-inline xt::xtensor<double,1> MatrixPartitioned<Solver>::Solve_u(
-    const xt::xtensor<double,1>& b_u, const xt::xtensor<double,1>& x_p)
+inline xt::xtensor<double, 1> MatrixPartitioned<Solver>::Solve_u(
+    const xt::xtensor<double, 1>& b_u, const xt::xtensor<double, 1>& x_p)
 {
-    xt::xtensor<double,1> x_u = xt::empty<double>({m_nnu});
+    xt::xtensor<double, 1> x_u = xt::empty<double>({m_nnu});
     this->solve_u(b_u, x_p, x_u);
     return x_u;
 }
 
 template <class Solver>
-inline xt::xtensor<double,2> MatrixPartitioned<Solver>::Reaction(
-    const xt::xtensor<double,2>& x, const xt::xtensor<double,2>& b) const
+inline xt::xtensor<double, 2> MatrixPartitioned<Solver>::Reaction(
+    const xt::xtensor<double, 2>& x, const xt::xtensor<double, 2>& b) const
 {
-    xt::xtensor<double,2> out = b;
+    xt::xtensor<double, 2> out = b;
     this->reaction(x, out);
     return out;
 }
 
 template <class Solver>
-inline xt::xtensor<double,1> MatrixPartitioned<Solver>::Reaction(
-    const xt::xtensor<double,1>& x, const xt::xtensor<double,1>& b) const
+inline xt::xtensor<double, 1> MatrixPartitioned<Solver>::Reaction(
+    const xt::xtensor<double, 1>& x, const xt::xtensor<double, 1>& b) const
 {
-    xt::xtensor<double,1> out = b;
+    xt::xtensor<double, 1> out = b;
     this->reaction(x, out);
     return out;
 }
 
 template <class Solver>
-inline xt::xtensor<double,1> MatrixPartitioned<Solver>::Reaction_p(
-    const xt::xtensor<double,1>& x_u, const xt::xtensor<double,1>& x_p) const
+inline xt::xtensor<double, 1> MatrixPartitioned<Solver>::Reaction_p(
+    const xt::xtensor<double, 1>& x_u, const xt::xtensor<double, 1>& x_p) const
 {
-    xt::xtensor<double,1> b_p = xt::empty<double>({m_nnp});
+    xt::xtensor<double, 1> b_p = xt::empty<double>({m_nnp});
     this->reaction_p(x_u, x_p, b_p);
     return b_p;
 }
 
 template <class Solver>
 inline Eigen::VectorXd
-MatrixPartitioned<Solver>::asDofs_u(const xt::xtensor<double,1>& dofval) const
+MatrixPartitioned<Solver>::asDofs_u(const xt::xtensor<double, 1>& dofval) const
 {
     assert(dofval.size() == m_ndof);
 
@@ -373,7 +367,7 @@ MatrixPartitioned<Solver>::asDofs_u(const xt::xtensor<double,1>& dofval) const
 
 template <class Solver>
 inline Eigen::VectorXd
-MatrixPartitioned<Solver>::asDofs_u(const xt::xtensor<double,2>& nodevec) const
+MatrixPartitioned<Solver>::asDofs_u(const xt::xtensor<double, 2>& nodevec) const
 {
     assert(nodevec.shape() == std::decay_t<decltype(nodevec)>::shape_type({m_nnode, m_ndim}));
 
@@ -393,7 +387,7 @@ MatrixPartitioned<Solver>::asDofs_u(const xt::xtensor<double,2>& nodevec) const
 
 template <class Solver>
 inline Eigen::VectorXd
-MatrixPartitioned<Solver>::asDofs_p(const xt::xtensor<double,1>& dofval) const
+MatrixPartitioned<Solver>::asDofs_p(const xt::xtensor<double, 1>& dofval) const
 {
     assert(dofval.size() == m_ndof);
 
@@ -409,7 +403,7 @@ MatrixPartitioned<Solver>::asDofs_p(const xt::xtensor<double,1>& dofval) const
 
 template <class Solver>
 inline Eigen::VectorXd
-MatrixPartitioned<Solver>::asDofs_p(const xt::xtensor<double,2>& nodevec) const
+MatrixPartitioned<Solver>::asDofs_p(const xt::xtensor<double, 2>& nodevec) const
 {
     assert(nodevec.shape() == std::decay_t<decltype(nodevec)>::shape_type({m_nnode, m_ndim}));
 

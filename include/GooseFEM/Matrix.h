@@ -20,7 +20,7 @@ class Matrix {
 public:
     // Constructors
     Matrix() = default;
-    Matrix(const xt::xtensor<size_t,2>& conn, const xt::xtensor<size_t,2>& dofs);
+    Matrix(const xt::xtensor<size_t, 2>& conn, const xt::xtensor<size_t, 2>& dofs);
 
     // Dimensions
     size_t nelem() const; // number of elements
@@ -30,26 +30,26 @@ public:
     size_t ndof() const;  // number of DOFs
 
     // DOF lists
-    xt::xtensor<size_t,2> dofs() const; // DOFs
+    xt::xtensor<size_t, 2> dofs() const; // DOFs
 
     // Assemble from matrices stored per element [nelem, nne*ndim, nne*ndim]
-    void assemble(const xt::xtensor<double,3>& elemmat);
+    void assemble(const xt::xtensor<double, 3>& elemmat);
 
     // Dot-product:
     // b_i = A_ij * x_j
-    void dot(const xt::xtensor<double,2>& x, xt::xtensor<double,2>& b) const;
-    void dot(const xt::xtensor<double,1>& x, xt::xtensor<double,1>& b) const;
+    void dot(const xt::xtensor<double, 2>& x, xt::xtensor<double, 2>& b) const;
+    void dot(const xt::xtensor<double, 1>& x, xt::xtensor<double, 1>& b) const;
 
     // Solve
     // x_u = A_uu \ ( b_u - A_up * x_p )
-    void solve(const xt::xtensor<double,2>& b, xt::xtensor<double,2>& x);
-    void solve(const xt::xtensor<double,1>& b, xt::xtensor<double,1>& x);
+    void solve(const xt::xtensor<double, 2>& b, xt::xtensor<double, 2>& x);
+    void solve(const xt::xtensor<double, 1>& b, xt::xtensor<double, 1>& x);
 
     // Auto-allocation of the functions above
-    xt::xtensor<double,2> Dot(const xt::xtensor<double,2>& x) const;
-    xt::xtensor<double,1> Dot(const xt::xtensor<double,1>& x) const;
-    xt::xtensor<double,2> Solve(const xt::xtensor<double,2>& b);
-    xt::xtensor<double,1> Solve(const xt::xtensor<double,1>& b);
+    xt::xtensor<double, 2> Dot(const xt::xtensor<double, 2>& x) const;
+    xt::xtensor<double, 1> Dot(const xt::xtensor<double, 1>& x) const;
+    xt::xtensor<double, 2> Solve(const xt::xtensor<double, 2>& b);
+    xt::xtensor<double, 1> Solve(const xt::xtensor<double, 1>& b);
 
 private:
     // The matrix
@@ -65,8 +65,8 @@ private:
     bool m_factor = false;
 
     // Bookkeeping
-    xt::xtensor<size_t,2> m_conn; // connectivity [nelem, nne]
-    xt::xtensor<size_t,2> m_dofs; // DOF-numbers per node [nnode, ndim]
+    xt::xtensor<size_t, 2> m_conn; // connectivity [nelem, nne]
+    xt::xtensor<size_t, 2> m_dofs; // DOF-numbers per node [nnode, ndim]
 
     // Dimensions
     size_t m_nelem; // number of elements
@@ -79,9 +79,9 @@ private:
     void factorize();
 
     // Convert arrays (Eigen version of Vector, which contains public functions)
-    Eigen::VectorXd asDofs(const xt::xtensor<double,2>& nodevec) const;
+    Eigen::VectorXd asDofs(const xt::xtensor<double, 2>& nodevec) const;
 
-    void asNode(const Eigen::VectorXd& dofval, xt::xtensor<double,2>& nodevec) const;
+    void asNode(const Eigen::VectorXd& dofval, xt::xtensor<double, 2>& nodevec) const;
 };
 
 } // namespace GooseFEM
