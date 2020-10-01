@@ -102,9 +102,7 @@ inline void MatrixDiagonalPartitioned::factorize()
 
 inline void MatrixDiagonalPartitioned::assemble(const xt::xtensor<double, 3>& elemmat)
 {
-    GOOSEFEM_ASSERT(
-        elemmat.shape() ==
-        std::decay_t<decltype(elemmat)>::shape_type({m_nelem, m_nne * m_ndim, m_nne * m_ndim}));
+    GOOSEFEM_ASSERT(xt::has_shape(elemmat, {m_nelem, m_nne * m_ndim, m_nne * m_ndim}));
     GOOSEFEM_ASSERT(Element::isDiagonal(elemmat));
 
     m_Auu.fill(0.0);
@@ -132,8 +130,8 @@ inline void MatrixDiagonalPartitioned::assemble(const xt::xtensor<double, 3>& el
 inline void
 MatrixDiagonalPartitioned::dot(const xt::xtensor<double, 2>& x, xt::xtensor<double, 2>& b) const
 {
-    GOOSEFEM_ASSERT(x.shape() == std::decay_t<decltype(x)>::shape_type({m_nnode, m_ndim}));
-    GOOSEFEM_ASSERT(b.shape() == std::decay_t<decltype(b)>::shape_type({m_nnode, m_ndim}));
+    GOOSEFEM_ASSERT(xt::has_shape(x, {m_nnode, m_ndim}));
+    GOOSEFEM_ASSERT(xt::has_shape(b, {m_nnode, m_ndim}));
 
     #pragma omp parallel for
     for (size_t m = 0; m < m_nnode; ++m) {
@@ -205,8 +203,8 @@ inline void MatrixDiagonalPartitioned::dot_p(
 inline void
 MatrixDiagonalPartitioned::solve(const xt::xtensor<double, 2>& b, xt::xtensor<double, 2>& x)
 {
-    GOOSEFEM_ASSERT(b.shape() == std::decay_t<decltype(b)>::shape_type({m_nnode, m_ndim}));
-    GOOSEFEM_ASSERT(x.shape() == std::decay_t<decltype(x)>::shape_type({m_nnode, m_ndim}));
+    GOOSEFEM_ASSERT(xt::has_shape(b, {m_nnode, m_ndim}));
+    GOOSEFEM_ASSERT(xt::has_shape(x, {m_nnode, m_ndim}));
 
     this->factorize();
 
@@ -256,8 +254,8 @@ inline void MatrixDiagonalPartitioned::solve_u(
 inline void MatrixDiagonalPartitioned::reaction(
     const xt::xtensor<double, 2>& x, xt::xtensor<double, 2>& b) const
 {
-    GOOSEFEM_ASSERT(x.shape() == std::decay_t<decltype(x)>::shape_type({m_nnode, m_ndim}));
-    GOOSEFEM_ASSERT(b.shape() == std::decay_t<decltype(b)>::shape_type({m_nnode, m_ndim}));
+    GOOSEFEM_ASSERT(xt::has_shape(x, {m_nnode, m_ndim}));
+    GOOSEFEM_ASSERT(xt::has_shape(b, {m_nnode, m_ndim}));
 
     #pragma omp parallel for
     for (size_t m = 0; m < m_nnode; ++m) {

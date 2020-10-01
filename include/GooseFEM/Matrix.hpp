@@ -78,9 +78,7 @@ inline void Matrix<Solver>::factorize()
 template <class Solver>
 inline void Matrix<Solver>::assemble(const xt::xtensor<double, 3>& elemmat)
 {
-    GOOSEFEM_ASSERT(
-        elemmat.shape() ==
-        std::decay_t<decltype(elemmat)>::shape_type({m_nelem, m_nne * m_ndim, m_nne * m_ndim}));
+    GOOSEFEM_ASSERT(xt::has_shape(elemmat, {m_nelem, m_nne * m_ndim, m_nne * m_ndim}));
 
     m_T.clear();
 
@@ -107,8 +105,8 @@ inline void Matrix<Solver>::assemble(const xt::xtensor<double, 3>& elemmat)
 template <class Solver>
 inline void Matrix<Solver>::dot(const xt::xtensor<double, 2>& x, xt::xtensor<double, 2>& b) const
 {
-    GOOSEFEM_ASSERT(b.shape() == std::decay_t<decltype(b)>::shape_type({m_nnode, m_ndim}));
-    GOOSEFEM_ASSERT(x.shape() == std::decay_t<decltype(x)>::shape_type({m_nnode, m_ndim}));
+    GOOSEFEM_ASSERT(xt::has_shape(b, {m_nnode, m_ndim}));
+    GOOSEFEM_ASSERT(xt::has_shape(x, {m_nnode, m_ndim}));
 
     Eigen::VectorXd B = m_A * this->asDofs(x);
     this->asNode(B, b);
@@ -127,8 +125,8 @@ inline void Matrix<Solver>::dot(const xt::xtensor<double, 1>& x, xt::xtensor<dou
 template <class Solver>
 inline void Matrix<Solver>::solve(const xt::xtensor<double, 2>& b, xt::xtensor<double, 2>& x)
 {
-    GOOSEFEM_ASSERT(b.shape() == std::decay_t<decltype(b)>::shape_type({m_nnode, m_ndim}));
-    GOOSEFEM_ASSERT(x.shape() == std::decay_t<decltype(x)>::shape_type({m_nnode, m_ndim}));
+    GOOSEFEM_ASSERT(xt::has_shape(b, {m_nnode, m_ndim}));
+    GOOSEFEM_ASSERT(xt::has_shape(x, {m_nnode, m_ndim}));
 
     this->factorize();
     Eigen::VectorXd B = this->asDofs(b);
@@ -182,7 +180,7 @@ inline xt::xtensor<double, 1> Matrix<Solver>::Solve(const xt::xtensor<double, 1>
 template <class Solver>
 inline Eigen::VectorXd Matrix<Solver>::asDofs(const xt::xtensor<double, 2>& nodevec) const
 {
-    assert(nodevec.shape() == std::decay_t<decltype(nodevec)>::shape_type({m_nnode, m_ndim}));
+    GOOSEFEM_ASSERT(xt::has_shape(nodevec, {m_nnode, m_ndim}));
 
     Eigen::VectorXd dofval(m_ndof, 1);
 
@@ -201,7 +199,7 @@ inline void
 Matrix<Solver>::asNode(const Eigen::VectorXd& dofval, xt::xtensor<double, 2>& nodevec) const
 {
     assert(static_cast<size_t>(dofval.size()) == m_ndof);
-    assert(nodevec.shape() == std::decay_t<decltype(nodevec)>::shape_type({m_nnode, m_ndim}));
+    GOOSEFEM_ASSERT(xt::has_shape(nodevec, {m_nnode, m_ndim}));
 
     #pragma omp parallel for
     for (size_t m = 0; m < m_nnode; ++m) {

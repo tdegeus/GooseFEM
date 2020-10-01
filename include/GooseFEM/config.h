@@ -73,4 +73,22 @@ using namespace xt::placeholders;
      GOOSEFEM_VERSION_MINOR == y && \
      GOOSEFEM_VERSION_PATCH == z)
 
+
+namespace xt {
+
+    template <class E, class S>
+    inline bool has_shape(const E& e, std::initializer_list<S> shape) noexcept
+    {
+        return e.shape().size() == shape.size() && std::equal(e.shape().cbegin(), e.shape().cend(), shape.begin());
+    }
+
+    template <class E, class S, class = typename std::enable_if_t<xt::has_iterator_interface<S>::value>>
+    inline bool has_shape(const E& e, const S& shape)
+    {
+        return e.shape().size() == shape.size() && std::equal(e.shape().cbegin(), e.shape().cend(), shape.begin());
+    }
+
+
+} // xtnew
+
 #endif

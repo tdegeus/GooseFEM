@@ -222,8 +222,7 @@ inline xt::xtensor<double, 4> Quadrature::GradN() const
 
 inline void Quadrature::dV(xt::xtensor<double, 2>& qscalar) const
 {
-    GOOSEFEM_ASSERT(
-        qscalar.shape() == std::decay_t<decltype(qscalar)>::shape_type({m_nelem, m_nip}));
+    GOOSEFEM_ASSERT(xt::has_shape(qscalar, {m_nelem, m_nip}));
 
     #pragma omp parallel for
     for (size_t e = 0; e < m_nelem; ++e) {
@@ -235,9 +234,7 @@ inline void Quadrature::dV(xt::xtensor<double, 2>& qscalar) const
 
 inline void Quadrature::dV(xt::xtensor<double, 4>& qtensor) const
 {
-    GOOSEFEM_ASSERT(
-        qtensor.shape() ==
-        std::decay_t<decltype(qtensor)>::shape_type({m_nelem, m_nip, m_ndim, m_ndim}));
+    GOOSEFEM_ASSERT(xt::has_shape(qtensor, {m_nelem, m_nip, m_ndim, m_ndim}));
 
     #pragma omp parallel for
     for (size_t e = 0; e < m_nelem; ++e) {
@@ -318,11 +315,8 @@ inline void Quadrature::compute_dN()
 inline void Quadrature::gradN_vector(
     const xt::xtensor<double, 3>& elemvec, xt::xtensor<double, 4>& qtensor) const
 {
-    GOOSEFEM_ASSERT(
-        elemvec.shape() == std::decay_t<decltype(elemvec)>::shape_type({m_nelem, m_nne, m_ndim}));
-    GOOSEFEM_ASSERT(
-        qtensor.shape() ==
-        std::decay_t<decltype(qtensor)>::shape_type({m_nelem, m_nip, m_ndim, m_ndim}));
+    GOOSEFEM_ASSERT(xt::has_shape(elemvec, {m_nelem, m_nne, m_ndim}));
+    GOOSEFEM_ASSERT(xt::has_shape(qtensor, {m_nelem, m_nip, m_ndim, m_ndim}));
 
     #pragma omp parallel for
     for (size_t e = 0; e < m_nelem; ++e) {
@@ -350,11 +344,8 @@ inline void Quadrature::gradN_vector(
 inline void Quadrature::gradN_vector_T(
     const xt::xtensor<double, 3>& elemvec, xt::xtensor<double, 4>& qtensor) const
 {
-    GOOSEFEM_ASSERT(
-        elemvec.shape() == std::decay_t<decltype(elemvec)>::shape_type({m_nelem, m_nne, m_ndim}));
-    GOOSEFEM_ASSERT(
-        qtensor.shape() ==
-        std::decay_t<decltype(qtensor)>::shape_type({m_nelem, m_nip, m_ndim, m_ndim}));
+    GOOSEFEM_ASSERT(xt::has_shape(elemvec, {m_nelem, m_nne, m_ndim}));
+    GOOSEFEM_ASSERT(xt::has_shape(qtensor, {m_nelem, m_nip, m_ndim, m_ndim}));
 
     #pragma omp parallel for
     for (size_t e = 0; e < m_nelem; ++e) {
@@ -382,11 +373,8 @@ inline void Quadrature::gradN_vector_T(
 inline void Quadrature::symGradN_vector(
     const xt::xtensor<double, 3>& elemvec, xt::xtensor<double, 4>& qtensor) const
 {
-    GOOSEFEM_ASSERT(
-        elemvec.shape() == std::decay_t<decltype(elemvec)>::shape_type({m_nelem, m_nne, m_ndim}));
-    GOOSEFEM_ASSERT(
-        qtensor.shape() ==
-        std::decay_t<decltype(qtensor)>::shape_type({m_nelem, m_nip, m_ndim, m_ndim}));
+    GOOSEFEM_ASSERT(xt::has_shape(elemvec, {m_nelem, m_nne, m_ndim}));
+    GOOSEFEM_ASSERT(xt::has_shape(qtensor, {m_nelem, m_nip, m_ndim, m_ndim}));
 
     #pragma omp parallel for
     for (size_t e = 0; e < m_nelem; ++e) {
@@ -415,11 +403,8 @@ inline void Quadrature::symGradN_vector(
 inline void Quadrature::int_N_scalar_NT_dV(
     const xt::xtensor<double, 2>& qscalar, xt::xtensor<double, 3>& elemmat) const
 {
-    GOOSEFEM_ASSERT(
-        qscalar.shape() == std::decay_t<decltype(qscalar)>::shape_type({m_nelem, m_nip}));
-    GOOSEFEM_ASSERT(
-        elemmat.shape() ==
-        std::decay_t<decltype(elemmat)>::shape_type({m_nelem, m_nne * m_ndim, m_nne * m_ndim}));
+    GOOSEFEM_ASSERT(xt::has_shape(qscalar, {m_nelem, m_nip}));
+    GOOSEFEM_ASSERT(xt::has_shape(elemmat, {m_nelem, m_nne * m_ndim, m_nne * m_ndim}));
 
     elemmat.fill(0.0);
 
@@ -448,11 +433,8 @@ inline void Quadrature::int_N_scalar_NT_dV(
 inline void Quadrature::int_gradN_dot_tensor2_dV(
     const xt::xtensor<double, 4>& qtensor, xt::xtensor<double, 3>& elemvec) const
 {
-    GOOSEFEM_ASSERT(
-        qtensor.shape() ==
-        std::decay_t<decltype(qtensor)>::shape_type({m_nelem, m_nip, m_ndim, m_ndim}));
-    GOOSEFEM_ASSERT(
-        elemvec.shape() == std::decay_t<decltype(elemvec)>::shape_type({m_nelem, m_nne, m_ndim}));
+    GOOSEFEM_ASSERT(xt::has_shape(qtensor, {m_nelem, m_nip, m_ndim, m_ndim}));
+    GOOSEFEM_ASSERT(xt::has_shape(elemvec, {m_nelem, m_nne, m_ndim}));
 
     elemvec.fill(0.0);
 
@@ -478,12 +460,8 @@ inline void Quadrature::int_gradN_dot_tensor2_dV(
 inline void Quadrature::int_gradN_dot_tensor4_dot_gradNT_dV(
     const xt::xtensor<double, 6>& qtensor, xt::xtensor<double, 3>& elemmat) const
 {
-    GOOSEFEM_ASSERT(
-        qtensor.shape() == std::decay_t<decltype(qtensor)>::shape_type(
-                               {m_nelem, m_nip, m_ndim, m_ndim, m_ndim, m_ndim}));
-    GOOSEFEM_ASSERT(
-        elemmat.shape() ==
-        std::decay_t<decltype(elemmat)>::shape_type({m_nelem, m_nne * m_ndim, m_nne * m_ndim}));
+    GOOSEFEM_ASSERT(xt::has_shape(qtensor, {m_nelem, m_nip, m_ndim, m_ndim, m_ndim, m_ndim}));
+    GOOSEFEM_ASSERT(xt::has_shape(elemmat, {m_nelem, m_nne * m_ndim, m_nne * m_ndim}));
 
     elemmat.fill(0.0);
 

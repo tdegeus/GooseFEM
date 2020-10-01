@@ -130,8 +130,7 @@ inline void VectorPartitionedTyings::asDofs_i(
     xt::xtensor<double, 1>& dofval_i,
     bool apply_tyings) const
 {
-    GOOSEFEM_ASSERT(
-        nodevec.shape() == std::decay_t<decltype(nodevec)>::shape_type({m_nnode, m_ndim}));
+    GOOSEFEM_ASSERT(xt::has_shape(nodevec, {m_nnode, m_ndim}));
     GOOSEFEM_ASSERT(dofval_i.size() == m_nni);
 
     #pragma omp parallel for
@@ -159,8 +158,7 @@ inline void VectorPartitionedTyings::asNode(
     const xt::xtensor<double, 1>& dofval, xt::xtensor<double, 2>& nodevec) const
 {
     GOOSEFEM_ASSERT(dofval.size() == m_ndof);
-    GOOSEFEM_ASSERT(
-        nodevec.shape() == std::decay_t<decltype(nodevec)>::shape_type({m_nnode, m_ndim}));
+    GOOSEFEM_ASSERT(xt::has_shape(nodevec, {m_nnode, m_ndim}));
 
     #pragma omp parallel for
     for (size_t m = 0; m < m_nnode; ++m) {
@@ -173,10 +171,8 @@ inline void VectorPartitionedTyings::asNode(
 inline void VectorPartitionedTyings::asElement(
     const xt::xtensor<double, 2>& nodevec, xt::xtensor<double, 3>& elemvec) const
 {
-    GOOSEFEM_ASSERT(
-        nodevec.shape() == std::decay_t<decltype(nodevec)>::shape_type({m_nnode, m_ndim}));
-    GOOSEFEM_ASSERT(
-        elemvec.shape() == std::decay_t<decltype(elemvec)>::shape_type({m_nelem, m_nne, m_ndim}));
+    GOOSEFEM_ASSERT(xt::has_shape(nodevec, {m_nnode, m_ndim}));
+    GOOSEFEM_ASSERT(xt::has_shape(elemvec, {m_nelem, m_nne, m_ndim}));
 
     #pragma omp parallel for
     for (size_t e = 0; e < m_nelem; ++e) {
@@ -191,8 +187,7 @@ inline void VectorPartitionedTyings::asElement(
 inline void VectorPartitionedTyings::assembleDofs(
     const xt::xtensor<double, 3>& elemvec, xt::xtensor<double, 1>& dofval) const
 {
-    GOOSEFEM_ASSERT(
-        elemvec.shape() == std::decay_t<decltype(elemvec)>::shape_type({m_nelem, m_nne, m_ndim}));
+    GOOSEFEM_ASSERT(xt::has_shape(elemvec, {m_nelem, m_nne, m_ndim}));
     GOOSEFEM_ASSERT(dofval.size() == m_ndof);
 
     dofval.fill(0.0);
@@ -209,10 +204,8 @@ inline void VectorPartitionedTyings::assembleDofs(
 inline void VectorPartitionedTyings::assembleNode(
     const xt::xtensor<double, 3>& elemvec, xt::xtensor<double, 2>& nodevec) const
 {
-    GOOSEFEM_ASSERT(
-        elemvec.shape() == std::decay_t<decltype(elemvec)>::shape_type({m_nelem, m_nne, m_ndim}));
-    GOOSEFEM_ASSERT(
-        nodevec.shape() == std::decay_t<decltype(nodevec)>::shape_type({m_nnode, m_ndim}));
+    GOOSEFEM_ASSERT(xt::has_shape(elemvec, {m_nelem, m_nne, m_ndim}));
+    GOOSEFEM_ASSERT(xt::has_shape(nodevec, {m_nnode, m_ndim}));
 
     xt::xtensor<double, 1> dofval = this->AssembleDofs(elemvec);
     this->asNode(dofval, nodevec);
@@ -261,8 +254,7 @@ VectorPartitionedTyings::AssembleNode(const xt::xtensor<double, 3>& elemvec) con
 inline Eigen::VectorXd
 VectorPartitionedTyings::Eigen_asDofs_d(const xt::xtensor<double, 2>& nodevec) const
 {
-    GOOSEFEM_ASSERT(
-        nodevec.shape() == std::decay_t<decltype(nodevec)>::shape_type({m_nnode, m_ndim}));
+    GOOSEFEM_ASSERT(xt::has_shape(nodevec, {m_nnode, m_ndim}));
 
     Eigen::VectorXd dofval_d(m_nnd, 1);
 
