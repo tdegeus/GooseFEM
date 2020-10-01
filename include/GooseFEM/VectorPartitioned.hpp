@@ -86,11 +86,8 @@ inline xt::xtensor<size_t, 1> VectorPartitioned::iip() const
 inline void VectorPartitioned::copy(
     const xt::xtensor<double, 2>& nodevec_src, xt::xtensor<double, 2>& nodevec_dest) const
 {
-    GOOSEFEM_ASSERT(
-        nodevec_src.shape() == std::decay_t<decltype(nodevec_src)>::shape_type({m_nnode, m_ndim}));
-    GOOSEFEM_ASSERT(
-        nodevec_dest.shape() ==
-        std::decay_t<decltype(nodevec_dest)>::shape_type({m_nnode, m_ndim}));
+    GOOSEFEM_ASSERT(xt::has_shape(nodevec_src, {m_nnode, m_ndim}));
+    GOOSEFEM_ASSERT(xt::has_shape(nodevec_dest, {m_nnode, m_ndim}));
 
     xt::noalias(nodevec_dest) = nodevec_src;
 }
@@ -98,11 +95,8 @@ inline void VectorPartitioned::copy(
 inline void VectorPartitioned::copy_u(
     const xt::xtensor<double, 2>& nodevec_src, xt::xtensor<double, 2>& nodevec_dest) const
 {
-    GOOSEFEM_ASSERT(
-        nodevec_src.shape() == std::decay_t<decltype(nodevec_src)>::shape_type({m_nnode, m_ndim}));
-    GOOSEFEM_ASSERT(
-        nodevec_dest.shape() ==
-        std::decay_t<decltype(nodevec_dest)>::shape_type({m_nnode, m_ndim}));
+    GOOSEFEM_ASSERT(xt::has_shape(nodevec_src, {m_nnode, m_ndim}));
+    GOOSEFEM_ASSERT(xt::has_shape(nodevec_dest, {m_nnode, m_ndim}));
 
     #pragma omp parallel for
     for (size_t m = 0; m < m_nnode; ++m) {
@@ -117,11 +111,8 @@ inline void VectorPartitioned::copy_u(
 inline void VectorPartitioned::copy_p(
     const xt::xtensor<double, 2>& nodevec_src, xt::xtensor<double, 2>& nodevec_dest) const
 {
-    GOOSEFEM_ASSERT(
-        nodevec_src.shape() == std::decay_t<decltype(nodevec_src)>::shape_type({m_nnode, m_ndim}));
-    GOOSEFEM_ASSERT(
-        nodevec_dest.shape() ==
-        std::decay_t<decltype(nodevec_dest)>::shape_type({m_nnode, m_ndim}));
+    GOOSEFEM_ASSERT(xt::has_shape(nodevec_src, {m_nnode, m_ndim}));
+    GOOSEFEM_ASSERT(xt::has_shape(nodevec_dest, {m_nnode, m_ndim}));
 
     #pragma omp parallel for
     for (size_t m = 0; m < m_nnode; ++m) {
@@ -156,8 +147,7 @@ inline void VectorPartitioned::asDofs(
 inline void VectorPartitioned::asDofs(
     const xt::xtensor<double, 2>& nodevec, xt::xtensor<double, 1>& dofval) const
 {
-    GOOSEFEM_ASSERT(
-        nodevec.shape() == std::decay_t<decltype(nodevec)>::shape_type({m_nnode, m_ndim}));
+    GOOSEFEM_ASSERT(xt::has_shape(nodevec, {m_nnode, m_ndim}));
     GOOSEFEM_ASSERT(dofval.size() == m_ndof);
 
     #pragma omp parallel for
@@ -183,8 +173,7 @@ inline void VectorPartitioned::asDofs_u(
 inline void VectorPartitioned::asDofs_u(
     const xt::xtensor<double, 2>& nodevec, xt::xtensor<double, 1>& dofval_u) const
 {
-    GOOSEFEM_ASSERT(
-        nodevec.shape() == std::decay_t<decltype(nodevec)>::shape_type({m_nnode, m_ndim}));
+    GOOSEFEM_ASSERT(xt::has_shape(nodevec, {m_nnode, m_ndim}));
     GOOSEFEM_ASSERT(dofval_u.size() == m_nnu);
 
     #pragma omp parallel for
@@ -212,8 +201,7 @@ inline void VectorPartitioned::asDofs_p(
 inline void VectorPartitioned::asDofs_p(
     const xt::xtensor<double, 2>& nodevec, xt::xtensor<double, 1>& dofval_p) const
 {
-    GOOSEFEM_ASSERT(
-        nodevec.shape() == std::decay_t<decltype(nodevec)>::shape_type({m_nnode, m_ndim}));
+    GOOSEFEM_ASSERT(xt::has_shape(nodevec, {m_nnode, m_ndim}));
     GOOSEFEM_ASSERT(dofval_p.size() == m_nnp);
 
     #pragma omp parallel for
@@ -229,8 +217,7 @@ inline void VectorPartitioned::asDofs_p(
 inline void VectorPartitioned::asDofs(
     const xt::xtensor<double, 3>& elemvec, xt::xtensor<double, 1>& dofval) const
 {
-    GOOSEFEM_ASSERT(
-        elemvec.shape() == std::decay_t<decltype(elemvec)>::shape_type({m_nelem, m_nne, m_ndim}));
+    GOOSEFEM_ASSERT(xt::has_shape(elemvec, {m_nelem, m_nne, m_ndim}));
     GOOSEFEM_ASSERT(dofval.size() == m_ndof);
 
     #pragma omp parallel for
@@ -246,8 +233,7 @@ inline void VectorPartitioned::asDofs(
 inline void VectorPartitioned::asDofs_u(
     const xt::xtensor<double, 3>& elemvec, xt::xtensor<double, 1>& dofval_u) const
 {
-    GOOSEFEM_ASSERT(
-        elemvec.shape() == std::decay_t<decltype(elemvec)>::shape_type({m_nelem, m_nne, m_ndim}));
+    GOOSEFEM_ASSERT(xt::has_shape(elemvec, {m_nelem, m_nne, m_ndim}));
     GOOSEFEM_ASSERT(dofval_u.size() == m_nnu);
 
     #pragma omp parallel for
@@ -265,8 +251,7 @@ inline void VectorPartitioned::asDofs_u(
 inline void VectorPartitioned::asDofs_p(
     const xt::xtensor<double, 3>& elemvec, xt::xtensor<double, 1>& dofval_p) const
 {
-    GOOSEFEM_ASSERT(
-        elemvec.shape() == std::decay_t<decltype(elemvec)>::shape_type({m_nelem, m_nne, m_ndim}));
+    GOOSEFEM_ASSERT(xt::has_shape(elemvec, {m_nelem, m_nne, m_ndim}));
     GOOSEFEM_ASSERT(dofval_p.size() == m_nnp);
 
     #pragma omp parallel for
@@ -285,8 +270,7 @@ inline void VectorPartitioned::asNode(
     const xt::xtensor<double, 1>& dofval, xt::xtensor<double, 2>& nodevec) const
 {
     GOOSEFEM_ASSERT(dofval.size() == m_ndof);
-    GOOSEFEM_ASSERT(
-        nodevec.shape() == std::decay_t<decltype(nodevec)>::shape_type({m_nnode, m_ndim}));
+    GOOSEFEM_ASSERT(xt::has_shape(nodevec, {m_nnode, m_ndim}));
 
     #pragma omp parallel for
     for (size_t m = 0; m < m_nnode; ++m) {
@@ -303,8 +287,7 @@ inline void VectorPartitioned::asNode(
 {
     GOOSEFEM_ASSERT(dofval_u.size() == m_nnu);
     GOOSEFEM_ASSERT(dofval_p.size() == m_nnp);
-    GOOSEFEM_ASSERT(
-        nodevec.shape() == std::decay_t<decltype(nodevec)>::shape_type({m_nnode, m_ndim}));
+    GOOSEFEM_ASSERT(xt::has_shape(nodevec, {m_nnode, m_ndim}));
 
     #pragma omp parallel for
     for (size_t m = 0; m < m_nnode; ++m) {
@@ -322,10 +305,8 @@ inline void VectorPartitioned::asNode(
 inline void VectorPartitioned::asNode(
     const xt::xtensor<double, 3>& elemvec, xt::xtensor<double, 2>& nodevec) const
 {
-    GOOSEFEM_ASSERT(
-        elemvec.shape() == std::decay_t<decltype(elemvec)>::shape_type({m_nelem, m_nne, m_ndim}));
-    GOOSEFEM_ASSERT(
-        nodevec.shape() == std::decay_t<decltype(nodevec)>::shape_type({m_nnode, m_ndim}));
+    GOOSEFEM_ASSERT(xt::has_shape(elemvec, {m_nelem, m_nne, m_ndim}));
+    GOOSEFEM_ASSERT(xt::has_shape(nodevec, {m_nnode, m_ndim}));
 
     #pragma omp parallel for
     for (size_t e = 0; e < m_nelem; ++e) {
@@ -341,8 +322,7 @@ inline void VectorPartitioned::asElement(
     const xt::xtensor<double, 1>& dofval, xt::xtensor<double, 3>& elemvec) const
 {
     GOOSEFEM_ASSERT(dofval.size() == m_ndof);
-    GOOSEFEM_ASSERT(
-        elemvec.shape() == std::decay_t<decltype(elemvec)>::shape_type({m_nelem, m_nne, m_ndim}));
+    GOOSEFEM_ASSERT(xt::has_shape(elemvec, {m_nelem, m_nne, m_ndim}));
 
     #pragma omp parallel for
     for (size_t e = 0; e < m_nelem; ++e) {
@@ -361,8 +341,7 @@ inline void VectorPartitioned::asElement(
 {
     GOOSEFEM_ASSERT(dofval_u.size() == m_nnu);
     GOOSEFEM_ASSERT(dofval_p.size() == m_nnp);
-    GOOSEFEM_ASSERT(
-        elemvec.shape() == std::decay_t<decltype(elemvec)>::shape_type({m_nelem, m_nne, m_ndim}));
+    GOOSEFEM_ASSERT(xt::has_shape(elemvec, {m_nelem, m_nne, m_ndim}));
 
     #pragma omp parallel for
     for (size_t e = 0; e < m_nelem; ++e) {
@@ -382,10 +361,8 @@ inline void VectorPartitioned::asElement(
 inline void VectorPartitioned::asElement(
     const xt::xtensor<double, 2>& nodevec, xt::xtensor<double, 3>& elemvec) const
 {
-    GOOSEFEM_ASSERT(
-        nodevec.shape() == std::decay_t<decltype(nodevec)>::shape_type({m_nnode, m_ndim}));
-    GOOSEFEM_ASSERT(
-        elemvec.shape() == std::decay_t<decltype(elemvec)>::shape_type({m_nelem, m_nne, m_ndim}));
+    GOOSEFEM_ASSERT(xt::has_shape(nodevec, {m_nnode, m_ndim}));
+    GOOSEFEM_ASSERT(xt::has_shape(elemvec, {m_nelem, m_nne, m_ndim}));
 
     #pragma omp parallel for
     for (size_t e = 0; e < m_nelem; ++e) {
@@ -400,8 +377,7 @@ inline void VectorPartitioned::asElement(
 inline void VectorPartitioned::assembleDofs(
     const xt::xtensor<double, 2>& nodevec, xt::xtensor<double, 1>& dofval) const
 {
-    GOOSEFEM_ASSERT(
-        nodevec.shape() == std::decay_t<decltype(nodevec)>::shape_type({m_nnode, m_ndim}));
+    GOOSEFEM_ASSERT(xt::has_shape(nodevec, {m_nnode, m_ndim}));
     GOOSEFEM_ASSERT(dofval.size() == m_ndof);
 
     dofval.fill(0.0);
@@ -416,8 +392,7 @@ inline void VectorPartitioned::assembleDofs(
 inline void VectorPartitioned::assembleDofs_u(
     const xt::xtensor<double, 2>& nodevec, xt::xtensor<double, 1>& dofval_u) const
 {
-    GOOSEFEM_ASSERT(
-        nodevec.shape() == std::decay_t<decltype(nodevec)>::shape_type({m_nnode, m_ndim}));
+    GOOSEFEM_ASSERT(xt::has_shape(nodevec, {m_nnode, m_ndim}));
     GOOSEFEM_ASSERT(dofval_u.size() == m_nnu);
 
     dofval_u.fill(0.0);
@@ -434,8 +409,7 @@ inline void VectorPartitioned::assembleDofs_u(
 inline void VectorPartitioned::assembleDofs_p(
     const xt::xtensor<double, 2>& nodevec, xt::xtensor<double, 1>& dofval_p) const
 {
-    GOOSEFEM_ASSERT(
-        nodevec.shape() == std::decay_t<decltype(nodevec)>::shape_type({m_nnode, m_ndim}));
+    GOOSEFEM_ASSERT(xt::has_shape(nodevec, {m_nnode, m_ndim}));
     GOOSEFEM_ASSERT(dofval_p.size() == m_nnp);
 
     dofval_p.fill(0.0);
@@ -452,8 +426,7 @@ inline void VectorPartitioned::assembleDofs_p(
 inline void VectorPartitioned::assembleDofs(
     const xt::xtensor<double, 3>& elemvec, xt::xtensor<double, 1>& dofval) const
 {
-    GOOSEFEM_ASSERT(
-        elemvec.shape() == std::decay_t<decltype(elemvec)>::shape_type({m_nelem, m_nne, m_ndim}));
+    GOOSEFEM_ASSERT(xt::has_shape(elemvec, {m_nelem, m_nne, m_ndim}));
     GOOSEFEM_ASSERT(dofval.size() == m_ndof);
 
     dofval.fill(0.0);
@@ -470,8 +443,7 @@ inline void VectorPartitioned::assembleDofs(
 inline void VectorPartitioned::assembleDofs_u(
     const xt::xtensor<double, 3>& elemvec, xt::xtensor<double, 1>& dofval_u) const
 {
-    GOOSEFEM_ASSERT(
-        elemvec.shape() == std::decay_t<decltype(elemvec)>::shape_type({m_nelem, m_nne, m_ndim}));
+    GOOSEFEM_ASSERT(xt::has_shape(elemvec, {m_nelem, m_nne, m_ndim}));
     GOOSEFEM_ASSERT(dofval_u.size() == m_nnu);
 
     dofval_u.fill(0.0);
@@ -490,8 +462,7 @@ inline void VectorPartitioned::assembleDofs_u(
 inline void VectorPartitioned::assembleDofs_p(
     const xt::xtensor<double, 3>& elemvec, xt::xtensor<double, 1>& dofval_p) const
 {
-    GOOSEFEM_ASSERT(
-        elemvec.shape() == std::decay_t<decltype(elemvec)>::shape_type({m_nelem, m_nne, m_ndim}));
+    GOOSEFEM_ASSERT(xt::has_shape(elemvec, {m_nelem, m_nne, m_ndim}));
     GOOSEFEM_ASSERT(dofval_p.size() == m_nnp);
 
     dofval_p.fill(0.0);
@@ -510,10 +481,8 @@ inline void VectorPartitioned::assembleDofs_p(
 inline void VectorPartitioned::assembleNode(
     const xt::xtensor<double, 3>& elemvec, xt::xtensor<double, 2>& nodevec) const
 {
-    GOOSEFEM_ASSERT(
-        elemvec.shape() == std::decay_t<decltype(elemvec)>::shape_type({m_nelem, m_nne, m_ndim}));
-    GOOSEFEM_ASSERT(
-        nodevec.shape() == std::decay_t<decltype(nodevec)>::shape_type({m_nnode, m_ndim}));
+    GOOSEFEM_ASSERT(xt::has_shape(elemvec, {m_nelem, m_nne, m_ndim}));
+    GOOSEFEM_ASSERT(xt::has_shape(nodevec, {m_nnode, m_ndim}));
 
     xt::xtensor<double, 1> dofval = this->AssembleDofs(elemvec);
     this->asNode(dofval, nodevec);

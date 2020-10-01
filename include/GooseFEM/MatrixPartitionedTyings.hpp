@@ -162,9 +162,7 @@ inline void MatrixPartitionedTyings<Solver>::factorize()
 template <class Solver>
 inline void MatrixPartitionedTyings<Solver>::assemble(const xt::xtensor<double, 3>& elemmat)
 {
-    GOOSEFEM_ASSERT(
-        elemmat.shape() ==
-        std::decay_t<decltype(elemmat)>::shape_type({m_nelem, m_nne * m_ndim, m_nne * m_ndim}));
+    GOOSEFEM_ASSERT(xt::has_shape(elemmat, {m_nelem, m_nne * m_ndim, m_nne * m_ndim}));
 
     m_Tuu.clear();
     m_Tup.clear();
@@ -254,8 +252,8 @@ template <class Solver>
 inline void
 MatrixPartitionedTyings<Solver>::solve(const xt::xtensor<double, 2>& b, xt::xtensor<double, 2>& x)
 {
-    GOOSEFEM_ASSERT(b.shape() == std::decay_t<decltype(b)>::shape_type({m_nnode, m_ndim}));
-    GOOSEFEM_ASSERT(x.shape() == std::decay_t<decltype(x)>::shape_type({m_nnode, m_ndim}));
+    GOOSEFEM_ASSERT(xt::has_shape(b, {m_nnode, m_ndim}));
+    GOOSEFEM_ASSERT(xt::has_shape(x, {m_nnode, m_ndim}));
 
     this->factorize();
 
@@ -384,7 +382,7 @@ template <class Solver>
 inline Eigen::VectorXd
 MatrixPartitionedTyings<Solver>::asDofs_u(const xt::xtensor<double, 2>& nodevec) const
 {
-    assert(nodevec.shape() == std::decay_t<decltype(nodevec)>::shape_type({m_nnode, m_ndim}));
+    GOOSEFEM_ASSERT(xt::has_shape(nodevec, {m_nnode, m_ndim}));
 
     Eigen::VectorXd dofval_u(m_nnu, 1);
 
@@ -420,7 +418,7 @@ template <class Solver>
 inline Eigen::VectorXd
 MatrixPartitionedTyings<Solver>::asDofs_p(const xt::xtensor<double, 2>& nodevec) const
 {
-    assert(nodevec.shape() == std::decay_t<decltype(nodevec)>::shape_type({m_nnode, m_ndim}));
+    GOOSEFEM_ASSERT(xt::has_shape(nodevec, {m_nnode, m_ndim}));
 
     Eigen::VectorXd dofval_p(m_nnp, 1);
 
@@ -456,7 +454,7 @@ template <class Solver>
 inline Eigen::VectorXd
 MatrixPartitionedTyings<Solver>::asDofs_d(const xt::xtensor<double, 2>& nodevec) const
 {
-    assert(nodevec.shape() == std::decay_t<decltype(nodevec)>::shape_type({m_nnode, m_ndim}));
+    GOOSEFEM_ASSERT(xt::has_shape(nodevec, {m_nnode, m_ndim}));
 
     Eigen::VectorXd dofval_d(m_nnd, 1);
 
