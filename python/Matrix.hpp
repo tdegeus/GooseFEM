@@ -58,12 +58,12 @@ py::class_<GooseFEM::Matrix<>>(m, "Matrix")
         "Return degrees-of-freedom")
 
     .def("Dot",
-        py::overload_cast<const xt::xtensor<double,1>&>(&GooseFEM::Matrix<>::Dot),
+        py::overload_cast<const xt::xtensor<double,1>&>(&GooseFEM::Matrix<>::Dot, py::const_),
         "Dot",
         py::arg("x"))
 
     .def("Dot",
-        py::overload_cast<const xt::xtensor<double,2>&>(&GooseFEM::Matrix<>::Dot),
+        py::overload_cast<const xt::xtensor<double,2>&>(&GooseFEM::Matrix<>::Dot, py::const_),
         "Dot",
         py::arg("x"))
 
