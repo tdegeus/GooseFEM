@@ -18,6 +18,7 @@ add_executable(main
     ElementHex8.cpp
     ElementQuad4.cpp
     Iterate.cpp
+    Matrix.cpp
     MatrixDiagonal.cpp
     Mesh.cpp
     MeshQuad4.cpp

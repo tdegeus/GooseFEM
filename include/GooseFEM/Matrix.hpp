@@ -105,6 +105,26 @@ inline void Matrix<Solver>::assemble(const xt::xtensor<double,3>& elemmat)
 }
 
 template <class Solver>
+inline void Matrix<Solver>::dot(const xt::xtensor<double,2>& x, xt::xtensor<double,2>& b) const
+{
+    GOOSEFEM_ASSERT(b.shape() == std::decay_t<decltype(b)>::shape_type({m_nnode, m_ndim}));
+    GOOSEFEM_ASSERT(x.shape() == std::decay_t<decltype(x)>::shape_type({m_nnode, m_ndim}));
+
+    Eigen::VectorXd B = m_A * this->asDofs(x);
+    this->asNode(B, b);
+}
+
+template <class Solver>
+inline void Matrix<Solver>::dot(const xt::xtensor<double,1>& x, xt::xtensor<double,1>& b) const
+{
+    GOOSEFEM_ASSERT(b.size() == m_ndof);
+    GOOSEFEM_ASSERT(x.size() == m_ndof);
+
+    Eigen::VectorXd B = m_A * Eigen::Map<const Eigen::VectorXd>(x.data(), m_ndof);
+    std::copy(B.data(), B.data() + m_ndof, b.begin());
+}
+
+template <class Solver>
 inline void Matrix<Solver>::solve(const xt::xtensor<double,2>& b, xt::xtensor<double,2>& x)
 {
     GOOSEFEM_ASSERT(b.shape() == std::decay_t<decltype(b)>::shape_type({m_nnode, m_ndim}));
@@ -123,10 +143,24 @@ inline void Matrix<Solver>::solve(const xt::xtensor<double,1>& b, xt::xtensor<do
     GOOSEFEM_ASSERT(x.size() == m_ndof);
 
     this->factorize();
-    Eigen::VectorXd B(m_ndof, 1);
-    std::copy(b.begin(), b.end(), B.data());
-    Eigen::VectorXd X = m_solver.solve(B);
+    Eigen::VectorXd X = m_solver.solve(Eigen::Map<const Eigen::VectorXd>(b.data(), m_ndof));
     std::copy(X.data(), X.data() + m_ndof, x.begin());
+}
+
+template <class Solver>
+inline xt::xtensor<double,2> Matrix<Solver>::Dot(const xt::xtensor<double,2>& x) const
+{
+    xt::xtensor<double,2> b = xt::empty<double>({m_nnode, m_ndim});
+    this->dot(x, b);
+    return b;
+}
+
+template <class Solver>
+inline xt::xtensor<double,1> Matrix<Solver>::Dot(const xt::xtensor<double,1>& x) const
+{
+    xt::xtensor<double,1> b = xt::empty<double>({m_ndof});
+    this->dot(x, b);
+    return b;
 }
 
 template <class Solver>
