@@ -326,7 +326,8 @@ inline void Quadrature::compute_dN()
 {
     #pragma omp parallel
     {
-        xt::xtensor_fixed<double, xt::xshape<3, 3>> J, Jinv;
+        xt::xtensor<double, 2> J = xt::empty<double>({3, 3});
+        xt::xtensor<double, 2> Jinv = xt::empty<double>({3, 3});
 
         #pragma omp for
         for (size_t e = 0; e < m_nelem; ++e) {
