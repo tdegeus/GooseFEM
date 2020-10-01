@@ -8,7 +8,7 @@
 #define GOOSEFEM_H
 
 #ifdef EIGEN_WORLD_VERSION
-    #define GOOSEFEM_EIGEN
+#define GOOSEFEM_EIGEN
 #endif
 
 #include "Element.h"

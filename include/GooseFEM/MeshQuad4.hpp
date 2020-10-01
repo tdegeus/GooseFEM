@@ -62,13 +62,13 @@ inline ElementType Regular::getElementType() const
     return ElementType::Quad4;
 }
 
-inline xt::xtensor<double,2> Regular::coor() const
+inline xt::xtensor<double, 2> Regular::coor() const
 {
-    xt::xtensor<double,2> out = xt::empty<double>({m_nnode, m_ndim});
+    xt::xtensor<double, 2> out = xt::empty<double>({m_nnode, m_ndim});
 
-    xt::xtensor<double,1> x =
+    xt::xtensor<double, 1> x =
         xt::linspace<double>(0.0, m_h * static_cast<double>(m_nelx), m_nelx + 1);
-    xt::xtensor<double,1> y =
+    xt::xtensor<double, 1> y =
         xt::linspace<double>(0.0, m_h * static_cast<double>(m_nely), m_nely + 1);
 
     size_t inode = 0;
@@ -84,9 +84,9 @@ inline xt::xtensor<double,2> Regular::coor() const
     return out;
 }
 
-inline xt::xtensor<size_t,2> Regular::conn() const
+inline xt::xtensor<size_t, 2> Regular::conn() const
 {
-    xt::xtensor<size_t,2> out = xt::empty<size_t>({m_nelem, m_nne});
+    xt::xtensor<size_t, 2> out = xt::empty<size_t>({m_nelem, m_nne});
 
     size_t ielem = 0;
 
@@ -103,42 +103,42 @@ inline xt::xtensor<size_t,2> Regular::conn() const
     return out;
 }
 
-inline xt::xtensor<size_t,1> Regular::nodesBottomEdge() const
+inline xt::xtensor<size_t, 1> Regular::nodesBottomEdge() const
 {
     return xt::arange<size_t>(m_nelx + 1);
 }
 
-inline xt::xtensor<size_t,1> Regular::nodesTopEdge() const
+inline xt::xtensor<size_t, 1> Regular::nodesTopEdge() const
 {
     return xt::arange<size_t>(m_nelx + 1) + m_nely * (m_nelx + 1);
 }
 
-inline xt::xtensor<size_t,1> Regular::nodesLeftEdge() const
+inline xt::xtensor<size_t, 1> Regular::nodesLeftEdge() const
 {
     return xt::arange<size_t>(m_nely + 1) * (m_nelx + 1);
 }
 
-inline xt::xtensor<size_t,1> Regular::nodesRightEdge() const
+inline xt::xtensor<size_t, 1> Regular::nodesRightEdge() const
 {
     return xt::arange<size_t>(m_nely + 1) * (m_nelx + 1) + m_nelx;
 }
 
-inline xt::xtensor<size_t,1> Regular::nodesBottomOpenEdge() const
+inline xt::xtensor<size_t, 1> Regular::nodesBottomOpenEdge() const
 {
     return xt::arange<size_t>(1, m_nelx);
 }
 
-inline xt::xtensor<size_t,1> Regular::nodesTopOpenEdge() const
+inline xt::xtensor<size_t, 1> Regular::nodesTopOpenEdge() const
 {
     return xt::arange<size_t>(1, m_nelx) + m_nely * (m_nelx + 1);
 }
 
-inline xt::xtensor<size_t,1> Regular::nodesLeftOpenEdge() const
+inline xt::xtensor<size_t, 1> Regular::nodesLeftOpenEdge() const
 {
     return xt::arange<size_t>(1, m_nely) * (m_nelx + 1);
 }
 
-inline xt::xtensor<size_t,1> Regular::nodesRightOpenEdge() const
+inline xt::xtensor<size_t, 1> Regular::nodesRightOpenEdge() const
 {
     return xt::arange<size_t>(1, m_nely) * (m_nelx + 1) + m_nelx;
 }
@@ -183,14 +183,14 @@ inline size_t Regular::nodesRightTopCorner() const
     return nodesTopRightCorner();
 }
 
-inline xt::xtensor<size_t,2> Regular::nodesPeriodic() const
+inline xt::xtensor<size_t, 2> Regular::nodesPeriodic() const
 {
-    xt::xtensor<size_t,1> bot = nodesBottomOpenEdge();
-    xt::xtensor<size_t,1> top = nodesTopOpenEdge();
-    xt::xtensor<size_t,1> lft = nodesLeftOpenEdge();
-    xt::xtensor<size_t,1> rgt = nodesRightOpenEdge();
+    xt::xtensor<size_t, 1> bot = nodesBottomOpenEdge();
+    xt::xtensor<size_t, 1> top = nodesTopOpenEdge();
+    xt::xtensor<size_t, 1> lft = nodesLeftOpenEdge();
+    xt::xtensor<size_t, 1> rgt = nodesRightOpenEdge();
 
-    xt::xtensor<size_t,2> out = xt::empty<size_t>({bot.size() + lft.size() + 3ul, 2ul});
+    xt::xtensor<size_t, 2> out = xt::empty<size_t>({bot.size() + lft.size() + 3ul, 2ul});
 
     out(0, 0) = nodesBottomLeftCorner();
     out(0, 1) = nodesBottomRightCorner();
@@ -219,17 +219,17 @@ inline size_t Regular::nodesOrigin() const
     return nodesBottomLeftCorner();
 }
 
-inline xt::xtensor<size_t,2> Regular::dofs() const
+inline xt::xtensor<size_t, 2> Regular::dofs() const
 {
     return GooseFEM::Mesh::dofs(m_nnode, m_ndim);
 }
 
-inline xt::xtensor<size_t,2> Regular::dofsPeriodic() const
+inline xt::xtensor<size_t, 2> Regular::dofsPeriodic() const
 {
-    xt::xtensor<size_t,2> out = GooseFEM::Mesh::dofs(m_nnode, m_ndim);
-    xt::xtensor<size_t,2> nodePer = nodesPeriodic();
-    xt::xtensor<size_t,1> independent = xt::view(nodePer, xt::all(), 0);
-    xt::xtensor<size_t,1> dependent = xt::view(nodePer, xt::all(), 1);
+    xt::xtensor<size_t, 2> out = GooseFEM::Mesh::dofs(m_nnode, m_ndim);
+    xt::xtensor<size_t, 2> nodePer = nodesPeriodic();
+    xt::xtensor<size_t, 1> independent = xt::view(nodePer, xt::all(), 0);
+    xt::xtensor<size_t, 1> dependent = xt::view(nodePer, xt::all(), 1);
 
     for (size_t j = 0; j < m_ndim; ++j) {
         xt::view(out, xt::keep(dependent), j) = xt::view(out, xt::keep(independent), j);
@@ -238,7 +238,7 @@ inline xt::xtensor<size_t,2> Regular::dofsPeriodic() const
     return GooseFEM::Mesh::renumber(out);
 }
 
-inline xt::xtensor<size_t,2> Regular::elementMatrix() const
+inline xt::xtensor<size_t, 2> Regular::elementMatrix() const
 {
     return xt::arange<size_t>(m_nelem).reshape({m_nely, m_nelx});
 }
@@ -254,9 +254,9 @@ inline FineLayer::FineLayer(size_t nelx, size_t nely, double h, size_t nfine) : 
 
     // temporary variables
     size_t nmin, ntot;
-    xt::xtensor<size_t,1> nhx = xt::ones<size_t>({nely});
-    xt::xtensor<size_t,1> nhy = xt::ones<size_t>({nely});
-    xt::xtensor<int,1> refine = -1 * xt::ones<int>({nely});
+    xt::xtensor<size_t, 1> nhx = xt::ones<size_t>({nely});
+    xt::xtensor<size_t, 1> nhy = xt::ones<size_t>({nely});
+    xt::xtensor<int, 1> refine = -1 * xt::ones<int>({nely});
 
     // minimum height in y-direction (half of the height because of symmetry)
     if (nely % 2 == 0) {
@@ -453,10 +453,10 @@ inline ElementType FineLayer::getElementType() const
     return ElementType::Quad4;
 }
 
-inline xt::xtensor<double,2> FineLayer::coor() const
+inline xt::xtensor<double, 2> FineLayer::coor() const
 {
     // allocate output
-    xt::xtensor<double,2> out = xt::empty<double>({m_nnode, m_ndim});
+    xt::xtensor<double, 2> out = xt::empty<double>({m_nnode, m_ndim});
 
     // current node, number of element layers
     size_t inode = 0;
@@ -464,7 +464,7 @@ inline xt::xtensor<double,2> FineLayer::coor() const
 
     // y-position of each main node layer (i.e. excluding node layers for refinement/coarsening)
     // - allocate
-    xt::xtensor<double,1> y = xt::empty<double>({nely + 1});
+    xt::xtensor<double, 1> y = xt::empty<double>({nely + 1});
     // - initialize
     y(0) = 0.0;
     // - compute
@@ -476,7 +476,7 @@ inline xt::xtensor<double,2> FineLayer::coor() const
 
     for (size_t iy = 0;; ++iy) {
         // get positions along the x- and z-axis
-        xt::xtensor<double,1> x = xt::linspace<double>(0.0, m_Lx, m_nelx(iy) + 1);
+        xt::xtensor<double, 1> x = xt::linspace<double>(0.0, m_Lx, m_nelx(iy) + 1);
 
         // add nodes of the bottom layer of this element
         for (size_t ix = 0; ix < m_nelx(iy) + 1; ++ix) {
@@ -510,7 +510,7 @@ inline xt::xtensor<double,2> FineLayer::coor() const
 
     for (size_t iy = (nely - 1) / 2; iy < nely; ++iy) {
         // get positions along the x- and z-axis
-        xt::xtensor<double,1> x = xt::linspace<double>(0.0, m_Lx, m_nelx(iy) + 1);
+        xt::xtensor<double, 1> x = xt::linspace<double>(0.0, m_Lx, m_nelx(iy) + 1);
 
         // add extra nodes of the intermediate layer, for refinement in x-direction
         if (m_refine(iy) == 0) {
@@ -538,10 +538,10 @@ inline xt::xtensor<double,2> FineLayer::coor() const
     return out;
 }
 
-inline xt::xtensor<size_t,2> FineLayer::conn() const
+inline xt::xtensor<size_t, 2> FineLayer::conn() const
 {
     // allocate output
-    xt::xtensor<size_t,2> out = xt::empty<size_t>({m_nelem, m_nne});
+    xt::xtensor<size_t, 2> out = xt::empty<size_t>({m_nelem, m_nne});
 
     // current element, number of element layers, starting nodes of each node layer
     size_t ielem = 0;
@@ -630,29 +630,29 @@ inline xt::xtensor<size_t,2> FineLayer::conn() const
     return out;
 }
 
-inline xt::xtensor<size_t,1> FineLayer::elementsMiddleLayer() const
+inline xt::xtensor<size_t, 1> FineLayer::elementsMiddleLayer() const
 {
     size_t nely = m_nhy.size();
     size_t iy = (nely - 1) / 2;
     return m_startElem(iy) + xt::arange<size_t>(m_nelx(iy));
 }
 
-inline xt::xtensor<size_t,1> FineLayer::nodesBottomEdge() const
+inline xt::xtensor<size_t, 1> FineLayer::nodesBottomEdge() const
 {
     return m_startNode(0) + xt::arange<size_t>(m_nelx(0) + 1);
 }
 
-inline xt::xtensor<size_t,1> FineLayer::nodesTopEdge() const
+inline xt::xtensor<size_t, 1> FineLayer::nodesTopEdge() const
 {
     size_t nely = m_nhy.size();
     return m_startNode(nely) + xt::arange<size_t>(m_nelx(nely - 1) + 1);
 }
 
-inline xt::xtensor<size_t,1> FineLayer::nodesLeftEdge() const
+inline xt::xtensor<size_t, 1> FineLayer::nodesLeftEdge() const
 {
     size_t nely = m_nhy.size();
 
-    xt::xtensor<size_t,1> out = xt::empty<size_t>({nely + 1});
+    xt::xtensor<size_t, 1> out = xt::empty<size_t>({nely + 1});
 
     size_t i = 0;
     size_t j = (nely + 1) / 2;
@@ -665,11 +665,11 @@ inline xt::xtensor<size_t,1> FineLayer::nodesLeftEdge() const
     return out;
 }
 
-inline xt::xtensor<size_t,1> FineLayer::nodesRightEdge() const
+inline xt::xtensor<size_t, 1> FineLayer::nodesRightEdge() const
 {
     size_t nely = m_nhy.size();
 
-    xt::xtensor<size_t,1> out = xt::empty<size_t>({nely + 1});
+    xt::xtensor<size_t, 1> out = xt::empty<size_t>({nely + 1});
 
     size_t i = 0;
     size_t j = (nely + 1) / 2;
@@ -685,23 +685,23 @@ inline xt::xtensor<size_t,1> FineLayer::nodesRightEdge() const
     return out;
 }
 
-inline xt::xtensor<size_t,1> FineLayer::nodesBottomOpenEdge() const
+inline xt::xtensor<size_t, 1> FineLayer::nodesBottomOpenEdge() const
 {
     return m_startNode(0) + xt::arange<size_t>(1, m_nelx(0));
 }
 
-inline xt::xtensor<size_t,1> FineLayer::nodesTopOpenEdge() const
+inline xt::xtensor<size_t, 1> FineLayer::nodesTopOpenEdge() const
 {
     size_t nely = m_nhy.size();
 
     return m_startNode(nely) + xt::arange<size_t>(1, m_nelx(nely - 1));
 }
 
-inline xt::xtensor<size_t,1> FineLayer::nodesLeftOpenEdge() const
+inline xt::xtensor<size_t, 1> FineLayer::nodesLeftOpenEdge() const
 {
     size_t nely = m_nhy.size();
 
-    xt::xtensor<size_t,1> out = xt::empty<size_t>({nely - 1});
+    xt::xtensor<size_t, 1> out = xt::empty<size_t>({nely - 1});
 
     size_t i = 0;
     size_t j = (nely + 1) / 2;
@@ -714,11 +714,11 @@ inline xt::xtensor<size_t,1> FineLayer::nodesLeftOpenEdge() const
     return out;
 }
 
-inline xt::xtensor<size_t,1> FineLayer::nodesRightOpenEdge() const
+inline xt::xtensor<size_t, 1> FineLayer::nodesRightOpenEdge() const
 {
     size_t nely = m_nhy.size();
 
-    xt::xtensor<size_t,1> out = xt::empty<size_t>({nely - 1});
+    xt::xtensor<size_t, 1> out = xt::empty<size_t>({nely - 1});
 
     size_t i = 0;
     size_t j = (nely + 1) / 2;
@@ -778,14 +778,14 @@ inline size_t FineLayer::nodesRightTopCorner() const
     return nodesTopRightCorner();
 }
 
-inline xt::xtensor<size_t,2> FineLayer::nodesPeriodic() const
+inline xt::xtensor<size_t, 2> FineLayer::nodesPeriodic() const
 {
-    xt::xtensor<size_t,1> bot = nodesBottomOpenEdge();
-    xt::xtensor<size_t,1> top = nodesTopOpenEdge();
-    xt::xtensor<size_t,1> lft = nodesLeftOpenEdge();
-    xt::xtensor<size_t,1> rgt = nodesRightOpenEdge();
+    xt::xtensor<size_t, 1> bot = nodesBottomOpenEdge();
+    xt::xtensor<size_t, 1> top = nodesTopOpenEdge();
+    xt::xtensor<size_t, 1> lft = nodesLeftOpenEdge();
+    xt::xtensor<size_t, 1> rgt = nodesRightOpenEdge();
 
-    xt::xtensor<size_t,2> out = xt::empty<size_t>({bot.size() + lft.size() + 3ul, 2ul});
+    xt::xtensor<size_t, 2> out = xt::empty<size_t>({bot.size() + lft.size() + 3ul, 2ul});
 
     out(0, 0) = nodesBottomLeftCorner();
     out(0, 1) = nodesBottomRightCorner();
@@ -814,17 +814,17 @@ inline size_t FineLayer::nodesOrigin() const
     return nodesBottomLeftCorner();
 }
 
-inline xt::xtensor<size_t,2> FineLayer::dofs() const
+inline xt::xtensor<size_t, 2> FineLayer::dofs() const
 {
     return GooseFEM::Mesh::dofs(m_nnode, m_ndim);
 }
 
-inline xt::xtensor<size_t,2> FineLayer::dofsPeriodic() const
+inline xt::xtensor<size_t, 2> FineLayer::dofsPeriodic() const
 {
-    xt::xtensor<size_t,2> out = GooseFEM::Mesh::dofs(m_nnode, m_ndim);
-    xt::xtensor<size_t,2> nodePer = nodesPeriodic();
-    xt::xtensor<size_t,1> independent = xt::view(nodePer, xt::all(), 0);
-    xt::xtensor<size_t,1> dependent = xt::view(nodePer, xt::all(), 1);
+    xt::xtensor<size_t, 2> out = GooseFEM::Mesh::dofs(m_nnode, m_ndim);
+    xt::xtensor<size_t, 2> nodePer = nodesPeriodic();
+    xt::xtensor<size_t, 1> independent = xt::view(nodePer, xt::all(), 0);
+    xt::xtensor<size_t, 1> dependent = xt::view(nodePer, xt::all(), 1);
 
     for (size_t j = 0; j < m_ndim; ++j) {
         xt::view(out, xt::keep(dependent), j) = xt::view(out, xt::keep(independent), j);
@@ -841,8 +841,8 @@ inline RefineRegular::RefineRegular(
 {
     m_fine = Regular(nx * m_coarse.nelx(), ny * m_coarse.nely(), m_coarse.h());
 
-    xt::xtensor<size_t,2> elmat_coarse = m_coarse.elementMatrix();
-    xt::xtensor<size_t,2> elmat_fine = m_fine.elementMatrix();
+    xt::xtensor<size_t, 2> elmat_coarse = m_coarse.elementMatrix();
+    xt::xtensor<size_t, 2> elmat_fine = m_fine.elementMatrix();
 
     m_coarse2fine = xt::empty<size_t>({m_coarse.nelem(), nx * ny});
 
@@ -864,19 +864,19 @@ inline GooseFEM::Mesh::Quad4::Regular RefineRegular::getFineMesh() const
     return m_fine;
 }
 
-inline xt::xtensor<size_t,2> RefineRegular::getMap() const
+inline xt::xtensor<size_t, 2> RefineRegular::getMap() const
 {
     return m_coarse2fine;
 }
 
-inline xt::xtensor<double,2> RefineRegular::mapToCoarse(const xt::xtensor<double,1>& data) const
+inline xt::xtensor<double, 2> RefineRegular::mapToCoarse(const xt::xtensor<double, 1>& data) const
 {
     GOOSEFEM_ASSERT(data.shape(0) == m_coarse2fine.size());
 
     size_t m = m_coarse2fine.shape(0);
     size_t n = m_coarse2fine.shape(1);
 
-    xt::xtensor<double,2> out = xt::empty<double>({m, n});
+    xt::xtensor<double, 2> out = xt::empty<double>({m, n});
 
     for (size_t i = 0; i < m; ++i) {
         auto e = xt::view(m_coarse2fine, i, xt::all());
@@ -886,7 +886,7 @@ inline xt::xtensor<double,2> RefineRegular::mapToCoarse(const xt::xtensor<double
     return out;
 }
 
-inline xt::xtensor<double,2> RefineRegular::mapToCoarse(const xt::xtensor<double,2>& data) const
+inline xt::xtensor<double, 2> RefineRegular::mapToCoarse(const xt::xtensor<double, 2>& data) const
 {
     GOOSEFEM_ASSERT(data.shape(0) == m_coarse2fine.size());
 
@@ -894,7 +894,7 @@ inline xt::xtensor<double,2> RefineRegular::mapToCoarse(const xt::xtensor<double
     size_t n = m_coarse2fine.shape(1);
     size_t N = data.shape(1);
 
-    xt::xtensor<double,2> out = xt::empty<double>({m, n * N});
+    xt::xtensor<double, 2> out = xt::empty<double>({m, n * N});
 
     for (size_t i = 0; i < m; ++i) {
         auto e = xt::view(m_coarse2fine, i, xt::all());
@@ -906,7 +906,7 @@ inline xt::xtensor<double,2> RefineRegular::mapToCoarse(const xt::xtensor<double
     return out;
 }
 
-inline xt::xtensor<double,4> RefineRegular::mapToCoarse(const xt::xtensor<double,4>& data) const
+inline xt::xtensor<double, 4> RefineRegular::mapToCoarse(const xt::xtensor<double, 4>& data) const
 {
     GOOSEFEM_ASSERT(data.shape(0) == m_coarse2fine.size());
 
@@ -914,7 +914,7 @@ inline xt::xtensor<double,4> RefineRegular::mapToCoarse(const xt::xtensor<double
     size_t n = m_coarse2fine.shape(1);
     size_t N = data.shape(1);
 
-    xt::xtensor<double,4> out = xt::empty<double>({m, n * N, data.shape(2), data.shape(3)});
+    xt::xtensor<double, 4> out = xt::empty<double>({m, n * N, data.shape(2), data.shape(3)});
 
     for (size_t i = 0; i < m; ++i) {
         auto e = xt::view(m_coarse2fine, i, xt::all());
@@ -926,11 +926,11 @@ inline xt::xtensor<double,4> RefineRegular::mapToCoarse(const xt::xtensor<double
     return out;
 }
 
-inline xt::xtensor<double,1> RefineRegular::mapToFine(const xt::xtensor<double,1>& data) const
+inline xt::xtensor<double, 1> RefineRegular::mapToFine(const xt::xtensor<double, 1>& data) const
 {
     GOOSEFEM_ASSERT(data.shape(0) == m_coarse2fine.shape(0));
 
-    xt::xtensor<double,1> out = xt::empty<double>({m_coarse2fine.size()});
+    xt::xtensor<double, 1> out = xt::empty<double>({m_coarse2fine.size()});
 
     for (size_t i = 0; i < m_coarse2fine.shape(0); ++i) {
         auto e = xt::view(m_coarse2fine, i, xt::all());
@@ -940,11 +940,11 @@ inline xt::xtensor<double,1> RefineRegular::mapToFine(const xt::xtensor<double,1
     return out;
 }
 
-inline xt::xtensor<double,2> RefineRegular::mapToFine(const xt::xtensor<double,2>& data) const
+inline xt::xtensor<double, 2> RefineRegular::mapToFine(const xt::xtensor<double, 2>& data) const
 {
     GOOSEFEM_ASSERT(data.shape(0) == m_coarse2fine.shape(0));
 
-    xt::xtensor<double,2> out = xt::empty<double>({m_coarse2fine.size(), data.shape(1)});
+    xt::xtensor<double, 2> out = xt::empty<double>({m_coarse2fine.size(), data.shape(1)});
 
     for (size_t i = 0; i < m_coarse2fine.shape(0); ++i) {
         auto e = xt::view(m_coarse2fine, i, xt::all());
@@ -954,11 +954,11 @@ inline xt::xtensor<double,2> RefineRegular::mapToFine(const xt::xtensor<double,2
     return out;
 }
 
-inline xt::xtensor<double,4> RefineRegular::mapToFine(const xt::xtensor<double,4>& data) const
+inline xt::xtensor<double, 4> RefineRegular::mapToFine(const xt::xtensor<double, 4>& data) const
 {
     GOOSEFEM_ASSERT(data.shape(0) == m_coarse2fine.shape(0));
 
-    xt::xtensor<double,4> out =
+    xt::xtensor<double, 4> out =
         xt::empty<double>({m_coarse2fine.size(), data.shape(1), data.shape(2), data.shape(3)});
 
     for (size_t i = 0; i < m_coarse2fine.shape(0); ++i) {
@@ -988,16 +988,16 @@ inline FineLayer2Regular::FineLayer2Regular(const GooseFEM::Mesh::Quad4::FineLay
     m_frac_regular.resize(m_finelayer.m_nelem);
 
     // alias
-    xt::xtensor<size_t,1> nhx = m_finelayer.m_nhx;
-    xt::xtensor<size_t,1> nhy = m_finelayer.m_nhy;
-    xt::xtensor<size_t,1> nelx = m_finelayer.m_nelx;
-    xt::xtensor<size_t,1> start = m_finelayer.m_startElem;
+    xt::xtensor<size_t, 1> nhx = m_finelayer.m_nhx;
+    xt::xtensor<size_t, 1> nhy = m_finelayer.m_nhy;
+    xt::xtensor<size_t, 1> nelx = m_finelayer.m_nelx;
+    xt::xtensor<size_t, 1> start = m_finelayer.m_startElem;
 
     // 'matrix' of element numbers of the Regular-mesh
-    xt::xtensor<size_t,2> elementMatrix = m_regular.elementMatrix();
+    xt::xtensor<size_t, 2> elementMatrix = m_regular.elementMatrix();
 
     // cumulative number of element-rows of the Regular-mesh per layer of the FineLayer-mesh
-    xt::xtensor<size_t,1> cum_nhy =
+    xt::xtensor<size_t, 1> cum_nhy =
         xt::concatenate(xt::xtuple(xt::zeros<size_t>({1}), xt::cumsum(nhy)));
 
     // number of element layers in y-direction of the FineLayer-mesh
@@ -1013,7 +1013,7 @@ inline FineLayer2Regular::FineLayer2Regular(const GooseFEM::Mesh::Quad4::FineLay
 
         if (m_finelayer.m_refine(iy) == -1) {
             // element numbers of the FineLayer-mesh along this layer
-            xt::xtensor<size_t,1> el_old = start(iy) + xt::arange<size_t>(nelx(iy));
+            xt::xtensor<size_t, 1> el_old = start(iy) + xt::arange<size_t>(nelx(iy));
 
             // loop along this layer of the FineLayer-mesh
             for (size_t ix = 0; ix < nelx(iy); ++ix) {
@@ -1036,7 +1036,7 @@ inline FineLayer2Regular::FineLayer2Regular(const GooseFEM::Mesh::Quad4::FineLay
         else if (m_finelayer.m_refine(iy) == 0 && iy <= (nely - 1) / 2) {
             // element numbers of the FineLayer-mesh along this layer
             // rows: coarse block, columns element numbers per block
-            xt::xtensor<size_t,2> el_old =
+            xt::xtensor<size_t, 2> el_old =
                 start(iy) + xt::arange<size_t>(nelx(iy) * 4ul).reshape({-1, 4});
 
             // loop along this layer of the FineLayer-mesh
@@ -1140,7 +1140,7 @@ inline FineLayer2Regular::FineLayer2Regular(const GooseFEM::Mesh::Quad4::FineLay
         else if (m_finelayer.m_refine(iy) == 0 && iy > (nely - 1) / 2) {
             // element numbers of the FineLayer-mesh along this layer
             // rows: coarse block, columns element numbers per block
-            xt::xtensor<size_t,2> el_old =
+            xt::xtensor<size_t, 2> el_old =
                 start(iy) + xt::arange<size_t>(nelx(iy) * 4ul).reshape({-1, 4});
 
             // loop along this layer of the FineLayer-mesh
@@ -1267,12 +1267,12 @@ inline std::vector<std::vector<double>> FineLayer2Regular::getMapFraction() cons
     return m_frac_regular;
 }
 
-inline xt::xtensor<double,1>
-FineLayer2Regular::mapToRegular(const xt::xtensor<double,1>& data) const
+inline xt::xtensor<double, 1>
+FineLayer2Regular::mapToRegular(const xt::xtensor<double, 1>& data) const
 {
     GOOSEFEM_ASSERT(data.shape(0) == m_finelayer.nelem());
 
-    xt::xtensor<double,1> out = xt::zeros<double>({m_regular.nelem()});
+    xt::xtensor<double, 1> out = xt::zeros<double>({m_regular.nelem()});
 
     for (size_t e = 0; e < m_finelayer.nelem(); ++e) {
         for (size_t i = 0; i < m_elem_regular[e].size(); ++i) {
@@ -1283,12 +1283,12 @@ FineLayer2Regular::mapToRegular(const xt::xtensor<double,1>& data) const
     return out;
 }
 
-inline xt::xtensor<double,2>
-FineLayer2Regular::mapToRegular(const xt::xtensor<double,2>& data) const
+inline xt::xtensor<double, 2>
+FineLayer2Regular::mapToRegular(const xt::xtensor<double, 2>& data) const
 {
     GOOSEFEM_ASSERT(data.shape(0) == m_finelayer.nelem());
 
-    xt::xtensor<double,2> out = xt::zeros<double>({m_regular.nelem(), data.shape(1)});
+    xt::xtensor<double, 2> out = xt::zeros<double>({m_regular.nelem(), data.shape(1)});
 
     for (size_t e = 0; e < m_finelayer.nelem(); ++e) {
         for (size_t i = 0; i < m_elem_regular[e].size(); ++i) {
@@ -1299,12 +1299,12 @@ FineLayer2Regular::mapToRegular(const xt::xtensor<double,2>& data) const
     return out;
 }
 
-inline xt::xtensor<double,4>
-FineLayer2Regular::mapToRegular(const xt::xtensor<double,4>& data) const
+inline xt::xtensor<double, 4>
+FineLayer2Regular::mapToRegular(const xt::xtensor<double, 4>& data) const
 {
     GOOSEFEM_ASSERT(data.shape(0) == m_finelayer.nelem());
 
-    xt::xtensor<double,4> out =
+    xt::xtensor<double, 4> out =
         xt::zeros<double>({m_regular.nelem(), data.shape(1), data.shape(2), data.shape(3)});
 
     for (size_t e = 0; e < m_finelayer.nelem(); ++e) {

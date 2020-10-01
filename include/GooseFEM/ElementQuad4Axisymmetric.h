@@ -29,15 +29,15 @@ public:
     // Constructor: integration point coordinates and weights are optional (default: Gauss)
     QuadratureAxisymmetric() = default;
 
-    QuadratureAxisymmetric(const xt::xtensor<double,3>& x);
+    QuadratureAxisymmetric(const xt::xtensor<double, 3>& x);
 
     QuadratureAxisymmetric(
-        const xt::xtensor<double,3>& x,
-        const xt::xtensor<double,2>& xi,
-        const xt::xtensor<double,1>& w);
+        const xt::xtensor<double, 3>& x,
+        const xt::xtensor<double, 2>& xi,
+        const xt::xtensor<double, 1>& w);
 
     // Update the nodal positions (shape of "x" should match the earlier definition)
-    void update_x(const xt::xtensor<double,3>& x);
+    void update_x(const xt::xtensor<double, 3>& x);
 
     // Return dimensions
     size_t nelem() const; // number of elements
@@ -46,52 +46,41 @@ public:
     size_t nip() const;   // number of integration points
 
     // Return integration volume
-    void dV(xt::xtensor<double,2>& qscalar) const;
-    void dV(xt::xtensor<double,4>& qtensor) const; // same volume for all tensor components
-    void dV(xt::xarray<double>& qtensor) const; // same volume for all tensor components
+    void dV(xt::xtensor<double, 2>& qscalar) const;
+    void dV(xt::xtensor<double, 4>& qtensor) const; // same volume for all tensor components
+    void dV(xt::xarray<double>& qtensor) const;     // same volume for all tensor components
 
     // Dyadic product (and its transpose and symmetric part)
     // qtensor(i,j) += B(m,i,j,k) * elemvec(m,k)
-    void gradN_vector(
-        const xt::xtensor<double,3>& elemvec,
-              xt::xtensor<double,4>& qtensor) const;
-
-    void gradN_vector_T(
-        const xt::xtensor<double,3>& elemvec,
-              xt::xtensor<double,4>& qtensor) const;
-
-    void symGradN_vector(
-        const xt::xtensor<double,3>& elemvec,
-              xt::xtensor<double,4>& qtensor) const;
+    void gradN_vector(const xt::xtensor<double, 3>& elemvec, xt::xtensor<double, 4>& qtensor) const;
+    void gradN_vector_T(const xt::xtensor<double, 3>& elemvec, xt::xtensor<double, 4>& qtensor) const;
+    void symGradN_vector(const xt::xtensor<double, 3>& elemvec, xt::xtensor<double, 4>& qtensor) const;
 
     // Integral of the scalar product
     // elemmat(m*ndim+i,n*ndim+i) += N(m) * qscalar * N(n) * dV
     void int_N_scalar_NT_dV(
-        const xt::xtensor<double,2>& qscalar,
-              xt::xtensor<double,3>& elemmat) const;
+        const xt::xtensor<double, 2>& qscalar, xt::xtensor<double, 3>& elemmat) const;
 
     // Integral of the assembled product
     // fm = ( Bm^T : qtensor ) dV
     void int_gradN_dot_tensor2_dV(
-        const xt::xtensor<double,4>& qtensor,
-              xt::xtensor<double,3>& elemvec) const;
+        const xt::xtensor<double, 4>& qtensor, xt::xtensor<double, 3>& elemvec) const;
 
     // Integral of the assembled product
     // Kmn = ( Bm^T : qtensor : Bn ) dV
     void int_gradN_dot_tensor4_dot_gradNT_dV(
-        const xt::xtensor<double,6>& qtensor,
-              xt::xtensor<double,3>& elemmat) const;
+        const xt::xtensor<double, 6>& qtensor, xt::xtensor<double, 3>& elemmat) const;
 
     // Auto-allocation of the functions above
-    xt::xtensor<double,2> DV() const;
+    xt::xtensor<double, 2> DV() const;
     xt::xarray<double> DV(size_t rank) const;
-    xt::xtensor<double,4> GradN_vector(const xt::xtensor<double,3>& elemvec) const;
-    xt::xtensor<double,4> GradN_vector_T(const xt::xtensor<double,3>& elemvec) const;
-    xt::xtensor<double,4> SymGradN_vector(const xt::xtensor<double,3>& elemvec) const;
-    xt::xtensor<double,3> Int_N_scalar_NT_dV(const xt::xtensor<double,2>& qscalar) const;
-    xt::xtensor<double,3> Int_gradN_dot_tensor2_dV(const xt::xtensor<double,4>& qtensor) const;
-    xt::xtensor<double,3> Int_gradN_dot_tensor4_dot_gradNT_dV(
-        const xt::xtensor<double,6>& qtensor) const;
+    xt::xtensor<double, 4> GradN_vector(const xt::xtensor<double, 3>& elemvec) const;
+    xt::xtensor<double, 4> GradN_vector_T(const xt::xtensor<double, 3>& elemvec) const;
+    xt::xtensor<double, 4> SymGradN_vector(const xt::xtensor<double, 3>& elemvec) const;
+    xt::xtensor<double, 3> Int_N_scalar_NT_dV(const xt::xtensor<double, 2>& qscalar) const;
+    xt::xtensor<double, 3> Int_gradN_dot_tensor2_dV(const xt::xtensor<double, 4>& qtensor) const;
+    xt::xtensor<double, 3> Int_gradN_dot_tensor4_dot_gradNT_dV(
+        const xt::xtensor<double, 6>& qtensor) const;
 
 private:
     // Compute "vol" and "B" based on current "x"
@@ -108,13 +97,13 @@ private:
     static const size_t m_tdim = 3; // number of dimensions of tensors
 
     // Data arrays
-    xt::xtensor<double,3> m_x;    // nodal positions stored per element [nelem, nne, ndim]
-    xt::xtensor<double,1> m_w;    // weight of each integration point [nip]
-    xt::xtensor<double,2> m_xi;   // local coordinate of each integration point [nip, ndim]
-    xt::xtensor<double,2> m_N;    // shape functions [nip, nne]
-    xt::xtensor<double,3> m_dNxi; // shape function grad. wrt local  coor. [nip, nne, ndim]
-    xt::xtensor<double,6> m_B;    // B-matrix [nelem, nne, tdim, tdim, tdim]
-    xt::xtensor<double,2> m_vol;  // integration point volume [nelem, nip]
+    xt::xtensor<double, 3> m_x;    // nodal positions stored per element [nelem, nne, ndim]
+    xt::xtensor<double, 1> m_w;    // weight of each integration point [nip]
+    xt::xtensor<double, 2> m_xi;   // local coordinate of each integration point [nip, ndim]
+    xt::xtensor<double, 2> m_N;    // shape functions [nip, nne]
+    xt::xtensor<double, 3> m_dNxi; // shape function grad. wrt local  coor. [nip, nne, ndim]
+    xt::xtensor<double, 6> m_B;    // B-matrix [nelem, nne, tdim, tdim, tdim]
+    xt::xtensor<double, 2> m_vol;  // integration point volume [nelem, nip]
 };
 
 } // namespace Quad4

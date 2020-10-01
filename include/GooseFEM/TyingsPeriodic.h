@@ -21,17 +21,17 @@ public:
     Periodic() = default;
 
     Periodic(
-        const xt::xtensor<double,2>& coor,
-        const xt::xtensor<size_t,2>& dofs,
-        const xt::xtensor<size_t,2>& control_dofs,
-        const xt::xtensor<size_t,2>& nodal_tyings); // (independent, dependent)
+        const xt::xtensor<double, 2>& coor,
+        const xt::xtensor<size_t, 2>& dofs,
+        const xt::xtensor<size_t, 2>& control_dofs,
+        const xt::xtensor<size_t, 2>& nodal_tyings); // (independent, dependent)
 
     Periodic(
-        const xt::xtensor<double,2>& coor,
-        const xt::xtensor<size_t,2>& dofs,
-        const xt::xtensor<size_t,2>& control_dofs,
-        const xt::xtensor<size_t,2>& nodal_tyings, // (independent, dependent)
-        const xt::xtensor<size_t,1>& iip);
+        const xt::xtensor<double, 2>& coor,
+        const xt::xtensor<size_t, 2>& dofs,
+        const xt::xtensor<size_t, 2>& control_dofs,
+        const xt::xtensor<size_t, 2>& nodal_tyings, // (independent, dependent)
+        const xt::xtensor<size_t, 1>& iip);
 
     // Dimensions
     size_t nnd() const; // dependent DOFs
@@ -40,12 +40,12 @@ public:
     size_t nnp() const; // independent, prescribed DOFs
 
     // DOF lists
-    xt::xtensor<size_t,2> dofs() const;    // DOFs
-    xt::xtensor<size_t,2> control() const; // control DOFs
-    xt::xtensor<size_t,1> iid() const;     // dependent DOFs
-    xt::xtensor<size_t,1> iii() const;     // independent DOFs
-    xt::xtensor<size_t,1> iiu() const;     // independent, unknown DOFs
-    xt::xtensor<size_t,1> iip() const;     // independent, prescribed DOFs
+    xt::xtensor<size_t, 2> dofs() const;    // DOFs
+    xt::xtensor<size_t, 2> control() const; // control DOFs
+    xt::xtensor<size_t, 1> iid() const;     // dependent DOFs
+    xt::xtensor<size_t, 1> iii() const;     // independent DOFs
+    xt::xtensor<size_t, 1> iiu() const;     // independent, unknown DOFs
+    xt::xtensor<size_t, 1> iip() const;     // independent, prescribed DOFs
 
     // Return the tying matrix
     // u_d = C_di * u_i
@@ -61,29 +61,29 @@ private:
     size_t m_nnd;
     size_t m_ndim;
     size_t m_nties; // number of nodal ties
-    xt::xtensor<size_t,2> m_dofs;
-    xt::xtensor<size_t,2> m_control;
-    xt::xtensor<size_t,2> m_tyings; // nodal ties: (independent, dependent)
-    xt::xtensor<double,2> m_coor;
+    xt::xtensor<size_t, 2> m_dofs;
+    xt::xtensor<size_t, 2> m_control;
+    xt::xtensor<size_t, 2> m_tyings; // nodal ties: (independent, dependent)
+    xt::xtensor<double, 2> m_coor;
 };
 
 class Control {
 public:
     // Constructors
     Control() = default;
-    Control(const xt::xtensor<double,2>& coor, const xt::xtensor<size_t,2>& dofs);
+    Control(const xt::xtensor<double, 2>& coor, const xt::xtensor<size_t, 2>& dofs);
 
     // Extract new lists
-    xt::xtensor<double,2> coor() const;
-    xt::xtensor<size_t,2> dofs() const;
-    xt::xtensor<size_t,2> controlDofs() const;
-    xt::xtensor<size_t,1> controlNodes() const;
+    xt::xtensor<double, 2> coor() const;
+    xt::xtensor<size_t, 2> dofs() const;
+    xt::xtensor<size_t, 2> controlDofs() const;
+    xt::xtensor<size_t, 1> controlNodes() const;
 
 private:
-    xt::xtensor<double,2> m_coor;
-    xt::xtensor<size_t,2> m_dofs;
-    xt::xtensor<size_t,2> m_control_dofs;
-    xt::xtensor<size_t,1> m_control_nodes;
+    xt::xtensor<double, 2> m_coor;
+    xt::xtensor<size_t, 2> m_dofs;
+    xt::xtensor<size_t, 2> m_control_dofs;
+    xt::xtensor<size_t, 1> m_control_nodes;
 };
 
 } // namespace Tyings

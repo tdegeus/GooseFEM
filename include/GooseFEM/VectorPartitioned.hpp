@@ -13,9 +13,9 @@
 namespace GooseFEM {
 
 inline VectorPartitioned::VectorPartitioned(
-    const xt::xtensor<size_t,2>& conn,
-    const xt::xtensor<size_t,2>& dofs,
-    const xt::xtensor<size_t,1>& iip)
+    const xt::xtensor<size_t, 2>& conn,
+    const xt::xtensor<size_t, 2>& dofs,
+    const xt::xtensor<size_t, 1>& iip)
     : m_conn(conn), m_dofs(dofs), m_iip(iip)
 {
     m_nelem = m_conn.shape(0);
@@ -68,39 +68,41 @@ inline size_t VectorPartitioned::nnp() const
     return m_nnp;
 }
 
-inline xt::xtensor<size_t,2> VectorPartitioned::dofs() const
+inline xt::xtensor<size_t, 2> VectorPartitioned::dofs() const
 {
     return m_dofs;
 }
 
-inline xt::xtensor<size_t,1> VectorPartitioned::iiu() const
+inline xt::xtensor<size_t, 1> VectorPartitioned::iiu() const
 {
     return m_iiu;
 }
 
-inline xt::xtensor<size_t,1> VectorPartitioned::iip() const
+inline xt::xtensor<size_t, 1> VectorPartitioned::iip() const
 {
     return m_iip;
 }
 
 inline void VectorPartitioned::copy(
-    const xt::xtensor<double,2>& nodevec_src, xt::xtensor<double,2>& nodevec_dest) const
+    const xt::xtensor<double, 2>& nodevec_src, xt::xtensor<double, 2>& nodevec_dest) const
 {
     GOOSEFEM_ASSERT(
         nodevec_src.shape() == std::decay_t<decltype(nodevec_src)>::shape_type({m_nnode, m_ndim}));
     GOOSEFEM_ASSERT(
-        nodevec_dest.shape() == std::decay_t<decltype(nodevec_dest)>::shape_type({m_nnode,m_ndim}));
+        nodevec_dest.shape() ==
+        std::decay_t<decltype(nodevec_dest)>::shape_type({m_nnode, m_ndim}));
 
     xt::noalias(nodevec_dest) = nodevec_src;
 }
 
 inline void VectorPartitioned::copy_u(
-    const xt::xtensor<double,2>& nodevec_src, xt::xtensor<double,2>& nodevec_dest) const
+    const xt::xtensor<double, 2>& nodevec_src, xt::xtensor<double, 2>& nodevec_dest) const
 {
     GOOSEFEM_ASSERT(
         nodevec_src.shape() == std::decay_t<decltype(nodevec_src)>::shape_type({m_nnode, m_ndim}));
     GOOSEFEM_ASSERT(
-        nodevec_dest.shape() == std::decay_t<decltype(nodevec_dest)>::shape_type({m_nnode,m_ndim}));
+        nodevec_dest.shape() ==
+        std::decay_t<decltype(nodevec_dest)>::shape_type({m_nnode, m_ndim}));
 
     #pragma omp parallel for
     for (size_t m = 0; m < m_nnode; ++m) {
@@ -113,7 +115,7 @@ inline void VectorPartitioned::copy_u(
 }
 
 inline void VectorPartitioned::copy_p(
-    const xt::xtensor<double,2>& nodevec_src, xt::xtensor<double,2>& nodevec_dest) const
+    const xt::xtensor<double, 2>& nodevec_src, xt::xtensor<double, 2>& nodevec_dest) const
 {
     GOOSEFEM_ASSERT(
         nodevec_src.shape() == std::decay_t<decltype(nodevec_src)>::shape_type({m_nnode, m_ndim}));
@@ -132,9 +134,9 @@ inline void VectorPartitioned::copy_p(
 }
 
 inline void VectorPartitioned::asDofs(
-    const xt::xtensor<double,1>& dofval_u,
-    const xt::xtensor<double,1>& dofval_p,
-    xt::xtensor<double,1>& dofval) const
+    const xt::xtensor<double, 1>& dofval_u,
+    const xt::xtensor<double, 1>& dofval_p,
+    xt::xtensor<double, 1>& dofval) const
 {
     GOOSEFEM_ASSERT(dofval_u.size() == m_nnu);
     GOOSEFEM_ASSERT(dofval_p.size() == m_nnp);
@@ -152,7 +154,7 @@ inline void VectorPartitioned::asDofs(
 }
 
 inline void VectorPartitioned::asDofs(
-    const xt::xtensor<double,2>& nodevec, xt::xtensor<double,1>& dofval) const
+    const xt::xtensor<double, 2>& nodevec, xt::xtensor<double, 1>& dofval) const
 {
     GOOSEFEM_ASSERT(
         nodevec.shape() == std::decay_t<decltype(nodevec)>::shape_type({m_nnode, m_ndim}));
@@ -167,7 +169,7 @@ inline void VectorPartitioned::asDofs(
 }
 
 inline void VectorPartitioned::asDofs_u(
-    const xt::xtensor<double,1>& dofval, xt::xtensor<double,1>& dofval_u) const
+    const xt::xtensor<double, 1>& dofval, xt::xtensor<double, 1>& dofval_u) const
 {
     GOOSEFEM_ASSERT(dofval.size() == m_ndof);
     GOOSEFEM_ASSERT(dofval_u.size() == m_nnu);
@@ -179,7 +181,7 @@ inline void VectorPartitioned::asDofs_u(
 }
 
 inline void VectorPartitioned::asDofs_u(
-    const xt::xtensor<double,2>& nodevec, xt::xtensor<double,1>& dofval_u) const
+    const xt::xtensor<double, 2>& nodevec, xt::xtensor<double, 1>& dofval_u) const
 {
     GOOSEFEM_ASSERT(
         nodevec.shape() == std::decay_t<decltype(nodevec)>::shape_type({m_nnode, m_ndim}));
@@ -196,7 +198,7 @@ inline void VectorPartitioned::asDofs_u(
 }
 
 inline void VectorPartitioned::asDofs_p(
-    const xt::xtensor<double,1>& dofval, xt::xtensor<double,1>& dofval_p) const
+    const xt::xtensor<double, 1>& dofval, xt::xtensor<double, 1>& dofval_p) const
 {
     GOOSEFEM_ASSERT(dofval.size() == m_ndof);
     GOOSEFEM_ASSERT(dofval_p.size() == m_nnp);
@@ -208,7 +210,7 @@ inline void VectorPartitioned::asDofs_p(
 }
 
 inline void VectorPartitioned::asDofs_p(
-    const xt::xtensor<double,2>& nodevec, xt::xtensor<double,1>& dofval_p) const
+    const xt::xtensor<double, 2>& nodevec, xt::xtensor<double, 1>& dofval_p) const
 {
     GOOSEFEM_ASSERT(
         nodevec.shape() == std::decay_t<decltype(nodevec)>::shape_type({m_nnode, m_ndim}));
@@ -225,7 +227,7 @@ inline void VectorPartitioned::asDofs_p(
 }
 
 inline void VectorPartitioned::asDofs(
-    const xt::xtensor<double,3>& elemvec, xt::xtensor<double,1>& dofval) const
+    const xt::xtensor<double, 3>& elemvec, xt::xtensor<double, 1>& dofval) const
 {
     GOOSEFEM_ASSERT(
         elemvec.shape() == std::decay_t<decltype(elemvec)>::shape_type({m_nelem, m_nne, m_ndim}));
@@ -242,7 +244,7 @@ inline void VectorPartitioned::asDofs(
 }
 
 inline void VectorPartitioned::asDofs_u(
-    const xt::xtensor<double,3>& elemvec, xt::xtensor<double,1>& dofval_u) const
+    const xt::xtensor<double, 3>& elemvec, xt::xtensor<double, 1>& dofval_u) const
 {
     GOOSEFEM_ASSERT(
         elemvec.shape() == std::decay_t<decltype(elemvec)>::shape_type({m_nelem, m_nne, m_ndim}));
@@ -261,7 +263,7 @@ inline void VectorPartitioned::asDofs_u(
 }
 
 inline void VectorPartitioned::asDofs_p(
-    const xt::xtensor<double,3>& elemvec, xt::xtensor<double,1>& dofval_p) const
+    const xt::xtensor<double, 3>& elemvec, xt::xtensor<double, 1>& dofval_p) const
 {
     GOOSEFEM_ASSERT(
         elemvec.shape() == std::decay_t<decltype(elemvec)>::shape_type({m_nelem, m_nne, m_ndim}));
@@ -280,7 +282,7 @@ inline void VectorPartitioned::asDofs_p(
 }
 
 inline void VectorPartitioned::asNode(
-    const xt::xtensor<double,1>& dofval, xt::xtensor<double,2>& nodevec) const
+    const xt::xtensor<double, 1>& dofval, xt::xtensor<double, 2>& nodevec) const
 {
     GOOSEFEM_ASSERT(dofval.size() == m_ndof);
     GOOSEFEM_ASSERT(
@@ -295,9 +297,9 @@ inline void VectorPartitioned::asNode(
 }
 
 inline void VectorPartitioned::asNode(
-    const xt::xtensor<double,1>& dofval_u,
-    const xt::xtensor<double,1>& dofval_p,
-    xt::xtensor<double,2>& nodevec) const
+    const xt::xtensor<double, 1>& dofval_u,
+    const xt::xtensor<double, 1>& dofval_p,
+    xt::xtensor<double, 2>& nodevec) const
 {
     GOOSEFEM_ASSERT(dofval_u.size() == m_nnu);
     GOOSEFEM_ASSERT(dofval_p.size() == m_nnp);
@@ -318,7 +320,7 @@ inline void VectorPartitioned::asNode(
 }
 
 inline void VectorPartitioned::asNode(
-    const xt::xtensor<double,3>& elemvec, xt::xtensor<double,2>& nodevec) const
+    const xt::xtensor<double, 3>& elemvec, xt::xtensor<double, 2>& nodevec) const
 {
     GOOSEFEM_ASSERT(
         elemvec.shape() == std::decay_t<decltype(elemvec)>::shape_type({m_nelem, m_nne, m_ndim}));
@@ -336,7 +338,7 @@ inline void VectorPartitioned::asNode(
 }
 
 inline void VectorPartitioned::asElement(
-    const xt::xtensor<double,1>& dofval, xt::xtensor<double,3>& elemvec) const
+    const xt::xtensor<double, 1>& dofval, xt::xtensor<double, 3>& elemvec) const
 {
     GOOSEFEM_ASSERT(dofval.size() == m_ndof);
     GOOSEFEM_ASSERT(
@@ -353,9 +355,9 @@ inline void VectorPartitioned::asElement(
 }
 
 inline void VectorPartitioned::asElement(
-    const xt::xtensor<double,1>& dofval_u,
-    const xt::xtensor<double,1>& dofval_p,
-    xt::xtensor<double,3>& elemvec) const
+    const xt::xtensor<double, 1>& dofval_u,
+    const xt::xtensor<double, 1>& dofval_p,
+    xt::xtensor<double, 3>& elemvec) const
 {
     GOOSEFEM_ASSERT(dofval_u.size() == m_nnu);
     GOOSEFEM_ASSERT(dofval_p.size() == m_nnp);
@@ -378,7 +380,7 @@ inline void VectorPartitioned::asElement(
 }
 
 inline void VectorPartitioned::asElement(
-    const xt::xtensor<double,2>& nodevec, xt::xtensor<double,3>& elemvec) const
+    const xt::xtensor<double, 2>& nodevec, xt::xtensor<double, 3>& elemvec) const
 {
     GOOSEFEM_ASSERT(
         nodevec.shape() == std::decay_t<decltype(nodevec)>::shape_type({m_nnode, m_ndim}));
@@ -396,7 +398,7 @@ inline void VectorPartitioned::asElement(
 }
 
 inline void VectorPartitioned::assembleDofs(
-    const xt::xtensor<double,2>& nodevec, xt::xtensor<double,1>& dofval) const
+    const xt::xtensor<double, 2>& nodevec, xt::xtensor<double, 1>& dofval) const
 {
     GOOSEFEM_ASSERT(
         nodevec.shape() == std::decay_t<decltype(nodevec)>::shape_type({m_nnode, m_ndim}));
@@ -412,7 +414,7 @@ inline void VectorPartitioned::assembleDofs(
 }
 
 inline void VectorPartitioned::assembleDofs_u(
-    const xt::xtensor<double,2>& nodevec, xt::xtensor<double,1>& dofval_u) const
+    const xt::xtensor<double, 2>& nodevec, xt::xtensor<double, 1>& dofval_u) const
 {
     GOOSEFEM_ASSERT(
         nodevec.shape() == std::decay_t<decltype(nodevec)>::shape_type({m_nnode, m_ndim}));
@@ -430,7 +432,7 @@ inline void VectorPartitioned::assembleDofs_u(
 }
 
 inline void VectorPartitioned::assembleDofs_p(
-    const xt::xtensor<double,2>& nodevec, xt::xtensor<double,1>& dofval_p) const
+    const xt::xtensor<double, 2>& nodevec, xt::xtensor<double, 1>& dofval_p) const
 {
     GOOSEFEM_ASSERT(
         nodevec.shape() == std::decay_t<decltype(nodevec)>::shape_type({m_nnode, m_ndim}));
@@ -448,7 +450,7 @@ inline void VectorPartitioned::assembleDofs_p(
 }
 
 inline void VectorPartitioned::assembleDofs(
-    const xt::xtensor<double,3>& elemvec, xt::xtensor<double,1>& dofval) const
+    const xt::xtensor<double, 3>& elemvec, xt::xtensor<double, 1>& dofval) const
 {
     GOOSEFEM_ASSERT(
         elemvec.shape() == std::decay_t<decltype(elemvec)>::shape_type({m_nelem, m_nne, m_ndim}));
@@ -466,7 +468,7 @@ inline void VectorPartitioned::assembleDofs(
 }
 
 inline void VectorPartitioned::assembleDofs_u(
-    const xt::xtensor<double,3>& elemvec, xt::xtensor<double,1>& dofval_u) const
+    const xt::xtensor<double, 3>& elemvec, xt::xtensor<double, 1>& dofval_u) const
 {
     GOOSEFEM_ASSERT(
         elemvec.shape() == std::decay_t<decltype(elemvec)>::shape_type({m_nelem, m_nne, m_ndim}));
@@ -486,7 +488,7 @@ inline void VectorPartitioned::assembleDofs_u(
 }
 
 inline void VectorPartitioned::assembleDofs_p(
-    const xt::xtensor<double,3>& elemvec, xt::xtensor<double,1>& dofval_p) const
+    const xt::xtensor<double, 3>& elemvec, xt::xtensor<double, 1>& dofval_p) const
 {
     GOOSEFEM_ASSERT(
         elemvec.shape() == std::decay_t<decltype(elemvec)>::shape_type({m_nelem, m_nne, m_ndim}));
@@ -506,209 +508,209 @@ inline void VectorPartitioned::assembleDofs_p(
 }
 
 inline void VectorPartitioned::assembleNode(
-    const xt::xtensor<double,3>& elemvec, xt::xtensor<double,2>& nodevec) const
+    const xt::xtensor<double, 3>& elemvec, xt::xtensor<double, 2>& nodevec) const
 {
     GOOSEFEM_ASSERT(
         elemvec.shape() == std::decay_t<decltype(elemvec)>::shape_type({m_nelem, m_nne, m_ndim}));
     GOOSEFEM_ASSERT(
         nodevec.shape() == std::decay_t<decltype(nodevec)>::shape_type({m_nnode, m_ndim}));
 
-    xt::xtensor<double,1> dofval = this->AssembleDofs(elemvec);
+    xt::xtensor<double, 1> dofval = this->AssembleDofs(elemvec);
     this->asNode(dofval, nodevec);
 }
 
-inline xt::xtensor<double,1> VectorPartitioned::AsDofs(
-    const xt::xtensor<double,1>& dofval_u, const xt::xtensor<double,1>& dofval_p) const
+inline xt::xtensor<double, 1> VectorPartitioned::AsDofs(
+    const xt::xtensor<double, 1>& dofval_u, const xt::xtensor<double, 1>& dofval_p) const
 {
-    xt::xtensor<double,1> dofval = xt::empty<double>({m_ndof});
+    xt::xtensor<double, 1> dofval = xt::empty<double>({m_ndof});
     this->asDofs(dofval_u, dofval_p, dofval);
     return dofval;
 }
 
-inline xt::xtensor<double,1> VectorPartitioned::AsDofs(const xt::xtensor<double,2>& nodevec) const
+inline xt::xtensor<double, 1> VectorPartitioned::AsDofs(const xt::xtensor<double, 2>& nodevec) const
 {
-    xt::xtensor<double,1> dofval = xt::empty<double>({m_ndof});
+    xt::xtensor<double, 1> dofval = xt::empty<double>({m_ndof});
     this->asDofs(nodevec, dofval);
     return dofval;
 }
 
-inline xt::xtensor<double,1>
-VectorPartitioned::AsDofs_u(const xt::xtensor<double,1>& dofval) const
+inline xt::xtensor<double, 1>
+VectorPartitioned::AsDofs_u(const xt::xtensor<double, 1>& dofval) const
 {
-    xt::xtensor<double,1> dofval_u = xt::empty<double>({m_nnu});
+    xt::xtensor<double, 1> dofval_u = xt::empty<double>({m_nnu});
     this->asDofs_u(dofval, dofval_u);
     return dofval_u;
 }
 
-inline xt::xtensor<double,1>
-VectorPartitioned::AsDofs_u(const xt::xtensor<double,2>& nodevec) const
+inline xt::xtensor<double, 1>
+VectorPartitioned::AsDofs_u(const xt::xtensor<double, 2>& nodevec) const
 {
-    xt::xtensor<double,1> dofval_u = xt::empty<double>({m_nnu});
+    xt::xtensor<double, 1> dofval_u = xt::empty<double>({m_nnu});
     this->asDofs_u(nodevec, dofval_u);
     return dofval_u;
 }
 
-inline xt::xtensor<double,1>
-VectorPartitioned::AsDofs_p(const xt::xtensor<double,1>& dofval) const
+inline xt::xtensor<double, 1>
+VectorPartitioned::AsDofs_p(const xt::xtensor<double, 1>& dofval) const
 {
-    xt::xtensor<double,1> dofval_p = xt::empty<double>({m_nnp});
+    xt::xtensor<double, 1> dofval_p = xt::empty<double>({m_nnp});
     this->asDofs_p(dofval, dofval_p);
     return dofval_p;
 }
 
-inline xt::xtensor<double,1>
-VectorPartitioned::AsDofs_p(const xt::xtensor<double,2>& nodevec) const
+inline xt::xtensor<double, 1>
+VectorPartitioned::AsDofs_p(const xt::xtensor<double, 2>& nodevec) const
 {
-    xt::xtensor<double,1> dofval_p = xt::empty<double>({m_nnp});
+    xt::xtensor<double, 1> dofval_p = xt::empty<double>({m_nnp});
     this->asDofs_p(nodevec, dofval_p);
     return dofval_p;
 }
 
-inline xt::xtensor<double,1> VectorPartitioned::AsDofs(const xt::xtensor<double,3>& elemvec) const
+inline xt::xtensor<double, 1> VectorPartitioned::AsDofs(const xt::xtensor<double, 3>& elemvec) const
 {
-    xt::xtensor<double,1> dofval = xt::empty<double>({m_ndof});
+    xt::xtensor<double, 1> dofval = xt::empty<double>({m_ndof});
     this->asDofs(elemvec, dofval);
     return dofval;
 }
 
-inline xt::xtensor<double,1>
-VectorPartitioned::AsDofs_u(const xt::xtensor<double,3>& elemvec) const
+inline xt::xtensor<double, 1>
+VectorPartitioned::AsDofs_u(const xt::xtensor<double, 3>& elemvec) const
 {
-    xt::xtensor<double,1> dofval_u = xt::empty<double>({m_nnu});
+    xt::xtensor<double, 1> dofval_u = xt::empty<double>({m_nnu});
     this->asDofs_u(elemvec, dofval_u);
     return dofval_u;
 }
 
-inline xt::xtensor<double,1>
-VectorPartitioned::AsDofs_p(const xt::xtensor<double,3>& elemvec) const
+inline xt::xtensor<double, 1>
+VectorPartitioned::AsDofs_p(const xt::xtensor<double, 3>& elemvec) const
 {
-    xt::xtensor<double,1> dofval_p = xt::empty<double>({m_nnp});
+    xt::xtensor<double, 1> dofval_p = xt::empty<double>({m_nnp});
     this->asDofs_p(elemvec, dofval_p);
     return dofval_p;
 }
 
-inline xt::xtensor<double,2> VectorPartitioned::AsNode(const xt::xtensor<double,1>& dofval) const
+inline xt::xtensor<double, 2> VectorPartitioned::AsNode(const xt::xtensor<double, 1>& dofval) const
 {
-    xt::xtensor<double,2> nodevec = xt::empty<double>({m_nnode, m_ndim});
+    xt::xtensor<double, 2> nodevec = xt::empty<double>({m_nnode, m_ndim});
     this->asNode(dofval, nodevec);
     return nodevec;
 }
 
-inline xt::xtensor<double,2> VectorPartitioned::AsNode(
-    const xt::xtensor<double,1>& dofval_u, const xt::xtensor<double,1>& dofval_p) const
+inline xt::xtensor<double, 2> VectorPartitioned::AsNode(
+    const xt::xtensor<double, 1>& dofval_u, const xt::xtensor<double, 1>& dofval_p) const
 {
-    xt::xtensor<double,2> nodevec = xt::empty<double>({m_nnode, m_ndim});
+    xt::xtensor<double, 2> nodevec = xt::empty<double>({m_nnode, m_ndim});
     this->asNode(dofval_u, dofval_p, nodevec);
     return nodevec;
 }
 
-inline xt::xtensor<double,2> VectorPartitioned::AsNode(const xt::xtensor<double,3>& elemvec) const
+inline xt::xtensor<double, 2> VectorPartitioned::AsNode(const xt::xtensor<double, 3>& elemvec) const
 {
-    xt::xtensor<double,2> nodevec = xt::empty<double>({m_nnode, m_ndim});
+    xt::xtensor<double, 2> nodevec = xt::empty<double>({m_nnode, m_ndim});
     this->asNode(elemvec, nodevec);
     return nodevec;
 }
 
-inline xt::xtensor<double,3>
-VectorPartitioned::AsElement(const xt::xtensor<double,1>& dofval) const
+inline xt::xtensor<double, 3>
+VectorPartitioned::AsElement(const xt::xtensor<double, 1>& dofval) const
 {
-    xt::xtensor<double,3> elemvec = xt::empty<double>({m_nelem, m_nne, m_ndim});
+    xt::xtensor<double, 3> elemvec = xt::empty<double>({m_nelem, m_nne, m_ndim});
     this->asElement(dofval, elemvec);
     return elemvec;
 }
 
-inline xt::xtensor<double,3> VectorPartitioned::AsElement(
-    const xt::xtensor<double,1>& dofval_u, const xt::xtensor<double,1>& dofval_p) const
+inline xt::xtensor<double, 3> VectorPartitioned::AsElement(
+    const xt::xtensor<double, 1>& dofval_u, const xt::xtensor<double, 1>& dofval_p) const
 {
-    xt::xtensor<double,3> elemvec = xt::empty<double>({m_nelem, m_nne, m_ndim});
+    xt::xtensor<double, 3> elemvec = xt::empty<double>({m_nelem, m_nne, m_ndim});
     this->asElement(dofval_u, dofval_p, elemvec);
     return elemvec;
 }
 
-inline xt::xtensor<double,3>
-VectorPartitioned::AsElement(const xt::xtensor<double,2>& nodevec) const
+inline xt::xtensor<double, 3>
+VectorPartitioned::AsElement(const xt::xtensor<double, 2>& nodevec) const
 {
-    xt::xtensor<double,3> elemvec = xt::empty<double>({m_nelem, m_nne, m_ndim});
+    xt::xtensor<double, 3> elemvec = xt::empty<double>({m_nelem, m_nne, m_ndim});
     this->asElement(nodevec, elemvec);
     return elemvec;
 }
 
-inline xt::xtensor<double,1>
-VectorPartitioned::AssembleDofs(const xt::xtensor<double,2>& nodevec) const
+inline xt::xtensor<double, 1>
+VectorPartitioned::AssembleDofs(const xt::xtensor<double, 2>& nodevec) const
 {
-    xt::xtensor<double,1> dofval = xt::empty<double>({m_ndof});
+    xt::xtensor<double, 1> dofval = xt::empty<double>({m_ndof});
     this->assembleDofs(nodevec, dofval);
     return dofval;
 }
 
-inline xt::xtensor<double,1>
-VectorPartitioned::AssembleDofs_u(const xt::xtensor<double,2>& nodevec) const
+inline xt::xtensor<double, 1>
+VectorPartitioned::AssembleDofs_u(const xt::xtensor<double, 2>& nodevec) const
 {
-    xt::xtensor<double,1> dofval_u = xt::empty<double>({m_nnu});
+    xt::xtensor<double, 1> dofval_u = xt::empty<double>({m_nnu});
     this->assembleDofs_u(nodevec, dofval_u);
     return dofval_u;
 }
 
-inline xt::xtensor<double,1>
-VectorPartitioned::AssembleDofs_p(const xt::xtensor<double,2>& nodevec) const
+inline xt::xtensor<double, 1>
+VectorPartitioned::AssembleDofs_p(const xt::xtensor<double, 2>& nodevec) const
 {
-    xt::xtensor<double,1> dofval_p = xt::empty<double>({m_nnp});
+    xt::xtensor<double, 1> dofval_p = xt::empty<double>({m_nnp});
     this->assembleDofs_p(nodevec, dofval_p);
     return dofval_p;
 }
 
-inline xt::xtensor<double,1>
-VectorPartitioned::AssembleDofs(const xt::xtensor<double,3>& elemvec) const
+inline xt::xtensor<double, 1>
+VectorPartitioned::AssembleDofs(const xt::xtensor<double, 3>& elemvec) const
 {
-    xt::xtensor<double,1> dofval = xt::empty<double>({m_ndof});
+    xt::xtensor<double, 1> dofval = xt::empty<double>({m_ndof});
     this->assembleDofs(elemvec, dofval);
     return dofval;
 }
 
-inline xt::xtensor<double,1>
-VectorPartitioned::AssembleDofs_u(const xt::xtensor<double,3>& elemvec) const
+inline xt::xtensor<double, 1>
+VectorPartitioned::AssembleDofs_u(const xt::xtensor<double, 3>& elemvec) const
 {
-    xt::xtensor<double,1> dofval_u = xt::empty<double>({m_nnu});
+    xt::xtensor<double, 1> dofval_u = xt::empty<double>({m_nnu});
     this->assembleDofs_u(elemvec, dofval_u);
     return dofval_u;
 }
 
-inline xt::xtensor<double,1>
-VectorPartitioned::AssembleDofs_p(const xt::xtensor<double,3>& elemvec) const
+inline xt::xtensor<double, 1>
+VectorPartitioned::AssembleDofs_p(const xt::xtensor<double, 3>& elemvec) const
 {
-    xt::xtensor<double,1> dofval_p = xt::empty<double>({m_nnp});
+    xt::xtensor<double, 1> dofval_p = xt::empty<double>({m_nnp});
     this->assembleDofs_p(elemvec, dofval_p);
     return dofval_p;
 }
 
-inline xt::xtensor<double,2>
-VectorPartitioned::AssembleNode(const xt::xtensor<double,3>& elemvec) const
+inline xt::xtensor<double, 2>
+VectorPartitioned::AssembleNode(const xt::xtensor<double, 3>& elemvec) const
 {
-    xt::xtensor<double,2> nodevec = xt::empty<double>({m_nnode, m_ndim});
+    xt::xtensor<double, 2> nodevec = xt::empty<double>({m_nnode, m_ndim});
     this->assembleNode(elemvec, nodevec);
     return nodevec;
 }
 
-inline xt::xtensor<double,2> VectorPartitioned::Copy(
-    const xt::xtensor<double,2>& nodevec_src, const xt::xtensor<double,2>& nodevec_dest) const
+inline xt::xtensor<double, 2> VectorPartitioned::Copy(
+    const xt::xtensor<double, 2>& nodevec_src, const xt::xtensor<double, 2>& nodevec_dest) const
 {
-    xt::xtensor<double,2> out = nodevec_dest;
+    xt::xtensor<double, 2> out = nodevec_dest;
     this->copy(nodevec_src, out);
     return out;
 }
 
-inline xt::xtensor<double,2> VectorPartitioned::Copy_u(
-    const xt::xtensor<double,2>& nodevec_src, const xt::xtensor<double,2>& nodevec_dest) const
+inline xt::xtensor<double, 2> VectorPartitioned::Copy_u(
+    const xt::xtensor<double, 2>& nodevec_src, const xt::xtensor<double, 2>& nodevec_dest) const
 {
-    xt::xtensor<double,2> out = nodevec_dest;
+    xt::xtensor<double, 2> out = nodevec_dest;
     this->copy_u(nodevec_src, out);
     return out;
 }
 
-inline xt::xtensor<double,2> VectorPartitioned::Copy_p(
-    const xt::xtensor<double,2>& nodevec_src, const xt::xtensor<double,2>& nodevec_dest) const
+inline xt::xtensor<double, 2> VectorPartitioned::Copy_p(
+    const xt::xtensor<double, 2>& nodevec_src, const xt::xtensor<double, 2>& nodevec_dest) const
 {
-    xt::xtensor<double,2> out = nodevec_dest;
+    xt::xtensor<double, 2> out = nodevec_dest;
     this->copy_p(nodevec_src, out);
     return out;
 }

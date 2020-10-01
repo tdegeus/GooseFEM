@@ -40,20 +40,20 @@ public:
     ElementType getElementType() const;
 
     // mesh
-    xt::xtensor<double,2> coor() const; // nodal positions [nnode, ndim]
-    xt::xtensor<size_t,2> conn() const; // connectivity [nelem, nne]
+    xt::xtensor<double, 2> coor() const; // nodal positions [nnode, ndim]
+    xt::xtensor<size_t, 2> conn() const; // connectivity [nelem, nne]
 
     // boundary nodes: edges
-    xt::xtensor<size_t,1> nodesBottomEdge() const;
-    xt::xtensor<size_t,1> nodesTopEdge() const;
-    xt::xtensor<size_t,1> nodesLeftEdge() const;
-    xt::xtensor<size_t,1> nodesRightEdge() const;
+    xt::xtensor<size_t, 1> nodesBottomEdge() const;
+    xt::xtensor<size_t, 1> nodesTopEdge() const;
+    xt::xtensor<size_t, 1> nodesLeftEdge() const;
+    xt::xtensor<size_t, 1> nodesRightEdge() const;
 
     // boundary nodes: edges, without corners
-    xt::xtensor<size_t,1> nodesBottomOpenEdge() const;
-    xt::xtensor<size_t,1> nodesTopOpenEdge() const;
-    xt::xtensor<size_t,1> nodesLeftOpenEdge() const;
-    xt::xtensor<size_t,1> nodesRightOpenEdge() const;
+    xt::xtensor<size_t, 1> nodesBottomOpenEdge() const;
+    xt::xtensor<size_t, 1> nodesTopOpenEdge() const;
+    xt::xtensor<size_t, 1> nodesLeftOpenEdge() const;
+    xt::xtensor<size_t, 1> nodesRightOpenEdge() const;
 
     // boundary nodes: corners (including aliases)
     size_t nodesBottomLeftCorner() const;
@@ -66,19 +66,19 @@ public:
     size_t nodesRightTopCorner() const;
 
     // DOF-numbers for each component of each node (sequential)
-    xt::xtensor<size_t,2> dofs() const;
+    xt::xtensor<size_t, 2> dofs() const;
 
     // DOF-numbers for the case that the periodicity if fully eliminated
-    xt::xtensor<size_t,2> dofsPeriodic() const;
+    xt::xtensor<size_t, 2> dofsPeriodic() const;
 
     // periodic node pairs [:,2]: (independent, dependent)
-    xt::xtensor<size_t,2> nodesPeriodic() const;
+    xt::xtensor<size_t, 2> nodesPeriodic() const;
 
     // front-bottom-left node, used as reference for periodicity
     size_t nodesOrigin() const;
 
     // element numbers as matrix
-    xt::xtensor<size_t,2> elementMatrix() const;
+    xt::xtensor<size_t, 2> elementMatrix() const;
 
 private:
     double m_h;                     // elementary element edge-size (in all directions)
@@ -115,23 +115,23 @@ public:
     ElementType getElementType() const;
 
     // mesh
-    xt::xtensor<double,2> coor() const; // nodal positions [nnode, ndim]
-    xt::xtensor<size_t,2> conn() const; // connectivity [nelem, nne]
+    xt::xtensor<double, 2> coor() const; // nodal positions [nnode, ndim]
+    xt::xtensor<size_t, 2> conn() const; // connectivity [nelem, nne]
 
     // element sets
-    xt::xtensor<size_t,1> elementsMiddleLayer() const; // elements in the middle (fine) layer
+    xt::xtensor<size_t, 1> elementsMiddleLayer() const; // elements in the middle (fine) layer
 
     // boundary nodes: edges
-    xt::xtensor<size_t,1> nodesBottomEdge() const;
-    xt::xtensor<size_t,1> nodesTopEdge() const;
-    xt::xtensor<size_t,1> nodesLeftEdge() const;
-    xt::xtensor<size_t,1> nodesRightEdge() const;
+    xt::xtensor<size_t, 1> nodesBottomEdge() const;
+    xt::xtensor<size_t, 1> nodesTopEdge() const;
+    xt::xtensor<size_t, 1> nodesLeftEdge() const;
+    xt::xtensor<size_t, 1> nodesRightEdge() const;
 
     // boundary nodes: edges, without corners
-    xt::xtensor<size_t,1> nodesBottomOpenEdge() const;
-    xt::xtensor<size_t,1> nodesTopOpenEdge() const;
-    xt::xtensor<size_t,1> nodesLeftOpenEdge() const;
-    xt::xtensor<size_t,1> nodesRightOpenEdge() const;
+    xt::xtensor<size_t, 1> nodesBottomOpenEdge() const;
+    xt::xtensor<size_t, 1> nodesTopOpenEdge() const;
+    xt::xtensor<size_t, 1> nodesLeftOpenEdge() const;
+    xt::xtensor<size_t, 1> nodesRightOpenEdge() const;
 
     // boundary nodes: corners (including aliases)
     size_t nodesBottomLeftCorner() const;
@@ -144,31 +144,31 @@ public:
     size_t nodesRightTopCorner() const;
 
     // DOF-numbers for each component of each node (sequential)
-    xt::xtensor<size_t,2> dofs() const;
+    xt::xtensor<size_t, 2> dofs() const;
 
     // DOF-numbers for the case that the periodicity if fully eliminated
-    xt::xtensor<size_t,2> dofsPeriodic() const;
+    xt::xtensor<size_t, 2> dofsPeriodic() const;
 
     // periodic node pairs [:,2]: (independent, dependent)
-    xt::xtensor<size_t,2> nodesPeriodic() const;
+    xt::xtensor<size_t, 2> nodesPeriodic() const;
 
     // front-bottom-left node, used as reference for periodicity
     size_t nodesOrigin() const;
 
 private:
-    double m_h;                        // elementary element edge-size (in all directions)
-    double m_Lx;                       // mesh size in "x"
-    size_t m_nelem;                    // number of elements
-    size_t m_nnode;                    // number of nodes
-    static const size_t m_nne = 4;     // number of nodes-per-element
-    static const size_t m_ndim = 2;    // number of dimensions
-    xt::xtensor<size_t,1> m_nelx;      // number of elements in "x" (*)
-    xt::xtensor<size_t,1> m_nnd;       // total number of nodes in the main node layer (**)
-    xt::xtensor<size_t,1> m_nhx;       // element size in x-direction (*)
-    xt::xtensor<size_t,1> m_nhy;       // element size in y-direction (*)
-    xt::xtensor<int,1> m_refine;       // refine direction (-1:no refine, 0:"x" (*)
-    xt::xtensor<size_t,1> m_startElem; // start element (*)
-    xt::xtensor<size_t,1> m_startNode; // start node (**)
+    double m_h;                         // elementary element edge-size (in all directions)
+    double m_Lx;                        // mesh size in "x"
+    size_t m_nelem;                     // number of elements
+    size_t m_nnode;                     // number of nodes
+    static const size_t m_nne = 4;      // number of nodes-per-element
+    static const size_t m_ndim = 2;     // number of dimensions
+    xt::xtensor<size_t, 1> m_nelx;      // number of elements in "x" (*)
+    xt::xtensor<size_t, 1> m_nnd;       // total number of nodes in the main node layer (**)
+    xt::xtensor<size_t, 1> m_nhx;       // element size in x-direction (*)
+    xt::xtensor<size_t, 1> m_nhy;       // element size in y-direction (*)
+    xt::xtensor<int, 1> m_refine;       // refine direction (-1:no refine, 0:"x" (*)
+    xt::xtensor<size_t, 1> m_startElem; // start element (*)
+    xt::xtensor<size_t, 1> m_startNode; // start node (**)
     // (*) per element layer in "y"
     // (**) per node layer in "y"
 
@@ -193,17 +193,17 @@ public:
     GooseFEM::Mesh::Quad4::Regular getFineMesh() const;
 
     // elements of the Fine mesh per element of the Coarse mesh
-    xt::xtensor<size_t,2> getMap() const;
+    xt::xtensor<size_t, 2> getMap() const;
 
     // map field
-    xt::xtensor<double,2> mapToCoarse(const xt::xtensor<double,1>& data) const; // scalar per el
-    xt::xtensor<double,2> mapToCoarse(const xt::xtensor<double,2>& data) const; // scalar per intpnt
-    xt::xtensor<double,4> mapToCoarse(const xt::xtensor<double,4>& data) const; // tensor per intpnt
+    xt::xtensor<double, 2> mapToCoarse(const xt::xtensor<double, 1>& data) const; // scalar per el
+    xt::xtensor<double, 2> mapToCoarse(const xt::xtensor<double, 2>& data) const; // scalar per intpnt
+    xt::xtensor<double, 4> mapToCoarse(const xt::xtensor<double, 4>& data) const; // tensor per intpnt
 
     // map field
-    xt::xtensor<double,1> mapToFine(const xt::xtensor<double,1>& data) const; // scalar per el
-    xt::xtensor<double,2> mapToFine(const xt::xtensor<double,2>& data) const; // scalar per intpnt
-    xt::xtensor<double,4> mapToFine(const xt::xtensor<double,4>& data) const; // tensor per intpnt
+    xt::xtensor<double, 1> mapToFine(const xt::xtensor<double, 1>& data) const; // scalar per el
+    xt::xtensor<double, 2> mapToFine(const xt::xtensor<double, 2>& data) const; // scalar per intpnt
+    xt::xtensor<double, 4> mapToFine(const xt::xtensor<double, 4>& data) const; // tensor per intpnt
 
 private:
     // the meshes
@@ -211,9 +211,9 @@ private:
     GooseFEM::Mesh::Quad4::Regular m_fine;
 
     // mapping
-    xt::xtensor<size_t,1> m_fine2coarse;
-    xt::xtensor<size_t,1> m_fine2coarse_index;
-    xt::xtensor<size_t,2> m_coarse2fine;
+    xt::xtensor<size_t, 1> m_fine2coarse;
+    xt::xtensor<size_t, 1> m_fine2coarse_index;
+    xt::xtensor<size_t, 2> m_coarse2fine;
 };
 } // namespace Map
 } // namespace Quad4
@@ -240,9 +240,9 @@ public:
     std::vector<std::vector<double>> getMapFraction() const;
 
     // map field
-    xt::xtensor<double,1> mapToRegular(const xt::xtensor<double,1>& data) const; // scalar per el
-    xt::xtensor<double,2> mapToRegular(const xt::xtensor<double,2>& data) const; // scalar per intpnt
-    xt::xtensor<double,4> mapToRegular(const xt::xtensor<double,4>& data) const; // tensor per intpnt
+    xt::xtensor<double, 1> mapToRegular(const xt::xtensor<double, 1>& data) const; // scalar per el
+    xt::xtensor<double, 2> mapToRegular(const xt::xtensor<double, 2>& data) const; // scalar per intpnt
+    xt::xtensor<double, 4> mapToRegular(const xt::xtensor<double, 4>& data) const; // tensor per intpnt
 
 private:
     // the "FineLayer" mesh to map

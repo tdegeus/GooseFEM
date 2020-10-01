@@ -52,7 +52,7 @@ inline std::string indent(size_t n)
     return out;
 }
 
-xt::xtensor<double,2> as3d(const xt::xtensor<double,2>& data)
+xt::xtensor<double, 2> as3d(const xt::xtensor<double, 2>& data)
 {
     GOOSEFEM_ASSERT(data.shape(1) > 0 && data.shape(1) < 4)
 
@@ -60,7 +60,7 @@ xt::xtensor<double,2> as3d(const xt::xtensor<double,2>& data)
         return data;
     }
 
-    xt::xtensor<double,2> out = xt::zeros<double>({data.shape(0), 3ul});
+    xt::xtensor<double, 2> out = xt::zeros<double>({data.shape(0), 3ul});
 
     if (data.shape(1) == 2ul) {
         xt::view(out, xt::all(), xt::keep(0, 1)) = data;
@@ -208,7 +208,7 @@ inline void Connectivity::init(
 
     GOOSEFEM_ASSERT(m_shape.size() == 2);
 
-    #ifdef GOOSEFEM_ENABLE_ASSERT
+#ifdef GOOSEFEM_ENABLE_ASSERT
     if (m_type == ElementType::Triangle) {
         GOOSEFEM_ASSERT(m_shape[1] == 3);
     }
@@ -218,7 +218,7 @@ inline void Connectivity::init(
     else if (m_type == ElementType::Hexahedron) {
         GOOSEFEM_ASSERT(m_shape[1] == 8);
     }
-    #endif
+#endif
 }
 
 inline size_t Connectivity::nelem() const
@@ -265,7 +265,7 @@ inline void Connectivity::readShape(const H5Easy::File& data)
 
     GOOSEFEM_ASSERT(m_shape.size() == 2);
 
-    #ifdef GOOSEFEM_ENABLE_ASSERT
+#ifdef GOOSEFEM_ENABLE_ASSERT
     if (m_type == ElementType::Triangle) {
         GOOSEFEM_ASSERT(m_shape[1] == 3);
     }
@@ -275,7 +275,7 @@ inline void Connectivity::readShape(const H5Easy::File& data)
     else if (m_type == ElementType::Hexahedron) {
         GOOSEFEM_ASSERT(m_shape[1] == 8);
     }
-    #endif
+#endif
 
     m_verified = true;
 }
@@ -647,9 +647,9 @@ inline void TimeSeries::write(const std::string& fname, size_t n_indent) const
 
     myfile << "<Xdmf Version=\"2.0\">" << std::endl;
     myfile << indent(n_indent) + "<Domain>" << std::endl;
-    myfile  << indent(n_indent * 2)
-        + "<Grid CollectionType=\"Temporal\" GridType=\"Collection\" Name=\"TimeSeries\">"
-        << std::endl;
+    myfile << indent(n_indent * 2) +
+                  "<Grid CollectionType=\"Temporal\" GridType=\"Collection\" Name=\"TimeSeries\">"
+           << std::endl;
 
     std::vector<std::string> lines = this->xdmf(n_indent);
 

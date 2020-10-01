@@ -13,8 +13,8 @@ namespace GooseFEM {
 namespace Element {
 namespace Hex8 {
 
-inline double inv(const xt::xtensor_fixed<double, xt::xshape<3, 3>>& A,
-                        xt::xtensor_fixed<double, xt::xshape<3, 3>>& Ainv)
+template <class T>
+inline double inv(const T& A, T& Ainv)
 {
     double det =
         (A(0, 0) * A(1, 1) * A(2, 2) + A(0, 1) * A(1, 2) * A(2, 0) + A(0, 2) * A(1, 0) * A(2, 1)) -
@@ -42,12 +42,12 @@ inline size_t nip()
     return 8;
 }
 
-inline xt::xtensor<double,2> xi()
+inline xt::xtensor<double, 2> xi()
 {
     size_t nip = 8;
     size_t ndim = 3;
 
-    xt::xtensor<double,2> xi = xt::empty<double>({nip, ndim});
+    xt::xtensor<double, 2> xi = xt::empty<double>({nip, ndim});
 
     xi(0, 0) = -1.0 / std::sqrt(3.0);
     xi(0, 1) = -1.0 / std::sqrt(3.0);
@@ -84,11 +84,11 @@ inline xt::xtensor<double,2> xi()
     return xi;
 }
 
-inline xt::xtensor<double,1> w()
+inline xt::xtensor<double, 1> w()
 {
     size_t nip = 8;
 
-    xt::xtensor<double,1> w = xt::empty<double>({nip});
+    xt::xtensor<double, 1> w = xt::empty<double>({nip});
 
     w(0) = 1.0;
     w(1) = 1.0;
@@ -111,12 +111,12 @@ inline size_t nip()
     return 8;
 }
 
-inline xt::xtensor<double,2> xi()
+inline xt::xtensor<double, 2> xi()
 {
     size_t nip = 8;
     size_t ndim = 3;
 
-    xt::xtensor<double,2> xi = xt::empty<double>({nip, ndim});
+    xt::xtensor<double, 2> xi = xt::empty<double>({nip, ndim});
 
     xi(0, 0) = -1.0;
     xi(0, 1) = -1.0;
@@ -153,11 +153,11 @@ inline xt::xtensor<double,2> xi()
     return xi;
 }
 
-inline xt::xtensor<double,1> w()
+inline xt::xtensor<double, 1> w()
 {
     size_t nip = 8;
 
-    xt::xtensor<double,1> w = xt::empty<double>({nip});
+    xt::xtensor<double, 1> w = xt::empty<double>({nip});
 
     w(0) = 1.0;
     w(1) = 1.0;
@@ -173,15 +173,15 @@ inline xt::xtensor<double,1> w()
 
 } // namespace Nodal
 
-inline Quadrature::Quadrature(const xt::xtensor<double,3>& x)
+inline Quadrature::Quadrature(const xt::xtensor<double, 3>& x)
     : Quadrature(x, Gauss::xi(), Gauss::w())
 {
 }
 
 inline Quadrature::Quadrature(
-    const xt::xtensor<double,3>& x,
-    const xt::xtensor<double,2>& xi,
-    const xt::xtensor<double,1>& w)
+    const xt::xtensor<double, 3>& x,
+    const xt::xtensor<double, 2>& xi,
+    const xt::xtensor<double, 1>& w)
     : m_x(x), m_w(w), m_xi(xi)
 {
     GOOSEFEM_ASSERT(m_x.shape(1) == m_nne);
@@ -266,12 +266,12 @@ inline size_t Quadrature::nip() const
     return m_nip;
 }
 
-inline xt::xtensor<double,4> Quadrature::GradN() const
+inline xt::xtensor<double, 4> Quadrature::GradN() const
 {
     return m_dNx;
 }
 
-inline void Quadrature::dV(xt::xtensor<double,2>& qscalar) const
+inline void Quadrature::dV(xt::xtensor<double, 2>& qscalar) const
 {
     GOOSEFEM_ASSERT(
         qscalar.shape() == std::decay_t<decltype(qscalar)>::shape_type({m_nelem, m_nip}));
@@ -284,7 +284,7 @@ inline void Quadrature::dV(xt::xtensor<double,2>& qscalar) const
     }
 }
 
-inline void Quadrature::dV(xt::xtensor<double,4>& qtensor) const
+inline void Quadrature::dV(xt::xtensor<double, 4>& qtensor) const
 {
     GOOSEFEM_ASSERT(
         qtensor.shape() ==
@@ -318,7 +318,7 @@ inline void Quadrature::dV(xt::xarray<double>& qtensor) const
         xt::strided_view(m_vol, qtensor.shape(), std::move(strides), 0ul, xt::layout_type::dynamic);
 }
 
-inline void Quadrature::update_x(const xt::xtensor<double,3>& x)
+inline void Quadrature::update_x(const xt::xtensor<double, 3>& x)
 {
     GOOSEFEM_ASSERT(x.shape() == m_x.shape());
     xt::noalias(m_x) = x;
@@ -355,18 +355,12 @@ inline void Quadrature::compute_dN()
 
                 // dNx(m,i) += Jinv(i,j) * dNxi(m,j);
                 for (size_t m = 0; m < m_nne; ++m) {
-                    dNx(m, 0)
-                        = Jinv(0, 0) * dNxi(m, 0)
-                        + Jinv(0, 1) * dNxi(m, 1)
-                        + Jinv(0, 2) * dNxi(m, 2);
-                    dNx(m, 1)
-                        = Jinv(1, 0) * dNxi(m, 0)
-                        + Jinv(1, 1) * dNxi(m, 1)
-                        + Jinv(1, 2) * dNxi(m, 2);
-                    dNx(m, 2)
-                        = Jinv(2, 0) * dNxi(m, 0)
-                        + Jinv(2, 1) * dNxi(m, 1)
-                        + Jinv(2, 2) * dNxi(m, 2);
+                    dNx(m, 0) =
+                        Jinv(0, 0) * dNxi(m, 0) + Jinv(0, 1) * dNxi(m, 1) + Jinv(0, 2) * dNxi(m, 2);
+                    dNx(m, 1) =
+                        Jinv(1, 0) * dNxi(m, 0) + Jinv(1, 1) * dNxi(m, 1) + Jinv(1, 2) * dNxi(m, 2);
+                    dNx(m, 2) =
+                        Jinv(2, 0) * dNxi(m, 0) + Jinv(2, 1) * dNxi(m, 1) + Jinv(2, 2) * dNxi(m, 2);
                 }
 
                 m_vol(e, q) = m_w(q) * Jdet;
@@ -376,7 +370,7 @@ inline void Quadrature::compute_dN()
 }
 
 inline void Quadrature::gradN_vector(
-    const xt::xtensor<double,3>& elemvec, xt::xtensor<double,4>& qtensor) const
+    const xt::xtensor<double, 3>& elemvec, xt::xtensor<double, 4>& qtensor) const
 {
     GOOSEFEM_ASSERT(
         elemvec.shape() == std::decay_t<decltype(elemvec)>::shape_type({m_nelem, m_nne, m_ndim}));
@@ -408,7 +402,7 @@ inline void Quadrature::gradN_vector(
 }
 
 inline void Quadrature::gradN_vector_T(
-    const xt::xtensor<double,3>& elemvec, xt::xtensor<double,4>& qtensor) const
+    const xt::xtensor<double, 3>& elemvec, xt::xtensor<double, 4>& qtensor) const
 {
     GOOSEFEM_ASSERT(
         elemvec.shape() == std::decay_t<decltype(elemvec)>::shape_type({m_nelem, m_nne, m_ndim}));
@@ -440,7 +434,7 @@ inline void Quadrature::gradN_vector_T(
 }
 
 inline void Quadrature::symGradN_vector(
-    const xt::xtensor<double,3>& elemvec, xt::xtensor<double,4>& qtensor) const
+    const xt::xtensor<double, 3>& elemvec, xt::xtensor<double, 4>& qtensor) const
 {
     GOOSEFEM_ASSERT(
         elemvec.shape() == std::decay_t<decltype(elemvec)>::shape_type({m_nelem, m_nne, m_ndim}));
@@ -473,7 +467,7 @@ inline void Quadrature::symGradN_vector(
 }
 
 inline void Quadrature::int_N_scalar_NT_dV(
-    const xt::xtensor<double,2>& qscalar, xt::xtensor<double,3>& elemmat) const
+    const xt::xtensor<double, 2>& qscalar, xt::xtensor<double, 3>& elemmat) const
 {
     GOOSEFEM_ASSERT(
         qscalar.shape() == std::decay_t<decltype(qscalar)>::shape_type({m_nelem, m_nip}));
@@ -507,7 +501,7 @@ inline void Quadrature::int_N_scalar_NT_dV(
 }
 
 inline void Quadrature::int_gradN_dot_tensor2_dV(
-    const xt::xtensor<double,4>& qtensor, xt::xtensor<double,3>& elemvec) const
+    const xt::xtensor<double, 4>& qtensor, xt::xtensor<double, 3>& elemvec) const
 {
     GOOSEFEM_ASSERT(
         qtensor.shape() ==
@@ -541,7 +535,7 @@ inline void Quadrature::int_gradN_dot_tensor2_dV(
 }
 
 inline void Quadrature::int_gradN_dot_tensor4_dot_gradNT_dV(
-    const xt::xtensor<double,6>& qtensor, xt::xtensor<double,3>& elemmat) const
+    const xt::xtensor<double, 6>& qtensor, xt::xtensor<double, 3>& elemmat) const
 {
     GOOSEFEM_ASSERT(
         qtensor.shape() == std::decay_t<decltype(qtensor)>::shape_type(
@@ -559,8 +553,8 @@ inline void Quadrature::int_gradN_dot_tensor4_dot_gradNT_dV(
 
         for (size_t q = 0; q < m_nip; ++q) {
 
-            auto dNx = xt::adapt(&m_dNx(e,q,0,0), xt::xshape<m_nne, m_ndim>());
-            auto C = xt::adapt(&qtensor(e,q,0,0,0,0), xt::xshape<m_ndim, m_ndim, m_ndim, m_ndim>());
+            auto dNx = xt::adapt(&m_dNx(e, q, 0, 0), xt::xshape<m_nne, m_ndim>());
+            auto C = xt::adapt(&qtensor(e, q, 0, 0, 0, 0), xt::xshape<m_ndim, m_ndim, m_ndim, m_ndim>());
             auto& vol = m_vol(e, q);
 
             for (size_t m = 0; m < m_nne; ++m) {
@@ -581,9 +575,9 @@ inline void Quadrature::int_gradN_dot_tensor4_dot_gradNT_dV(
     }
 }
 
-inline xt::xtensor<double,2> Quadrature::DV() const
+inline xt::xtensor<double, 2> Quadrature::DV() const
 {
-    xt::xtensor<double,2> out = xt::empty<double>({m_nelem, m_nip});
+    xt::xtensor<double, 2> out = xt::empty<double>({m_nelem, m_nip});
     this->dV(out);
     return out;
 }
@@ -601,49 +595,49 @@ inline xt::xarray<double> Quadrature::DV(size_t rank) const
     return out;
 }
 
-inline xt::xtensor<double,4> Quadrature::GradN_vector(const xt::xtensor<double,3>& elemvec) const
+inline xt::xtensor<double, 4> Quadrature::GradN_vector(const xt::xtensor<double, 3>& elemvec) const
 {
-    xt::xtensor<double,4> qtensor = xt::empty<double>({m_nelem, m_nip, m_ndim, m_ndim});
+    xt::xtensor<double, 4> qtensor = xt::empty<double>({m_nelem, m_nip, m_ndim, m_ndim});
     this->gradN_vector(elemvec, qtensor);
     return qtensor;
 }
 
-inline xt::xtensor<double,4>
-Quadrature::GradN_vector_T(const xt::xtensor<double,3>& elemvec) const
+inline xt::xtensor<double, 4>
+Quadrature::GradN_vector_T(const xt::xtensor<double, 3>& elemvec) const
 {
-    xt::xtensor<double,4> qtensor = xt::empty<double>({m_nelem, m_nip, m_ndim, m_ndim});
+    xt::xtensor<double, 4> qtensor = xt::empty<double>({m_nelem, m_nip, m_ndim, m_ndim});
     this->gradN_vector_T(elemvec, qtensor);
     return qtensor;
 }
 
-inline xt::xtensor<double,4>
-Quadrature::SymGradN_vector(const xt::xtensor<double,3>& elemvec) const
+inline xt::xtensor<double, 4>
+Quadrature::SymGradN_vector(const xt::xtensor<double, 3>& elemvec) const
 {
-    xt::xtensor<double,4> qtensor = xt::empty<double>({m_nelem, m_nip, m_ndim, m_ndim});
+    xt::xtensor<double, 4> qtensor = xt::empty<double>({m_nelem, m_nip, m_ndim, m_ndim});
     this->symGradN_vector(elemvec, qtensor);
     return qtensor;
 }
 
-inline xt::xtensor<double,3>
-Quadrature::Int_N_scalar_NT_dV(const xt::xtensor<double,2>& qscalar) const
+inline xt::xtensor<double, 3>
+Quadrature::Int_N_scalar_NT_dV(const xt::xtensor<double, 2>& qscalar) const
 {
-    xt::xtensor<double,3> elemmat = xt::empty<double>({m_nelem, m_nne * m_ndim, m_nne * m_ndim});
+    xt::xtensor<double, 3> elemmat = xt::empty<double>({m_nelem, m_nne * m_ndim, m_nne * m_ndim});
     this->int_N_scalar_NT_dV(qscalar, elemmat);
     return elemmat;
 }
 
-inline xt::xtensor<double,3>
-Quadrature::Int_gradN_dot_tensor2_dV(const xt::xtensor<double,4>& qtensor) const
+inline xt::xtensor<double, 3>
+Quadrature::Int_gradN_dot_tensor2_dV(const xt::xtensor<double, 4>& qtensor) const
 {
-    xt::xtensor<double,3> elemvec = xt::empty<double>({m_nelem, m_nne, m_ndim});
+    xt::xtensor<double, 3> elemvec = xt::empty<double>({m_nelem, m_nne, m_ndim});
     this->int_gradN_dot_tensor2_dV(qtensor, elemvec);
     return elemvec;
 }
 
-inline xt::xtensor<double,3>
-Quadrature::Int_gradN_dot_tensor4_dot_gradNT_dV(const xt::xtensor<double,6>& qtensor) const
+inline xt::xtensor<double, 3>
+Quadrature::Int_gradN_dot_tensor4_dot_gradNT_dV(const xt::xtensor<double, 6>& qtensor) const
 {
-    xt::xtensor<double,3> elemmat = xt::empty<double>({m_nelem, m_ndim * m_nne, m_ndim * m_nne});
+    xt::xtensor<double, 3> elemmat = xt::empty<double>({m_nelem, m_ndim * m_nne, m_ndim * m_nne});
     this->int_gradN_dot_tensor4_dot_gradNT_dV(qtensor, elemmat);
     return elemmat;
 }

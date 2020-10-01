@@ -27,20 +27,20 @@ public:
     ElementType getElementType() const;
 
     // mesh
-    xt::xtensor<double,2> coor() const; // nodal positions [nnode, ndim]
-    xt::xtensor<size_t,2> conn() const; // connectivity [nelem, nne]
+    xt::xtensor<double, 2> coor() const; // nodal positions [nnode, ndim]
+    xt::xtensor<size_t, 2> conn() const; // connectivity [nelem, nne]
 
     // boundary nodes: edges
-    xt::xtensor<size_t,1> nodesBottomEdge() const;
-    xt::xtensor<size_t,1> nodesTopEdge() const;
-    xt::xtensor<size_t,1> nodesLeftEdge() const;
-    xt::xtensor<size_t,1> nodesRightEdge() const;
+    xt::xtensor<size_t, 1> nodesBottomEdge() const;
+    xt::xtensor<size_t, 1> nodesTopEdge() const;
+    xt::xtensor<size_t, 1> nodesLeftEdge() const;
+    xt::xtensor<size_t, 1> nodesRightEdge() const;
 
     // boundary nodes: edges, without corners
-    xt::xtensor<size_t,1> nodesBottomOpenEdge() const;
-    xt::xtensor<size_t,1> nodesTopOpenEdge() const;
-    xt::xtensor<size_t,1> nodesLeftOpenEdge() const;
-    xt::xtensor<size_t,1> nodesRightOpenEdge() const;
+    xt::xtensor<size_t, 1> nodesBottomOpenEdge() const;
+    xt::xtensor<size_t, 1> nodesTopOpenEdge() const;
+    xt::xtensor<size_t, 1> nodesLeftOpenEdge() const;
+    xt::xtensor<size_t, 1> nodesRightOpenEdge() const;
 
     // boundary nodes: corners (including aliases)
     size_t nodesBottomLeftCorner() const;
@@ -53,13 +53,13 @@ public:
     size_t nodesRightTopCorner() const;
 
     // DOF-numbers for each component of each node (sequential)
-    xt::xtensor<size_t,2> dofs() const;
+    xt::xtensor<size_t, 2> dofs() const;
 
     // DOF-numbers for the case that the periodicity if fully eliminated
-    xt::xtensor<size_t,2> dofsPeriodic() const;
+    xt::xtensor<size_t, 2> dofsPeriodic() const;
 
     // periodic node pairs [:,2]: (independent, dependent)
-    xt::xtensor<size_t,2> nodesPeriodic() const;
+    xt::xtensor<size_t, 2> nodesPeriodic() const;
 
     // front-bottom-left node, used as reference for periodicity
     size_t nodesOrigin() const;
@@ -75,19 +75,16 @@ private:
 };
 
 // read / set the orientation (-1/+1) of all triangles
-inline xt::xtensor<int,1> getOrientation(
-    const xt::xtensor<double,2>& coor,
-    const xt::xtensor<size_t,2>& conn);
+inline xt::xtensor<int, 1> getOrientation(
+    const xt::xtensor<double, 2>& coor, const xt::xtensor<size_t, 2>& conn);
 
-inline xt::xtensor<size_t,2> setOrientation(
-    const xt::xtensor<double,2>& coor,
-    const xt::xtensor<size_t,2>& conn,
-    int orientation = -1);
+inline xt::xtensor<size_t, 2> setOrientation(
+    const xt::xtensor<double, 2>& coor, const xt::xtensor<size_t, 2>& conn, int orientation = -1);
 
-inline xt::xtensor<size_t,2> setOrientation(
-    const xt::xtensor<double,2>& coor,
-    const xt::xtensor<size_t,2>& conn,
-    const xt::xtensor<int,1>& current, // (output of "getOrientation")
+inline xt::xtensor<size_t, 2> setOrientation(
+    const xt::xtensor<double, 2>& coor,
+    const xt::xtensor<size_t, 2>& conn,
+    const xt::xtensor<int, 1>& current, // (output of "getOrientation")
     int orientation = -1);
 
 } // namespace Tri3

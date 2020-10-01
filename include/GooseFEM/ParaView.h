@@ -23,7 +23,7 @@ namespace HDF5 {
 
 inline std::string join(const std::vector<std::string>& lines, const std::string& sep = "\n");
 inline std::string indent(size_t n);
-xt::xtensor<double,2> as3d(const xt::xtensor<double,2>& data);
+xt::xtensor<double, 2> as3d(const xt::xtensor<double, 2>& data);
 
 enum class ElementType {
     Triangle,
@@ -42,15 +42,15 @@ class Connectivity {
 public:
     Connectivity() = default;
 
-    #ifndef GOOSEFEM_NO_HIGHFIVE
+#ifndef GOOSEFEM_NO_HIGHFIVE
     Connectivity(
         const H5Easy::File& data, const std::string& dataset, GooseFEM::Mesh::ElementType type);
-    #endif
+#endif
 
-    #ifndef GOOSEFEM_NO_HIGHFIVE
+#ifndef GOOSEFEM_NO_HIGHFIVE
     Connectivity(
         const std::string& fname, const std::string& dataset, GooseFEM::Mesh::ElementType type);
-    #endif
+#endif
 
     Connectivity(
         const std::string& fname,
@@ -58,13 +58,13 @@ public:
         GooseFEM::Mesh::ElementType type,
         const std::vector<size_t>& shape);
 
-    #ifndef GOOSEFEM_NO_HIGHFIVE
+#ifndef GOOSEFEM_NO_HIGHFIVE
     Connectivity(const H5Easy::File& data, const std::string& dataset, ElementType type);
-    #endif
+#endif
 
-    #ifndef GOOSEFEM_NO_HIGHFIVE
+#ifndef GOOSEFEM_NO_HIGHFIVE
     Connectivity(const std::string& fname, const std::string& dataset, ElementType type);
-    #endif
+#endif
 
     Connectivity(
         const std::string& fname,
@@ -77,24 +77,24 @@ public:
     std::vector<size_t> shape() const;
     std::string fname() const;
 
-    #ifndef GOOSEFEM_NO_HIGHFIVE
+#ifndef GOOSEFEM_NO_HIGHFIVE
     void checkShape();
-    #endif
+#endif
 
     std::vector<std::string> xdmf(size_t indent = 4) const;
 
 private:
-    #ifndef GOOSEFEM_NO_HIGHFIVE
+#ifndef GOOSEFEM_NO_HIGHFIVE
     void readShape(const H5Easy::File& data);
-    #endif
+#endif
 
-    #ifndef GOOSEFEM_NO_HIGHFIVE
+#ifndef GOOSEFEM_NO_HIGHFIVE
     void init(const H5Easy::File& data, const std::string& dataset, ElementType type);
-    #endif
+#endif
 
-    #ifndef GOOSEFEM_NO_HIGHFIVE
+#ifndef GOOSEFEM_NO_HIGHFIVE
     void init(const std::string& fname, const std::string& dataset, ElementType type);
-    #endif
+#endif
 
     void init(
         const std::string& fname,
@@ -107,74 +107,70 @@ private:
     std::string m_dataset;
     std::vector<size_t> m_shape;
 
-    #ifndef GOOSEFEM_NO_HIGHFIVE
+#ifndef GOOSEFEM_NO_HIGHFIVE
     bool m_verified = false; // if true: shape read from file, not need to check
-    #endif
+#endif
 };
 
 class Coordinates {
 public:
     Coordinates() = default;
 
-    #ifndef GOOSEFEM_NO_HIGHFIVE
+#ifndef GOOSEFEM_NO_HIGHFIVE
     Coordinates(const H5Easy::File& data, const std::string& dataset);
-    #endif
+#endif
 
-    #ifndef GOOSEFEM_NO_HIGHFIVE
-    Coordinates(
-        const std::string& fname,
-        const std::string& dataset);
-    #endif
+#ifndef GOOSEFEM_NO_HIGHFIVE
+    Coordinates(const std::string& fname, const std::string& dataset);
+#endif
 
     Coordinates(
-        const std::string& fname,
-        const std::string& dataset,
-        const std::vector<size_t>& shape);
+        const std::string& fname, const std::string& dataset, const std::vector<size_t>& shape);
 
     size_t nnode() const;
     size_t ndim() const;
     std::vector<size_t> shape() const;
     std::string fname() const;
 
-    #ifndef GOOSEFEM_NO_HIGHFIVE
+#ifndef GOOSEFEM_NO_HIGHFIVE
     void checkShape();
-    #endif
+#endif
 
     std::vector<std::string> xdmf(size_t indent = 4) const;
 
 private:
-    #ifndef GOOSEFEM_NO_HIGHFIVE
+#ifndef GOOSEFEM_NO_HIGHFIVE
     void readShape(const H5Easy::File& data);
-    #endif
+#endif
 
     std::string m_fname;
     std::string m_dataset;
     std::vector<size_t> m_shape;
 
-    #ifndef GOOSEFEM_NO_HIGHFIVE
+#ifndef GOOSEFEM_NO_HIGHFIVE
     bool m_verified = false; // if true: shape read from file, not need to check
-    #endif
+#endif
 };
 
 class Attribute {
 public:
     Attribute() = default;
 
-    #ifndef GOOSEFEM_NO_HIGHFIVE
+#ifndef GOOSEFEM_NO_HIGHFIVE
     Attribute(
         const H5Easy::File& data,
         const std::string& dataset,
         const std::string& name,
         AttributeType type);
-    #endif
+#endif
 
-    #ifndef GOOSEFEM_NO_HIGHFIVE
+#ifndef GOOSEFEM_NO_HIGHFIVE
     Attribute(
         const std::string& fname,
         const std::string& dataset,
         const std::string& name,
         AttributeType type);
-    #endif
+#endif
 
     Attribute(
         const std::string& fname,
@@ -186,16 +182,16 @@ public:
     std::vector<size_t> shape() const;
     std::string fname() const;
 
-    #ifndef GOOSEFEM_NO_HIGHFIVE
+#ifndef GOOSEFEM_NO_HIGHFIVE
     void checkShape();
-    #endif
+#endif
 
     std::vector<std::string> xdmf(size_t indent = 4) const;
 
 private:
-    #ifndef GOOSEFEM_NO_HIGHFIVE
+#ifndef GOOSEFEM_NO_HIGHFIVE
     void readShape(const H5Easy::File& data);
-    #endif
+#endif
 
     AttributeType m_type;
     std::string m_fname;
@@ -203,9 +199,9 @@ private:
     std::string m_name;
     std::vector<size_t> m_shape;
 
-    #ifndef GOOSEFEM_NO_HIGHFIVE
+#ifndef GOOSEFEM_NO_HIGHFIVE
     bool m_verified = false; // if true: shape read from file, not need to check
-    #endif
+#endif
 };
 
 class Mesh {
@@ -232,9 +228,7 @@ public:
     Increment(const Connectivity& conn, const Coordinates& coor);
 
     Increment(
-        const Connectivity& conn,
-        const Coordinates& coor,
-        const std::vector<Attribute>& attr);
+        const Connectivity& conn, const Coordinates& coor, const std::vector<Attribute>& attr);
 
     void push_back(const Connectivity& data);
     void push_back(const Coordinates& data);

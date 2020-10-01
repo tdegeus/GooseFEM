@@ -22,9 +22,9 @@ public:
     MatrixPartitioned() = default;
 
     MatrixPartitioned(
-        const xt::xtensor<size_t,2>& conn,
-        const xt::xtensor<size_t,2>& dofs,
-        const xt::xtensor<size_t,1>& iip);
+        const xt::xtensor<size_t, 2>& conn,
+        const xt::xtensor<size_t, 2>& dofs,
+        const xt::xtensor<size_t, 1>& iip);
 
     // Dimensions
     size_t nelem() const; // number of elements
@@ -36,57 +36,51 @@ public:
     size_t nnp() const;   // number of prescribed DOFs
 
     // DOF lists
-    xt::xtensor<size_t,2> dofs() const; // DOFs
-    xt::xtensor<size_t,1> iiu() const;  // unknown DOFs
-    xt::xtensor<size_t,1> iip() const;  // prescribed DOFs
+    xt::xtensor<size_t, 2> dofs() const; // DOFs
+    xt::xtensor<size_t, 1> iiu() const;  // unknown DOFs
+    xt::xtensor<size_t, 1> iip() const;  // prescribed DOFs
 
     // Assemble from matrices stored per element [nelem, nne*ndim, nne*ndim]
-    void assemble(const xt::xtensor<double,3>& elemmat);
+    void assemble(const xt::xtensor<double, 3>& elemmat);
 
     // Solve:
     // x_u = A_uu \ ( b_u - A_up * x_p )
-    void solve(const xt::xtensor<double,2>& b, xt::xtensor<double,2>& x); // modified with "x_u"
-    void solve(const xt::xtensor<double,1>& b, xt::xtensor<double,1>& x); // modified with "x_u"
+    void solve(const xt::xtensor<double, 2>& b, xt::xtensor<double, 2>& x); // modified with "x_u"
+    void solve(const xt::xtensor<double, 1>& b, xt::xtensor<double, 1>& x); // modified with "x_u"
 
     void solve_u(
-        const xt::xtensor<double,1>& b_u,
-        const xt::xtensor<double,1>& x_p,
-              xt::xtensor<double,1>& x_u);
+        const xt::xtensor<double, 1>& b_u,
+        const xt::xtensor<double, 1>& x_p,
+        xt::xtensor<double, 1>& x_u);
 
     // Get right-hand-size for corresponding to the prescribed DOFs:
     // b_p = A_pu * x_u + A_pp * x_p = A_pp * x_p
     void reaction(
-        const xt::xtensor<double,2>& x,
-              xt::xtensor<double,2>& b) const; // modified with "b_p"
+        const xt::xtensor<double, 2>& x, xt::xtensor<double, 2>& b) const; // modified with "b_p"
 
     void reaction(
-        const xt::xtensor<double,1>& x,
-              xt::xtensor<double,1>& b) const; // modified with "b_p"
+        const xt::xtensor<double, 1>& x, xt::xtensor<double, 1>& b) const; // modified with "b_p"
 
     void reaction_p(
-        const xt::xtensor<double,1>& x_u,
-        const xt::xtensor<double,1>& x_p,
-              xt::xtensor<double,1>& b_p) const;
+        const xt::xtensor<double, 1>& x_u,
+        const xt::xtensor<double, 1>& x_p,
+        xt::xtensor<double, 1>& b_p) const;
 
     // Auto-allocation of the functions above
-    xt::xtensor<double,2> Solve(const xt::xtensor<double,2>& b, const xt::xtensor<double,2>& x);
-    xt::xtensor<double,1> Solve(const xt::xtensor<double,1>& b, const xt::xtensor<double,1>& x);
+    xt::xtensor<double, 2> Solve(const xt::xtensor<double, 2>& b, const xt::xtensor<double, 2>& x);
+    xt::xtensor<double, 1> Solve(const xt::xtensor<double, 1>& b, const xt::xtensor<double, 1>& x);
 
-    xt::xtensor<double,1> Solve_u(
-        const xt::xtensor<double,1>& b_u,
-        const xt::xtensor<double,1>& x_p);
+    xt::xtensor<double, 1> Solve_u(
+        const xt::xtensor<double, 1>& b_u, const xt::xtensor<double, 1>& x_p);
 
-    xt::xtensor<double,2> Reaction(
-        const xt::xtensor<double,2>& x,
-        const xt::xtensor<double,2>& b) const;
+    xt::xtensor<double, 2> Reaction(
+        const xt::xtensor<double, 2>& x, const xt::xtensor<double, 2>& b) const;
 
-    xt::xtensor<double,1> Reaction(
-        const xt::xtensor<double,1>& x,
-        const xt::xtensor<double,1>& b) const;
+    xt::xtensor<double, 1> Reaction(
+        const xt::xtensor<double, 1>& x, const xt::xtensor<double, 1>& b) const;
 
-    xt::xtensor<double,1> Reaction_p(
-        const xt::xtensor<double,1>& x_u,
-        const xt::xtensor<double,1>& x_p) const;
+    xt::xtensor<double, 1> Reaction_p(
+        const xt::xtensor<double, 1>& x_u, const xt::xtensor<double, 1>& x_p) const;
 
 private:
     // The matrix
@@ -108,11 +102,11 @@ private:
     bool m_factor = false;
 
     // Bookkeeping
-    xt::xtensor<size_t,2> m_conn; // connectivity                      [nelem, nne ]
-    xt::xtensor<size_t,2> m_dofs; // DOF-numbers per node              [nnode, ndim]
-    xt::xtensor<size_t,2> m_part; // DOF-numbers per node, renumbered  [nnode, ndim]
-    xt::xtensor<size_t,1> m_iiu;  // unknown    DOFs                   [nnu]
-    xt::xtensor<size_t,1> m_iip;  // prescribed DOFs                   [nnp]
+    xt::xtensor<size_t, 2> m_conn; // connectivity                      [nelem, nne ]
+    xt::xtensor<size_t, 2> m_dofs; // DOF-numbers per node              [nnode, ndim]
+    xt::xtensor<size_t, 2> m_part; // DOF-numbers per node, renumbered  [nnode, ndim]
+    xt::xtensor<size_t, 1> m_iiu;  // unknown    DOFs                   [nnu]
+    xt::xtensor<size_t, 1> m_iip;  // prescribed DOFs                   [nnp]
 
     // Dimensions
     size_t m_nelem; // number of elements
@@ -127,10 +121,10 @@ private:
     void factorize();
 
     // Convert arrays (Eigen version of VectorPartitioned, which contains public functions)
-    Eigen::VectorXd asDofs_u(const xt::xtensor<double,1>& dofval) const;
-    Eigen::VectorXd asDofs_u(const xt::xtensor<double,2>& nodevec) const;
-    Eigen::VectorXd asDofs_p(const xt::xtensor<double,1>& dofval) const;
-    Eigen::VectorXd asDofs_p(const xt::xtensor<double,2>& nodevec) const;
+    Eigen::VectorXd asDofs_u(const xt::xtensor<double, 1>& dofval) const;
+    Eigen::VectorXd asDofs_u(const xt::xtensor<double, 2>& nodevec) const;
+    Eigen::VectorXd asDofs_p(const xt::xtensor<double, 1>& dofval) const;
+    Eigen::VectorXd asDofs_p(const xt::xtensor<double, 2>& nodevec) const;
 };
 
 } // namespace GooseFEM
