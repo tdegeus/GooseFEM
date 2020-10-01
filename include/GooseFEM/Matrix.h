@@ -22,6 +22,11 @@ public:
     Matrix() = default;
     Matrix(const xt::xtensor<size_t, 2>& conn, const xt::xtensor<size_t, 2>& dofs);
 
+    // Copy constructor and copy-assignment operator
+    // (needed because "m_solver" cannot be copied)
+    Matrix(const Matrix<Solver>& other);
+    Matrix<Solver>& operator=(const Matrix<Solver> &other);
+
     // Dimensions
     size_t nelem() const; // number of elements
     size_t nne() const;   // number of nodes per element
