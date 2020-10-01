@@ -351,7 +351,7 @@ template <class Solver>
 inline Eigen::VectorXd
 MatrixPartitioned<Solver>::asDofs_u(const xt::xtensor<double, 1>& dofval) const
 {
-    assert(dofval.size() == m_ndof);
+    GOOSEFEM_ASSERT(dofval.size() == m_ndof);
 
     Eigen::VectorXd dofval_u(m_nnu, 1);
 
@@ -387,7 +387,7 @@ template <class Solver>
 inline Eigen::VectorXd
 MatrixPartitioned<Solver>::asDofs_p(const xt::xtensor<double, 1>& dofval) const
 {
-    assert(dofval.size() == m_ndof);
+    GOOSEFEM_ASSERT(dofval.size() == m_ndof);
 
     Eigen::VectorXd dofval_p(m_nnp, 1);
 

@@ -198,7 +198,7 @@ template <class Solver>
 inline void
 Matrix<Solver>::asNode(const Eigen::VectorXd& dofval, xt::xtensor<double, 2>& nodevec) const
 {
-    assert(static_cast<size_t>(dofval.size()) == m_ndof);
+    GOOSEFEM_ASSERT(static_cast<size_t>(dofval.size()) == m_ndof);
     GOOSEFEM_ASSERT(xt::has_shape(nodevec, {m_nnode, m_ndim}));
 
     #pragma omp parallel for
