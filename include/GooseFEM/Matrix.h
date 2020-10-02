@@ -15,17 +15,14 @@
 
 namespace GooseFEM {
 
-template <class Solver = Eigen::SimplicialLDLT<Eigen::SparseMatrix<double>>>
+// forward declaration
+template <class> class MatrixSolver;
+
 class Matrix {
 public:
     // Constructors
     Matrix() = default;
     Matrix(const xt::xtensor<size_t, 2>& conn, const xt::xtensor<size_t, 2>& dofs);
-
-    // Copy constructor and copy-assignment operator
-    // (needed because "m_solver" cannot be copied)
-    Matrix(const Matrix<Solver>& other);
-    Matrix<Solver>& operator=(const Matrix<Solver> &other);
 
     // Dimensions
     size_t nelem() const; // number of elements
@@ -45,16 +42,9 @@ public:
     void dot(const xt::xtensor<double, 2>& x, xt::xtensor<double, 2>& b) const;
     void dot(const xt::xtensor<double, 1>& x, xt::xtensor<double, 1>& b) const;
 
-    // Solve
-    // x_u = A_uu \ ( b_u - A_up * x_p )
-    void solve(const xt::xtensor<double, 2>& b, xt::xtensor<double, 2>& x);
-    void solve(const xt::xtensor<double, 1>& b, xt::xtensor<double, 1>& x);
-
     // Auto-allocation of the functions above
     xt::xtensor<double, 2> Dot(const xt::xtensor<double, 2>& x) const;
     xt::xtensor<double, 1> Dot(const xt::xtensor<double, 1>& x) const;
-    xt::xtensor<double, 2> Solve(const xt::xtensor<double, 2>& b);
-    xt::xtensor<double, 1> Solve(const xt::xtensor<double, 1>& b);
 
 private:
     // The matrix
@@ -63,11 +53,8 @@ private:
     // Matrix entries
     std::vector<Eigen::Triplet<double>> m_T;
 
-    // Solver (re-used to solve different RHS)
-    Solver m_solver;
-
-    // Signal changes to data compare to the last inverse
-    bool m_factor = false;
+    // Signal changes to data
+    bool m_changed = true;
 
     // Bookkeeping
     xt::xtensor<size_t, 2> m_conn; // connectivity [nelem, nne]
@@ -80,13 +67,35 @@ private:
     size_t m_ndim;  // number of dimensions
     size_t m_ndof;  // number of DOFs
 
-    // Compute inverse (automatically evaluated by "solve")
-    void factorize();
+    // grant access to solver class
+    template <class> friend class MatrixSolver;
 
     // Convert arrays (Eigen version of Vector, which contains public functions)
     Eigen::VectorXd asDofs(const xt::xtensor<double, 2>& nodevec) const;
 
     void asNode(const Eigen::VectorXd& dofval, xt::xtensor<double, 2>& nodevec) const;
+};
+
+
+template <class Solver = Eigen::SimplicialLDLT<Eigen::SparseMatrix<double>>>
+class MatrixSolver {
+public:
+    // Constructors
+    MatrixSolver() = default;
+
+    // Solve
+    // x_u = A_uu \ (b_u - A_up * x_p)
+    void solve(Matrix& matrix, const xt::xtensor<double, 2>& b, xt::xtensor<double, 2>& x);
+    void solve(Matrix& matrix, const xt::xtensor<double, 1>& b, xt::xtensor<double, 1>& x);
+
+    // Auto-allocation of the functions above
+    xt::xtensor<double, 2> Solve(Matrix& matrix, const xt::xtensor<double, 2>& b);
+    xt::xtensor<double, 1> Solve(Matrix& matrix, const xt::xtensor<double, 1>& b);
+
+private:
+    Solver m_solver; // solver
+    bool m_factor = false; // signal to force factorization
+    void factorize(Matrix& matrix); // compute inverse (evaluated by "solve")
 };
 
 } // namespace GooseFEM
