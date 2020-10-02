@@ -22,10 +22,11 @@ TEST_CASE("GooseFEM::Matrix", "Matrix.h")
             xt::view(a, e, xt::all(), xt::all()) = ae;
         }
 
-        GooseFEM::Matrix<> A(mesh.conn(), mesh.dofs());
+        GooseFEM::Matrix A(mesh.conn(), mesh.dofs());
+        GooseFEM::MatrixSolver<> Solver;
         A.assemble(a);
         xt::xtensor<double, 1> C = A.Dot(b);
-        xt::xtensor<double, 1> B = A.Solve(C);
+        xt::xtensor<double, 1> B = Solver.Solve(A, C);
 
         REQUIRE(B.size() == b.size());
         REQUIRE(xt::allclose(B, b));

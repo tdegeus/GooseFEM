@@ -43,7 +43,8 @@ int main()
     GooseFEM::VectorPartitioned vector(conn, dofs, iip);
 
     // allocate system matrix
-    GooseFEM::MatrixPartitioned<> K(conn, dofs, iip);
+    GooseFEM::MatrixPartitioned K(conn, dofs, iip);
+    GooseFEM::MatrixPartitionedSolver<> Solver;
 
     // nodal quantities
     xt::xtensor<double,2> disp = xt::zeros<double>(coor.shape());
@@ -108,7 +109,7 @@ int main()
     vector.asDofs_u(fres, fres_u);
 
     // solve
-    K.solve_u(fres_u, u_p, u_u);
+    Solver.solve_u(K, fres_u, u_p, u_u);
 
     // assemble to nodal vector
     vector.asNode(u_u, u_p, disp);
