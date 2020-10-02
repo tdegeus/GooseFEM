@@ -43,6 +43,7 @@ vector = GooseFEM.VectorPartitioned(conn, dofs, iip)
 
 # allocate system matrix
 K = GooseFEM.MatrixPartitioned(conn, dofs, iip)
+Solver = GooseFEM.MatrixPartitionedSolver()
 
 # nodal quantities
 disp = np.zeros(coor.shape)
@@ -108,7 +109,7 @@ fres = fext - fint
 fres_u = vector.AsDofs_u(fres)
 
 # solve
-u_u = K.Solve_u(fres_u, u_p)
+u_u = Solver.Solve_u(K, fres_u, u_p)
 
 # assemble to nodal vector
 disp = vector.AsNode(u_u, u_p)
