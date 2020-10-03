@@ -1,0 +1,56 @@
+build: false
+
+branches:
+    only:
+        - master
+
+platform:
+    - x64
+
+image:
+    - Visual Studio 2017
+    - Visual Studio 2015
+
+environment:
+    matrix:
+        - MINICONDA: C:\myname-conda
+
+init:
+    - "ECHO %MINICONDA%"
+    - if "%APPVEYOR_BUILD_WORKER_IMAGE%" == "Visual Studio 2015" set VCVARPATH="C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat"
+    - if "%APPVEYOR_BUILD_WORKER_IMAGE%" == "Visual Studio 2015" set VCARGUMENT=%PLATFORM%
+    - if "%APPVEYOR_BUILD_WORKER_IMAGE%" == "Visual Studio 2017" set VCVARPATH="C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Auxiliary\Build\vcvars64.bat"
+    - echo "%VCVARPATH% %VCARGUMENT%"
+    - "%VCVARPATH% %VCARGUMENT%"
+    - ps: if($env:Platform -eq "x64"){Start-FileDownload 'http://repo.continuum.io/miniconda/Miniconda3-latest-Windows-x86_64.exe' C:\Miniconda.exe; echo "Done"}
+    - ps: if($env:Platform -eq "x86"){Start-FileDownload 'http://repo.continuum.io/miniconda/Miniconda3-latest-Windows-x86.exe' C:\Miniconda.exe; echo "Done"}
+    - cmd: C:\Miniconda.exe /S /D=C:\myname-conda
+    - "set PATH=%MINICONDA%;%MINICONDA%\\Scripts;%MINICONDA%\\Library\\bin;%PATH%"
+
+install:
+    # Set environment using Conda
+    - conda config --set always_yes yes --set changeps1 no
+    - conda update -q conda
+    - conda info -a
+    - conda install -c conda-forge mamba
+    - mamba install -c conda-forge cmake xtensor xsimd eigen python numpy pyxtensor catch2 h5py highfive gmatelastic gmatnonlinearelastic gmatelastoplastic gmatelastoplasticfinitestrainsimo
+    # - mamba install -c conda-forge cmake xtensor xsimd python numpy pyxtensor catch2 h5py highfive gmatelastic gmatnonlinearelastic gmatelastoplastic gmatelastoplasticfinitestrainsimo python-gmatelastic
+    # Build/install the library
+    - cmake -G "NMake Makefiles" -DCMAKE_INSTALL_PREFIX=%MINICONDA%\\LIBRARY -DCMAKE_BUILD_TYPE=RELEASE -DBUILD_TESTS=ON -DBUILD_EXAMPLES=OFF .
+    - nmake
+    - nmake install
+    - python setup.py build
+    - python setup.py install
+
+build_script:
+    # Run tests
+    - .\test\main
+    # Run examples
+    # - .\docs\examples\statics_FixedDisplacements_LinearElastic_example
+    # - .\docs\examples\statics_FixedDisplacements_LinearElastic_manual_partition
+    # - .\docs\examples\statics_Periodic_ElastoPlasticFiniteStrainSimo_main
+    # - .\docs\examples\statics_Periodic_ElastoPlastic_main
+    # - .\docs\examples\statics_Periodic_LinearElastic_main
+    # - .\docs\examples\statics_Periodic_NonLinearElastic_main
+    # - python .\docs\examples\statics\FixedDisplacements_LinearElastic\example.py --no-plot
+    # - python .\docs\examples\statics\FixedDisplacements_LinearElastic\manual_partition.py --no-plot

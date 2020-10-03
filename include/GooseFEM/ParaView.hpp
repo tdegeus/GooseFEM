@@ -60,7 +60,7 @@ xt::xtensor<double, 2> as3d(const xt::xtensor<double, 2>& data)
         return data;
     }
 
-    xt::xtensor<double, 2> out = xt::zeros<double>({data.shape(0), 3ul});
+    xt::xtensor<double, 2> out = xt::zeros<double>(std::array<size_t, 2>{data.shape(0), 3ul});
 
     if (data.shape(1) == 2ul) {
         xt::view(out, xt::all(), xt::keep(0, 1)) = data;

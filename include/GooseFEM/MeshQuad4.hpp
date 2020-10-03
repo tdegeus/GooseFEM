@@ -189,8 +189,8 @@ inline xt::xtensor<size_t, 2> Regular::nodesPeriodic() const
     xt::xtensor<size_t, 1> top = nodesTopOpenEdge();
     xt::xtensor<size_t, 1> lft = nodesLeftOpenEdge();
     xt::xtensor<size_t, 1> rgt = nodesRightOpenEdge();
-
-    xt::xtensor<size_t, 2> out = xt::empty<size_t>({bot.size() + lft.size() + 3ul, 2ul});
+    std::array<size_t, 2> shape = {bot.size() + lft.size() + 3ul, 2ul};
+    xt::xtensor<size_t, 2> out = xt::empty<size_t>(shape);
 
     out(0, 0) = nodesBottomLeftCorner();
     out(0, 1) = nodesBottomRightCorner();
@@ -784,8 +784,8 @@ inline xt::xtensor<size_t, 2> FineLayer::nodesPeriodic() const
     xt::xtensor<size_t, 1> top = nodesTopOpenEdge();
     xt::xtensor<size_t, 1> lft = nodesLeftOpenEdge();
     xt::xtensor<size_t, 1> rgt = nodesRightOpenEdge();
-
-    xt::xtensor<size_t, 2> out = xt::empty<size_t>({bot.size() + lft.size() + 3ul, 2ul});
+    std::array<size_t, 2> shape = {bot.size() + lft.size() + 3ul, 2ul};
+    xt::xtensor<size_t, 2> out = xt::empty<size_t>(shape);
 
     out(0, 0) = nodesBottomLeftCorner();
     out(0, 1) = nodesBottomRightCorner();
