@@ -8,7 +8,7 @@ endif()
 
 option(WARNINGS "Show build warnings" ON)
 option(SIMD "Enable xsimd" ON)
-option(DEBUG "Enable all assertions" ON)
+option(DEBUG "Enable all assertions" OFF)
 
 find_package(HDF5 REQUIRED)
 

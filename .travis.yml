@@ -85,9 +85,9 @@ script:
     # run examples
     - ./docs/examples/statics_FixedDisplacements_LinearElastic_example
     - ./docs/examples/statics_FixedDisplacements_LinearElastic_manual_partition
-    - ./docs/examples/statics_Periodic_ElastoPlasticFiniteStrainSimo_main
-    - ./docs/examples/statics_Periodic_ElastoPlastic_main
-    - ./docs/examples/statics_Periodic_LinearElastic_main
-    - ./docs/examples/statics_Periodic_NonLinearElastic_main
+    # - ./docs/examples/statics_Periodic_LinearElastic_main
+    # - ./docs/examples/statics_Periodic_NonLinearElastic_main
+    # - ./docs/examples/statics_Periodic_ElastoPlastic_main
+    # - ./docs/examples/statics_Periodic_ElastoPlasticFiniteStrainSimo_main
     - python ../docs/examples/statics/FixedDisplacements_LinearElastic/example.py --no-plot
     - python ../docs/examples/statics/FixedDisplacements_LinearElastic/manual_partition.py --no-plot
