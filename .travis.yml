@@ -71,17 +71,8 @@ install:
     - hash -r
     - conda config --set always_yes yes --set changeps1 no
     - conda update -q conda
-    - conda install -c conda-forge cmake
-    - conda install -c conda-forge xsimd
-    - conda install -c conda-forge xtensor
-    - conda install -c conda-forge python
-    - conda install -c conda-forge numpy
-    - conda install -c conda-forge pyxtensor
-    - conda install -c conda-forge catch2
-    - conda install -c conda-forge eigen
-    - conda install -c conda-forge gmatelastic
-    - conda install -c conda-forge python-gmatelastic
-    - conda install -c conda-forge highfive
+    - conda install -c conda-forge mamba
+    - mamba install -c conda-forge cmake xtensor xsimd eigen python numpy pyxtensor catch2 h5py highfive gmatelastic gmatnonlinearelastic gmatelastoplastic gmatelastoplasticfinitestrainsimo python-gmatelastic
     # Build/install the library
     - cmake . -DBUILD_TESTS=ON -DBUILD_EXAMPLES=ON
     - make
@@ -93,6 +84,10 @@ script:
     - ./test/main
     # run examples
     - ./docs/examples/statics_FixedDisplacements_LinearElastic_example
-    - python docs/examples/statics_FixedDisplacements_LinearElastic_example.py --no-plot
     - ./docs/examples/statics_FixedDisplacements_LinearElastic_manual_partition
-    - python docs/examples/statics_FixedDisplacements_LinearElastic_manual_partition.py --no-plot
+    # - ./docs/examples/statics_Periodic_LinearElastic_main
+    # - ./docs/examples/statics_Periodic_NonLinearElastic_main
+    # - ./docs/examples/statics_Periodic_ElastoPlastic_main
+    # - ./docs/examples/statics_Periodic_ElastoPlasticFiniteStrainSimo_main
+    - python ./docs/examples/statics/FixedDisplacements_LinearElastic/example.py --no-plot
+    - python ./docs/examples/statics/FixedDisplacements_LinearElastic/manual_partition.py --no-plot
