@@ -72,7 +72,7 @@ install:
     - conda config --set always_yes yes --set changeps1 no
     - conda update -q conda
     - conda install -c conda-forge mamba
-    - mamba install -c conda-forge cmake xtensor xsimd python numpy pyxtensor catch2 h5py highfive gmatelastic gmatnonlinearelastic gmatelastoplastic gmatelastoplasticfinitestrainsimo python-gmatelastic
+    - mamba install -c conda-forge cmake xtensor xsimd eigen python numpy pyxtensor catch2 h5py highfive gmatelastic gmatnonlinearelastic gmatelastoplastic gmatelastoplasticfinitestrainsimo python-gmatelastic
     # Build/install the library
     - cmake . -DBUILD_TESTS=ON -DBUILD_EXAMPLES=ON
     - make
