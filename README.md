@@ -1,4 +1,5 @@
 [![Travis](https://travis-ci.com/tdegeus/GooseFEM.svg?branch=master)](https://travis-ci.com/tdegeus/GooseFEM)
+[![appveyor](https://ci.appveyor.com/api/projects/status/w20e6gw5mdhnntyx?svg=true)](https://ci.appveyor.com/project/tdegeus/goosefem)
 [![Documentation Status](https://readthedocs.org/projects/goosefem/badge/?version=latest)](https://readthedocs.org/projects/goosefem/badge/?version=latest)
 
 ## GooseFEM
