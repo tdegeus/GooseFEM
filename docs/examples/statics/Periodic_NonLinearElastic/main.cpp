@@ -103,7 +103,8 @@ int main()
   xt::xtensor<double,6> C   = xt::empty<double>({nelem, nip, tdim, tdim, tdim, tdim});
 
   // allocate system matrix
-  GF::MatrixPartitionedTyings<> K(conn, dofs, tyings.Cdu(), tyings.Cdp());
+  GF::MatrixPartitionedTyings K(conn, dofs, tyings.Cdu(), tyings.Cdp());
+  GF::MatrixPartitionedTyingsSolver<> Solver;
 
   // allocate internal variables
   double res;
@@ -163,7 +164,7 @@ int main()
       du(control_nodes(0),1) = 0.1;
 
     // solve
-    K.solve(fres, du);
+    Solver.solve(K, fres, du);
 
     // add displacement update
     disp += du;

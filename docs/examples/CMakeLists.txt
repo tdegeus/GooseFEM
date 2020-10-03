@@ -33,45 +33,49 @@ endif()
 
 set(exec "statics_FixedDisplacements_LinearElastic_example")
 set(source "statics/FixedDisplacements_LinearElastic/example.cpp")
-
 add_executable(${exec} ${source})
-
 target_link_libraries(${exec} PRIVATE libraries)
-
-configure_file(
-     "statics/FixedDisplacements_LinearElastic/example.py"
-     "statics_FixedDisplacements_LinearElastic_example.py" COPYONLY)
-
-configure_file(
-     "statics/FixedDisplacements_LinearElastic/plot.py"
-     "statics_FixedDisplacements_LinearElastic_plot.py" COPYONLY)
 
 # create executable
 
 set(exec "statics_FixedDisplacements_LinearElastic_manual_partition")
 set(source "statics/FixedDisplacements_LinearElastic/manual_partition.cpp")
-
 add_executable(${exec} ${source})
-
 target_link_libraries(${exec} PRIVATE libraries)
-
-configure_file(
-     "statics/FixedDisplacements_LinearElastic/manual_partition.py"
-     "statics_FixedDisplacements_LinearElastic_manual_partition.py" COPYONLY)
 
 # create executable
 
 set(exec "statics_MixedPeriodic_LinearElastic_example")
 set(source "statics/MixedPeriodic_LinearElastic/example.cpp")
-
 add_executable(${exec} ${source})
-
 target_link_libraries(${exec} PRIVATE libraries)
 
-configure_file(
-     "statics/MixedPeriodic_LinearElastic/example.py"
-     "statics_MixedPeriodic_LinearElastic_example.py" COPYONLY)
+# create executable
 
-configure_file(
-     "statics/MixedPeriodic_LinearElastic/plot.py"
-     "statics_MixedPeriodic_LinearElastic_plot.py" COPYONLY)
+set(exec "statics_Periodic_ElastoPlastic_main")
+set(source "statics/Periodic_ElastoPlastic/main.cpp")
+add_executable(${exec} ${source})
+target_link_libraries(${exec} PRIVATE libraries)
+
+# create executable
+
+set(exec "statics_Periodic_ElastoPlasticFiniteStrainSimo_main")
+set(source "statics/Periodic_ElastoPlasticFiniteStrainSimo/main.cpp")
+add_executable(${exec} ${source})
+target_link_libraries(${exec} PRIVATE libraries)
+
+# create executable
+
+set(exec "statics_Periodic_LinearElastic_main")
+set(source "statics/Periodic_LinearElastic/main.cpp")
+add_executable(${exec} ${source})
+target_link_libraries(${exec} PRIVATE libraries)
+
+# create executable
+
+set(exec "statics_Periodic_NonLinearElastic_main")
+set(source "statics/Periodic_NonLinearElastic/main.cpp")
+add_executable(${exec} ${source})
+target_link_libraries(${exec} PRIVATE libraries)
+
+
