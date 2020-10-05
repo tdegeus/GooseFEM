@@ -11,8 +11,7 @@
 
 namespace GooseFEM {
 
-inline Matrix::Matrix(
-    const xt::xtensor<size_t, 2>& conn, const xt::xtensor<size_t, 2>& dofs)
+inline Matrix::Matrix(const xt::xtensor<size_t, 2>& conn, const xt::xtensor<size_t, 2>& dofs)
     : m_conn(conn), m_dofs(dofs)
 {
     m_nelem = m_conn.shape(0);
@@ -178,8 +177,8 @@ inline void MatrixSolver<Solver>::solve(
 }
 
 template <class Solver>
-inline xt::xtensor<double, 2> MatrixSolver<Solver>::Solve(
-    Matrix& matrix, const xt::xtensor<double, 2>& b)
+inline xt::xtensor<double, 2>
+MatrixSolver<Solver>::Solve(Matrix& matrix, const xt::xtensor<double, 2>& b)
 {
     xt::xtensor<double, 2> x = xt::empty<double>({matrix.m_nnode, matrix.m_ndim});
     this->solve(matrix, b, x);
@@ -187,8 +186,8 @@ inline xt::xtensor<double, 2> MatrixSolver<Solver>::Solve(
 }
 
 template <class Solver>
-inline xt::xtensor<double, 1> MatrixSolver<Solver>::Solve(
-    Matrix& matrix, const xt::xtensor<double, 1>& b)
+inline xt::xtensor<double, 1>
+MatrixSolver<Solver>::Solve(Matrix& matrix, const xt::xtensor<double, 1>& b)
 {
     xt::xtensor<double, 1> x = xt::empty<double>({matrix.m_ndof});
     this->solve(matrix, b, x);
