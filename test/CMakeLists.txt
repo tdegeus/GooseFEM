@@ -12,22 +12,42 @@ option(ASSERT "Enable assertions" ON)
 option(DEBUG "Enable all assertions" ON)
 
 find_package(Catch2 REQUIRED)
-find_package(GMatElastic REQUIRED)
+if(!WIN32)
+    find_package(GMatElastic REQUIRED)
+endif()
 
-add_executable(main
-    main.cpp
-    ElementHex8.cpp
-    ElementQuad4.cpp
-    Iterate.cpp
-    Matrix.cpp
-    MatrixDiagonal.cpp
-    Mesh.cpp
-    MeshQuad4.cpp
-    Vector.cpp
-    VectorPartitioned.cpp
-    Example_hybrid-material.cpp)
+if(!WIN32)
+    add_executable(main
+        main.cpp
+        ElementHex8.cpp
+        ElementQuad4.cpp
+        Iterate.cpp
+        Matrix.cpp
+        MatrixDiagonal.cpp
+        Mesh.cpp
+        MeshQuad4.cpp
+        Vector.cpp
+        VectorPartitioned.cpp
+        Example_hybrid-material.cpp)
+else()
+    add_executable(main
+        main.cpp
+        ElementHex8.cpp
+        ElementQuad4.cpp
+        Iterate.cpp
+        Matrix.cpp
+        MatrixDiagonal.cpp
+        Mesh.cpp
+        MeshQuad4.cpp
+        Vector.cpp
+        VectorPartitioned.cpp)
+endif()
 
-target_link_libraries(main PRIVATE Catch2::Catch2 GMatElastic GooseFEM)
+if(!WIN32)
+    target_link_libraries(main PRIVATE Catch2::Catch2 GooseFEM GMatElastic)
+else()
+    target_link_libraries(main PRIVATE Catch2::Catch2 GooseFEM)
+endif()
 
 if (SIMD)
     target_link_libraries(main PRIVATE xtensor::optimize xtensor::use_xsimd)
