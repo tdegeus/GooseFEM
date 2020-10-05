@@ -15,7 +15,7 @@ int main()
   // ----
 
   // define mesh
-  GF::Mesh::Quad4::Regular mesh(5*10, 5*10);
+  GF::Mesh::Quad4::Regular mesh(5, 5);
 
   // mesh dimensions
   size_t nelem = mesh.nelem();
@@ -87,7 +87,7 @@ int main()
   size_t tdim = mat.ndim();
 
   // some artificial material definition
-  xt::xtensor<size_t,1> ehard = xt::ravel(xt::view(elmat, xt::range(0,2*10), xt::range(0,2*10)));
+  xt::xtensor<size_t,1> ehard = xt::ravel(xt::view(elmat, xt::range(0,2), xt::range(0,2)));
   xt::xtensor<size_t,2> Ihard = xt::zeros<size_t>({nelem, nip});
   xt::view(Ihard, xt::keep(ehard), xt::all()) = 1ul;
   xt::xtensor<size_t,2> Isoft = xt::ones<size_t>({nelem, nip}) - Ihard;
