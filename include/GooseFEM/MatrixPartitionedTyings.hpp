@@ -228,7 +228,8 @@ inline Eigen::VectorXd MatrixPartitionedTyings::asDofs_u(const xt::xtensor<doubl
     return dofval_u;
 }
 
-inline Eigen::VectorXd MatrixPartitionedTyings::asDofs_u(const xt::xtensor<double, 2>& nodevec) const
+inline Eigen::VectorXd
+MatrixPartitionedTyings::asDofs_u(const xt::xtensor<double, 2>& nodevec) const
 {
     GOOSEFEM_ASSERT(xt::has_shape(nodevec, {m_nnode, m_ndim}));
 
@@ -260,7 +261,8 @@ inline Eigen::VectorXd MatrixPartitionedTyings::asDofs_p(const xt::xtensor<doubl
     return dofval_p;
 }
 
-inline Eigen::VectorXd MatrixPartitionedTyings::asDofs_p(const xt::xtensor<double, 2>& nodevec) const
+inline Eigen::VectorXd
+MatrixPartitionedTyings::asDofs_p(const xt::xtensor<double, 2>& nodevec) const
 {
     GOOSEFEM_ASSERT(xt::has_shape(nodevec, {m_nnode, m_ndim}));
 
@@ -292,7 +294,8 @@ inline Eigen::VectorXd MatrixPartitionedTyings::asDofs_d(const xt::xtensor<doubl
     return dofval_d;
 }
 
-inline Eigen::VectorXd MatrixPartitionedTyings::asDofs_d(const xt::xtensor<double, 2>& nodevec) const
+inline Eigen::VectorXd
+MatrixPartitionedTyings::asDofs_d(const xt::xtensor<double, 2>& nodevec) const
 {
     GOOSEFEM_ASSERT(xt::has_shape(nodevec, {m_nnode, m_ndim}));
 
@@ -317,11 +320,11 @@ inline void MatrixPartitionedTyingsSolver<Solver>::factorize(MatrixPartitionedTy
         return;
     }
 
-    matrix.m_ACuu = matrix.m_Auu + matrix.m_Aud * matrix.m_Cdu + matrix.m_Cud * matrix.m_Adu
-        + matrix.m_Cud * matrix.m_Add * matrix.m_Cdu;
+    matrix.m_ACuu = matrix.m_Auu + matrix.m_Aud * matrix.m_Cdu + matrix.m_Cud * matrix.m_Adu +
+                    matrix.m_Cud * matrix.m_Add * matrix.m_Cdu;
 
-    matrix.m_ACup = matrix.m_Aup + matrix.m_Aud * matrix.m_Cdp + matrix.m_Cud * matrix.m_Adp
-        + matrix.m_Cud * matrix.m_Add * matrix.m_Cdp;
+    matrix.m_ACup = matrix.m_Aup + matrix.m_Aud * matrix.m_Cdp + matrix.m_Cud * matrix.m_Adp +
+                    matrix.m_Cud * matrix.m_Add * matrix.m_Cdp;
 
     // matrix.m_ACpu = matrix.m_Apu + matrix.m_Apd * matrix.m_Cdu + matrix.m_Cpd * matrix.m_Adu
     //     + matrix.m_Cpd * matrix.m_Add * matrix.m_Cdu;
