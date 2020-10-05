@@ -30,6 +30,7 @@
 #include <xtensor/xmath.hpp>
 #include <xtensor/xnoalias.hpp>
 #include <xtensor/xsort.hpp>
+#include <xtensor/xshape.hpp>
 #include <xtensor/xstrided_view.hpp>
 #include <xtensor/xtensor.hpp>
 #include <xtensor/xutils.hpp>
