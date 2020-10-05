@@ -14,7 +14,7 @@ namespace Mesh {
 
 inline Renumber::Renumber(const xt::xarray<size_t>& dofs)
 {
-    size_t n = xt::amax(dofs)[0] + 1;
+    size_t n = xt::amax(dofs)() + 1;
     size_t i = 0;
 
     xt::xtensor<size_t, 1> unique = xt::unique(dofs);
@@ -61,7 +61,7 @@ inline Reorder::Reorder(const std::initializer_list<xt::xtensor<size_t, 1>> args
         if (arg.size() == 0) {
             continue;
         }
-        n = std::max(n, xt::amax(arg)[0] + 1);
+        n = std::max(n, xt::amax(arg)() + 1);
     }
 
 #ifdef GOOSEFEM_ENABLE_ASSERT
@@ -119,7 +119,7 @@ inline xt::xtensor<size_t, 2> dofs(size_t nnode, size_t ndim)
 
 inline xt::xtensor<size_t, 1> coordination(const xt::xtensor<size_t, 2>& conn)
 {
-    size_t nnode = xt::amax(conn)[0] + 1;
+    size_t nnode = xt::amax(conn)() + 1;
 
     xt::xtensor<size_t, 1> N = xt::zeros<size_t>({nnode});
 

@@ -23,13 +23,13 @@ inline VectorPartitioned::VectorPartitioned(
     m_nnode = m_dofs.shape(0);
     m_ndim = m_dofs.shape(1);
     m_iiu = xt::setdiff1d(dofs, iip);
-    m_ndof = xt::amax(m_dofs)[0] + 1;
+    m_ndof = xt::amax(m_dofs)() + 1;
     m_nnp = m_iip.size();
     m_nnu = m_iiu.size();
     m_part = Mesh::Reorder({m_iiu, m_iip}).get(m_dofs);
 
     GOOSEFEM_ASSERT(xt::amax(m_conn)[0] + 1 == m_nnode);
-    GOOSEFEM_ASSERT(xt::amax(m_iip)[0] <= xt::amax(m_dofs)[0]);
+    GOOSEFEM_ASSERT(xt::amax(m_iip)() <= xt::amax(m_dofs)());
     GOOSEFEM_ASSERT(m_ndof <= m_nnode * m_ndim);
 }
 

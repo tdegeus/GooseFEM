@@ -39,7 +39,7 @@ inline xt::xtensor<double, 2> assembleNodeVector(
     size_t nelem = conn.shape(0);
     size_t nne = conn.shape(1);
     size_t ndim = elemvec.shape(2);
-    size_t nnode = xt::amax(conn)[0] + 1;
+    size_t nnode = xt::amax(conn)() + 1;
 
     GOOSEFEM_ASSERT(elemvec.shape(0) == nelem);
     GOOSEFEM_ASSERT(elemvec.shape(1) == nne);
@@ -60,7 +60,7 @@ inline xt::xtensor<double, 2> assembleNodeVector(
 template <class E>
 inline bool isSequential(const E& dofs)
 {
-    size_t ndof = xt::amax(dofs)[0] + 1;
+    size_t ndof = xt::amax(dofs)() + 1;
 
     xt::xtensor<int, 1> exists = xt::zeros<int>({ndof});
 

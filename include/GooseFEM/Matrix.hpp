@@ -18,7 +18,7 @@ inline Matrix::Matrix(const xt::xtensor<size_t, 2>& conn, const xt::xtensor<size
     m_nne = m_conn.shape(1);
     m_nnode = m_dofs.shape(0);
     m_ndim = m_dofs.shape(1);
-    m_ndof = xt::amax(m_dofs)[0] + 1;
+    m_ndof = xt::amax(m_dofs)() + 1;
     m_T.reserve(m_nelem * m_nne * m_ndim * m_nne * m_ndim);
     m_A.resize(m_ndof, m_ndof);
 

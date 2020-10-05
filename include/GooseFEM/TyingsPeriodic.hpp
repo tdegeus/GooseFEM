@@ -205,7 +205,7 @@ inline Control::Control(const xt::xtensor<double, 2>& coor, const xt::xtensor<si
     size_t ndim = coor.shape(1);
 
     m_control_dofs = xt::arange<size_t>(ndim * ndim).reshape({ndim, ndim});
-    m_control_dofs += xt::amax(dofs)[0] + 1;
+    m_control_dofs += xt::amax(dofs)() + 1;
 
     m_control_nodes = nnode + xt::arange<size_t>(ndim);
 
