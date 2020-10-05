@@ -22,7 +22,7 @@ inline VectorPartitioned::VectorPartitioned(
     m_nne = m_conn.shape(1);
     m_nnode = m_dofs.shape(0);
     m_ndim = m_dofs.shape(1);
-    m_iiu = xt::setdiff1d(dofs, iip);
+    m_iiu = xt::setdiff1d(m_dofs, m_iip);
     m_ndof = xt::amax(m_dofs)() + 1;
     m_nnp = m_iip.size();
     m_nnu = m_iiu.size();
@@ -31,7 +31,6 @@ inline VectorPartitioned::VectorPartitioned(
     GOOSEFEM_ASSERT(xt::amax(m_conn)() + 1 <= m_nnode);
     GOOSEFEM_ASSERT(xt::amax(m_iip)() <= xt::amax(m_dofs)());
     GOOSEFEM_ASSERT(m_ndof <= m_nnode * m_ndim);
-    GOOSEFEM_ASSERT(m_ndof == m_nnu + m_nnp);
 }
 
 inline size_t VectorPartitioned::nelem() const
@@ -133,6 +132,8 @@ inline void VectorPartitioned::asDofs(
     GOOSEFEM_ASSERT(dofval_u.size() == m_nnu);
     GOOSEFEM_ASSERT(dofval_p.size() == m_nnp);
     GOOSEFEM_ASSERT(dofval.size() == m_ndof);
+
+    dofval.fill(0.0);
 
     #pragma omp parallel for
     for (size_t d = 0; d < m_nnu; ++d) {
