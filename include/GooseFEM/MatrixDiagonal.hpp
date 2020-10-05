@@ -23,7 +23,7 @@ inline MatrixDiagonal::MatrixDiagonal(
     m_A = xt::empty<double>({m_ndof});
     m_inv = xt::empty<double>({m_ndof});
 
-    GOOSEFEM_ASSERT(xt::amax(m_conn)() + 1 == m_nnode);
+    GOOSEFEM_ASSERT(xt::amax(m_conn)() + 1 <= m_nnode);
     GOOSEFEM_ASSERT(m_ndof <= m_nnode * m_ndim);
 }
 
@@ -64,8 +64,9 @@ inline void MatrixDiagonal::factorize()
     }
 
     #pragma omp parallel for
-    for (size_t d = 0; d < m_ndof; ++d)
+    for (size_t d = 0; d < m_ndof; ++d) {
         m_inv(d) = 1.0 / m_A(d);
+    }
 
     m_factor = false;
 }

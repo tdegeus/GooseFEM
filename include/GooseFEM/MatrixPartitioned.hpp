@@ -36,7 +36,7 @@ inline MatrixPartitioned::MatrixPartitioned(
     m_Apu.resize(m_nnp, m_nnu);
     m_App.resize(m_nnp, m_nnp);
 
-    GOOSEFEM_ASSERT(xt::amax(m_conn)() + 1 == m_nnode);
+    GOOSEFEM_ASSERT(xt::amax(m_conn)() + 1 <= m_nnode);
     GOOSEFEM_ASSERT(xt::amax(m_iip)() <= xt::amax(m_dofs)());
     GOOSEFEM_ASSERT(m_ndof <= m_nnode * m_ndim);
 }
@@ -195,17 +195,17 @@ inline void MatrixPartitioned::reaction_p(
 inline xt::xtensor<double, 2>
 MatrixPartitioned::Reaction(const xt::xtensor<double, 2>& x, const xt::xtensor<double, 2>& b) const
 {
-    xt::xtensor<double, 2> out = b;
-    this->reaction(x, out);
-    return out;
+    xt::xtensor<double, 2> ret = b;
+    this->reaction(x, ret);
+    return ret;
 }
 
 inline xt::xtensor<double, 1>
 MatrixPartitioned::Reaction(const xt::xtensor<double, 1>& x, const xt::xtensor<double, 1>& b) const
 {
-    xt::xtensor<double, 1> out = b;
-    this->reaction(x, out);
-    return out;
+    xt::xtensor<double, 1> ret = b;
+    this->reaction(x, ret);
+    return ret;
 }
 
 inline xt::xtensor<double, 1> MatrixPartitioned::Reaction_p(
@@ -234,7 +234,7 @@ inline Eigen::VectorXd MatrixPartitioned::AsDofs_u(const xt::xtensor<double, 2>&
 {
     GOOSEFEM_ASSERT(xt::has_shape(nodevec, {m_nnode, m_ndim}));
 
-    Eigen::VectorXd dofval_u(m_nnu, 1);
+    Eigen::VectorXd dofval_u = Eigen::VectorXd::Zero(m_nnu, 1);
 
     #pragma omp parallel for
     for (size_t m = 0; m < m_nnode; ++m) {
@@ -266,7 +266,7 @@ inline Eigen::VectorXd MatrixPartitioned::AsDofs_p(const xt::xtensor<double, 2>&
 {
     GOOSEFEM_ASSERT(xt::has_shape(nodevec, {m_nnode, m_ndim}));
 
-    Eigen::VectorXd dofval_p(m_nnp, 1);
+    Eigen::VectorXd dofval_p = Eigen::VectorXd::Zero(m_nnp, 1);
 
     #pragma omp parallel for
     for (size_t m = 0; m < m_nnode; ++m) {
