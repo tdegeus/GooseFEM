@@ -678,25 +678,25 @@ VectorPartitioned::AssembleNode(const xt::xtensor<double, 3>& elemvec) const
 inline xt::xtensor<double, 2> VectorPartitioned::Copy(
     const xt::xtensor<double, 2>& nodevec_src, const xt::xtensor<double, 2>& nodevec_dest) const
 {
-    xt::xtensor<double, 2> out = nodevec_dest;
-    this->copy(nodevec_src, out);
-    return out;
+    xt::xtensor<double, 2> ret = nodevec_dest;
+    this->copy(nodevec_src, ret);
+    return ret;
 }
 
 inline xt::xtensor<double, 2> VectorPartitioned::Copy_u(
     const xt::xtensor<double, 2>& nodevec_src, const xt::xtensor<double, 2>& nodevec_dest) const
 {
-    xt::xtensor<double, 2> out = nodevec_dest;
-    this->copy_u(nodevec_src, out);
-    return out;
+    xt::xtensor<double, 2> ret = nodevec_dest;
+    this->copy_u(nodevec_src, ret);
+    return ret;
 }
 
 inline xt::xtensor<double, 2> VectorPartitioned::Copy_p(
     const xt::xtensor<double, 2>& nodevec_src, const xt::xtensor<double, 2>& nodevec_dest) const
 {
-    xt::xtensor<double, 2> out = nodevec_dest;
-    this->copy_p(nodevec_src, out);
-    return out;
+    xt::xtensor<double, 2> ret = nodevec_dest;
+    this->copy_p(nodevec_src, ret);
+    return ret;
 }
 
 } // namespace GooseFEM

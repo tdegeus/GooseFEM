@@ -49,7 +49,7 @@ inline ElementType Regular::getElementType() const
 
 inline xt::xtensor<double, 2> Regular::coor() const
 {
-    xt::xtensor<double, 2> out = xt::empty<double>({m_nnode, m_ndim});
+    xt::xtensor<double, 2> ret = xt::empty<double>({m_nnode, m_ndim});
 
     xt::xtensor<double, 1> x =
         xt::linspace<double>(0.0, m_h * static_cast<double>(m_nelx), m_nelx + 1);
@@ -60,123 +60,123 @@ inline xt::xtensor<double, 2> Regular::coor() const
 
     for (size_t iy = 0; iy < m_nely + 1; ++iy) {
         for (size_t ix = 0; ix < m_nelx + 1; ++ix) {
-            out(inode, 0) = x(ix);
-            out(inode, 1) = y(iy);
+            ret(inode, 0) = x(ix);
+            ret(inode, 1) = y(iy);
             ++inode;
         }
     }
 
-    return out;
+    return ret;
 }
 
 inline xt::xtensor<size_t, 2> Regular::conn() const
 {
-    xt::xtensor<size_t, 2> out = xt::empty<size_t>({m_nelem, m_nne});
+    xt::xtensor<size_t, 2> ret = xt::empty<size_t>({m_nelem, m_nne});
 
     size_t ielem = 0;
 
     for (size_t iy = 0; iy < m_nely; ++iy) {
         for (size_t ix = 0; ix < m_nelx; ++ix) {
-            out(ielem, 0) = (iy) * (m_nelx + 1) + (ix);
-            out(ielem, 1) = (iy) * (m_nelx + 1) + (ix + 1);
-            out(ielem, 2) = (iy + 1) * (m_nelx + 1) + (ix);
+            ret(ielem, 0) = (iy) * (m_nelx + 1) + (ix);
+            ret(ielem, 1) = (iy) * (m_nelx + 1) + (ix + 1);
+            ret(ielem, 2) = (iy + 1) * (m_nelx + 1) + (ix);
             ++ielem;
-            out(ielem, 0) = (iy) * (m_nelx + 1) + (ix + 1);
-            out(ielem, 1) = (iy + 1) * (m_nelx + 1) + (ix + 1);
-            out(ielem, 2) = (iy + 1) * (m_nelx + 1) + (ix);
+            ret(ielem, 0) = (iy) * (m_nelx + 1) + (ix + 1);
+            ret(ielem, 1) = (iy + 1) * (m_nelx + 1) + (ix + 1);
+            ret(ielem, 2) = (iy + 1) * (m_nelx + 1) + (ix);
             ++ielem;
         }
     }
 
-    return out;
+    return ret;
 }
 
 inline xt::xtensor<size_t, 1> Regular::nodesBottomEdge() const
 {
-    xt::xtensor<size_t, 1> out = xt::empty<size_t>({m_nelx + 1});
+    xt::xtensor<size_t, 1> ret = xt::empty<size_t>({m_nelx + 1});
 
     for (size_t ix = 0; ix < m_nelx + 1; ++ix) {
-        out(ix) = ix;
+        ret(ix) = ix;
     }
 
-    return out;
+    return ret;
 }
 
 inline xt::xtensor<size_t, 1> Regular::nodesTopEdge() const
 {
-    xt::xtensor<size_t, 1> out = xt::empty<size_t>({m_nelx + 1});
+    xt::xtensor<size_t, 1> ret = xt::empty<size_t>({m_nelx + 1});
 
     for (size_t ix = 0; ix < m_nelx + 1; ++ix) {
-        out(ix) = ix + m_nely * (m_nelx + 1);
+        ret(ix) = ix + m_nely * (m_nelx + 1);
     }
 
-    return out;
+    return ret;
 }
 
 inline xt::xtensor<size_t, 1> Regular::nodesLeftEdge() const
 {
-    xt::xtensor<size_t, 1> out = xt::empty<size_t>({m_nely + 1});
+    xt::xtensor<size_t, 1> ret = xt::empty<size_t>({m_nely + 1});
 
     for (size_t iy = 0; iy < m_nely + 1; ++iy) {
-        out(iy) = iy * (m_nelx + 1);
+        ret(iy) = iy * (m_nelx + 1);
     }
 
-    return out;
+    return ret;
 }
 
 inline xt::xtensor<size_t, 1> Regular::nodesRightEdge() const
 {
-    xt::xtensor<size_t, 1> out = xt::empty<size_t>({m_nely + 1});
+    xt::xtensor<size_t, 1> ret = xt::empty<size_t>({m_nely + 1});
 
     for (size_t iy = 0; iy < m_nely + 1; ++iy) {
-        out(iy) = iy * (m_nelx + 1) + m_nelx;
+        ret(iy) = iy * (m_nelx + 1) + m_nelx;
     }
 
-    return out;
+    return ret;
 }
 
 inline xt::xtensor<size_t, 1> Regular::nodesBottomOpenEdge() const
 {
-    xt::xtensor<size_t, 1> out = xt::empty<size_t>({m_nelx - 1});
+    xt::xtensor<size_t, 1> ret = xt::empty<size_t>({m_nelx - 1});
 
     for (size_t ix = 1; ix < m_nelx; ++ix) {
-        out(ix - 1) = ix;
+        ret(ix - 1) = ix;
     }
 
-    return out;
+    return ret;
 }
 
 inline xt::xtensor<size_t, 1> Regular::nodesTopOpenEdge() const
 {
-    xt::xtensor<size_t, 1> out = xt::empty<size_t>({m_nelx - 1});
+    xt::xtensor<size_t, 1> ret = xt::empty<size_t>({m_nelx - 1});
 
     for (size_t ix = 1; ix < m_nelx; ++ix) {
-        out(ix - 1) = ix + m_nely * (m_nelx + 1);
+        ret(ix - 1) = ix + m_nely * (m_nelx + 1);
     }
 
-    return out;
+    return ret;
 }
 
 inline xt::xtensor<size_t, 1> Regular::nodesLeftOpenEdge() const
 {
-    xt::xtensor<size_t, 1> out = xt::empty<size_t>({m_nely - 1});
+    xt::xtensor<size_t, 1> ret = xt::empty<size_t>({m_nely - 1});
 
     for (size_t iy = 1; iy < m_nely; ++iy) {
-        out(iy - 1) = iy * (m_nelx + 1);
+        ret(iy - 1) = iy * (m_nelx + 1);
     }
 
-    return out;
+    return ret;
 }
 
 inline xt::xtensor<size_t, 1> Regular::nodesRightOpenEdge() const
 {
-    xt::xtensor<size_t, 1> out = xt::empty<size_t>({m_nely - 1});
+    xt::xtensor<size_t, 1> ret = xt::empty<size_t>({m_nely - 1});
 
     for (size_t iy = 1; iy < m_nely; ++iy) {
-        out(iy - 1) = iy * (m_nelx + 1) + m_nelx;
+        ret(iy - 1) = iy * (m_nelx + 1) + m_nelx;
     }
 
-    return out;
+    return ret;
 }
 
 inline size_t Regular::nodesBottomLeftCorner() const
@@ -228,32 +228,32 @@ inline xt::xtensor<size_t, 2> Regular::nodesPeriodic() const
 
     size_t tedge = bot.size() + lft.size();
     size_t tnode = 3;
-    xt::xtensor<size_t, 2> out = xt::empty<size_t>({tedge + tnode, std::size_t(2)});
+    xt::xtensor<size_t, 2> ret = xt::empty<size_t>({tedge + tnode, std::size_t(2)});
 
     size_t i = 0;
 
-    out(i, 0) = nodesBottomLeftCorner();
-    out(i, 1) = nodesBottomRightCorner();
+    ret(i, 0) = nodesBottomLeftCorner();
+    ret(i, 1) = nodesBottomRightCorner();
     ++i;
-    out(i, 0) = nodesBottomLeftCorner();
-    out(i, 1) = nodesTopRightCorner();
+    ret(i, 0) = nodesBottomLeftCorner();
+    ret(i, 1) = nodesTopRightCorner();
     ++i;
-    out(i, 0) = nodesBottomLeftCorner();
-    out(i, 1) = nodesTopLeftCorner();
+    ret(i, 0) = nodesBottomLeftCorner();
+    ret(i, 1) = nodesTopLeftCorner();
     ++i;
 
     for (size_t j = 0; j < bot.size(); ++j) {
-        out(i, 0) = bot(j);
-        out(i, 1) = top(j);
+        ret(i, 0) = bot(j);
+        ret(i, 1) = top(j);
         ++i;
     }
     for (size_t j = 0; j < lft.size(); ++j) {
-        out(i, 0) = lft(j);
-        out(i, 1) = rgt(j);
+        ret(i, 0) = lft(j);
+        ret(i, 1) = rgt(j);
         ++i;
     }
 
-    return out;
+    return ret;
 }
 
 inline size_t Regular::nodesOrigin() const
@@ -268,16 +268,16 @@ inline xt::xtensor<size_t, 2> Regular::dofs() const
 
 inline xt::xtensor<size_t, 2> Regular::dofsPeriodic() const
 {
-    xt::xtensor<size_t, 2> out = GooseFEM::Mesh::dofs(m_nnode, m_ndim);
+    xt::xtensor<size_t, 2> ret = GooseFEM::Mesh::dofs(m_nnode, m_ndim);
     xt::xtensor<size_t, 2> nodePer = nodesPeriodic();
 
     for (size_t i = 0; i < nodePer.shape(0); ++i) {
         for (size_t j = 0; j < m_ndim; ++j) {
-            out(nodePer(i, 1), j) = out(nodePer(i, 0), j);
+            ret(nodePer(i, 1), j) = ret(nodePer(i, 0), j);
         }
     }
 
-    return GooseFEM::Mesh::renumber(out);
+    return GooseFEM::Mesh::renumber(ret);
 }
 
 inline xt::xtensor<int, 1>
@@ -289,7 +289,7 @@ getOrientation(const xt::xtensor<double, 2>& coor, const xt::xtensor<size_t, 2>&
     double k;
     size_t nelem = conn.shape(0);
 
-    xt::xtensor<int, 1> out = xt::empty<int>({nelem});
+    xt::xtensor<int, 1> ret = xt::empty<int>({nelem});
 
     for (size_t ielem = 0; ielem < nelem; ++ielem) {
         auto v1 =
@@ -300,14 +300,14 @@ getOrientation(const xt::xtensor<double, 2>& coor, const xt::xtensor<size_t, 2>&
         k = v1(0) * v2(1) - v2(0) * v1(1);
 
         if (k < 0) {
-            out(ielem) = -1;
+            ret(ielem) = -1;
         }
         else {
-            out(ielem) = +1;
+            ret(ielem) = +1;
         }
     }
 
-    return out;
+    return ret;
 }
 
 inline xt::xtensor<size_t, 2> setOrientation(
@@ -336,15 +336,15 @@ inline xt::xtensor<size_t, 2> setOrientation(
     UNUSED(coor);
 
     size_t nelem = conn.shape(0);
-    xt::xtensor<size_t, 2> out = conn;
+    xt::xtensor<size_t, 2> ret = conn;
 
     for (size_t ielem = 0; ielem < nelem; ++ielem) {
         if ((orientation == -1 && val(ielem) > 0) || (orientation == +1 && val(ielem) < 0)) {
-            std::swap(out(ielem, 2), out(ielem, 1));
+            std::swap(ret(ielem, 2), ret(ielem, 1));
         }
     }
 
-    return out;
+    return ret;
 }
 
 } // namespace Tri3

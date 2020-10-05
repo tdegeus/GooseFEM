@@ -19,37 +19,37 @@ inline std::string join(const std::vector<std::string>& lines, const std::string
         return lines[0];
     }
 
-    std::string out = "";
+    std::string ret = "";
 
     for (auto line : lines) {
-        if (out.size() == 0) {
-            out += line;
+        if (ret.size() == 0) {
+            ret += line;
             continue;
         }
 
         if (line[0] == sep[0]) {
-            out += line;
+            ret += line;
         }
-        else if (out[out.size() - 1] == sep[0]) {
-            out += line;
+        else if (ret[ret.size() - 1] == sep[0]) {
+            ret += line;
         }
         else {
-            out += sep + line;
+            ret += sep + line;
         }
     }
 
-    return out;
+    return ret;
 }
 
 inline std::string indent(size_t n)
 {
-    std::string out = "";
+    std::string ret = "";
 
     for (size_t i = 0; i < n; ++i) {
-        out += " ";
+        ret += " ";
     }
 
-    return out;
+    return ret;
 }
 
 xt::xtensor<double, 2> as3d(const xt::xtensor<double, 2>& data)
@@ -60,17 +60,17 @@ xt::xtensor<double, 2> as3d(const xt::xtensor<double, 2>& data)
         return data;
     }
 
-    xt::xtensor<double, 2> out = xt::zeros<double>(std::array<size_t, 2>{data.shape(0), 3ul});
+    xt::xtensor<double, 2> ret = xt::zeros<double>(std::array<size_t, 2>{data.shape(0), 3ul});
 
     if (data.shape(1) == 2ul) {
-        xt::view(out, xt::all(), xt::keep(0, 1)) = data;
+        xt::view(ret, xt::all(), xt::keep(0, 1)) = data;
     }
 
     if (data.shape(1) == 1ul) {
-        xt::view(out, xt::all(), xt::keep(0)) = data;
+        xt::view(ret, xt::all(), xt::keep(0)) = data;
     }
 
-    return out;
+    return ret;
 }
 
 inline ElementType convert(GooseFEM::Mesh::ElementType type)
@@ -283,20 +283,20 @@ inline void Connectivity::readShape(const H5Easy::File& data)
 
 inline std::vector<std::string> Connectivity::xdmf(size_t n_indent) const
 {
-    std::vector<std::string> out;
+    std::vector<std::string> ret;
 
-    out.push_back(
+    ret.push_back(
         "<Topology NumberOfElements=\"" + std::to_string(m_shape[0]) + "\" TopologyType=\"" +
         to_string(m_type) + "\">");
 
-    out.push_back(
+    ret.push_back(
         indent(n_indent) + "<DataItem Dimensions=\"" + std::to_string(m_shape[0]) + " " +
         std::to_string(m_shape[1]) + "\" Format=\"HDF\">" + m_fname + ":" + m_dataset +
         "</DataItem>");
 
-    out.push_back("</Topology>");
+    ret.push_back("</Topology>");
 
-    return out;
+    return ret;
 }
 
 #ifndef GOOSEFEM_NO_HIGHFIVE
@@ -374,26 +374,26 @@ inline void Coordinates::readShape(const H5Easy::File& data)
 
 inline std::vector<std::string> Coordinates::xdmf(size_t n_indent) const
 {
-    std::vector<std::string> out;
+    std::vector<std::string> ret;
 
     if (m_shape[1] == 1) {
-        out.push_back("<Geometry GeometryType=\"X\">");
+        ret.push_back("<Geometry GeometryType=\"X\">");
     }
     else if (m_shape[1] == 2) {
-        out.push_back("<Geometry GeometryType=\"XY\">");
+        ret.push_back("<Geometry GeometryType=\"XY\">");
     }
     else if (m_shape[1] == 3) {
-        out.push_back("<Geometry GeometryType=\"XYZ\">");
+        ret.push_back("<Geometry GeometryType=\"XYZ\">");
     }
 
-    out.push_back(
+    ret.push_back(
         indent(n_indent) + "<DataItem Dimensions=\"" + std::to_string(m_shape[0]) + " " +
         std::to_string(m_shape[1]) + "\" Format=\"HDF\">" + m_fname + ":" + m_dataset +
         "</DataItem>");
 
-    out.push_back("</Geometry>)");
+    ret.push_back("</Geometry>)");
 
-    return out;
+    return ret;
 }
 
 #ifndef GOOSEFEM_NO_HIGHFIVE
@@ -477,31 +477,31 @@ inline std::vector<std::string> Attribute::xdmf(size_t n_indent) const
     GOOSEFEM_ASSERT(m_shape.size() > 0);
     GOOSEFEM_ASSERT(m_shape.size() < 3);
 
-    std::vector<std::string> out;
+    std::vector<std::string> ret;
 
     if (m_shape.size() == 1) {
-        out.push_back(
+        ret.push_back(
             "<Attribute AttributeType=\"Scalar\" Center=\"" + to_string(m_type) + "\" Name=\"" +
             m_name + "\">");
 
-        out.push_back(
+        ret.push_back(
             indent(n_indent) + "<DataItem Dimensions=\"" + std::to_string(m_shape[0]) +
             "\" Format=\"HDF\">" + m_fname + ":" + m_dataset + "</DataItem>");
     }
     else if (m_shape.size() == 2) {
-        out.push_back(
+        ret.push_back(
             "<Attribute AttributeType=\"Vector\" Center=\"" + to_string(m_type) + "\" Name=\"" +
             m_name + "\">");
 
-        out.push_back(
+        ret.push_back(
             indent(n_indent) + "<DataItem Dimensions=\"" + std::to_string(m_shape[0]) + " " +
             std::to_string(m_shape[1]) + "\" Format=\"HDF\">" + m_fname + ":" + m_dataset +
             "</DataItem>");
     }
 
-    out.push_back("</Attribute>)");
+    ret.push_back("</Attribute>)");
 
-    return out;
+    return ret;
 }
 
 inline Mesh::Mesh(const Connectivity& conn, const Coordinates& coor) : m_conn(conn), m_coor(coor)
@@ -515,13 +515,13 @@ inline void Mesh::push_back(const Attribute& data)
 
 inline std::vector<std::string> Mesh::xdmf(size_t n_indent) const
 {
-    std::vector<std::string> out;
+    std::vector<std::string> ret;
 
     {
         std::vector<std::string> lines = m_conn.xdmf(n_indent);
 
         for (auto& line : lines) {
-            out.push_back(line);
+            ret.push_back(line);
         }
     }
 
@@ -529,7 +529,7 @@ inline std::vector<std::string> Mesh::xdmf(size_t n_indent) const
         std::vector<std::string> lines = m_coor.xdmf(n_indent);
 
         for (auto& line : lines) {
-            out.push_back(line);
+            ret.push_back(line);
         }
     }
 
@@ -537,11 +537,11 @@ inline std::vector<std::string> Mesh::xdmf(size_t n_indent) const
         std::vector<std::string> lines = i.xdmf(n_indent);
 
         for (auto& line : lines) {
-            out.push_back(line);
+            ret.push_back(line);
         }
     }
 
-    return out;
+    return ret;
 }
 
 inline void Mesh::write(const std::string& fname, size_t n_indent) const
@@ -580,13 +580,13 @@ inline void Increment::push_back(const Attribute& data)
 
 inline std::vector<std::string> Increment::xdmf(size_t n_indent) const
 {
-    std::vector<std::string> out;
+    std::vector<std::string> ret;
 
     for (auto& i : m_conn) {
         std::vector<std::string> lines = i.xdmf(n_indent);
 
         for (auto& line : lines) {
-            out.push_back(line);
+            ret.push_back(line);
         }
     }
 
@@ -594,7 +594,7 @@ inline std::vector<std::string> Increment::xdmf(size_t n_indent) const
         std::vector<std::string> lines = i.xdmf(n_indent);
 
         for (auto& line : lines) {
-            out.push_back(line);
+            ret.push_back(line);
         }
     }
 
@@ -602,11 +602,11 @@ inline std::vector<std::string> Increment::xdmf(size_t n_indent) const
         std::vector<std::string> lines = i.xdmf(n_indent);
 
         for (auto& line : lines) {
-            out.push_back(line);
+            ret.push_back(line);
         }
     }
 
-    return out;
+    return ret;
 }
 
 inline TimeSeries::TimeSeries(const std::vector<Increment>& data) : m_data(data)
@@ -620,23 +620,23 @@ inline void TimeSeries::push_back(const Increment& data)
 
 inline std::vector<std::string> TimeSeries::xdmf(size_t n_indent) const
 {
-    std::vector<std::string> out;
+    std::vector<std::string> ret;
 
     for (size_t inc = 0; inc < m_data.size(); ++inc) {
-        out.push_back("<Grid Name=\"Increment " + std::to_string(inc) + "\">");
+        ret.push_back("<Grid Name=\"Increment " + std::to_string(inc) + "\">");
 
-        out.push_back(indent(n_indent) + "<Time Value=\"" + std::to_string(inc) + "\"/>");
+        ret.push_back(indent(n_indent) + "<Time Value=\"" + std::to_string(inc) + "\"/>");
 
         std::vector<std::string> lines = m_data[inc].xdmf(n_indent);
 
         for (auto& line : lines) {
-            out.push_back(indent(n_indent) + line);
+            ret.push_back(indent(n_indent) + line);
         }
 
-        out.push_back("</Grid>)");
+        ret.push_back("</Grid>)");
     }
 
-    return out;
+    return ret;
 }
 
 inline void TimeSeries::write(const std::string& fname, size_t n_indent) const
