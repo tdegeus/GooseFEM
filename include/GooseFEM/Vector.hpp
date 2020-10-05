@@ -20,7 +20,7 @@ inline Vector::Vector(const xt::xtensor<size_t, 2>& conn, const xt::xtensor<size
     m_ndim = m_dofs.shape(1);
     m_ndof = xt::amax(m_dofs)() + 1;
 
-    GOOSEFEM_ASSERT(xt::amax(m_conn)[0] + 1 == m_nnode);
+    GOOSEFEM_ASSERT(xt::amax(m_conn)() + 1 <= m_nnode);
     GOOSEFEM_ASSERT(m_ndof <= m_nnode * m_ndim);
 }
 
@@ -69,6 +69,8 @@ Vector::asDofs(const xt::xtensor<double, 2>& nodevec, xt::xtensor<double, 1>& do
     GOOSEFEM_ASSERT(xt::has_shape(nodevec, {m_nnode, m_ndim}));
     GOOSEFEM_ASSERT(dofval.size() == m_ndof);
 
+    dofval.fill(0.0);
+
     #pragma omp parallel for
     for (size_t m = 0; m < m_nnode; ++m) {
         for (size_t i = 0; i < m_ndim; ++i) {
@@ -82,6 +84,8 @@ Vector::asDofs(const xt::xtensor<double, 3>& elemvec, xt::xtensor<double, 1>& do
 {
     GOOSEFEM_ASSERT(xt::has_shape(elemvec, {m_nelem, m_nne, m_ndim}));
     GOOSEFEM_ASSERT(dofval.size() == m_ndof);
+
+    dofval.fill(0.0);
 
     #pragma omp parallel for
     for (size_t e = 0; e < m_nelem; ++e) {
@@ -112,6 +116,8 @@ Vector::asNode(const xt::xtensor<double, 3>& elemvec, xt::xtensor<double, 2>& no
 {
     GOOSEFEM_ASSERT(xt::has_shape(elemvec, {m_nelem, m_nne, m_ndim}));
     GOOSEFEM_ASSERT(xt::has_shape(nodevec, {m_nnode, m_ndim}));
+
+    nodevec.fill(0.0);
 
     #pragma omp parallel for
     for (size_t e = 0; e < m_nelem; ++e) {

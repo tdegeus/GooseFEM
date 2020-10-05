@@ -31,7 +31,7 @@ inline MatrixDiagonalPartitioned::MatrixDiagonalPartitioned(
     m_App = xt::empty<double>({m_nnp});
     m_inv_uu = xt::empty<double>({m_nnu});
 
-    GOOSEFEM_ASSERT(xt::amax(m_conn)() + 1 == m_nnode);
+    GOOSEFEM_ASSERT(xt::amax(m_conn)() + 1 <= m_nnode);
     GOOSEFEM_ASSERT(xt::amax(m_iip)() <= xt::amax(m_dofs)());
     GOOSEFEM_ASSERT(m_ndof <= m_nnode * m_ndim);
 }
@@ -298,19 +298,19 @@ inline void MatrixDiagonalPartitioned::reaction_p(
 
 inline xt::xtensor<double, 1> MatrixDiagonalPartitioned::AsDiagonal() const
 {
-    xt::xtensor<double, 1> out = xt::zeros<double>({m_ndof});
+    xt::xtensor<double, 1> ret = xt::zeros<double>({m_ndof});
 
     #pragma omp parallel for
     for (size_t d = 0; d < m_nnu; ++d) {
-        out(m_iiu(d)) = m_Auu(d);
+        ret(m_iiu(d)) = m_Auu(d);
     }
 
     #pragma omp parallel for
     for (size_t d = 0; d < m_nnp; ++d) {
-        out(m_iip(d)) = m_App(d);
+        ret(m_iip(d)) = m_App(d);
     }
 
-    return out;
+    return ret;
 }
 
 inline xt::xtensor<double, 2> MatrixDiagonalPartitioned::Dot(const xt::xtensor<double, 2>& x) const
@@ -346,17 +346,17 @@ inline xt::xtensor<double, 1> MatrixDiagonalPartitioned::Dot_p(
 inline xt::xtensor<double, 2>
 MatrixDiagonalPartitioned::Solve(const xt::xtensor<double, 2>& b, const xt::xtensor<double, 2>& x)
 {
-    xt::xtensor<double, 2> out = x;
-    this->solve(b, out);
-    return out;
+    xt::xtensor<double, 2> ret = x;
+    this->solve(b, ret);
+    return ret;
 }
 
 inline xt::xtensor<double, 1>
 MatrixDiagonalPartitioned::Solve(const xt::xtensor<double, 1>& b, const xt::xtensor<double, 1>& x)
 {
-    xt::xtensor<double, 1> out = x;
-    this->solve(b, out);
-    return out;
+    xt::xtensor<double, 1> ret = x;
+    this->solve(b, ret);
+    return ret;
 }
 
 inline xt::xtensor<double, 1> MatrixDiagonalPartitioned::Solve_u(
@@ -370,17 +370,17 @@ inline xt::xtensor<double, 1> MatrixDiagonalPartitioned::Solve_u(
 inline xt::xtensor<double, 2> MatrixDiagonalPartitioned::Reaction(
     const xt::xtensor<double, 2>& x, const xt::xtensor<double, 2>& b) const
 {
-    xt::xtensor<double, 2> out = b;
-    this->reaction(x, out);
-    return out;
+    xt::xtensor<double, 2> ret = b;
+    this->reaction(x, ret);
+    return ret;
 }
 
 inline xt::xtensor<double, 1> MatrixDiagonalPartitioned::Reaction(
     const xt::xtensor<double, 1>& x, const xt::xtensor<double, 1>& b) const
 {
-    xt::xtensor<double, 1> out = b;
-    this->reaction(x, out);
-    return out;
+    xt::xtensor<double, 1> ret = b;
+    this->reaction(x, ret);
+    return ret;
 }
 
 inline xt::xtensor<double, 1> MatrixDiagonalPartitioned::Reaction_p(

@@ -133,6 +133,8 @@ inline void VectorPartitionedTyings::asDofs_i(
     GOOSEFEM_ASSERT(xt::has_shape(nodevec, {m_nnode, m_ndim}));
     GOOSEFEM_ASSERT(dofval_i.size() == m_nni);
 
+    dofval_i.fill(0.0);
+
     #pragma omp parallel for
     for (size_t m = 0; m < m_nnode; ++m) {
         for (size_t i = 0; i < m_ndim; ++i) {
@@ -142,8 +144,9 @@ inline void VectorPartitionedTyings::asDofs_i(
         }
     }
 
-    if (!apply_tyings)
+    if (!apply_tyings) {
         return;
+    }
 
     Eigen::VectorXd Dofval_d = this->Eigen_asDofs_d(nodevec);
     Eigen::VectorXd Dofval_i = m_Cid * Dofval_d;
