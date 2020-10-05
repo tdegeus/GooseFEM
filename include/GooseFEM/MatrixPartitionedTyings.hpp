@@ -410,17 +410,9 @@ inline void MatrixPartitionedTyingsSolver<Solver>::solve_u(
 
     this->factorize(matrix);
 
-    Eigen::VectorXd B_u(matrix.m_nnu, 1);
-    Eigen::VectorXd B_d(matrix.m_nnd, 1);
-    Eigen::VectorXd X_p(matrix.m_nnp, 1);
-
-    std::copy(b_u.begin(), b_u.end(), B_u.data());
-    std::copy(b_d.begin(), b_d.end(), B_d.data());
-    std::copy(x_p.begin(), x_p.end(), X_p.data());
-
-    Eigen::VectorXd X_u = m_solver.solve(Eigen::VectorXd(B_u - matrix.m_ACup * X_p));
-
-    std::copy(X_u.data(), X_u.data() + matrix.m_nnu, x_u.begin());
+    Eigen::Map<Eigen::VectorXd>(x_u.data(), x_u.size()).noalias() = m_solver.solve(Eigen::VectorXd(
+        Eigen::Map<const Eigen::VectorXd>(b_u.data(), b_u.size()) -
+        matrix.m_ACup * Eigen::Map<const Eigen::VectorXd>(x_p.data(), x_p.size())));
 }
 
 template <class Solver>

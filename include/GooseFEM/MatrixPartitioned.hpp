@@ -187,15 +187,9 @@ inline void MatrixPartitioned::reaction_p(
     GOOSEFEM_ASSERT(x_p.size() == m_nnp);
     GOOSEFEM_ASSERT(b_p.size() == m_nnp);
 
-    Eigen::VectorXd X_u(m_nnu, 1);
-    Eigen::VectorXd X_p(m_nnp, 1);
-
-    std::copy(x_u.begin(), x_u.end(), X_u.data());
-    std::copy(x_p.begin(), x_p.end(), X_p.data());
-
-    Eigen::VectorXd B_p = m_Apu * X_u + m_App * X_p;
-
-    std::copy(B_p.data(), B_p.data() + m_nnp, b_p.begin());
+    Eigen::Map<Eigen::VectorXd>(b_p.data(), b_p.size()).noalias() =
+        m_Apu * Eigen::Map<const Eigen::VectorXd>(x_u.data(), x_u.size()) +
+        m_App * Eigen::Map<const Eigen::VectorXd>(x_p.data(), x_p.size());
 }
 
 inline xt::xtensor<double, 2>
@@ -305,10 +299,8 @@ inline void MatrixPartitionedSolver<Solver>::solve(
     GOOSEFEM_ASSERT(xt::has_shape(x, {matrix.m_nnode, matrix.m_ndim}));
 
     this->factorize(matrix);
-
     Eigen::VectorXd B_u = matrix.asDofs_u(b);
     Eigen::VectorXd X_p = matrix.asDofs_p(x);
-
     Eigen::VectorXd X_u = m_solver.solve(Eigen::VectorXd(B_u - matrix.m_Aup * X_p));
 
     #pragma omp parallel for
@@ -329,10 +321,8 @@ inline void MatrixPartitionedSolver<Solver>::solve(
     GOOSEFEM_ASSERT(x.size() == matrix.m_ndof);
 
     this->factorize(matrix);
-
     Eigen::VectorXd B_u = matrix.asDofs_u(b);
     Eigen::VectorXd X_p = matrix.asDofs_p(x);
-
     Eigen::VectorXd X_u = m_solver.solve(Eigen::VectorXd(B_u - matrix.m_Aup * X_p));
 
     #pragma omp parallel for
@@ -354,15 +344,9 @@ inline void MatrixPartitionedSolver<Solver>::solve_u(
 
     this->factorize(matrix);
 
-    Eigen::VectorXd B_u(matrix.m_nnu, 1);
-    Eigen::VectorXd X_p(matrix.m_nnp, 1);
-
-    std::copy(b_u.begin(), b_u.end(), B_u.data());
-    std::copy(x_p.begin(), x_p.end(), X_p.data());
-
-    Eigen::VectorXd X_u = m_solver.solve(Eigen::VectorXd(B_u - matrix.m_Aup * X_p));
-
-    std::copy(X_u.data(), X_u.data() + matrix.m_nnu, x_u.begin());
+    Eigen::Map<Eigen::VectorXd>(x_u.data(), x_u.size()).noalias() = m_solver.solve(Eigen::VectorXd(
+        Eigen::Map<const Eigen::VectorXd>(b_u.data(), b_u.size()) -
+        matrix.m_Aup * Eigen::Map<const Eigen::VectorXd>(x_p.data(), x_p.size())));
 }
 
 template <class Solver>
