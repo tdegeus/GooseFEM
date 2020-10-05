@@ -435,12 +435,12 @@ inline size_t FineLayer::ndim() const
 
 inline size_t FineLayer::nelx() const
 {
-    return xt::amax(m_nelx)[0];
+    return xt::amax(m_nelx)();
 }
 
 inline size_t FineLayer::nely() const
 {
-    return xt::sum(m_nhy)[0];
+    return xt::sum(m_nhy)();
 }
 
 inline double FineLayer::h() const
@@ -977,7 +977,7 @@ inline FineLayer2Regular::FineLayer2Regular(const GooseFEM::Mesh::Quad4::FineLay
     // ------------
 
     m_regular = GooseFEM::Mesh::Quad4::Regular(
-        xt::amax(m_finelayer.m_nelx)[0], xt::sum(m_finelayer.m_nhy)[0], m_finelayer.m_h);
+        xt::amax(m_finelayer.m_nelx)(), xt::sum(m_finelayer.m_nhy)(), m_finelayer.m_h);
 
     // -------
     // mapping

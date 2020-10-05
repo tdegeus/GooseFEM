@@ -1212,17 +1212,17 @@ inline size_t FineLayer::ndim() const
 
 inline size_t FineLayer::nelx() const
 {
-    return xt::amax(m_nelx)[0];
+    return xt::amax(m_nelx)();
 }
 
 inline size_t FineLayer::nely() const
 {
-    return xt::sum(m_nhy)[0];
+    return xt::sum(m_nhy)();
 }
 
 inline size_t FineLayer::nelz() const
 {
-    return xt::amax(m_nelz)[0];
+    return xt::amax(m_nelz)();
 }
 
 inline ElementType FineLayer::getElementType() const

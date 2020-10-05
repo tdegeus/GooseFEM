@@ -18,7 +18,7 @@ inline Vector::Vector(const xt::xtensor<size_t, 2>& conn, const xt::xtensor<size
     m_nne = m_conn.shape(1);
     m_nnode = m_dofs.shape(0);
     m_ndim = m_dofs.shape(1);
-    m_ndof = xt::amax(m_dofs)[0] + 1;
+    m_ndof = xt::amax(m_dofs)() + 1;
 
     GOOSEFEM_ASSERT(xt::amax(m_conn)[0] + 1 == m_nnode);
     GOOSEFEM_ASSERT(m_ndof <= m_nnode * m_ndim);

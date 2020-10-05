@@ -40,7 +40,7 @@ inline VectorPartitionedTyings::VectorPartitionedTyings(
 
     GOOSEFEM_ASSERT(static_cast<size_t>(m_Cdi.cols()) == m_nni);
     GOOSEFEM_ASSERT(m_ndof <= m_nnode * m_ndim);
-    GOOSEFEM_ASSERT(m_ndof == xt::amax(m_dofs)[0] + 1);
+    GOOSEFEM_ASSERT(m_ndof == xt::amax(m_dofs)() + 1);
 }
 
 inline size_t VectorPartitionedTyings::nelem() const

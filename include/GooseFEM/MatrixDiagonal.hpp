@@ -19,11 +19,11 @@ inline MatrixDiagonal::MatrixDiagonal(
     m_nne = m_conn.shape(1);
     m_nnode = m_dofs.shape(0);
     m_ndim = m_dofs.shape(1);
-    m_ndof = xt::amax(m_dofs)[0] + 1;
+    m_ndof = xt::amax(m_dofs)() + 1;
     m_A = xt::empty<double>({m_ndof});
     m_inv = xt::empty<double>({m_ndof});
 
-    GOOSEFEM_ASSERT(xt::amax(m_conn)[0] + 1 == m_nnode);
+    GOOSEFEM_ASSERT(xt::amax(m_conn)() + 1 == m_nnode);
     GOOSEFEM_ASSERT(m_ndof <= m_nnode * m_ndim);
 }
 

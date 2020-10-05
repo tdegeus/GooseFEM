@@ -54,7 +54,7 @@ inline MatrixPartitionedTyings::MatrixPartitionedTyings(
     m_Add.resize(m_nnd, m_nnd);
 
     GOOSEFEM_ASSERT(m_ndof <= m_nnode * m_ndim);
-    GOOSEFEM_ASSERT(m_ndof == xt::amax(m_dofs)[0] + 1);
+    GOOSEFEM_ASSERT(m_ndof == xt::amax(m_dofs)() + 1);
 }
 
 inline size_t MatrixPartitionedTyings::nelem() const
