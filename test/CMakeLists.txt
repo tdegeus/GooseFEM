@@ -12,6 +12,7 @@ option(ASSERT "Enable assertions" ON)
 option(DEBUG "Enable all assertions" ON)
 
 find_package(Catch2 REQUIRED)
+find_package(GMatElastic REQUIRED)
 
 add_executable(main
     main.cpp
@@ -23,9 +24,10 @@ add_executable(main
     Mesh.cpp
     MeshQuad4.cpp
     Vector.cpp
-    VectorPartitioned.cpp)
+    VectorPartitioned.cpp
+    Example_hybrid-material.cpp)
 
-target_link_libraries(main PRIVATE Catch2::Catch2 GooseFEM)
+target_link_libraries(main PRIVATE Catch2::Catch2 GMatElastic GooseFEM)
 
 if (SIMD)
     target_link_libraries(main PRIVATE xtensor::optimize xtensor::use_xsimd)
