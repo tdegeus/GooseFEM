@@ -148,8 +148,8 @@ MatrixPartitioned::reaction(const xt::xtensor<double, 2>& x, xt::xtensor<double,
     GOOSEFEM_ASSERT(xt::has_shape(x, {m_nnode, m_ndim}));
     GOOSEFEM_ASSERT(xt::has_shape(b, {m_nnode, m_ndim}));
 
-    Eigen::VectorXd X_u = this->asDofs_u(x);
-    Eigen::VectorXd X_p = this->asDofs_p(x);
+    Eigen::VectorXd X_u = this->AsDofs_u(x);
+    Eigen::VectorXd X_p = this->AsDofs_p(x);
     Eigen::VectorXd B_p = m_Apu * X_u + m_App * X_p;
 
     #pragma omp parallel for
@@ -168,8 +168,8 @@ MatrixPartitioned::reaction(const xt::xtensor<double, 1>& x, xt::xtensor<double,
     GOOSEFEM_ASSERT(x.size() == m_ndof);
     GOOSEFEM_ASSERT(b.size() == m_ndof);
 
-    Eigen::VectorXd X_u = this->asDofs_u(x);
-    Eigen::VectorXd X_p = this->asDofs_p(x);
+    Eigen::VectorXd X_u = this->AsDofs_u(x);
+    Eigen::VectorXd X_p = this->AsDofs_p(x);
     Eigen::VectorXd B_p = m_Apu * X_u + m_App * X_p;
 
     #pragma omp parallel for
@@ -216,7 +216,7 @@ inline xt::xtensor<double, 1> MatrixPartitioned::Reaction_p(
     return b_p;
 }
 
-inline Eigen::VectorXd MatrixPartitioned::asDofs_u(const xt::xtensor<double, 1>& dofval) const
+inline Eigen::VectorXd MatrixPartitioned::AsDofs_u(const xt::xtensor<double, 1>& dofval) const
 {
     GOOSEFEM_ASSERT(dofval.size() == m_ndof);
 
@@ -230,7 +230,7 @@ inline Eigen::VectorXd MatrixPartitioned::asDofs_u(const xt::xtensor<double, 1>&
     return dofval_u;
 }
 
-inline Eigen::VectorXd MatrixPartitioned::asDofs_u(const xt::xtensor<double, 2>& nodevec) const
+inline Eigen::VectorXd MatrixPartitioned::AsDofs_u(const xt::xtensor<double, 2>& nodevec) const
 {
     GOOSEFEM_ASSERT(xt::has_shape(nodevec, {m_nnode, m_ndim}));
 
@@ -248,7 +248,7 @@ inline Eigen::VectorXd MatrixPartitioned::asDofs_u(const xt::xtensor<double, 2>&
     return dofval_u;
 }
 
-inline Eigen::VectorXd MatrixPartitioned::asDofs_p(const xt::xtensor<double, 1>& dofval) const
+inline Eigen::VectorXd MatrixPartitioned::AsDofs_p(const xt::xtensor<double, 1>& dofval) const
 {
     GOOSEFEM_ASSERT(dofval.size() == m_ndof);
 
@@ -262,7 +262,7 @@ inline Eigen::VectorXd MatrixPartitioned::asDofs_p(const xt::xtensor<double, 1>&
     return dofval_p;
 }
 
-inline Eigen::VectorXd MatrixPartitioned::asDofs_p(const xt::xtensor<double, 2>& nodevec) const
+inline Eigen::VectorXd MatrixPartitioned::AsDofs_p(const xt::xtensor<double, 2>& nodevec) const
 {
     GOOSEFEM_ASSERT(xt::has_shape(nodevec, {m_nnode, m_ndim}));
 
@@ -299,8 +299,8 @@ inline void MatrixPartitionedSolver<Solver>::solve(
     GOOSEFEM_ASSERT(xt::has_shape(x, {matrix.m_nnode, matrix.m_ndim}));
 
     this->factorize(matrix);
-    Eigen::VectorXd B_u = matrix.asDofs_u(b);
-    Eigen::VectorXd X_p = matrix.asDofs_p(x);
+    Eigen::VectorXd B_u = matrix.AsDofs_u(b);
+    Eigen::VectorXd X_p = matrix.AsDofs_p(x);
     Eigen::VectorXd X_u = m_solver.solve(Eigen::VectorXd(B_u - matrix.m_Aup * X_p));
 
     #pragma omp parallel for
@@ -321,8 +321,8 @@ inline void MatrixPartitionedSolver<Solver>::solve(
     GOOSEFEM_ASSERT(x.size() == matrix.m_ndof);
 
     this->factorize(matrix);
-    Eigen::VectorXd B_u = matrix.asDofs_u(b);
-    Eigen::VectorXd X_p = matrix.asDofs_p(x);
+    Eigen::VectorXd B_u = matrix.AsDofs_u(b);
+    Eigen::VectorXd X_p = matrix.AsDofs_p(x);
     Eigen::VectorXd X_u = m_solver.solve(Eigen::VectorXd(B_u - matrix.m_Aup * X_p));
 
     #pragma omp parallel for
