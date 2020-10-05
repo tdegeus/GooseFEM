@@ -110,12 +110,12 @@ private:
     template <class> friend class MatrixPartitionedTyingsSolver;
 
     // Convert arrays (Eigen version of VectorPartitioned, which contains public functions)
-    Eigen::VectorXd asDofs_u(const xt::xtensor<double, 1>& dofval) const;
-    Eigen::VectorXd asDofs_u(const xt::xtensor<double, 2>& nodevec) const;
-    Eigen::VectorXd asDofs_p(const xt::xtensor<double, 1>& dofval) const;
-    Eigen::VectorXd asDofs_p(const xt::xtensor<double, 2>& nodevec) const;
-    Eigen::VectorXd asDofs_d(const xt::xtensor<double, 1>& dofval) const;
-    Eigen::VectorXd asDofs_d(const xt::xtensor<double, 2>& nodevec) const;
+    Eigen::VectorXd AsDofs_u(const xt::xtensor<double, 1>& dofval) const;
+    Eigen::VectorXd AsDofs_u(const xt::xtensor<double, 2>& nodevec) const;
+    Eigen::VectorXd AsDofs_p(const xt::xtensor<double, 1>& dofval) const;
+    Eigen::VectorXd AsDofs_p(const xt::xtensor<double, 2>& nodevec) const;
+    Eigen::VectorXd AsDofs_d(const xt::xtensor<double, 1>& dofval) const;
+    Eigen::VectorXd AsDofs_d(const xt::xtensor<double, 2>& nodevec) const;
 };
 
 template <class Solver = Eigen::SimplicialLDLT<Eigen::SparseMatrix<double>>>

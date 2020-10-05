@@ -71,7 +71,7 @@ private:
     template <class> friend class MatrixSolver;
 
     // Convert arrays (Eigen version of Vector, which contains public functions)
-    Eigen::VectorXd asDofs(const xt::xtensor<double, 2>& nodevec) const;
+    Eigen::VectorXd AsDofs(const xt::xtensor<double, 2>& nodevec) const;
 
     void asNode(const Eigen::VectorXd& dofval, xt::xtensor<double, 2>& nodevec) const;
 };

@@ -214,7 +214,7 @@ inline void MatrixPartitionedTyings::assemble(const xt::xtensor<double, 3>& elem
     m_changed = true;
 }
 
-inline Eigen::VectorXd MatrixPartitionedTyings::asDofs_u(const xt::xtensor<double, 1>& dofval) const
+inline Eigen::VectorXd MatrixPartitionedTyings::AsDofs_u(const xt::xtensor<double, 1>& dofval) const
 {
     GOOSEFEM_ASSERT(dofval.size() == m_ndof);
 
@@ -229,7 +229,7 @@ inline Eigen::VectorXd MatrixPartitionedTyings::asDofs_u(const xt::xtensor<doubl
 }
 
 inline Eigen::VectorXd
-MatrixPartitionedTyings::asDofs_u(const xt::xtensor<double, 2>& nodevec) const
+MatrixPartitionedTyings::AsDofs_u(const xt::xtensor<double, 2>& nodevec) const
 {
     GOOSEFEM_ASSERT(xt::has_shape(nodevec, {m_nnode, m_ndim}));
 
@@ -247,7 +247,7 @@ MatrixPartitionedTyings::asDofs_u(const xt::xtensor<double, 2>& nodevec) const
     return dofval_u;
 }
 
-inline Eigen::VectorXd MatrixPartitionedTyings::asDofs_p(const xt::xtensor<double, 1>& dofval) const
+inline Eigen::VectorXd MatrixPartitionedTyings::AsDofs_p(const xt::xtensor<double, 1>& dofval) const
 {
     GOOSEFEM_ASSERT(dofval.size() == m_ndof);
 
@@ -262,7 +262,7 @@ inline Eigen::VectorXd MatrixPartitionedTyings::asDofs_p(const xt::xtensor<doubl
 }
 
 inline Eigen::VectorXd
-MatrixPartitionedTyings::asDofs_p(const xt::xtensor<double, 2>& nodevec) const
+MatrixPartitionedTyings::AsDofs_p(const xt::xtensor<double, 2>& nodevec) const
 {
     GOOSEFEM_ASSERT(xt::has_shape(nodevec, {m_nnode, m_ndim}));
 
@@ -280,7 +280,7 @@ MatrixPartitionedTyings::asDofs_p(const xt::xtensor<double, 2>& nodevec) const
     return dofval_p;
 }
 
-inline Eigen::VectorXd MatrixPartitionedTyings::asDofs_d(const xt::xtensor<double, 1>& dofval) const
+inline Eigen::VectorXd MatrixPartitionedTyings::AsDofs_d(const xt::xtensor<double, 1>& dofval) const
 {
     GOOSEFEM_ASSERT(dofval.size() == m_ndof);
 
@@ -295,7 +295,7 @@ inline Eigen::VectorXd MatrixPartitionedTyings::asDofs_d(const xt::xtensor<doubl
 }
 
 inline Eigen::VectorXd
-MatrixPartitionedTyings::asDofs_d(const xt::xtensor<double, 2>& nodevec) const
+MatrixPartitionedTyings::AsDofs_d(const xt::xtensor<double, 2>& nodevec) const
 {
     GOOSEFEM_ASSERT(xt::has_shape(nodevec, {m_nnode, m_ndim}));
 
@@ -346,9 +346,9 @@ inline void MatrixPartitionedTyingsSolver<Solver>::solve(
 
     this->factorize(matrix);
 
-    Eigen::VectorXd B_u = matrix.asDofs_u(b);
-    Eigen::VectorXd B_d = matrix.asDofs_d(b);
-    Eigen::VectorXd X_p = matrix.asDofs_p(x);
+    Eigen::VectorXd B_u = matrix.AsDofs_u(b);
+    Eigen::VectorXd B_d = matrix.AsDofs_d(b);
+    Eigen::VectorXd X_p = matrix.AsDofs_p(x);
 
     B_u += matrix.m_Cud * B_d;
 
@@ -377,9 +377,9 @@ inline void MatrixPartitionedTyingsSolver<Solver>::solve(
 
     this->factorize(matrix);
 
-    Eigen::VectorXd B_u = matrix.asDofs_u(b);
-    Eigen::VectorXd B_d = matrix.asDofs_d(b);
-    Eigen::VectorXd X_p = matrix.asDofs_p(x);
+    Eigen::VectorXd B_u = matrix.AsDofs_u(b);
+    Eigen::VectorXd B_d = matrix.AsDofs_d(b);
+    Eigen::VectorXd X_p = matrix.AsDofs_p(x);
 
     Eigen::VectorXd X_u = m_solver.solve(Eigen::VectorXd(B_u - matrix.m_ACup * X_p));
     Eigen::VectorXd X_d = matrix.m_Cdu * X_u + matrix.m_Cdp * X_p;

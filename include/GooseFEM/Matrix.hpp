@@ -85,9 +85,7 @@ inline void Matrix::dot(const xt::xtensor<double, 2>& x, xt::xtensor<double, 2>&
 {
     GOOSEFEM_ASSERT(xt::has_shape(b, {m_nnode, m_ndim}));
     GOOSEFEM_ASSERT(xt::has_shape(x, {m_nnode, m_ndim}));
-
-    Eigen::VectorXd B = m_A * this->asDofs(x);
-    this->asNode(B, b);
+    this->asNode(m_A * this->AsDofs(x), b);
 }
 
 inline void Matrix::dot(const xt::xtensor<double, 1>& x, xt::xtensor<double, 1>& b) const
@@ -96,7 +94,7 @@ inline void Matrix::dot(const xt::xtensor<double, 1>& x, xt::xtensor<double, 1>&
     GOOSEFEM_ASSERT(x.size() == m_ndof);
 
     Eigen::Map<Eigen::VectorXd>(b.data(), b.size()).noalias() =
-        m_A * Eigen::Map<const Eigen::VectorXd>(x.data(), m_ndof);
+        m_A * Eigen::Map<const Eigen::VectorXd>(x.data(), x.size());
 }
 
 inline xt::xtensor<double, 2> Matrix::Dot(const xt::xtensor<double, 2>& x) const
@@ -113,7 +111,7 @@ inline xt::xtensor<double, 1> Matrix::Dot(const xt::xtensor<double, 1>& x) const
     return b;
 }
 
-inline Eigen::VectorXd Matrix::asDofs(const xt::xtensor<double, 2>& nodevec) const
+inline Eigen::VectorXd Matrix::AsDofs(const xt::xtensor<double, 2>& nodevec) const
 {
     GOOSEFEM_ASSERT(xt::has_shape(nodevec, {m_nnode, m_ndim}));
 
@@ -160,7 +158,7 @@ inline void MatrixSolver<Solver>::solve(
     GOOSEFEM_ASSERT(xt::has_shape(b, {matrix.m_nnode, matrix.m_ndim}));
     GOOSEFEM_ASSERT(xt::has_shape(x, {matrix.m_nnode, matrix.m_ndim}));
     this->factorize(matrix);
-    Eigen::VectorXd B = matrix.asDofs(b);
+    Eigen::VectorXd B = matrix.AsDofs(b);
     Eigen::VectorXd X = m_solver.solve(B);
     matrix.asNode(X, x);
 }
@@ -172,8 +170,8 @@ inline void MatrixSolver<Solver>::solve(
     GOOSEFEM_ASSERT(b.size() == matrix.m_ndof);
     GOOSEFEM_ASSERT(x.size() == matrix.m_ndof);
     this->factorize(matrix);
-    Eigen::VectorXd X = m_solver.solve(Eigen::Map<const Eigen::VectorXd>(b.data(), matrix.m_ndof));
-    std::copy(X.data(), X.data() + matrix.m_ndof, x.begin());
+    Eigen::Map<Eigen::VectorXd>(x.data(), x.size()).noalias() = m_solver.solve(
+        Eigen::Map<const Eigen::VectorXd>(b.data(), matrix.m_ndof));
 }
 
 template <class Solver>
