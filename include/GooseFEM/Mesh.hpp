@@ -27,19 +27,19 @@ inline Renumber::Renumber(const xt::xarray<size_t>& dofs)
     }
 }
 
-// out(i,j) = renum(list(i,j))
+// ret(i,j) = renum(list(i,j))
 template <class T>
 T Renumber::apply(const T& list) const
 {
-    T out = T::from_shape(list.shape());
+    T ret = T::from_shape(list.shape());
 
-    auto jt = out.begin();
+    auto jt = ret.begin();
 
     for (auto it = list.begin(); it != list.end(); ++it, ++jt) {
         *jt = m_renum(*it);
     }
 
-    return out;
+    return ret;
 }
 
 inline xt::xtensor<size_t, 2> Renumber::get(const xt::xtensor<size_t, 2>& dofs) const
@@ -64,10 +64,11 @@ inline Reorder::Reorder(const std::initializer_list<xt::xtensor<size_t, 1>> args
         n = std::max(n, xt::amax(arg)() + 1);
     }
 
-#ifdef GOOSEFEM_ENABLE_ASSERT
-    for (auto& arg : args)
+    #ifdef GOOSEFEM_ENABLE_ASSERT
+    for (auto& arg : args) {
         GOOSEFEM_ASSERT(xt::unique(arg) == xt::sort(arg));
-#endif
+    }
+    #endif
 
     m_renum = xt::empty<size_t>({n});
 
@@ -91,20 +92,20 @@ inline xt::xtensor<size_t, 1> Reorder::index() const
 
 // apply renumbering, e.g. for a matrix:
 //
-//   out(i,j) = renum(list(i,j))
+//   ret(i,j) = renum(list(i,j))
 
 template <class T>
 T Reorder::apply(const T& list) const
 {
-    T out = T::from_shape(list.shape());
+    T ret = T::from_shape(list.shape());
 
-    auto jt = out.begin();
+    auto jt = ret.begin();
 
     for (auto it = list.begin(); it != list.end(); ++it, ++jt) {
         *jt = m_renum(*it);
     }
 
-    return out;
+    return ret;
 }
 
 inline xt::xtensor<size_t, 2> renumber(const xt::xtensor<size_t, 2>& dofs)
@@ -135,19 +136,19 @@ inline std::vector<std::vector<size_t>> elem2node(const xt::xtensor<size_t, 2>& 
     auto N = coordination(conn);
     auto nnode = N.size();
 
-    std::vector<std::vector<size_t>> out;
-    out.resize(nnode);
+    std::vector<std::vector<size_t>> ret;
+    ret.resize(nnode);
     for (size_t i = 0; i < nnode; ++i) {
-        out[i].reserve(N(i));
+        ret[i].reserve(N(i));
     }
 
     for (size_t e = 0; e < conn.shape(0); ++e) {
         for (size_t m = 0; m < conn.shape(1); ++m) {
-            out[conn(e, m)].push_back(e);
+            ret[conn(e, m)].push_back(e);
         }
     }
 
-    return out;
+    return ret;
 }
 
 inline xt::xtensor<double, 2> edgesize(
@@ -170,12 +171,12 @@ inline xt::xtensor<double, 2> edgesize(
         xt::xtensor<double, 1> y1 = xt::view(coor, xt::keep(n1), 1);
         xt::xtensor<double, 1> y2 = xt::view(coor, xt::keep(n2), 1);
         xt::xtensor<double, 1> y3 = xt::view(coor, xt::keep(n3), 1);
-        xt::xtensor<double, 2> out = xt::empty<double>(conn.shape());
-        xt::view(out, xt::all(), 0) = xt::sqrt(xt::pow(x1 - x0, 2.0) + xt::pow(y1 - y0, 2.0));
-        xt::view(out, xt::all(), 1) = xt::sqrt(xt::pow(x2 - x1, 2.0) + xt::pow(y2 - y1, 2.0));
-        xt::view(out, xt::all(), 2) = xt::sqrt(xt::pow(x3 - x2, 2.0) + xt::pow(y3 - y2, 2.0));
-        xt::view(out, xt::all(), 3) = xt::sqrt(xt::pow(x0 - x3, 2.0) + xt::pow(y0 - y3, 2.0));
-        return out;
+        xt::xtensor<double, 2> ret = xt::empty<double>(conn.shape());
+        xt::view(ret, xt::all(), 0) = xt::sqrt(xt::pow(x1 - x0, 2.0) + xt::pow(y1 - y0, 2.0));
+        xt::view(ret, xt::all(), 1) = xt::sqrt(xt::pow(x2 - x1, 2.0) + xt::pow(y2 - y1, 2.0));
+        xt::view(ret, xt::all(), 2) = xt::sqrt(xt::pow(x3 - x2, 2.0) + xt::pow(y3 - y2, 2.0));
+        xt::view(ret, xt::all(), 3) = xt::sqrt(xt::pow(x0 - x3, 2.0) + xt::pow(y0 - y3, 2.0));
+        return ret;
     }
 
     throw std::runtime_error("Element-type not implemented");

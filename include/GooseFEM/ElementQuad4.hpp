@@ -496,9 +496,9 @@ inline void Quadrature::int_gradN_dot_tensor4_dot_gradNT_dV(
 
 inline xt::xtensor<double, 2> Quadrature::DV() const
 {
-    xt::xtensor<double, 2> out = xt::empty<double>({m_nelem, m_nip});
-    this->dV(out);
-    return out;
+    xt::xtensor<double, 2> ret = xt::empty<double>({m_nelem, m_nip});
+    this->dV(ret);
+    return ret;
 }
 
 inline xt::xarray<double> Quadrature::DV(size_t rank) const
@@ -509,9 +509,9 @@ inline xt::xarray<double> Quadrature::DV(size_t rank) const
         shape.push_back(static_cast<size_t>(m_ndim));
     }
 
-    xt::xarray<double> out = xt::empty<double>(shape);
-    this->dV(out);
-    return out;
+    xt::xarray<double> ret = xt::empty<double>(shape);
+    this->dV(ret);
+    return ret;
 }
 
 inline xt::xtensor<double, 4> Quadrature::GradN_vector(const xt::xtensor<double, 3>& elemvec) const

@@ -438,9 +438,9 @@ inline void QuadratureAxisymmetric::int_gradN_dot_tensor4_dot_gradNT_dV(
 
 inline xt::xtensor<double, 2> QuadratureAxisymmetric::DV() const
 {
-    xt::xtensor<double, 2> out = xt::empty<double>({m_nelem, m_nip});
-    this->dV(out);
-    return out;
+    xt::xtensor<double, 2> ret = xt::empty<double>({m_nelem, m_nip});
+    this->dV(ret);
+    return ret;
 }
 
 inline xt::xarray<double> QuadratureAxisymmetric::DV(size_t rank) const
@@ -451,9 +451,9 @@ inline xt::xarray<double> QuadratureAxisymmetric::DV(size_t rank) const
         shape.push_back(static_cast<size_t>(m_tdim));
     }
 
-    xt::xarray<double> out = xt::empty<double>(shape);
-    this->dV(out);
-    return out;
+    xt::xarray<double> ret = xt::empty<double>(shape);
+    this->dV(ret);
+    return ret;
 }
 
 inline xt::xtensor<double, 4>

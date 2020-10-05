@@ -353,18 +353,18 @@ template <class Solver>
 inline xt::xtensor<double, 2> MatrixPartitionedSolver<Solver>::Solve(
     MatrixPartitioned& matrix, const xt::xtensor<double, 2>& b, const xt::xtensor<double, 2>& x)
 {
-    xt::xtensor<double, 2> out = x;
-    this->solve(matrix, b, out);
-    return out;
+    xt::xtensor<double, 2> ret = x;
+    this->solve(matrix, b, ret);
+    return ret;
 }
 
 template <class Solver>
 inline xt::xtensor<double, 1> MatrixPartitionedSolver<Solver>::Solve(
     MatrixPartitioned& matrix, const xt::xtensor<double, 1>& b, const xt::xtensor<double, 1>& x)
 {
-    xt::xtensor<double, 1> out = x;
-    this->solve(matrix, b, out);
-    return out;
+    xt::xtensor<double, 1> ret = x;
+    this->solve(matrix, b, ret);
+    return ret;
 }
 
 template <class Solver>

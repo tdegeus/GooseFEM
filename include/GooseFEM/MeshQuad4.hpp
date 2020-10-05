@@ -64,7 +64,7 @@ inline ElementType Regular::getElementType() const
 
 inline xt::xtensor<double, 2> Regular::coor() const
 {
-    xt::xtensor<double, 2> out = xt::empty<double>({m_nnode, m_ndim});
+    xt::xtensor<double, 2> ret = xt::empty<double>({m_nnode, m_ndim});
 
     xt::xtensor<double, 1> x =
         xt::linspace<double>(0.0, m_h * static_cast<double>(m_nelx), m_nelx + 1);
@@ -75,32 +75,32 @@ inline xt::xtensor<double, 2> Regular::coor() const
 
     for (size_t iy = 0; iy < m_nely + 1; ++iy) {
         for (size_t ix = 0; ix < m_nelx + 1; ++ix) {
-            out(inode, 0) = x(ix);
-            out(inode, 1) = y(iy);
+            ret(inode, 0) = x(ix);
+            ret(inode, 1) = y(iy);
             ++inode;
         }
     }
 
-    return out;
+    return ret;
 }
 
 inline xt::xtensor<size_t, 2> Regular::conn() const
 {
-    xt::xtensor<size_t, 2> out = xt::empty<size_t>({m_nelem, m_nne});
+    xt::xtensor<size_t, 2> ret = xt::empty<size_t>({m_nelem, m_nne});
 
     size_t ielem = 0;
 
     for (size_t iy = 0; iy < m_nely; ++iy) {
         for (size_t ix = 0; ix < m_nelx; ++ix) {
-            out(ielem, 0) = (iy) * (m_nelx + 1) + (ix);
-            out(ielem, 1) = (iy) * (m_nelx + 1) + (ix + 1);
-            out(ielem, 3) = (iy + 1) * (m_nelx + 1) + (ix);
-            out(ielem, 2) = (iy + 1) * (m_nelx + 1) + (ix + 1);
+            ret(ielem, 0) = (iy) * (m_nelx + 1) + (ix);
+            ret(ielem, 1) = (iy) * (m_nelx + 1) + (ix + 1);
+            ret(ielem, 3) = (iy + 1) * (m_nelx + 1) + (ix);
+            ret(ielem, 2) = (iy + 1) * (m_nelx + 1) + (ix + 1);
             ++ielem;
         }
     }
 
-    return out;
+    return ret;
 }
 
 inline xt::xtensor<size_t, 1> Regular::nodesBottomEdge() const
@@ -190,28 +190,28 @@ inline xt::xtensor<size_t, 2> Regular::nodesPeriodic() const
     xt::xtensor<size_t, 1> lft = nodesLeftOpenEdge();
     xt::xtensor<size_t, 1> rgt = nodesRightOpenEdge();
     std::array<size_t, 2> shape = {bot.size() + lft.size() + 3ul, 2ul};
-    xt::xtensor<size_t, 2> out = xt::empty<size_t>(shape);
+    xt::xtensor<size_t, 2> ret = xt::empty<size_t>(shape);
 
-    out(0, 0) = nodesBottomLeftCorner();
-    out(0, 1) = nodesBottomRightCorner();
+    ret(0, 0) = nodesBottomLeftCorner();
+    ret(0, 1) = nodesBottomRightCorner();
 
-    out(1, 0) = nodesBottomLeftCorner();
-    out(1, 1) = nodesTopRightCorner();
+    ret(1, 0) = nodesBottomLeftCorner();
+    ret(1, 1) = nodesTopRightCorner();
 
-    out(2, 0) = nodesBottomLeftCorner();
-    out(2, 1) = nodesTopLeftCorner();
+    ret(2, 0) = nodesBottomLeftCorner();
+    ret(2, 1) = nodesTopLeftCorner();
 
     size_t i = 3;
 
-    xt::view(out, xt::range(i, i + bot.size()), 0) = bot;
-    xt::view(out, xt::range(i, i + bot.size()), 1) = top;
+    xt::view(ret, xt::range(i, i + bot.size()), 0) = bot;
+    xt::view(ret, xt::range(i, i + bot.size()), 1) = top;
 
     i += bot.size();
 
-    xt::view(out, xt::range(i, i + lft.size()), 0) = lft;
-    xt::view(out, xt::range(i, i + lft.size()), 1) = rgt;
+    xt::view(ret, xt::range(i, i + lft.size()), 0) = lft;
+    xt::view(ret, xt::range(i, i + lft.size()), 1) = rgt;
 
-    return out;
+    return ret;
 }
 
 inline size_t Regular::nodesOrigin() const
@@ -226,16 +226,16 @@ inline xt::xtensor<size_t, 2> Regular::dofs() const
 
 inline xt::xtensor<size_t, 2> Regular::dofsPeriodic() const
 {
-    xt::xtensor<size_t, 2> out = GooseFEM::Mesh::dofs(m_nnode, m_ndim);
+    xt::xtensor<size_t, 2> ret = GooseFEM::Mesh::dofs(m_nnode, m_ndim);
     xt::xtensor<size_t, 2> nodePer = nodesPeriodic();
     xt::xtensor<size_t, 1> independent = xt::view(nodePer, xt::all(), 0);
     xt::xtensor<size_t, 1> dependent = xt::view(nodePer, xt::all(), 1);
 
     for (size_t j = 0; j < m_ndim; ++j) {
-        xt::view(out, xt::keep(dependent), j) = xt::view(out, xt::keep(independent), j);
+        xt::view(ret, xt::keep(dependent), j) = xt::view(ret, xt::keep(independent), j);
     }
 
-    return GooseFEM::Mesh::renumber(out);
+    return GooseFEM::Mesh::renumber(ret);
 }
 
 inline xt::xtensor<size_t, 2> Regular::elementMatrix() const
@@ -456,7 +456,7 @@ inline ElementType FineLayer::getElementType() const
 inline xt::xtensor<double, 2> FineLayer::coor() const
 {
     // allocate output
-    xt::xtensor<double, 2> out = xt::empty<double>({m_nnode, m_ndim});
+    xt::xtensor<double, 2> ret = xt::empty<double>({m_nnode, m_ndim});
 
     // current node, number of element layers
     size_t inode = 0;
@@ -480,8 +480,8 @@ inline xt::xtensor<double, 2> FineLayer::coor() const
 
         // add nodes of the bottom layer of this element
         for (size_t ix = 0; ix < m_nelx(iy) + 1; ++ix) {
-            out(inode, 0) = x(ix);
-            out(inode, 1) = y(iy);
+            ret(inode, 0) = x(ix);
+            ret(inode, 1) = y(iy);
             ++inode;
         }
 
@@ -498,8 +498,8 @@ inline xt::xtensor<double, 2> FineLayer::coor() const
             // - add nodes of the intermediate layer
             for (size_t ix = 0; ix < m_nelx(iy); ++ix) {
                 for (size_t j = 0; j < 2; ++j) {
-                    out(inode, 0) = x(ix) + dx * static_cast<double>(j + 1);
-                    out(inode, 1) = y(iy) + dy;
+                    ret(inode, 0) = x(ix) + dx * static_cast<double>(j + 1);
+                    ret(inode, 1) = y(iy) + dy;
                     ++inode;
                 }
             }
@@ -520,8 +520,8 @@ inline xt::xtensor<double, 2> FineLayer::coor() const
             // - add nodes of the intermediate layer
             for (size_t ix = 0; ix < m_nelx(iy); ++ix) {
                 for (size_t j = 0; j < 2; ++j) {
-                    out(inode, 0) = x(ix) + dx * static_cast<double>(j + 1);
-                    out(inode, 1) = y(iy) + dy;
+                    ret(inode, 0) = x(ix) + dx * static_cast<double>(j + 1);
+                    ret(inode, 1) = y(iy) + dy;
                     ++inode;
                 }
             }
@@ -529,19 +529,19 @@ inline xt::xtensor<double, 2> FineLayer::coor() const
 
         // add nodes of the top layer of this element
         for (size_t ix = 0; ix < m_nelx(iy) + 1; ++ix) {
-            out(inode, 0) = x(ix);
-            out(inode, 1) = y(iy + 1);
+            ret(inode, 0) = x(ix);
+            ret(inode, 1) = y(iy + 1);
             ++inode;
         }
     }
 
-    return out;
+    return ret;
 }
 
 inline xt::xtensor<size_t, 2> FineLayer::conn() const
 {
     // allocate output
-    xt::xtensor<size_t, 2> out = xt::empty<size_t>({m_nelem, m_nne});
+    xt::xtensor<size_t, 2> ret = xt::empty<size_t>({m_nelem, m_nne});
 
     // current element, number of element layers, starting nodes of each node layer
     size_t ielem = 0;
@@ -558,10 +558,10 @@ inline xt::xtensor<size_t, 2> FineLayer::conn() const
         // - define connectivity: no coarsening/refinement
         if (m_refine(iy) == -1) {
             for (size_t ix = 0; ix < m_nelx(iy); ++ix) {
-                out(ielem, 0) = bot + (ix);
-                out(ielem, 1) = bot + (ix + 1);
-                out(ielem, 2) = top + (ix + 1);
-                out(ielem, 3) = top + (ix);
+                ret(ielem, 0) = bot + (ix);
+                ret(ielem, 1) = bot + (ix + 1);
+                ret(ielem, 2) = top + (ix + 1);
+                ret(ielem, 3) = top + (ix);
                 ielem++;
             }
         }
@@ -570,28 +570,28 @@ inline xt::xtensor<size_t, 2> FineLayer::conn() const
         else if (m_refine(iy) == 0 && iy <= (nely - 1) / 2) {
             for (size_t ix = 0; ix < m_nelx(iy); ++ix) {
                 // -- bottom element
-                out(ielem, 0) = bot + (ix);
-                out(ielem, 1) = bot + (ix + 1);
-                out(ielem, 2) = mid + (2 * ix + 1);
-                out(ielem, 3) = mid + (2 * ix);
+                ret(ielem, 0) = bot + (ix);
+                ret(ielem, 1) = bot + (ix + 1);
+                ret(ielem, 2) = mid + (2 * ix + 1);
+                ret(ielem, 3) = mid + (2 * ix);
                 ielem++;
                 // -- top-right element
-                out(ielem, 0) = bot + (ix + 1);
-                out(ielem, 1) = top + (3 * ix + 3);
-                out(ielem, 2) = top + (3 * ix + 2);
-                out(ielem, 3) = mid + (2 * ix + 1);
+                ret(ielem, 0) = bot + (ix + 1);
+                ret(ielem, 1) = top + (3 * ix + 3);
+                ret(ielem, 2) = top + (3 * ix + 2);
+                ret(ielem, 3) = mid + (2 * ix + 1);
                 ielem++;
                 // -- top-center element
-                out(ielem, 0) = mid + (2 * ix);
-                out(ielem, 1) = mid + (2 * ix + 1);
-                out(ielem, 2) = top + (3 * ix + 2);
-                out(ielem, 3) = top + (3 * ix + 1);
+                ret(ielem, 0) = mid + (2 * ix);
+                ret(ielem, 1) = mid + (2 * ix + 1);
+                ret(ielem, 2) = top + (3 * ix + 2);
+                ret(ielem, 3) = top + (3 * ix + 1);
                 ielem++;
                 // -- top-left element
-                out(ielem, 0) = bot + (ix);
-                out(ielem, 1) = mid + (2 * ix);
-                out(ielem, 2) = top + (3 * ix + 1);
-                out(ielem, 3) = top + (3 * ix);
+                ret(ielem, 0) = bot + (ix);
+                ret(ielem, 1) = mid + (2 * ix);
+                ret(ielem, 2) = top + (3 * ix + 1);
+                ret(ielem, 3) = top + (3 * ix);
                 ielem++;
             }
         }
@@ -600,34 +600,34 @@ inline xt::xtensor<size_t, 2> FineLayer::conn() const
         else if (m_refine(iy) == 0 && iy > (nely - 1) / 2) {
             for (size_t ix = 0; ix < m_nelx(iy); ++ix) {
                 // -- lower-left element
-                out(ielem, 0) = bot + (3 * ix);
-                out(ielem, 1) = bot + (3 * ix + 1);
-                out(ielem, 2) = mid + (2 * ix);
-                out(ielem, 3) = top + (ix);
+                ret(ielem, 0) = bot + (3 * ix);
+                ret(ielem, 1) = bot + (3 * ix + 1);
+                ret(ielem, 2) = mid + (2 * ix);
+                ret(ielem, 3) = top + (ix);
                 ielem++;
                 // -- lower-center element
-                out(ielem, 0) = bot + (3 * ix + 1);
-                out(ielem, 1) = bot + (3 * ix + 2);
-                out(ielem, 2) = mid + (2 * ix + 1);
-                out(ielem, 3) = mid + (2 * ix);
+                ret(ielem, 0) = bot + (3 * ix + 1);
+                ret(ielem, 1) = bot + (3 * ix + 2);
+                ret(ielem, 2) = mid + (2 * ix + 1);
+                ret(ielem, 3) = mid + (2 * ix);
                 ielem++;
                 // -- lower-right element
-                out(ielem, 0) = bot + (3 * ix + 2);
-                out(ielem, 1) = bot + (3 * ix + 3);
-                out(ielem, 2) = top + (ix + 1);
-                out(ielem, 3) = mid + (2 * ix + 1);
+                ret(ielem, 0) = bot + (3 * ix + 2);
+                ret(ielem, 1) = bot + (3 * ix + 3);
+                ret(ielem, 2) = top + (ix + 1);
+                ret(ielem, 3) = mid + (2 * ix + 1);
                 ielem++;
                 // -- upper element
-                out(ielem, 0) = mid + (2 * ix);
-                out(ielem, 1) = mid + (2 * ix + 1);
-                out(ielem, 2) = top + (ix + 1);
-                out(ielem, 3) = top + (ix);
+                ret(ielem, 0) = mid + (2 * ix);
+                ret(ielem, 1) = mid + (2 * ix + 1);
+                ret(ielem, 2) = top + (ix + 1);
+                ret(ielem, 3) = top + (ix);
                 ielem++;
             }
         }
     }
 
-    return out;
+    return ret;
 }
 
 inline xt::xtensor<size_t, 1> FineLayer::elementsMiddleLayer() const
@@ -652,37 +652,37 @@ inline xt::xtensor<size_t, 1> FineLayer::nodesLeftEdge() const
 {
     size_t nely = m_nhy.size();
 
-    xt::xtensor<size_t, 1> out = xt::empty<size_t>({nely + 1});
+    xt::xtensor<size_t, 1> ret = xt::empty<size_t>({nely + 1});
 
     size_t i = 0;
     size_t j = (nely + 1) / 2;
     size_t k = (nely - 1) / 2;
     size_t l = nely;
 
-    xt::view(out, xt::range(i, j)) = xt::view(m_startNode, xt::range(i, j));
-    xt::view(out, xt::range(k + 1, l + 1)) = xt::view(m_startNode, xt::range(k + 1, l + 1));
+    xt::view(ret, xt::range(i, j)) = xt::view(m_startNode, xt::range(i, j));
+    xt::view(ret, xt::range(k + 1, l + 1)) = xt::view(m_startNode, xt::range(k + 1, l + 1));
 
-    return out;
+    return ret;
 }
 
 inline xt::xtensor<size_t, 1> FineLayer::nodesRightEdge() const
 {
     size_t nely = m_nhy.size();
 
-    xt::xtensor<size_t, 1> out = xt::empty<size_t>({nely + 1});
+    xt::xtensor<size_t, 1> ret = xt::empty<size_t>({nely + 1});
 
     size_t i = 0;
     size_t j = (nely + 1) / 2;
     size_t k = (nely - 1) / 2;
     size_t l = nely;
 
-    xt::view(out, xt::range(i, j)) =
+    xt::view(ret, xt::range(i, j)) =
         xt::view(m_startNode, xt::range(i, j)) + xt::view(m_nelx, xt::range(i, j));
 
-    xt::view(out, xt::range(k + 1, l + 1)) =
+    xt::view(ret, xt::range(k + 1, l + 1)) =
         xt::view(m_startNode, xt::range(k + 1, l + 1)) + xt::view(m_nelx, xt::range(k, l));
 
-    return out;
+    return ret;
 }
 
 inline xt::xtensor<size_t, 1> FineLayer::nodesBottomOpenEdge() const
@@ -701,37 +701,37 @@ inline xt::xtensor<size_t, 1> FineLayer::nodesLeftOpenEdge() const
 {
     size_t nely = m_nhy.size();
 
-    xt::xtensor<size_t, 1> out = xt::empty<size_t>({nely - 1});
+    xt::xtensor<size_t, 1> ret = xt::empty<size_t>({nely - 1});
 
     size_t i = 0;
     size_t j = (nely + 1) / 2;
     size_t k = (nely - 1) / 2;
     size_t l = nely;
 
-    xt::view(out, xt::range(i, j - 1)) = xt::view(m_startNode, xt::range(i + 1, j));
-    xt::view(out, xt::range(k, l - 1)) = xt::view(m_startNode, xt::range(k + 1, l));
+    xt::view(ret, xt::range(i, j - 1)) = xt::view(m_startNode, xt::range(i + 1, j));
+    xt::view(ret, xt::range(k, l - 1)) = xt::view(m_startNode, xt::range(k + 1, l));
 
-    return out;
+    return ret;
 }
 
 inline xt::xtensor<size_t, 1> FineLayer::nodesRightOpenEdge() const
 {
     size_t nely = m_nhy.size();
 
-    xt::xtensor<size_t, 1> out = xt::empty<size_t>({nely - 1});
+    xt::xtensor<size_t, 1> ret = xt::empty<size_t>({nely - 1});
 
     size_t i = 0;
     size_t j = (nely + 1) / 2;
     size_t k = (nely - 1) / 2;
     size_t l = nely;
 
-    xt::view(out, xt::range(i, j - 1)) =
+    xt::view(ret, xt::range(i, j - 1)) =
         xt::view(m_startNode, xt::range(i + 1, j)) + xt::view(m_nelx, xt::range(i + 1, j));
 
-    xt::view(out, xt::range(k, l - 1)) =
+    xt::view(ret, xt::range(k, l - 1)) =
         xt::view(m_startNode, xt::range(k + 1, l)) + xt::view(m_nelx, xt::range(k, l - 1));
 
-    return out;
+    return ret;
 }
 
 inline size_t FineLayer::nodesBottomLeftCorner() const
@@ -785,28 +785,28 @@ inline xt::xtensor<size_t, 2> FineLayer::nodesPeriodic() const
     xt::xtensor<size_t, 1> lft = nodesLeftOpenEdge();
     xt::xtensor<size_t, 1> rgt = nodesRightOpenEdge();
     std::array<size_t, 2> shape = {bot.size() + lft.size() + 3ul, 2ul};
-    xt::xtensor<size_t, 2> out = xt::empty<size_t>(shape);
+    xt::xtensor<size_t, 2> ret = xt::empty<size_t>(shape);
 
-    out(0, 0) = nodesBottomLeftCorner();
-    out(0, 1) = nodesBottomRightCorner();
+    ret(0, 0) = nodesBottomLeftCorner();
+    ret(0, 1) = nodesBottomRightCorner();
 
-    out(1, 0) = nodesBottomLeftCorner();
-    out(1, 1) = nodesTopRightCorner();
+    ret(1, 0) = nodesBottomLeftCorner();
+    ret(1, 1) = nodesTopRightCorner();
 
-    out(2, 0) = nodesBottomLeftCorner();
-    out(2, 1) = nodesTopLeftCorner();
+    ret(2, 0) = nodesBottomLeftCorner();
+    ret(2, 1) = nodesTopLeftCorner();
 
     size_t i = 3;
 
-    xt::view(out, xt::range(i, i + bot.size()), 0) = bot;
-    xt::view(out, xt::range(i, i + bot.size()), 1) = top;
+    xt::view(ret, xt::range(i, i + bot.size()), 0) = bot;
+    xt::view(ret, xt::range(i, i + bot.size()), 1) = top;
 
     i += bot.size();
 
-    xt::view(out, xt::range(i, i + lft.size()), 0) = lft;
-    xt::view(out, xt::range(i, i + lft.size()), 1) = rgt;
+    xt::view(ret, xt::range(i, i + lft.size()), 0) = lft;
+    xt::view(ret, xt::range(i, i + lft.size()), 1) = rgt;
 
-    return out;
+    return ret;
 }
 
 inline size_t FineLayer::nodesOrigin() const
@@ -821,16 +821,16 @@ inline xt::xtensor<size_t, 2> FineLayer::dofs() const
 
 inline xt::xtensor<size_t, 2> FineLayer::dofsPeriodic() const
 {
-    xt::xtensor<size_t, 2> out = GooseFEM::Mesh::dofs(m_nnode, m_ndim);
+    xt::xtensor<size_t, 2> ret = GooseFEM::Mesh::dofs(m_nnode, m_ndim);
     xt::xtensor<size_t, 2> nodePer = nodesPeriodic();
     xt::xtensor<size_t, 1> independent = xt::view(nodePer, xt::all(), 0);
     xt::xtensor<size_t, 1> dependent = xt::view(nodePer, xt::all(), 1);
 
     for (size_t j = 0; j < m_ndim; ++j) {
-        xt::view(out, xt::keep(dependent), j) = xt::view(out, xt::keep(independent), j);
+        xt::view(ret, xt::keep(dependent), j) = xt::view(ret, xt::keep(independent), j);
     }
 
-    return GooseFEM::Mesh::renumber(out);
+    return GooseFEM::Mesh::renumber(ret);
 }
 
 namespace Map {
@@ -876,14 +876,14 @@ inline xt::xtensor<double, 2> RefineRegular::mapToCoarse(const xt::xtensor<doubl
     size_t m = m_coarse2fine.shape(0);
     size_t n = m_coarse2fine.shape(1);
 
-    xt::xtensor<double, 2> out = xt::empty<double>({m, n});
+    xt::xtensor<double, 2> ret = xt::empty<double>({m, n});
 
     for (size_t i = 0; i < m; ++i) {
         auto e = xt::view(m_coarse2fine, i, xt::all());
-        xt::view(out, i) = xt::view(data, xt::keep(e));
+        xt::view(ret, i) = xt::view(data, xt::keep(e));
     }
 
-    return out;
+    return ret;
 }
 
 inline xt::xtensor<double, 2> RefineRegular::mapToCoarse(const xt::xtensor<double, 2>& data) const
@@ -894,16 +894,16 @@ inline xt::xtensor<double, 2> RefineRegular::mapToCoarse(const xt::xtensor<doubl
     size_t n = m_coarse2fine.shape(1);
     size_t N = data.shape(1);
 
-    xt::xtensor<double, 2> out = xt::empty<double>({m, n * N});
+    xt::xtensor<double, 2> ret = xt::empty<double>({m, n * N});
 
     for (size_t i = 0; i < m; ++i) {
         auto e = xt::view(m_coarse2fine, i, xt::all());
         for (size_t q = 0; q < data.shape(1); ++q) {
-            xt::view(out, i, xt::range(q + 0, q + n * N, N)) = xt::view(data, xt::keep(e), q);
+            xt::view(ret, i, xt::range(q + 0, q + n * N, N)) = xt::view(data, xt::keep(e), q);
         }
     }
 
-    return out;
+    return ret;
 }
 
 inline xt::xtensor<double, 4> RefineRegular::mapToCoarse(const xt::xtensor<double, 4>& data) const
@@ -914,59 +914,59 @@ inline xt::xtensor<double, 4> RefineRegular::mapToCoarse(const xt::xtensor<doubl
     size_t n = m_coarse2fine.shape(1);
     size_t N = data.shape(1);
 
-    xt::xtensor<double, 4> out = xt::empty<double>({m, n * N, data.shape(2), data.shape(3)});
+    xt::xtensor<double, 4> ret = xt::empty<double>({m, n * N, data.shape(2), data.shape(3)});
 
     for (size_t i = 0; i < m; ++i) {
         auto e = xt::view(m_coarse2fine, i, xt::all());
         for (size_t q = 0; q < data.shape(1); ++q) {
-            xt::view(out, i, xt::range(q + 0, q + n * N, N)) = xt::view(data, xt::keep(e), q);
+            xt::view(ret, i, xt::range(q + 0, q + n * N, N)) = xt::view(data, xt::keep(e), q);
         }
     }
 
-    return out;
+    return ret;
 }
 
 inline xt::xtensor<double, 1> RefineRegular::mapToFine(const xt::xtensor<double, 1>& data) const
 {
     GOOSEFEM_ASSERT(data.shape(0) == m_coarse2fine.shape(0));
 
-    xt::xtensor<double, 1> out = xt::empty<double>({m_coarse2fine.size()});
+    xt::xtensor<double, 1> ret = xt::empty<double>({m_coarse2fine.size()});
 
     for (size_t i = 0; i < m_coarse2fine.shape(0); ++i) {
         auto e = xt::view(m_coarse2fine, i, xt::all());
-        xt::view(out, xt::keep(e)) = data(i);
+        xt::view(ret, xt::keep(e)) = data(i);
     }
 
-    return out;
+    return ret;
 }
 
 inline xt::xtensor<double, 2> RefineRegular::mapToFine(const xt::xtensor<double, 2>& data) const
 {
     GOOSEFEM_ASSERT(data.shape(0) == m_coarse2fine.shape(0));
 
-    xt::xtensor<double, 2> out = xt::empty<double>({m_coarse2fine.size(), data.shape(1)});
+    xt::xtensor<double, 2> ret = xt::empty<double>({m_coarse2fine.size(), data.shape(1)});
 
     for (size_t i = 0; i < m_coarse2fine.shape(0); ++i) {
         auto e = xt::view(m_coarse2fine, i, xt::all());
-        xt::view(out, xt::keep(e)) = xt::view(data, i);
+        xt::view(ret, xt::keep(e)) = xt::view(data, i);
     }
 
-    return out;
+    return ret;
 }
 
 inline xt::xtensor<double, 4> RefineRegular::mapToFine(const xt::xtensor<double, 4>& data) const
 {
     GOOSEFEM_ASSERT(data.shape(0) == m_coarse2fine.shape(0));
 
-    xt::xtensor<double, 4> out =
+    xt::xtensor<double, 4> ret =
         xt::empty<double>({m_coarse2fine.size(), data.shape(1), data.shape(2), data.shape(3)});
 
     for (size_t i = 0; i < m_coarse2fine.shape(0); ++i) {
         auto e = xt::view(m_coarse2fine, i, xt::all());
-        xt::view(out, xt::keep(e)) = xt::view(data, i);
+        xt::view(ret, xt::keep(e)) = xt::view(data, i);
     }
 
-    return out;
+    return ret;
 }
 
 inline FineLayer2Regular::FineLayer2Regular(const GooseFEM::Mesh::Quad4::FineLayer& mesh)
@@ -1272,15 +1272,15 @@ FineLayer2Regular::mapToRegular(const xt::xtensor<double, 1>& data) const
 {
     GOOSEFEM_ASSERT(data.shape(0) == m_finelayer.nelem());
 
-    xt::xtensor<double, 1> out = xt::zeros<double>({m_regular.nelem()});
+    xt::xtensor<double, 1> ret = xt::zeros<double>({m_regular.nelem()});
 
     for (size_t e = 0; e < m_finelayer.nelem(); ++e) {
         for (size_t i = 0; i < m_elem_regular[e].size(); ++i) {
-            out(m_elem_regular[e][i]) += m_frac_regular[e][i] * data(e);
+            ret(m_elem_regular[e][i]) += m_frac_regular[e][i] * data(e);
         }
     }
 
-    return out;
+    return ret;
 }
 
 inline xt::xtensor<double, 2>
@@ -1288,15 +1288,15 @@ FineLayer2Regular::mapToRegular(const xt::xtensor<double, 2>& data) const
 {
     GOOSEFEM_ASSERT(data.shape(0) == m_finelayer.nelem());
 
-    xt::xtensor<double, 2> out = xt::zeros<double>({m_regular.nelem(), data.shape(1)});
+    xt::xtensor<double, 2> ret = xt::zeros<double>({m_regular.nelem(), data.shape(1)});
 
     for (size_t e = 0; e < m_finelayer.nelem(); ++e) {
         for (size_t i = 0; i < m_elem_regular[e].size(); ++i) {
-            xt::view(out, m_elem_regular[e][i]) += m_frac_regular[e][i] * xt::view(data, e);
+            xt::view(ret, m_elem_regular[e][i]) += m_frac_regular[e][i] * xt::view(data, e);
         }
     }
 
-    return out;
+    return ret;
 }
 
 inline xt::xtensor<double, 4>
@@ -1304,16 +1304,16 @@ FineLayer2Regular::mapToRegular(const xt::xtensor<double, 4>& data) const
 {
     GOOSEFEM_ASSERT(data.shape(0) == m_finelayer.nelem());
 
-    xt::xtensor<double, 4> out =
+    xt::xtensor<double, 4> ret =
         xt::zeros<double>({m_regular.nelem(), data.shape(1), data.shape(2), data.shape(3)});
 
     for (size_t e = 0; e < m_finelayer.nelem(); ++e) {
         for (size_t i = 0; i < m_elem_regular[e].size(); ++i) {
-            xt::view(out, m_elem_regular[e][i]) += m_frac_regular[e][i] * xt::view(data, e);
+            xt::view(ret, m_elem_regular[e][i]) += m_frac_regular[e][i] * xt::view(data, e);
         }
     }
 
-    return out;
+    return ret;
 }
 
 } // namespace Map
