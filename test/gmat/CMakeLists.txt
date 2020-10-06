@@ -15,17 +15,29 @@ find_package(Catch2 REQUIRED)
 
 if(NOT WIN32)
     find_package(GMatElastic REQUIRED)
+    find_package(GMatElastoPlasticQPot REQUIRED)
 
     add_executable(test-gmat
         main.cpp
-        hybrid-elastic.cpp)
+        hybrid-elastic.cpp
+        hybrid-elastoplasticqpot.cpp)
 
-    target_link_libraries(test-gmat PRIVATE Catch2::Catch2 GooseFEM GMatElastic)
+    target_link_libraries(test-gmat PRIVATE
+        Catch2::Catch2
+        GooseFEM
+        GMatElastic
+        GMatElastoPlasticQPot)
 else()
-    add_executable(test-gmat
-        main.cpp)
+    find_package(GMatElastoPlasticQPot REQUIRED)
 
-    target_link_libraries(test-gmat PRIVATE Catch2::Catch2 GooseFEM)
+    add_executable(test-gmat
+        main.cpp
+        hybrid-elastoplasticqpot.cpp)
+
+    target_link_libraries(test-gmat PRIVATE
+        Catch2::Catch2
+        GooseFEM
+        GMatElastoPlasticQPot)
 endif()
 
 if (SIMD)
