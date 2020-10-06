@@ -33,7 +33,7 @@ install:
     - conda update -q conda
     - conda info -a
     - conda install -c conda-forge mamba
-    - |
+    - >
       mamba install -c conda-forge
       cmake
       xtensor

@@ -72,7 +72,7 @@ install:
     - conda config --set always_yes yes --set changeps1 no
     - conda update -q conda
     - conda install -c conda-forge mamba
-    - |
+    - >
       mamba install -c conda-forge
       cmake
       xtensor
