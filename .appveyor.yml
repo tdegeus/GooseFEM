@@ -33,8 +33,23 @@ install:
     - conda update -q conda
     - conda info -a
     - conda install -c conda-forge mamba
-    - mamba install -c conda-forge cmake xtensor xsimd eigen python numpy pyxtensor catch2 h5py highfive gmatelastic gmatnonlinearelastic gmatelastoplastic gmatelastoplasticfinitestrainsimo
-    # - mamba install -c conda-forge cmake xtensor xsimd python numpy pyxtensor catch2 h5py highfive gmatelastic gmatnonlinearelastic gmatelastoplastic gmatelastoplasticfinitestrainsimo python-gmatelastic
+    - |
+      mamba install -c conda-forge
+      cmake
+      xtensor
+      xsimd
+      eigen
+      python
+      numpy
+      pyxtensor
+      catch2
+      h5py
+      highfive
+      gmatelastic
+      gmatnonlinearelastic
+      gmatelastoplastic
+      gmatelastoplasticfinitestrainsimo
+      gmatelastoplasticqpot
     # Build/install the library
     - cmake -G "NMake Makefiles" -DCMAKE_INSTALL_PREFIX=%MINICONDA%\\LIBRARY -DCMAKE_BUILD_TYPE=RELEASE -DBUILD_TESTS=ON -DBUILD_EXAMPLES=OFF .
     - nmake
@@ -44,13 +59,5 @@ install:
 
 build_script:
     # Run tests
-    - .\test\main
-    # Run examples
-    # - .\docs\examples\statics_FixedDisplacements_LinearElastic_example
-    # - .\docs\examples\statics_FixedDisplacements_LinearElastic_manual_partition
-    # - .\docs\examples\statics_Periodic_ElastoPlasticFiniteStrainSimo_main
-    # - .\docs\examples\statics_Periodic_ElastoPlastic_main
-    # - .\docs\examples\statics_Periodic_LinearElastic_main
-    # - .\docs\examples\statics_Periodic_NonLinearElastic_main
-    # - python .\docs\examples\statics\FixedDisplacements_LinearElastic\example.py --no-plot
-    # - python .\docs\examples\statics\FixedDisplacements_LinearElastic\manual_partition.py --no-plot
+    - .\test\basic\test-basic
+    - .\test\gmat\test-gmat

@@ -12,13 +12,21 @@ option(ASSERT "Enable assertions" ON)
 option(DEBUG "Enable all assertions" ON)
 
 find_package(Catch2 REQUIRED)
-find_package(GMatElastic REQUIRED)
 
-add_executable(test-gmat
-    main.cpp
-    hybrid-elastic.cpp)
+if(NOT WIN32)
+    find_package(GMatElastic REQUIRED)
 
-target_link_libraries(test-gmat PRIVATE Catch2::Catch2 GooseFEM GMatElastic)
+    add_executable(test-gmat
+        main.cpp
+        hybrid-elastic.cpp)
+
+    target_link_libraries(test-gmat PRIVATE Catch2::Catch2 GooseFEM GMatElastic)
+else()
+    add_executable(test-gmat
+        main.cpp)
+
+    target_link_libraries(test-gmat PRIVATE Catch2::Catch2 GooseFEM)
+endif()
 
 if (SIMD)
     target_link_libraries(test-gmat PRIVATE xtensor::optimize xtensor::use_xsimd)

@@ -84,9 +84,7 @@ include("GooseFEMConfig.cmake")
 
 if(BUILD_TESTS)
     add_subdirectory(test/basic)
-    if (NOT WIN32)
-        add_subdirectory(test/gmat)
-    endif()
+    add_subdirectory(test/gmat)
 endif()
 
 if(BUILD_EXAMPLES)
