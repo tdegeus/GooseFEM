@@ -72,7 +72,24 @@ install:
     - conda config --set always_yes yes --set changeps1 no
     - conda update -q conda
     - conda install -c conda-forge mamba
-    - mamba install -c conda-forge cmake xtensor xsimd eigen python numpy pyxtensor catch2 h5py highfive gmatelastic gmatnonlinearelastic gmatelastoplastic gmatelastoplasticfinitestrainsimo python-gmatelastic
+    - >
+      mamba install -c conda-forge
+      cmake
+      xtensor
+      xsimd
+      eigen
+      python
+      numpy
+      pyxtensor
+      catch2
+      h5py
+      highfive
+      gmatelastic
+      gmatnonlinearelastic
+      gmatelastoplastic
+      gmatelastoplasticfinitestrainsimo
+      gmatelastoplasticqpot
+      python-gmatelastic
     # Build/install the library
     - cmake . -DBUILD_TESTS=ON -DBUILD_EXAMPLES=ON
     - make
@@ -80,9 +97,10 @@ install:
     - python setup.py build
     - python setup.py install
 script:
-    # run tests
-    - ./test/main
-    # run examples
+    # Run tests
+    - ./test/basic/test-basic
+    - ./test/gmat/test-gmat
+    # Run examples
     - ./docs/examples/statics_FixedDisplacements_LinearElastic_example
     - ./docs/examples/statics_FixedDisplacements_LinearElastic_manual_partition
     # - ./docs/examples/statics_Periodic_LinearElastic_main

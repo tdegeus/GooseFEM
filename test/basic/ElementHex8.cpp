@@ -1,5 +1,10 @@
 
-#include "support.h"
+#include <catch2/catch.hpp>
+#include <xtensor/xrandom.hpp>
+#include <xtensor/xmath.hpp>
+#include <GooseFEM/GooseFEM.h>
+
+#define ISCLOSE(a,b) REQUIRE_THAT((a), Catch::WithinAbs((b), 1.e-12));
 
 TEST_CASE("GooseFEM::ElementHex8", "ElementHex8.h")
 {

@@ -1,9 +1,14 @@
 
-#include "support.h"
+#include <catch2/catch.hpp>
 #include <xtensor/xrandom.hpp>
+#include <xtensor/xmath.hpp>
+#include <Eigen/Eigen>
+#include <GooseFEM/GooseFEM.h>
 #include <GMatElastic/Cartesian3d.h>
 
-TEST_CASE("Example_hybrid-material", "GooseFEM.h")
+#define ISCLOSE(a,b) REQUIRE_THAT((a), Catch::WithinAbs((b), 1.0e-12));
+
+TEST_CASE("hybrid-elastic", "GooseFEM.h")
 {
 
     SECTION("Vector/Matrix - GMatElastic")
