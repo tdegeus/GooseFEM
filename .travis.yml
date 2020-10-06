@@ -97,10 +97,10 @@ install:
     - python setup.py build
     - python setup.py install
 script:
-    # run tests
+    # Run tests
     - ./test/basic/test-basic
-    - ./test/basic/test-gmat
-    # run examples
+    - ./test/gmat/test-gmat
+    # Run examples
     - ./docs/examples/statics_FixedDisplacements_LinearElastic_example
     - ./docs/examples/statics_FixedDisplacements_LinearElastic_manual_partition
     # - ./docs/examples/statics_Periodic_LinearElastic_main
