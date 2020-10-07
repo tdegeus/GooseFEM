@@ -91,6 +91,37 @@ void init_ElementQuad4(py::module& m)
                 size_t, const xt::xtensor<double, 2>&) const) &
                 GooseFEM::Element::Quad4::Quadrature::AsTensor,
             "Convert 'qscalar' to 'qtensor' of certain rank")
+
+        .def(
+            "AllocateQtensor",
+            (xt::xarray<double>(GooseFEM::Element::Quad4::Quadrature::*)(
+                size_t) const) &
+                GooseFEM::Element::Quad4::Quadrature::AllocateQtensor,
+            "Allocate 'qtensor'",
+            py::arg("rank"))
+
+        .def(
+            "AllocateQtensor",
+            (xt::xarray<double>(GooseFEM::Element::Quad4::Quadrature::*)(
+                size_t, double) const) &
+                GooseFEM::Element::Quad4::Quadrature::AllocateQtensor,
+            "Allocate 'qtensor'",
+            py::arg("rank"),
+            py::arg("val"))
+
+        .def(
+            "AllocateQscalar",
+            py::overload_cast<>(
+                &GooseFEM::Element::Quad4::Quadrature::AllocateQscalar, py::const_),
+            "Allocate 'qscalar'")
+
+        .def(
+            "AllocateQscalar",
+            py::overload_cast<double>(
+                &GooseFEM::Element::Quad4::Quadrature::AllocateQscalar, py::const_),
+            "Allocate 'qscalar'",
+            py::arg("val"))
+
         .def("__repr__", [](const GooseFEM::Element::Quad4::Quadrature&) {
             return "<GooseFEM.Element.Quad4.Quadrature>";
         });

@@ -142,6 +142,14 @@ public:
         const xt::xtensor<double, 2>& nodevec_src,
         const xt::xtensor<double, 2>& nodevec_dest) const;
 
+    // Get zero-allocated dofval, nodevec, elemvec
+    xt::xtensor<double, 1> AllocateDofval() const;
+    xt::xtensor<double, 2> AllocateNodevec() const;
+    xt::xtensor<double, 3> AllocateElemvec() const;
+    xt::xtensor<double, 1> AllocateDofval(double val) const;
+    xt::xtensor<double, 2> AllocateNodevec(double val) const;
+    xt::xtensor<double, 3> AllocateElemvec(double val) const;
+
 private:
     // Bookkeeping
     xt::xtensor<size_t, 2> m_conn; // connectivity                    [nelem, nne ]

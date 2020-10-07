@@ -194,6 +194,30 @@ void init_VectorPartitioned(py::module& m)
 
         .def("Copy_p", &GooseFEM::VectorPartitioned::Copy_p, "Copy iip")
 
+        .def(
+            "AllocateDofval",
+            py::overload_cast<>(&GooseFEM::VectorPartitioned::AllocateDofval, py::const_))
+
+        .def(
+            "AllocateDofval",
+            py::overload_cast<double>(&GooseFEM::VectorPartitioned::AllocateDofval, py::const_))
+
+        .def(
+            "AllocateNodevec",
+            py::overload_cast<>(&GooseFEM::VectorPartitioned::AllocateNodevec, py::const_))
+
+        .def(
+            "AllocateNodevec",
+            py::overload_cast<double>(&GooseFEM::VectorPartitioned::AllocateNodevec, py::const_))
+
+        .def(
+            "AllocateElemvec",
+            py::overload_cast<>(&GooseFEM::VectorPartitioned::AllocateElemvec, py::const_))
+
+        .def(
+            "AllocateElemvec",
+            py::overload_cast<double>(&GooseFEM::VectorPartitioned::AllocateElemvec, py::const_))
+
         .def("__repr__", [](const GooseFEM::VectorPartitioned&) {
             return "<GooseFEM.VectorPartitioned>";
         });

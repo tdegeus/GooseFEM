@@ -84,6 +84,30 @@ void init_VectorPartitionedTyings(py::module& m)
             "Assemble 'nodevec'",
             py::arg("elemvec"))
 
+        .def(
+            "AllocateDofval",
+            py::overload_cast<>(&GooseFEM::VectorPartitionedTyings::AllocateDofval, py::const_))
+
+        .def(
+            "AllocateDofval",
+            py::overload_cast<double>(&GooseFEM::VectorPartitionedTyings::AllocateDofval, py::const_))
+
+        .def(
+            "AllocateNodevec",
+            py::overload_cast<>(&GooseFEM::VectorPartitionedTyings::AllocateNodevec, py::const_))
+
+        .def(
+            "AllocateNodevec",
+            py::overload_cast<double>(&GooseFEM::VectorPartitionedTyings::AllocateNodevec, py::const_))
+
+        .def(
+            "AllocateElemvec",
+            py::overload_cast<>(&GooseFEM::VectorPartitionedTyings::AllocateElemvec, py::const_))
+
+        .def(
+            "AllocateElemvec",
+            py::overload_cast<double>(&GooseFEM::VectorPartitionedTyings::AllocateElemvec, py::const_))
+
         .def("__repr__", [](const GooseFEM::VectorPartitionedTyings&) {
             return "<GooseFEM.VectorPartitionedTyings>";
         });
