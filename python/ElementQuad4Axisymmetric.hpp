@@ -49,14 +49,8 @@ void init_ElementQuad4Axisymmetric(py::module& m)
             "Number of integration points")
 
         .def(
-            "DV",
-            py::overload_cast<size_t>(
-                &GooseFEM::Element::Quad4::QuadratureAxisymmetric::DV, py::const_),
-            "Integration point volume (qtensor)")
-
-        .def(
-            "DV",
-            py::overload_cast<>(&GooseFEM::Element::Quad4::QuadratureAxisymmetric::DV, py::const_),
+            "dV",
+            &GooseFEM::Element::Quad4::QuadratureAxisymmetric::dV,
             "Integration point volume (qscalar)")
 
         .def(
@@ -104,6 +98,12 @@ void init_ElementQuad4Axisymmetric(py::module& m)
             "Integration, returns 'elemvec'",
             py::arg("qtensor"))
 
+        .def(
+            "AsTensor",
+            (xt::xarray<double>(GooseFEM::Element::Quad4::QuadratureAxisymmetric::*)(
+                size_t, const xt::xtensor<double, 2>&) const) &
+                GooseFEM::Element::Quad4::QuadratureAxisymmetric::AsTensor,
+            "Convert 'qscalar' to 'qtensor' of certain rank")
         .def("__repr__", [](const GooseFEM::Element::Quad4::QuadratureAxisymmetric&) {
             return "<GooseFEM.Element.Quad4.QuadratureAxisymmetric>";
         });

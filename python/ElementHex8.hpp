@@ -40,15 +40,7 @@ void init_ElementHex8(py::module& m)
 
         .def("nip", &GooseFEM::Element::Hex8::Quadrature::nip, "Number of integration points")
 
-        .def(
-            "DV",
-            py::overload_cast<size_t>(&GooseFEM::Element::Hex8::Quadrature::DV, py::const_),
-            "Integration point volume (qtensor)")
-
-        .def(
-            "DV",
-            py::overload_cast<>(&GooseFEM::Element::Hex8::Quadrature::DV, py::const_),
-            "Integration point volume (qscalar)")
+        .def("dV", &GooseFEM::Element::Hex8::Quadrature::dV, "Integration point volume (qscalar)")
 
         .def(
             "GradN_vector",
@@ -93,6 +85,12 @@ void init_ElementHex8(py::module& m)
             "Integration, returns 'elemvec'",
             py::arg("qtensor"))
 
+        .def(
+            "AsTensor",
+            (xt::xarray<double>(GooseFEM::Element::Hex8::Quadrature::*)(
+                size_t, const xt::xtensor<double, 2>&) const) &
+                GooseFEM::Element::Hex8::Quadrature::AsTensor,
+            "Convert 'qscalar' to 'qtensor' of certain rank")
         .def("__repr__", [](const GooseFEM::Element::Hex8::Quadrature&) {
             return "<GooseFEM.Element.Hex8.Quadrature>";
         });

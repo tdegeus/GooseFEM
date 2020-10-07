@@ -271,48 +271,17 @@ inline xt::xtensor<double, 4> Quadrature::GradN() const
     return m_dNx;
 }
 
-inline void Quadrature::dV(xt::xtensor<double, 2>& qscalar) const
+template <size_t rank>
+inline void
+Quadrature::asTensor(const xt::xtensor<double, 2>& arg, xt::xtensor<double, 2 + rank>& ret) const
 {
-    GOOSEFEM_ASSERT(xt::has_shape(qscalar, {m_nelem, m_nip}));
-
-    #pragma omp parallel for
-    for (size_t e = 0; e < m_nelem; ++e) {
-        for (size_t q = 0; q < m_nip; ++q) {
-            qscalar(e, q) = m_vol(e, q);
-        }
-    }
+    GOOSEFEM_ASSERT(xt::has_shape(arg, {m_nelem, m_nne}));
+    GooseFEM::asTensor<2, rank>(arg, ret);
 }
 
-inline void Quadrature::dV(xt::xtensor<double, 4>& qtensor) const
+inline xt::xtensor<double, 2> Quadrature::dV() const
 {
-    GOOSEFEM_ASSERT(xt::has_shape(qtensor, {m_nelem, m_nip, m_ndim, m_ndim}));
-
-    #pragma omp parallel for
-    for (size_t e = 0; e < m_nelem; ++e) {
-        for (size_t q = 0; q < m_nip; ++q) {
-            for (size_t i = 0; i < m_ndim; ++i) {
-                for (size_t j = 0; j < m_ndim; ++j) {
-                    qtensor(e, q, i, j) = m_vol(e, q);
-                }
-            }
-        }
-    }
-}
-
-inline void Quadrature::dV(xt::xarray<double>& qtensor) const
-{
-    GOOSEFEM_ASSERT(qtensor.shape(0) == m_nelem);
-    GOOSEFEM_ASSERT(qtensor.shape(1) == m_nip);
-
-    xt::dynamic_shape<ptrdiff_t> strides = {static_cast<ptrdiff_t>(m_vol.strides()[0]),
-                                            static_cast<ptrdiff_t>(m_vol.strides()[1])};
-
-    for (size_t i = 2; i < qtensor.shape().size(); ++i) {
-        strides.push_back(0);
-    }
-
-    qtensor =
-        xt::strided_view(m_vol, qtensor.shape(), std::move(strides), 0ul, xt::layout_type::dynamic);
+    return m_vol;
 }
 
 inline void Quadrature::update_x(const xt::xtensor<double, 3>& x)
@@ -554,24 +523,17 @@ inline void Quadrature::int_gradN_dot_tensor4_dot_gradNT_dV(
     }
 }
 
-inline xt::xtensor<double, 2> Quadrature::DV() const
+template <size_t rank>
+inline xt::xtensor<double, 2 + rank>
+Quadrature::AsTensor(const xt::xtensor<double, 2>& qscalar) const
 {
-    xt::xtensor<double, 2> ret = xt::empty<double>({m_nelem, m_nip});
-    this->dV(ret);
-    return ret;
+    return GooseFEM::AsTensor<2, rank>(qscalar, m_ndim);
 }
 
-inline xt::xarray<double> Quadrature::DV(size_t rank) const
+inline xt::xarray<double>
+Quadrature::AsTensor(size_t rank, const xt::xtensor<double, 2>& qscalar) const
 {
-    std::vector<size_t> shape = {m_nelem, m_nip};
-
-    for (size_t i = 0; i < rank; ++i) {
-        shape.push_back(static_cast<size_t>(m_ndim));
-    }
-
-    xt::xarray<double> ret = xt::empty<double>(shape);
-    this->dV(ret);
-    return ret;
+    return GooseFEM::AsTensor(rank, qscalar, m_ndim);
 }
 
 inline xt::xtensor<double, 4> Quadrature::GradN_vector(const xt::xtensor<double, 3>& elemvec) const
