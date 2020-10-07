@@ -92,5 +92,29 @@ void init_Vector(py::module& m)
             "Assemble 'nodevec'",
             py::arg("elemvec"))
 
+        .def(
+            "AllocateDofval",
+            py::overload_cast<>(&GooseFEM::Vector::AllocateDofval, py::const_))
+
+        .def(
+            "AllocateDofval",
+            py::overload_cast<double>(&GooseFEM::Vector::AllocateDofval, py::const_))
+
+        .def(
+            "AllocateNodevec",
+            py::overload_cast<>(&GooseFEM::Vector::AllocateNodevec, py::const_))
+
+        .def(
+            "AllocateNodevec",
+            py::overload_cast<double>(&GooseFEM::Vector::AllocateNodevec, py::const_))
+
+        .def(
+            "AllocateElemvec",
+            py::overload_cast<>(&GooseFEM::Vector::AllocateElemvec, py::const_))
+
+        .def(
+            "AllocateElemvec",
+            py::overload_cast<double>(&GooseFEM::Vector::AllocateElemvec, py::const_))
+
         .def("__repr__", [](const GooseFEM::Vector&) { return "<GooseFEM.Vector>"; });
 }

@@ -110,6 +110,21 @@ public:
 
     xt::xarray<double> AsTensor(size_t rank, const xt::xtensor<double, 2>& qscalar) const;
 
+    // Return allocated integration point tensor of a certain rank, e.g.:
+    // - rank == 0 -> qscalar
+    // - rank == 2 -> qtensor
+    template <size_t rank = 0>
+    xt::xtensor<double, rank + 2> AllocateQtensor() const;
+
+    template <size_t rank = 0>
+    xt::xtensor<double, rank + 2> AllocateQtensor(double val) const;
+
+    xt::xarray<double> AllocateQtensor(size_t rank) const;
+    xt::xarray<double> AllocateQtensor(size_t rank, double val) const;
+
+    xt::xtensor<double, 2> AllocateQscalar() const;
+    xt::xtensor<double, 2> AllocateQscalar(double val) const;
+
 private:
     // Compute "vol" and "dNdx" based on current "x"
     void compute_dN();

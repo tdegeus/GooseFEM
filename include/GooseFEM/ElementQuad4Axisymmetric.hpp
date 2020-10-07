@@ -466,6 +466,54 @@ QuadratureAxisymmetric::Int_gradN_dot_tensor4_dot_gradNT_dV(const xt::xtensor<do
     return elemmat;
 }
 
+template <size_t rank>
+inline xt::xtensor<double, rank + 2> QuadratureAxisymmetric::AllocateQtensor() const
+{
+    std::array<size_t, rank + 2> shape;
+    shape[0] = m_nelem;
+    shape[1] = m_nip;
+    size_t n = m_tdim;
+    std::fill(shape.begin() + 2, shape.end(), n);
+    xt::xtensor<double, rank + 2> ret = xt::empty<double>(shape);
+    return ret;
+}
+
+template <size_t rank>
+inline xt::xtensor<double, rank + 2> QuadratureAxisymmetric::AllocateQtensor(double val) const
+{
+    xt::xtensor<double, rank + 2> ret = this->AllocateQtensor<rank>();
+    ret.fill(val);
+    return ret;
+}
+
+inline xt::xarray<double> QuadratureAxisymmetric::AllocateQtensor(size_t rank) const
+{
+    std::vector<size_t> shape(rank + 2);
+    shape[0] = m_nelem;
+    shape[1] = m_nip;
+    size_t n = m_tdim;
+    std::fill(shape.begin() + 2, shape.end(), n);
+    xt::xarray<double> ret = xt::empty<double>(shape);
+    return ret;
+}
+
+inline xt::xarray<double> QuadratureAxisymmetric::AllocateQtensor(size_t rank, double val) const
+{
+    xt::xarray<double> ret = this->AllocateQtensor(rank);
+    ret.fill(val);
+    return ret;
+}
+
+inline xt::xtensor<double, 2> QuadratureAxisymmetric::AllocateQscalar() const
+{
+    return this->AllocateQtensor<0>();
+}
+
+inline xt::xtensor<double, 2> QuadratureAxisymmetric::AllocateQscalar(double val) const
+{
+    return this->AllocateQtensor<0>(val);
+}
+
 } // namespace Quad4
 } // namespace Element
 } // namespace GooseFEM

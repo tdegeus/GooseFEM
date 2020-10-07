@@ -700,6 +700,45 @@ inline xt::xtensor<double, 2> VectorPartitioned::Copy_p(
     return ret;
 }
 
+inline xt::xtensor<double, 1> VectorPartitioned::AllocateDofval() const
+{
+    xt::xtensor<double, 1> dofval = xt::empty<double>({m_ndof});
+    return dofval;
+}
+
+inline xt::xtensor<double, 2> VectorPartitioned::AllocateNodevec() const
+{
+    xt::xtensor<double, 2> nodevec = xt::empty<double>({m_nnode, m_ndim});
+    return nodevec;
+}
+
+inline xt::xtensor<double, 3> VectorPartitioned::AllocateElemvec() const
+{
+    xt::xtensor<double, 3> elemvec = xt::empty<double>({m_nelem, m_nne, m_ndim});
+    return elemvec;
+}
+
+inline xt::xtensor<double, 1> VectorPartitioned::AllocateDofval(double val) const
+{
+    xt::xtensor<double, 1> dofval = xt::zeros<double>({m_ndof});
+    dofval.fill(val);
+    return dofval;
+}
+
+inline xt::xtensor<double, 2> VectorPartitioned::AllocateNodevec(double val) const
+{
+    xt::xtensor<double, 2> nodevec = xt::zeros<double>({m_nnode, m_ndim});
+    nodevec.fill(val);
+    return nodevec;
+}
+
+inline xt::xtensor<double, 3> VectorPartitioned::AllocateElemvec(double val) const
+{
+    xt::xtensor<double, 3> elemvec = xt::zeros<double>({m_nelem, m_nne, m_ndim});
+    elemvec.fill(val);
+    return elemvec;
+}
+
 } // namespace GooseFEM
 
 #endif

@@ -28,6 +28,13 @@ TEST_CASE("GooseFEM::ElementHex8", "ElementHex8.h")
         auto dV = quad.dV();
         auto dV_tensor = quad.AsTensor<2>(dV);
 
+        REQUIRE(xt::has_shape(quad.AllocateQscalar(), dV.shape()));
+        REQUIRE(xt::has_shape(quad.AllocateQscalar(0.0), dV.shape()));
+        REQUIRE(xt::has_shape(quad.AllocateQtensor<2>(), dV_tensor.shape()));
+        REQUIRE(xt::has_shape(quad.AllocateQtensor<2>(0.0), dV_tensor.shape()));
+        REQUIRE(xt::has_shape(quad.AllocateQtensor(2), dV_tensor.shape()));
+        REQUIRE(xt::has_shape(quad.AllocateQtensor(2, 0.0), dV_tensor.shape()));
+
         REQUIRE(xt::allclose(xt::view(dV, xt::keep(0)), 1.0 / 8.0));
         REQUIRE(xt::allclose(xt::view(dV, xt::keep(1)), 2.0 / 8.0));
         REQUIRE(xt::allclose(xt::view(dV, xt::keep(2)), 2.0 / 8.0));
