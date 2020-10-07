@@ -42,13 +42,8 @@ void init_ElementQuad4Planar(py::module& m)
             "nip", &GooseFEM::Element::Quad4::QuadraturePlanar::nip, "Number of integration points")
 
         .def(
-            "DV",
-            py::overload_cast<size_t>(&GooseFEM::Element::Quad4::QuadraturePlanar::DV, py::const_),
-            "Integration point volume (qtensor)")
-
-        .def(
-            "DV",
-            py::overload_cast<>(&GooseFEM::Element::Quad4::QuadraturePlanar::DV, py::const_),
+            "dV",
+            &GooseFEM::Element::Quad4::QuadraturePlanar::dV,
             "Integration point volume (qscalar)")
 
         .def(
@@ -94,6 +89,12 @@ void init_ElementQuad4Planar(py::module& m)
             "Integration, returns 'elemvec'",
             py::arg("qtensor"))
 
+        .def(
+            "AsTensor",
+            (xt::xarray<double>(GooseFEM::Element::Quad4::QuadraturePlanar::*)(
+                size_t, const xt::xtensor<double, 2>&) const) &
+                GooseFEM::Element::Quad4::QuadraturePlanar::AsTensor,
+            "Convert 'qscalar' to 'qtensor' of certain rank")
         .def("__repr__", [](const GooseFEM::Element::Quad4::QuadraturePlanar&) {
             return "<GooseFEM.Element.Quad4.QuadraturePlanar>";
         });

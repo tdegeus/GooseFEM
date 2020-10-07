@@ -11,6 +11,7 @@
 #define GOOSEFEM_EIGEN
 #endif
 
+#include "Allocate.h"
 #include "Element.h"
 #include "ElementHex8.h"
 #include "ElementQuad4.h"

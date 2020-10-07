@@ -49,10 +49,12 @@ public:
     // Return shape function gradients
     xt::xtensor<double, 4> GradN() const;
 
+    // Convert "qscalar" to "qtensor" of certain rank
+    template <size_t rank = 0>
+    void asTensor(const xt::xtensor<double, 2>& qscalar, xt::xtensor<double, 2 + rank>& qtensor) const;
+
     // Return integration volume
-    void dV(xt::xtensor<double, 2>& qscalar) const;
-    void dV(xt::xtensor<double, 4>& qtensor) const; // same volume for all tensor components
-    void dV(xt::xarray<double>& qtensor) const;     // same volume for all tensor components
+    xt::xtensor<double, 2> dV() const;
 
     // Dyadic product (and its transpose and symmetric part)
     // qtensor(i,j) += dNdx(m,i) * elemvec(m,j)
@@ -76,15 +78,18 @@ public:
         const xt::xtensor<double, 6>& qtensor, xt::xtensor<double, 3>& elemmat) const;
 
     // Auto-allocation of the functions above
-    xt::xtensor<double, 2> DV() const;
-    xt::xarray<double> DV(size_t rank) const;
     xt::xtensor<double, 4> GradN_vector(const xt::xtensor<double, 3>& elemvec) const;
     xt::xtensor<double, 4> GradN_vector_T(const xt::xtensor<double, 3>& elemvec) const;
     xt::xtensor<double, 4> SymGradN_vector(const xt::xtensor<double, 3>& elemvec) const;
     xt::xtensor<double, 3> Int_N_scalar_NT_dV(const xt::xtensor<double, 2>& qscalar) const;
     xt::xtensor<double, 3> Int_gradN_dot_tensor2_dV(const xt::xtensor<double, 4>& qtensor) const;
-    xt::xtensor<double, 3> Int_gradN_dot_tensor4_dot_gradNT_dV(
-        const xt::xtensor<double, 6>& qtensor) const;
+    xt::xtensor<double, 3> Int_gradN_dot_tensor4_dot_gradNT_dV(const xt::xtensor<double, 6>& qtensor) const;
+
+    // Convert "qscalar" to "qtensor" of certain rank
+    template <size_t rank = 0>
+    xt::xtensor<double, 2 + rank> AsTensor(const xt::xtensor<double, 2>& qscalar) const;
+
+    xt::xarray<double> AsTensor(size_t rank, const xt::xtensor<double, 2>& qscalar) const;
 
 private:
     // Compute "vol" and "dNdx" based on current "x"

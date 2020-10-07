@@ -15,6 +15,7 @@ find_package(Catch2 REQUIRED)
 
 add_executable(test-basic
     main.cpp
+    Allocate.cpp
     ElementHex8.cpp
     ElementQuad4.cpp
     Iterate.cpp
