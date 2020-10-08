@@ -1,5 +1,5 @@
 
-cmake_minimum_required(VERSION 3.0)
+cmake_minimum_required(VERSION 3.16)
 
 if(CMAKE_CURRENT_SOURCE_DIR STREQUAL CMAKE_SOURCE_DIR)
     project(GooseFEM-examples)
@@ -10,11 +10,14 @@ option(WARNINGS "Show build warnings" ON)
 option(SIMD "Enable xsimd" ON)
 option(DEBUG "Enable all assertions" OFF)
 
-find_package(HDF5 REQUIRED)
+set(HIGHFIVE_USE_BOOST 0)
+set(HIGHFIVE_USE_XTENSOR 1)
+find_package(HighFive REQUIRED)
+find_package(XDMFWrite_HighFive REQUIRED)
 
 add_library(libraries INTERFACE IMPORTED)
 
-target_link_libraries(libraries INTERFACE GooseFEM ${HDF5_LIBRARIES})
+target_link_libraries(libraries INTERFACE GooseFEM HighFive XDMFWrite_HighFive)
 
 if (SIMD)
     target_link_libraries(libraries INTERFACE xtensor::optimize xtensor::use_xsimd)
