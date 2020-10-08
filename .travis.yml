@@ -84,6 +84,8 @@ install:
       catch2
       h5py
       highfive
+      xdmfwrite_highfive
+      xdmfwrite_h5py
       gmatelastic
       gmatnonlinearelastic
       gmatelastoplastic
