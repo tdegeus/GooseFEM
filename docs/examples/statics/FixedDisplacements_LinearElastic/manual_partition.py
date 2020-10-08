@@ -139,7 +139,7 @@ fres_u = vector.AsDofs_u(fres)
 print(np.sum(np.abs(fres_u)) / np.sum(np.abs(fext_p)))
 
 # average stress per node
-dV = elem.DV(2)
+dV = elem.AsTensor(2, elem.dV())
 Sig = np.average(Sig, weights=dV, axis=1)
 
 # skip plot with "--no-plot" command line argument
