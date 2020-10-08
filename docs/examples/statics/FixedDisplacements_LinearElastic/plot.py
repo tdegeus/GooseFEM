@@ -19,10 +19,8 @@ with h5py.File('output.h5', 'r') as data:
 def ddot22(A2, B2):
     return np.einsum('eij, eji -> e', A2, B2)
 
-
 def ddot42(A4, B2):
     return np.einsum('eijkl, elk -> eij', A4, B2)
-
 
 def dyad22(A2, B2):
     return np.einsum('eij, ekl -> eijkl', A2, B2)

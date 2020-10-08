@@ -10,14 +10,14 @@ plt.style.use(['goose', 'goose-latex'])
 
 with h5py.File('example.hdf5', 'r') as data:
 
-  t = data['/global/t'][...]
+    t = data['/global/t'][...]
 
-  Epot = data['/global/Epot'][...]
-  Ekin = data['/global/Ekin'][...]
+    Epot = data['/global/Epot'][...]
+    Ekin = data['/global/Ekin'][...]
 
-  coor = data['/mesh/coor'][...]
-  conn = data['/mesh/conn'][...]
-  disp = data['/mesh/disp'][...]
+    coor = data['/mesh/coor'][...]
+    conn = data['/mesh/conn'][...]
+    disp = data['/mesh/disp'][...]
 
 # --------------------------------------------------------------------------------------------------
 
@@ -36,13 +36,13 @@ ax.set_ylabel(r'$E$')
 
 ax = axes[1]
 
-im = gplt.patch(coor=coor+disp, conn=conn)
+im = gplt.patch(coor=coor + disp, conn=conn)
 
-Lx = np.max(coor[:,0])-np.min(coor[:,0])
-Ly = np.max(coor[:,1])-np.min(coor[:,1])
+Lx = np.max(coor[:, 0]) - np.min(coor[:, 0])
+Ly = np.max(coor[:, 1]) - np.min(coor[:, 1])
 
-ax.set_xlim([-0.1*Lx, 1.3*Lx])
-ax.set_ylim([-0.1*Ly, 1.3*Ly])
+ax.set_xlim([-0.1 * Lx, 1.3 * Lx])
+ax.set_ylim([-0.1 * Ly, 1.3 * Ly])
 
 ax.set_aspect('equal')
 
