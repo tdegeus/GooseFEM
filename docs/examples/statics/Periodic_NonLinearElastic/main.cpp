@@ -179,7 +179,7 @@ int main()
   H5::dump(file, "/conn", conn);
   H5::dump(file, "/coor", coor);
   // - integration point volume
-  xt::xtensor<double,4> dV = elem.DV(2);
+  xt::xtensor<double,4> dV = elem.AsTensor<2>(elem.dV());
   // - compute strain and stress
   vector.asElement(disp, ue);
   elem.symGradN_vector(ue, Eps);
