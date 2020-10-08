@@ -10,6 +10,7 @@ GooseFEM
    introduction.rst
    install.rst
    compile.rst
+   changelog.rst
 
 .. toctree::
    :caption: EXAMPLES - STATICS
