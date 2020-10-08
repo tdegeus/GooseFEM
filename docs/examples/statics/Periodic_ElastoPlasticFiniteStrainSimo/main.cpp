@@ -204,7 +204,7 @@ int main()
     GM::strain(F, Eps);
     mat.stress(F, Sig);
     // - integration point volume
-    xt::xtensor<double,4> dV = elem.DV(2);
+    xt::xtensor<double,4> dV = elem.AsTensor<2>(elem.dV());
     // - element average stress
     xt::xtensor<double,3> Sigelem = xt::average(Sig, dV, {1});
     xt::xtensor<double,3> Epselem = xt::average(Eps, dV, {1});

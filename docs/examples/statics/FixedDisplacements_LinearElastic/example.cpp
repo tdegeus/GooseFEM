@@ -124,7 +124,7 @@ int main()
     std::cout << xt::sum(xt::abs(fres))[0] / xt::sum(xt::abs(fext))[0] << std::endl;
 
     // average stress per node
-    xt::xtensor<double,4> dV = elem.DV(2);
+    xt::xtensor<double,4> dV = elem.AsTensor<2>(elem.dV());
     xt::xtensor<double,3> SigAv = xt::average(Sig, dV, {1});
 
     // write output

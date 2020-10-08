@@ -79,7 +79,7 @@ int main()
   // FEM quadrature
   GF::Element::Quad4::QuadraturePlanar elem(vector.AsElement(coor));
   size_t nip = elem.nip();
-  xt::xtensor<double,4> dV = elem.DV(2);
+  xt::xtensor<double,4> dV = elem.AsTensor<2>(elem.dV());
 
   // material model
   // even though the problem is 2-d, the material model is 3-d, plane strain is implicitly assumed
