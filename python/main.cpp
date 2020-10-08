@@ -33,7 +33,6 @@ namespace py = pybind11;
 #include "MeshTri3.hpp"
 #include "MeshQuad4.hpp"
 #include "MeshHex8.hpp"
-#include "ParaView.hpp"
 
 PYBIND11_MODULE(GooseFEM, m) {
 
@@ -121,16 +120,6 @@ init_MeshQuad4Map(mMeshQuad4Map);
 py::module mMeshHex8 = mMesh.def_submodule("Hex8", "Linear hexahedron (brick) elements (3D)");
 
 init_MeshHex8(mMeshHex8);
-
-// -----------------
-// GooseFEM.ParaView
-// -----------------
-
-py::module mParaView = m.def_submodule("ParaView", "ParaView output files");
-
-py::module mParaViewHDF5 = mParaView.def_submodule("HDF5", "ParaView/HDF5 support using XDMF files");
-
-init_ParaViewHDF5(mParaViewHDF5);
 
 }
 

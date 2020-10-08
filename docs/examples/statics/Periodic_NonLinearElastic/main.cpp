@@ -1,12 +1,12 @@
 #include <Eigen/Eigen>
 #include <GMatNonLinearElastic/Cartesian3d.h>
 #include <GooseFEM/GooseFEM.h>
-#include <GooseFEM/ParaView.h>
+#include <XDMFWrite_HighFive.hpp>
 #include <highfive/H5Easy.hpp>
 
 namespace GM = GMatNonLinearElastic::Cartesian3d;
 namespace GF = GooseFEM;
-namespace PV = GooseFEM::ParaView::HDF5;
+namespace PV = XDMFWrite_HighFive;
 namespace H5 = H5Easy;
 
 int main()
@@ -196,19 +196,18 @@ int main()
     // - write to output-file: element quantities
     H5::dump(file, "/sigeq", GM::Sigeq(Sigelem));
     H5::dump(file, "/epseq", GM::Epseq(Epselem));
-    H5::dump(file, "/disp", PV::as3d(disp));
+    H5::dump(file, "/disp", GF::as3d(disp));
     // - update ParaView meta-data
-    xdmf.push_back(PV::Increment(
-        PV::Connectivity(file, "/conn", mesh.getElementType()),
-        PV::Coordinates(file, "/coor"),
-        {
-            PV::Attribute(file, "/disp", "Displacement", PV::AttributeType::Node),
-            PV::Attribute(file, "/sigeq", "Eq. stress", PV::AttributeType::Cell),
-            PV::Attribute(file, "/epseq", "Eq. strain", PV::AttributeType::Cell),
-        }));
+    xdmf.push_back({
+        PV::Topology(file, "/conn", mesh.getElementType()),
+        PV::Geometry(file, "/coor"),
+        PV::Attribute(file, "/disp", PV::AttributeCenter::Node, "Displacement"),
+        PV::Attribute(file, "/sigeq", PV::AttributeCenter::Cell, "Eq. stress"),
+        PV::Attribute(file, "/epseq", PV::AttributeCenter::Cell, "Eq. strain")});
+
 
     // write ParaView meta-data
-    xdmf.write("main.xdmf");
+    PV::write("main.xdmf", xdmf.get());
 
     return 0;
 }

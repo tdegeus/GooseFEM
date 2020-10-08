@@ -1,12 +1,12 @@
 #include <Eigen/Eigen>
 #include <GMatElastoPlasticFiniteStrainSimo/Cartesian3d.h>
 #include <GooseFEM/GooseFEM.h>
-#include <GooseFEM/ParaView.h>
+#include <XDMFWrite_HighFive.hpp>
 #include <highfive/H5Easy.hpp>
 
 namespace GM = GMatElastoPlasticFiniteStrainSimo::Cartesian3d;
 namespace GF = GooseFEM;
-namespace PV = GooseFEM::ParaView::HDF5;
+namespace PV = XDMFWrite_HighFive;
 namespace H5 = H5Easy;
 
 int main()
@@ -166,10 +166,9 @@ int main()
                 else
                     res = nfres;
                 // - print progress to screen
-                std::cout << "inc = " << inc 
-                          << ", iter = " << iter 
-                          << ", res = " << res
-                          << std::endl;
+                std::cout << "inc = " << inc << ", "
+                          << "iter = " << iter << ", "
+                          << "res = " << res << std::endl;
                 // - check for convergence
                 if (res < 1.0e-5) {
                     break;
@@ -221,20 +220,18 @@ int main()
         // - write to output-file: element quantities
         H5::dump(file, "/sigeq/" + std::to_string(inc), GM::Sigeq(Sigelem));
         H5::dump(file, "/epseq/" + std::to_string(inc), GM::Epseq(Epselem));
-        H5::dump(file, "/disp/" + std::to_string(inc), PV::as3d(disp));
+        H5::dump(file, "/disp/" + std::to_string(inc), GF::as3d(disp));
         // - update ParaView meta-data
-        xdmf.push_back(PV::Increment(
-            PV::Connectivity(file, "/conn", mesh.getElementType()),
-            PV::Coordinates(file, "/coor"),
-            {
-                PV::Attribute(file, "/disp/" + std::to_string(inc), "Displacement", PV::AttributeType::Node),
-                PV::Attribute(file, "/sigeq/" + std::to_string(inc), "Eq. stress", PV::AttributeType::Cell),
-                PV::Attribute(file, "/epseq/" + std::to_string(inc), "Eq. strain", PV::AttributeType::Cell),
-            }));
+        xdmf.push_back({
+            PV::Topology(file, "/conn", mesh.getElementType()),
+            PV::Geometry(file, "/coor"),
+            PV::Attribute(file, "/disp/" + std::to_string(inc), PV::AttributeCenter::Node, "Displacement"),
+            PV::Attribute(file, "/sigeq/" + std::to_string(inc), PV::AttributeCenter::Cell, "Eq. stress"),
+            PV::Attribute(file, "/epseq/" + std::to_string(inc), PV::AttributeCenter::Cell, "Eq. strain")});
     }
 
     // write ParaView meta-data
-    xdmf.write("main.xdmf");
+    PV::write("main.xdmf", xdmf.get());
 
     return 0;
 }

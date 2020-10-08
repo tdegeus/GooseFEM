@@ -1,4 +1,3 @@
-
 #include <GMatElastoPlasticQPot/Cartesian2d.h>
 #include <GooseFEM/GooseFEM.h>
 #include <highfive/H5Easy.hpp>

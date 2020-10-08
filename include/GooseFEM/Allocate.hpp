@@ -88,6 +88,27 @@ inline xt::xarray<double> AsTensor(size_t rank, const T& arg, size_t n)
     return ret;
 }
 
+inline xt::xtensor<double, 2> as3d(const xt::xtensor<double, 2>& data)
+{
+    GOOSEFEM_ASSERT(data.shape(1) > 0 && data.shape(1) < 4)
+
+    if (data.shape(1) == 3ul) {
+        return data;
+    }
+
+    xt::xtensor<double, 2> ret = xt::zeros<double>(std::array<size_t, 2>{data.shape(0), 3ul});
+
+    if (data.shape(1) == 2ul) {
+        xt::view(ret, xt::all(), xt::keep(0, 1)) = data;
+    }
+
+    if (data.shape(1) == 1ul) {
+        xt::view(ret, xt::all(), xt::keep(0)) = data;
+    }
+
+    return ret;
+}
+
 } // namespace GooseFEM
 
 #endif
