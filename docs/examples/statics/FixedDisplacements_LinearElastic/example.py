@@ -123,7 +123,7 @@ fres = fext - fint
 print(np.sum(np.abs(fres)) / np.sum(np.abs(fext)))
 
 # average stress per node
-dV = elem.DV(2)
+dV = elem.AsTensor(2, elem.dV())
 Sig = np.average(Sig, weights=dV, axis=1)
 
 # skip plot with "--no-plot" command line argument
