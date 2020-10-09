@@ -3,13 +3,21 @@
 Changelog
 *********
 
+v0.4.1
+======
+
+API additions
+-------------
+
+*   Added  "AllocateElemmat".
+
 v0.4.0
 ======
 
 API additions
 -------------
 
-*   Added "AllocateQtensor", "AllocateQscalar", "AllocateDofval", "AllocateNodevec", "AllocateElemvec"
+*   Added "AllocateQtensor", "AllocateQscalar", "AllocateDofval", "AllocateNodevec", "AllocateElemvec".
 
 API changes
 -----------
