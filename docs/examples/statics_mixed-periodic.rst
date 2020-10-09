@@ -47,7 +47,7 @@ Apply periodicity
 
 .. literalinclude:: statics/MixedPeriodic_LinearElastic/example.cpp
     :language: cpp
-    :lines: 33-37
+    :lines: 33
 
 Applying periodicity in this case is rather straightforward.
 In particular the degrees-of-freedom along the right edge are eliminated,
@@ -60,7 +60,7 @@ Fixed displacement
 
 .. literalinclude:: statics/MixedPeriodic_LinearElastic/example.cpp
     :language: cpp
-    :lines: 38-43
+    :lines: 36-41
 
 The degrees-of-freedom of which the displacement is controlled are finally extracted
 from the renumbered list of degrees-of-freedom.

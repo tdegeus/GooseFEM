@@ -35,11 +35,6 @@ Mesh::Hex8::Regular
 
 Regular mesh.
 
-.. seealso::
-
-  | :download:`Python/ParaView - example <figures/MeshHex8/Regular/paraview.py>`
-  | :download:`Python/ParaView - nodesets <figures/MeshHex8/Regular/paraview_nodesets.py>`
-
 Mesh::Hex8::Regular::nelem()
 ----------------------------
 
@@ -63,7 +58,7 @@ Return number of dimensions (= 2).
 Mesh::Hex8::Regular::getElementType()
 -------------------------------------
 
-Return element-type. For example used in the :ref:`ParaView` module.
+Return element-type.
 
 Mesh::Hex8::Regular::coor()
 ---------------------------
@@ -120,11 +115,6 @@ Mesh::Hex8::FineLayer
 
 Mesh with a fine layer in the middle, and that becomes course away from this plane (see image below). Note coursening can only be done if the number of elements in x- and y-direction is dividable by 3, and that it is only optimal if the number of elements in x- and y-direction is a factor of 3. Note that the number of elements in the vertical direction is specified as the number of times the unit element (the number of times "h" the height should be), and that this number is only a target: the algorithm chooses in accordance with the applied coursing.
 
-.. seealso::
-
-  | :download:`Python/ParaView - example <figures/MeshHex8/FineLayer/paraview.py>`
-  | :download:`Python/ParaView - nodesets <figures/MeshHex8/FineLayer/paraview_nodesets.py>`
-
 Mesh::Hex8::FineLayer::nelem()
 ------------------------------
 
@@ -163,7 +153,7 @@ Unit edge size (matches input).
 Mesh::Hex8::FineLayer::getElementType()
 ---------------------------------------
 
-Return element-type. For example used in the :ref:`ParaView` module.
+Return element-type.
 
 Mesh::Hex8::FineLayer::coor()
 -----------------------------

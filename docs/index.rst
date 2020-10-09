@@ -52,7 +52,6 @@ GooseFEM
    details/Vector.rst
    details/Matrix.rst
    details/Tyings.rst
-   details/ParaView.rst
    details/Iterate.rst
 
 .. toctree::

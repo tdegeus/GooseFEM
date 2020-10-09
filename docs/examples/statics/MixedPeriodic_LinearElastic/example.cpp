@@ -30,9 +30,7 @@ int main()
     // periodicity and fixed displacements DOFs
     // ----------------------------------------
 
-    for (size_t j = 0; j < coor.shape(1); ++j) {
-        xt::view(dofs, xt::keep(nodesRgt), j) = xt::view(dofs, xt::keep(nodesLft), j);
-    }
+    xt::view(dofs, xt::keep(nodesRgt)) = xt::view(dofs, xt::keep(nodesLft));
 
     dofs = GooseFEM::Mesh::renumber(dofs);
 

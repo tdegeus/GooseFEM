@@ -22,8 +22,6 @@ Regular mesh.
 .. seealso::
 
   | :download:`Python - example <figures/MeshQuad4/Regular/example.py>`
-  | :download:`Python/ParaView - example <figures/MeshQuad4/Regular/paraview.py>`
-  | :download:`Python/ParaView - nodesets <figures/MeshQuad4/Regular/paraview_nodesets.py>`
 
 Mesh::Quad4::Regular::nelem()
 -----------------------------
@@ -48,7 +46,7 @@ Return number of dimensions (= 2).
 Mesh::Quad4::Regular::getElementType()
 --------------------------------------
 
-Return element-type. For example used in the :ref:`ParaView` module.
+Return element-type.
 
 Mesh::Quad4::Regular::coor()
 ----------------------------
@@ -112,8 +110,6 @@ Mesh with a fine layer in the middle, and that becomes course away from this pla
 .. seealso::
 
   | :download:`Python - example <figures/MeshQuad4/FineLayer/example.py>`
-  | :download:`Python/ParaView - example <figures/MeshQuad4/FineLayer/paraview.py>`
-  | :download:`Python/ParaView - nodesets <figures/MeshQuad4/FineLayer/paraview_nodesets.py>`
   | :download:`Python - behaviour 'nx' <figures/MeshQuad4/FineLayer/behaviour.py>`
   | :download:`Python - element numbers <figures/MeshQuad4/FineLayer/element-numbers.py>`
 
@@ -155,7 +151,7 @@ Unit edge size (matches input).
 Mesh::Quad4::FineLayer::getElementType()
 ----------------------------------------
 
-Return element-type. For example used in the :ref:`ParaView` module.
+Return element-type.
 
 Mesh::Quad4::FineLayer::coor()
 ------------------------------

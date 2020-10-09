@@ -20,10 +20,6 @@ Matrix
 
 Matrix definition.
 
-.. note::
-
-  A solver has to be chosen, see :ref:`linear_solver`.
-
 Matrix::nelem()
 ---------------
 
@@ -59,8 +55,20 @@ Matrix::assemble(...)
 
 Assemble matrix from element matrices stored as "elemmat".
 
-Matrix::solve(...)
-------------------
+Matrix::dot(...)
+----------------
+
+Matrix vector product.
+
+MatrixSolver
+============
+
+.. note::
+
+  A solver has to be chosen, see :ref:`linear_solver`.
+
+MatrixSolver::solve(...)
+------------------------
 
 Solve linear system.
 
@@ -128,16 +136,6 @@ MatrixPartitioned::assemble(...)
 
 Assemble matrix from element matrices stored as "elemmat".
 
-MatrixPartitioned::solve(...)
------------------------------
-
-Solve linear system.
-
-MatrixPartitioned::solve_u(...)
--------------------------------
-
-Solve linear system.
-
 MatrixPartitioned::reaction(...)
 --------------------------------
 
@@ -147,6 +145,28 @@ MatrixPartitioned::reaction_p(...)
 ----------------------------------
 
 Compute reaction forces (part of "b" that corresponds to "x_p").
+
+MatrixPartitioned::dot(...)
+---------------------------
+
+Matrix vector product.
+
+MatrixPartitionedSolver
+=======================
+
+.. note::
+
+  A solver has to be chosen, see :ref:`linear_solver`.
+
+MatrixPartitionedSolver::solve(...)
+-----------------------------------
+
+Solve linear system.
+
+MatrixPartitionedSolver::solve_u(...)
+-------------------------------------
+
+Solve linear system.
 
 MatrixPartitionedTyings
 =======================
@@ -232,13 +252,25 @@ MatrixPartitionedTyings::assemble(...)
 
 Assemble matrix from element matrices stored as "elemmat".
 
-MatrixPartitionedTyings::solve(...)
------------------------------------
+MatrixPartitionedTyings::dot(...)
+---------------------------------
+
+Matrix vector product.
+
+MatrixPartitionedTyingsSolver
+=============================
+
+.. note::
+
+  A solver has to be chosen, see :ref:`linear_solver`.
+
+MatrixPartitionedTyingsSolver::solve(...)
+-----------------------------------------
 
 Solve linear system.
 
-MatrixPartitionedTyings::solve_u(...)
--------------------------------------
+MatrixPartitionedTyingsSolver::solve_u(...)
+-------------------------------------------
 
 Solve linear system.
 
