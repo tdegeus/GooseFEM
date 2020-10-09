@@ -291,6 +291,12 @@ inline xt::xtensor<double, 3> VectorPartitionedTyings::AllocateElemvec() const
     return elemvec;
 }
 
+inline xt::xtensor<double, 3> VectorPartitionedTyings::AllocateElemmat() const
+{
+    xt::xtensor<double, 3> elemmat = xt::empty<double>({m_nelem, m_nne * m_ndim, m_nne * m_ndim});
+    return elemmat;
+}
+
 inline xt::xtensor<double, 1> VectorPartitionedTyings::AllocateDofval(double val) const
 {
     xt::xtensor<double, 1> dofval = xt::zeros<double>({m_ndof});
@@ -310,6 +316,13 @@ inline xt::xtensor<double, 3> VectorPartitionedTyings::AllocateElemvec(double va
     xt::xtensor<double, 3> elemvec = xt::zeros<double>({m_nelem, m_nne, m_ndim});
     elemvec.fill(val);
     return elemvec;
+}
+
+inline xt::xtensor<double, 3> VectorPartitionedTyings::AllocateElemmat(double val) const
+{
+    xt::xtensor<double, 3> elemmat = xt::empty<double>({m_nelem, m_nne * m_ndim, m_nne * m_ndim});
+    elemmat.fill(val);
+    return elemmat;
 }
 
 } // namespace GooseFEM

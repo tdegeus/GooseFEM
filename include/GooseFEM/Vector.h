@@ -70,9 +70,11 @@ public:
     xt::xtensor<double, 1> AllocateDofval() const;
     xt::xtensor<double, 2> AllocateNodevec() const;
     xt::xtensor<double, 3> AllocateElemvec() const;
+    xt::xtensor<double, 3> AllocateElemmat() const;
     xt::xtensor<double, 1> AllocateDofval(double val) const;
     xt::xtensor<double, 2> AllocateNodevec(double val) const;
     xt::xtensor<double, 3> AllocateElemvec(double val) const;
+    xt::xtensor<double, 3> AllocateElemmat(double val) const;
 
 private:
     // Bookkeeping

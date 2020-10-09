@@ -116,5 +116,13 @@ void init_Vector(py::module& m)
             "AllocateElemvec",
             py::overload_cast<double>(&GooseFEM::Vector::AllocateElemvec, py::const_))
 
+        .def(
+            "AllocateElemmat",
+            py::overload_cast<>(&GooseFEM::Vector::AllocateElemmat, py::const_))
+
+        .def(
+            "AllocateElemmat",
+            py::overload_cast<double>(&GooseFEM::Vector::AllocateElemmat, py::const_))
+
         .def("__repr__", [](const GooseFEM::Vector&) { return "<GooseFEM.Vector>"; });
 }

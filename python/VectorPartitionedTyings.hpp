@@ -108,6 +108,14 @@ void init_VectorPartitionedTyings(py::module& m)
             "AllocateElemvec",
             py::overload_cast<double>(&GooseFEM::VectorPartitionedTyings::AllocateElemvec, py::const_))
 
+        .def(
+            "AllocateElemmat",
+            py::overload_cast<>(&GooseFEM::VectorPartitionedTyings::AllocateElemmat, py::const_))
+
+        .def(
+            "AllocateElemmat",
+            py::overload_cast<double>(&GooseFEM::VectorPartitionedTyings::AllocateElemmat, py::const_))
+
         .def("__repr__", [](const GooseFEM::VectorPartitionedTyings&) {
             return "<GooseFEM.VectorPartitionedTyings>";
         });

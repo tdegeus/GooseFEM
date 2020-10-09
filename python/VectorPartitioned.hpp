@@ -218,6 +218,14 @@ void init_VectorPartitioned(py::module& m)
             "AllocateElemvec",
             py::overload_cast<double>(&GooseFEM::VectorPartitioned::AllocateElemvec, py::const_))
 
+        .def(
+            "AllocateElemmat",
+            py::overload_cast<>(&GooseFEM::VectorPartitioned::AllocateElemmat, py::const_))
+
+        .def(
+            "AllocateElemmat",
+            py::overload_cast<double>(&GooseFEM::VectorPartitioned::AllocateElemmat, py::const_))
+
         .def("__repr__", [](const GooseFEM::VectorPartitioned&) {
             return "<GooseFEM.VectorPartitioned>";
         });
