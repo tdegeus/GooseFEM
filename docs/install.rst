@@ -39,7 +39,7 @@ The quickest (but not the most efficient!) is to use *conda* to install *GooseFE
 
     This package does not benefit from *xsimd* optimisation,
     as it is not compiled on your hardware.
-    Therefore compiling by hand is recommended.
+    You'll have to compile by hand to benefit from *xsimd* optimisation.
 
 From source
 ^^^^^^^^^^^

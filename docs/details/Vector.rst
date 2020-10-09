@@ -92,6 +92,26 @@ Convert "dofval" or "elemvec" to "nodevec".
 
   Verify that you don't need "asNode(...)"
 
+Vector::AllocateDofval(...)
+---------------------------
+
+Allocate (and initialize) "dofval".
+
+Vector::AllocateNodevec(...)
+----------------------------
+
+Allocate (and initialize) "nodevec".
+
+Vector::AllocateElemvec(...)
+----------------------------
+
+Allocate (and initialize) "elemvec".
+
+Vector::AllocateElemmat(...)
+----------------------------
+
+Allocate (and initialize) "elemmat".
+
 VectorPartitioned
 =================
 
@@ -239,6 +259,26 @@ Convert "dofval" or "elemvec" to "nodevec".
 
   Verify that you don't need "asNode(...)"
 
+VectorPartitioned::AllocateDofval(...)
+--------------------------------------
+
+Allocate (and initialize) "dofval".
+
+VectorPartitioned::AllocateNodevec(...)
+---------------------------------------
+
+Allocate (and initialize) "nodevec".
+
+VectorPartitioned::AllocateElemvec(...)
+---------------------------------------
+
+Allocate (and initialize) "elemvec".
+
+VectorPartitioned::AllocateElemmat(...)
+---------------------------------------
+
+Allocate (and initialize) "elemmat".
+
 VectorPartitionedTyings
 =======================
 
@@ -382,3 +422,23 @@ Convert "dofval" or "elemvec" to "nodevec".
 .. warning::
 
   Verify that you don't need "asNode(...)"
+
+VectorPartitionedTyings::AllocateDofval(...)
+--------------------------------------------
+
+Allocate (and initialize) "dofval".
+
+VectorPartitionedTyings::AllocateNodevec(...)
+---------------------------------------------
+
+Allocate (and initialize) "nodevec".
+
+VectorPartitionedTyings::AllocateElemvec(...)
+---------------------------------------------
+
+Allocate (and initialize) "elemvec".
+
+VectorPartitionedTyings::AllocateElemmat(...)
+---------------------------------------------
+
+Allocate (and initialize) "elemmat".

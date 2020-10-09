@@ -22,8 +22,6 @@ Regular mesh.
 .. seealso::
 
   | :download:`Python - example <figures/MeshTri3/Regular/example.py>`
-  | :download:`Python/ParaView - example <figures/MeshTri3/Regular/paraview.py>`
-  | :download:`Python/ParaView - nodesets <figures/MeshTri3/Regular/paraview_nodesets.py>`
 
 Mesh::Tri3::Regular::nelem()
 ----------------------------
@@ -48,7 +46,7 @@ Return number of dimensions (= 2).
 Mesh::Tri3::Regular::getElementType()
 -------------------------------------
 
-Return element-type. For example used in the :ref:`ParaView` module.
+Return element-type.
 
 Mesh::Tri3::Regular::coor()
 ---------------------------

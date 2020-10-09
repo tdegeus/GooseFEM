@@ -40,7 +40,7 @@ Include library
 .. literalinclude:: statics/FixedDisplacements_LinearElastic/example.cpp
     :language: cpp
     :lines: 1-4
-    :emphasize-lines: 1-2
+    :emphasize-lines: 2-3
 
 The first step is to include the header-only library.
 Note that for this example we also make use of a material model
@@ -138,12 +138,17 @@ System matrix
 
 .. literalinclude:: statics/FixedDisplacements_LinearElastic/example.cpp
     :language: cpp
-    :lines: 46
+    :lines: 46-47
     :emphasize-lines: 1
 
 We now also allocate the system/stiffness system (stored as sparse matrix).
 Like vector, it can accept and return different vector representations,
 in addition to the ability to assemble from element system matrices.
+
+In addition we allocate the accompanying sparse solver,
+that we will use to solve a linear system of equations.
+Note that the solver-class takes care of factorising only when needed
+(when the matrix has been changed).
 
 .. note::
 
@@ -160,19 +165,34 @@ Allocate nodal vectors
 
 .. literalinclude:: statics/FixedDisplacements_LinearElastic/example.cpp
     :language: cpp
-    :lines: 49-52
+    :lines: 50-53
 
 *   *disp*: nodal displacements
 *   *fint*: nodal internal forces
 *   *fext*: nodal external forces
 *   *fres*: nodal residual forces
 
+.. note::
+
+    To allocate nodal vectors the convenience function:
+
+    .. code-block:: cpp
+
+        vector.AllocateNodevec(); // allocate
+        vector.AllocateElemvec(0.0); // allocate & (zero-)initialise
+
+    is available, which takes care of getting the right shape. E.g.
+
+    .. code-block:: cpp
+
+        auto disp = vector.AllocateNodevec(0.0);
+
 Allocate element vectors
 ========================
 
 .. literalinclude:: statics/FixedDisplacements_LinearElastic/example.cpp
     :language: cpp
-    :lines: 55-57
+    :lines: 56-58
 
 *   *ue*: displacement
 *   *fe*: force
@@ -185,25 +205,55 @@ Allocate element vectors
     see :ref:`conventions_vector_conversion`.
     We will get back to this point below.
 
+.. note::
+
+    To allocate element vectors the convenience function:
+
+    .. code-block:: cpp
+
+        vector.AllocateElemvec(); // allocate
+        vector.AllocateElemvec(0.0); // allocate & (zero-)initialise
+
+    is available, which takes care of getting the right shape. E.g.
+
+    .. code-block:: cpp
+
+        auto ue = vector.AllocateElemvec(0.0);
+
+.. note::
+
+    To allocate element matrices the convenience function:
+
+    .. code-block:: cpp
+
+        vector.AllocateElemmat(); // allocate
+        vector.AllocateElemmat(0.0); // allocate & (zero-)initialise
+
+    is available, which takes care of getting the right shape. E.g.
+
+    .. code-block:: cpp
+
+        auto Ke = vector.AllocateElemmat(0.0);
+
 Element definition
 ==================
 
 .. literalinclude:: statics/FixedDisplacements_LinearElastic/example.cpp
     :language: cpp
-    :lines: 63-64
+    :lines: 64-65
 
 At this moment the interpolation and quadrature is allocated.
 The shape functions and integration points (that can be customised) are stored in this class.
 As observed, no further information is needed than the number of elements and
 the nodal coordinates per element.
-Both are contained in the output of "vector.AsElement(coor)", which is an 'elemvec' of
+Both are contained in the output of ``vector.AsElement(coor)``, which is an 'elemvec' of
 shape "[nelem, nne, ndim]".
 This illustrates that problem specific book-keeping is isolated to the main program,
 using *Vector* as tool.
 
 .. note::
 
-    The shape functions are computed when constructing this class,
+    The shape-functions are computed when constructing this class,
     they are not recomputed when evaluating them.
     One can recompute them if the nodal coordinates change using ".update_x(...)", however,
     this is only relevant in a large deformation setting.
@@ -220,7 +270,7 @@ Material definition
 
 .. literalinclude:: statics/FixedDisplacements_LinearElastic/example.cpp
     :language: cpp
-    :lines: 67
+    :lines: 68
 
 We now define a uniform linear elastic material,
 using an external library that is tuned to GooseFEM.
@@ -245,19 +295,39 @@ Integration point tensors
 
 .. literalinclude:: statics/FixedDisplacements_LinearElastic/example.cpp
     :language: cpp
-    :lines: 70-73
+    :lines: 71-74
 
 These strain, stress, and stiffness tensors per integration point are now allocated.
 Note that these tensors are 3-d while our problem was 2-d.
 This is thanks to the plane strain assumption,
 and the element definition that ignores all third-dimension components.
 
+.. note::
+
+    To allocate integration point the convenience function:
+
+    .. code-block:: cpp
+
+        quad.AllocateQtensor<rank>(); // allocate
+        quad.AllocateQtensor<rank>(0.0); // allocate & (zero-)initialise
+
+    is available, which takes care of getting the right shape. E.g.
+
+    .. code-block:: cpp
+
+        auto Eps = quad.AllocateQtensor<2>();
+        auto C = quad.AllocateQtensor<4>();
+
+    From Python simply use ``rank`` as the first function argument.
+    Furthermore, for scalar you could use ``AllocateQscalar()``
+    which is equivalent to ``AllocateQtensor<0>()``.
+
 Compute strain
 ==============
 
 .. literalinclude:: statics/FixedDisplacements_LinearElastic/example.cpp
     :language: cpp
-    :lines: 78-80
+    :lines: 79-81
     :emphasize-lines: 2
 
 The strain per integration point is now computed using the current nodal displacements
@@ -265,7 +335,7 @@ The strain per integration point is now computed using the current nodal displac
 
 .. note::
 
-    *ue* is the output of "vector.asElement(disp, ue)".
+    *ue* is the output of ``vector.asElement(disp, ue)``.
     Using this syntax re-allocation of *ue* is avoided.
     If this optimisation is irrelevant for you problem (or if you are using the Python interface),
     please use the same function, but starting with a capital:
@@ -285,7 +355,7 @@ Compute stress and tangent
 
 .. literalinclude:: statics/FixedDisplacements_LinearElastic/example.cpp
     :language: cpp
-    :lines: 82
+    :lines: 83
 
 The stress and stiffness tensors are now computed for each integration point
 (completely independently) using the external material model.
@@ -299,7 +369,7 @@ Assemble system
 
 .. literalinclude:: statics/FixedDisplacements_LinearElastic/example.cpp
     :language: cpp
-    :lines: 84-91
+    :lines: 85-92
 
 The stress stored per integration point (*Sig*) is now converted to
 nodal internal force vectors stored per element (*fe*).
@@ -334,7 +404,7 @@ Solve
 
 .. literalinclude:: statics/FixedDisplacements_LinearElastic/example.cpp
     :language: cpp
-    :lines: 92-103
+    :lines: 93-104
 
 We now prescribe the displacement of the Prescribed degrees-of-freedom directly
 in the nodal displacements *disp* and compute the residual force.
@@ -348,7 +418,7 @@ Strain and stress
 
 .. literalinclude:: statics/FixedDisplacements_LinearElastic/example.cpp
     :language: cpp
-    :lines: 108-111
+    :lines: 109-112
 
 The strain and stress per integration point are recomputed for post-processing.
 
@@ -357,7 +427,7 @@ Residual force
 
 .. literalinclude:: statics/FixedDisplacements_LinearElastic/example.cpp
     :language: cpp
-    :lines: 112-124
+    :lines: 113-125
 
 We convince ourselves that the solution is indeed in mechanical equilibrium.
 
@@ -366,7 +436,7 @@ Store & plot
 
 .. literalinclude:: statics/FixedDisplacements_LinearElastic/example.cpp
     :language: cpp
-    :lines: 125-135
+    :lines: 126-136
 
 Finally we store some fields for plotting using
 :download:`plot.py <statics/FixedDisplacements_LinearElastic/plot.py>`.

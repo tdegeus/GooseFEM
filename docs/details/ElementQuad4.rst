@@ -58,10 +58,19 @@ Element::Quad4::Quadrature::GradN()
 
 (Current) Shape function gradient (w.r.t. real coordinates): [nelem, nip, nne, ndim]
 
-Element::Quad4::Quadrature::dV(...)*
-------------------------------------
+Element::Quad4::Quadrature::asTensor<...>(...)*
+-----------------------------------------------
 
-(Current) Volume of each integration point (qscalar: [nelem, nip]). An overload is available to get the same result as a tensor per integration point (qtensor: [nelem, nip, tdim, tdim]) with all tensor-components having the same value.
+Convert a 'qscalar' (scalar values stored per integration point) to a 'qtensor',
+a tensor per integration point, with all tensor-components having the same value.
+The template parameters allows you to specify the rank of the tensor.
+From Python use the function that allocates data, and specify the rank as first
+argument.
+
+Element::Quad4::Quadrature::dV(...)
+-----------------------------------
+
+(Current) Volume of each integration point (qscalar: [nelem, nip]).
 
 Element::Quad4::Quadrature::gradN_vector(...)*
 ----------------------------------------------
@@ -430,6 +439,17 @@ or in index notation
   K_{m+id, n+kd} = \sum\limits_q \; \frac{\partial N_m}{\partial x_i} C_{ijkl} \frac{\partial N_n}{\partial x_l} \; \delta\Omega_q
 
 Note that the output is an "elemmat", which has shape [nelem, nne*ndim, nne*ndim].
+
+Element::Quad4::Quadrature::AllocateQtensor<...>(...)
+-----------------------------------------------------
+
+Allocate (and initialize) a 'qtensor' of a certain rank (template parameter).
+From Python specify the rank as fist argument.
+
+Element::Quad4::Quadrature::AllocateQscalar(...)
+------------------------------------------------
+
+Shortcut for ``AllocateQtensor<0>(...)``.
 
 Element::Quad4::Gauss
 =====================
