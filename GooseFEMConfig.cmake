@@ -29,15 +29,10 @@ endif()
 
 find_dependency(xtensor)
 
-find_package(Eigen3 QUIET)
+find_package(Eigen3)
 
-if(NOT Eigen3_FOUND)
-    find_package(PkgConfig)
-    pkg_check_modules(EIGEN3 QUIET eigen3)
-endif()
-
-if(Eigen3_FOUND)
-    target_include_directories(GooseFEM INTERFACE ${EIGEN3_INCLUDE_DIRS})
+if (TARGET Eigen3::Eigen)
+    target_link_libraries(GooseFEM INTERFACE Eigen3::Eigen)
 endif()
 
 # Define support target "GooseFEM::compiler_warnings"
