@@ -45,6 +45,18 @@ public:
     // Assemble from matrices stored per element [nelem, nne*ndim, nne*ndim]
     void assemble(const xt::xtensor<double, 3>& elemmat);
 
+    // Overwrite with a dense (sub-) matrix
+    void set(
+        const xt::xtensor<size_t, 1>& rows,
+        const xt::xtensor<size_t, 1>& cols,
+        const xt::xtensor<double, 2>& matrix);
+
+    // Add a dense (sub-) matrix to the current matrix
+    void add(
+        const xt::xtensor<size_t, 1>& rows,
+        const xt::xtensor<size_t, 1>& cols,
+        const xt::xtensor<double, 2>& matrix);
+
     // Get right-hand-size for corresponding to the prescribed DOFs:
     // b_p = A_pu * x_u + A_pp * x_p = A_pp * x_p
     void reaction(
