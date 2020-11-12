@@ -39,6 +39,22 @@ void init_Matrix(py::module& m)
             "Assemble matrix from 'elemmat",
             py::arg("elemmat"))
 
+        .def(
+            "set",
+            &GooseFEM::Matrix::set,
+            "Overwrite with a dense (sub-) matrix",
+            py::arg("rows"),
+            py::arg("cols"),
+            py::arg("matrix"))
+
+        .def(
+            "add",
+            &GooseFEM::Matrix::add,
+            "Add a dense (sub-) matrix to the current matrix",
+            py::arg("rows"),
+            py::arg("cols"),
+            py::arg("matrix"))
+
         .def("dofs", &GooseFEM::Matrix::dofs, "Return degrees-of-freedom")
 
         .def(

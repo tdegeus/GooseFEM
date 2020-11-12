@@ -142,6 +142,100 @@ inline void MatrixPartitioned::assemble(const xt::xtensor<double, 3>& elemmat)
     m_changed = true;
 }
 
+inline void MatrixPartitioned::set(
+    const xt::xtensor<size_t, 1>& rows,
+    const xt::xtensor<size_t, 1>& cols,
+    const xt::xtensor<double, 2>& matrix)
+{
+    GOOSEFEM_ASSERT(rows.size() == matrix.shape(0));
+    GOOSEFEM_ASSERT(cols.size() == matrix.shape(1));
+    GOOSEFEM_ASSERT(xt::amax(cols)() < m_ndof);
+    GOOSEFEM_ASSERT(xt::amax(rows)() < m_ndof);
+
+    std::vector<Eigen::Triplet<double>> Tuu;
+    std::vector<Eigen::Triplet<double>> Tup;
+    std::vector<Eigen::Triplet<double>> Tpu;
+    std::vector<Eigen::Triplet<double>> Tpp;
+
+    for (size_t i = 0; i < rows.size(); ++i) {
+        for (size_t j = 0; j < cols.size(); ++j) {
+            size_t di = rows(i);
+            size_t dj = cols(j);
+            double v = matrix(i, j);
+
+            if (di < m_nnu && dj < m_nnu) {
+                Tuu.push_back(Eigen::Triplet<double>(di, dj, v));
+            }
+            else if (di < m_nnu) {
+                Tup.push_back(Eigen::Triplet<double>(di, dj - m_nnu, v));
+            }
+            else if (dj < m_nnu) {
+                Tpu.push_back(Eigen::Triplet<double>(di - m_nnu, dj, v));
+            }
+            else {
+                Tpp.push_back(Eigen::Triplet<double>(di - m_nnu, dj - m_nnu, v));
+            }
+        }
+    }
+
+    m_Auu.setFromTriplets(Tuu.begin(), Tuu.end());
+    m_Aup.setFromTriplets(Tup.begin(), Tup.end());
+    m_Apu.setFromTriplets(Tpu.begin(), Tpu.end());
+    m_App.setFromTriplets(Tpp.begin(), Tpp.end());
+    m_changed = true;
+}
+
+inline void MatrixPartitioned::add(
+    const xt::xtensor<size_t, 1>& rows,
+    const xt::xtensor<size_t, 1>& cols,
+    const xt::xtensor<double, 2>& matrix)
+{
+    GOOSEFEM_ASSERT(rows.size() == matrix.shape(0));
+    GOOSEFEM_ASSERT(cols.size() == matrix.shape(1));
+    GOOSEFEM_ASSERT(xt::amax(cols)() < m_ndof);
+    GOOSEFEM_ASSERT(xt::amax(rows)() < m_ndof);
+
+    std::vector<Eigen::Triplet<double>> Tuu;
+    std::vector<Eigen::Triplet<double>> Tup;
+    std::vector<Eigen::Triplet<double>> Tpu;
+    std::vector<Eigen::Triplet<double>> Tpp;
+
+    Eigen::SparseMatrix<double> Auu;
+    Eigen::SparseMatrix<double> Aup;
+    Eigen::SparseMatrix<double> Apu;
+    Eigen::SparseMatrix<double> App;
+
+    for (size_t i = 0; i < rows.size(); ++i) {
+        for (size_t j = 0; j < cols.size(); ++j) {
+            size_t di = rows(i);
+            size_t dj = cols(j);
+            double v = matrix(i, j);
+
+            if (di < m_nnu && dj < m_nnu) {
+                Tuu.push_back(Eigen::Triplet<double>(di, dj, v));
+            }
+            else if (di < m_nnu) {
+                Tup.push_back(Eigen::Triplet<double>(di, dj - m_nnu, v));
+            }
+            else if (dj < m_nnu) {
+                Tpu.push_back(Eigen::Triplet<double>(di - m_nnu, dj, v));
+            }
+            else {
+                Tpp.push_back(Eigen::Triplet<double>(di - m_nnu, dj - m_nnu, v));
+            }
+        }
+    }
+
+    Auu.setFromTriplets(Tuu.begin(), Tuu.end());
+    Aup.setFromTriplets(Tup.begin(), Tup.end());
+    Apu.setFromTriplets(Tpu.begin(), Tpu.end());
+    App.setFromTriplets(Tpp.begin(), Tpp.end());
+    m_Auu += Auu;
+    m_Aup += Aup;
+    m_Apu += Apu;
+    m_App += App;
+    m_changed = true;
+}
 inline void
 MatrixPartitioned::reaction(const xt::xtensor<double, 2>& x, xt::xtensor<double, 2>& b) const
 {

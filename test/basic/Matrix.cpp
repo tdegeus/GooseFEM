@@ -9,7 +9,6 @@
 
 TEST_CASE("GooseFEM::Matrix", "Matrix.h")
 {
-
     SECTION("solve")
     {
         GooseFEM::Mesh::Quad4::Regular mesh(2, 2);
@@ -35,6 +34,32 @@ TEST_CASE("GooseFEM::Matrix", "Matrix.h")
         xt::xtensor<double, 1> B = Solver.Solve(A, C);
 
         REQUIRE(B.size() == b.size());
+        REQUIRE(xt::allclose(B, b));
+    }
+
+    SECTION("set/dot/solve")
+    {
+        xt::xtensor<double, 2> A = xt::random::rand<double>({5, 5});
+        xt::xtensor<double, 1> x = xt::random::rand<double>({5});
+        xt::xtensor<double, 1> b = xt::zeros<double>({5});
+
+        for (size_t i = 0; i < A.shape(0); ++i) {
+            for (size_t j = 0; j < A.shape(1); ++j) {
+                b(i) += A(i, j) * x(j);
+            }
+        }
+
+        xt::xtensor<size_t, 2> conn = xt::zeros<size_t>({1, 5});
+        xt::xtensor<size_t, 2> dofs = xt::zeros<size_t>({5, 2});
+
+        GooseFEM::Matrix K(conn, dofs);
+        GooseFEM::MatrixSolver<> Solver;
+        K.set(xt::arange<size_t>(5), xt::arange<size_t>(5), A);
+
+        auto B = K.Dot(x);
+        auto X = Solver.Solve(K, b);
+
+        REQUIRE(xt::allclose(X, x));
         REQUIRE(xt::allclose(B, b));
     }
 }

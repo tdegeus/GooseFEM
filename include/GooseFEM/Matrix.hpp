@@ -81,6 +81,53 @@ inline void Matrix::assemble(const xt::xtensor<double, 3>& elemmat)
     m_changed = true;
 }
 
+inline void Matrix::set(
+    const xt::xtensor<size_t, 1>& rows,
+    const xt::xtensor<size_t, 1>& cols,
+    const xt::xtensor<double, 2>& matrix)
+{
+    GOOSEFEM_ASSERT(rows.size() == matrix.shape(0));
+    GOOSEFEM_ASSERT(cols.size() == matrix.shape(1));
+    GOOSEFEM_ASSERT(xt::amax(cols)() < m_ndof);
+    GOOSEFEM_ASSERT(xt::amax(rows)() < m_ndof);
+
+    std::vector<Eigen::Triplet<double>> T;
+
+    for (size_t i = 0; i < rows.size(); ++i) {
+        for (size_t j = 0; j < cols.size(); ++j) {
+            T.push_back(Eigen::Triplet<double>(rows(i), cols(j), matrix(i, j)));
+        }
+    }
+
+    m_A.setFromTriplets(T.begin(), T.end());
+    m_changed = true;
+}
+
+inline void Matrix::add(
+    const xt::xtensor<size_t, 1>& rows,
+    const xt::xtensor<size_t, 1>& cols,
+    const xt::xtensor<double, 2>& matrix)
+{
+    GOOSEFEM_ASSERT(rows.size() == matrix.shape(0));
+    GOOSEFEM_ASSERT(cols.size() == matrix.shape(1));
+    GOOSEFEM_ASSERT(xt::amax(cols)() < m_ndof);
+    GOOSEFEM_ASSERT(xt::amax(rows)() < m_ndof);
+
+    std::vector<Eigen::Triplet<double>> T;
+
+    Eigen::SparseMatrix<double> A;
+
+    for (size_t i = 0; i < rows.size(); ++i) {
+        for (size_t j = 0; j < cols.size(); ++j) {
+            T.push_back(Eigen::Triplet<double>(rows(i), cols(j), matrix(i, j)));
+        }
+    }
+
+    A.setFromTriplets(T.begin(), T.end());
+    m_A += A;
+    m_changed = true;
+}
+
 inline void Matrix::dot(const xt::xtensor<double, 2>& x, xt::xtensor<double, 2>& b) const
 {
     GOOSEFEM_ASSERT(xt::has_shape(b, {m_nnode, m_ndim}));
