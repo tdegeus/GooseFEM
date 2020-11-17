@@ -200,10 +200,10 @@ inline void MatrixPartitioned::add(
     std::vector<Eigen::Triplet<double>> Tpu;
     std::vector<Eigen::Triplet<double>> Tpp;
 
-    Eigen::SparseMatrix<double> Auu;
-    Eigen::SparseMatrix<double> Aup;
-    Eigen::SparseMatrix<double> Apu;
-    Eigen::SparseMatrix<double> App;
+    Eigen::SparseMatrix<double> Auu(m_nnu, m_nnu);
+    Eigen::SparseMatrix<double> Aup(m_nnu, m_nnp);
+    Eigen::SparseMatrix<double> Apu(m_nnp, m_nnu);
+    Eigen::SparseMatrix<double> App(m_nnp, m_nnp);
 
     for (size_t i = 0; i < rows.size(); ++i) {
         for (size_t j = 0; j < cols.size(); ++j) {
@@ -236,6 +236,56 @@ inline void MatrixPartitioned::add(
     m_App += App;
     m_changed = true;
 }
+
+inline void MatrixPartitioned::dot(const xt::xtensor<double, 2>& x, xt::xtensor<double, 2>& b) const
+{
+    GOOSEFEM_ASSERT(xt::has_shape(b, {m_nnode, m_ndim}));
+    GOOSEFEM_ASSERT(xt::has_shape(x, {m_nnode, m_ndim}));
+
+    Eigen::VectorXd X_u = this->AsDofs_u(x);
+    Eigen::VectorXd X_p = this->AsDofs_p(x);
+    Eigen::VectorXd B_u = m_Auu * X_u + m_Aup * X_p;
+    Eigen::VectorXd B_p = m_Apu * X_u + m_App * X_p;
+
+    #pragma omp parallel for
+    for (size_t m = 0; m < m_nnode; ++m) {
+        for (size_t i = 0; i < m_ndim; ++i) {
+            if (m_part(m, i) < m_nnu) {
+                b(m, i) = B_u(m_part(m, i));
+            }
+            else{
+                b(m, i) = B_p(m_part(m, i) - m_nnu);
+            }
+        }
+    }
+}
+
+inline void MatrixPartitioned::dot(const xt::xtensor<double, 1>& x, xt::xtensor<double, 1>& b) const
+{
+    GOOSEFEM_ASSERT(b.size() == m_ndof);
+    GOOSEFEM_ASSERT(x.size() == m_ndof);
+
+    Eigen::VectorXd X_u = this->AsDofs_u(x);
+    Eigen::VectorXd X_p = this->AsDofs_p(x);
+
+    Eigen::Map<Eigen::VectorXd>(b.data(), m_nnu).noalias() = m_Auu * X_u + m_Aup * X_p;
+    Eigen::Map<Eigen::VectorXd>(b.data() + m_nnu, m_ndof).noalias() = m_Auu * X_u + m_Aup * X_p;
+}
+
+inline xt::xtensor<double, 2> MatrixPartitioned::Dot(const xt::xtensor<double, 2>& x) const
+{
+    xt::xtensor<double, 2> b = xt::empty<double>({m_nnode, m_ndim});
+    this->dot(x, b);
+    return b;
+}
+
+inline xt::xtensor<double, 1> MatrixPartitioned::Dot(const xt::xtensor<double, 1>& x) const
+{
+    xt::xtensor<double, 1> b = xt::empty<double>({m_ndof});
+    this->dot(x, b);
+    return b;
+}
+
 inline void
 MatrixPartitioned::reaction(const xt::xtensor<double, 2>& x, xt::xtensor<double, 2>& b) const
 {

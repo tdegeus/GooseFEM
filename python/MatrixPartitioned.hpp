@@ -47,6 +47,22 @@ void init_MatrixPartitioned(py::module& m)
             "Assemble matrix from 'elemmat",
             py::arg("elemmat"))
 
+        .def(
+            "set",
+            &GooseFEM::MatrixPartitioned::set,
+            "Overwrite with a dense (sub-) matrix",
+            py::arg("rows"),
+            py::arg("cols"),
+            py::arg("matrix"))
+
+        .def(
+            "add",
+            &GooseFEM::MatrixPartitioned::add,
+            "Add a dense (sub-) matrix to the current matrix",
+            py::arg("rows"),
+            py::arg("cols"),
+            py::arg("matrix"))
+
         .def("dofs", &GooseFEM::MatrixPartitioned::dofs, "Return degrees-of-freedom")
 
         .def("iiu", &GooseFEM::MatrixPartitioned::iiu, "Return unknown degrees-of-freedom")
@@ -76,6 +92,18 @@ void init_MatrixPartitioned(py::module& m)
             "Reaction_p",
             py::arg("x_u"),
             py::arg("x_p"))
+
+        .def(
+            "Dot",
+            py::overload_cast<const xt::xtensor<double, 1>&>(&GooseFEM::MatrixPartitioned::Dot, py::const_),
+            "Dot",
+            py::arg("x"))
+
+        .def(
+            "Dot",
+            py::overload_cast<const xt::xtensor<double, 2>&>(&GooseFEM::MatrixPartitioned::Dot, py::const_),
+            "Dot",
+            py::arg("x"))
 
         .def("__repr__", [](const GooseFEM::MatrixPartitioned&) {
             return "<GooseFEM.MatrixPartitioned>";

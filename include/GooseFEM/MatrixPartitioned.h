@@ -57,6 +57,12 @@ public:
         const xt::xtensor<size_t, 1>& cols,
         const xt::xtensor<double, 2>& matrix);
 
+
+    // Dot-product:
+    // b_i = A_ij * x_j
+    void dot(const xt::xtensor<double, 2>& x, xt::xtensor<double, 2>& b) const;
+    void dot(const xt::xtensor<double, 1>& x, xt::xtensor<double, 1>& b) const;
+
     // Get right-hand-size for corresponding to the prescribed DOFs:
     // b_p = A_pu * x_u + A_pp * x_p = A_pp * x_p
     void reaction(
@@ -73,12 +79,12 @@ public:
         xt::xtensor<double, 1>& b_p) const;
 
     // Auto-allocation of the functions above
+    xt::xtensor<double, 2> Dot(const xt::xtensor<double, 2>& x) const;
+    xt::xtensor<double, 1> Dot(const xt::xtensor<double, 1>& x) const;
     xt::xtensor<double, 2> Reaction(
         const xt::xtensor<double, 2>& x, const xt::xtensor<double, 2>& b) const;
-
     xt::xtensor<double, 1> Reaction(
         const xt::xtensor<double, 1>& x, const xt::xtensor<double, 1>& b) const;
-
     xt::xtensor<double, 1> Reaction_p(
         const xt::xtensor<double, 1>& x_u, const xt::xtensor<double, 1>& x_p) const;
 
