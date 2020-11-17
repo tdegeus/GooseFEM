@@ -11,9 +11,11 @@ option(SIMD "Enable xsimd" ON)
 option(ASSERT "Enable assertions" ON)
 option(DEBUG "Enable all assertions" ON)
 
+set(test_name "test-basic")
+
 find_package(Catch2 REQUIRED)
 
-add_executable(test-basic
+add_executable(${test_name}
     main.cpp
     Allocate.cpp
     ElementHex8.cpp
@@ -26,20 +28,22 @@ add_executable(test-basic
     Vector.cpp
     VectorPartitioned.cpp)
 
-target_link_libraries(test-basic PRIVATE Catch2::Catch2 GooseFEM)
+target_link_libraries(${test_name} PRIVATE Catch2::Catch2 GooseFEM)
 
 if (SIMD)
-    target_link_libraries(test-basic PRIVATE xtensor::optimize xtensor::use_xsimd)
+    target_link_libraries(${test_name} PRIVATE xtensor::optimize xtensor::use_xsimd)
 endif()
 
 if (WARNINGS)
-    target_link_libraries(test-basic PRIVATE GooseFEM::compiler_warnings)
+    target_link_libraries(${test_name} PRIVATE GooseFEM::compiler_warnings)
 endif()
 
 if (ASSERT)
-    target_link_libraries(test-basic PRIVATE GooseFEM::assert)
+    target_link_libraries(${test_name} PRIVATE GooseFEM::assert)
 endif()
 
 if (DEBUG)
-    target_link_libraries(test-basic PRIVATE GooseFEM::debug)
+    target_link_libraries(${test_name} PRIVATE GooseFEM::debug)
 endif()
+
+add_test(NAME ${test_name} COMMAND ${test_name})

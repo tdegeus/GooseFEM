@@ -83,7 +83,10 @@ install(FILES "${CMAKE_CURRENT_BINARY_DIR}/GooseFEM.pc"
 include("GooseFEMConfig.cmake")
 
 if(BUILD_TESTS)
+    enable_testing()
     add_subdirectory(test/basic)
+
+    enable_testing()
     add_subdirectory(test/gmat)
 endif()
 

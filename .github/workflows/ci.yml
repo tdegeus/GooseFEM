@@ -42,20 +42,17 @@ jobs:
 
     - name: Configure using CMake (Unix)
       if: runner.os != 'Windows'
-      run: cmake . -DBUILD_TESTS=ON -DBUILD_EXAMPLES=ON
+      run: cmake . -DBUILD_TESTS=ON -DBUILD_EXAMPLES=ON -DCMAKE_BUILD_TYPE=RELEASE
 
     - name: Configure using CMake (Windows)
       if: runner.os == 'Windows'
-      run: cmake . -DBUILD_TESTS=ON -DBUILD_EXAMPLES=OFF
+      run: cmake . -DBUILD_TESTS=ON -DBUILD_EXAMPLES=OFF -DCMAKE_BUILD_TYPE=RELEASE
 
     - name: Build C++ tests & examples
       run: cmake --build .
 
-    - name: Run basic C++ test
-      run: ./test/basic/test-basic
-
-    - name: Run GMat-based C++ test
-      run: ./test/gmat/test-gmat
+    - name: Run C++ tests
+      run: cmake --build . --target "RUN_TESTS"
 
     - name: Run C++ example - Linear elastic (1) (Unix only)
       if: runner.os != 'Windows'
