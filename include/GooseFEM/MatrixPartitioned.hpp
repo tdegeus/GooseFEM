@@ -237,6 +237,44 @@ inline void MatrixPartitioned::add(
     m_changed = true;
 }
 
+inline void MatrixPartitioned::todense(xt::xtensor<double, 2>& ret) const
+{
+    GOOSEFEM_ASSERT(xt::has_shape(ret, {m_ndof, m_ndof}));
+
+    ret.fill(0.0);
+
+    for (int k = 0; k < m_Auu.outerSize(); ++k) {
+        for (Eigen::SparseMatrix<double>::InnerIterator it(m_Auu, k); it; ++it) {
+            ret(it.row(), it.col()) = it.value();
+        }
+    }
+
+    for (int k = 0; k < m_Aup.outerSize(); ++k) {
+        for (Eigen::SparseMatrix<double>::InnerIterator it(m_Aup, k); it; ++it) {
+            ret(it.row(), it.col() + m_nnu) = it.value();
+        }
+    }
+
+    for (int k = 0; k < m_Apu.outerSize(); ++k) {
+        for (Eigen::SparseMatrix<double>::InnerIterator it(m_Apu, k); it; ++it) {
+            ret(it.row() + m_nnu, it.col()) = it.value();
+        }
+    }
+
+    for (int k = 0; k < m_App.outerSize(); ++k) {
+        for (Eigen::SparseMatrix<double>::InnerIterator it(m_App, k); it; ++it) {
+            ret(it.row() + m_nnu, it.col() + m_nnu) = it.value();
+        }
+    }
+}
+
+inline xt::xtensor<double, 2> MatrixPartitioned::Todense() const
+{
+    xt::xtensor<double, 2> ret = xt::empty<double>({m_ndof, m_ndof});
+    this->todense(ret);
+    return ret;
+}
+
 inline void MatrixPartitioned::dot(const xt::xtensor<double, 2>& x, xt::xtensor<double, 2>& b) const
 {
     GOOSEFEM_ASSERT(xt::has_shape(b, {m_nnode, m_ndim}));
