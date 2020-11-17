@@ -41,7 +41,12 @@ jobs:
         auto-activate-base: false
 
     - name: Configure using CMake
+      if: runner.os != 'Windows'
       run: cmake . -DBUILD_TESTS=ON -DBUILD_EXAMPLES=ON
+
+   - name: Configure using CMake
+      if: runner.os == 'Windows'
+      run: cmake . -DBUILD_TESTS=ON -DBUILD_EXAMPLES=OFF
 
     - name: Build C++ tests & examples
       run: cmake --build .
@@ -53,7 +58,9 @@ jobs:
       run: ./test/gmat/test-gmat
 
     - name: Run C++ example - Linear elastic (1)
+      if: runner.os != 'Windows'
       run: ./docs/examples/statics_FixedDisplacements_LinearElastic_example
 
     - name: Run C++ example - Linear elastic (2)
+      if: runner.os != 'Windows'
       run: ./docs/examples/statics_FixedDisplacements_LinearElastic_manual_partition
