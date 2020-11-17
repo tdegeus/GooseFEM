@@ -42,8 +42,7 @@ jobs:
 
     - name: Configure using CMake (Unix)
       if: runner.os != 'Windows'
-      # run: cmake . -DBUILD_TESTS=ON -DBUILD_EXAMPLES=ON -DCMAKE_BUILD_TYPE=RELEASE
-      run: cmake . -DBUILD_TESTS=ON -DBUILD_EXAMPLES=OFF -DCMAKE_BUILD_TYPE=RELEASE
+      run: cmake . -DBUILD_TESTS=ON -DBUILD_EXAMPLES=ON -DCMAKE_BUILD_TYPE=RELEASE
 
     - name: Configure using CMake (Windows)
       if: runner.os == 'Windows'
@@ -55,10 +54,10 @@ jobs:
     - name: Run C++ tests
       run: cmake --build . --target "RUN_TESTS_AND_EXAMPLES"
 
-    # - name: Run C++ example - Linear elastic (1) (Unix only)
-    #   if: runner.os != 'Windows'
-    #   run: ./docs/examples/statics_FixedDisplacements_LinearElastic_example
+    - name: Run C++ example - Linear elastic (1) (Unix only)
+      if: runner.os != 'Windows'
+      run: ./docs/examples/statics_FixedDisplacements_LinearElastic_example
 
-    # - name: Run C++ example - Linear elastic (2) (Unix only)
-    #   if: runner.os != 'Windows'
-    #   run: ./docs/examples/statics_FixedDisplacements_LinearElastic_manual_partition
+    - name: Run C++ example - Linear elastic (2) (Unix only)
+      if: runner.os != 'Windows'
+      run: ./docs/examples/statics_FixedDisplacements_LinearElastic_manual_partition
