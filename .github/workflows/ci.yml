@@ -53,7 +53,7 @@ jobs:
       run: cmake --build .
 
     - name: Run C++ tests
-      run: cmake --build . --target "RUN_TESTS"
+      run: cmake --build . --target "RUN_TESTS_AND_EXAMPLES"
 
     # - name: Run C++ example - Linear elastic (1) (Unix only)
     #   if: runner.os != 'Windows'
