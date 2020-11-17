@@ -57,6 +57,8 @@ public:
         const xt::xtensor<size_t, 1>& cols,
         const xt::xtensor<double, 2>& matrix);
 
+    // Return as dense matrix
+    void todense(xt::xtensor<double, 2>& ret) const;
 
     // Dot-product:
     // b_i = A_ij * x_j
@@ -79,6 +81,7 @@ public:
         xt::xtensor<double, 1>& b_p) const;
 
     // Auto-allocation of the functions above
+    xt::xtensor<double, 2> Todense() const;
     xt::xtensor<double, 2> Dot(const xt::xtensor<double, 2>& x) const;
     xt::xtensor<double, 1> Dot(const xt::xtensor<double, 1>& x) const;
     xt::xtensor<double, 2> Reaction(

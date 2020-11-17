@@ -115,7 +115,7 @@ inline void Matrix::add(
 
     std::vector<Eigen::Triplet<double>> T;
 
-    Eigen::SparseMatrix<double> A;
+    Eigen::SparseMatrix<double> A(m_ndof, m_ndof);
 
     for (size_t i = 0; i < rows.size(); ++i) {
         for (size_t j = 0; j < cols.size(); ++j) {
@@ -126,6 +126,26 @@ inline void Matrix::add(
     A.setFromTriplets(T.begin(), T.end());
     m_A += A;
     m_changed = true;
+}
+
+inline void Matrix::todense(xt::xtensor<double, 2>& ret) const
+{
+    GOOSEFEM_ASSERT(xt::has_shape(ret, {m_ndof, m_ndof}));
+
+    ret.fill(0.0);
+
+    for (int k = 0; k < m_A.outerSize(); ++k) {
+        for (Eigen::SparseMatrix<double>::InnerIterator it(m_A, k); it; ++it) {
+            ret(it.row(), it.col()) = it.value();
+        }
+    }
+}
+
+inline xt::xtensor<double, 2> Matrix::Todense() const
+{
+    xt::xtensor<double, 2> ret = xt::empty<double>({m_ndof, m_ndof});
+    this->todense(ret);
+    return ret;
 }
 
 inline void Matrix::dot(const xt::xtensor<double, 2>& x, xt::xtensor<double, 2>& b) const

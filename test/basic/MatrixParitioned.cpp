@@ -7,7 +7,7 @@
 
 #define ISCLOSE(a,b) REQUIRE_THAT((a), Catch::WithinAbs((b), 1.e-12));
 
-TEST_CASE("GooseFEM::Matrix", "Matrix.h")
+TEST_CASE("GooseFEM::MatrixPartitioned", "MatrixPartitioned.h")
 {
     SECTION("solve")
     {
@@ -17,6 +17,10 @@ TEST_CASE("GooseFEM::Matrix", "Matrix.h")
         size_t ndim = mesh.ndim();
         size_t nelem = mesh.nelem();
         size_t nnode = mesh.nnode();
+        auto dofs = mesh.dofs();
+        size_t npp = xt::amax(dofs)();
+        npp = (npp - npp % 2) / 2;
+        xt::xtensor<size_t, 1> iip = xt::arange<size_t<(npp);
 
         xt::xtensor<double, 3> a = xt::empty<double>({nelem, nne * ndim, nne * ndim});
         xt::xtensor<double, 1> b = xt::random::rand<double>({nnode * ndim});
@@ -27,8 +31,8 @@ TEST_CASE("GooseFEM::Matrix", "Matrix.h")
             xt::view(a, e, xt::all(), xt::all()) = ae;
         }
 
-        GooseFEM::Matrix A(mesh.conn(), mesh.dofs());
-        GooseFEM::MatrixSolver<> Solver;
+        GooseFEM::MatrixPartitioned A(mesh.conn(), dofs, iip);
+        GooseFEM::MatrixPartitionedSolver<> Solver;
         A.assemble(a);
         xt::xtensor<double, 1> C = A.Dot(b);
         xt::xtensor<double, 1> B = Solver.Solve(A, C);
@@ -53,9 +57,10 @@ TEST_CASE("GooseFEM::Matrix", "Matrix.h")
 
         xt::xtensor<size_t, 2> conn = xt::zeros<size_t>({1, 5});
         xt::xtensor<size_t, 2> dofs = xt::arange<size_t>(10).reshape({5, 2});
+        xt::xtensor<size_t, 1> iip = xt::arange<size_t<(5);
 
-        GooseFEM::Matrix K(conn, dofs);
-        GooseFEM::MatrixSolver<> Solver;
+        GooseFEM::MatrixPartitioned K(conn, dofs, iip);
+        GooseFEM::MatrixPartitionedSolver<> Solver;
         K.set(xt::arange<size_t>(10), xt::arange<size_t>(10), a);
         K.add(xt::arange<size_t>(10), xt::arange<size_t>(10), xt::transpose(a));
 
@@ -84,9 +89,10 @@ TEST_CASE("GooseFEM::Matrix", "Matrix.h")
 
         xt::xtensor<size_t, 2> conn = xt::zeros<size_t>({1, 5});
         xt::xtensor<size_t, 2> dofs = xt::arange<size_t>(10).reshape({5, 2});
+        xt::xtensor<size_t, 1> iip = xt::arange<size_t<(5);
 
-        GooseFEM::Matrix K(conn, dofs);
-        GooseFEM::MatrixSolver<> Solver;
+        GooseFEM::MatrixPartitioned K(conn, dofs, iip);
+        GooseFEM::MatrixPartitionedSolver<> Solver;
         K.set(xt::arange<size_t>(10), xt::arange<size_t>(10), a);
         K.add(xt::arange<size_t>(10), xt::arange<size_t>(10), xt::transpose(a));
 
