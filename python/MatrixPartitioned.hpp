@@ -41,6 +41,12 @@ void init_MatrixPartitioned(py::module& m)
 
         .def("nnp", &GooseFEM::MatrixPartitioned::nnp, "Number of prescribed degrees-of-freedom")
 
+        .def("dofs", &GooseFEM::MatrixPartitioned::dofs, "Return degrees-of-freedom")
+
+        .def("iiu", &GooseFEM::MatrixPartitioned::iiu, "Return unknown degrees-of-freedom")
+
+        .def("iip", &GooseFEM::MatrixPartitioned::iip, "Return prescribed degrees-of-freedom")
+
         .def(
             "assemble",
             &GooseFEM::MatrixPartitioned::assemble,
@@ -63,11 +69,19 @@ void init_MatrixPartitioned(py::module& m)
             py::arg("cols"),
             py::arg("matrix"))
 
-        .def("dofs", &GooseFEM::MatrixPartitioned::dofs, "Return degrees-of-freedom")
+        .def("Todense", &GooseFEM::MatrixPartitioned::Todense, "Return as dense matrix")
 
-        .def("iiu", &GooseFEM::MatrixPartitioned::iiu, "Return unknown degrees-of-freedom")
+        .def(
+            "Dot",
+            py::overload_cast<const xt::xtensor<double, 1>&>(&GooseFEM::MatrixPartitioned::Dot, py::const_),
+            "Dot",
+            py::arg("x"))
 
-        .def("iip", &GooseFEM::MatrixPartitioned::iip, "Return prescribed degrees-of-freedom")
+        .def(
+            "Dot",
+            py::overload_cast<const xt::xtensor<double, 2>&>(&GooseFEM::MatrixPartitioned::Dot, py::const_),
+            "Dot",
+            py::arg("x"))
 
         .def(
             "Reaction",
@@ -92,18 +106,6 @@ void init_MatrixPartitioned(py::module& m)
             "Reaction_p",
             py::arg("x_u"),
             py::arg("x_p"))
-
-        .def(
-            "Dot",
-            py::overload_cast<const xt::xtensor<double, 1>&>(&GooseFEM::MatrixPartitioned::Dot, py::const_),
-            "Dot",
-            py::arg("x"))
-
-        .def(
-            "Dot",
-            py::overload_cast<const xt::xtensor<double, 2>&>(&GooseFEM::MatrixPartitioned::Dot, py::const_),
-            "Dot",
-            py::arg("x"))
 
         .def("__repr__", [](const GooseFEM::MatrixPartitioned&) {
             return "<GooseFEM.MatrixPartitioned>";

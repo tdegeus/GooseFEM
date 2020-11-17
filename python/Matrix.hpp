@@ -33,6 +33,8 @@ void init_Matrix(py::module& m)
 
         .def("ndof", &GooseFEM::Matrix::ndof, "Number of degrees-of-freedom")
 
+        .def("dofs", &GooseFEM::Matrix::dofs, "Return degrees-of-freedom")
+
         .def(
             "assemble",
             &GooseFEM::Matrix::assemble,
@@ -55,7 +57,7 @@ void init_Matrix(py::module& m)
             py::arg("cols"),
             py::arg("matrix"))
 
-        .def("dofs", &GooseFEM::Matrix::dofs, "Return degrees-of-freedom")
+        .def("Todense", &GooseFEM::Matrix::Todense, "Return as dense matrix")
 
         .def(
             "Dot",
