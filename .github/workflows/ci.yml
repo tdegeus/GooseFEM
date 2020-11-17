@@ -37,11 +37,8 @@ jobs:
         activate-environment: test
         auto-activate-base: false
 
-    - name: Build directory
-      run: mkdir build; cd build
-
     - name: Configure using CMake
-      run: cmake .. -DBUILD_TESTS=ON -DBUILD_EXAMPLES=ON
+      run: cmake . -DBUILD_TESTS=ON -DBUILD_EXAMPLES=ON
 
     - name: Build C++ tests & examples
       run: cmake --build .
