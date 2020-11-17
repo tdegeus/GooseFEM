@@ -33,6 +33,9 @@ jobs:
     - name: Set conda test environment
       uses: conda-incubator/setup-miniconda@v2
       with:
+        mamba-version: "*"
+        channels: conda-forge,defaults
+        channel-priority: true
         environment-file: environment.yaml
         activate-environment: test
         auto-activate-base: false
