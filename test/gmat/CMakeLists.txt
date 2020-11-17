@@ -11,7 +11,7 @@ option(SIMD "Enable xsimd" ON)
 option(ASSERT "Enable assertions" ON)
 option(DEBUG "Enable all assertions" ON)
 
-set(test_name "test-basic")
+set(test_name "test-gmat")
 
 find_package(Catch2 REQUIRED)
 
