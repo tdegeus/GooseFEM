@@ -44,7 +44,7 @@ jobs:
       if: runner.os != 'Windows'
       run: cmake . -DBUILD_TESTS=ON -DBUILD_EXAMPLES=ON
 
-   - name: Configure using CMake
+    - name: Configure using CMake
       if: runner.os == 'Windows'
       run: cmake . -DBUILD_TESTS=ON -DBUILD_EXAMPLES=OFF
 
