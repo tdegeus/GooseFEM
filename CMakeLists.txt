@@ -94,5 +94,6 @@ if(BUILD_TESTS)
 endif()
 
 if(BUILD_EXAMPLES)
+    enable_testing()
     add_subdirectory(docs/examples)
 endif()
