@@ -403,6 +403,7 @@ inline void MatrixPartitionedTyingsSolver<Solver>::solve_u(
     const xt::xtensor<double, 1>& x_p,
     xt::xtensor<double, 1>& x_u)
 {
+    UNUSED(b_d);
     GOOSEFEM_ASSERT(b_u.size() == matrix.m_nnu);
     GOOSEFEM_ASSERT(b_d.size() == matrix.m_nnd);
     GOOSEFEM_ASSERT(x_p.size() == matrix.m_nnp);

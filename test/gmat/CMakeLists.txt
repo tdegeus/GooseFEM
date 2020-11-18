@@ -6,10 +6,10 @@ if(CMAKE_CURRENT_SOURCE_DIR STREQUAL CMAKE_SOURCE_DIR)
     find_package(GooseFEM REQUIRED CONFIG)
 endif()
 
-option(WARNINGS "Show build warnings" ON)
+set(ASSERT ON)
+set(DEBUG ON)
 option(SIMD "Enable xsimd" ON)
-option(ASSERT "Enable assertions" ON)
-option(DEBUG "Enable all assertions" ON)
+option(WARNINGS "Enable warnings" ON)
 
 set(test_name "test-gmat")
 
@@ -42,19 +42,19 @@ else()
         GMatElastoPlasticQPot)
 endif()
 
-if (SIMD)
+if(SIMD)
     target_link_libraries(${test_name} PRIVATE xtensor::optimize xtensor::use_xsimd)
 endif()
 
-if (WARNINGS)
+if(WARNINGS)
     target_link_libraries(${test_name} PRIVATE GooseFEM::compiler_warnings)
 endif()
 
-if (ASSERT)
+if(ASSERT)
     target_link_libraries(${test_name} PRIVATE GooseFEM::assert)
 endif()
 
-if (DEBUG)
+if(DEBUG)
     target_link_libraries(${test_name} PRIVATE GooseFEM::debug)
 endif()
 

@@ -5,7 +5,7 @@ on:
   pull_request:
   push:
     branches:
-      - main
+      - master
       - stable
       - v*
 
@@ -40,24 +40,16 @@ jobs:
         activate-environment: test
         auto-activate-base: false
 
-    - name: Configure using CMake (Unix)
-      if: runner.os != 'Windows'
+    - name: Configure using CMake (with examples)
+      if: runner.os == 'Linux'
       run: cmake . -DBUILD_TESTS=ON -DBUILD_EXAMPLES=ON -DCMAKE_BUILD_TYPE=RELEASE
 
-    - name: Configure using CMake (Windows)
-      if: runner.os == 'Windows'
+    - name: Configure using CMake (no examples)
+      if: runner.os != 'Linux'
       run: cmake . -DBUILD_TESTS=ON -DBUILD_EXAMPLES=OFF -DCMAKE_BUILD_TYPE=RELEASE
 
     - name: Build C++ tests & examples
       run: cmake --build .
 
-    - name: Run C++ tests
+    - name: Run C++ tests & examples
       run: cmake --build . --target "RUN_TESTS_AND_EXAMPLES"
-
-    - name: Run C++ example - Linear elastic (1) (Unix only)
-      if: runner.os != 'Windows'
-      run: ./docs/examples/statics_FixedDisplacements_LinearElastic_example
-
-    - name: Run C++ example - Linear elastic (2) (Unix only)
-      if: runner.os != 'Windows'
-      run: ./docs/examples/statics_FixedDisplacements_LinearElastic_manual_partition
