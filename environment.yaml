@@ -1,0 +1,21 @@
+channels:
+  - conda-forge
+dependencies:
+  - cmake
+  - xtensor
+  - xsimd
+  - eigen
+  - python
+  - numpy
+  - pyxtensor
+  - catch2
+  - h5py
+  - highfive
+  - xdmfwrite_highfive
+  - xdmfwrite_h5py
+  - gmatelastic
+  - gmatnonlinearelastic
+  - gmatelastoplastic
+  - gmatelastoplasticfinitestrainsimo
+  - gmatelastoplasticqpot
+  # - python-gmatelastic
