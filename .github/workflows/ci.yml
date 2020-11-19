@@ -51,3 +51,15 @@ jobs:
 
     - name: Run C++ tests & examples
       run: cmake --build . --target "RUN_TESTS_AND_EXAMPLES"
+
+    - name: Build and install Python module
+      run: |
+        python setup.py build
+        python setup.py install
+
+    - name: Run Python examples
+      if: runner.os != 'Windows'
+      run: |
+        conda install -c conda-forge python-gmatelastic
+        python ./docs/examples/statics/FixedDisplacements_LinearElastic/example.py --no-plot
+        python ./docs/examples/statics/FixedDisplacements_LinearElastic/manual_partition.py --no-plot
