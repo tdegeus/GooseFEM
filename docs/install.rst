@@ -2,13 +2,35 @@
 Getting GooseFEM
 ****************
 
-
 Using conda
 ===========
 
 The easiest is to use *conda* to install *GooseFEM*::
 
     conda install -c conda-forge goosefem
+
+This will install all the necessary runtime dependencies as well.
+
+.. tip::
+
+    The runtime dependencies (for both the C++ and the Python APIs) are also listed in
+    ``environment.yaml``.
+    One could install those dependencies in an activated environment by:
+
+    .. code-block:: cpp
+
+        conda env update --file environment.yaml
+
+    In addition, one could further extend one's environment
+    to also run the tests and the examples using:
+
+    .. code-block:: cpp
+
+        conda env update --file environment_test.yaml
+        conda env update --file environment_examples.yaml
+
+    Note that ``environment_test.yaml`` and ``environment_examples.yaml`` extend the environment.
+    In each case one **also** has to install the dependencies in ``environment.yaml``.
 
 
 From source
