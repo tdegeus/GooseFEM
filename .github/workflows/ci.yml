@@ -47,11 +47,11 @@ jobs:
 
     - name: Configure using CMake (with examples)
       if: runner.os == 'Linux'
-      run: cmake . -DBUILD_TESTS=ON -DBUILD_EXAMPLES=ON -DCMAKE_BUILD_TYPE=RELEASE
+      run: cmake . -DBUILD_TESTS=ON -DBUILD_EXAMPLES=ON
 
     - name: Configure using CMake (without examples)
       if: runner.os != 'Linux'
-      run: cmake . -DBUILD_TESTS=ON -DBUILD_EXAMPLES=OFF -DCMAKE_BUILD_TYPE=RELEASE
+      run: cmake . -DBUILD_TESTS=ON -DBUILD_EXAMPLES=OFF
 
     - name: Build C++ tests & examples
       run: cmake --build .

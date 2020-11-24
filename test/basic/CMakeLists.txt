@@ -8,7 +8,7 @@ endif()
 
 set(ASSERT ON)
 set(DEBUG ON)
-option(SIMD "Enable xsimd" ON)
+option(XSIMD "Use xsimd and 'march=native' optimisations" ON)
 option(WARNINGS "Enable warnings" ON)
 
 set(test_name "test-basic")

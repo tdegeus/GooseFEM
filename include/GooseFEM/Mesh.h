@@ -78,7 +78,9 @@ inline xt::xtensor<size_t, 2> renumber(const xt::xtensor<size_t, 2>& dofs);
 inline xt::xtensor<size_t, 1> coordination(const xt::xtensor<size_t, 2>& conn);
 
 // elements connected to each node
-inline std::vector<std::vector<size_t>> elem2node(const xt::xtensor<size_t, 2>& conn);
+inline std::vector<std::vector<size_t>> elem2node(
+    const xt::xtensor<size_t, 2>& conn,
+    bool sorted=true); // ensure the output to be sorted
 
 // return size of each element edge
 inline xt::xtensor<double, 2> edgesize(
