@@ -90,7 +90,8 @@ void init_Mesh(py::module& m)
         "elem2node",
         &GooseFEM::Mesh::elem2node,
         "Element-numbers connected to each node",
-        py::arg("conn"));
+        py::arg("conn"),
+        py::arg("sorted") = true);
 
     m.def(
         "edgesize",

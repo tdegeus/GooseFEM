@@ -131,13 +131,12 @@ inline xt::xtensor<size_t, 1> coordination(const xt::xtensor<size_t, 2>& conn)
     return N;
 }
 
-inline std::vector<std::vector<size_t>> elem2node(const xt::xtensor<size_t, 2>& conn)
+inline std::vector<std::vector<size_t>> elem2node(const xt::xtensor<size_t, 2>& conn, bool sorted)
 {
     auto N = coordination(conn);
     auto nnode = N.size();
 
-    std::vector<std::vector<size_t>> ret;
-    ret.resize(nnode);
+    std::vector<std::vector<size_t>> ret(nnode);
     for (size_t i = 0; i < nnode; ++i) {
         ret[i].reserve(N(i));
     }
@@ -145,6 +144,12 @@ inline std::vector<std::vector<size_t>> elem2node(const xt::xtensor<size_t, 2>& 
     for (size_t e = 0; e < conn.shape(0); ++e) {
         for (size_t m = 0; m < conn.shape(1); ++m) {
             ret[conn(e, m)].push_back(e);
+        }
+    }
+
+    if (sorted) {
+        for (auto& row : ret) {
+            std::sort(row.begin(), row.end());
         }
     }
 
