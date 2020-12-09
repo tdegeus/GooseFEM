@@ -17,6 +17,10 @@ enum class ElementType {
     Hex8,
     Tri3 };
 
+inline ElementType defaultElementType(
+    const xt::xtensor<double, 2>& coor,
+    const xt::xtensor<size_t, 2>& conn);
+
 // Renumber to lowest possible index. For example [0,3,4,2] -> [0,2,3,1]
 
 class Renumber {
@@ -84,11 +88,23 @@ inline std::vector<std::vector<size_t>> elem2node(
 
 // return size of each element edge
 inline xt::xtensor<double, 2> edgesize(
-    const xt::xtensor<double, 2>& coor, const xt::xtensor<size_t, 2>& conn, ElementType type);
+    const xt::xtensor<double, 2>& coor,
+    const xt::xtensor<size_t, 2>& conn,
+    ElementType type);
 
-// return size of each element edge: extract element-type based on shape of "conn"
 inline xt::xtensor<double, 2> edgesize(
-    const xt::xtensor<double, 2>& coor, const xt::xtensor<size_t, 2>& conn);
+    const xt::xtensor<double, 2>& coor,
+    const xt::xtensor<size_t, 2>& conn); // extract element-type based on shape of "conn"
+
+// Coordinates of the center of each element
+inline xt::xtensor<double, 2> centers(
+    const xt::xtensor<double, 2>& coor,
+    const xt::xtensor<size_t, 2>& conn,
+    ElementType type);
+
+inline xt::xtensor<double, 2> centers(
+    const xt::xtensor<double, 2>& coor,
+    const xt::xtensor<size_t, 2>& conn); // extract element-type based on shape of "conn"
 
 } // namespace Mesh
 } // namespace GooseFEM
