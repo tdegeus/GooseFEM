@@ -25,6 +25,18 @@ TEST_CASE("GooseFEM::Mesh", "Mesh.h")
         REQUIRE(xt::all(xt::equal(N, ret)));
     }
 
+    SECTION("centers")
+    {
+        GooseFEM::Mesh::Quad4::Regular mesh(2, 2, 2.0);
+        xt::xtensor<double, 2> c = {
+            {1.0, 1.0},
+            {3.0, 1.0},
+            {1.0, 3.0},
+            {3.0, 3.0}};
+
+        REQUIRE(xt::allclose(GooseFEM::Mesh::centers(mesh.coor(), mesh.conn()), c));
+    }
+
     SECTION("elem2node")
     {
         GooseFEM::Mesh::Quad4::Regular mesh(3, 3);

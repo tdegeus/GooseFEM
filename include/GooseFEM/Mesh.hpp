@@ -12,6 +12,23 @@
 namespace GooseFEM {
 namespace Mesh {
 
+inline ElementType defaultElementType(
+    const xt::xtensor<double, 2>& coor,
+    const xt::xtensor<size_t, 2>& conn)
+{
+    if (coor.shape(1) == 2ul && conn.shape(1) == 3ul) {
+        return ElementType::Tri3;
+    }
+    if (coor.shape(1) == 2ul && conn.shape(1) == 4ul) {
+        return ElementType::Quad4;
+    }
+    if (coor.shape(1) == 3ul && conn.shape(1) == 8ul) {
+        return ElementType::Hex8;
+    }
+
+    throw std::runtime_error("Element-type not implemented");
+}
+
 inline Renumber::Renumber(const xt::xarray<size_t>& dofs)
 {
     size_t n = xt::amax(dofs)() + 1;
@@ -188,20 +205,41 @@ inline xt::xtensor<double, 2> edgesize(
 }
 
 inline xt::xtensor<double, 2> edgesize(
-    const xt::xtensor<double, 2>& coor, const xt::xtensor<size_t, 2>& conn)
+    const xt::xtensor<double, 2>& coor,
+    const xt::xtensor<size_t, 2>& conn)
 {
-    if (coor.shape(1) == 2ul && conn.shape(1) == 3ul) {
-        return edgesize(coor, conn, ElementType::Tri3);
-    }
-    if (coor.shape(1) == 2ul && conn.shape(1) == 4ul) {
-        return edgesize(coor, conn, ElementType::Quad4);
-    }
-    if (coor.shape(1) == 3ul && conn.shape(1) == 8ul) {
-        return edgesize(coor, conn, ElementType::Hex8);
+    return edgesize(coor, conn, defaultElementType(coor, conn));
+}
+
+inline xt::xtensor<double, 2> centers(
+    const xt::xtensor<double, 2>& coor,
+    const xt::xtensor<size_t, 2>& conn,
+    ElementType type)
+{
+    GOOSEFEM_ASSERT(xt::amax(conn)() < coor.shape(0));
+    xt::xtensor<double, 2> ret = xt::zeros<double>({conn.shape(0), coor.shape(1)});
+
+    if (type == ElementType::Quad4) {
+        GOOSEFEM_ASSERT(coor.shape(1) == 2);
+        GOOSEFEM_ASSERT(conn.shape(1) == 4);
+        for (size_t i = 0; i < 4; ++i) {
+            auto n = xt::view(conn, xt::all(), i);
+            ret += xt::view(coor, xt::keep(n), xt::all());
+        }
+        ret /= 4.0;
+        return ret;
     }
 
     throw std::runtime_error("Element-type not implemented");
 }
+
+inline xt::xtensor<double, 2> centers(
+    const xt::xtensor<double, 2>& coor,
+    const xt::xtensor<size_t, 2>& conn)
+{
+    return centers(coor, conn, defaultElementType(coor, conn));
+}
+
 
 } // namespace Mesh
 } // namespace GooseFEM
