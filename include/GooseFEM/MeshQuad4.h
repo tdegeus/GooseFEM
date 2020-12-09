@@ -12,16 +12,11 @@
 namespace GooseFEM {
 namespace Mesh {
 namespace Quad4 {
-namespace Map {
-class FineLayer2Regular;
-}
-} // namespace Quad4
-} // namespace Mesh
-} // namespace GooseFEM
 
-namespace GooseFEM {
-namespace Mesh {
-namespace Quad4 {
+namespace Map {
+    class FineLayer2Regular;
+} // namespace Map
+
 class Regular {
 public:
     Regular() = default;
@@ -89,18 +84,14 @@ private:
     static const size_t m_nne = 4;  // number of nodes-per-element
     static const size_t m_ndim = 2; // number of dimensions
 };
-} // namespace Quad4
-} // namespace Mesh
-} // namespace GooseFEM
 
-namespace GooseFEM {
-namespace Mesh {
-namespace Quad4 {
 class FineLayer {
 public:
     FineLayer() = default;
-
     FineLayer(size_t nelx, size_t nely, double h = 1.0, size_t nfine = 1);
+
+    // Reconstruct class for given coordinates / connectivity
+    FineLayer(const xt::xtensor<double, 2>& coor, const xt::xtensor<size_t, 2>& conn);
 
     // size
     size_t nelem() const; // number of elements
@@ -172,16 +163,20 @@ private:
     // (*) per element layer in "y"
     // (**) per node layer in "y"
 
+    void init(size_t nelx, size_t nely, double h, size_t nfine = 1);
+    void map(const xt::xtensor<double, 2>& coor, const xt::xtensor<size_t, 2>& conn);
+
     friend class GooseFEM::Mesh::Quad4::Map::FineLayer2Regular;
 };
-} // namespace Quad4
-} // namespace Mesh
-} // namespace GooseFEM
 
-namespace GooseFEM {
-namespace Mesh {
-namespace Quad4 {
 namespace Map {
+
+// Return "FineLayer"-class responsible for generating a connectivity
+// Throws if conversion is not possible
+GooseFEM::Mesh::Quad4::FineLayer FineLayer(
+    const xt::xtensor<double, 2>& coor,
+    const xt::xtensor<size_t, 2>& conn);
+
 class RefineRegular {
 public:
     // constructor
@@ -215,15 +210,7 @@ private:
     xt::xtensor<size_t, 1> m_fine2coarse_index;
     xt::xtensor<size_t, 2> m_coarse2fine;
 };
-} // namespace Map
-} // namespace Quad4
-} // namespace Mesh
-} // namespace GooseFEM
 
-namespace GooseFEM {
-namespace Mesh {
-namespace Quad4 {
-namespace Map {
 class FineLayer2Regular {
 public:
     // constructor
@@ -255,7 +242,9 @@ private:
     std::vector<std::vector<size_t>> m_elem_regular;
     std::vector<std::vector<double>> m_frac_regular;
 };
+
 } // namespace Map
+
 } // namespace Quad4
 } // namespace Mesh
 } // namespace GooseFEM
