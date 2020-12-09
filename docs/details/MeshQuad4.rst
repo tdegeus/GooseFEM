@@ -203,6 +203,13 @@ Mesh::Quad4::FineLayer::elementsMiddleLayer()
 
 Element numbers of the middle, fine, layer
 
+Details
+-------
+
+.. image:: figures/MeshQuad4/FineLayer/element_numbers.svg
+  :width: 400px
+  :align: center
+
 Mesh::Quad4::Map::RefineRegular
 ===============================
 
