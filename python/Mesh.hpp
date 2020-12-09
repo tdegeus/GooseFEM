@@ -93,6 +93,13 @@ void init_Mesh(py::module& m)
         py::arg("conn"),
         py::arg("sorted") = true);
 
+    // m.def(
+    //     "neighbours",
+    //     &GooseFEM::Mesh::neighbours,
+    //     "Neighbours of each element.",
+    //     py::arg("conn"),
+    //     py::arg("sorted") = true);
+
     m.def(
         "edgesize",
         py::overload_cast<const xt::xtensor<double, 2>&, const xt::xtensor<size_t, 2>&>(

@@ -47,4 +47,36 @@ TEST_CASE("GooseFEM::Mesh", "Mesh.h")
         REQUIRE(tonode[14] == std::vector<size_t>{7, 8});
         REQUIRE(tonode[15] == std::vector<size_t>{8});
     }
+
+    // SECTION("neighbours > 1 shared node")
+    // {
+    //     GooseFEM::Mesh::Quad4::Regular mesh(3, 3);
+    //     auto neigh = GooseFEM::Mesh::neighbours(mesh.conn());
+    //     REQUIRE(neigh.size() == 9);
+    //     REQUIRE(neigh[0] == std::vector<size_t>{1, 3, 4});
+    //     REQUIRE(neigh[1] == std::vector<size_t>{0, 2, 3, 4, 5});
+    //     REQUIRE(neigh[2] == std::vector<size_t>{1, 4, 5});
+    //     REQUIRE(neigh[3] == std::vector<size_t>{0, 1, 4, 6, 7});
+    //     REQUIRE(neigh[4] == std::vector<size_t>{0, 1, 2, 3, 5, 6, 7, 8});
+    //     REQUIRE(neigh[5] == std::vector<size_t>{1, 2, 4, 7, 8});
+    //     REQUIRE(neigh[6] == std::vector<size_t>{3, 4, 7});
+    //     REQUIRE(neigh[7] == std::vector<size_t>{3, 4, 5, 6, 8});
+    //     REQUIRE(neigh[8] == std::vector<size_t>{4, 5, 7});
+    // }
+
+    // SECTION("neighbours > 1 shared edge")
+    // {
+    //     GooseFEM::Mesh::Quad4::Regular mesh(3, 3);
+    //     auto neigh = GooseFEM::Mesh::neighbours(mesh.conn(), 1);
+    //     REQUIRE(neigh.size() == 9);
+    //     REQUIRE(neigh[0] == std::vector<size_t>{1, 3, 4});
+    //     REQUIRE(neigh[1] == std::vector<size_t>{0, 2, 3, 4, 5});
+    //     REQUIRE(neigh[2] == std::vector<size_t>{1, 4, 5});
+    //     REQUIRE(neigh[3] == std::vector<size_t>{0, 1, 4, 6, 7});
+    //     REQUIRE(neigh[4] == std::vector<size_t>{0, 1, 2, 3, 5, 6, 7, 8});
+    //     REQUIRE(neigh[5] == std::vector<size_t>{1, 2, 4, 7, 8});
+    //     REQUIRE(neigh[6] == std::vector<size_t>{3, 4, 7});
+    //     REQUIRE(neigh[7] == std::vector<size_t>{3, 4, 5, 6, 8});
+    //     REQUIRE(neigh[8] == std::vector<size_t>{4, 5, 7});
+    // }
 }
