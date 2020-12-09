@@ -322,6 +322,30 @@ TEST_CASE("GooseFEM::MeshQuad4", "MeshQuad4.h")
         REQUIRE(xt::all(xt::equal(dofsPeriodic, dofsPeriodic_)));
     }
 
+    SECTION("FineLayer - replica - trivial")
+    {
+        GooseFEM::Mesh::Quad4::FineLayer mesh(1, 1);
+        GooseFEM::Mesh::Quad4::FineLayer replica(mesh.coor(), mesh.conn());
+        REQUIRE(xt::all(xt::equal(mesh.conn(), replica.conn())));
+        REQUIRE(xt::allclose(mesh.coor(), replica.coor()));
+    }
+
+    SECTION("FineLayer - replica - equi-sized")
+    {
+        GooseFEM::Mesh::Quad4::FineLayer mesh(4, 4);
+        GooseFEM::Mesh::Quad4::FineLayer replica(mesh.coor(), mesh.conn());
+        REQUIRE(xt::all(xt::equal(mesh.conn(), replica.conn())));
+        REQUIRE(xt::allclose(mesh.coor(), replica.coor()));
+    }
+
+    SECTION("FineLayer - replica")
+    {
+        GooseFEM::Mesh::Quad4::FineLayer mesh(27, 27);
+        GooseFEM::Mesh::Quad4::FineLayer replica(mesh.coor(), mesh.conn());
+        REQUIRE(xt::all(xt::equal(mesh.conn(), replica.conn())));
+        REQUIRE(xt::allclose(mesh.coor(), replica.coor()));
+    }
+
     SECTION("Map::RefineRegular")
     {
         GooseFEM::Mesh::Quad4::Regular mesh(5, 4);

@@ -243,11 +243,22 @@ inline xt::xtensor<size_t, 2> Regular::elementMatrix() const
     return xt::arange<size_t>(m_nelem).reshape({m_nely, m_nelx});
 }
 
-inline FineLayer::FineLayer(size_t nelx, size_t nely, double h, size_t nfine) : m_h(h)
+inline FineLayer::FineLayer(size_t nelx, size_t nely, double h, size_t nfine)
+{
+    this->init(nelx, nely, h, nfine);
+}
+
+inline FineLayer::FineLayer(const xt::xtensor<double, 2>& coor, const xt::xtensor<size_t, 2>& conn)
+{
+    this->map(coor, conn);
+}
+
+inline void FineLayer::init(size_t nelx, size_t nely, double h, size_t nfine)
 {
     GOOSEFEM_ASSERT(nelx >= 1ul);
     GOOSEFEM_ASSERT(nely >= 1ul);
 
+    m_h = h;
     m_Lx = m_h * static_cast<double>(nelx);
 
     // compute element size in y-direction (use symmetry, compute upper half)
@@ -831,6 +842,53 @@ inline xt::xtensor<size_t, 2> FineLayer::dofsPeriodic() const
     }
 
     return GooseFEM::Mesh::renumber(ret);
+}
+
+inline void FineLayer::map(const xt::xtensor<double, 2>& coor, const xt::xtensor<size_t, 2>& conn)
+{
+    GOOSEFEM_ASSERT(coor.shape(1) == 2);
+    GOOSEFEM_ASSERT(conn.shape(1) == 4);
+    GOOSEFEM_ASSERT(conn.shape(0) > 0);
+    GOOSEFEM_ASSERT(coor.shape(0) >= 4);
+    GOOSEFEM_ASSERT(xt::amax(conn)() < coor.shape(0));
+
+    auto n0 = xt::view(conn, xt::all(), 0);
+    auto n1 = xt::view(conn, xt::all(), 1);
+    auto n2 = xt::view(conn, xt::all(), 2);
+    auto dx = xt::view(coor, xt::keep(n1), 0) - xt::view(coor, xt::keep(n0), 0);
+    auto dy = xt::view(coor, xt::keep(n2), 1) - xt::view(coor, xt::keep(n1), 1);
+    auto hx = xt::amin(xt::where(dx > 0.0, dx, std::numeric_limits<double>::max()))();
+    auto hy = xt::amin(xt::where(dy > 0.0, dx, std::numeric_limits<double>::max()))();
+
+    GOOSEFEM_CHECK(xt::allclose(hx, hy));
+
+    if (conn.shape(0) == 1) {
+        this->init(1, 1, hx);
+        GOOSEFEM_CHECK(xt::all(xt::equal(this->conn(), conn)));
+        GOOSEFEM_CHECK(xt::allclose(this->coor(), coor));
+        return;
+    }
+
+    size_t emid = (conn.shape(0) - conn.shape(0) % 2) / 2;
+    size_t eleft = emid;
+    size_t eright = emid;
+
+    while (conn(eleft, 0) == conn(eleft - 1, 1) && eleft > 0) {
+        eleft--;
+    }
+
+    while (conn(eright, 1) == conn(eright + 1, 0) && eright < conn.shape(0) - 1) {
+        eright++;
+    }
+
+    GOOSEFEM_CHECK(xt::allclose(coor(conn(eleft, 0), 0), 0.0));
+    size_t nelx = eright - eleft + 1;
+    size_t nely = static_cast<size_t>((coor(coor.shape(0) - 1, 1) - coor(0, 1)) / hx);
+
+    this->init(nelx, nely, hx);
+    GOOSEFEM_CHECK(xt::all(xt::equal(this->conn(), conn)));
+    GOOSEFEM_CHECK(xt::allclose(this->coor(), coor));
+    GOOSEFEM_CHECK(xt::all(xt::equal(this->elementsMiddleLayer(), eleft + xt::arange<size_t>(nelx))));
 }
 
 namespace Map {
