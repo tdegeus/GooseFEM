@@ -146,6 +146,10 @@ public:
     // front-bottom-left node, used as reference for periodicity
     size_t nodesOrigin() const;
 
+    // mapping to 'roll' periodically,
+    // return element mapping, to get the new connectivity use "comm[mesh.roll(), :]"
+    xt::xtensor<size_t, 1> roll(size_t n, size_t axis = 0);
+
 private:
     double m_h;                         // elementary element edge-size (in all directions)
     double m_Lx;                        // mesh size in "x"

@@ -346,6 +346,117 @@ TEST_CASE("GooseFEM::MeshQuad4", "MeshQuad4.h")
         REQUIRE(xt::allclose(mesh.coor(), replica.coor()));
     }
 
+    SECTION("FineLayer - roll - trivial")
+    {
+        GooseFEM::Mesh::Quad4::FineLayer mesh(3, 3);
+        xt::xtensor<size_t, 1> m0 = {
+            0, 1, 2,
+            3, 4, 5,
+            6, 7, 8
+        };
+        xt::xtensor<size_t, 1> m1 = {
+            2, 0, 1,
+            5, 3, 4,
+            8, 6, 7
+        };
+        xt::xtensor<size_t, 1> m2 = {
+            1, 2, 0,
+            4, 5, 3,
+            7, 8, 6,
+        };
+        REQUIRE(xt::all(xt::equal(mesh.roll(0), m0)));
+        REQUIRE(xt::all(xt::equal(mesh.roll(1), m1)));
+        REQUIRE(xt::all(xt::equal(mesh.roll(2), m2)));
+        REQUIRE(xt::all(xt::equal(mesh.roll(3), m0)));
+        REQUIRE(xt::all(xt::equal(mesh.roll(4), m1)));
+        REQUIRE(xt::all(xt::equal(mesh.roll(5), m2)));
+    }
+
+    SECTION("FineLayer - roll - a")
+    {
+        GooseFEM::Mesh::Quad4::FineLayer mesh(6, 18);
+        xt::xtensor<size_t, 1> m0 = {
+            0, 1,
+            2, 3,
+            4, 5, 6, 7, 8, 9, 10, 11,
+            12, 13, 14, 15, 16, 17,
+            18, 19, 20, 21, 22, 23,
+            24, 25, 26, 27, 28, 29,
+            30, 31, 32, 33, 34, 35,
+            36, 37, 38, 39, 40, 41,
+            42, 43, 44, 45, 46, 47, 48, 49,
+            50, 51,
+            52, 53
+        };
+        xt::xtensor<size_t, 1> m1 = {
+            1, 0,
+            3, 2,
+            8, 9, 10, 11, 4, 5, 6, 7,
+            15, 16, 17, 12, 13, 14,
+            21, 22, 23, 18, 19, 20,
+            27, 28, 29, 24, 25, 26,
+            33, 34, 35, 30, 31, 32,
+            39, 40, 41, 36, 37, 38,
+            46, 47, 48, 49, 42, 43, 44, 45,
+            51, 50,
+            53, 52
+        };
+        REQUIRE(xt::all(xt::equal(mesh.roll(0), m0)));
+        REQUIRE(xt::all(xt::equal(mesh.roll(1), m1)));
+        REQUIRE(xt::all(xt::equal(mesh.roll(2), m0)));
+        REQUIRE(xt::all(xt::equal(mesh.roll(3), m1)));
+    }
+
+    SECTION("FineLayer - roll - b")
+    {
+        GooseFEM::Mesh::Quad4::FineLayer mesh(9, 18);
+        xt::xtensor<size_t, 1> m0 = {
+            0, 1, 2,
+            3, 4, 5,
+            6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17,
+            18, 19, 20, 21, 22, 23, 24, 25, 26,
+            27, 28, 29, 30, 31, 32, 33, 34, 35,
+            36, 37, 38, 39, 40, 41, 42, 43, 44,
+            45, 46, 47, 48, 49, 50, 51, 52, 53,
+            54, 55, 56, 57, 58, 59, 60, 61, 62,
+            63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74,
+            75, 76, 77,
+            78, 79, 80
+        };
+        xt::xtensor<size_t, 1> m1 = {
+            2, 0, 1,
+            5, 3, 4,
+            14, 15, 16, 17, 6, 7, 8, 9, 10, 11, 12, 13,
+            24, 25, 26, 18, 19, 20, 21, 22, 23,
+            33, 34, 35, 27, 28, 29, 30, 31, 32,
+            42, 43, 44, 36, 37, 38, 39, 40, 41,
+            51, 52, 53, 45, 46, 47, 48, 49, 50,
+            60, 61, 62, 54, 55, 56, 57, 58, 59,
+            71, 72, 73, 74, 63, 64, 65, 66, 67, 68, 69, 70,
+            77, 75, 76,
+            80, 78, 79
+        };
+        xt::xtensor<size_t, 1> m2 = {
+            1, 2, 0,
+            4, 5, 3,
+            10, 11, 12, 13, 14, 15, 16, 17, 6, 7, 8, 9,
+            21, 22, 23, 24, 25, 26, 18, 19, 20,
+            30, 31, 32, 33, 34, 35, 27, 28, 29,
+            39, 40, 41, 42, 43, 44, 36, 37, 38,
+            48, 49, 50, 51, 52, 53, 45, 46, 47,
+            57, 58, 59, 60, 61, 62, 54, 55, 56,
+            67, 68, 69, 70, 71, 72, 73, 74, 63, 64, 65, 66,
+            76, 77, 75,
+            79, 80, 78
+        };
+        REQUIRE(xt::all(xt::equal(mesh.roll(0), m0)));
+        REQUIRE(xt::all(xt::equal(mesh.roll(1), m1)));
+        REQUIRE(xt::all(xt::equal(mesh.roll(2), m2)));
+        REQUIRE(xt::all(xt::equal(mesh.roll(3), m0)));
+        REQUIRE(xt::all(xt::equal(mesh.roll(4), m1)));
+        REQUIRE(xt::all(xt::equal(mesh.roll(5), m2)));
+    }
+
     SECTION("Map::RefineRegular")
     {
         GooseFEM::Mesh::Quad4::Regular mesh(5, 4);

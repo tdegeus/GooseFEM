@@ -844,6 +844,34 @@ inline xt::xtensor<size_t, 2> FineLayer::dofsPeriodic() const
     return GooseFEM::Mesh::renumber(ret);
 }
 
+inline xt::xtensor<size_t, 1> FineLayer::roll(size_t n, size_t axis)
+{
+    GOOSEFEM_ASSERT(axis == 0);
+    auto conn = this->conn();
+    size_t nely = static_cast<size_t>(m_nhy.size());
+    xt::xtensor<size_t, 1> ret = xt::empty<size_t>({m_nelem});
+
+    // loop over all element layers
+    for (size_t iy = 0; iy < nely; ++iy) {
+
+        // no refinement
+        size_t shift = n * (m_nelx(iy) / m_nelx(0));
+        size_t nel = m_nelx(iy);
+
+        // refinement
+        if (m_refine(iy) != -1) {
+            shift = n * (m_nelx(iy) / m_nelx(0)) * 4;
+            nel = m_nelx(iy) * 4;
+        }
+
+        // element numbers of the layer, and roll them
+        auto e = m_startElem(iy) + xt::arange<size_t>(nel);
+        xt::view(ret, xt::range(m_startElem(iy), m_startElem(iy) + nel)) = xt::roll(e, shift);
+    }
+
+    return ret;
+}
+
 inline void FineLayer::map(const xt::xtensor<double, 2>& coor, const xt::xtensor<size_t, 2>& conn)
 {
     GOOSEFEM_ASSERT(coor.shape(1) == 2);
