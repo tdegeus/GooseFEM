@@ -156,6 +156,39 @@ inline std::vector<std::vector<size_t>> elem2node(const xt::xtensor<size_t, 2>& 
     return ret;
 }
 
+// inline std::vector<std::vector<size_t>> neighbours(const xt::xtensor<size_t, 2>& conn, bool sorted)
+// {
+//     auto tonode = elem2node(conn);
+//     std::vector<std::vector<size_t>> ret(conn.shape(0));
+
+//     for (size_t e = 0; e < conn.shape(0); ++e) {
+//         size_t n = 0;
+//         for (size_t m = 0; m < conn.shape(1); ++m) {
+//             n += tonode[conn(e, m)].size();
+//         }
+//         n -= conn.shape(1);
+//         ret[e].reserve(n);
+//     }
+
+//     for (size_t e = 0; e < conn.shape(0); ++e) {
+//         for (size_t m = 0; m < conn.shape(1); ++m) {
+//             for (auto& n : tonode[conn(e, m)]) {
+//                 if (n != e) {
+//                     ret[e].push_back(n);
+//                 }
+//             }
+//         }
+//     }
+
+//     if (sorted) {
+//         for (auto& row : ret) {
+//             std::sort(row.begin(), row.end());
+//         }
+//     }
+
+//     return ret;
+// }
+
 inline xt::xtensor<double, 2> edgesize(
     const xt::xtensor<double, 2>& coor, const xt::xtensor<size_t, 2>& conn, ElementType type)
 {
