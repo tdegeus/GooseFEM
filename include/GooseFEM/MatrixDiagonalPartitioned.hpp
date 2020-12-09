@@ -296,7 +296,7 @@ inline void MatrixDiagonalPartitioned::reaction_p(
     }
 }
 
-inline xt::xtensor<double, 1> MatrixDiagonalPartitioned::AsDiagonal() const
+inline xt::xtensor<double, 1> MatrixDiagonalPartitioned::Todiagonal() const
 {
     xt::xtensor<double, 1> ret = xt::zeros<double>({m_ndof});
 

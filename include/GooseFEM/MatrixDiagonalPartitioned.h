@@ -79,7 +79,7 @@ public:
         xt::xtensor<double, 1>& b_p) const;
 
     // Return matrix as diagonal matrix (column)
-    xt::xtensor<double, 1> AsDiagonal() const;
+    xt::xtensor<double, 1> Todiagonal() const;
 
     // Auto-allocation of the functions above
     xt::xtensor<double, 2> Dot(const xt::xtensor<double, 2>& x) const;
