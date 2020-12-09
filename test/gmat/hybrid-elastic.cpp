@@ -43,9 +43,9 @@ TEST_CASE("hybrid-elastic", "GooseFEM.h")
         GooseFEM::Element::Quad4::QuadraturePlanar quad_b(vector_b.AsElement(coor));
         size_t nip = quad.nip();
 
-        GMatElastic::Cartesian3d::Matrix mat(nelem, nip);
-        GMatElastic::Cartesian3d::Matrix mat_a(nelem_a, nip, 3.0, 4.0);
-        GMatElastic::Cartesian3d::Matrix mat_b(nelem_b, nip, 5.0, 6.0);
+        GMatElastic::Cartesian3d::Array<2> mat({nelem, nip});
+        GMatElastic::Cartesian3d::Array<2> mat_a({nelem_a, nip}, 3.0, 4.0);
+        GMatElastic::Cartesian3d::Array<2> mat_b({nelem_b, nip}, 5.0, 6.0);
 
         {
             xt::xtensor<size_t, 2> I = xt::zeros<size_t>({nelem, nip});
@@ -59,10 +59,6 @@ TEST_CASE("hybrid-elastic", "GooseFEM.h")
             mat.setElastic(I, 5.0, 6.0);
         }
 
-        mat.check();
-        mat_a.check();
-        mat_b.check();
-
         for (size_t iter = 0; iter < 10; ++iter) {
 
             xt::xtensor<double, 2> disp = xt::random::rand<double>(coor.shape());
@@ -71,16 +67,17 @@ TEST_CASE("hybrid-elastic", "GooseFEM.h")
             auto Eps_a = quad_a.SymGradN_vector(vector_a.AsElement(disp));
             auto Eps_b = quad_b.SymGradN_vector(vector_b.AsElement(disp));
 
-            auto Sig = mat.Stress(Eps);
-            auto Sig_a = mat_a.Stress(Eps_a);
-            auto Sig_b = mat_b.Stress(Eps_b);
+            mat.setStrain(Eps);
+            mat_a.setStrain(Eps_a);
+            mat_b.setStrain(Eps_b);
 
-            xt::xtensor<double, 6> C;
-            xt::xtensor<double, 6> C_a;
-            xt::xtensor<double, 6> C_b;
-            std::tie(Sig, C) = mat.Tangent(Eps);
-            std::tie(Sig_a, C_a) = mat_a.Tangent(Eps_a);
-            std::tie(Sig_b, C_b) = mat_b.Tangent(Eps_b);
+            auto Sig = mat.Stress();
+            auto Sig_a = mat_a.Stress();
+            auto Sig_b = mat_b.Stress();
+
+            auto C = mat.Tangent();
+            auto C_a = mat_a.Tangent();
+            auto C_b = mat_b.Tangent();
 
             K.assemble(quad.Int_gradN_dot_tensor4_dot_gradNT_dV(C));
             K_a.assemble(quad_a.Int_gradN_dot_tensor4_dot_gradNT_dV(C_a));
@@ -148,9 +145,9 @@ TEST_CASE("hybrid-elastic", "GooseFEM.h")
         GooseFEM::Element::Quad4::QuadraturePlanar quad_b(vector_b.AsElement(coor));
         size_t nip = quad.nip();
 
-        GMatElastic::Cartesian3d::Matrix mat(nelem, nip);
-        GMatElastic::Cartesian3d::Matrix mat_a(nelem_a, nip, 3.0, 4.0);
-        GMatElastic::Cartesian3d::Matrix mat_b(nelem_b, nip, 5.0, 6.0);
+        GMatElastic::Cartesian3d::Array<2> mat({nelem, nip});
+        GMatElastic::Cartesian3d::Array<2> mat_a({nelem_a, nip}, 3.0, 4.0);
+        GMatElastic::Cartesian3d::Array<2> mat_b({nelem_b, nip}, 5.0, 6.0);
 
         {
             xt::xtensor<size_t, 2> I = xt::zeros<size_t>({nelem, nip});
@@ -164,10 +161,6 @@ TEST_CASE("hybrid-elastic", "GooseFEM.h")
             mat.setElastic(I, 5.0, 6.0);
         }
 
-        mat.check();
-        mat_a.check();
-        mat_b.check();
-
         for (size_t iter = 0; iter < 10; ++iter) {
 
             xt::xtensor<double, 2> disp = xt::random::rand<double>(coor.shape());
@@ -177,16 +170,17 @@ TEST_CASE("hybrid-elastic", "GooseFEM.h")
             auto Eps_a = quad_a.SymGradN_vector(vector_a.AsElement(disp));
             auto Eps_b = quad_b.SymGradN_vector(vector_b.AsElement(disp));
 
-            auto Sig = mat.Stress(Eps);
-            auto Sig_a = mat_a.Stress(Eps_a);
-            auto Sig_b = mat_b.Stress(Eps_b);
+            mat.setStrain(Eps);
+            mat_a.setStrain(Eps_a);
+            mat_b.setStrain(Eps_b);
 
-            xt::xtensor<double, 6> C;
-            xt::xtensor<double, 6> C_a;
-            xt::xtensor<double, 6> C_b;
-            std::tie(Sig, C) = mat.Tangent(Eps);
-            std::tie(Sig_a, C_a) = mat_a.Tangent(Eps_a);
-            std::tie(Sig_b, C_b) = mat_b.Tangent(Eps_b);
+            auto Sig = mat.Stress();
+            auto Sig_a = mat_a.Stress();
+            auto Sig_b = mat_b.Stress();
+
+            auto C = mat.Tangent();
+            auto C_a = mat_a.Tangent();
+            auto C_b = mat_b.Tangent();
 
             K.assemble(quad.Int_gradN_dot_tensor4_dot_gradNT_dV(C));
             K_a.assemble(quad_a.Int_gradN_dot_tensor4_dot_gradNT_dV(C_a));
@@ -269,9 +263,9 @@ TEST_CASE("hybrid-elastic", "GooseFEM.h")
         GooseFEM::Element::Quad4::QuadraturePlanar quad_b(vector_b.AsElement(coor));
         size_t nip = quad.nip();
 
-        GMatElastic::Cartesian3d::Matrix mat(nelem, nip);
-        GMatElastic::Cartesian3d::Matrix mat_a(nelem_a, nip, 3.0, 4.0);
-        GMatElastic::Cartesian3d::Matrix mat_b(nelem_b, nip, 5.0, 6.0);
+        GMatElastic::Cartesian3d::Array<2> mat({nelem, nip});
+        GMatElastic::Cartesian3d::Array<2> mat_a({nelem_a, nip}, 3.0, 4.0);
+        GMatElastic::Cartesian3d::Array<2> mat_b({nelem_b, nip}, 5.0, 6.0);
 
         {
             xt::xtensor<size_t, 2> I = xt::zeros<size_t>({nelem, nip});
@@ -285,10 +279,6 @@ TEST_CASE("hybrid-elastic", "GooseFEM.h")
             mat.setElastic(I, 5.0, 6.0);
         }
 
-        mat.check();
-        mat_a.check();
-        mat_b.check();
-
         for (size_t iter = 0; iter < 10; ++iter) {
 
             xt::xtensor<double, 2> disp = xt::random::rand<double>(coor.shape());
@@ -298,16 +288,17 @@ TEST_CASE("hybrid-elastic", "GooseFEM.h")
             auto Eps_a = quad_a.SymGradN_vector(vector_a.AsElement(disp));
             auto Eps_b = quad_b.SymGradN_vector(vector_b.AsElement(disp));
 
-            auto Sig = mat.Stress(Eps);
-            auto Sig_a = mat_a.Stress(Eps_a);
-            auto Sig_b = mat_b.Stress(Eps_b);
+            mat.setStrain(Eps);
+            mat_a.setStrain(Eps_a);
+            mat_b.setStrain(Eps_b);
 
-            xt::xtensor<double, 6> C;
-            xt::xtensor<double, 6> C_a;
-            xt::xtensor<double, 6> C_b;
-            std::tie(Sig, C) = mat.Tangent(Eps);
-            std::tie(Sig_a, C_a) = mat_a.Tangent(Eps_a);
-            std::tie(Sig_b, C_b) = mat_b.Tangent(Eps_b);
+            auto Sig = mat.Stress();
+            auto Sig_a = mat_a.Stress();
+            auto Sig_b = mat_b.Stress();
+
+            auto C = mat.Tangent();
+            auto C_a = mat_a.Tangent();
+            auto C_b = mat_b.Tangent();
 
             K.assemble(quad.Int_gradN_dot_tensor4_dot_gradNT_dV(C));
             K_a.assemble(quad_a.Int_gradN_dot_tensor4_dot_gradNT_dV(C_a));
