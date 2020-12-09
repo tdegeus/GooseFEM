@@ -140,7 +140,7 @@ inline void MatrixDiagonal::solve(const xt::xtensor<double, 1>& b, xt::xtensor<d
     xt::noalias(x) = m_inv * b;
 }
 
-inline xt::xtensor<double, 1> MatrixDiagonal::AsDiagonal() const
+inline xt::xtensor<double, 1> MatrixDiagonal::Todiagonal() const
 {
     return m_A;
 }
