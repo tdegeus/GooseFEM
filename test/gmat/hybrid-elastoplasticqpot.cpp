@@ -74,10 +74,6 @@ TEST_CASE("hybrid-elastoplasticqpot", "GooseFEM.h")
             mat_b.setElastic(I, 5.0, 6.0);
         }
 
-        mat.check();
-        mat_a.check();
-        mat_b.check();
-
         for (size_t iter = 0; iter < 10; ++iter) {
 
             xt::xtensor<double, 2> disp = xt::random::rand<double>(coor.shape());
@@ -184,10 +180,6 @@ TEST_CASE("hybrid-elastoplasticqpot", "GooseFEM.h")
             xt::xtensor<size_t, 2> I = xt::ones<size_t>({nelem_b, nip});
             mat_b.setElastic(I, 5.0, 6.0);
         }
-
-        mat.check();
-        mat_a.check();
-        mat_b.check();
 
         for (size_t iter = 0; iter < 10; ++iter) {
 
@@ -311,10 +303,6 @@ TEST_CASE("hybrid-elastoplasticqpot", "GooseFEM.h")
             xt::xtensor<size_t, 2> I = xt::ones<size_t>({nelem_b, nip});
             mat_b.setElastic(I, 5.0, 6.0);
         }
-
-        mat.check();
-        mat_a.check();
-        mat_b.check();
 
         for (size_t iter = 0; iter < 10; ++iter) {
 
