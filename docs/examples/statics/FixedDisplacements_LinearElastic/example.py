@@ -64,7 +64,7 @@ elem = GooseFEM.Element.Quad4.QuadraturePlanar(vector.AsElement(coor))
 nip = elem.nip()
 
 # material definition
-mat = GMatElastic.Cartesian3d.Matrix(nelem, nip, 1.0, 1.0)
+mat = GMatElastic.Cartesian3d.Array2d([nelem, nip], 1.0, 1.0)
 
 # integration point tensors
 Eps = np.empty((nelem, nip, 3, 3))
@@ -79,7 +79,9 @@ ue = vector.AsElement(disp)
 Eps = elem.SymGradN_vector(ue)
 
 # stress & tangent
-(Sig, C) = mat.Tangent(Eps)
+mat.setStrain(Eps)
+Sig = mat.Stress()
+C = mat.Tangent()
 
 # internal force
 fe = elem.Int_gradN_dot_tensor2_dV(Sig)
@@ -107,7 +109,8 @@ disp = Solver.Solve(K, fres, disp)
 # compute strain and stress
 ue = vector.AsElement(disp)
 Eps = elem.SymGradN_vector(ue)
-Sig = mat.Stress(Eps)
+mat.setStrain(Eps)
+Sig = mat.Stress()
 
 # internal force
 fe = elem.Int_gradN_dot_tensor2_dV(Sig)
