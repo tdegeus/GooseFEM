@@ -174,7 +174,7 @@ public:
 
 private:
     Solver m_solver; // solver
-    bool m_factor = false; // signal to force factorization
+    bool m_factor = true; // signal to force factorization
     void factorize(MatrixPartitioned& matrix); // compute inverse (evaluated by "solve")
 };
 
