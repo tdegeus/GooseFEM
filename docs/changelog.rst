@@ -3,6 +3,15 @@
 Changelog
 *********
 
+v0.5.0
+======
+
+*   Adding ``Mesh::elemmap2nodemap``. Updating Python API.
+*   Adding ``roll`` to FineLayer
+*   Adding ``Mesh::centers`` and ``Mesh::defaultElementType``
+*   Mapping connectivity on generating FineLayer-object
+*   Switching to new GMat API
+
 v0.4.2
 ======
 
