@@ -59,7 +59,7 @@ private:
     xt::xtensor<double, 1> m_inv;
 
     // Signal changes to data compare to the last inverse
-    bool m_factor = false;
+    bool m_factor = true;
 
     // Bookkeeping
     xt::xtensor<size_t, 2> m_conn; // connectivity [nelem, nne]

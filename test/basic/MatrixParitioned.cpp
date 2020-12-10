@@ -39,6 +39,13 @@ TEST_CASE("GooseFEM::MatrixPartitioned", "MatrixPartitioned.h")
 
         REQUIRE(B.size() == b.size());
         REQUIRE(xt::allclose(B, b));
+
+        // check that allocating a different Solver instance still works
+        GooseFEM::MatrixPartitionedSolver<> NewSolver;
+        xt::xtensor<double, 1> NB = NewSolver.Solve(A, C);
+
+        REQUIRE(NB.size() == b.size());
+        REQUIRE(xt::allclose(NB, b));
     }
 
     SECTION("set/add/dot/solve - dofval")
