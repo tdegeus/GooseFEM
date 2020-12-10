@@ -240,6 +240,43 @@ inline xt::xtensor<double, 2> centers(
     return centers(coor, conn, defaultElementType(coor, conn));
 }
 
+inline xt::xtensor<size_t, 1> elemmap2nodemap(
+    const xt::xtensor<size_t, 1>& elem_map,
+    const xt::xtensor<double, 2>& coor,
+    const xt::xtensor<size_t, 2>& conn,
+    ElementType type)
+{
+    GOOSEFEM_ASSERT(xt::amax(conn)() < coor.shape(0));
+    GOOSEFEM_ASSERT(elem_map.size() == conn.shape(0));
+    size_t N = coor.shape(0);
+
+    xt::xtensor<size_t, 1> ret = N * xt::ones<size_t>({N});
+
+    if (type == ElementType::Quad4) {
+        GOOSEFEM_ASSERT(coor.shape(1) == 2);
+        GOOSEFEM_ASSERT(conn.shape(1) == 4);
+
+        for (size_t i = 0; i < 4; ++i) {
+            xt::xtensor<size_t, 1> t = N * xt::ones<size_t>({N});
+            auto old_nd = xt::view(conn, xt::all(), i);
+            auto new_nd = xt::view(conn, xt::keep(elem_map), i);
+            xt::view(t, xt::keep(old_nd)) = new_nd;
+            ret = xt::where(xt::equal(ret, N), t, ret);
+        }
+
+        return ret;
+    }
+
+    throw std::runtime_error("Element-type not implemented");
+}
+
+inline xt::xtensor<size_t, 1> elemmap2nodemap(
+    const xt::xtensor<size_t, 1>& elem_map,
+    const xt::xtensor<double, 2>& coor,
+    const xt::xtensor<size_t, 2>& conn)
+{
+    return elemmap2nodemap(elem_map, coor, conn, defaultElementType(coor, conn));
+}
 
 } // namespace Mesh
 } // namespace GooseFEM

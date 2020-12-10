@@ -106,6 +106,20 @@ inline xt::xtensor<double, 2> centers(
     const xt::xtensor<double, 2>& coor,
     const xt::xtensor<size_t, 2>& conn); // extract element-type based on shape of "conn"
 
+// Convert an element-map to a node-map.
+// Input: new_elvar = elvar[elem_map]
+// Return: new_nodevar = nodevar[node_map]
+inline xt::xtensor<size_t, 1> elemmap2nodemap(
+    const xt::xtensor<size_t, 1>& elem_map,
+    const xt::xtensor<double, 2>& coor,
+    const xt::xtensor<size_t, 2>& conn); // extract element-type based on shape of "conn"
+
+inline xt::xtensor<size_t, 1> elemmap2nodemap(
+    const xt::xtensor<size_t, 1>& elem_map,
+    const xt::xtensor<double, 2>& coor,
+    const xt::xtensor<size_t, 2>& conn,
+    ElementType type);
+
 } // namespace Mesh
 } // namespace GooseFEM
 

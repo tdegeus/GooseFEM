@@ -59,4 +59,220 @@ TEST_CASE("GooseFEM::Mesh", "Mesh.h")
         REQUIRE(tonode[14] == std::vector<size_t>{7, 8});
         REQUIRE(tonode[15] == std::vector<size_t>{8});
     }
+
+    SECTION("elemmap2nodemap")
+    {
+        GooseFEM::Mesh::Quad4::Regular mesh(3, 3);
+
+        xt::xtensor<size_t, 1> elmap0 = {
+            0, 1, 2,
+            3, 4, 5,
+            6, 7, 8
+        };
+        xt::xtensor<size_t, 1> elmap1 = {
+            2, 0, 1,
+            5, 3, 4,
+            8, 6, 7
+        };
+        xt::xtensor<size_t, 1> elmap2 = {
+            1, 2, 0,
+            4, 5, 3,
+            7, 8, 6
+        };
+
+        xt::xtensor<size_t, 1> nodemap0 = {
+             0,  1,  2,  3,
+             4,  5,  6,  7,
+             8,  9, 10, 11,
+            12, 13, 14, 15
+        };
+        xt::xtensor<size_t, 1> nodemap1 = {
+              2,  0,  1,  2,
+              6,  4,  5,  6,
+             10,  8,  9, 10,
+             14, 15, 13, 14
+        };
+        xt::xtensor<size_t, 1> nodemap2 = {
+             1,  2,  0,  1,
+             5,  6,  4,  5,
+             9, 10,  8,  9,
+            13, 14, 15, 13
+        };
+
+        REQUIRE(xt::all(xt::equal(GooseFEM::Mesh::elemmap2nodemap(elmap0, mesh.coor(), mesh.conn()), nodemap0)));
+        REQUIRE(xt::all(xt::equal(GooseFEM::Mesh::elemmap2nodemap(elmap1, mesh.coor(), mesh.conn()), nodemap1)));
+        REQUIRE(xt::all(xt::equal(GooseFEM::Mesh::elemmap2nodemap(elmap2, mesh.coor(), mesh.conn()), nodemap2)));
+    }
+
+    SECTION("elemmap2nodemap - example 1")
+    {
+        GooseFEM::Mesh::Quad4::FineLayer mesh(3, 3);
+
+        xt::xtensor<int, 1> elemval = {
+            1, 0, 0,
+            1, 0, 0,
+            1, 0, 0
+        };
+
+        xt::xtensor<int, 1> elemval_r1 = {
+            0, 1, 0,
+            0, 1, 0,
+            0, 1, 0
+        };
+
+        xt::xtensor<int, 1> elemval_r2 = {
+            0, 0, 1,
+            0, 0, 1,
+            0, 0, 1
+        };
+
+        xt::xtensor<int, 1> nodeval = {
+            1, 0, 0, 1,
+            1, 0, 0, 1,
+            1, 0, 0, 1,
+            1, 0, 0, 1
+        };
+
+        xt::xtensor<int, 1> nodeval_r1 = {
+            0, 1, 0, 0,
+            0, 1, 0, 0,
+            0, 1, 0, 0,
+            0, 1, 0, 0
+        };
+
+        xt::xtensor<int, 1> nodeval_r2 = {
+            0, 0, 1, 0,
+            0, 0, 1, 0,
+            0, 0, 1, 0,
+            0, 0, 1, 0
+        };
+
+        {
+            auto elemmap = mesh.roll(0);
+            auto nodemap = GooseFEM::Mesh::elemmap2nodemap(elemmap, mesh.coor(), mesh.conn());
+            REQUIRE(xt::all(xt::equal(elemval, xt::view(elemval, xt::keep(elemmap)))));
+            REQUIRE(xt::all(xt::equal(nodeval, xt::view(nodeval, xt::keep(nodemap)))));
+        }
+
+        {
+            auto elemmap = mesh.roll(1);
+            auto nodemap = GooseFEM::Mesh::elemmap2nodemap(elemmap, mesh.coor(), mesh.conn());
+            REQUIRE(xt::all(xt::equal(elemval_r1, xt::view(elemval, xt::keep(elemmap)))));
+            REQUIRE(xt::all(xt::equal(nodeval_r1, xt::view(nodeval, xt::keep(nodemap)))));
+        }
+
+        {
+            auto elemmap = mesh.roll(2);
+            auto nodemap = GooseFEM::Mesh::elemmap2nodemap(elemmap, mesh.coor(), mesh.conn());
+            REQUIRE(xt::all(xt::equal(elemval_r2, xt::view(elemval, xt::keep(elemmap)))));
+            REQUIRE(xt::all(xt::equal(nodeval_r2, xt::view(nodeval, xt::keep(nodemap)))));
+        }
+
+        {
+            auto elemmap = mesh.roll(3);
+            auto nodemap = GooseFEM::Mesh::elemmap2nodemap(elemmap, mesh.coor(), mesh.conn());
+            REQUIRE(xt::all(xt::equal(elemval, xt::view(elemval, xt::keep(elemmap)))));
+            REQUIRE(xt::all(xt::equal(nodeval, xt::view(nodeval, xt::keep(nodemap)))));
+        }
+
+        {
+            auto elemmap = mesh.roll(4);
+            auto nodemap = GooseFEM::Mesh::elemmap2nodemap(elemmap, mesh.coor(), mesh.conn());
+            REQUIRE(xt::all(xt::equal(elemval_r1, xt::view(elemval, xt::keep(elemmap)))));
+            REQUIRE(xt::all(xt::equal(nodeval_r1, xt::view(nodeval, xt::keep(nodemap)))));
+        }
+
+        {
+            auto elemmap = mesh.roll(5);
+            auto nodemap = GooseFEM::Mesh::elemmap2nodemap(elemmap, mesh.coor(), mesh.conn());
+            REQUIRE(xt::all(xt::equal(elemval_r2, xt::view(elemval, xt::keep(elemmap)))));
+            REQUIRE(xt::all(xt::equal(nodeval_r2, xt::view(nodeval, xt::keep(nodemap)))));
+        }
+    }
+
+    SECTION("elemmap2nodemap - example 2")
+    {
+        GooseFEM::Mesh::Quad4::FineLayer mesh(3, 3);
+
+        xt::xtensor<int, 1> elemval = {
+            1, 0, 0,
+            0, 1, 0,
+            0, 0, 1
+        };
+
+        xt::xtensor<int, 1> elemval_r1 = {
+            0, 1, 0,
+            0, 0, 1,
+            1, 0, 0
+        };
+
+        xt::xtensor<int, 1> elemval_r2 = {
+            0, 0, 1,
+            1, 0, 0,
+            0, 1, 0
+        };
+
+        xt::xtensor<int, 1> nodeval = {
+            1, 0, 0, 1,
+            0, 1, 0, 0,
+            0, 0, 1, 0,
+            1, 0, 0, 1
+        };
+
+        xt::xtensor<int, 1> nodeval_r1 = {
+            0, 1, 0, 0,
+            0, 0, 1, 0,
+            1, 0, 0, 1,
+            0, 1, 0, 0
+        };
+
+        xt::xtensor<int, 1> nodeval_r2 = {
+            0, 0, 1, 0,
+            1, 0, 0, 1,
+            0, 1, 0, 0,
+            0, 0, 1, 0
+        };
+
+        {
+            auto elemmap = mesh.roll(0);
+            auto nodemap = GooseFEM::Mesh::elemmap2nodemap(elemmap, mesh.coor(), mesh.conn());
+            REQUIRE(xt::all(xt::equal(elemval, xt::view(elemval, xt::keep(elemmap)))));
+            REQUIRE(xt::all(xt::equal(nodeval, xt::view(nodeval, xt::keep(nodemap)))));
+        }
+
+        {
+            auto elemmap = mesh.roll(1);
+            auto nodemap = GooseFEM::Mesh::elemmap2nodemap(elemmap, mesh.coor(), mesh.conn());
+            REQUIRE(xt::all(xt::equal(elemval_r1, xt::view(elemval, xt::keep(elemmap)))));
+            REQUIRE(xt::all(xt::equal(nodeval_r1, xt::view(nodeval, xt::keep(nodemap)))));
+        }
+
+        {
+            auto elemmap = mesh.roll(2);
+            auto nodemap = GooseFEM::Mesh::elemmap2nodemap(elemmap, mesh.coor(), mesh.conn());
+            REQUIRE(xt::all(xt::equal(elemval_r2, xt::view(elemval, xt::keep(elemmap)))));
+            REQUIRE(xt::all(xt::equal(nodeval_r2, xt::view(nodeval, xt::keep(nodemap)))));
+        }
+
+        {
+            auto elemmap = mesh.roll(3);
+            auto nodemap = GooseFEM::Mesh::elemmap2nodemap(elemmap, mesh.coor(), mesh.conn());
+            REQUIRE(xt::all(xt::equal(elemval, xt::view(elemval, xt::keep(elemmap)))));
+            REQUIRE(xt::all(xt::equal(nodeval, xt::view(nodeval, xt::keep(nodemap)))));
+        }
+
+        {
+            auto elemmap = mesh.roll(4);
+            auto nodemap = GooseFEM::Mesh::elemmap2nodemap(elemmap, mesh.coor(), mesh.conn());
+            REQUIRE(xt::all(xt::equal(elemval_r1, xt::view(elemval, xt::keep(elemmap)))));
+            REQUIRE(xt::all(xt::equal(nodeval_r1, xt::view(nodeval, xt::keep(nodemap)))));
+        }
+
+        {
+            auto elemmap = mesh.roll(5);
+            auto nodemap = GooseFEM::Mesh::elemmap2nodemap(elemmap, mesh.coor(), mesh.conn());
+            REQUIRE(xt::all(xt::equal(elemval_r2, xt::view(elemval, xt::keep(elemmap)))));
+            REQUIRE(xt::all(xt::equal(nodeval_r2, xt::view(nodeval, xt::keep(nodemap)))));
+        }
+    }
 }

@@ -168,6 +168,8 @@ void init_MeshQuad4(py::module& m)
 
         .def("dofsPeriodic", &GooseFEM::Mesh::Quad4::FineLayer::dofsPeriodic)
 
+        .def("roll", &GooseFEM::Mesh::Quad4::FineLayer::roll)
+
         .def("__repr__", [](const GooseFEM::Mesh::Quad4::FineLayer&) {
             return "<GooseFEM.Mesh.Quad4.FineLayer>";
         });
