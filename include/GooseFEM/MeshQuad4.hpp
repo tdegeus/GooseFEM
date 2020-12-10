@@ -844,9 +844,8 @@ inline xt::xtensor<size_t, 2> FineLayer::dofsPeriodic() const
     return GooseFEM::Mesh::renumber(ret);
 }
 
-inline xt::xtensor<size_t, 1> FineLayer::roll(size_t n, size_t axis)
+inline xt::xtensor<size_t, 1> FineLayer::roll(size_t n)
 {
-    GOOSEFEM_ASSERT(axis == 0);
     auto conn = this->conn();
     size_t nely = static_cast<size_t>(m_nhy.size());
     xt::xtensor<size_t, 1> ret = xt::empty<size_t>({m_nelem});

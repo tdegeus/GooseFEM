@@ -111,4 +111,47 @@ void init_Mesh(py::module& m)
         py::arg("coor"),
         py::arg("conn"),
         py::arg("type"));
+
+    m.def(
+        "centers",
+        py::overload_cast<const xt::xtensor<double, 2>&, const xt::xtensor<size_t, 2>&>(
+            &GooseFEM::Mesh::centers),
+        "Coordinates of the center of each element",
+        py::arg("coor"),
+        py::arg("conn"));
+
+    m.def(
+        "centers",
+        py::overload_cast<
+            const xt::xtensor<double, 2>&,
+            const xt::xtensor<size_t, 2>&,
+            GooseFEM::Mesh::ElementType>(&GooseFEM::Mesh::centers),
+        "Coordinates of the center of each element",
+        py::arg("coor"),
+        py::arg("conn"),
+        py::arg("type"));
+
+    m.def(
+        "elemmap2nodemap",
+        py::overload_cast<
+            const xt::xtensor<size_t, 1>&,
+            const xt::xtensor<double, 2>&,
+            const xt::xtensor<size_t, 2>&>(&GooseFEM::Mesh::elemmap2nodemap),
+        "Convert an element-map to a node-map",
+        py::arg("elem_map"),
+        py::arg("coor"),
+        py::arg("conn"));
+
+    m.def(
+        "elemmap2nodemap",
+        py::overload_cast<
+            const xt::xtensor<size_t, 1>&,
+            const xt::xtensor<double, 2>&,
+            const xt::xtensor<size_t, 2>&,
+            GooseFEM::Mesh::ElementType>(&GooseFEM::Mesh::elemmap2nodemap),
+        "Convert an element-map to a node-map",
+        py::arg("elem_map"),
+        py::arg("coor"),
+        py::arg("conn"),
+        py::arg("type"));
 }
