@@ -69,7 +69,7 @@ int main()
     size_t nip = elem.nip();
 
     // material definition
-    GMatElastic::Cartesian3d::Matrix mat(nelem, nip);
+    GMatElastic::Cartesian3d::Array<2> mat({nelem, nip});
     xt::xtensor<size_t, 2> Ihard = xt::zeros<size_t>({nelem, nip});
     xt::view(Ihard, xt::keep(0, 1, 5, 6), xt::all()) = 1;
     xt::xtensor<size_t, 2> Isoft = xt::ones<size_t>({nelem, nip}) - Ihard;
@@ -89,7 +89,9 @@ int main()
     elem.symGradN_vector(ue, Eps);
 
     // stress & tangent
-    mat.tangent(Eps, Sig, C);
+    mat.setStrain(Eps);
+    mat.stress(Sig);
+    mat.tangent(C);
 
     // internal force
     elem.int_gradN_dot_tensor2_dV(Sig, fe);
@@ -114,7 +116,8 @@ int main()
     // compute strain and stress
     vector.asElement(disp, ue);
     elem.symGradN_vector(ue, Eps);
-    mat.stress(Eps, Sig);
+    mat.setStrain(Eps);
+    mat.stress(Sig);
 
     // internal force
     elem.int_gradN_dot_tensor2_dV(Sig, fe);
