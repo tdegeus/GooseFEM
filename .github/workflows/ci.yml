@@ -68,9 +68,9 @@ jobs:
       run: |
         python test/basic-python/MeshQuad4.py
 
-    - name: Run Python examples
-      if: runner.os == 'Linux'
-      run: |
-        python ./docs/examples/statics/FixedDisplacements_LinearElastic/example.py --no-plot
-        python ./docs/examples/statics/FixedDisplacements_LinearElastic/manual_partition.py --no-plot
+    # - name: Run Python examples
+    #   if: runner.os == 'Linux'
+    #   run: |
+    #     python ./docs/examples/statics/FixedDisplacements_LinearElastic/example.py --no-plot
+    #     python ./docs/examples/statics/FixedDisplacements_LinearElastic/manual_partition.py --no-plot
 
