@@ -42,8 +42,8 @@ void init_MatrixDiagonal(py::module& m)
         .def("dofs", &GooseFEM::MatrixDiagonal::dofs, "Return degrees-of-freedom")
 
         .def(
-            "AsDiagonal",
-            &GooseFEM::MatrixDiagonal::AsDiagonal,
+            "Todiagonal",
+            &GooseFEM::MatrixDiagonal::Todiagonal,
             "Return as diagonal matrix (column)")
 
         .def(

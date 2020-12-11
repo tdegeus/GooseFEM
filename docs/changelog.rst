@@ -6,6 +6,8 @@ Changelog
 v0.5.0
 ======
 
+*   Renaming ``MatrixDiagonal::AsDiagonal`` -> ``MatrixDiagonal::Todiagonal``
+    to maintain API consistency.
 *   Adding ``Mesh::elemmap2nodemap``. Updating Python API.
 *   Adding ``roll`` to FineLayer
 *   Adding ``Mesh::centers`` and ``Mesh::defaultElementType``
