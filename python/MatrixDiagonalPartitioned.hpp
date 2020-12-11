@@ -61,8 +61,8 @@ void init_MatrixDiagonalPartitioned(py::module& m)
             "Return prescribed degrees-of-freedom")
 
         .def(
-            "AsDiagonal",
-            &GooseFEM::MatrixDiagonalPartitioned::AsDiagonal,
+            "Todiagonal",
+            &GooseFEM::MatrixDiagonalPartitioned::Todiagonal,
             "Return as diagonal matrix (column)")
 
         .def(
