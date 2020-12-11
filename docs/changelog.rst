@@ -9,10 +9,15 @@ v0.5.0
 *   Renaming ``MatrixDiagonal::AsDiagonal`` -> ``MatrixDiagonal::Todiagonal``
     to maintain API consistency.
 *   Adding ``Mesh::elemmap2nodemap``. Updating Python API.
-*   Adding ``roll`` to FineLayer
-*   Adding ``Mesh::centers`` and ``Mesh::defaultElementType``
-*   Mapping connectivity on generating FineLayer-object
-*   Switching to new GMat API
+*   Adding ``roll`` to FineLayer.
+*   Adding ``Mesh::centers`` and ``Mesh::defaultElementType``.
+*   Mapping connectivity on generating FineLayer-object.
+*   Switching to new GMat API.
+*   Solver: force factorization on the first call.
+*   Sorting output of ``GooseFEM::Mesh::elem2node``. Adding checks.
+*   Switched to GitHub CI.
+*   Adding ``todense`` to sparse matrix classes.
+*   Adding ``dot`` to ``MatrixPartitioned``.
 
 v0.4.2
 ======
