@@ -90,7 +90,7 @@ TEST_CASE("GooseFEM::ElementQuad4", "ElementQuad4.h")
         xt::xtensor<double, 2> rho = xt::ones<double>({mesh.nelem(), quad.nip()});
 
         mat.assemble(quad.Int_N_scalar_NT_dV(rho));
-        auto M = mat.AsDiagonal();
+        auto M = mat.Todiagonal();
 
         REQUIRE(M.size() == vec.ndof());
         REQUIRE(xt::allclose(M, 1.));
