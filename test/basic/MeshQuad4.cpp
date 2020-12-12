@@ -346,6 +346,25 @@ TEST_CASE("GooseFEM::MeshQuad4", "MeshQuad4.h")
         REQUIRE(xt::allclose(mesh.coor(), replica.coor()));
     }
 
+    SECTION("FineLayer - replica - one")
+    {
+        double h = xt::numeric_constants<double>::PI;
+        GooseFEM::Mesh::Quad4::FineLayer mesh(1, 1, h);
+        GooseFEM::Mesh::Quad4::FineLayer replica(mesh.coor(), mesh.conn());
+        REQUIRE(xt::all(xt::equal(mesh.conn(), replica.conn())));
+        REQUIRE(xt::allclose(mesh.coor(), replica.coor()));
+    }
+
+    SECTION("FineLayer - replica - large")
+    {
+        size_t N = 2 * std::pow(3, 6);
+        double h = xt::numeric_constants<double>::PI;
+        GooseFEM::Mesh::Quad4::FineLayer mesh(N, N, h);
+        GooseFEM::Mesh::Quad4::FineLayer replica(mesh.coor(), mesh.conn());
+        REQUIRE(xt::all(xt::equal(mesh.conn(), replica.conn())));
+        REQUIRE(xt::allclose(mesh.coor(), replica.coor()));
+    }
+
     SECTION("FineLayer - roll - trivial")
     {
         GooseFEM::Mesh::Quad4::FineLayer mesh(3, 3);
