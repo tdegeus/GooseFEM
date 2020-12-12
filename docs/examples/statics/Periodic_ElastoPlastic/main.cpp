@@ -84,8 +84,8 @@ int main()
 
     // material model
     // even though the problem is 2-d, the material model is 3-d, plane strain is implicitly assumed
-    GM::Matrix mat(nelem, nip);
-    size_t tdim = mat.ndim();
+    GM::Array<2> mat({nelem, nip});
+    size_t tdim = 3;
 
     // some artificial material definition
     xt::xtensor<size_t, 1> ehard = xt::ravel(xt::view(elmat, xt::range(0, 2), xt::range(0, 2)));
@@ -136,7 +136,9 @@ int main()
             elem.symGradN_vector(ue, Eps);
 
             // stress & tangent
-            mat.tangent(Eps, Sig, C);
+            mat.setStrain(Eps);
+            mat.stress(Sig);
+            mat.tangent(C);
 
             // internal force
             elem.int_gradN_dot_tensor2_dV(Sig, fe);
@@ -197,7 +199,8 @@ int main()
         // - compute strain and stress
         vector.asElement(disp, ue);
         elem.symGradN_vector(ue, Eps);
-        mat.stress(Eps, Sig);
+        mat.setStrain(Eps);
+        mat.stress(Sig);
         // - element average stress
         xt::xtensor<double, 3> Sigelem = xt::average(Sig, dV, {1});
         xt::xtensor<double, 3> Epselem = xt::average(Eps, dV, {1});
@@ -207,11 +210,11 @@ int main()
         // - write to output-file: increment numbers
         H5::dump(file, "/stored", inc, {inc});
         // - write to output-file: macroscopic response
-        H5::dump(file, "/macroscopic/sigeq", GM::Sigeq(Sigbar), {inc});
-        H5::dump(file, "/macroscopic/epseq", GM::Epseq(Epsbar), {inc});
+        H5::dump(file, "/macroscopic/sigeq", GM::Sigeq(Sigbar)(), {inc});
+        H5::dump(file, "/macroscopic/epseq", GM::Epseq(Epsbar)(), {inc});
         // - write to output-file: element quantities
-        H5::dump(file, "/sigeq/" + std::to_string(inc), GM::Sigeq(Sigelem));
-        H5::dump(file, "/epseq/" + std::to_string(inc), GM::Epseq(Epselem));
+        H5::dump(file, "/sigeq/" + std::to_string(inc), GM::Sigeq(Sigelem)());
+        H5::dump(file, "/epseq/" + std::to_string(inc), GM::Epseq(Epselem)());
         H5::dump(file, "/disp/" + std::to_string(inc), GF::as3d(disp));
         // - update ParaView meta-data
         xdmf.push_back({
