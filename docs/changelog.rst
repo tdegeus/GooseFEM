@@ -3,6 +3,12 @@
 Changelog
 *********
 
+v0.5.1
+======
+
+*   FineLayer - replica: bug-fix in size detection.
+*   Updated examples to new GMat API.
+
 v0.5.0
 ======
 
