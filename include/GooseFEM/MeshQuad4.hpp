@@ -879,22 +879,14 @@ inline void FineLayer::map(const xt::xtensor<double, 2>& coor, const xt::xtensor
     GOOSEFEM_ASSERT(coor.shape(0) >= 4);
     GOOSEFEM_ASSERT(xt::amax(conn)() < coor.shape(0));
 
-    auto n0 = xt::view(conn, xt::all(), 0);
-    auto n1 = xt::view(conn, xt::all(), 1);
-    auto n2 = xt::view(conn, xt::all(), 2);
-    auto dx = xt::view(coor, xt::keep(n1), 0) - xt::view(coor, xt::keep(n0), 0);
-    auto dy = xt::view(coor, xt::keep(n2), 1) - xt::view(coor, xt::keep(n1), 1);
-    auto hx = xt::amin(xt::where(dx > 0.0, dx, std::numeric_limits<double>::max()))();
-    auto hy = xt::amin(xt::where(dy > 0.0, dx, std::numeric_limits<double>::max()))();
-
-    GOOSEFEM_CHECK(xt::allclose(hx, hy));
-
     if (conn.shape(0) == 1) {
-        this->init(1, 1, hx);
+        this->init(1, 1, coor(conn(0, 1), 0) - coor(conn(0, 0), 0));
         GOOSEFEM_CHECK(xt::all(xt::equal(this->conn(), conn)));
         GOOSEFEM_CHECK(xt::allclose(this->coor(), coor));
         return;
     }
+
+    // Identify the middle layer
 
     size_t emid = (conn.shape(0) - conn.shape(0) % 2) / 2;
     size_t eleft = emid;
@@ -909,9 +901,25 @@ inline void FineLayer::map(const xt::xtensor<double, 2>& coor, const xt::xtensor
     }
 
     GOOSEFEM_CHECK(xt::allclose(coor(conn(eleft, 0), 0), 0.0));
+
+    // Get element sizes along the middle layer
+
+    auto n0 = xt::view(conn, xt::range(eleft, eright + 1), 0);
+    auto n1 = xt::view(conn, xt::range(eleft, eright + 1), 1);
+    auto n2 = xt::view(conn, xt::range(eleft, eright + 1), 2);
+    auto dx = xt::view(coor, xt::keep(n1), 0) - xt::view(coor, xt::keep(n0), 0);
+    auto dy = xt::view(coor, xt::keep(n2), 1) - xt::view(coor, xt::keep(n1), 1);
+    auto hx = xt::amin(dx)();
+    auto hy = xt::amin(dy)();
+
+    GOOSEFEM_CHECK(xt::allclose(hx, hy));
+    GOOSEFEM_CHECK(xt::allclose(dx, hx));
+    GOOSEFEM_CHECK(xt::allclose(dy, hy));
+
+    // Extract shape and initialise
+
     size_t nelx = eright - eleft + 1;
     size_t nely = static_cast<size_t>((coor(coor.shape(0) - 1, 1) - coor(0, 1)) / hx);
-
     this->init(nelx, nely, hx);
     GOOSEFEM_CHECK(xt::all(xt::equal(this->conn(), conn)));
     GOOSEFEM_CHECK(xt::allclose(this->coor(), coor));
