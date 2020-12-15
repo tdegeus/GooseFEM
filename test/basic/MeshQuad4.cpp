@@ -322,6 +322,30 @@ TEST_CASE("GooseFEM::MeshQuad4", "MeshQuad4.h")
         REQUIRE(xt::all(xt::equal(dofsPeriodic, dofsPeriodic_)));
     }
 
+    SECTION("FineLayer::elementgrid_ravel")
+    {
+        GooseFEM::Mesh::Quad4::FineLayer mesh(5, 5);
+        xt::xtensor<size_t, 1> a = {
+             0,  1,  2,  3,  4,
+             5,  6,  7,  8,  9,
+            10, 11, 12, 13, 14,
+            15, 16, 17, 18, 19,
+            20, 21, 22, 23, 24};
+        REQUIRE(xt::all(xt::equal(a, mesh.elementgrid_ravel({0, 5}, {0, 5}))));
+
+        xt::xtensor<size_t, 1> b = {
+             5,  6,  7,  8,  9,
+            10, 11, 12, 13, 14,
+            15, 16, 17, 18, 19};
+        REQUIRE(xt::all(xt::equal(b, mesh.elementgrid_ravel({1, 4}, {0, 5}))));
+
+        xt::xtensor<size_t, 1> c = {
+             6,  7,  8,
+            11, 12, 13,
+            16, 17, 18};
+        REQUIRE(xt::all(xt::equal(c, mesh.elementgrid_ravel({1, 4}, {1, 4}))));
+    }
+
     SECTION("FineLayer - replica - trivial")
     {
         GooseFEM::Mesh::Quad4::FineLayer mesh(1, 1);
