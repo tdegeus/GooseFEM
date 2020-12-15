@@ -73,7 +73,7 @@ public:
     size_t nodesOrigin() const;
 
     // element numbers as matrix
-    xt::xtensor<size_t, 2> elementMatrix() const;
+    xt::xtensor<size_t, 2> elementgrid() const;
 
 private:
     double m_h;                     // elementary element edge-size (in all directions)

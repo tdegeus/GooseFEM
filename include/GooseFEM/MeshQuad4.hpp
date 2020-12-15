@@ -238,7 +238,7 @@ inline xt::xtensor<size_t, 2> Regular::dofsPeriodic() const
     return GooseFEM::Mesh::renumber(ret);
 }
 
-inline xt::xtensor<size_t, 2> Regular::elementMatrix() const
+inline xt::xtensor<size_t, 2> Regular::elementgrid() const
 {
     return xt::arange<size_t>(m_nelem).reshape({m_nely, m_nelx});
 }
@@ -934,8 +934,8 @@ inline RefineRegular::RefineRegular(
 {
     m_fine = Regular(nx * m_coarse.nelx(), ny * m_coarse.nely(), m_coarse.h());
 
-    xt::xtensor<size_t, 2> elmat_coarse = m_coarse.elementMatrix();
-    xt::xtensor<size_t, 2> elmat_fine = m_fine.elementMatrix();
+    xt::xtensor<size_t, 2> elmat_coarse = m_coarse.elementgrid();
+    xt::xtensor<size_t, 2> elmat_fine = m_fine.elementgrid();
 
     m_coarse2fine = xt::empty<size_t>({m_coarse.nelem(), nx * ny});
 
@@ -1087,7 +1087,7 @@ inline FineLayer2Regular::FineLayer2Regular(const GooseFEM::Mesh::Quad4::FineLay
     xt::xtensor<size_t, 1> start = m_finelayer.m_startElem;
 
     // 'matrix' of element numbers of the Regular-mesh
-    xt::xtensor<size_t, 2> elementMatrix = m_regular.elementMatrix();
+    xt::xtensor<size_t, 2> elementgrid = m_regular.elementgrid();
 
     // cumulative number of element-rows of the Regular-mesh per layer of the FineLayer-mesh
     xt::xtensor<size_t, 1> cum_nhy =
@@ -1099,7 +1099,7 @@ inline FineLayer2Regular::FineLayer2Regular(const GooseFEM::Mesh::Quad4::FineLay
     // loop over layers of the FineLayer-mesh
     for (size_t iy = 0; iy < nely; ++iy) {
         // element numbers of the Regular-mesh along this layer of the FineLayer-mesh
-        auto el_new = xt::view(elementMatrix, xt::range(cum_nhy(iy), cum_nhy(iy + 1)), xt::all());
+        auto el_new = xt::view(elementgrid, xt::range(cum_nhy(iy), cum_nhy(iy + 1)), xt::all());
 
         // no coarsening/refinement
         // ------------------------
