@@ -648,6 +648,146 @@ inline xt::xtensor<size_t, 1> FineLayer::elementsMiddleLayer() const
     return m_startElem(iy) + xt::arange<size_t>(m_nelx(iy));
 }
 
+inline xt::xtensor<size_t, 1> FineLayer::elementgrid_ravel(
+    std::array<size_t, 2> start_stop_rows,
+    std::array<size_t, 2> start_stop_cols) const
+{
+    GOOSEFEM_ASSERT(start_stop_rows[0] <= this->nely());
+    GOOSEFEM_ASSERT(start_stop_rows[1] <= this->nely());
+    GOOSEFEM_ASSERT(start_stop_cols[0] <= this->nelx());
+    GOOSEFEM_ASSERT(start_stop_cols[1] <= this->nelx());
+
+    if (start_stop_rows[0] == start_stop_rows[1] || start_stop_cols[0] == start_stop_cols[1]) {
+        xt::xtensor<size_t, 1> ret = xt::empty<size_t>({0});
+        return ret;
+    }
+
+    // Compute dimensions
+
+    auto H = xt::cumsum(m_nhy);
+    size_t yl = 0;
+    if (start_stop_rows[0] > 0) {
+        yl = xt::argmax(H > start_stop_rows[0])();
+    }
+    size_t yu = xt::argmax(H >= start_stop_rows[1])();
+    size_t hx = std::max(m_nhx(yl), m_nhx(yu));
+    size_t xl = (start_stop_cols[0] - start_stop_cols[0] % hx) / hx;
+    size_t xu = (start_stop_cols[1] - start_stop_cols[1] % hx) / hx;
+
+    // Allocate output
+
+    size_t N = 0;
+
+    for (size_t i = yl; i <= yu; ++i) {
+        // no refinement
+        size_t n = (xu - xl) * hx / m_nhx(i);
+        // refinement
+        if (m_refine(i) != -1) {
+            n *= 4;
+        }
+        N += n;
+    }
+
+    xt::xtensor<size_t, 1> ret = xt::empty<size_t>({N});
+
+    // Write output
+
+    N = 0;
+
+    for (size_t i = yl; i <= yu; ++i) {
+        // no refinement
+        size_t n = (xu - xl) * hx / m_nhx(i);
+        // refinement
+        if (m_refine(i) != -1) {
+            n *= 4;
+        }
+        xt::xtensor<size_t, 1> e = m_startElem(i) + xl * hx / m_nhx(i) + xt::arange<size_t>(n);
+        xt::view(ret, xt::range(N, N + n)) = e;
+        N += n;
+    }
+
+    return ret;
+}
+
+
+// inline xt::xtensor<size_t, 1> FineLayer::elementsAround(size_t e, int left, int right) const
+// {
+//     GOOSEFEM_ASSERT(right - left <= static_cast<decltype(left)>(this->nelx()));
+//     GOOSEFEM_ASSERT(right - left <= static_cast<decltype(left)>(this->nely()));
+//     GOOSEFEM_ASSERT(e < this->nelem());
+//     GOOSEFEM_WIP_ASSERT(left <= 0);
+//     GOOSEFEM_WIP_ASSERT(right >= 0);
+
+//     size_t l = static_cast<size_t>(std::abs(left));
+//     size_t r = static_cast<size_t>(std::abs(right));
+//     size_t w = l + r;
+
+//     size_t nely = m_nhy.size();
+//     size_t iy = xt::argmin(xt::greater(e, m_startElem))() - 1;
+//     size_t nel = m_nelx(iy);
+//     size_t mid = static_cast<size_t>(static_cast<int>(m_startElem(iy)) - left);
+//     size_t nroll = nel - (nel - nel % 2) / 2 + e - m_startElem(iy);
+//     GOOSEFEM_WIP_ASSERT(iy == (nely - 1) / 2);
+//     GOOSEFEM_WIP_ASSERT(iy >= l);
+//     GOOSEFEM_WIP_ASSERT(iy < r);
+
+//     // Select elements layers around the middle layer
+
+//     size_t nyb = 0;
+//     size_t nyt = 0;
+//     size_t nhb = 0;
+//     size_t nht = m_nhy(iy);
+//     if (left < 0) {
+//         while (nhb < l) {
+//             nyb += 1;
+//             nhb += m_nhy(iy - nyb);
+//         }
+//     }
+//     if (right > 0) {
+//         while (nht < r) {
+//             nyt += 1;
+//             nht += m_nhy(iy + nyt);
+//         }
+//     }
+//     nyt++;
+
+//     // Allocate output
+
+//     size_t N = 0;
+
+//     for (size_t i = iy - nyb; i < iy + nyt; ++i) {
+//         if (m_refine(iy) == -1) {
+//             N += w / m_nhx(i); // no refinement
+//         }
+//         else {
+//             N += 4 * w / m_nhx(i); // refinement
+//         }
+//     }
+
+//     xt::xtensor<size_t, 1> ret = xt::empty<size_t>({N});
+
+//     // Fill output
+
+//     N = 0;
+//     size_t n;
+
+//     std::cout << w << std::endl;
+//     std::cout << m_nhx << std::endl;
+
+//     for (size_t i = iy - nyb; i < iy + nyt; ++i) {
+//         if (m_refine(iy) == -1) {
+//             n = w / m_nhx(i); // no refinement
+//         }
+//         else {
+//             n = 4 * w / m_nhx(i); // refinement
+//         }
+//         xt::view(ret, xt::range(N, N + n)) = m_startElem(i) + xt::arange<size_t>(n);
+//         N += n;
+//     }
+
+//     return ret;
+// }
+
 inline xt::xtensor<size_t, 1> FineLayer::nodesBottomEdge() const
 {
     return m_startNode(0) + xt::arange<size_t>(m_nelx(0) + 1);
