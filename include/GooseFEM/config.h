@@ -60,6 +60,14 @@ using namespace xt::placeholders;
             ": assertion failed (" #expr ") \n\t"); \
     }
 
+#define GOOSEFEM_WIP_ASSERT(expr) GOOSEFEM_CHECK_IMPL(expr, __FILE__, __LINE__)
+#define GOOSEFEM_WIP_ASSERT_IMPL(expr, file, line) \
+    if (!(expr)) { \
+        throw std::runtime_error( \
+            std::string(file) + ':' + std::to_string(line) + \
+            ": WIP, please extend the code, assertion failed (" #expr ") \n\t"); \
+    }
+
 #define GOOSEFEM_VERSION_MAJOR 0
 #define GOOSEFEM_VERSION_MINOR 5
 #define GOOSEFEM_VERSION_PATCH 1
