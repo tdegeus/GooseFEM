@@ -93,8 +93,8 @@ Mesh::Quad4::Regular::dofsPeriodic()
 
 DOF-numbers for each component of each node, for the case that the periodicity if fully eliminated. The output shape is thus [nnode, ndim].
 
-Mesh::Quad4::Regular::elementMatrix()
--------------------------------------
+Mesh::Quad4::Regular::elementgrid()
+-----------------------------------
 
 Return element numbers as matrix [nely, nelx].
 

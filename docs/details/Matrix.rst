@@ -328,7 +328,7 @@ MatrixDiagonal::solve(...)
 
 Solve linear system.
 
-MatrixDiagonal::AsDiagonal(...)
+MatrixDiagonal::Todiagonal(...)
 -------------------------------
 
 Return matrix as diagonal matrix (column)
@@ -440,7 +440,7 @@ MatrixDiagonalPartitioned::reaction_p(...)
 
 Compute reaction forces (part of "b" that corresponds to "x_p").
 
-MatrixDiagonalPartitioned::AsDiagonal(...)
+MatrixDiagonalPartitioned::Todiagonal(...)
 ------------------------------------------
 
 Return matrix as diagonal matrix (column)
