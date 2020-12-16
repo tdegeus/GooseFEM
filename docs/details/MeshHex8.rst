@@ -105,10 +105,10 @@ Mesh::Hex8::Regular::dofsPeriodic()
 
 DOF-numbers for each component of each node, for the case that the periodicity if fully eliminated. The output shape is thus [nnode, ndim].
 
-Mesh::Hex8::Regular::elementMatrix()
-------------------------------------
+Mesh::Hex8::Regular::elementgrid()
+----------------------------------
 
-Return element numbers as matrix [nely, nelx].
+Return element numbers as matrix [nelz, nely, nelx].
 
 Mesh::Hex8::FineLayer
 =====================

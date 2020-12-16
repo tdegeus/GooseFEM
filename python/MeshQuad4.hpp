@@ -83,7 +83,7 @@ void init_MeshQuad4(py::module& m)
 
         .def("dofsPeriodic", &GooseFEM::Mesh::Quad4::Regular::dofsPeriodic)
 
-        .def("elementMatrix", &GooseFEM::Mesh::Quad4::Regular::elementMatrix)
+        .def("elementgrid", &GooseFEM::Mesh::Quad4::Regular::elementgrid)
 
         .def("__repr__", [](const GooseFEM::Mesh::Quad4::Regular&) {
             return "<GooseFEM.Mesh.Quad4.Regular>";

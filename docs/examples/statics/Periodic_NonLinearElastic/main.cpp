@@ -26,7 +26,7 @@ int main()
     xt::xtensor<double, 2> coor = mesh.coor();
     xt::xtensor<size_t, 2> conn = mesh.conn();
     xt::xtensor<size_t, 2> dofs = mesh.dofs();
-    xt::xtensor<size_t, 2> elmat = mesh.elementMatrix();
+    xt::xtensor<size_t, 2> elmat = mesh.elementgrid();
 
     // periodicity and fixed displacements DOFs
     // ----------------------------------------
