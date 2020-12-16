@@ -322,7 +322,7 @@ TEST_CASE("GooseFEM::MeshQuad4", "MeshQuad4.h")
         REQUIRE(xt::all(xt::equal(dofsPeriodic, dofsPeriodic_)));
     }
 
-    SECTION("FineLayer::elementgrid_ravel")
+    SECTION("FineLayer::elementgrid_ravel - uniform")
     {
         GooseFEM::Mesh::Quad4::FineLayer mesh(5, 5);
         xt::xtensor<size_t, 1> a = {
@@ -344,6 +344,30 @@ TEST_CASE("GooseFEM::MeshQuad4", "MeshQuad4.h")
             11, 12, 13,
             16, 17, 18};
         REQUIRE(xt::all(xt::equal(c, mesh.elementgrid_ravel({1, 4}, {1, 4}))));
+    }
+
+    SECTION("FineLayer::elementgrid_ravel - refined")
+    {
+        GooseFEM::Mesh::Quad4::FineLayer mesh(6, 18);
+        xt::xtensor<size_t, 1> a = {
+            19, 20, 21, 22,
+            25, 26, 27, 28,
+            31, 32, 33, 34};
+        REQUIRE(xt::all(xt::equal(a, mesh.elementgrid_ravel({9, 12}, {1, 5}))));
+
+        xt::xtensor<size_t, 1> b = {
+            0, 1,
+            2, 3};
+        REQUIRE(xt::all(xt::equal(b, mesh.elementgrid_ravel({0, 6}, {0, 6}))));
+
+        xt::xtensor<size_t, 1> c = {
+            50, 51,
+            52, 53};
+        REQUIRE(xt::all(xt::equal(c, mesh.elementgrid_ravel({15, 21}, {0, 6}))));
+
+        xt::xtensor<size_t, 1> d = {
+            4, 5, 6, 7, 8, 9, 10, 11};
+        REQUIRE(xt::all(xt::equal(d, mesh.elementgrid_ravel({6, 8}, {0, 6}))));
     }
 
     SECTION("FineLayer - replica - trivial")
