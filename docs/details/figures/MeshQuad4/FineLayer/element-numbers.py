@@ -29,5 +29,5 @@ ax.set_aspect('equal')
 ax.get_xaxis().set_visible(False)
 ax.get_yaxis().set_visible(False)
 
-plt.savefig('element_numbers.svg')
+plt.savefig('element-numbers.svg')
 plt.close()

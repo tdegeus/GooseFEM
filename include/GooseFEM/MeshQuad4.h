@@ -109,19 +109,19 @@ public:
     xt::xtensor<double, 2> coor() const; // nodal positions [nnode, ndim]
     xt::xtensor<size_t, 2> conn() const; // connectivity [nelem, nne]
 
-    // element sets
-    // - elements in the middle (fine) layer
+    // elements in the middle (fine) layer
     xt::xtensor<size_t, 1> elementsMiddleLayer() const;
-    // - select region of elements from 'matrix' of element numbers
+
+    // select region of elements from 'matrix' of element numbers
     xt::xtensor<size_t, 1> elementgrid_ravel(
-        std::array<size_t, 2> start_stop_rows,
-        std::array<size_t, 2> start_stop_cols) const;
-    // - select region of elements from 'matrix' of element numbers around an element
+        std::vector<size_t> rows_range,
+        std::vector<size_t> cols_range) const;
+
+    // select region of elements from 'matrix' of element numbers around an element
     xt::xtensor<size_t, 1> elementgrid_around_ravel(
         size_t element,
-        std::array<int, 2> start_stop_rows,
-        std::array<int, 2> start_stop_cols) const;
-    // xt::xtensor<size_t, 1> elementsAround(size_t e, int left, int right) const; // region-of-interests
+        size_t size,
+        bool periodic = true);
 
     // boundary nodes: edges
     xt::xtensor<size_t, 1> nodesBottomEdge() const;
