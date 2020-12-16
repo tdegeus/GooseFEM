@@ -6,6 +6,7 @@
 
 #include <GooseFEM/GooseFEM.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/stl.h>
 #include <pyxtensor/pyxtensor.hpp>
 
 namespace py = pybind11;
@@ -107,67 +108,50 @@ void init_MeshQuad4(py::module& m)
             py::arg("conn"))
 
         .def("coor", &GooseFEM::Mesh::Quad4::FineLayer::coor)
-
         .def("conn", &GooseFEM::Mesh::Quad4::FineLayer::conn)
-
         .def("nelem", &GooseFEM::Mesh::Quad4::FineLayer::nelem)
-
         .def("nnode", &GooseFEM::Mesh::Quad4::FineLayer::nnode)
-
         .def("nne", &GooseFEM::Mesh::Quad4::FineLayer::nne)
-
         .def("ndim", &GooseFEM::Mesh::Quad4::FineLayer::ndim)
-
         .def("nelx", &GooseFEM::Mesh::Quad4::FineLayer::nelx)
-
         .def("nely", &GooseFEM::Mesh::Quad4::FineLayer::nely)
-
         .def("h", &GooseFEM::Mesh::Quad4::FineLayer::h)
-
         .def("getElementType", &GooseFEM::Mesh::Quad4::FineLayer::getElementType)
-
         .def("elementsMiddleLayer", &GooseFEM::Mesh::Quad4::FineLayer::elementsMiddleLayer)
 
+        .def(
+            "elementgrid_ravel",
+            &GooseFEM::Mesh::Quad4::FineLayer::elementgrid_ravel,
+            py::arg("rows_range"),
+            py::arg("cols_range"))
+
+        .def(
+            "elementgrid_around_ravel",
+            &GooseFEM::Mesh::Quad4::FineLayer::elementgrid_around_ravel,
+            py::arg("element"),
+            py::arg("size"),
+            py::arg("periodic") = true)
+
         .def("nodesBottomEdge", &GooseFEM::Mesh::Quad4::FineLayer::nodesBottomEdge)
-
         .def("nodesTopEdge", &GooseFEM::Mesh::Quad4::FineLayer::nodesTopEdge)
-
         .def("nodesLeftEdge", &GooseFEM::Mesh::Quad4::FineLayer::nodesLeftEdge)
-
         .def("nodesRightEdge", &GooseFEM::Mesh::Quad4::FineLayer::nodesRightEdge)
-
         .def("nodesBottomOpenEdge", &GooseFEM::Mesh::Quad4::FineLayer::nodesBottomOpenEdge)
-
         .def("nodesTopOpenEdge", &GooseFEM::Mesh::Quad4::FineLayer::nodesTopOpenEdge)
-
         .def("nodesLeftOpenEdge", &GooseFEM::Mesh::Quad4::FineLayer::nodesLeftOpenEdge)
-
         .def("nodesRightOpenEdge", &GooseFEM::Mesh::Quad4::FineLayer::nodesRightOpenEdge)
-
         .def("nodesBottomLeftCorner", &GooseFEM::Mesh::Quad4::FineLayer::nodesBottomLeftCorner)
-
         .def("nodesBottomRightCorner", &GooseFEM::Mesh::Quad4::FineLayer::nodesBottomRightCorner)
-
         .def("nodesTopLeftCorner", &GooseFEM::Mesh::Quad4::FineLayer::nodesTopLeftCorner)
-
         .def("nodesTopRightCorner", &GooseFEM::Mesh::Quad4::FineLayer::nodesTopRightCorner)
-
         .def("nodesLeftBottomCorner", &GooseFEM::Mesh::Quad4::FineLayer::nodesLeftBottomCorner)
-
         .def("nodesLeftTopCorner", &GooseFEM::Mesh::Quad4::FineLayer::nodesLeftTopCorner)
-
         .def("nodesRightBottomCorner", &GooseFEM::Mesh::Quad4::FineLayer::nodesRightBottomCorner)
-
         .def("nodesRightTopCorner", &GooseFEM::Mesh::Quad4::FineLayer::nodesRightTopCorner)
-
         .def("dofs", &GooseFEM::Mesh::Quad4::FineLayer::dofs)
-
         .def("nodesPeriodic", &GooseFEM::Mesh::Quad4::FineLayer::nodesPeriodic)
-
         .def("nodesOrigin", &GooseFEM::Mesh::Quad4::FineLayer::nodesOrigin)
-
         .def("dofsPeriodic", &GooseFEM::Mesh::Quad4::FineLayer::dofsPeriodic)
-
         .def("roll", &GooseFEM::Mesh::Quad4::FineLayer::roll)
 
         .def("__repr__", [](const GooseFEM::Mesh::Quad4::FineLayer&) {

@@ -332,6 +332,9 @@ TEST_CASE("GooseFEM::MeshQuad4", "MeshQuad4.h")
             15, 16, 17, 18, 19,
             20, 21, 22, 23, 24};
         REQUIRE(xt::all(xt::equal(a, mesh.elementgrid_ravel({0, 5}, {0, 5}))));
+        REQUIRE(xt::all(xt::equal(a, mesh.elementgrid_ravel({0, 5}, {}))));
+        REQUIRE(xt::all(xt::equal(a, mesh.elementgrid_ravel({}, {0, 5}))));
+        REQUIRE(xt::all(xt::equal(a, mesh.elementgrid_ravel({}, {}))));
 
         xt::xtensor<size_t, 1> b = {
              5,  6,  7,  8,  9,
@@ -368,6 +371,86 @@ TEST_CASE("GooseFEM::MeshQuad4", "MeshQuad4.h")
         xt::xtensor<size_t, 1> d = {
             4, 5, 6, 7, 8, 9, 10, 11};
         REQUIRE(xt::all(xt::equal(d, mesh.elementgrid_ravel({6, 8}, {0, 6}))));
+    }
+
+    SECTION("FineLayer::elementgrid_ravel - uniform")
+    {
+        GooseFEM::Mesh::Quad4::FineLayer mesh(5, 5);
+        xt::xtensor<size_t, 1> a = {
+             0,  1,  2,  3,  4,
+             5,  6,  7,  8,  9,
+            10, 11, 12, 13, 14,
+            15, 16, 17, 18, 19,
+            20, 21, 22, 23, 24};
+
+        REQUIRE(xt::all(xt::equal(a, xt::sort(mesh.elementgrid_around_ravel(10, 2)))));
+        REQUIRE(xt::all(xt::equal(a, xt::sort(mesh.elementgrid_around_ravel(11, 2)))));
+        REQUIRE(xt::all(xt::equal(a, xt::sort(mesh.elementgrid_around_ravel(12, 2)))));
+        REQUIRE(xt::all(xt::equal(a, xt::sort(mesh.elementgrid_around_ravel(13, 2)))));
+        REQUIRE(xt::all(xt::equal(a, xt::sort(mesh.elementgrid_around_ravel(14, 2)))));
+
+        xt::xtensor<size_t, 1> b10 = {
+             5,  6,  9,
+            10, 11, 14,
+            15, 16, 19};
+
+        xt::xtensor<size_t, 1> b11 = {
+             5,  6,  7,
+            10, 11, 12,
+            15, 16, 17};
+
+        xt::xtensor<size_t, 1> b12 = {
+             6,  7,  8,
+            11, 12, 13,
+            16, 17, 18};
+
+        xt::xtensor<size_t, 1> b13 = {
+             7,  8,  9,
+            12, 13, 14,
+            17, 18, 19};
+
+        xt::xtensor<size_t, 1> b14 = {
+             5,  8,  9,
+            10, 13, 14,
+            15, 18, 19};
+
+        REQUIRE(xt::all(xt::equal(xt::sort(b10), xt::sort(mesh.elementgrid_around_ravel(10, 1)))));
+        REQUIRE(xt::all(xt::equal(xt::sort(b11), xt::sort(mesh.elementgrid_around_ravel(11, 1)))));
+        REQUIRE(xt::all(xt::equal(xt::sort(b12), xt::sort(mesh.elementgrid_around_ravel(12, 1)))));
+        REQUIRE(xt::all(xt::equal(xt::sort(b13), xt::sort(mesh.elementgrid_around_ravel(13, 1)))));
+        REQUIRE(xt::all(xt::equal(xt::sort(b14), xt::sort(mesh.elementgrid_around_ravel(14, 1)))));
+
+        REQUIRE(xt::all(xt::equal(10, xt::sort(mesh.elementgrid_around_ravel(10, 0)))));
+        REQUIRE(xt::all(xt::equal(11, xt::sort(mesh.elementgrid_around_ravel(11, 0)))));
+        REQUIRE(xt::all(xt::equal(12, xt::sort(mesh.elementgrid_around_ravel(12, 0)))));
+        REQUIRE(xt::all(xt::equal(13, xt::sort(mesh.elementgrid_around_ravel(13, 0)))));
+        REQUIRE(xt::all(xt::equal(14, xt::sort(mesh.elementgrid_around_ravel(14, 0)))));
+    }
+
+    SECTION("FineLayer::elementgrid_around_ravel")
+    {
+        GooseFEM::Mesh::Quad4::FineLayer mesh(12, 18);
+        xt::xtensor<size_t, 1> r0 = {
+            36, 37, 71,
+            48, 49, 59,
+            60, 61, 47,
+        };
+        xt::xtensor<size_t, 1> r1 = {
+            36, 37, 38,
+            48, 49, 50,
+            60, 61, 62,
+        };
+        xt::xtensor<size_t, 1> r12 = {
+            46, 47, 36,
+            58, 59, 48,
+            70, 71, 60,
+        };
+
+        REQUIRE(xt::all(xt::equal(xt::sort(r0), xt::sort(mesh.elementgrid_around_ravel(48, 1)))));
+        for (size_t n = 0; n < 10; ++n) {
+            REQUIRE(xt::all(xt::equal(xt::sort(r1) + n, xt::sort(mesh.elementgrid_around_ravel(49 + n, 1)))));
+        }
+        REQUIRE(xt::all(xt::equal(xt::sort(r12), xt::sort(mesh.elementgrid_around_ravel(59, 1)))));
     }
 
     SECTION("FineLayer - replica - trivial")
