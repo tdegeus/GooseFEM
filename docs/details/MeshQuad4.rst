@@ -201,12 +201,27 @@ DOF-numbers for each component of each node, for the case that the periodicity i
 Mesh::Quad4::FineLayer::elementsMiddleLayer()
 ---------------------------------------------
 
-Element numbers of the middle, fine, layer
+Element numbers of the middle, fine, layer.
+
+Mesh::Quad4::FineLayer::elementgrid_ravel
+-----------------------------------------
+
+Slice of an equivalent 'matrix' of elements.
+
+Mesh::Quad4::FineLayer::elementgrid_around_ravel
+------------------------------------------------
+
+Slice of an equivalent 'matrix' of elements, such that the slice contains an minimum width
+around a selected element.
+
+.. image:: figures/MeshQuad4/FineLayer/elementgrid.svg
+  :width: 400px
+  :align: center
 
 Details
 -------
 
-.. image:: figures/MeshQuad4/FineLayer/element_numbers.svg
+.. image:: figures/MeshQuad4/FineLayer/element-numbers.svg
   :width: 400px
   :align: center
 
