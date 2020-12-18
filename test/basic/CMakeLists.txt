@@ -9,11 +9,11 @@ endif()
 set(ASSERT ON)
 set(DEBUG ON)
 option(XSIMD "Use xsimd and 'march=native' optimisations" ON)
-option(WARNINGS "Enable warnings" ON)
 
 set(test_name "test-basic")
 
 find_package(Catch2 REQUIRED)
+find_package(xtensor REQUIRED)
 
 add_executable(${test_name}
     main.cpp
@@ -24,18 +24,20 @@ add_executable(${test_name}
     Matrix.cpp
     MatrixDiagonal.cpp
     Mesh.cpp
-    MeshQuad4.cpp
+    MeshQuad4_Regular.cpp
+    MeshQuad4_FineLayer.cpp
+    MeshQuad4_Map.cpp
     Vector.cpp
     VectorPartitioned.cpp)
 
-target_link_libraries(${test_name} PRIVATE Catch2::Catch2 GooseFEM)
+target_link_libraries(${test_name} PRIVATE
+    Catch2::Catch2
+    GooseFEM
+    GooseFEM::compiler_warnings
+    xtensor::optimize)
 
 if(SIMD)
-    target_link_libraries(${test_name} PRIVATE xtensor::optimize xtensor::use_xsimd)
-endif()
-
-if(WARNINGS)
-    target_link_libraries(${test_name} PRIVATE GooseFEM::compiler_warnings)
+    target_link_libraries(${test_name} PRIVATE xtensor::use_xsimd)
 endif()
 
 if(ASSERT)
