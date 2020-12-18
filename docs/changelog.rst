@@ -3,6 +3,17 @@
 Changelog
 *********
 
+v0.6.0
+======
+
+*   Adding ``Mesh::Quad4::FineLayer::elementgrid_around_ravel``
+*   ``FineLayer::elementgrid_ravel``: Adding test
+*   Renaming ``elementMatrix`` -> ``elementgrid`` everywhere
+*   Adding ``Mesh::Quad4::FineLayer::elementgrid_ravel``
+*   Adding ``GOOFEM_WIP_ASSERT`` to assert if code needs to be generalized
+*   API change: renaming ``Mesh::Quad4::Regular::elementMatrix``
+    -> M``esh::Quad4::Regular::elementgrid``.
+
 v0.5.1
 ======
 
