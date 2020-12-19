@@ -3,6 +3,11 @@
 Changelog
 *********
 
+v0.6.1
+======
+
+*   Minor bugfix ``Mesh::Quad4::FineLayer::elementgrid_around_ravel``: allowing huge sizes.
+
 v0.6.0
 ======
 
