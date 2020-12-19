@@ -764,8 +764,14 @@ inline xt::xtensor<size_t, 1> FineLayer::elementgrid_around_ravel(
     size_t mid = (nel / step - (nel / step) % 2) / 2 * step + relx;
     size_t nroll = (nel - (nel - mid + e - m_startElem(iy)) % nel) / step;
     size_t dx = m_nhx(u);
-    size_t xl = mid - size;
-    size_t xu = mid + size + 1;
+    size_t xl = 0;
+    size_t xu = nel;
+    if (mid >= size) {
+        xl = mid - size;
+    }
+    if (mid + size < nel) {
+        xu = mid + size + 1;
+    }
     xl = xl - xl % dx;
     xu = xu - xu % dx;
     if (mid - xl < size) {
