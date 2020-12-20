@@ -40,9 +40,7 @@ jobs:
 
     - name: (Windows) Use clang instead of MSVC
       if: runner.os == 'Windows'
-      run: |
-        conda install -c conda-forge clang
-        clang-cl --version
+      run: conda install -c conda-forge clang_win-64
 
     - name: Extending conda environment for testing
       run: conda env update --file environment_test.yaml
