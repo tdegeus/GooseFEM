@@ -40,7 +40,7 @@ jobs:
 
     - name: (Windows) Use clang instead of MSVC
       if: runner.os == 'Windows'
-      run: conda install -c conda-forge clang_win-64
+      run: conda install -c conda-forge clang_win-64 ninja
 
     - name: Extending conda environment for testing
       run: conda env update --file environment_test.yaml
@@ -62,15 +62,10 @@ jobs:
       run: |
         clang --version
         clang++ --version
-        cmake . -DBUILD_TESTS=ON -DBUILD_EXAMPLES=OFF -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++
+        cmake . -G Ninja -DBUILD_TESTS=ON -DBUILD_EXAMPLES=OFF -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++
 
     - name: Build C++ tests & examples
-      if: runner.os != 'Windows'
       run: cmake --build .
-
-    - name: Build C++ tests & examples
-      if: runner.os == 'Windows'
-      run: cmake --build .  -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++
 
     - name: Run C++ tests & examples
       run: cmake --build . --target "RUN_TESTS_AND_EXAMPLES"
