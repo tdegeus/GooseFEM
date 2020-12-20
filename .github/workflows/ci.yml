@@ -14,7 +14,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        runs-on: [ubuntu-latest, macos-latest, windows-latest]
+        # runs-on: [ubuntu-latest, macos-latest, windows-latest]
+        runs-on: [windows-latest]
 
     defaults:
       run:
@@ -40,7 +41,7 @@ jobs:
 
     - name: (Windows) Use clang instead of MSVC
       if: runner.os == 'Windows'
-      run: conda install -c conda-forge clang clangxx ninja
+      run: conda install -c conda-forge clangdev ninja
 
     - name: Extending conda environment for testing
       run: conda env update --file environment_test.yaml
@@ -62,7 +63,7 @@ jobs:
       run: |
         clang --version
         clang++ --version
-        cmake . -G Ninja -DBUILD_TESTS=ON -DBUILD_EXAMPLES=OFF -DCMAKE_C_COMPILER=clang-cl -DCMAKE_CXX_COMPILER=clang-cl
+        cmake . -G Ninja -DBUILD_TESTS=ON -DBUILD_EXAMPLES=OFF -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++
 
     - name: Build C++ tests & examples
       run: cmake --build .
