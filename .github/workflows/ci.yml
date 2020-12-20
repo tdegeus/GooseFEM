@@ -59,10 +59,18 @@ jobs:
 
     - name: Configure using CMake (without examples, using clang)
       if: runner.os == 'Windows'
-      run: cmake . -DBUILD_TESTS=ON -DBUILD_EXAMPLES=OFF -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++
+      run: |
+        clang --version
+        clang++ --version
+        cmake . -DBUILD_TESTS=ON -DBUILD_EXAMPLES=OFF -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++
 
     - name: Build C++ tests & examples
+      if: runner.os != 'Windows'
       run: cmake --build .
+
+    - name: Build C++ tests & examples
+      if: runner.os == 'Windows'
+      run: cmake --build .  -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++
 
     - name: Run C++ tests & examples
       run: cmake --build . --target "RUN_TESTS_AND_EXAMPLES"
