@@ -1,10 +1,35 @@
 channels:
   - conda-forge
 dependencies:
-  - cmake
+  # dependencies
   - xtensor
-  - xsimd
   - eigen
+
+  # optional dependencies
+  - xsimd
+
+  # build tools
+  - cmake
+
+  # Python API
   - python
   - numpy
   - pyxtensor
+
+  # to run tests
+  - catch2
+  - gmatelastic
+  - gmatelastoplasticqpot
+
+  # to run examples
+  - h5py
+  - highfive
+  - xdmfwrite_highfive
+  - xdmfwrite_h5py
+  - gmatelastic
+  - gmatnonlinearelastic
+  - gmatelastoplastic
+  - gmatelastoplasticfinitestrainsimo
+  - gmatelastoplasticqpot
+  - python-gmatelastic
+
