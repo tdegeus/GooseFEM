@@ -39,9 +39,12 @@ jobs:
     - name: Basic GitHub action setup
       uses: actions/checkout@v2
 
-    - name: (Windows) Add msbuild to PATH
+    - name: Install LLVM and Clang (Windows)
       if: runner.os == 'Windows'
-      uses: microsoft/setup-msbuild@v1.0.2
+      uses: KyleMayes/install-llvm-action@v1
+      with:
+        version: "11.0"
+        directory: ${{ runner.temp }}/llvm
 
     - name: Set conda environment "test"
       uses: conda-incubator/setup-miniconda@v2
@@ -53,17 +56,11 @@ jobs:
         activate-environment: test
         auto-activate-base: false
 
-    - name: Install LLVM
-      if: runner.os == 'Windows'
-      run: |
-        curl -fsSL -o "LLVM-10.0.0-win64.exe" "https://github.com/llvm/llvm-project/releases/download/llvmorg-10.0.0/LLVM-10.0.0-win64.exe"
-        LLVM-10.0.0-win64.exe /S
-
     - name: Configure using CMake
       if: runner.os != 'Windows'
       run: cmake . ${{ matrix.config }}
 
-    - name: (Windows) Configure using CMake
+    - name: Configure using CMake (Windows)
       if: runner.os == 'Windows'
       run: |
         conda install -c conda-forge ninja
