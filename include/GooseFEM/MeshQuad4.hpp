@@ -796,7 +796,7 @@ inline xt::xtensor<size_t, 1> FineLayer::elementgrid_around_ravel(
     return xt::view(map, xt::keep(ret));
 }
 
-inline xt::xtensor<size_t, 1> FineLayer::elementgrid_leftright_ravel(
+inline xt::xtensor<size_t, 1> FineLayer::elementgrid_leftright(
     size_t e,
     size_t left,
     size_t right,

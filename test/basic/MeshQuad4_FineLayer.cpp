@@ -325,7 +325,7 @@ TEST_CASE("GooseFEM::MeshQuad4::FineLayer", "MeshQuad4.h")
         REQUIRE(xt::all(xt::equal(xt::sort(r12), xt::sort(mesh.elementgrid_around_ravel(59, 1)))));
     }
 
-    SECTION("FineLayer::elementgrid_leftright_ravel")
+    SECTION("FineLayer::elementgrid_leftright")
     {
         GooseFEM::Mesh::Quad4::FineLayer mesh(12, 18);
         xt::xtensor<size_t, 1> r0 = {
@@ -338,11 +338,11 @@ TEST_CASE("GooseFEM::MeshQuad4::FineLayer", "MeshQuad4.h")
             58, 59, 48,
         };
 
-        REQUIRE(xt::all(xt::equal(xt::sort(r0), xt::sort(mesh.elementgrid_leftright_ravel(48, 1, 1)))));
+        REQUIRE(xt::all(xt::equal(xt::sort(r0), xt::sort(mesh.elementgrid_leftright(48, 1, 1)))));
         for (size_t n = 0; n < 10; ++n) {
-            REQUIRE(xt::all(xt::equal(xt::sort(r1) + n, xt::sort(mesh.elementgrid_leftright_ravel(49 + n, 1, 1)))));
+            REQUIRE(xt::all(xt::equal(xt::sort(r1) + n, xt::sort(mesh.elementgrid_leftright(49 + n, 1, 1)))));
         }
-        REQUIRE(xt::all(xt::equal(xt::sort(r12), xt::sort(mesh.elementgrid_leftright_ravel(59, 1, 1)))));
+        REQUIRE(xt::all(xt::equal(xt::sort(r12), xt::sort(mesh.elementgrid_leftright(59, 1, 1)))));
     }
 
     SECTION("FineLayer - replica - trivial")

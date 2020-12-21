@@ -3,6 +3,11 @@
 Changelog
 *********
 
+v0.7.0
+======
+
+*   Adding ``Mesh::Quad4::FineLayer::elementgrid_leftright``
+
 v0.6.1
 ======
 
