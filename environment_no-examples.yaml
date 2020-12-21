@@ -1,0 +1,22 @@
+channels:
+  - conda-forge
+dependencies:
+  # dependencies
+  - xtensor
+  - eigen
+
+  # optional dependencies
+  - xsimd
+
+  # build tools
+  - cmake
+
+  # Python API
+  - python
+  - numpy
+  - pyxtensor
+
+  # to run tests
+  - catch2
+  - gmatelastic
+  - gmatelastoplasticqpot

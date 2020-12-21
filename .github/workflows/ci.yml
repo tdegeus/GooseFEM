@@ -38,15 +38,9 @@ jobs:
         mamba-version: "*"
         channels: conda-forge,defaults
         channel-priority: true
-        environment-file: environment.yaml
+        environment-file: environment_no-examples.yaml
         activate-environment: test
         auto-activate-base: false
-
-    - name: (Windows) Use clang instead of MSVC
-      if: runner.os == 'Windows'
-      run: |
-        export CC="clang-cl.exe"
-        export CXX="clang-cl.exe"
 
     - name: Configure using CMake (with examples)
       if: runner.os == 'Linux'
@@ -55,6 +49,15 @@ jobs:
     - name: Configure using CMake (without examples)
       if: runner.os != 'Linux'
       run: cmake . -DBUILD_TESTS=ON -DBUILD_EXAMPLES=OFF
+
+    - name: Configure using CMake (without examples)
+      if: runner.os == 'macOS'
+      run: cmake . -DBUILD_TESTS=ON -DBUILD_EXAMPLES=OFF
+
+    - name: Configure using CMake (without examples, using clang)
+      if: runner.os == 'Windows'
+      run: |
+        cmake . -G Ninja -DBUILD_TESTS=ON -DBUILD_EXAMPLES=OFF -DCMAKE_C_COMPILER="clang-cl.exe" -DCMAKE_CXX_COMPILER="clang-cl.exe"
 
     - name: Build C++ tests & examples
       run: cmake --build .
