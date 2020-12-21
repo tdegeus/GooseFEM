@@ -133,8 +133,8 @@ void init_MeshQuad4(py::module& m)
             py::arg("periodic") = true)
 
         .def(
-            "elementgrid_leftright_ravel",
-            &GooseFEM::Mesh::Quad4::FineLayer::elementgrid_leftright_ravel,
+            "elementgrid_leftright",
+            &GooseFEM::Mesh::Quad4::FineLayer::elementgrid_leftright,
             py::arg("element"),
             py::arg("left"),
             py::arg("right"),

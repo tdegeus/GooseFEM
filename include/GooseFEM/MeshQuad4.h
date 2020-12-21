@@ -123,7 +123,7 @@ public:
         size_t size,
         bool periodic = true);
 
-    xt::xtensor<size_t, 1> elementgrid_leftright_ravel(
+    xt::xtensor<size_t, 1> elementgrid_leftright(
         size_t element,
         size_t left,
         size_t right,
