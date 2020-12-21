@@ -132,6 +132,14 @@ void init_MeshQuad4(py::module& m)
             py::arg("size"),
             py::arg("periodic") = true)
 
+        .def(
+            "elementgrid_leftright_ravel",
+            &GooseFEM::Mesh::Quad4::FineLayer::elementgrid_leftright_ravel,
+            py::arg("element"),
+            py::arg("left"),
+            py::arg("right"),
+            py::arg("periodic") = true)
+
         .def("nodesBottomEdge", &GooseFEM::Mesh::Quad4::FineLayer::nodesBottomEdge)
         .def("nodesTopEdge", &GooseFEM::Mesh::Quad4::FineLayer::nodesTopEdge)
         .def("nodesLeftEdge", &GooseFEM::Mesh::Quad4::FineLayer::nodesLeftEdge)

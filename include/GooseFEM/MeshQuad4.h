@@ -123,6 +123,12 @@ public:
         size_t size,
         bool periodic = true);
 
+    xt::xtensor<size_t, 1> elementgrid_leftright_ravel(
+        size_t element,
+        size_t left,
+        size_t right,
+        bool periodic = true);
+
     // boundary nodes: edges
     xt::xtensor<size_t, 1> nodesBottomEdge() const;
     xt::xtensor<size_t, 1> nodesTopEdge() const;
