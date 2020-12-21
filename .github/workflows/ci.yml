@@ -57,7 +57,7 @@ jobs:
       if: runner.os == 'Windows'
       run: |
         curl -fsSL -o "LLVM-10.0.0-win64.exe" "https://github.com/llvm/llvm-project/releases/download/llvmorg-10.0.0/LLVM-10.0.0-win64.exe"
-LLVM-10.0.0-win64.exe /S
+        LLVM-10.0.0-win64.exe /S
 
     - name: Configure using CMake
       if: runner.os != 'Windows'
