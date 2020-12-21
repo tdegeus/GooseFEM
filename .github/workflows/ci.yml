@@ -14,15 +14,16 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
+        # runs-on: [ubuntu-latest, macos-latest, windows-latest]
         runs-on: [windows-latest]
         include:
-          - runs-on: ubuntu-latest
-            config: -DBUILD_TESTS=ON -DBUILD_EXAMPLES=ON
-            env: environment.yaml
+          # - runs-on: ubuntu-latest
+          #   config: -DBUILD_TESTS=ON -DBUILD_EXAMPLES=ON
+          #   env: environment.yaml
+          # - runs-on: macos-latest
+          #   config: -DBUILD_TESTS=ON -DBUILD_EXAMPLES=OFF
+          #   env: environment_no-examples.yaml
           - runs-on: windows-latest
-            config: -DBUILD_TESTS=ON -DBUILD_EXAMPLES=OFF
-            env: environment_no-examples.yaml
-          - runs-on: macos-latest
             config: -DBUILD_TESTS=ON -DBUILD_EXAMPLES=OFF
             env: environment_no-examples.yaml
 
@@ -51,6 +52,12 @@ jobs:
         environment-file: ${{ matrix.env }}
         activate-environment: test
         auto-activate-base: false
+
+    - name: Install LLVM
+      if: runner.os == 'Windows'
+      run: |
+        curl -fsSL -o "LLVM-10.0.0-win64.exe" "https://github.com/llvm/llvm-project/releases/download/llvmorg-10.0.0/LLVM-10.0.0-win64.exe"
+LLVM-10.0.0-win64.exe /S
 
     - name: Configure using CMake
       if: runner.os != 'Windows'
