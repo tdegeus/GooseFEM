@@ -15,6 +15,16 @@ jobs:
       fail-fast: false
       matrix:
         runs-on: [windows-latest]
+        include:
+          - runs-on: ubuntu-latest
+            config: -DBUILD_TESTS=ON -DBUILD_EXAMPLES=ON
+            env: environment.yaml
+          - runs-on: windows-latest
+            config: -DBUILD_TESTS=ON -DBUILD_EXAMPLES=OFF
+            env: environment_no-examples.yaml
+          - runs-on: macos-latest
+            config: -DBUILD_TESTS=ON -DBUILD_EXAMPLES=OFF
+            env: environment_no-examples.yaml
 
     defaults:
       run:
@@ -38,26 +48,19 @@ jobs:
         mamba-version: "*"
         channels: conda-forge,defaults
         channel-priority: true
-        environment-file: environment_no-examples.yaml
+        environment-file: {{ matrix.env }}
         activate-environment: test
         auto-activate-base: false
 
-    - name: Configure using CMake (with examples)
-      if: runner.os == 'Linux'
-      run: cmake . -DBUILD_TESTS=ON -DBUILD_EXAMPLES=ON
+    - name: Configure using CMake
+      if: runner.os != 'Windows'
+      run: cmake . {{ matrix.config }}
 
-    - name: Configure using CMake (without examples)
-      if: runner.os != 'Linux'
-      run: cmake . -DBUILD_TESTS=ON -DBUILD_EXAMPLES=OFF
-
-    - name: Configure using CMake (without examples)
-      if: runner.os == 'macOS'
-      run: cmake . -DBUILD_TESTS=ON -DBUILD_EXAMPLES=OFF
-
-    - name: Configure using CMake (without examples, using clang)
+    - name: (Windows) Configure using CMake
       if: runner.os == 'Windows'
       run: |
-        cmake . -G Ninja -DBUILD_TESTS=ON -DBUILD_EXAMPLES=OFF -DCMAKE_C_COMPILER="clang-cl.exe" -DCMAKE_CXX_COMPILER="clang-cl.exe"
+        conda install -c conda-forge ninja
+        cmake . -G Ninja {{ matrix.config }} -DCMAKE_C_COMPILER="clang-cl.exe" -DCMAKE_CXX_COMPILER="clang-cl.exe"
 
     - name: Build C++ tests & examples
       run: cmake --build .
