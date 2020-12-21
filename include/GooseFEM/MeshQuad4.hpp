@@ -796,6 +796,61 @@ inline xt::xtensor<size_t, 1> FineLayer::elementgrid_around_ravel(
     return xt::view(map, xt::keep(ret));
 }
 
+inline xt::xtensor<size_t, 1> FineLayer::elementgrid_leftright_ravel(
+    size_t e,
+    size_t left,
+    size_t right,
+    bool periodic)
+{
+    GOOSEFEM_WIP_ASSERT(periodic == true);
+
+    size_t iy = xt::argmin(m_startElem <= e)() - 1;
+    size_t nel = m_nelx(iy);
+
+    GOOSEFEM_WIP_ASSERT(iy == (m_nhy.size() - 1) / 2);
+
+    size_t step = xt::amax(m_nhx)();
+    size_t relx = (e - m_startElem(iy)) % step;
+    size_t mid = (nel / step - (nel / step) % 2) / 2 * step + relx;
+    size_t nroll = (nel - (nel - mid + e - m_startElem(iy)) % nel) / step;
+    size_t dx = m_nhx(iy);
+    size_t xl = 0;
+    size_t xu = nel;
+    if (mid >= left) {
+        xl = mid - left;
+    }
+    if (mid + right < nel) {
+        xu = mid + right + 1;
+    }
+    xl = xl - xl % dx;
+    xu = xu - xu % dx;
+    if (mid - xl < left) {
+        if (xl < dx) {
+            xl = 0;
+        }
+        else {
+            xl -= dx;
+        }
+    }
+    if (xu - mid < right) {
+        if (xu > nel - dx) {
+            xu = nel;
+        }
+        else {
+            xu += dx;
+        }
+    }
+
+    auto H = xt::cumsum(m_nhy);
+    size_t yl = 0;
+    if (iy > 0) {
+        yl = H(iy - 1);
+    }
+    auto ret = this->elementgrid_ravel({yl, H(iy)}, {xl, xu});
+    auto map = this->roll(nroll);
+    return xt::view(map, xt::keep(ret));
+}
+
 inline xt::xtensor<size_t, 1> FineLayer::nodesBottomEdge() const
 {
     return m_startNode(0) + xt::arange<size_t>(m_nelx(0) + 1);
