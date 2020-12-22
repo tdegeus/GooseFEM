@@ -24,9 +24,7 @@ add_executable(${test_name}
     Matrix.cpp
     MatrixDiagonal.cpp
     Mesh.cpp
-    MeshQuad4_Regular.cpp
-    MeshQuad4_FineLayer.cpp
-    MeshQuad4_Map.cpp
+    MeshQuad4.cpp
     Vector.cpp
     VectorPartitioned.cpp)
 
