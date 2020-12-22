@@ -19,13 +19,13 @@ jobs:
         include:
           # - runs-on: ubuntu-latest
           #   config: -DBUILD_TESTS=ON -DBUILD_EXAMPLES=ON
-          #   env: environment.yaml
+          #   conda: environment.yaml
           # - runs-on: macos-latest
           #   config: -DBUILD_TESTS=ON -DBUILD_EXAMPLES=OFF
-          #   env: environment_no-examples.yaml
+          #   conda: environment_no-examples.yaml
           - runs-on: windows-latest
             config: -DBUILD_TESTS=ON -DBUILD_EXAMPLES=OFF
-            env: environment_no-examples.yaml
+            conda: environment_no-examples.yaml
 
     defaults:
       run:
@@ -52,7 +52,7 @@ jobs:
         mamba-version: "*"
         channels: conda-forge,defaults
         channel-priority: true
-        environment-file: ${{ matrix.env }}
+        environment-file: ${{ matrix.conda }}
         activate-environment: test
         auto-activate-base: false
 
