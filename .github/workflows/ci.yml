@@ -14,15 +14,14 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        # runs-on: [ubuntu-latest, macos-latest, windows-latest]
-        runs-on: [windows-latest]
+        runs-on: [ubuntu-latest, macos-latest, windows-latest]
         include:
-          # - runs-on: ubuntu-latest
-          #   config: -DBUILD_TESTS=ON -DBUILD_EXAMPLES=ON
-          #   conda: environment.yaml
-          # - runs-on: macos-latest
-          #   config: -DBUILD_TESTS=ON -DBUILD_EXAMPLES=OFF
-          #   conda: environment_no-examples.yaml
+          - runs-on: ubuntu-latest
+            config: -DBUILD_TESTS=ON -DBUILD_EXAMPLES=ON
+            conda: environment.yaml
+          - runs-on: macos-latest
+            config: -DBUILD_TESTS=ON -DBUILD_EXAMPLES=OFF
+            conda: environment_no-examples.yaml
           - runs-on: windows-latest
             config: -DBUILD_TESTS=ON -DBUILD_EXAMPLES=OFF
             conda: environment_no-examples.yaml
