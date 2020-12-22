@@ -39,13 +39,6 @@ jobs:
     - name: Basic GitHub action setup
       uses: actions/checkout@v2
 
-    - name: Install LLVM and Clang (Windows)
-      if: runner.os == 'Windows'
-      uses: KyleMayes/install-llvm-action@v1
-      with:
-        version: "11.0"
-        directory: ${{ runner.temp }}/llvm
-
     - name: Set conda environment "test"
       uses: conda-incubator/setup-miniconda@v2
       with:
@@ -63,8 +56,8 @@ jobs:
     - name: Configure using CMake (Windows)
       if: runner.os == 'Windows'
       run: |
-        conda install -c conda-forge ninja
-        cmake . -G Ninja ${{ matrix.config }} -DCMAKE_C_COMPILER="clang-cl.exe" -DCMAKE_CXX_COMPILER="clang-cl.exe"
+        conda install -c conda-forge clang_win-64 ninja
+        cmake . -G Ninja ${{ matrix.config }} -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++
 
     - name: Build C++ tests & examples
       run: cmake --build .
