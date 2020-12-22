@@ -19,12 +19,15 @@ jobs:
           - runs-on: ubuntu-latest
             config: -DBUILD_TESTS=ON -DBUILD_EXAMPLES=ON
             conda: environment.yaml
+            prop: tests & examples
           - runs-on: macos-latest
             config: -DBUILD_TESTS=ON -DBUILD_EXAMPLES=OFF
             conda: environment_no-examples.yaml
+            prop: tests
           - runs-on: windows-latest
             config: -DBUILD_TESTS=ON -DBUILD_EXAMPLES=OFF
             conda: environment_no-examples.yaml
+            prop: tests
 
     defaults:
       run:
@@ -48,7 +51,7 @@ jobs:
         activate-environment: test
         auto-activate-base: false
 
-    - name: Configure using CMake
+    - name: Configure using CMake (!Windows)
       if: runner.os != 'Windows'
       run: cmake . ${{ matrix.config }}
 
@@ -58,10 +61,10 @@ jobs:
         conda install -c conda-forge clang_win-64 ninja
         cmake . -G Ninja ${{ matrix.config }} -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++
 
-    - name: Build C++ tests & examples
+    - name: Build C++ ${{ matrix.prop }}
       run: cmake --build .
 
-    - name: Run C++ tests & examples
+    - name: Run C++ ${{ matrix.prop }}
       run: cmake --build . --target "RUN_TESTS_AND_EXAMPLES"
 
     - name: Build and install Python module
