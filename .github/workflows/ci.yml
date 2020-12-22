@@ -15,6 +15,16 @@ jobs:
       fail-fast: false
       matrix:
         runs-on: [ubuntu-latest, macos-latest, windows-latest]
+        include:
+          - runs-on: ubuntu-latest
+            config: -DBUILD_TESTS=ON -DBUILD_EXAMPLES=ON
+            conda: environment.yaml
+          - runs-on: macos-latest
+            config: -DBUILD_TESTS=ON -DBUILD_EXAMPLES=OFF
+            conda: environment_no-examples.yaml
+          - runs-on: windows-latest
+            config: -DBUILD_TESTS=ON -DBUILD_EXAMPLES=OFF
+            conda: environment_no-examples.yaml
 
     defaults:
       run:
@@ -34,32 +44,19 @@ jobs:
         mamba-version: "*"
         channels: conda-forge,defaults
         channel-priority: true
-        environment-file: environment.yaml
+        environment-file: ${{ matrix.conda }}
         activate-environment: test
         auto-activate-base: false
 
-    - name: (Windows) Use clang instead of MSVC
+    - name: Configure using CMake
+      if: runner.os != 'Windows'
+      run: cmake . ${{ matrix.config }}
+
+    - name: Configure using CMake (Windows)
       if: runner.os == 'Windows'
-      run: conda install -c conda-forge clang-11
-
-    - name: Extending conda environment for testing
-      run: conda env update --file environment_test.yaml
-
-    - name: Extending conda environment to run examples
-      if: runner.os == 'Linux'
-      run: conda env update --file environment_examples.yaml
-
-    - name: Configure using CMake (with examples)
-      if: runner.os == 'Linux'
-      run: cmake . -DBUILD_TESTS=ON -DBUILD_EXAMPLES=ON
-
-    - name: Configure using CMake (without examples)
-      if: runner.os == 'macOS'
-      run: cmake . -DBUILD_TESTS=ON -DBUILD_EXAMPLES=OFF
-
-    - name: Configure using CMake (without examples, using clang)
-      if: runner.os == 'Windows'
-      run: cmake . -DBUILD_TESTS=ON -DBUILD_EXAMPLES=OFF -DCMAKE_C_COMPILER=clang-cl -DCMAKE_CXX_COMPILER=clang-cl
+      run: |
+        conda install -c conda-forge clang_win-64 ninja
+        cmake . -G Ninja ${{ matrix.config }} -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++
 
     - name: Build C++ tests & examples
       run: cmake --build .
