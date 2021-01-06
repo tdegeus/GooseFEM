@@ -13,9 +13,13 @@ namespace GooseFEM {
 namespace Mesh {
 namespace Quad4 {
 
+// pre-allocation
+
 namespace Map {
     class FineLayer2Regular;
-} // namespace Map
+}
+
+// Regular mesh: equi-sized elements
 
 class Regular {
 public:
@@ -84,6 +88,8 @@ private:
     static const size_t m_nne = 4;  // number of nodes-per-element
     static const size_t m_ndim = 2; // number of dimensions
 };
+
+// Mesh with fine middle layer, and coarser elements towards the top and bottom
 
 class FineLayer {
 public:
@@ -190,79 +196,84 @@ private:
     friend class GooseFEM::Mesh::Quad4::Map::FineLayer2Regular;
 };
 
+// Mesh mappings
+
 namespace Map {
 
-// Return "FineLayer"-class responsible for generating a connectivity
-// Throws if conversion is not possible
-GooseFEM::Mesh::Quad4::FineLayer FineLayer(
-    const xt::xtensor<double, 2>& coor,
-    const xt::xtensor<size_t, 2>& conn);
+    // Return "FineLayer"-class responsible for generating a connectivity
+    // Throws if conversion is not possible
 
-class RefineRegular {
-public:
-    // constructor
-    RefineRegular() = default;
-    RefineRegular(const GooseFEM::Mesh::Quad4::Regular& mesh, size_t nx, size_t ny);
+    GooseFEM::Mesh::Quad4::FineLayer FineLayer(
+        const xt::xtensor<double, 2>& coor,
+        const xt::xtensor<size_t, 2>& conn);
 
-    // return the one of the two meshes
-    GooseFEM::Mesh::Quad4::Regular getCoarseMesh() const;
-    GooseFEM::Mesh::Quad4::Regular getFineMesh() const;
+    // Refine a regular mesh: sub-divide elements in several smaller elements
 
-    // elements of the Fine mesh per element of the Coarse mesh
-    xt::xtensor<size_t, 2> getMap() const;
+    class RefineRegular {
+    public:
+        // Constructors
+        RefineRegular() = default;
+        RefineRegular(const GooseFEM::Mesh::Quad4::Regular& mesh, size_t nx, size_t ny);
 
-    // map field
-    xt::xtensor<double, 2> mapToCoarse(const xt::xtensor<double, 1>& data) const; // scalar per el
-    xt::xtensor<double, 2> mapToCoarse(const xt::xtensor<double, 2>& data) const; // scalar per intpnt
-    xt::xtensor<double, 4> mapToCoarse(const xt::xtensor<double, 4>& data) const; // tensor per intpnt
+        // return the coarse or the fine mesh objects
+        GooseFEM::Mesh::Quad4::Regular getCoarseMesh() const;
+        GooseFEM::Mesh::Quad4::Regular getFineMesh() const;
 
-    // map field
-    xt::xtensor<double, 1> mapToFine(const xt::xtensor<double, 1>& data) const; // scalar per el
-    xt::xtensor<double, 2> mapToFine(const xt::xtensor<double, 2>& data) const; // scalar per intpnt
-    xt::xtensor<double, 4> mapToFine(const xt::xtensor<double, 4>& data) const; // tensor per intpnt
+        // elements of the fine mesh per element of the coarse mesh
+        xt::xtensor<size_t, 2> getMap() const;
 
-private:
-    // the meshes
-    GooseFEM::Mesh::Quad4::Regular m_coarse;
-    GooseFEM::Mesh::Quad4::Regular m_fine;
+        // map field
+        xt::xtensor<double, 2> mapToCoarse(const xt::xtensor<double, 1>& data) const; // scalar per el
+        xt::xtensor<double, 2> mapToCoarse(const xt::xtensor<double, 2>& data) const; // scalar per intpnt
+        xt::xtensor<double, 4> mapToCoarse(const xt::xtensor<double, 4>& data) const; // tensor per intpnt
 
-    // mapping
-    xt::xtensor<size_t, 1> m_fine2coarse;
-    xt::xtensor<size_t, 1> m_fine2coarse_index;
-    xt::xtensor<size_t, 2> m_coarse2fine;
-};
+        // map field
+        xt::xtensor<double, 1> mapToFine(const xt::xtensor<double, 1>& data) const; // scalar per el
+        xt::xtensor<double, 2> mapToFine(const xt::xtensor<double, 2>& data) const; // scalar per intpnt
+        xt::xtensor<double, 4> mapToFine(const xt::xtensor<double, 4>& data) const; // tensor per intpnt
 
-class FineLayer2Regular {
-public:
-    // constructor
-    FineLayer2Regular() = default;
-    FineLayer2Regular(const GooseFEM::Mesh::Quad4::FineLayer& mesh);
+    private:
+        // the meshes
+        GooseFEM::Mesh::Quad4::Regular m_coarse;
+        GooseFEM::Mesh::Quad4::Regular m_fine;
 
-    // return either of the meshes
-    GooseFEM::Mesh::Quad4::Regular getRegularMesh() const;
-    GooseFEM::Mesh::Quad4::FineLayer getFineLayerMesh() const;
+        // mapping
+        xt::xtensor<size_t, 1> m_fine2coarse;
+        xt::xtensor<size_t, 1> m_fine2coarse_index;
+        xt::xtensor<size_t, 2> m_coarse2fine;
+    };
 
-    // elements of the Regular mesh per element of the FineLayer mesh
-    // and the fraction by which the overlap is
-    std::vector<std::vector<size_t>> getMap() const;
-    std::vector<std::vector<double>> getMapFraction() const;
+    class FineLayer2Regular {
+    public:
+        // constructor
+        FineLayer2Regular() = default;
+        FineLayer2Regular(const GooseFEM::Mesh::Quad4::FineLayer& mesh);
 
-    // map field
-    xt::xtensor<double, 1> mapToRegular(const xt::xtensor<double, 1>& data) const; // scalar per el
-    xt::xtensor<double, 2> mapToRegular(const xt::xtensor<double, 2>& data) const; // scalar per intpnt
-    xt::xtensor<double, 4> mapToRegular(const xt::xtensor<double, 4>& data) const; // tensor per intpnt
+        // return either of the meshes
+        GooseFEM::Mesh::Quad4::Regular getRegularMesh() const;
+        GooseFEM::Mesh::Quad4::FineLayer getFineLayerMesh() const;
 
-private:
-    // the "FineLayer" mesh to map
-    GooseFEM::Mesh::Quad4::FineLayer m_finelayer;
+        // elements of the Regular mesh per element of the FineLayer mesh
+        // and the fraction by which the overlap is
+        std::vector<std::vector<size_t>> getMap() const;
+        std::vector<std::vector<double>> getMapFraction() const;
 
-    // the new "Regular" mesh to which to map
-    GooseFEM::Mesh::Quad4::Regular m_regular;
+        // map field
+        xt::xtensor<double, 1> mapToRegular(const xt::xtensor<double, 1>& data) const; // scalar per el
+        xt::xtensor<double, 2> mapToRegular(const xt::xtensor<double, 2>& data) const; // scalar per intpnt
+        xt::xtensor<double, 4> mapToRegular(const xt::xtensor<double, 4>& data) const; // tensor per intpnt
 
-    // mapping
-    std::vector<std::vector<size_t>> m_elem_regular;
-    std::vector<std::vector<double>> m_frac_regular;
-};
+    private:
+        // the "FineLayer" mesh to map
+        GooseFEM::Mesh::Quad4::FineLayer m_finelayer;
+
+        // the new "Regular" mesh to which to map
+        GooseFEM::Mesh::Quad4::Regular m_regular;
+
+        // mapping
+        std::vector<std::vector<size_t>> m_elem_regular;
+        std::vector<std::vector<double>> m_frac_regular;
+    };
 
 } // namespace Map
 
