@@ -8,6 +8,28 @@
 
 TEST_CASE("GooseFEM::Mesh", "Mesh.h")
 {
+    SECTION("Stitch")
+    {
+        GooseFEM::Mesh::Quad4::Regular mesh(5, 5, 1.0);
+
+        auto coor_a = mesh.coor();
+        auto conn_a = mesh.conn();
+        auto overlap_a = mesh.nodesTopEdge();
+
+        auto coor_b = mesh.coor();
+        auto conn_b = mesh.conn();
+        auto overlap_b = mesh.nodesBottomEdge();
+        xt::view(coor_b, xt::all(), 1) += 5.0;
+
+        GooseFEM::Mesh::Stitch stitch(coor_a, conn_a, overlap_a, coor_b, conn_b, overlap_b);
+
+        GooseFEM::Mesh::Quad4::Regular res(5, 10, 1.0);
+
+        REQUIRE(xt::allclose(res.coor(), stitch.coor()));
+        REQUIRE(xt::all(xt::equal(res.conn(), stitch.conn())));
+        REQUIRE(xt::all(xt::equal(stitch.nodeset(overlap_a, 0), stitch.nodeset(overlap_b, 1))));
+    }
+
     SECTION("edgesize")
     {
         GooseFEM::Mesh::Quad4::Regular mesh(2, 2, 10.0);

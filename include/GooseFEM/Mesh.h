@@ -12,14 +12,48 @@
 namespace GooseFEM {
 namespace Mesh {
 
+// Enumerator for element-types
+
 enum class ElementType {
-    Quad4,
-    Hex8,
-    Tri3 };
+    Quad4, // Quadrilateral: 4-noded element in 2-d
+    Hex8, // Hexahedron: 8-noded element in 3-d
+    Tri3 }; // Triangle: 3-noded element in 2-d
+
+// Extract the element type based on the connectivity
 
 inline ElementType defaultElementType(
     const xt::xtensor<double, 2>& coor,
     const xt::xtensor<size_t, 2>& conn);
+
+// Stitch meshes
+
+class Stitch {
+public:
+    Stitch() = default;
+
+    Stitch(
+        const xt::xtensor<double, 2>& coor_a,
+        const xt::xtensor<size_t, 2>& conn_a,
+        const xt::xtensor<size_t, 1>& overlapping_nodes_a,
+        const xt::xtensor<double, 2>& coor_b,
+        const xt::xtensor<size_t, 2>& conn_b,
+        const xt::xtensor<size_t, 1>& overlapping_nodes_b,
+        bool check_position = true);
+
+    // return connectivity
+    xt::xtensor<double, 2> coor() const;
+    xt::xtensor<size_t, 2> conn() const;
+
+    // convert set of of node/element-numbers for an original mesh to the final mesh
+    xt::xtensor<size_t, 1> nodeset(const xt::xtensor<size_t, 1>& set, size_t mesh) const;
+    xt::xtensor<size_t, 1> elementset(const xt::xtensor<size_t, 1>& set, size_t mesh) const;
+
+private:
+    xt::xtensor<double, 2> m_coor;
+    xt::xtensor<size_t, 2> m_conn;
+    xt::xtensor<size_t, 1> m_map_b;
+    size_t m_nel_a;
+};
 
 // Renumber to lowest possible index. For example [0,3,4,2] -> [0,2,3,1]
 
