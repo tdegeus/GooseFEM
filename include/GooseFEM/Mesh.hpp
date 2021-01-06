@@ -29,6 +29,102 @@ inline ElementType defaultElementType(
     throw std::runtime_error("Element-type not implemented");
 }
 
+namespace detail {
+
+    template <class T, class R>
+    inline T renum(const T& arg, const R& mapping)
+    {
+        T ret = T::from_shape(arg.shape());
+
+        auto jt = ret.begin();
+
+        for (auto it = arg.begin(); it != arg.end(); ++it, ++jt) {
+            *jt = mapping(*it);
+        }
+
+        return ret;
+    }
+
+} // namespace detail
+
+inline Stitch::Stitch(
+        const xt::xtensor<double, 2>& coor_a,
+        const xt::xtensor<size_t, 2>& conn_a,
+        const xt::xtensor<size_t, 1>& overlapping_nodes_a,
+        const xt::xtensor<double, 2>& coor_b,
+        const xt::xtensor<size_t, 2>& conn_b,
+        const xt::xtensor<size_t, 1>& overlapping_nodes_b,
+        bool check_position)
+{
+    GOOSEFEM_ASSERT(xt::has_shape(overlapping_nodes_a, overlapping_nodes_b.shape()));
+    GOOSEFEM_ASSERT(coor_a.shape(1) == coor_b.shape(1));
+    GOOSEFEM_ASSERT(conn_a.shape(1) == conn_b.shape(1));
+
+    if (check_position) {
+        GOOSEFEM_ASSERT(xt::allclose(
+            xt::view(coor_a, xt::keep(overlapping_nodes_a), xt::all()),
+            xt::view(coor_b, xt::keep(overlapping_nodes_b), xt::all())));
+    }
+
+    size_t nnda = coor_a.shape(0);
+    size_t nndb = coor_b.shape(0);
+    size_t ndim = coor_a.shape(1);
+    size_t nelim = overlapping_nodes_a.size();
+
+    size_t nela = conn_a.shape(0);
+    size_t nelb = conn_b.shape(0);
+    size_t nne = conn_a.shape(1);
+
+    m_nel_a = nela;
+
+    xt::xtensor<size_t, 1> keep_b = xt::setdiff1d(xt::arange<size_t>(nndb), overlapping_nodes_b);
+
+    m_map_b = xt::empty<size_t>({nndb});
+    xt::view(m_map_b, xt::keep(overlapping_nodes_b)) = overlapping_nodes_a;
+    xt::view(m_map_b, xt::keep(keep_b)) = xt::arange<size_t>(keep_b.size()) + nnda;
+
+    m_conn = xt::empty<size_t>({nela + nelb, nne});
+    xt::view(m_conn, xt::range(0, nela), xt::all()) = conn_a;
+    xt::view(m_conn, xt::range(nela, nela + nelb), xt::all()) = detail::renum(conn_b, m_map_b);
+
+    m_coor = xt::empty<size_t>({nnda + nndb - nelim, ndim});
+    xt::view(m_coor, xt::range(0, nnda), xt::all()) = coor_a;
+    xt::view(m_coor, xt::range(nnda, nnda + nndb - nelim), xt::all()) =
+        xt::view(coor_b, xt::keep(keep_b), xt::all());
+}
+
+inline xt::xtensor<double, 2> Stitch::coor() const
+{
+    return m_coor;
+}
+
+inline xt::xtensor<size_t, 2> Stitch::conn() const
+{
+    return m_conn;
+}
+
+inline xt::xtensor<size_t, 1> Stitch::nodeset(const xt::xtensor<size_t, 1>& set, size_t mesh) const
+{
+    GOOSEFEM_ASSERT(mesh <= 1);
+
+    if (mesh == 0) {
+        return set;
+    }
+
+    return detail::renum(set, m_map_b);
+}
+
+inline xt::xtensor<size_t, 1> Stitch::elementset(const xt::xtensor<size_t, 1>& set, size_t mesh) const
+{
+    GOOSEFEM_ASSERT(mesh <= 1);
+
+    if (mesh == 0) {
+        return set;
+    }
+
+    return set + m_nel_a;
+}
+
 inline Renumber::Renumber(const xt::xarray<size_t>& dofs)
 {
     size_t n = xt::amax(dofs)() + 1;
@@ -48,15 +144,7 @@ inline Renumber::Renumber(const xt::xarray<size_t>& dofs)
 template <class T>
 T Renumber::apply(const T& list) const
 {
-    T ret = T::from_shape(list.shape());
-
-    auto jt = ret.begin();
-
-    for (auto it = list.begin(); it != list.end(); ++it, ++jt) {
-        *jt = m_renum(*it);
-    }
-
-    return ret;
+    return detail::renum(list, m_renum);
 }
 
 inline xt::xtensor<size_t, 2> Renumber::get(const xt::xtensor<size_t, 2>& dofs) const
