@@ -8,7 +8,7 @@ endif()
 
 set(ASSERT ON)
 set(DEBUG ON)
-option(XSIMD "Use xsimd and 'march=native' optimisations" ON)
+option(XSIMD "Use xsimd optimisations" ON)
 
 set(test_name "test-basic")
 
@@ -34,16 +34,17 @@ target_link_libraries(${test_name} PRIVATE
     GooseFEM::compiler_warnings
     xtensor::optimize)
 
-if(SIMD)
-    target_link_libraries(${test_name} PRIVATE xtensor::use_xsimd)
-endif()
-
 if(ASSERT)
     target_link_libraries(${test_name} PRIVATE GooseFEM::assert)
 endif()
 
 if(DEBUG)
     target_link_libraries(${test_name} PRIVATE GooseFEM::debug)
+endif()
+
+if(SIMD)
+    find_package(xsimd REQUIRED)
+    target_link_libraries(${test_name} PRIVATE xtensor::use_xsimd)
 endif()
 
 add_test(NAME ${test_name} COMMAND ${test_name})
