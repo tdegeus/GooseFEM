@@ -25,34 +25,69 @@ inline ElementType defaultElementType(
     const xt::xtensor<double, 2>& coor,
     const xt::xtensor<size_t, 2>& conn);
 
-// Stitch meshes
+// Stitch two mesh objects, specifying overlapping nodes by hand
 
-class Stitch {
+class ManualStitch {
 public:
-    Stitch() = default;
+    ManualStitch() = default;
 
-    Stitch(
+    ManualStitch(
         const xt::xtensor<double, 2>& coor_a,
         const xt::xtensor<size_t, 2>& conn_a,
         const xt::xtensor<size_t, 1>& overlapping_nodes_a,
         const xt::xtensor<double, 2>& coor_b,
         const xt::xtensor<size_t, 2>& conn_b,
         const xt::xtensor<size_t, 1>& overlapping_nodes_b,
-        bool check_position = true);
+        bool check_position = true,
+        double rtol = 1e-5,
+        double atol = 1e-8);
 
-    // return connectivity
     xt::xtensor<double, 2> coor() const;
     xt::xtensor<size_t, 2> conn() const;
+    xt::xtensor<size_t, 1> nodemap(size_t mesh_index) const;
 
     // convert set of of node/element-numbers for an original mesh to the final mesh
-    xt::xtensor<size_t, 1> nodeset(const xt::xtensor<size_t, 1>& set, size_t mesh) const;
-    xt::xtensor<size_t, 1> elementset(const xt::xtensor<size_t, 1>& set, size_t mesh) const;
+    xt::xtensor<size_t, 1> nodeset(const xt::xtensor<size_t, 1>& set, size_t mesh_index) const;
+    xt::xtensor<size_t, 1> elementset(const xt::xtensor<size_t, 1>& set, size_t mesh_index) const;
 
 private:
     xt::xtensor<double, 2> m_coor;
     xt::xtensor<size_t, 2> m_conn;
     xt::xtensor<size_t, 1> m_map_b;
+    size_t m_nnd_a;
     size_t m_nel_a;
+};
+
+// Stitch mesh objects, searching for overlapping nodes
+
+class Stitch {
+public:
+    Stitch() = default;
+
+    Stitch(double rtol, double atol);
+
+    void push_back(const xt::xtensor<double, 2>& coor, const xt::xtensor<size_t, 2>& conn);
+
+    // return connectivity
+    xt::xtensor<double, 2> coor() const;
+    xt::xtensor<size_t, 2> conn() const;
+    xt::xtensor<size_t, 1> nodemap(size_t mesh_index) const;
+
+    // convert set of node/element-numbers for an original mesh to the final mesh
+    xt::xtensor<size_t, 1> nodeset(const xt::xtensor<size_t, 1>& set, size_t mesh_index) const;
+    xt::xtensor<size_t, 1> elementset(const xt::xtensor<size_t, 1>& set, size_t mesh_index) const;
+
+    // combine set of node/element-numbers for an original to the final mesh (removes duplicates)
+    xt::xtensor<size_t, 1> nodeset(const std::vector<xt::xtensor<size_t, 1>>& set) const;
+    xt::xtensor<size_t, 1> elementset(const std::vector<xt::xtensor<size_t, 1>>& set) const;
+
+private:
+    xt::xtensor<double, 2> m_coor;
+    xt::xtensor<size_t, 2> m_conn;
+    std::vector<xt::xtensor<size_t, 1>> m_map;
+    std::vector<size_t> m_nel;
+    double m_rtol = 1e-5;
+    double m_atol = 1e-8;
 };
 
 // Renumber to lowest possible index. For example [0,3,4,2] -> [0,2,3,1]
@@ -153,6 +188,15 @@ inline xt::xtensor<size_t, 1> elemmap2nodemap(
     const xt::xtensor<double, 2>& coor,
     const xt::xtensor<size_t, 2>& conn,
     ElementType type);
+
+// Find overlapping nodes
+// Return: [[nodes_from_mesh_a],
+//          [nodes_from_mesh_b]]
+inline xt::xtensor<size_t, 2> overlapping(
+    const xt::xtensor<double, 2>& coor_a,
+    const xt::xtensor<double, 2>& coor_b,
+    double rtol = 1e-5,
+    double atol = 1e-8);
 
 } // namespace Mesh
 } // namespace GooseFEM

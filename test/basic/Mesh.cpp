@@ -8,7 +8,24 @@
 
 TEST_CASE("GooseFEM::Mesh", "Mesh.h")
 {
-    SECTION("Stitch")
+    SECTION("overlapping")
+    {
+        GooseFEM::Mesh::Quad4::Regular mesh(5, 5, 1.0);
+
+        auto coor_a = mesh.coor();
+        auto overlap_a = mesh.nodesTopEdge();
+
+        auto coor_b = mesh.coor();
+        auto overlap_b = mesh.nodesBottomEdge();
+        xt::view(coor_b, xt::all(), 1) += 5.0;
+
+        auto overlap = GooseFEM::Mesh::overlapping(coor_a, coor_b);
+
+        REQUIRE(xt::all(xt::equal(xt::view(overlap, 0, xt::all()), overlap_a)));
+        REQUIRE(xt::all(xt::equal(xt::view(overlap, 1, xt::all()), overlap_b)));
+    }
+
+    SECTION("ManualStitch")
     {
         GooseFEM::Mesh::Quad4::Regular mesh(5, 5, 1.0);
 
@@ -21,13 +38,41 @@ TEST_CASE("GooseFEM::Mesh", "Mesh.h")
         auto overlap_b = mesh.nodesBottomEdge();
         xt::view(coor_b, xt::all(), 1) += 5.0;
 
-        GooseFEM::Mesh::Stitch stitch(coor_a, conn_a, overlap_a, coor_b, conn_b, overlap_b);
+        GooseFEM::Mesh::ManualStitch stitch(coor_a, conn_a, overlap_a, coor_b, conn_b, overlap_b);
 
         GooseFEM::Mesh::Quad4::Regular res(5, 10, 1.0);
 
         REQUIRE(xt::allclose(res.coor(), stitch.coor()));
         REQUIRE(xt::all(xt::equal(res.conn(), stitch.conn())));
         REQUIRE(xt::all(xt::equal(stitch.nodeset(overlap_a, 0), stitch.nodeset(overlap_b, 1))));
+    }
+
+    SECTION("Stitch")
+    {
+        GooseFEM::Mesh::Quad4::Regular mesh(5, 5, 1.0);
+
+        auto coor_a = mesh.coor();
+        auto conn_a = mesh.conn();
+        auto overlap_a = mesh.nodesTopEdge();
+        auto nset = mesh.nodesLeftEdge();
+        auto eset = xt::eval(xt::arange<size_t>(mesh.nelem()));
+
+        auto coor_b = mesh.coor();
+        auto conn_b = mesh.conn();
+        auto overlap_b = mesh.nodesBottomEdge();
+        xt::view(coor_b, xt::all(), 1) += 5.0;
+
+        GooseFEM::Mesh::Stitch stitch;
+        stitch.push_back(coor_a, conn_a);
+        stitch.push_back(coor_b, conn_b);
+
+        GooseFEM::Mesh::Quad4::Regular res(5, 10, 1.0);
+
+        REQUIRE(xt::allclose(res.coor(), stitch.coor()));
+        REQUIRE(xt::all(xt::equal(res.conn(), stitch.conn())));
+        REQUIRE(xt::all(xt::equal(stitch.nodeset(overlap_a, 0), stitch.nodeset(overlap_b, 1))));
+        REQUIRE(xt::all(xt::equal(stitch.nodeset({nset, nset}), xt::arange<size_t>(0, 6 * 6 + 5 * 6, 6))));
+        REQUIRE(xt::all(xt::equal(stitch.elementset({eset, eset}), xt::arange<size_t>(2 * 5 * 5))));
     }
 
     SECTION("edgesize")
