@@ -83,6 +83,7 @@ inline ManualStitch::ManualStitch(
     size_t nne = conn_a.shape(1);
 
     m_nel_a = nela;
+    m_nel_b = nelb;
     m_nnd_a = nnda;
 
     xt::xtensor<size_t, 1> keep_b = xt::setdiff1d(xt::arange<size_t>(nndb), overlapping_nodes_b);
@@ -122,6 +123,17 @@ inline xt::xtensor<size_t, 1> ManualStitch::nodemap(size_t index) const
     return m_map_b;
 }
 
+inline xt::xtensor<size_t, 1> ManualStitch::elemmap(size_t index) const
+{
+    GOOSEFEM_ASSERT(index <= 1);
+
+    if (index == 0) {
+        return xt::arange<size_t>(m_nel_a);
+    }
+
+    return xt::arange<size_t>(m_nel_b) + m_nel_a;
+}
+
 inline xt::xtensor<size_t, 1>
 ManualStitch::nodeset(const xt::xtensor<size_t, 1>& set, size_t index) const
 {
@@ -135,7 +147,7 @@ ManualStitch::nodeset(const xt::xtensor<size_t, 1>& set, size_t index) const
 }
 
 inline xt::xtensor<size_t, 1>
-ManualStitch::elementset(const xt::xtensor<size_t, 1>& set, size_t index) const
+ManualStitch::elemset(const xt::xtensor<size_t, 1>& set, size_t index) const
 {
     GOOSEFEM_ASSERT(index <= 1);
 
@@ -159,10 +171,12 @@ inline void Stitch::push_back(const xt::xtensor<double, 2>& coor, const xt::xten
         m_conn = conn;
         m_map.push_back(xt::eval(xt::arange<size_t>(coor.shape(0))));
         m_nel.push_back(conn.shape(0));
+        m_el_offset.push_back(0);
         return;
     }
 
     auto overlap = overlapping(m_coor, coor, m_rtol, m_atol);
+    size_t index = m_map.size();
 
     ManualStitch stich(
         m_coor, m_conn, xt::view(overlap, 0, xt::all()),
@@ -173,6 +187,7 @@ inline void Stitch::push_back(const xt::xtensor<double, 2>& coor, const xt::xten
     m_conn = stich.conn();
     m_map.push_back(stich.nodemap(1));
     m_nel.push_back(conn.shape(0));
+    m_el_offset.push_back(m_el_offset[index - 1] + conn.shape(0));
 }
 
 inline xt::xtensor<double, 2> Stitch::coor() const
@@ -191,25 +206,25 @@ inline xt::xtensor<size_t, 1> Stitch::nodemap(size_t index) const
     return m_map[index];
 }
 
-inline xt::xtensor<size_t, 1>
-Stitch::nodeset(const xt::xtensor<size_t, 1>& set, size_t index) const
+inline xt::xtensor<size_t, 1> Stitch::elemmap(size_t index) const
+{
+    GOOSEFEM_ASSERT(index < m_map.size());
+    return xt::arange<size_t>(m_nel[index]) + m_el_offset[index];
+}
+
+inline xt::xtensor<size_t, 1> Stitch::nodeset(const xt::xtensor<size_t, 1>& set, size_t index) const
 {
     GOOSEFEM_ASSERT(index < m_map.size());
     return detail::renum(set, m_map[index]);
 }
 
-inline xt::xtensor<size_t, 1>
-Stitch::elementset(const xt::xtensor<size_t, 1>& set, size_t index) const
+inline xt::xtensor<size_t, 1> Stitch::elemset(const xt::xtensor<size_t, 1>& set, size_t index) const
 {
     GOOSEFEM_ASSERT(index < m_map.size());
-    size_t offset = 0;
-    for (size_t i = 0; i < index; ++i) {
-        offset += m_nel[i];
-    }
-    return set + offset;
+    return set + m_el_offset[index];
 }
 
-xt::xtensor<size_t, 1> Stitch::nodeset(const std::vector<xt::xtensor<size_t, 1>>& set) const
+inline xt::xtensor<size_t, 1> Stitch::nodeset(const std::vector<xt::xtensor<size_t, 1>>& set) const
 {
     size_t n = 0;
 
@@ -229,7 +244,7 @@ xt::xtensor<size_t, 1> Stitch::nodeset(const std::vector<xt::xtensor<size_t, 1>>
     return xt::unique(ret);
 }
 
-xt::xtensor<size_t, 1> Stitch::elementset(const std::vector<xt::xtensor<size_t, 1>>& set) const
+inline xt::xtensor<size_t, 1> Stitch::elemset(const std::vector<xt::xtensor<size_t, 1>>& set) const
 {
     size_t n = 0;
 
@@ -242,7 +257,7 @@ xt::xtensor<size_t, 1> Stitch::elementset(const std::vector<xt::xtensor<size_t, 
     n = 0;
 
     for (size_t i = 0; i < set.size(); ++i) {
-        xt::view(ret, xt::range(n, n + set[i].size())) = this->elementset(set[i], i);
+        xt::view(ret, xt::range(n, n + set[i].size())) = this->elemset(set[i], i);
         n += set[i].size();
     }
 
