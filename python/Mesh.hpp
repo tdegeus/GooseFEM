@@ -46,19 +46,20 @@ void init_Mesh(py::module& m)
         .def("coor", &GooseFEM::Mesh::ManualStitch::coor, "Return coordinates of stitched mesh")
         .def("conn", &GooseFEM::Mesh::ManualStitch::conn, "Return connectivity of stitched mesh")
         .def("nodemap", &GooseFEM::Mesh::ManualStitch::nodemap, "Map to new node-numbers")
+        .def("elemmap", &GooseFEM::Mesh::ManualStitch::elemmap, "Map to new element-numbers")
 
         .def(
             "nodeset",
             &GooseFEM::Mesh::ManualStitch::nodeset,
             "Transfer nodeset to the stitched mesh",
-            py::arg("arg"),
+            py::arg("set"),
             py::arg("mesh_index"))
 
         .def(
-            "elementset",
-            &GooseFEM::Mesh::ManualStitch::elementset,
+            "elemset",
+            &GooseFEM::Mesh::ManualStitch::elemset,
             "Transfer elementset to the stitched mesh",
-            py::arg("arg"),
+            py::arg("set"),
             py::arg("mesh_index"))
 
         .def(
@@ -83,21 +84,22 @@ void init_Mesh(py::module& m)
         .def("coor", &GooseFEM::Mesh::Stitch::coor, "Return coordinates of stitched mesh")
         .def("conn", &GooseFEM::Mesh::Stitch::conn, "Return connectivity of stitched mesh")
         .def("nodemap", &GooseFEM::Mesh::Stitch::nodemap, "Map to new node-numbers")
+        .def("elemmap", &GooseFEM::Mesh::Stitch::elemmap, "Map to new element-numbers")
 
         .def(
             "nodeset",
             py::overload_cast<const xt::xtensor<size_t, 1>&, size_t>(
                 &GooseFEM::Mesh::Stitch::nodeset, py::const_),
             "Transfer nodeset to the stitched mesh",
-            py::arg("arg"),
+            py::arg("set"),
             py::arg("mesh_index"))
 
         .def(
-            "elementset",
+            "elemset",
             py::overload_cast<const xt::xtensor<size_t, 1>&, size_t>(
-                &GooseFEM::Mesh::Stitch::elementset, py::const_),
+                &GooseFEM::Mesh::Stitch::elemset, py::const_),
             "Transfer elementset to the stitched mesh",
-            py::arg("arg"),
+            py::arg("set"),
             py::arg("mesh_index"))
 
         .def(
@@ -105,14 +107,14 @@ void init_Mesh(py::module& m)
             py::overload_cast<const std::vector<xt::xtensor<size_t, 1>>&>(
                 &GooseFEM::Mesh::Stitch::nodeset, py::const_),
             "Transfer nodeset to the stitched mesh",
-            py::arg("arg"))
+            py::arg("set"))
 
         .def(
-            "elementset",
+            "elemset",
             py::overload_cast<const std::vector<xt::xtensor<size_t, 1>>&>(
-                &GooseFEM::Mesh::Stitch::elementset, py::const_),
+                &GooseFEM::Mesh::Stitch::elemset, py::const_),
             "Transfer elementset to the stitched mesh",
-            py::arg("arg"))
+            py::arg("set"))
 
         .def(
             "__repr__", [](const GooseFEM::Mesh::Stitch&) { return "<GooseFEM.Mesh.Stitch>"; });

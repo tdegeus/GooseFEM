@@ -45,10 +45,11 @@ public:
     xt::xtensor<double, 2> coor() const;
     xt::xtensor<size_t, 2> conn() const;
     xt::xtensor<size_t, 1> nodemap(size_t mesh_index) const;
+    xt::xtensor<size_t, 1> elemmap(size_t mesh_index) const;
 
     // convert set of of node/element-numbers for an original mesh to the final mesh
     xt::xtensor<size_t, 1> nodeset(const xt::xtensor<size_t, 1>& set, size_t mesh_index) const;
-    xt::xtensor<size_t, 1> elementset(const xt::xtensor<size_t, 1>& set, size_t mesh_index) const;
+    xt::xtensor<size_t, 1> elemset(const xt::xtensor<size_t, 1>& set, size_t mesh_index) const;
 
 private:
     xt::xtensor<double, 2> m_coor;
@@ -56,6 +57,7 @@ private:
     xt::xtensor<size_t, 1> m_map_b;
     size_t m_nnd_a;
     size_t m_nel_a;
+    size_t m_nel_b;
 };
 
 // Stitch mesh objects, searching for overlapping nodes
@@ -68,24 +70,25 @@ public:
 
     void push_back(const xt::xtensor<double, 2>& coor, const xt::xtensor<size_t, 2>& conn);
 
-    // return connectivity
     xt::xtensor<double, 2> coor() const;
     xt::xtensor<size_t, 2> conn() const;
     xt::xtensor<size_t, 1> nodemap(size_t mesh_index) const;
+    xt::xtensor<size_t, 1> elemmap(size_t mesh_index) const;
 
     // convert set of node/element-numbers for an original mesh to the final mesh
     xt::xtensor<size_t, 1> nodeset(const xt::xtensor<size_t, 1>& set, size_t mesh_index) const;
-    xt::xtensor<size_t, 1> elementset(const xt::xtensor<size_t, 1>& set, size_t mesh_index) const;
+    xt::xtensor<size_t, 1> elemset(const xt::xtensor<size_t, 1>& set, size_t mesh_index) const;
 
     // combine set of node/element-numbers for an original to the final mesh (removes duplicates)
     xt::xtensor<size_t, 1> nodeset(const std::vector<xt::xtensor<size_t, 1>>& set) const;
-    xt::xtensor<size_t, 1> elementset(const std::vector<xt::xtensor<size_t, 1>>& set) const;
+    xt::xtensor<size_t, 1> elemset(const std::vector<xt::xtensor<size_t, 1>>& set) const;
 
 private:
     xt::xtensor<double, 2> m_coor;
     xt::xtensor<size_t, 2> m_conn;
     std::vector<xt::xtensor<size_t, 1>> m_map;
     std::vector<size_t> m_nel;
+    std::vector<size_t> m_el_offset;
     double m_rtol = 1e-5;
     double m_atol = 1e-8;
 };

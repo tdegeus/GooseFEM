@@ -31,9 +31,9 @@ coor = stitch.coor()
 conn = stitch.conn()
 
 cindex = np.zeros(conn.shape[0])
-cindex[stitch.elementset(np.arange(mesh.nelem()), 0)] = 1
-cindex[stitch.elementset(np.arange(mesh.nelem()), 1)] = 2
-cindex[stitch.elementset(np.arange(mesh.nelem()), 2)] = 3
+cindex[stitch.elemset(np.arange(mesh.nelem()), 0)] = 1
+cindex[stitch.elemset(np.arange(mesh.nelem()), 1)] = 2
+cindex[stitch.elemset(np.arange(mesh.nelem()), 2)] = 3
 
 im = gplt.patch(coor=coor, conn=conn, cindex=cindex, cmap='jet', axis=ax)
 
