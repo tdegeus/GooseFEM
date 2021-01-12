@@ -19,7 +19,7 @@ void init_Mesh(py::module& m)
         .value("Hex8", GooseFEM::Mesh::ElementType::Hex8)
         .export_values();
 
-    py::class_<GooseFEM::Mesh::Stitch>(m, "Stitch")
+    py::class_<GooseFEM::Mesh::ManualStitch>(m, "ManualStitch")
 
         .def(
             py::init<
@@ -29,32 +29,90 @@ void init_Mesh(py::module& m)
                 const xt::xtensor<double, 2>&,
                 const xt::xtensor<size_t, 2>&,
                 const xt::xtensor<size_t, 1>&,
-                bool>(),
-            "Stitch meshes",
+                bool,
+                double,
+                double>(),
+            "ManualStitch meshes",
             py::arg("coor_a"),
             py::arg("conn_a"),
             py::arg("overlapping_nodes_a"),
             py::arg("coor_b"),
             py::arg("conn_b"),
             py::arg("overlapping_nodes_b"),
-            py::arg("check_position") = true)
+            py::arg("check_position") = true,
+            py::arg("rtol") = 1e-5,
+            py::arg("atol") = 1e-8)
 
-        .def("coor", &GooseFEM::Mesh::Stitch::coor, "Return coordinates of stitched mesh")
-        .def("conn", &GooseFEM::Mesh::Stitch::conn, "Return connectivity of stitched mesh")
+        .def("coor", &GooseFEM::Mesh::ManualStitch::coor, "Return coordinates of stitched mesh")
+        .def("conn", &GooseFEM::Mesh::ManualStitch::conn, "Return connectivity of stitched mesh")
+        .def("nodemap", &GooseFEM::Mesh::ManualStitch::nodemap, "Map to new node-numbers")
 
         .def(
             "nodeset",
-            &GooseFEM::Mesh::Stitch::nodeset,
+            &GooseFEM::Mesh::ManualStitch::nodeset,
             "Transfer nodeset to the stitched mesh",
             py::arg("arg"),
-            py::arg("mesh"))
+            py::arg("mesh_index"))
 
         .def(
             "elementset",
-            &GooseFEM::Mesh::Stitch::elementset,
+            &GooseFEM::Mesh::ManualStitch::elementset,
             "Transfer elementset to the stitched mesh",
             py::arg("arg"),
-            py::arg("mesh"))
+            py::arg("mesh_index"))
+
+        .def(
+            "__repr__", [](const GooseFEM::Mesh::ManualStitch&) {
+                return "<GooseFEM.Mesh.ManualStitch>"; });
+
+    py::class_<GooseFEM::Mesh::Stitch>(m, "Stitch")
+
+        .def(
+            py::init<double, double>(),
+            "Stitch meshes",
+            py::arg("rtol") = 1e-5,
+            py::arg("atol") = 1e-8)
+
+        .def(
+            "push_back",
+            &GooseFEM::Mesh::Stitch::push_back,
+            "Add mesh",
+            py::arg("coor"),
+            py::arg("conn"))
+
+        .def("coor", &GooseFEM::Mesh::Stitch::coor, "Return coordinates of stitched mesh")
+        .def("conn", &GooseFEM::Mesh::Stitch::conn, "Return connectivity of stitched mesh")
+        .def("nodemap", &GooseFEM::Mesh::Stitch::nodemap, "Map to new node-numbers")
+
+        .def(
+            "nodeset",
+            py::overload_cast<const xt::xtensor<size_t, 1>&, size_t>(
+                &GooseFEM::Mesh::Stitch::nodeset, py::const_),
+            "Transfer nodeset to the stitched mesh",
+            py::arg("arg"),
+            py::arg("mesh_index"))
+
+        .def(
+            "elementset",
+            py::overload_cast<const xt::xtensor<size_t, 1>&, size_t>(
+                &GooseFEM::Mesh::Stitch::elementset, py::const_),
+            "Transfer elementset to the stitched mesh",
+            py::arg("arg"),
+            py::arg("mesh_index"))
+
+        .def(
+            "nodeset",
+            py::overload_cast<const std::vector<xt::xtensor<size_t, 1>>&>(
+                &GooseFEM::Mesh::Stitch::nodeset, py::const_),
+            "Transfer nodeset to the stitched mesh",
+            py::arg("arg"))
+
+        .def(
+            "elementset",
+            py::overload_cast<const std::vector<xt::xtensor<size_t, 1>>&>(
+                &GooseFEM::Mesh::Stitch::elementset, py::const_),
+            "Transfer elementset to the stitched mesh",
+            py::arg("arg"))
 
         .def(
             "__repr__", [](const GooseFEM::Mesh::Stitch&) { return "<GooseFEM.Mesh.Stitch>"; });
@@ -194,4 +252,13 @@ void init_Mesh(py::module& m)
         py::arg("coor"),
         py::arg("conn"),
         py::arg("type"));
+
+    m.def(
+        "overlapping",
+        &GooseFEM::Mesh::overlapping,
+        "Find overlapping nodes",
+        py::arg("coor_a"),
+        py::arg("coor_b"),
+        py::arg("rtol") = 1e-5,
+        py::arg("atol") = 1e-8);
 }

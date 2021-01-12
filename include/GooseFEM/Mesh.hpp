@@ -47,15 +47,20 @@ namespace detail {
 
 } // namespace detail
 
-inline Stitch::Stitch(
+inline ManualStitch::ManualStitch(
         const xt::xtensor<double, 2>& coor_a,
         const xt::xtensor<size_t, 2>& conn_a,
         const xt::xtensor<size_t, 1>& overlapping_nodes_a,
         const xt::xtensor<double, 2>& coor_b,
         const xt::xtensor<size_t, 2>& conn_b,
         const xt::xtensor<size_t, 1>& overlapping_nodes_b,
-        bool check_position)
+        bool check_position,
+        double rtol,
+        double atol)
 {
+    UNUSED(rtol);
+    UNUSED(atol);
+
     GOOSEFEM_ASSERT(xt::has_shape(overlapping_nodes_a, overlapping_nodes_b.shape()));
     GOOSEFEM_ASSERT(coor_a.shape(1) == coor_b.shape(1));
     GOOSEFEM_ASSERT(conn_a.shape(1) == conn_b.shape(1));
@@ -63,7 +68,9 @@ inline Stitch::Stitch(
     if (check_position) {
         GOOSEFEM_ASSERT(xt::allclose(
             xt::view(coor_a, xt::keep(overlapping_nodes_a), xt::all()),
-            xt::view(coor_b, xt::keep(overlapping_nodes_b), xt::all())));
+            xt::view(coor_b, xt::keep(overlapping_nodes_b), xt::all()),
+            rtol,
+            atol));
     }
 
     size_t nnda = coor_a.shape(0);
@@ -76,6 +83,7 @@ inline Stitch::Stitch(
     size_t nne = conn_a.shape(1);
 
     m_nel_a = nela;
+    m_nnd_a = nnda;
 
     xt::xtensor<size_t, 1> keep_b = xt::setdiff1d(xt::arange<size_t>(nndb), overlapping_nodes_b);
 
@@ -93,6 +101,80 @@ inline Stitch::Stitch(
         xt::view(coor_b, xt::keep(keep_b), xt::all());
 }
 
+inline xt::xtensor<double, 2> ManualStitch::coor() const
+{
+    return m_coor;
+}
+
+inline xt::xtensor<size_t, 2> ManualStitch::conn() const
+{
+    return m_conn;
+}
+
+inline xt::xtensor<size_t, 1> ManualStitch::nodemap(size_t index) const
+{
+    GOOSEFEM_ASSERT(index <= 1);
+
+    if (index == 0) {
+        return xt::arange<size_t>(m_nnd_a);
+    }
+
+    return m_map_b;
+}
+
+inline xt::xtensor<size_t, 1>
+ManualStitch::nodeset(const xt::xtensor<size_t, 1>& set, size_t index) const
+{
+    GOOSEFEM_ASSERT(index <= 1);
+
+    if (index == 0) {
+        return set;
+    }
+
+    return detail::renum(set, m_map_b);
+}
+
+inline xt::xtensor<size_t, 1>
+ManualStitch::elementset(const xt::xtensor<size_t, 1>& set, size_t index) const
+{
+    GOOSEFEM_ASSERT(index <= 1);
+
+    if (index == 0) {
+        return set;
+    }
+
+    return set + m_nel_a;
+}
+
+inline Stitch::Stitch(double rtol, double atol)
+{
+    m_rtol = rtol;
+    m_atol = atol;
+}
+
+inline void Stitch::push_back(const xt::xtensor<double, 2>& coor, const xt::xtensor<size_t, 2>& conn)
+{
+    if (m_map.size() == 0) {
+        m_coor = coor;
+        m_conn = conn;
+        m_map.push_back(xt::eval(xt::arange<size_t>(coor.shape(0))));
+        m_nel.push_back(conn.shape(0));
+        return;
+    }
+
+    auto overlap = overlapping(m_coor, coor, m_rtol, m_atol);
+
+    ManualStitch stich(
+        m_coor, m_conn, xt::view(overlap, 0, xt::all()),
+        coor, conn, xt::view(overlap, 1, xt::all()),
+        false);
+
+    m_coor = stich.coor();
+    m_conn = stich.conn();
+    m_map.push_back(stich.nodemap(1));
+    m_nel.push_back(conn.shape(0));
+}
+
 inline xt::xtensor<double, 2> Stitch::coor() const
 {
     return m_coor;
@@ -103,26 +185,68 @@ inline xt::xtensor<size_t, 2> Stitch::conn() const
     return m_conn;
 }
 
-inline xt::xtensor<size_t, 1> Stitch::nodeset(const xt::xtensor<size_t, 1>& set, size_t mesh) const
+inline xt::xtensor<size_t, 1> Stitch::nodemap(size_t index) const
 {
-    GOOSEFEM_ASSERT(mesh <= 1);
-
-    if (mesh == 0) {
-        return set;
-    }
-
-    return detail::renum(set, m_map_b);
+    GOOSEFEM_ASSERT(index < m_map.size());
+    return m_map[index];
 }
 
-inline xt::xtensor<size_t, 1> Stitch::elementset(const xt::xtensor<size_t, 1>& set, size_t mesh) const
+inline xt::xtensor<size_t, 1>
+Stitch::nodeset(const xt::xtensor<size_t, 1>& set, size_t index) const
 {
-    GOOSEFEM_ASSERT(mesh <= 1);
+    GOOSEFEM_ASSERT(index < m_map.size());
+    return detail::renum(set, m_map[index]);
+}
 
-    if (mesh == 0) {
-        return set;
+inline xt::xtensor<size_t, 1>
+Stitch::elementset(const xt::xtensor<size_t, 1>& set, size_t index) const
+{
+    GOOSEFEM_ASSERT(index < m_map.size());
+    size_t offset = 0;
+    for (size_t i = 0; i < index; ++i) {
+        offset += m_nel[i];
+    }
+    return set + offset;
+}
+
+xt::xtensor<size_t, 1> Stitch::nodeset(const std::vector<xt::xtensor<size_t, 1>>& set) const
+{
+    size_t n = 0;
+
+    for (size_t i = 0; i < set.size(); ++i) {
+        n += set[i].size();
     }
 
-    return set + m_nel_a;
+    xt::xtensor<size_t, 1> ret = xt::empty<size_t>({n});
+
+    n = 0;
+
+    for (size_t i = 0; i < set.size(); ++i) {
+        xt::view(ret, xt::range(n, n + set[i].size())) = this->nodeset(set[i], i);
+        n += set[i].size();
+    }
+
+    return xt::unique(ret);
+}
+
+xt::xtensor<size_t, 1> Stitch::elementset(const std::vector<xt::xtensor<size_t, 1>>& set) const
+{
+    size_t n = 0;
+
+    for (size_t i = 0; i < set.size(); ++i) {
+        n += set[i].size();
+    }
+
+    xt::xtensor<size_t, 1> ret = xt::empty<size_t>({n});
+
+    n = 0;
+
+    for (size_t i = 0; i < set.size(); ++i) {
+        xt::view(ret, xt::range(n, n + set[i].size())) = this->elementset(set[i], i);
+        n += set[i].size();
+    }
+
+    return ret;
 }
 
 inline Renumber::Renumber(const xt::xarray<size_t>& dofs)
@@ -364,6 +488,37 @@ inline xt::xtensor<size_t, 1> elemmap2nodemap(
     const xt::xtensor<size_t, 2>& conn)
 {
     return elemmap2nodemap(elem_map, coor, conn, defaultElementType(coor, conn));
+}
+
+inline xt::xtensor<size_t, 2> overlapping(
+    const xt::xtensor<double, 2>& coor_a,
+    const xt::xtensor<double, 2>& coor_b,
+    double rtol,
+    double atol)
+{
+    GOOSEFEM_ASSERT(coor_a.shape(1) == coor_b.shape(1));
+
+    std::vector<size_t> ret_a;
+    std::vector<size_t> ret_b;
+
+    for (size_t i = 0; i < coor_a.shape(0); ++i) {
+
+        auto idx = xt::flatten_indices(xt::argwhere(xt::prod(xt::isclose(
+            coor_b, xt::view(coor_a, i, xt::all()), rtol, atol), 1)));
+
+        for (auto& j : idx) {
+            ret_a.push_back(i);
+            ret_b.push_back(j);
+        }
+    }
+
+    xt::xtensor<size_t, 2> ret = xt::empty<size_t>({size_t(2), ret_a.size()});
+    for (size_t i = 0; i < ret_a.size(); ++i) {
+        ret(0, i) = ret_a[i];
+        ret(1, i) = ret_b[i];
+    }
+
+    return ret;
 }
 
 } // namespace Mesh
