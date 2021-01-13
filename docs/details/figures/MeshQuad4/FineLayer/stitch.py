@@ -10,22 +10,19 @@ fig, ax = plt.subplots()
 
 mesh = GooseFEM.Mesh.Quad4.FineLayer(6 * 9, 51)
 
-coor_a = mesh.coor()
-conn_a = mesh.conn()
+coor_0 = mesh.coor()
+coor_1 = mesh.coor()
+coor_2 = mesh.coor()
 
-coor_b = mesh.coor()
-conn_b = mesh.conn()
+H = np.max(coor_0[:, 1])
 
-coor_c = mesh.coor()
-conn_c = mesh.conn()
-
-coor_b[:, 1] += np.max(coor_a[:, 1])
-coor_c[:, 1] += np.max(coor_a[:, 1]) * 2
+coor_1[:, 1] += H
+coor_2[:, 1] += H * 2
 
 stitch = GooseFEM.Mesh.Stitch()
-stitch.push_back(coor_a, conn_a)
-stitch.push_back(coor_b, conn_b)
-stitch.push_back(coor_c, conn_c)
+stitch.push_back(coor_0, mesh.conn())
+stitch.push_back(coor_1, mesh.conn())
+stitch.push_back(coor_2, mesh.conn())
 
 coor = stitch.coor()
 conn = stitch.conn()

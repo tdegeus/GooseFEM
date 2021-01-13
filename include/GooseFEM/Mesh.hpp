@@ -140,9 +140,11 @@ ManualStitch::nodeset(const xt::xtensor<size_t, 1>& set, size_t index) const
     GOOSEFEM_ASSERT(index <= 1);
 
     if (index == 0) {
+        GOOSEFEM_ASSERT(xt::amax(set)() < m_nnd_a);
         return set;
     }
 
+    GOOSEFEM_ASSERT(xt::amax(set)() < m_map_b.size());
     return detail::renum(set, m_map_b);
 }
 
@@ -152,9 +154,11 @@ ManualStitch::elemset(const xt::xtensor<size_t, 1>& set, size_t index) const
     GOOSEFEM_ASSERT(index <= 1);
 
     if (index == 0) {
+        GOOSEFEM_ASSERT(xt::amax(set)() < m_nel_a);
         return set;
     }
 
+    GOOSEFEM_ASSERT(xt::amax(set)() < m_nel_b);
     return set + m_nel_a;
 }
 
@@ -187,7 +191,7 @@ inline void Stitch::push_back(const xt::xtensor<double, 2>& coor, const xt::xten
     m_conn = stich.conn();
     m_map.push_back(stich.nodemap(1));
     m_nel.push_back(conn.shape(0));
-    m_el_offset.push_back(m_el_offset[index - 1] + conn.shape(0));
+    m_el_offset.push_back(m_el_offset[index - 1] + m_nel[index - 1]);
 }
 
 inline xt::xtensor<double, 2> Stitch::coor() const
@@ -215,17 +219,21 @@ inline xt::xtensor<size_t, 1> Stitch::elemmap(size_t index) const
 inline xt::xtensor<size_t, 1> Stitch::nodeset(const xt::xtensor<size_t, 1>& set, size_t index) const
 {
     GOOSEFEM_ASSERT(index < m_map.size());
+    GOOSEFEM_ASSERT(xt::amax(set)() < m_map[index].size());
     return detail::renum(set, m_map[index]);
 }
 
 inline xt::xtensor<size_t, 1> Stitch::elemset(const xt::xtensor<size_t, 1>& set, size_t index) const
 {
     GOOSEFEM_ASSERT(index < m_map.size());
+    GOOSEFEM_ASSERT(xt::amax(set)() < m_nel[index]);
     return set + m_el_offset[index];
 }
 
 inline xt::xtensor<size_t, 1> Stitch::nodeset(const std::vector<xt::xtensor<size_t, 1>>& set) const
 {
+    GOOSEFEM_ASSERT(set.size() == m_map.size());
+
     size_t n = 0;
 
     for (size_t i = 0; i < set.size(); ++i) {
@@ -246,6 +254,8 @@ inline xt::xtensor<size_t, 1> Stitch::nodeset(const std::vector<xt::xtensor<size
 
 inline xt::xtensor<size_t, 1> Stitch::elemset(const std::vector<xt::xtensor<size_t, 1>>& set) const
 {
+    GOOSEFEM_ASSERT(set.size() == m_map.size());
+
     size_t n = 0;
 
     for (size_t i = 0; i < set.size(); ++i) {

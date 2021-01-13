@@ -459,6 +459,21 @@ inline double FineLayer::h() const
     return m_h;
 }
 
+inline xt::xtensor<size_t, 1> FineLayer::elemrow_nhx() const
+{
+    return m_nhx;
+}
+
+inline xt::xtensor<size_t, 1> FineLayer::elemrow_nhy() const
+{
+    return m_nhy;
+}
+
+inline xt::xtensor<size_t, 1> FineLayer::elemrow_nelem() const
+{
+    return m_nelx;
+}
+
 inline ElementType FineLayer::getElementType() const
 {
     return ElementType::Quad4;
