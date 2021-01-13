@@ -108,6 +108,11 @@ public:
     size_t nely() const;  // number of elements in y-direction
     double h() const;     // edge size
 
+    // edge size, per row of elements (in units of "h")
+    xt::xtensor<size_t, 1> elemrow_nhx() const;
+    xt::xtensor<size_t, 1> elemrow_nhy() const;
+    xt::xtensor<size_t, 1> elemrow_nelem() const;
+
     // type
     ElementType getElementType() const;
 
@@ -120,15 +125,16 @@ public:
 
     // select region of elements from 'matrix' of element numbers
     xt::xtensor<size_t, 1> elementgrid_ravel(
-        std::vector<size_t> rows_range,
-        std::vector<size_t> cols_range) const;
+        std::vector<size_t> rows_start_stop,
+        std::vector<size_t> cols_start_stop) const;
 
     // select region of elements from 'matrix' of element numbers around an element
+    // - square box with edge-size (2 * "size" + 1) * "h", around "element"
     xt::xtensor<size_t, 1> elementgrid_around_ravel(
         size_t element,
         size_t size,
         bool periodic = true);
-
+    // - left/right from "element" (on the same layer)
     xt::xtensor<size_t, 1> elementgrid_leftright(
         size_t element,
         size_t left,

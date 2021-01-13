@@ -25,65 +25,35 @@ void init_MeshQuad4(py::module& m)
             py::arg("h") = 1.)
 
         .def("coor", &GooseFEM::Mesh::Quad4::Regular::coor)
-
         .def("conn", &GooseFEM::Mesh::Quad4::Regular::conn)
-
         .def("nelem", &GooseFEM::Mesh::Quad4::Regular::nelem)
-
         .def("nnode", &GooseFEM::Mesh::Quad4::Regular::nnode)
-
         .def("nne", &GooseFEM::Mesh::Quad4::Regular::nne)
-
         .def("ndim", &GooseFEM::Mesh::Quad4::Regular::ndim)
-
         .def("nelx", &GooseFEM::Mesh::Quad4::Regular::nelx)
-
         .def("nely", &GooseFEM::Mesh::Quad4::Regular::nely)
-
         .def("h", &GooseFEM::Mesh::Quad4::Regular::h)
-
         .def("getElementType", &GooseFEM::Mesh::Quad4::Regular::getElementType)
-
         .def("nodesBottomEdge", &GooseFEM::Mesh::Quad4::Regular::nodesBottomEdge)
-
         .def("nodesTopEdge", &GooseFEM::Mesh::Quad4::Regular::nodesTopEdge)
-
         .def("nodesLeftEdge", &GooseFEM::Mesh::Quad4::Regular::nodesLeftEdge)
-
         .def("nodesRightEdge", &GooseFEM::Mesh::Quad4::Regular::nodesRightEdge)
-
         .def("nodesBottomOpenEdge", &GooseFEM::Mesh::Quad4::Regular::nodesBottomOpenEdge)
-
         .def("nodesTopOpenEdge", &GooseFEM::Mesh::Quad4::Regular::nodesTopOpenEdge)
-
         .def("nodesLeftOpenEdge", &GooseFEM::Mesh::Quad4::Regular::nodesLeftOpenEdge)
-
         .def("nodesRightOpenEdge", &GooseFEM::Mesh::Quad4::Regular::nodesRightOpenEdge)
-
         .def("nodesBottomLeftCorner", &GooseFEM::Mesh::Quad4::Regular::nodesBottomLeftCorner)
-
         .def("nodesBottomRightCorner", &GooseFEM::Mesh::Quad4::Regular::nodesBottomRightCorner)
-
         .def("nodesTopLeftCorner", &GooseFEM::Mesh::Quad4::Regular::nodesTopLeftCorner)
-
         .def("nodesTopRightCorner", &GooseFEM::Mesh::Quad4::Regular::nodesTopRightCorner)
-
         .def("nodesLeftBottomCorner", &GooseFEM::Mesh::Quad4::Regular::nodesLeftBottomCorner)
-
         .def("nodesLeftTopCorner", &GooseFEM::Mesh::Quad4::Regular::nodesLeftTopCorner)
-
         .def("nodesRightBottomCorner", &GooseFEM::Mesh::Quad4::Regular::nodesRightBottomCorner)
-
         .def("nodesRightTopCorner", &GooseFEM::Mesh::Quad4::Regular::nodesRightTopCorner)
-
         .def("dofs", &GooseFEM::Mesh::Quad4::Regular::dofs)
-
         .def("nodesPeriodic", &GooseFEM::Mesh::Quad4::Regular::nodesPeriodic)
-
         .def("nodesOrigin", &GooseFEM::Mesh::Quad4::Regular::nodesOrigin)
-
         .def("dofsPeriodic", &GooseFEM::Mesh::Quad4::Regular::dofsPeriodic)
-
         .def("elementgrid", &GooseFEM::Mesh::Quad4::Regular::elementgrid)
 
         .def("__repr__", [](const GooseFEM::Mesh::Quad4::Regular&) {
@@ -116,6 +86,9 @@ void init_MeshQuad4(py::module& m)
         .def("nelx", &GooseFEM::Mesh::Quad4::FineLayer::nelx)
         .def("nely", &GooseFEM::Mesh::Quad4::FineLayer::nely)
         .def("h", &GooseFEM::Mesh::Quad4::FineLayer::h)
+        .def("elemrow_nhx", &GooseFEM::Mesh::Quad4::FineLayer::elemrow_nhx)
+        .def("elemrow_nhy", &GooseFEM::Mesh::Quad4::FineLayer::elemrow_nhy)
+        .def("elemrow_nelem", &GooseFEM::Mesh::Quad4::FineLayer::elemrow_nelem)
         .def("getElementType", &GooseFEM::Mesh::Quad4::FineLayer::getElementType)
         .def("elementsMiddleLayer", &GooseFEM::Mesh::Quad4::FineLayer::elementsMiddleLayer)
 
