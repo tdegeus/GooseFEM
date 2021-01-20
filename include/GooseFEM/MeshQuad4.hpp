@@ -663,6 +663,16 @@ inline xt::xtensor<size_t, 1> FineLayer::elementsMiddleLayer() const
     return m_startElem(iy) + xt::arange<size_t>(m_nelx(iy));
 }
 
+inline xt::xtensor<size_t, 1> FineLayer::elementsLayer(size_t iy) const
+{
+    GOOSEFEM_ASSERT(iy < m_nelx.size());
+    size_t n = m_nelx(iy);
+    if (m_refine(iy) != -1) {
+        n *= 4;
+    }
+    return m_startElem(iy) + xt::arange<size_t>(n);
+}
+
 inline xt::xtensor<size_t, 1> FineLayer::elementgrid_ravel(
     std::vector<size_t> start_stop_rows,
     std::vector<size_t> start_stop_cols) const

@@ -91,6 +91,7 @@ void init_MeshQuad4(py::module& m)
         .def("elemrow_nelem", &GooseFEM::Mesh::Quad4::FineLayer::elemrow_nelem)
         .def("getElementType", &GooseFEM::Mesh::Quad4::FineLayer::getElementType)
         .def("elementsMiddleLayer", &GooseFEM::Mesh::Quad4::FineLayer::elementsMiddleLayer)
+        .def("elementsLayer", &GooseFEM::Mesh::Quad4::FineLayer::elementsLayer)
 
         .def(
             "elementgrid_ravel",
