@@ -123,6 +123,9 @@ public:
     // elements in the middle (fine) layer
     xt::xtensor<size_t, 1> elementsMiddleLayer() const;
 
+    // extract elements along a layer
+    xt::xtensor<size_t, 1> elementsLayer(size_t layer) const;
+
     // select region of elements from 'matrix' of element numbers
     xt::xtensor<size_t, 1> elementgrid_ravel(
         std::vector<size_t> rows_start_stop,
