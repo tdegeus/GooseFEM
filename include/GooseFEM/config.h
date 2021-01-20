@@ -69,7 +69,7 @@ using namespace xt::placeholders;
     }
 
 #define GOOSEFEM_VERSION_MAJOR 0
-#define GOOSEFEM_VERSION_MINOR 7
+#define GOOSEFEM_VERSION_MINOR 8
 #define GOOSEFEM_VERSION_PATCH 0
 
 #define GOOSEFEM_VERSION_AT_LEAST(x, y, z) \

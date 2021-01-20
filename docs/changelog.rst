@@ -3,6 +3,22 @@
 Changelog
 *********
 
+v0.8.0
+======
+
+*   [CI] Using gcc-8
+*   Adding Mesh::Quad4::FineLayer::elementsLayer
+*   Stitch: Adding nodesets to example
+*   Stitch: Adding hybrid example. Adding assertions.
+*   Making API more functional
+*   Adding Mesh::ManualStich
+*   Adding Mesh::Stitch
+*   Minor style update
+*   [CMake] Minor updates in testing
+*   [CI] improve comments (#142)
+*   Combining tests MeshQuad4 (#141)
+*   Using clang on Windows (#139)
+
 v0.7.0
 ======
 
