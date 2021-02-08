@@ -8,7 +8,7 @@ Generic mesh operations.
 #ifndef GOOSEFEM_MESH_H
 #define GOOSEFEM_MESH_H
 
-// #include "config.h"
+#include "config.h"
 
 namespace GooseFEM {
 namespace Mesh {
