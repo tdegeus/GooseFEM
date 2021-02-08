@@ -38,11 +38,22 @@ GooseFEM
    conventions/allocation.rst
 
 .. toctree::
+   :caption: API
+   :maxdepth: 1
+
+   api/Mesh.rst
+
+.. toctree::
+   :caption: PYTHON API
+   :maxdepth: 1
+
+   api_python/Mesh.rst
+
+.. toctree::
    :caption: DETAILS
    :maxdepth: 1
 
    details/macros.rst
-   details/Mesh.rst
    details/MeshTri3.rst
    details/MeshQuad4.rst
    details/MeshHex8.rst
