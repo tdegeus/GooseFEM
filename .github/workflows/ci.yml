@@ -55,9 +55,9 @@ jobs:
 
     - name: Select GCC
       if: matrix.gcc
-      env:
-        CC: gcc-${{ matrix.gcc }}
-        CXX: g++-${{ matrix.gcc }}
+      run: |
+         echo "CC=gcc-${{ matrix.gcc }}" >> $GITHUB_ENV
+         echo "CXX=g++-${{ matrix.gcc }}" >> $GITHUB_ENV
 
     - name: Configure using CMake (!Windows)
       if: runner.os != 'Windows'
