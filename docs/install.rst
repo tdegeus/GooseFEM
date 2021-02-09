@@ -46,6 +46,7 @@ Install headers, *CMake* and *pkg-config* support::
     cmake .
     make install
 
+.. _install_python:
 
 Python interface
 ================
@@ -62,6 +63,8 @@ The quickest (but not the most efficient!) is to use *conda* to install *GooseFE
     This package does not benefit from *xsimd* optimisation,
     as it is not compiled on your hardware.
     You'll have to compile by hand to benefit from *xsimd* optimisation.
+
+.. _install_python_source:
 
 From source
 ^^^^^^^^^^^
