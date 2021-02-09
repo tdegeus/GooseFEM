@@ -1,0 +1,10 @@
+channels:
+  - conda-forge
+dependencies:
+  - doxygen
+  - breathe
+  - sphinx
+  - sphinx_rtd_theme
+  - python-goosefem
+  - pyxtensor
+  - eigen
