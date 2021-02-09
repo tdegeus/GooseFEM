@@ -1,6 +1,7 @@
 .DS_Store
 tmp*
 docs/xml
+docs/html
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
