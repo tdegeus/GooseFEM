@@ -1,6 +1,8 @@
-name: pages
+name: Published doxygen output to GitHub pages
 
-on: push
+on:
+  release:
+    types: [created]
 
 jobs:
 
