@@ -20,3 +20,15 @@ dependencies:
   - catch2
   - gmatelastic
   - gmatelastoplasticqpot
+
+  # to run examples
+  - h5py
+  - highfive
+  - xdmfwrite_highfive
+  - xdmfwrite_h5py
+  - gmatelastic
+  - gmatnonlinearelastic
+  - gmatelastoplastic
+  - gmatelastoplasticfinitestrainsimo
+  - gmatelastoplasticqpot
+  - python-gmatelastic

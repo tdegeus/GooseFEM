@@ -18,17 +18,17 @@ jobs:
         include:
           - runs-on: ubuntu-latest
             config: -DBUILD_TESTS=1 -DBUILD_EXAMPLES=1
-            conda: environment.yaml
+            conda: docs/examples/environment.yaml
             prop: tests & examples
             compiler: gcc
             gcc: 8
           - runs-on: macos-latest
             config: -DBUILD_TESTS=1 -DBUILD_EXAMPLES=0
-            conda: environment_no-examples.yaml
+            conda: environment.yaml
             prop: tests
           - runs-on: windows-latest
             config: -DBUILD_TESTS=1 -DBUILD_EXAMPLES=0
-            conda: environment_no-examples.yaml
+            conda: environment.yaml
             prop: tests
 
     defaults:

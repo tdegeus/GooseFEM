@@ -16,4 +16,4 @@ formats:
 version: 2
 
 conda:
-  environment: docs/environment.yml
+  environment: .readthedocsenv.yml
