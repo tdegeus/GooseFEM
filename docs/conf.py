@@ -10,9 +10,19 @@
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 #
-# import os
-# import sys
+import os
+import sys
 # sys.path.insert(0, os.path.abspath('.'))
+
+# -- Run Doxygen -------------------------------------------------------------
+
+import subprocess
+
+read_the_docs_build = os.environ.get('READTHEDOCS', None) == 'True'
+
+if read_the_docs_build:
+
+    subprocess.call('doxygen', shell=True)
 
 
 # -- Project information -----------------------------------------------------
