@@ -18,9 +18,9 @@ namespace Mesh {
 Enumerator for element-types
 */
 enum class ElementType {
-    Quad4, /*!< Quadrilateral: 4-noded element in 2-d */
-    Hex8, /*!< Hexahedron: 8-noded element in 3-d */
-    Tri3 /*!< Triangle: 3-noded element in 2-d */
+    Quad4, ///< Quadrilateral: 4-noded element in 2-d
+    Hex8, ///< Hexahedron: 8-noded element in 3-d
+    Tri3 ///< Triangle: 3-noded element in 2-d
 };
 
 /**
