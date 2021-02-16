@@ -66,6 +66,12 @@ public:
     xt::xtensor<double, 1> AssembleDofs(const xt::xtensor<double, 3>& elemvec) const;
     xt::xtensor<double, 2> AssembleNode(const xt::xtensor<double, 3>& elemvec) const;
 
+    // Get shape of dofval, nodevec, elemvec
+    std::array<size_t, 1> ShapeDofval() const;
+    std::array<size_t, 2> ShapeNodevec() const;
+    std::array<size_t, 3> ShapeElemvec() const;
+    std::array<size_t, 3> ShapeElemmat() const;
+
     // Get zero-allocated dofval, nodevec, elemvec
     xt::xtensor<double, 1> AllocateDofval() const;
     xt::xtensor<double, 2> AllocateNodevec() const;

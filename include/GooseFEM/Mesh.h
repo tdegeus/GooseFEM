@@ -28,7 +28,7 @@ Extract the element type based on the connectivity.
 
 \param coor Nodal coordinates.
 \param conn Connectivity.
-\return ElementType
+\return ElementType().
 */
 inline ElementType defaultElementType(
     const xt::xtensor<double, 2>& coor,
@@ -772,7 +772,7 @@ inline xt::xtensor<double, 2> edgesize(
 
 /**
 Return size of each element edge.
-The element-type is automatically determined, see GooseFEM::Mesh::defaultElementType.
+The element-type is automatically determined, see defaultElementType().
 
 \param coor Nodal coordinates.
 \param conn Connectivity.
@@ -817,7 +817,7 @@ inline xt::xtensor<double, 2> centers(
 
 /**
 Coordinates of the center of each element.
-The element-type is automatically determined, see GooseFEM::Mesh::defaultElementType.
+The element-type is automatically determined, see defaultElementType().
 
 \param coor Nodal coordinates.
 \param conn Connectivity.
@@ -871,7 +871,7 @@ inline xt::xtensor<size_t, 1> elemmap2nodemap(
 
 /**
 Convert an element-map to a node-map.
-The element-type is automatically determined, see GooseFEM::Mesh::defaultElementType.
+The element-type is automatically determined, see defaultElementType().
 
 \param elem_map Element-map such that ``new_elvar = elvar[elem_map]``.
 \param coor Nodal coordinates.
