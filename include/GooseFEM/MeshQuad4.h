@@ -1,7 +1,10 @@
-/*
+/**
+\file MeshQuad4.h
+
+\brief
+Generate mesh with 4-noded quadrilateral elements.
 
 (c - GPLv3) T.W.J. de Geus (Tom) | tom@geus.me | www.geus.me | github.com/tdegeus/GooseFEM
-
 */
 
 #ifndef GOOSEFEM_MESHQUAD4_H
@@ -35,7 +38,11 @@ public:
     size_t nely() const;  // number of elements in y-direction
     double h() const;     // edge size
 
-    // type
+    /**
+    Get the element type.
+
+    \return GooseFEM::Mesh::ElementType().
+    */
     ElementType getElementType() const;
 
     // mesh
@@ -131,13 +138,31 @@ public:
         std::vector<size_t> rows_start_stop,
         std::vector<size_t> cols_start_stop) const;
 
-    // select region of elements from 'matrix' of element numbers around an element
-    // - square box with edge-size (2 * "size" + 1) * "h", around "element"
+    /**
+    Select region of elements from 'matrix' of element numbers around an element:
+    square box with edge-size ``(2 * size + 1) * h``, around ``element``.
+
+    \param element The element around which to select elements.
+    \param size Edge size of the square box encapsulating the selected element.
+    \param periodic Assume the mesh periodic.
+    \returns List of elements.
+    */
     xt::xtensor<size_t, 1> elementgrid_around_ravel(
         size_t element,
         size_t size,
         bool periodic = true);
-    // - left/right from "element" (on the same layer)
+
+    /**
+    Select region of elements from 'matrix' of element numbers around an element:
+    left/right from ``element`` (on the same layer).
+
+    \param element The element around which to select elements.
+    \param left Number of elements to select to the left.
+    \param right Number of elements to select to the right.
+    \param periodic Assume the mesh periodic.
+    \returns List of elements.
+    */
+    // -
     xt::xtensor<size_t, 1> elementgrid_leftright(
         size_t element,
         size_t left,
