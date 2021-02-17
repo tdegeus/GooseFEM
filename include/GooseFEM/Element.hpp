@@ -1,7 +1,8 @@
-/*
+/**
+\file Element.h
+Implementation of Element.hpp
 
 (c - GPLv3) T.W.J. de Geus (Tom) | tom@geus.me | www.geus.me | github.com/tdegeus/GooseFEM
-
 */
 
 #ifndef GOOSEFEM_ELEMENT_HPP

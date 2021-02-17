@@ -1,7 +1,8 @@
-/*
+/**
+\file Element.h
+Convenience methods for integration point data.
 
 (c - GPLv3) T.W.J. de Geus (Tom) | tom@geus.me | www.geus.me | github.com/tdegeus/GooseFEM
-
 */
 
 #ifndef GOOSEFEM_ELEMENT_H
@@ -46,10 +47,10 @@ inline bool isSequential(const E& dofs);
 
 
 /**
-Check that all of the matrices stored per element (shape: ``[nelem, nne * ndim, nne * ndim]``)
+Check that all of the matrices stored per elemmat (shape: ``[nelem, nne * ndim, nne * ndim]``)
 are diagonal.
 
-\param element Element-vectors ("element")
+\param elemmat Element-vectors ("elemmat")
 \return ``true`` if all element matrices are diagonal.
 */
 bool isDiagonal(const xt::xtensor<double, 3>& elemmat);
