@@ -211,17 +211,22 @@ void init_MeshQuad4Map(py::module& m)
         .def(
             "mapToRegular",
             py::overload_cast<const xt::xtensor<double, 1>&>(
-                &GooseFEM::Mesh::Quad4::Map::FineLayer2Regular::mapToRegular, py::const_))
+                &GooseFEM::Mesh::Quad4::Map::FineLayer2Regular::mapToRegular<double, 1>, py::const_))
 
         .def(
             "mapToRegular",
             py::overload_cast<const xt::xtensor<double, 2>&>(
-                &GooseFEM::Mesh::Quad4::Map::FineLayer2Regular::mapToRegular, py::const_))
+                &GooseFEM::Mesh::Quad4::Map::FineLayer2Regular::mapToRegular<double, 2>, py::const_))
+
+        .def(
+            "mapToRegular",
+            py::overload_cast<const xt::xtensor<double, 3>&>(
+                &GooseFEM::Mesh::Quad4::Map::FineLayer2Regular::mapToRegular<double, 3>, py::const_))
 
         .def(
             "mapToRegular",
             py::overload_cast<const xt::xtensor<double, 4>&>(
-                &GooseFEM::Mesh::Quad4::Map::FineLayer2Regular::mapToRegular, py::const_))
+                &GooseFEM::Mesh::Quad4::Map::FineLayer2Regular::mapToRegular<double, 4>, py::const_))
 
         .def("__repr__", [](const GooseFEM::Mesh::Quad4::Map::FineLayer2Regular&) {
             return "<GooseFEM.Mesh.Quad4.Map.FineLayer2Regular>";

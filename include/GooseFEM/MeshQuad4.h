@@ -291,10 +291,16 @@ namespace Map {
         std::vector<std::vector<size_t>> getMap() const;
         std::vector<std::vector<double>> getMapFraction() const;
 
-        // map field
-        xt::xtensor<double, 1> mapToRegular(const xt::xtensor<double, 1>& data) const; // scalar per el
-        xt::xtensor<double, 2> mapToRegular(const xt::xtensor<double, 2>& data) const; // scalar per intpnt
-        xt::xtensor<double, 4> mapToRegular(const xt::xtensor<double, 4>& data) const; // tensor per intpnt
+        /**
+        Map integration point quantities to Regular.
+
+        \tparam T The type of the data (e.g. ``double``).
+        \tparam rank Rank of the data.
+        \param arg The data.
+        \return The mapped data.
+        */
+        template <class T, size_t rank>
+        xt::xtensor<T, rank> mapToRegular(const xt::xtensor<T, rank>& arg) const;
 
     private:
         // the "FineLayer" mesh to map
