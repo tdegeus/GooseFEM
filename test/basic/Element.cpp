@@ -18,12 +18,12 @@ TEST_CASE("GooseFEM::Element", "Element.h")
         xt::xtensor<double, 2> qscalar = xt::random::rand<double>({nelem, nip});
         auto qtensor = quad.AsTensor<2>(qscalar);
 
-        REQUIRE(xt::has_shape(quad.AllocateQscalar(), qscalar.shape()));
-        REQUIRE(xt::has_shape(quad.AllocateQscalar(0.0), qscalar.shape()));
-        REQUIRE(xt::has_shape(quad.AllocateQtensor<2>(), qtensor.shape()));
-        REQUIRE(xt::has_shape(quad.AllocateQtensor<2>(0.0), qtensor.shape()));
-        REQUIRE(xt::has_shape(quad.AllocateQtensor(2), qtensor.shape()));
-        REQUIRE(xt::has_shape(quad.AllocateQtensor(2, 0.0), qtensor.shape()));
+        REQUIRE(xt::has_shape(quad.AllocateQscalar<double>(), qscalar.shape()));
+        REQUIRE(xt::has_shape(quad.AllocateQscalar<double>(0.0), qscalar.shape()));
+        REQUIRE(xt::has_shape(quad.AllocateQtensor<2, double>(), qtensor.shape()));
+        REQUIRE(xt::has_shape(quad.AllocateQtensor<2, double>(0.0), qtensor.shape()));
+        REQUIRE(xt::has_shape(quad.AllocateQtensor<double>(2), qtensor.shape()));
+        REQUIRE(xt::has_shape(quad.AllocateQtensor<double>(2, 0.0), qtensor.shape()));
 
         for (size_t e = 0; e < nelem; ++e) {
             for (size_t q = 0; q < nip; ++q) {
@@ -41,12 +41,12 @@ TEST_CASE("GooseFEM::Element", "Element.h")
         xt::xtensor<double, 2> qscalar = xt::random::rand<double>({nelem, nip});
         auto qtensor = quad.AsTensor<2>(qscalar);
 
-        REQUIRE(xt::has_shape(quad.AllocateQscalar(), qscalar.shape()));
-        REQUIRE(xt::has_shape(quad.AllocateQscalar(0.0), qscalar.shape()));
-        REQUIRE(xt::has_shape(quad.AllocateQtensor<2>(), qtensor.shape()));
-        REQUIRE(xt::has_shape(quad.AllocateQtensor<2>(0.0), qtensor.shape()));
-        REQUIRE(xt::has_shape(quad.AllocateQtensor(2), qtensor.shape()));
-        REQUIRE(xt::has_shape(quad.AllocateQtensor(2, 0.0), qtensor.shape()));
+        REQUIRE(xt::has_shape(quad.AllocateQscalar<double>(), qscalar.shape()));
+        REQUIRE(xt::has_shape(quad.AllocateQscalar<double>(0.0), qscalar.shape()));
+        REQUIRE(xt::has_shape(quad.AllocateQtensor<2, double>(), qtensor.shape()));
+        REQUIRE(xt::has_shape(quad.AllocateQtensor<2, double>(0.0), qtensor.shape()));
+        REQUIRE(xt::has_shape(quad.AllocateQtensor<double>(2), qtensor.shape()));
+        REQUIRE(xt::has_shape(quad.AllocateQtensor<double>(2, 0.0), qtensor.shape()));
 
         for (size_t e = 0; e < nelem; ++e) {
             for (size_t q = 0; q < nip; ++q) {

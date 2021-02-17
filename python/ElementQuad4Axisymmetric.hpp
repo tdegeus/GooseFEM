@@ -101,23 +101,23 @@ void init_ElementQuad4Axisymmetric(py::module& m)
         .def(
             "AsTensor",
             (xt::xarray<double>(GooseFEM::Element::Quad4::QuadratureAxisymmetric::*)(
-                size_t, const xt::xtensor<double, 2>&) const) &
-                GooseFEM::Element::Quad4::QuadratureAxisymmetric::AsTensor,
+                size_t, const xt::xtensor<double, 2>&) const)
+                &GooseFEM::Element::Quad4::QuadratureAxisymmetric::AsTensor<double>,
             "Convert 'qscalar' to 'qtensor' of certain rank")
 
         .def(
             "AllocateQtensor",
             (xt::xarray<double>(GooseFEM::Element::Quad4::QuadratureAxisymmetric::*)(
-                size_t) const) &
-                GooseFEM::Element::Quad4::QuadratureAxisymmetric::AllocateQtensor,
+                size_t) const)
+                &GooseFEM::Element::Quad4::QuadratureAxisymmetric::AllocateQtensor<double>,
             "Allocate 'qtensor'",
             py::arg("rank"))
 
         .def(
             "AllocateQtensor",
             (xt::xarray<double>(GooseFEM::Element::Quad4::QuadratureAxisymmetric::*)(
-                size_t, double) const) &
-                GooseFEM::Element::Quad4::QuadratureAxisymmetric::AllocateQtensor,
+                size_t, double) const)
+                &GooseFEM::Element::Quad4::QuadratureAxisymmetric::AllocateQtensor<double>,
             "Allocate 'qtensor'",
             py::arg("rank"),
             py::arg("val"))
@@ -125,13 +125,13 @@ void init_ElementQuad4Axisymmetric(py::module& m)
         .def(
             "AllocateQscalar",
             py::overload_cast<>(
-                &GooseFEM::Element::Quad4::QuadratureAxisymmetric::AllocateQscalar, py::const_),
+                &GooseFEM::Element::Quad4::QuadratureAxisymmetric::AllocateQscalar<double>, py::const_),
             "Allocate 'qscalar'")
 
         .def(
             "AllocateQscalar",
             py::overload_cast<double>(
-                &GooseFEM::Element::Quad4::QuadratureAxisymmetric::AllocateQscalar, py::const_),
+                &GooseFEM::Element::Quad4::QuadratureAxisymmetric::AllocateQscalar<double>, py::const_),
             "Allocate 'qscalar'",
             py::arg("val"))
 

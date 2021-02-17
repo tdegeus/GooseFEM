@@ -20,3 +20,6 @@ SOURCE_BROWSER = YES
 # Allow for rst directives and advanced functions e.g. grid tables
 ALIASES  = "rst=\verbatim embed:rst:leading-asterisk"
 ALIASES += "endrst=\endverbatim"
+
+# Add license command
+ALIASES += "license=@par License:"
