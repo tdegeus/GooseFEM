@@ -250,6 +250,39 @@ inline void Quadrature::compute_dN()
     }
 }
 
+template <class T>
+inline void Quadrature::interp_N_vector(
+    const xt::xtensor<T, 3>& elemvec, xt::xtensor<T, 3>& qvector) const
+{
+    GOOSEFEM_ASSERT(xt::has_shape(elemvec, {m_nelem, m_nne, m_ndim}));
+    GOOSEFEM_ASSERT(xt::has_shape(qvector, {m_nelem, m_nip, m_ndim}));
+
+    qvector.fill(0.0);
+
+    #pragma omp parallel for
+    for (size_t e = 0; e < m_nelem; ++e) {
+
+        auto u = xt::adapt(&elemvec(e, 0, 0), xt::xshape<m_nne, m_ndim>());
+
+        for (size_t q = 0; q < m_nip; ++q) {
+
+            auto N = xt::adapt(&m_N(q, 0), xt::xshape<m_nne>());
+            auto ui = xt::adapt(&qvector(e, q, 0), xt::xshape<m_ndim>());
+
+            ui(0) = N(0) * u(0, 0) + N(1) * u(1, 0) + N(2) * u(2, 0) + N(3) * u(3, 0);
+            ui(1) = N(0) * u(0, 1) + N(1) * u(1, 1) + N(2) * u(2, 1) + N(3) * u(3, 1);
+        }
+    }
+}
+
+template <class T>
+inline xt::xtensor<T, 3> Quadrature::Interp_N_vector(const xt::xtensor<T, 3>& elemvec) const
+{
+    xt::xtensor<T, 3> qvector = xt::empty<T>({m_nelem, m_nip, m_ndim});
+    this->interp_N_vector(elemvec, qvector);
+    return qvector;
+}
+
 inline void Quadrature::gradN_vector(
     const xt::xtensor<double, 3>& elemvec, xt::xtensor<double, 4>& qtensor) const
 {

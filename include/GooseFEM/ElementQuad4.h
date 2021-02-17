@@ -1,7 +1,9 @@
-/*
+/**
+Quadrature for 4-noded quadrilateral element (GooseFEM::Mesh::ElementType::Quad4).
 
-(c - GPLv3) T.W.J. de Geus (Tom) | tom@geus.me | www.geus.me | github.com/tdegeus/GooseFEM
-
+\file ElementQuad4.h
+\copyright Copyright 2017. Tom de Geus. All rights reserved.
+\license This project is released under the GNU Public License (GPLv3).
 */
 
 #ifndef GOOSEFEM_ELEMENTQUAD4_H
@@ -65,6 +67,24 @@ public:
 
     // Return integration volume
     xt::xtensor<double, 2> dV() const;
+
+    /**
+    Interpolate element vector.
+
+    \param elemvec Nodal vector stored per element (shape: ``[nelem, nne, ndim]``).
+    \param qvector Output: integration point vector (shape: ``[nelem, nip, ndim]``).
+    */
+    template <class T>
+    void interp_N_vector(const xt::xtensor<T, 3>& elemvec, xt::xtensor<T, 3>& qvector) const;
+
+    /**
+    Same as interp_N_vector(), but returns auto-allocated data.
+
+    \param elemvec Nodal vector stored per element (shape: ``[nelem, nne, ndim]``).
+    \return integration point vector (shape: ``[nelem, nip, ndim]``).
+    */
+    template <class T>
+    xt::xtensor<T, 3> Interp_N_vector(const xt::xtensor<T, 3>& elemvec) const;
 
     // Dyadic product (and its transpose and symmetric part)
     // qtensor(i,j) += dNdx(m,i) * elemvec(m,j)
