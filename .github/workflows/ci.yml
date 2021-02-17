@@ -73,7 +73,7 @@ jobs:
       run: cmake --build .
 
     - name: Run C++ ${{ matrix.prop }}
-      run: cmake --build . --target "RUN_TESTS_AND_EXAMPLES"
+      run: ctest --output-on-failure
 
     - name: Build and install Python module
       run: |
