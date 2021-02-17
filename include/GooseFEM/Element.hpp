@@ -102,6 +102,149 @@ inline bool isDiagonal(const xt::xtensor<double, 3>& elemmat)
     return true;
 }
 
+template <size_t ne, size_t nd, size_t td>
+inline QuadratureBase<ne, nd, td>::QuadratureBase(size_t nelem, size_t nip)
+{
+    this->initQuadratureBase(nelem, nip);
+}
+
+template <size_t ne, size_t nd, size_t td>
+inline void QuadratureBase<ne, nd, td>::initQuadratureBase(size_t nelem, size_t nip)
+{
+    m_nelem = nelem;
+    m_nip = nip;
+}
+
+template <size_t ne, size_t nd, size_t td>
+inline size_t QuadratureBase<ne, nd, td>::nelem() const
+{
+    return m_nelem;
+}
+
+template <size_t ne, size_t nd, size_t td>
+inline size_t QuadratureBase<ne, nd, td>::nne() const
+{
+    return m_nne;
+}
+
+template <size_t ne, size_t nd, size_t td>
+inline size_t QuadratureBase<ne, nd, td>::ndim() const
+{
+    return m_ndim;
+}
+
+template <size_t ne, size_t nd, size_t td>
+inline size_t QuadratureBase<ne, nd, td>::tdim() const
+{
+    return m_tdim;
+}
+
+template <size_t ne, size_t nd, size_t td>
+inline size_t QuadratureBase<ne, nd, td>::nip() const
+{
+    return m_nip;
+}
+
+template <size_t ne, size_t nd, size_t td>
+template <size_t rank>
+inline void QuadratureBase<ne, nd, td>::asTensor(
+    const xt::xtensor<double, 2>& arg,
+    xt::xtensor<double, 2 + rank>& ret) const
+{
+    GOOSEFEM_ASSERT(xt::has_shape(arg, {m_nelem, m_nne}));
+    GooseFEM::asTensor<2, rank>(arg, ret);
+}
+
+template <size_t ne, size_t nd, size_t td>
+template <size_t rank>
+inline xt::xtensor<double, 2 + rank> QuadratureBase<ne, nd, td>::AsTensor(
+    const xt::xtensor<double, 2>& qscalar) const
+{
+    return GooseFEM::AsTensor<2, rank>(qscalar, m_tdim);
+}
+
+template <size_t ne, size_t nd, size_t td>
+inline xt::xarray<double> QuadratureBase<ne, nd, td>::AsTensor(
+    size_t rank,
+    const xt::xtensor<double, 2>& qscalar) const
+{
+    return GooseFEM::AsTensor(rank, qscalar, m_tdim);
+}
+
+template <size_t ne, size_t nd, size_t td>
+template <size_t rank>
+inline std::array<size_t, 2 + rank> QuadratureBase<ne, nd, td>::ShapeQtensor() const
+{
+    std::array<size_t, 2 + rank> shape;
+    shape[0] = m_nelem;
+    shape[1] = m_nip;
+    std::fill(shape.begin() + 2, shape.end(), td);
+    return shape;
+}
+
+template <size_t ne, size_t nd, size_t td>
+inline std::vector<size_t> QuadratureBase<ne, nd, td>::ShapeQtensor(size_t rank) const
+{
+    std::vector<size_t> shape(2 + rank);
+    shape[0] = m_nelem;
+    shape[1] = m_nip;
+    std::fill(shape.begin() + 2, shape.end(), td);
+    return shape;
+}
+
+template <size_t ne, size_t nd, size_t td>
+inline std::vector<size_t> QuadratureBase<ne, nd, td>::ShapeQscalar() const
+{
+    std::vector<size_t> shape(2);
+    shape[0] = m_nelem;
+    shape[1] = m_nip;
+    return shape;
+}
+
+template <size_t ne, size_t nd, size_t td>
+template <size_t rank>
+inline xt::xtensor<double, 2 + rank> QuadratureBase<ne, nd, td>::AllocateQtensor() const
+{
+    xt::xtensor<double, 2 + rank> ret = xt::empty<double>(this->ShapeQtensor<rank>());
+    return ret;
+}
+
+template <size_t ne, size_t nd, size_t td>
+template <size_t rank>
+inline xt::xtensor<double, 2 + rank> QuadratureBase<ne, nd, td>::AllocateQtensor(double val) const
+{
+    xt::xtensor<double, 2 + rank> ret = xt::empty<double>(this->ShapeQtensor<rank>());
+    ret.fill(val);
+    return ret;
+}
+
+template <size_t ne, size_t nd, size_t td>
+inline xt::xarray<double> QuadratureBase<ne, nd, td>::AllocateQtensor(size_t rank) const
+{
+    xt::xarray<double> ret = xt::empty<double>(this->ShapeQtensor(rank));
+    return ret;
+}
+
+template <size_t ne, size_t nd, size_t td>
+inline xt::xarray<double> QuadratureBase<ne, nd, td>::AllocateQtensor(size_t rank, double val) const
+{
+    xt::xarray<double> ret = xt::empty<double>(this->ShapeQtensor(rank));
+    ret.fill(val);
+    return ret;
+}
+
+template <size_t ne, size_t nd, size_t td>
+inline xt::xtensor<double, 2> QuadratureBase<ne, nd, td>::AllocateQscalar() const
+{
+    return this->AllocateQtensor<0>();
+}
+
+template <size_t ne, size_t nd, size_t td>
+inline xt::xtensor<double, 2> QuadratureBase<ne, nd, td>::AllocateQscalar(double val) const
+{
+    return this->AllocateQtensor<0>(val);
+}
+
 } // namespace Element
 } // namespace GooseFEM
 
