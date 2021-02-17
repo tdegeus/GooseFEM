@@ -92,23 +92,23 @@ void init_ElementQuad4Planar(py::module& m)
         .def(
             "AsTensor",
             (xt::xarray<double>(GooseFEM::Element::Quad4::QuadraturePlanar::*)(
-                size_t, const xt::xtensor<double, 2>&) const) &
-                GooseFEM::Element::Quad4::QuadraturePlanar::AsTensor,
+                size_t, const xt::xtensor<double, 2>&) const)
+                &GooseFEM::Element::Quad4::QuadraturePlanar::AsTensor<double>,
             "Convert 'qscalar' to 'qtensor' of certain rank")
 
         .def(
             "AllocateQtensor",
             (xt::xarray<double>(GooseFEM::Element::Quad4::QuadraturePlanar::*)(
-                size_t) const) &
-                GooseFEM::Element::Quad4::QuadraturePlanar::AllocateQtensor,
+                size_t) const)
+                &GooseFEM::Element::Quad4::QuadraturePlanar::AllocateQtensor<double>,
             "Allocate 'qtensor'",
             py::arg("rank"))
 
         .def(
             "AllocateQtensor",
             (xt::xarray<double>(GooseFEM::Element::Quad4::QuadraturePlanar::*)(
-                size_t, double) const) &
-                GooseFEM::Element::Quad4::QuadraturePlanar::AllocateQtensor,
+                size_t, double) const)
+                &GooseFEM::Element::Quad4::QuadraturePlanar::AllocateQtensor<double>,
             "Allocate 'qtensor'",
             py::arg("rank"),
             py::arg("val"))
@@ -116,13 +116,13 @@ void init_ElementQuad4Planar(py::module& m)
         .def(
             "AllocateQscalar",
             py::overload_cast<>(
-                &GooseFEM::Element::Quad4::QuadraturePlanar::AllocateQscalar, py::const_),
+                &GooseFEM::Element::Quad4::QuadraturePlanar::AllocateQscalar<double>, py::const_),
             "Allocate 'qscalar'")
 
         .def(
             "AllocateQscalar",
             py::overload_cast<double>(
-                &GooseFEM::Element::Quad4::QuadraturePlanar::AllocateQscalar, py::const_),
+                &GooseFEM::Element::Quad4::QuadraturePlanar::AllocateQscalar<double>, py::const_),
             "Allocate 'qscalar'",
             py::arg("val"))
 

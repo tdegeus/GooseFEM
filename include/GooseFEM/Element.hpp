@@ -1,8 +1,7 @@
 /**
-\file Element.h
-Implementation of Element.hpp
-
-(c - GPLv3) T.W.J. de Geus (Tom) | tom@geus.me | www.geus.me | github.com/tdegeus/GooseFEM
+\file Element.hpp
+\copyright Copyright 2017. Tom de Geus. All rights reserved.
+\license This project is released under the GNU Public License (GPLv3).
 */
 
 #ifndef GOOSEFEM_ELEMENT_HPP
@@ -147,27 +146,28 @@ inline size_t QuadratureBase<ne, nd, td>::nip() const
 }
 
 template <size_t ne, size_t nd, size_t td>
-template <size_t rank>
+template <size_t rank, class T>
 inline void QuadratureBase<ne, nd, td>::asTensor(
-    const xt::xtensor<double, 2>& arg,
-    xt::xtensor<double, 2 + rank>& ret) const
+    const xt::xtensor<T, 2>& arg,
+    xt::xtensor<T, 2 + rank>& ret) const
 {
     GOOSEFEM_ASSERT(xt::has_shape(arg, {m_nelem, m_nne}));
     GooseFEM::asTensor<2, rank>(arg, ret);
 }
 
 template <size_t ne, size_t nd, size_t td>
-template <size_t rank>
-inline xt::xtensor<double, 2 + rank> QuadratureBase<ne, nd, td>::AsTensor(
-    const xt::xtensor<double, 2>& qscalar) const
+template <size_t rank, class T>
+inline xt::xtensor<T, 2 + rank> QuadratureBase<ne, nd, td>::AsTensor(
+    const xt::xtensor<T, 2>& qscalar) const
 {
     return GooseFEM::AsTensor<2, rank>(qscalar, m_tdim);
 }
 
 template <size_t ne, size_t nd, size_t td>
-inline xt::xarray<double> QuadratureBase<ne, nd, td>::AsTensor(
+template <class T>
+inline xt::xarray<T> QuadratureBase<ne, nd, td>::AsTensor(
     size_t rank,
-    const xt::xtensor<double, 2>& qscalar) const
+    const xt::xtensor<T, 2>& qscalar) const
 {
     return GooseFEM::AsTensor(rank, qscalar, m_tdim);
 }
@@ -203,47 +203,51 @@ inline std::vector<size_t> QuadratureBase<ne, nd, td>::ShapeQscalar() const
 }
 
 template <size_t ne, size_t nd, size_t td>
-template <size_t rank>
-inline xt::xtensor<double, 2 + rank> QuadratureBase<ne, nd, td>::AllocateQtensor() const
+template <size_t rank, class T>
+inline xt::xtensor<T, 2 + rank> QuadratureBase<ne, nd, td>::AllocateQtensor() const
 {
-    xt::xtensor<double, 2 + rank> ret = xt::empty<double>(this->ShapeQtensor<rank>());
+    xt::xtensor<T, 2 + rank> ret = xt::empty<T>(this->ShapeQtensor<rank>());
     return ret;
 }
 
 template <size_t ne, size_t nd, size_t td>
-template <size_t rank>
-inline xt::xtensor<double, 2 + rank> QuadratureBase<ne, nd, td>::AllocateQtensor(double val) const
+template <size_t rank, class T>
+inline xt::xtensor<T, 2 + rank> QuadratureBase<ne, nd, td>::AllocateQtensor(T val) const
 {
-    xt::xtensor<double, 2 + rank> ret = xt::empty<double>(this->ShapeQtensor<rank>());
+    xt::xtensor<T, 2 + rank> ret = xt::empty<T>(this->ShapeQtensor<rank>());
     ret.fill(val);
     return ret;
 }
 
 template <size_t ne, size_t nd, size_t td>
-inline xt::xarray<double> QuadratureBase<ne, nd, td>::AllocateQtensor(size_t rank) const
+template <class T>
+inline xt::xarray<T> QuadratureBase<ne, nd, td>::AllocateQtensor(size_t rank) const
 {
-    xt::xarray<double> ret = xt::empty<double>(this->ShapeQtensor(rank));
+    xt::xarray<T> ret = xt::empty<T>(this->ShapeQtensor(rank));
     return ret;
 }
 
 template <size_t ne, size_t nd, size_t td>
-inline xt::xarray<double> QuadratureBase<ne, nd, td>::AllocateQtensor(size_t rank, double val) const
+template <class T>
+inline xt::xarray<T> QuadratureBase<ne, nd, td>::AllocateQtensor(size_t rank, T val) const
 {
-    xt::xarray<double> ret = xt::empty<double>(this->ShapeQtensor(rank));
+    xt::xarray<T> ret = xt::empty<T>(this->ShapeQtensor(rank));
     ret.fill(val);
     return ret;
 }
 
 template <size_t ne, size_t nd, size_t td>
-inline xt::xtensor<double, 2> QuadratureBase<ne, nd, td>::AllocateQscalar() const
+template <class T>
+inline xt::xtensor<T, 2> QuadratureBase<ne, nd, td>::AllocateQscalar() const
 {
-    return this->AllocateQtensor<0>();
+    return this->AllocateQtensor<0, T>();
 }
 
 template <size_t ne, size_t nd, size_t td>
-inline xt::xtensor<double, 2> QuadratureBase<ne, nd, td>::AllocateQscalar(double val) const
+template <class T>
+inline xt::xtensor<T, 2> QuadratureBase<ne, nd, td>::AllocateQscalar(T val) const
 {
-    return this->AllocateQtensor<0>(val);
+    return this->AllocateQtensor<0, T>(val);
 }
 
 } // namespace Element

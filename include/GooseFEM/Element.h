@@ -1,8 +1,9 @@
 /**
-\file Element.h
 Convenience methods for integration point data.
 
-(c - GPLv3) T.W.J. de Geus (Tom) | tom@geus.me | www.geus.me | github.com/tdegeus/GooseFEM
+\file Element.h
+\copyright Copyright 2017. Tom de Geus. All rights reserved.
+\license This project is released under the GNU Public License (GPLv3).
 */
 
 #ifndef GOOSEFEM_ELEMENT_H
@@ -59,6 +60,10 @@ bool isDiagonal(const xt::xtensor<double, 3>& elemmat);
 Base quadrature-class.
 This class does not have a specific element-type in mind, it is used mostly internally
 to derive from such that common methods do not have to be reimplementation.
+
+\tparam ne Number of nodes per element.
+\tparam nd Number of dimensions for node vectors.
+\tparam td Number of dimensions for integration point tensors.
 */
 template <size_t ne, size_t nd, size_t td>
 class QuadratureBase {
@@ -85,7 +90,7 @@ public:
     size_t nne() const;
 
     /**
-    Number of dimensions for node-vectors.
+    Number of dimensions for node vectors.
 
     \return Scalar.
     */
@@ -112,8 +117,8 @@ public:
     \param qscalar A "qscalar".
     \param qtensor A "qtensor".
     */
-    template <size_t rank = 0>
-    void asTensor(const xt::xtensor<double, 2>& qscalar, xt::xtensor<double, 2 + rank>& qtensor) const;
+    template <size_t rank = 0, class T>
+    void asTensor(const xt::xtensor<T, 2>& qscalar, xt::xtensor<T, 2 + rank>& qtensor) const;
 
     /**
     Convert "qscalar" to "qtensor" of certain rank.
@@ -121,8 +126,8 @@ public:
     \param "qscalar".
     \return "qtensor".
     */
-    template <size_t rank = 0>
-    xt::xtensor<double, 2 + rank> AsTensor(const xt::xtensor<double, 2>& qscalar) const;
+    template <size_t rank = 0, class T>
+    xt::xtensor<T, 2 + rank> AsTensor(const xt::xtensor<T, 2>& qscalar) const;
 
     /**
     Convert "qscalar" to "qtensor" of certain rank.
@@ -131,7 +136,8 @@ public:
     \param qscalar A "qscalar".
     \return "qtensor".
     */
-    xt::xarray<double> AsTensor(size_t rank, const xt::xtensor<double, 2>& qscalar) const;
+    template <class T>
+    xt::xarray<T> AsTensor(size_t rank, const xt::xtensor<T, 2>& qscalar) const;
 
     /**
     Get the shape of a "qtensor" of a certain rank
@@ -167,8 +173,8 @@ public:
 
     \returns `xt::xtensor` container of the correct shape (and rank).
     */
-    template <size_t rank = 0>
-    xt::xtensor<double, 2 + rank> AllocateQtensor() const;
+    template <size_t rank = 0, class T>
+    xt::xtensor<T, 2 + rank> AllocateQtensor() const;
 
     /**
     Get an allocated and initialised `xt::xtensor` to store a "qtensor" of a certain rank
@@ -178,8 +184,8 @@ public:
     \param val The value to which to initialise all items.
     \returns `xt::xtensor` container of the correct shape (and rank).
     */
-    template <size_t rank = 0>
-    xt::xtensor<double, 2 + rank> AllocateQtensor(double val) const;
+    template <size_t rank = 0, class T>
+    xt::xtensor<T, 2 + rank> AllocateQtensor(T val) const;
 
     /**
     Get an allocated `xt::xarray` to store a "qtensor" of a certain rank
@@ -189,7 +195,8 @@ public:
     \param rank The tensor rank.
     \returns `xt::xarray` container of the correct shape.
     */
-    xt::xarray<double> AllocateQtensor(size_t rank) const;
+    template <class T>
+    xt::xarray<T> AllocateQtensor(size_t rank) const;
 
     /**
     Get an allocated and initialised `xt::xarray` to store a "qtensor" of a certain rank
@@ -199,7 +206,8 @@ public:
     \param val The value to which to initialise all items.
     \returns `xt::xtensor` container of the correct shape (and rank).
     */
-    xt::xarray<double> AllocateQtensor(size_t rank, double val) const;
+    template <class T>
+    xt::xarray<T> AllocateQtensor(size_t rank, T val) const;
 
     /**
     Get an allocated `xt::xtensor` to store a "qscalar" (a "qtensor" of rank 0).
@@ -207,7 +215,8 @@ public:
 
     \returns `xt::xarray` container of the correct shape.
     */
-    xt::xtensor<double, 2> AllocateQscalar() const;
+    template <class T>
+    xt::xtensor<T, 2> AllocateQscalar() const;
 
     /**
     Get an allocated and initialised `xt::xarray` to store a "qscalar" (a "qtensor" of rank 0).
@@ -215,9 +224,13 @@ public:
     \param val The value to which to initialise all items.
     \returns `xt::xtensor` container of the correct shape (and rank).
     */
-    xt::xtensor<double, 2> AllocateQscalar(double val) const;
+    template <class T>
+    xt::xtensor<T, 2> AllocateQscalar(T val) const;
 
 protected:
+    /**
+    Wrapper of constructor, for derived classes.
+    */
     void initQuadratureBase(size_t nelem, size_t nip);
 
 protected:

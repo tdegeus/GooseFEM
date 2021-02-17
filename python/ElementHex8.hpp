@@ -88,23 +88,23 @@ void init_ElementHex8(py::module& m)
         .def(
             "AsTensor",
             (xt::xarray<double>(GooseFEM::Element::Hex8::Quadrature::*)(
-                size_t, const xt::xtensor<double, 2>&) const) &
-                GooseFEM::Element::Hex8::Quadrature::AsTensor,
+                size_t, const xt::xtensor<double, 2>&) const)
+                &GooseFEM::Element::Hex8::Quadrature::AsTensor<double>,
             "Convert 'qscalar' to 'qtensor' of certain rank")
 
         .def(
             "AllocateQtensor",
             (xt::xarray<double>(GooseFEM::Element::Hex8::Quadrature::*)(
-                size_t) const) &
-                GooseFEM::Element::Hex8::Quadrature::AllocateQtensor,
+                size_t) const)
+                &GooseFEM::Element::Hex8::Quadrature::AllocateQtensor<double>,
             "Allocate 'qtensor'",
             py::arg("rank"))
 
         .def(
             "AllocateQtensor",
             (xt::xarray<double>(GooseFEM::Element::Hex8::Quadrature::*)(
-                size_t, double) const) &
-                GooseFEM::Element::Hex8::Quadrature::AllocateQtensor,
+                size_t, double) const)
+                &GooseFEM::Element::Hex8::Quadrature::AllocateQtensor<double>,
             "Allocate 'qtensor'",
             py::arg("rank"),
             py::arg("val"))
@@ -112,13 +112,13 @@ void init_ElementHex8(py::module& m)
         .def(
             "AllocateQscalar",
             py::overload_cast<>(
-                &GooseFEM::Element::Hex8::Quadrature::AllocateQscalar, py::const_),
+                &GooseFEM::Element::Hex8::Quadrature::AllocateQscalar<double>, py::const_),
             "Allocate 'qscalar'")
 
         .def(
             "AllocateQscalar",
             py::overload_cast<double>(
-                &GooseFEM::Element::Hex8::Quadrature::AllocateQscalar, py::const_),
+                &GooseFEM::Element::Hex8::Quadrature::AllocateQscalar<double>, py::const_),
             "Allocate 'qscalar'",
             py::arg("val"))
 
