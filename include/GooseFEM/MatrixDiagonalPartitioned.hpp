@@ -26,7 +26,7 @@ inline MatrixDiagonalPartitioned::MatrixDiagonalPartitioned(
     m_ndof = xt::amax(m_dofs)() + 1;
     m_nnp = m_iip.size();
     m_nnu = m_iiu.size();
-    m_part = Mesh::Reorder({m_iiu, m_iip}).get(m_dofs);
+    m_part = Mesh::Reorder({m_iiu, m_iip}).apply(m_dofs);
     m_Auu = xt::empty<double>({m_nnu});
     m_App = xt::empty<double>({m_nnp});
     m_inv_uu = xt::empty<double>({m_nnu});
