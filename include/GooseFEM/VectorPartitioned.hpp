@@ -26,7 +26,7 @@ inline VectorPartitioned::VectorPartitioned(
     m_ndof = xt::amax(m_dofs)() + 1;
     m_nnp = m_iip.size();
     m_nnu = m_iiu.size();
-    m_part = Mesh::Reorder({m_iiu, m_iip}).get(m_dofs);
+    m_part = Mesh::Reorder({m_iiu, m_iip}).apply(m_dofs);
 
     GOOSEFEM_ASSERT(xt::amax(m_conn)() + 1 <= m_nnode);
     GOOSEFEM_ASSERT(xt::amax(m_iip)() <= xt::amax(m_dofs)());

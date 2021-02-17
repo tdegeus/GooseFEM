@@ -630,19 +630,20 @@ TEST_CASE("GooseFEM::MeshQuad4", "MeshQuad4.h")
 
         GooseFEM::Mesh::Quad4::Map::RefineRegular refine(mesh, 5, 3);
 
-        xt::xtensor<double, 1> a = xt::random::rand<double>({mesh.nelem()});
+        std::array<size_t, 1> as = {mesh.nelem()};
+        xt::xtensor<double, 1> a = xt::random::rand<double>(as);
         auto a_ = refine.mapToCoarse(refine.mapToFine(a));
 
         REQUIRE(xt::allclose(a, xt::mean(a_, {1})));
 
-        xt::xtensor<double, 2> b =
-            xt::random::rand<double>(std::array<size_t, 2>{mesh.nelem(), 4ul});
+        std::array<size_t, 2> bs = {mesh.nelem(), 4};
+        xt::xtensor<double, 2> b = xt::random::rand<double>(bs);
         auto b_ = refine.mapToCoarse(refine.mapToFine(b));
 
         REQUIRE(xt::allclose(xt::mean(b, {1}), xt::mean(b_, {1})));
 
-        xt::xtensor<double, 4> c =
-            xt::random::rand<double>(std::array<size_t, 4>{mesh.nelem(), 4ul, 3ul, 3ul});
+        std::array<size_t, 4> cs = {mesh.nelem(), 4, 3, 3};
+        xt::xtensor<double, 4> c = xt::random::rand<double>(cs);
         auto c_ = refine.mapToCoarse(refine.mapToFine(c));
 
         REQUIRE(xt::allclose(xt::mean(c, {1}), xt::mean(c_, {1})));
@@ -654,19 +655,20 @@ TEST_CASE("GooseFEM::MeshQuad4", "MeshQuad4.h")
 
         GooseFEM::Mesh::Quad4::Map::FineLayer2Regular map(mesh);
 
-        xt::xtensor<double, 1> a = xt::random::rand<double>({mesh.nelem()});
+        std::array<size_t, 1> as = {mesh.nelem()};
+        xt::xtensor<double, 1> a = xt::random::rand<double>(as);
         auto a_ = map.mapToRegular(a);
 
         REQUIRE(xt::allclose(a, a_));
 
-        xt::xtensor<double, 2> b =
-            xt::random::rand<double>(std::array<size_t, 2>{mesh.nelem(), 4ul});
+        std::array<size_t, 2> bs = {mesh.nelem(), 4};
+        xt::xtensor<double, 2> b = xt::random::rand<double>(bs);
         auto b_ = map.mapToRegular(b);
 
         REQUIRE(xt::allclose(b, b_));
 
-        xt::xtensor<double, 4> c =
-            xt::random::rand<double>(std::array<size_t, 4>{mesh.nelem(), 4ul, 3ul, 3ul});
+        std::array<size_t, 4> cs = {mesh.nelem(), 4, 3, 3};
+        xt::xtensor<double, 4> c = xt::random::rand<double>(cs);
         auto c_ = map.mapToRegular(c);
 
         REQUIRE(xt::allclose(c, c_));

@@ -1588,45 +1588,17 @@ inline std::vector<std::vector<double>> FineLayer2Regular::getMapFraction() cons
     return m_frac_regular;
 }
 
-inline xt::xtensor<double, 1>
-FineLayer2Regular::mapToRegular(const xt::xtensor<double, 1>& data) const
+template <class T, size_t rank>
+inline xt::xtensor<T, rank>
+FineLayer2Regular::mapToRegular(const xt::xtensor<T, rank>& data) const
 {
     GOOSEFEM_ASSERT(data.shape(0) == m_finelayer.nelem());
 
-    xt::xtensor<double, 1> ret = xt::zeros<double>({m_regular.nelem()});
+    std::array<size_t, rank> shape;
+    std::copy(data.shape().cbegin(), data.shape().cend(), &shape[0]);
+    shape[0] = m_regular.nelem();
 
-    for (size_t e = 0; e < m_finelayer.nelem(); ++e) {
-        for (size_t i = 0; i < m_elem_regular[e].size(); ++i) {
-            ret(m_elem_regular[e][i]) += m_frac_regular[e][i] * data(e);
-        }
-    }
-
-    return ret;
-}
-
-inline xt::xtensor<double, 2>
-FineLayer2Regular::mapToRegular(const xt::xtensor<double, 2>& data) const
-{
-    GOOSEFEM_ASSERT(data.shape(0) == m_finelayer.nelem());
-
-    xt::xtensor<double, 2> ret = xt::zeros<double>({m_regular.nelem(), data.shape(1)});
-
-    for (size_t e = 0; e < m_finelayer.nelem(); ++e) {
-        for (size_t i = 0; i < m_elem_regular[e].size(); ++i) {
-            xt::view(ret, m_elem_regular[e][i]) += m_frac_regular[e][i] * xt::view(data, e);
-        }
-    }
-
-    return ret;
-}
-
-inline xt::xtensor<double, 4>
-FineLayer2Regular::mapToRegular(const xt::xtensor<double, 4>& data) const
-{
-    GOOSEFEM_ASSERT(data.shape(0) == m_finelayer.nelem());
-
-    xt::xtensor<double, 4> ret =
-        xt::zeros<double>({m_regular.nelem(), data.shape(1), data.shape(2), data.shape(3)});
+    xt::xtensor<T, rank> ret = xt::zeros<T>(shape);
 
     for (size_t e = 0; e < m_finelayer.nelem(); ++e) {
         for (size_t i = 0; i < m_elem_regular[e].size(); ++i) {
