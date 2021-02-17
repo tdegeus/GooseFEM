@@ -26,7 +26,7 @@ inline MatrixPartitioned::MatrixPartitioned(
     m_ndof = xt::amax(m_dofs)() + 1;
     m_nnp = m_iip.size();
     m_nnu = m_iiu.size();
-    m_part = Mesh::Reorder({m_iiu, m_iip}).get(m_dofs);
+    m_part = Mesh::Reorder({m_iiu, m_iip}).apply(m_dofs);
     m_Tuu.reserve(m_nelem * m_nne * m_ndim * m_nne * m_ndim);
     m_Tup.reserve(m_nelem * m_nne * m_ndim * m_nne * m_ndim);
     m_Tpu.reserve(m_nelem * m_nne * m_ndim * m_nne * m_ndim);
