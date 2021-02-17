@@ -18,6 +18,7 @@ find_package(xtensor REQUIRED)
 add_executable(${test_name}
     main.cpp
     Allocate.cpp
+    Element.cpp
     ElementHex8.cpp
     ElementQuad4.cpp
     Iterate.cpp

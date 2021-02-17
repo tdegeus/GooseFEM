@@ -63,37 +63,9 @@ inline QuadraturePlanar::QuadraturePlanar(
     compute_dN();
 }
 
-inline size_t QuadraturePlanar::nelem() const
-{
-    return m_nelem;
-}
-
-inline size_t QuadraturePlanar::nne() const
-{
-    return m_nne;
-}
-
-inline size_t QuadraturePlanar::ndim() const
-{
-    return m_ndim;
-}
-
-inline size_t QuadraturePlanar::nip() const
-{
-    return m_nip;
-}
-
 inline xt::xtensor<double, 4> QuadraturePlanar::GradN() const
 {
     return m_dNx;
-}
-
-template <size_t rank>
-inline void
-QuadraturePlanar::asTensor(const xt::xtensor<double, 2>& arg, xt::xtensor<double, 2 + rank>& ret) const
-{
-    GOOSEFEM_ASSERT(xt::has_shape(arg, {m_nelem, m_nne}));
-    GooseFEM::asTensor<2, rank>(arg, ret);
 }
 
 inline xt::xtensor<double, 2> QuadraturePlanar::dV() const
@@ -337,19 +309,6 @@ inline void QuadraturePlanar::int_gradN_dot_tensor4_dot_gradNT_dV(
     }
 }
 
-template <size_t rank>
-inline xt::xtensor<double, 2 + rank>
-QuadraturePlanar::AsTensor(const xt::xtensor<double, 2>& qscalar) const
-{
-    return GooseFEM::AsTensor<2, rank>(qscalar, m_tdim);
-}
-
-inline xt::xarray<double>
-QuadraturePlanar::AsTensor(size_t rank, const xt::xtensor<double, 2>& qscalar) const
-{
-    return GooseFEM::AsTensor(rank, qscalar, m_tdim);
-}
-
 inline xt::xtensor<double, 4>
 QuadraturePlanar::GradN_vector(const xt::xtensor<double, 3>& elemvec) const
 {
@@ -396,54 +355,6 @@ QuadraturePlanar::Int_gradN_dot_tensor4_dot_gradNT_dV(const xt::xtensor<double, 
     xt::xtensor<double, 3> elemmat = xt::empty<double>({m_nelem, m_ndim * m_nne, m_ndim * m_nne});
     this->int_gradN_dot_tensor4_dot_gradNT_dV(qtensor, elemmat);
     return elemmat;
-}
-
-template <size_t rank>
-inline xt::xtensor<double, rank + 2> QuadraturePlanar::AllocateQtensor() const
-{
-    std::array<size_t, rank + 2> shape;
-    shape[0] = m_nelem;
-    shape[1] = m_nip;
-    size_t n = m_tdim;
-    std::fill(shape.begin() + 2, shape.end(), n);
-    xt::xtensor<double, rank + 2> ret = xt::empty<double>(shape);
-    return ret;
-}
-
-template <size_t rank>
-inline xt::xtensor<double, rank + 2> QuadraturePlanar::AllocateQtensor(double val) const
-{
-    xt::xtensor<double, rank + 2> ret = this->AllocateQtensor<rank>();
-    ret.fill(val);
-    return ret;
-}
-
-inline xt::xarray<double> QuadraturePlanar::AllocateQtensor(size_t rank) const
-{
-    std::vector<size_t> shape(rank + 2);
-    shape[0] = m_nelem;
-    shape[1] = m_nip;
-    size_t n = m_tdim;
-    std::fill(shape.begin() + 2, shape.end(), n);
-    xt::xarray<double> ret = xt::empty<double>(shape);
-    return ret;
-}
-
-inline xt::xarray<double> QuadraturePlanar::AllocateQtensor(size_t rank, double val) const
-{
-    xt::xarray<double> ret = this->AllocateQtensor(rank);
-    ret.fill(val);
-    return ret;
-}
-
-inline xt::xtensor<double, 2> QuadraturePlanar::AllocateQscalar() const
-{
-    return this->AllocateQtensor<0>();
-}
-
-inline xt::xtensor<double, 2> QuadraturePlanar::AllocateQscalar(double val) const
-{
-    return this->AllocateQtensor<0>(val);
 }
 
 } // namespace Quad4

@@ -34,8 +34,9 @@ inline void asTensor(const xt::xtensor<double, dim>& arg, xt::xtensor<double, di
 }
 
 template <size_t dim, size_t rank>
-inline xt::xtensor<double, dim + rank>
-AsTensor(const xt::xtensor<double, dim>& arg, const std::array<size_t, rank>& shape)
+inline xt::xtensor<double, dim + rank> AsTensor(
+    const xt::xtensor<double, dim>& arg,
+    const std::array<size_t, rank>& shape)
 {
     std::array<size_t, dim + rank> ret_shape;
     std::copy(arg.shape().begin(), arg.shape().end(), ret_shape.begin());

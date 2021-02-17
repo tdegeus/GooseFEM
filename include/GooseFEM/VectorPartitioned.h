@@ -138,6 +138,13 @@ public:
         const xt::xtensor<double, 2>& nodevec_src,
         const xt::xtensor<double, 2>& nodevec_dest) const;
 
+    /**
+    Copy prescribed DOFs from an "src" to "dest".
+
+    \param nodevec_src The input, from which to copy the prescribed DOFs.
+    \param nodevec_dest The destination, to which to copy the prescribed DOFs.
+    \returns The result after copying.
+    */
     xt::xtensor<double, 2> Copy_p(
         const xt::xtensor<double, 2>& nodevec_src,
         const xt::xtensor<double, 2>& nodevec_dest) const;
