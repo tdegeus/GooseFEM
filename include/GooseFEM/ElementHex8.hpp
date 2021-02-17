@@ -184,12 +184,9 @@ inline Quadrature::Quadrature(
     const xt::xtensor<double, 1>& w)
     : m_x(x), m_w(w), m_xi(xi)
 {
+    this->initQuadratureBase(m_x.shape(0), m_w.size());
     GOOSEFEM_ASSERT(m_x.shape(1) == m_nne);
     GOOSEFEM_ASSERT(m_x.shape(2) == m_ndim);
-
-    m_nelem = m_x.shape(0);
-    m_nip = m_w.size();
-
     GOOSEFEM_ASSERT(m_xi.shape(0) == m_nip);
     GOOSEFEM_ASSERT(m_xi.shape(1) == m_ndim);
     GOOSEFEM_ASSERT(m_w.size() == m_nip);
