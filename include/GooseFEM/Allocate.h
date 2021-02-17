@@ -1,7 +1,8 @@
-/*
+/**
+\file Allocate.h
+Common allocation methods.
 
 (c - GPLv3) T.W.J. de Geus (Tom) | tom@geus.me | www.geus.me | github.com/tdegeus/GooseFEM
-
 */
 
 #ifndef GOOSEFEM_ALLOCATE_H
