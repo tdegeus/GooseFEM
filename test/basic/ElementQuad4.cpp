@@ -9,6 +9,19 @@
 TEST_CASE("GooseFEM::ElementQuad4", "ElementQuad4.h")
 {
 
+    SECTION("interp_N_vector")
+    {
+        GooseFEM::Mesh::Quad4::Regular mesh(3, 3);
+        GooseFEM::Vector vector(mesh.conn(), mesh.dofsPeriodic());
+        GooseFEM::Element::Quad4::Quadrature quad(vector.AsElement(mesh.coor()));
+
+        auto u = vector.AllocateNodevec(1.0);
+        auto ue = vector.AsElement(u);
+        auto uq = quad.Interp_N_vector(ue);
+
+        REQUIRE(xt::allclose(uq, 1.0));
+    }
+
     SECTION("int_N_scalar_NT_dV")
     {
         GooseFEM::Mesh::Quad4::Regular mesh(3, 3);
