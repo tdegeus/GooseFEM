@@ -32,14 +32,6 @@ void init_ElementQuad4(py::module& m)
             &GooseFEM::Element::Quad4::Quadrature::update_x,
             "Update the nodal positions")
 
-        .def("nelem", &GooseFEM::Element::Quad4::Quadrature::nelem, "Number of elements")
-
-        .def("nne", &GooseFEM::Element::Quad4::Quadrature::nne, "Number of nodes per element")
-
-        .def("ndim", &GooseFEM::Element::Quad4::Quadrature::ndim, "Number of dimensions")
-
-        .def("nip", &GooseFEM::Element::Quad4::Quadrature::nip, "Number of integration points")
-
         .def("dV", &GooseFEM::Element::Quad4::Quadrature::dV, "Integration point volume (qscalar)")
 
         .def(
@@ -91,6 +83,16 @@ void init_ElementQuad4(py::module& m)
             "Integration, returns 'elemvec'",
             py::arg("qtensor"))
 
+        // Derived from QuadratureBase
+
+        .def("nelem", &GooseFEM::Element::Quad4::Quadrature::nelem, "Number of elements")
+
+        .def("nne", &GooseFEM::Element::Quad4::Quadrature::nne, "Number of nodes per element")
+
+        .def("ndim", &GooseFEM::Element::Quad4::Quadrature::ndim, "Number of dimensions")
+
+        .def("nip", &GooseFEM::Element::Quad4::Quadrature::nip, "Number of integration points")
+
         .def(
             "AsTensor",
             (xt::xarray<double>(GooseFEM::Element::Quad4::Quadrature::*)(
@@ -99,17 +101,27 @@ void init_ElementQuad4(py::module& m)
             "Convert 'qscalar' to 'qtensor' of certain rank")
 
         .def(
+            "ShapeQtensor",
+            (std::vector<size_t>(GooseFEM::Element::Quad4::Quadrature::*)(size_t) const)
+                &GooseFEM::Element::Quad4::Quadrature::ShapeQtensor,
+            "Shape of 'qtensor'",
+            py::arg("rank"))
+
+        .def(
+            "ShapeQscalar",
+            &GooseFEM::Element::Quad4::Quadrature::ShapeQscalar,
+            "Shape of 'qscalar'")
+
+        .def(
             "AllocateQtensor",
-            (xt::xarray<double>(GooseFEM::Element::Quad4::Quadrature::*)(
-                size_t) const)
+            (xt::xarray<double>(GooseFEM::Element::Quad4::Quadrature::*)(size_t) const)
                 &GooseFEM::Element::Quad4::Quadrature::AllocateQtensor<double>,
             "Allocate 'qtensor'",
             py::arg("rank"))
 
         .def(
             "AllocateQtensor",
-            (xt::xarray<double>(GooseFEM::Element::Quad4::Quadrature::*)(
-                size_t, double) const)
+            (xt::xarray<double>(GooseFEM::Element::Quad4::Quadrature::*)(size_t, double) const)
                 &GooseFEM::Element::Quad4::Quadrature::AllocateQtensor<double>,
             "Allocate 'qtensor'",
             py::arg("rank"),
