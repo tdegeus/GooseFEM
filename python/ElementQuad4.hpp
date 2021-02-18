@@ -17,8 +17,7 @@ void init_ElementQuad4(py::module& m)
 
         .def(py::init<const xt::xtensor<double, 3>&>(), "Quadrature", py::arg("x"))
 
-        .def(
-            py::init<
+        .def(py::init<
                 const xt::xtensor<double, 3>&,
                 const xt::xtensor<double, 2>&,
                 const xt::xtensor<double, 1>&>(),
@@ -27,56 +26,48 @@ void init_ElementQuad4(py::module& m)
             py::arg("xi"),
             py::arg("w"))
 
-        .def(
-            "update_x",
+        .def("update_x",
             &GooseFEM::Element::Quad4::Quadrature::update_x,
             "Update the nodal positions")
 
         .def("dV", &GooseFEM::Element::Quad4::Quadrature::dV, "Integration point volume (qscalar)")
 
-        .def(
-            "Interp_N_vector",
+        .def("Interp_N_vector",
             &GooseFEM::Element::Quad4::Quadrature::Interp_N_vector<double>,
             "See :cpp:class:`GooseFEM::Quad4::Quadrature::Interp_N_vector`.",
             py::arg("elemvec"))
 
-        .def(
-            "GradN_vector",
+        .def("GradN_vector",
             py::overload_cast<const xt::xtensor<double, 3>&>(
                 &GooseFEM::Element::Quad4::Quadrature::GradN_vector, py::const_),
             "Dyadic product, returns 'qtensor'",
             py::arg("elemvec"))
 
-        .def(
-            "GradN_vector_T",
+        .def("GradN_vector_T",
             py::overload_cast<const xt::xtensor<double, 3>&>(
                 &GooseFEM::Element::Quad4::Quadrature::GradN_vector_T, py::const_),
             "Dyadic product, returns 'qtensor'",
             py::arg("elemvec"))
 
-        .def(
-            "SymGradN_vector",
+        .def("SymGradN_vector",
             py::overload_cast<const xt::xtensor<double, 3>&>(
                 &GooseFEM::Element::Quad4::Quadrature::SymGradN_vector, py::const_),
             "Dyadic product, returns 'qtensor'",
             py::arg("elemvec"))
 
-        .def(
-            "Int_N_scalar_NT_dV",
+        .def("Int_N_scalar_NT_dV",
             py::overload_cast<const xt::xtensor<double, 2>&>(
                 &GooseFEM::Element::Quad4::Quadrature::Int_N_scalar_NT_dV, py::const_),
             "Integration, returns 'elemmat'",
             py::arg("qscalar"))
 
-        .def(
-            "Int_gradN_dot_tensor2_dV",
+        .def("Int_gradN_dot_tensor2_dV",
             py::overload_cast<const xt::xtensor<double, 4>&>(
                 &GooseFEM::Element::Quad4::Quadrature::Int_gradN_dot_tensor2_dV, py::const_),
             "Integration, returns 'elemvec'",
             py::arg("qtensor"))
 
-        .def(
-            "Int_gradN_dot_tensor4_dot_gradNT_dV",
+        .def("Int_gradN_dot_tensor4_dot_gradNT_dV",
             py::overload_cast<const xt::xtensor<double, 6>&>(
                 &GooseFEM::Element::Quad4::Quadrature::Int_gradN_dot_tensor4_dot_gradNT_dV,
                 py::const_),
@@ -93,48 +84,41 @@ void init_ElementQuad4(py::module& m)
 
         .def("nip", &GooseFEM::Element::Quad4::Quadrature::nip, "Number of integration points")
 
-        .def(
-            "AsTensor",
+        .def("AsTensor",
             (xt::xarray<double>(GooseFEM::Element::Quad4::Quadrature::*)(
                 size_t, const xt::xtensor<double, 2>&) const)
                 &GooseFEM::Element::Quad4::Quadrature::AsTensor<double>,
             "Convert 'qscalar' to 'qtensor' of certain rank")
 
-        .def(
-            "ShapeQtensor",
+        .def("ShapeQtensor",
             (std::vector<size_t>(GooseFEM::Element::Quad4::Quadrature::*)(size_t) const)
                 &GooseFEM::Element::Quad4::Quadrature::ShapeQtensor,
             "Shape of 'qtensor'",
             py::arg("rank"))
 
-        .def(
-            "ShapeQscalar",
+        .def("ShapeQscalar",
             &GooseFEM::Element::Quad4::Quadrature::ShapeQscalar,
             "Shape of 'qscalar'")
 
-        .def(
-            "AllocateQtensor",
+        .def("AllocateQtensor",
             (xt::xarray<double>(GooseFEM::Element::Quad4::Quadrature::*)(size_t) const)
                 &GooseFEM::Element::Quad4::Quadrature::AllocateQtensor<double>,
             "Allocate 'qtensor'",
             py::arg("rank"))
 
-        .def(
-            "AllocateQtensor",
+        .def("AllocateQtensor",
             (xt::xarray<double>(GooseFEM::Element::Quad4::Quadrature::*)(size_t, double) const)
                 &GooseFEM::Element::Quad4::Quadrature::AllocateQtensor<double>,
             "Allocate 'qtensor'",
             py::arg("rank"),
             py::arg("val"))
 
-        .def(
-            "AllocateQscalar",
+        .def("AllocateQscalar",
             py::overload_cast<>(
                 &GooseFEM::Element::Quad4::Quadrature::AllocateQscalar<double>, py::const_),
             "Allocate 'qscalar'")
 
-        .def(
-            "AllocateQscalar",
+        .def("AllocateQscalar",
             py::overload_cast<double>(
                 &GooseFEM::Element::Quad4::Quadrature::AllocateQscalar<double>, py::const_),
             "Allocate 'qscalar'",
