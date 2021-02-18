@@ -17,7 +17,7 @@ inline VectorPartitionedTyings::VectorPartitionedTyings(
     const Eigen::SparseMatrix<double>& Cdu,
     const Eigen::SparseMatrix<double>& Cdp,
     const Eigen::SparseMatrix<double>& Cdi)
-    : m_conn(conn), m_dofs(dofs), m_Cdu(Cdu), m_Cdp(Cdp), m_Cdi(Cdi)
+    : Vector(conn, dofs), m_Cdu(Cdu), m_Cdp(Cdp), m_Cdi(Cdi)
 {
     GOOSEFEM_ASSERT(Cdu.rows() == Cdp.rows());
     GOOSEFEM_ASSERT(Cdi.rows() == Cdp.rows());
@@ -26,46 +26,15 @@ inline VectorPartitionedTyings::VectorPartitionedTyings(
     m_nnp = static_cast<size_t>(m_Cdp.cols());
     m_nnd = static_cast<size_t>(m_Cdp.rows());
     m_nni = m_nnu + m_nnp;
-    m_ndof = m_nni + m_nnd;
     m_iiu = xt::arange<size_t>(m_nnu);
     m_iip = xt::arange<size_t>(m_nnu, m_nnu + m_nnp);
     m_iid = xt::arange<size_t>(m_nni, m_nni + m_nnd);
-    m_nelem = m_conn.shape(0);
-    m_nne = m_conn.shape(1);
-    m_nnode = m_dofs.shape(0);
-    m_ndim = m_dofs.shape(1);
     m_Cud = m_Cdu.transpose();
     m_Cpd = m_Cdp.transpose();
     m_Cid = m_Cdi.transpose();
 
     GOOSEFEM_ASSERT(static_cast<size_t>(m_Cdi.cols()) == m_nni);
-    GOOSEFEM_ASSERT(m_ndof <= m_nnode * m_ndim);
     GOOSEFEM_ASSERT(m_ndof == xt::amax(m_dofs)() + 1);
-}
-
-inline size_t VectorPartitionedTyings::nelem() const
-{
-    return m_nelem;
-}
-
-inline size_t VectorPartitionedTyings::nne() const
-{
-    return m_nne;
-}
-
-inline size_t VectorPartitionedTyings::nnode() const
-{
-    return m_nnode;
-}
-
-inline size_t VectorPartitionedTyings::ndim() const
-{
-    return m_ndim;
-}
-
-inline size_t VectorPartitionedTyings::ndof() const
-{
-    return m_ndof;
 }
 
 inline size_t VectorPartitionedTyings::nnu() const
@@ -86,11 +55,6 @@ inline size_t VectorPartitionedTyings::nni() const
 inline size_t VectorPartitionedTyings::nnd() const
 {
     return m_nnd;
-}
-
-inline xt::xtensor<size_t, 2> VectorPartitionedTyings::dofs() const
-{
-    return m_dofs;
 }
 
 inline xt::xtensor<size_t, 1> VectorPartitionedTyings::iiu() const
@@ -157,105 +121,14 @@ inline void VectorPartitionedTyings::asDofs_i(
     }
 }
 
-inline void VectorPartitionedTyings::asNode(
-    const xt::xtensor<double, 1>& dofval, xt::xtensor<double, 2>& nodevec) const
-{
-    GOOSEFEM_ASSERT(dofval.size() == m_ndof);
-    GOOSEFEM_ASSERT(xt::has_shape(nodevec, {m_nnode, m_ndim}));
-
-    #pragma omp parallel for
-    for (size_t m = 0; m < m_nnode; ++m) {
-        for (size_t i = 0; i < m_ndim; ++i) {
-            nodevec(m, i) = dofval(m_dofs(m, i));
-        }
-    }
-}
-
-inline void VectorPartitionedTyings::asElement(
-    const xt::xtensor<double, 2>& nodevec, xt::xtensor<double, 3>& elemvec) const
-{
-    GOOSEFEM_ASSERT(xt::has_shape(nodevec, {m_nnode, m_ndim}));
-    GOOSEFEM_ASSERT(xt::has_shape(elemvec, {m_nelem, m_nne, m_ndim}));
-
-    #pragma omp parallel for
-    for (size_t e = 0; e < m_nelem; ++e) {
-        for (size_t m = 0; m < m_nne; ++m) {
-            for (size_t i = 0; i < m_ndim; ++i) {
-                elemvec(e, m, i) = nodevec(m_conn(e, m), i);
-            }
-        }
-    }
-}
-
-inline void VectorPartitionedTyings::assembleDofs(
-    const xt::xtensor<double, 3>& elemvec, xt::xtensor<double, 1>& dofval) const
-{
-    GOOSEFEM_ASSERT(xt::has_shape(elemvec, {m_nelem, m_nne, m_ndim}));
-    GOOSEFEM_ASSERT(dofval.size() == m_ndof);
-
-    dofval.fill(0.0);
-
-    for (size_t e = 0; e < m_nelem; ++e) {
-        for (size_t m = 0; m < m_nne; ++m) {
-            for (size_t i = 0; i < m_ndim; ++i) {
-                dofval(m_dofs(m_conn(e, m), i)) += elemvec(e, m, i);
-            }
-        }
-    }
-}
-
-inline void VectorPartitionedTyings::assembleNode(
-    const xt::xtensor<double, 3>& elemvec, xt::xtensor<double, 2>& nodevec) const
-{
-    GOOSEFEM_ASSERT(xt::has_shape(elemvec, {m_nelem, m_nne, m_ndim}));
-    GOOSEFEM_ASSERT(xt::has_shape(nodevec, {m_nnode, m_ndim}));
-
-    xt::xtensor<double, 1> dofval = this->AssembleDofs(elemvec);
-    this->asNode(dofval, nodevec);
-}
-
-inline xt::xtensor<double, 1>
-VectorPartitionedTyings::AsDofs_i(const xt::xtensor<double, 2>& nodevec) const
+inline xt::xtensor<double, 1> VectorPartitionedTyings::AsDofs_i(const xt::xtensor<double, 2>& nodevec) const
 {
     xt::xtensor<double, 1> dofval = xt::empty<double>({m_nni});
     this->asDofs_i(nodevec, dofval);
     return dofval;
 }
 
-inline xt::xtensor<double, 2>
-VectorPartitionedTyings::AsNode(const xt::xtensor<double, 1>& dofval) const
-{
-    xt::xtensor<double, 2> nodevec = xt::empty<double>({m_nnode, m_ndim});
-    this->asNode(dofval, nodevec);
-    return nodevec;
-}
-
-inline xt::xtensor<double, 3>
-VectorPartitionedTyings::AsElement(const xt::xtensor<double, 2>& nodevec) const
-{
-    xt::xtensor<double, 3> elemvec = xt::empty<double>({m_nelem, m_nne, m_ndim});
-    this->asElement(nodevec, elemvec);
-    return elemvec;
-}
-
-inline xt::xtensor<double, 1>
-VectorPartitionedTyings::AssembleDofs(const xt::xtensor<double, 3>& elemvec) const
-{
-    xt::xtensor<double, 1> dofval = xt::empty<double>({m_ndof});
-    this->assembleDofs(elemvec, dofval);
-    return dofval;
-}
-
-inline xt::xtensor<double, 2>
-VectorPartitionedTyings::AssembleNode(const xt::xtensor<double, 3>& elemvec) const
-{
-    xt::xtensor<double, 2> nodevec = xt::empty<double>({m_nnode, m_ndim});
-    this->assembleNode(elemvec, nodevec);
-    return nodevec;
-}
-
-inline Eigen::VectorXd
-VectorPartitionedTyings::Eigen_asDofs_d(const xt::xtensor<double, 2>& nodevec) const
+inline Eigen::VectorXd VectorPartitionedTyings::Eigen_asDofs_d(const xt::xtensor<double, 2>& nodevec) const
 {
     GOOSEFEM_ASSERT(xt::has_shape(nodevec, {m_nnode, m_ndim}));
 
@@ -271,58 +144,6 @@ VectorPartitionedTyings::Eigen_asDofs_d(const xt::xtensor<double, 2>& nodevec) c
     }
 
     return dofval_d;
-}
-
-inline xt::xtensor<double, 1> VectorPartitionedTyings::AllocateDofval() const
-{
-    xt::xtensor<double, 1> dofval = xt::empty<double>({m_ndof});
-    return dofval;
-}
-
-inline xt::xtensor<double, 2> VectorPartitionedTyings::AllocateNodevec() const
-{
-    xt::xtensor<double, 2> nodevec = xt::empty<double>({m_nnode, m_ndim});
-    return nodevec;
-}
-
-inline xt::xtensor<double, 3> VectorPartitionedTyings::AllocateElemvec() const
-{
-    xt::xtensor<double, 3> elemvec = xt::empty<double>({m_nelem, m_nne, m_ndim});
-    return elemvec;
-}
-
-inline xt::xtensor<double, 3> VectorPartitionedTyings::AllocateElemmat() const
-{
-    xt::xtensor<double, 3> elemmat = xt::empty<double>({m_nelem, m_nne * m_ndim, m_nne * m_ndim});
-    return elemmat;
-}
-
-inline xt::xtensor<double, 1> VectorPartitionedTyings::AllocateDofval(double val) const
-{
-    xt::xtensor<double, 1> dofval = xt::zeros<double>({m_ndof});
-    dofval.fill(val);
-    return dofval;
-}
-
-inline xt::xtensor<double, 2> VectorPartitionedTyings::AllocateNodevec(double val) const
-{
-    xt::xtensor<double, 2> nodevec = xt::zeros<double>({m_nnode, m_ndim});
-    nodevec.fill(val);
-    return nodevec;
-}
-
-inline xt::xtensor<double, 3> VectorPartitionedTyings::AllocateElemvec(double val) const
-{
-    xt::xtensor<double, 3> elemvec = xt::zeros<double>({m_nelem, m_nne, m_ndim});
-    elemvec.fill(val);
-    return elemvec;
-}
-
-inline xt::xtensor<double, 3> VectorPartitionedTyings::AllocateElemmat(double val) const
-{
-    xt::xtensor<double, 3> elemmat = xt::empty<double>({m_nelem, m_nne * m_ndim, m_nne * m_ndim});
-    elemmat.fill(val);
-    return elemmat;
 }
 
 } // namespace GooseFEM

@@ -34,6 +34,12 @@ void init_Vector(py::module& m)
         .def("dofs", &GooseFEM::Vector::dofs, "Return degrees-of-freedom")
 
         .def(
+            "Copy",
+            &GooseFEM::Vector::Copy,
+            py::arg("nodevec_src"),
+            py::arg("nodevec_dest"))
+
+        .def(
             "AsDofs",
             py::overload_cast<const xt::xtensor<double, 2>&>(&GooseFEM::Vector::AsDofs, py::const_),
             "Set 'dofval",
@@ -91,6 +97,22 @@ void init_Vector(py::module& m)
                 &GooseFEM::Vector::AssembleNode, py::const_),
             "Assemble 'nodevec'",
             py::arg("elemvec"))
+
+        .def(
+            "ShapeDofval",
+            &GooseFEM::Vector::ShapeDofval)
+
+        .def(
+            "ShapeNodevec",
+            &GooseFEM::Vector::ShapeNodevec)
+
+        .def(
+            "ShapeElemvec",
+            &GooseFEM::Vector::ShapeElemvec)
+
+        .def(
+            "ShapeElemmat",
+            &GooseFEM::Vector::ShapeElemmat)
 
         .def(
             "AllocateDofval",
