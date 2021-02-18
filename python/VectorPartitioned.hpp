@@ -13,7 +13,7 @@ namespace py = pybind11;
 void init_VectorPartitioned(py::module& m)
 {
 
-    py::class_<GooseFEM::VectorPartitioned>(m, "VectorPartitioned")
+    py::class_<GooseFEM::VectorPartitioned, GooseFEM::Vector>(m, "VectorPartitioned")
 
         .def(
             py::init<
@@ -133,116 +133,116 @@ void init_VectorPartitioned(py::module& m)
 
         .def(
             "Copy",
-            &GooseFEM::VectorPartitioned::Copy,
+            &GooseFEM::Vector::Copy,
             py::arg("nodevec_src"),
             py::arg("nodevec_dest"))
 
         .def(
             "AsDofs",
-            py::overload_cast<const xt::xtensor<double, 2>&>(&GooseFEM::VectorPartitioned::AsDofs, py::const_),
+            py::overload_cast<const xt::xtensor<double, 2>&>(&GooseFEM::Vector::AsDofs, py::const_),
             "Set 'dofval",
             py::arg("nodevec"))
 
         .def(
             "AsDofs",
-            py::overload_cast<const xt::xtensor<double, 3>&>(&GooseFEM::VectorPartitioned::AsDofs, py::const_),
+            py::overload_cast<const xt::xtensor<double, 3>&>(&GooseFEM::Vector::AsDofs, py::const_),
             "Set 'dofval",
             py::arg("elemvec"))
 
         .def(
             "AsNode",
-            py::overload_cast<const xt::xtensor<double, 1>&>(&GooseFEM::VectorPartitioned::AsNode, py::const_),
+            py::overload_cast<const xt::xtensor<double, 1>&>(&GooseFEM::Vector::AsNode, py::const_),
             "Set 'nodevec",
             py::arg("dofval"))
 
         .def(
             "AsNode",
-            py::overload_cast<const xt::xtensor<double, 3>&>(&GooseFEM::VectorPartitioned::AsNode, py::const_),
+            py::overload_cast<const xt::xtensor<double, 3>&>(&GooseFEM::Vector::AsNode, py::const_),
             "Set 'nodevec",
             py::arg("elemvec"))
 
         .def(
             "AsElement",
             py::overload_cast<const xt::xtensor<double, 1>&>(
-                &GooseFEM::VectorPartitioned::AsElement, py::const_),
+                &GooseFEM::Vector::AsElement, py::const_),
             "Set 'elemvec",
             py::arg("dofval"))
 
         .def(
             "AsElement",
             py::overload_cast<const xt::xtensor<double, 2>&>(
-                &GooseFEM::VectorPartitioned::AsElement, py::const_),
+                &GooseFEM::Vector::AsElement, py::const_),
             "Set 'elemvec",
             py::arg("nodevec"))
 
         .def(
             "AssembleDofs",
             py::overload_cast<const xt::xtensor<double, 2>&>(
-                &GooseFEM::VectorPartitioned::AssembleDofs, py::const_),
+                &GooseFEM::Vector::AssembleDofs, py::const_),
             "Assemble 'dofval'",
             py::arg("nodevec"))
 
         .def(
             "AssembleDofs",
             py::overload_cast<const xt::xtensor<double, 3>&>(
-                &GooseFEM::VectorPartitioned::AssembleDofs, py::const_),
+                &GooseFEM::Vector::AssembleDofs, py::const_),
             "Assemble 'dofval'",
             py::arg("elemvec"))
 
         .def(
             "AssembleNode",
             py::overload_cast<const xt::xtensor<double, 3>&>(
-                &GooseFEM::VectorPartitioned::AssembleNode, py::const_),
+                &GooseFEM::Vector::AssembleNode, py::const_),
             "Assemble 'nodevec'",
             py::arg("elemvec"))
 
         .def(
             "ShapeDofval",
-            &GooseFEM::VectorPartitioned::ShapeDofval)
+            &GooseFEM::Vector::ShapeDofval)
 
         .def(
             "ShapeNodevec",
-            &GooseFEM::VectorPartitioned::ShapeNodevec)
+            &GooseFEM::Vector::ShapeNodevec)
 
         .def(
             "ShapeElemvec",
-            &GooseFEM::VectorPartitioned::ShapeElemvec)
+            &GooseFEM::Vector::ShapeElemvec)
 
         .def(
             "ShapeElemmat",
-            &GooseFEM::VectorPartitioned::ShapeElemmat)
+            &GooseFEM::Vector::ShapeElemmat)
 
         .def(
             "AllocateDofval",
-            py::overload_cast<>(&GooseFEM::VectorPartitioned::AllocateDofval, py::const_))
+            py::overload_cast<>(&GooseFEM::Vector::AllocateDofval, py::const_))
 
         .def(
             "AllocateDofval",
-            py::overload_cast<double>(&GooseFEM::VectorPartitioned::AllocateDofval, py::const_))
+            py::overload_cast<double>(&GooseFEM::Vector::AllocateDofval, py::const_))
 
         .def(
             "AllocateNodevec",
-            py::overload_cast<>(&GooseFEM::VectorPartitioned::AllocateNodevec, py::const_))
+            py::overload_cast<>(&GooseFEM::Vector::AllocateNodevec, py::const_))
 
         .def(
             "AllocateNodevec",
-            py::overload_cast<double>(&GooseFEM::VectorPartitioned::AllocateNodevec, py::const_))
+            py::overload_cast<double>(&GooseFEM::Vector::AllocateNodevec, py::const_))
 
         .def(
             "AllocateElemvec",
-            py::overload_cast<>(&GooseFEM::VectorPartitioned::AllocateElemvec, py::const_))
+            py::overload_cast<>(&GooseFEM::Vector::AllocateElemvec, py::const_))
 
         .def(
             "AllocateElemvec",
-            py::overload_cast<double>(&GooseFEM::VectorPartitioned::AllocateElemvec, py::const_))
+            py::overload_cast<double>(&GooseFEM::Vector::AllocateElemvec, py::const_))
 
         .def(
             "AllocateElemmat",
-            py::overload_cast<>(&GooseFEM::VectorPartitioned::AllocateElemmat, py::const_))
+            py::overload_cast<>(&GooseFEM::Vector::AllocateElemmat, py::const_))
 
         .def(
             "AllocateElemmat",
-            py::overload_cast<double>(&GooseFEM::VectorPartitioned::AllocateElemmat, py::const_))
+            py::overload_cast<double>(&GooseFEM::Vector::AllocateElemmat, py::const_))
 
         .def("__repr__", [](const GooseFEM::VectorPartitioned&) {
             return "<GooseFEM.VectorPartitioned>";
