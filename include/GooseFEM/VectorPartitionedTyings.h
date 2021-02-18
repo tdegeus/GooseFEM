@@ -22,7 +22,7 @@ namespace GooseFEM {
   "dofval_p"  -  DOF values (Prescribed) "== dofval[iiu]" -  [nnp]
 */
 
-class VectorPartitionedTyings {
+class VectorPartitionedTyings : public Vector {
 public:
     // Constructor
     VectorPartitionedTyings() = default;
@@ -35,18 +35,12 @@ public:
         const Eigen::SparseMatrix<double>& Cdi);
 
     // Dimensions
-    size_t nelem() const; // number of elements
-    size_t nne() const;   // number of nodes per element
-    size_t nnode() const; // number of nodes
-    size_t ndim() const;  // number of dimensions
-    size_t ndof() const;  // number of DOFs
     size_t nnu() const;   // number of independent, unknown DOFs
     size_t nnp() const;   // number of independent, prescribed DOFs
     size_t nni() const;   // number of independent DOFs
     size_t nnd() const;   // number of dependent DOFs
 
     // DOF lists
-    xt::xtensor<size_t, 2> dofs() const; // DOFs
     xt::xtensor<size_t, 1> iiu() const;  // independent, unknown DOFs
     xt::xtensor<size_t, 1> iip() const;  // independent, prescribed DOFs
     xt::xtensor<size_t, 1> iii() const;  // independent DOFs
@@ -62,49 +56,17 @@ public:
         xt::xtensor<double, 1>& dofval_i,
         bool apply_tyings = true) const;
 
-    // Convert to "nodevec" (overwrite entries that occur more than once) -- (auto allocation below)
-    void asNode(const xt::xtensor<double, 1>& dofval, xt::xtensor<double, 2>& nodevec) const;
-
-    // Convert to "elemvec" (overwrite entries that occur more than once) -- (auto allocation below)
-    void asElement(const xt::xtensor<double, 2>& nodevec, xt::xtensor<double, 3>& elemvec) const;
-
-    // Assemble "dofval" (adds entries that occur more that once) -- (auto allocation below)
-    void assembleDofs(const xt::xtensor<double, 3>& elemvec, xt::xtensor<double, 1>& dofval) const;
-
-    // Assemble "nodevec" (adds entries that occur more that once) -- (auto allocation below)
-    void assembleNode(const xt::xtensor<double, 3>& elemvec, xt::xtensor<double, 2>& nodevec) const;
 
     // Auto-allocation of the functions above
     xt::xtensor<double, 1> AsDofs_i(const xt::xtensor<double, 2>& nodevec) const;
-    xt::xtensor<double, 2> AsNode(const xt::xtensor<double, 1>& dofval) const;
-    xt::xtensor<double, 3> AsElement(const xt::xtensor<double, 2>& nodevec) const;
-    xt::xtensor<double, 1> AssembleDofs(const xt::xtensor<double, 3>& elemvec) const;
-    xt::xtensor<double, 2> AssembleNode(const xt::xtensor<double, 3>& elemvec) const;
-
-    // Get zero-allocated dofval, nodevec, elemvec
-    xt::xtensor<double, 1> AllocateDofval() const;
-    xt::xtensor<double, 2> AllocateNodevec() const;
-    xt::xtensor<double, 3> AllocateElemvec() const;
-    xt::xtensor<double, 3> AllocateElemmat() const;
-    xt::xtensor<double, 1> AllocateDofval(double val) const;
-    xt::xtensor<double, 2> AllocateNodevec(double val) const;
-    xt::xtensor<double, 3> AllocateElemvec(double val) const;
-    xt::xtensor<double, 3> AllocateElemmat(double val) const;
 
 private:
     // Bookkeeping
-    xt::xtensor<size_t, 2> m_conn; // connectivity [nelem, nne]
-    xt::xtensor<size_t, 2> m_dofs; // DOF-numbers per node  [nnode, ndim]
     xt::xtensor<size_t, 1> m_iiu;  // unknown DOFs [nnu]
     xt::xtensor<size_t, 1> m_iip;  // prescribed DOFs [nnp]
     xt::xtensor<size_t, 1> m_iid;  // dependent DOFs [nnd]
 
     // Dimensions
-    size_t m_nelem; // number of elements
-    size_t m_nne;   // number of nodes per element
-    size_t m_nnode; // number of nodes
-    size_t m_ndim;  // number of dimensions
-    size_t m_ndof;  // number of DOFs
     size_t m_nnu;   // number of independent, unknown DOFs
     size_t m_nnp;   // number of independent, prescribed DOFs
     size_t m_nni;   // number of independent DOFs

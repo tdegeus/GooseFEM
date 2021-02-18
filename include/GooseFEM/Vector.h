@@ -19,8 +19,15 @@ namespace GooseFEM {
 
 class Vector {
 public:
-    // Constructor
+
     Vector() = default;
+
+    /**
+    Constructor.
+
+    \param conn Connectivity, shape ``[nelem, nne]``.
+    \param dofs DOFs per node, shape ``[nnode, ndim]``.
+    */
     Vector(const xt::xtensor<size_t, 2>& conn, const xt::xtensor<size_t, 2>& dofs);
 
     // Dimensions
@@ -66,6 +73,10 @@ public:
     xt::xtensor<double, 1> AssembleDofs(const xt::xtensor<double, 3>& elemvec) const;
     xt::xtensor<double, 2> AssembleNode(const xt::xtensor<double, 3>& elemvec) const;
 
+    xt::xtensor<double, 2> Copy(
+        const xt::xtensor<double, 2>& nodevec_src,
+        const xt::xtensor<double, 2>& nodevec_dest) const;
+
     // Get shape of dofval, nodevec, elemvec
     std::array<size_t, 1> ShapeDofval() const;
     std::array<size_t, 2> ShapeNodevec() const;
@@ -82,17 +93,14 @@ public:
     xt::xtensor<double, 3> AllocateElemvec(double val) const;
     xt::xtensor<double, 3> AllocateElemmat(double val) const;
 
-private:
-    // Bookkeeping
-    xt::xtensor<size_t, 2> m_conn; // connectivity         [nelem, nne ]
-    xt::xtensor<size_t, 2> m_dofs; // DOF-numbers per node [nnode, ndim]
-
-    // Dimensions
-    size_t m_nelem; // number of elements
-    size_t m_nne;   // number of nodes per element
-    size_t m_nnode; // number of nodes
-    size_t m_ndim;  // number of dimensions
-    size_t m_ndof;  // number of DOFs
+protected:
+    xt::xtensor<size_t, 2> m_conn; ///< Connectivity ``[nelem, nne]``
+    xt::xtensor<size_t, 2> m_dofs; ///< DOF-numbers per node ``[nnode, ndim]``
+    size_t m_nelem; ///< Number of elements
+    size_t m_nne;   ///< Number of nodes per element
+    size_t m_nnode; ///< Number of nodes
+    size_t m_ndim;  ///< Number of dimensions
+    size_t m_ndof;  ///< Number of DOFs
 };
 
 } // namespace GooseFEM

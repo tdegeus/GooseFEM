@@ -29,16 +29,6 @@ void init_VectorPartitionedTyings(py::module& m)
             py::arg("Cdp"),
             py::arg("Cdi"))
 
-        .def("nelem", &GooseFEM::VectorPartitionedTyings::nelem, "Number of element")
-
-        .def("nne", &GooseFEM::VectorPartitionedTyings::nne, "Number of nodes per element")
-
-        .def("nnode", &GooseFEM::VectorPartitionedTyings::nnode, "Number of nodes")
-
-        .def("ndim", &GooseFEM::VectorPartitionedTyings::ndim, "Number of dimensions")
-
-        .def("ndof", &GooseFEM::VectorPartitionedTyings::ndof, "Number of DOFs")
-
         .def("nnu", &GooseFEM::VectorPartitionedTyings::nnu, "Number of unknown DOFs")
 
         .def("nnp", &GooseFEM::VectorPartitionedTyings::nnp, "Number of prescribed DOFs")
@@ -46,8 +36,6 @@ void init_VectorPartitionedTyings(py::module& m)
         .def("nni", &GooseFEM::VectorPartitionedTyings::nni, "Number of independent DOFs")
 
         .def("nnd", &GooseFEM::VectorPartitionedTyings::nnd, "Number of dependent DOFs")
-
-        .def("dofs", &GooseFEM::VectorPartitionedTyings::dofs, "DOFs")
 
         .def("iiu", &GooseFEM::VectorPartitionedTyings::iiu, "Unknown DOFs")
 
@@ -63,26 +51,100 @@ void init_VectorPartitionedTyings(py::module& m)
             "Set 'dofval",
             py::arg("nodevec"))
 
+        // Overloaded methods from Vector
+
+        .def("nelem", &GooseFEM::VectorPartitionedTyings::nelem, "Number of element")
+
+        .def("nne", &GooseFEM::VectorPartitionedTyings::nne, "Number of nodes per element")
+
+        .def("nnode", &GooseFEM::VectorPartitionedTyings::nnode, "Number of nodes")
+
+        .def("ndim", &GooseFEM::VectorPartitionedTyings::ndim, "Number of dimensions")
+
+        .def("ndof", &GooseFEM::VectorPartitionedTyings::ndof, "Number of degrees-of-freedom")
+
+        .def("dofs", &GooseFEM::VectorPartitionedTyings::dofs, "Return degrees-of-freedom")
+
         .def(
-            "AsNode", &GooseFEM::VectorPartitionedTyings::AsNode, "Set 'nodevec", py::arg("dofval"))
+            "Copy",
+            &GooseFEM::VectorPartitionedTyings::Copy,
+            py::arg("nodevec_src"),
+            py::arg("nodevec_dest"))
+
+        .def(
+            "AsDofs",
+            py::overload_cast<const xt::xtensor<double, 2>&>(&GooseFEM::VectorPartitionedTyings::AsDofs, py::const_),
+            "Set 'dofval",
+            py::arg("nodevec"))
+
+        .def(
+            "AsDofs",
+            py::overload_cast<const xt::xtensor<double, 3>&>(&GooseFEM::VectorPartitionedTyings::AsDofs, py::const_),
+            "Set 'dofval",
+            py::arg("elemvec"))
+
+        .def(
+            "AsNode",
+            py::overload_cast<const xt::xtensor<double, 1>&>(&GooseFEM::VectorPartitionedTyings::AsNode, py::const_),
+            "Set 'nodevec",
+            py::arg("dofval"))
+
+        .def(
+            "AsNode",
+            py::overload_cast<const xt::xtensor<double, 3>&>(&GooseFEM::VectorPartitionedTyings::AsNode, py::const_),
+            "Set 'nodevec",
+            py::arg("elemvec"))
 
         .def(
             "AsElement",
-            &GooseFEM::VectorPartitionedTyings::AsElement,
+            py::overload_cast<const xt::xtensor<double, 1>&>(
+                &GooseFEM::VectorPartitionedTyings::AsElement, py::const_),
+            "Set 'elemvec",
+            py::arg("dofval"))
+
+        .def(
+            "AsElement",
+            py::overload_cast<const xt::xtensor<double, 2>&>(
+                &GooseFEM::VectorPartitionedTyings::AsElement, py::const_),
             "Set 'elemvec",
             py::arg("nodevec"))
 
         .def(
             "AssembleDofs",
-            &GooseFEM::VectorPartitionedTyings::AssembleDofs,
+            py::overload_cast<const xt::xtensor<double, 2>&>(
+                &GooseFEM::VectorPartitionedTyings::AssembleDofs, py::const_),
+            "Assemble 'dofval'",
+            py::arg("nodevec"))
+
+        .def(
+            "AssembleDofs",
+            py::overload_cast<const xt::xtensor<double, 3>&>(
+                &GooseFEM::VectorPartitionedTyings::AssembleDofs, py::const_),
             "Assemble 'dofval'",
             py::arg("elemvec"))
 
         .def(
             "AssembleNode",
-            &GooseFEM::VectorPartitionedTyings::AssembleNode,
+            py::overload_cast<const xt::xtensor<double, 3>&>(
+                &GooseFEM::VectorPartitionedTyings::AssembleNode, py::const_),
             "Assemble 'nodevec'",
             py::arg("elemvec"))
+
+        .def(
+            "ShapeDofval",
+            &GooseFEM::VectorPartitionedTyings::ShapeDofval)
+
+        .def(
+            "ShapeNodevec",
+            &GooseFEM::VectorPartitionedTyings::ShapeNodevec)
+
+        .def(
+            "ShapeElemvec",
+            &GooseFEM::VectorPartitionedTyings::ShapeElemvec)
+
+        .def(
+            "ShapeElemmat",
+            &GooseFEM::VectorPartitionedTyings::ShapeElemmat)
 
         .def(
             "AllocateDofval",
