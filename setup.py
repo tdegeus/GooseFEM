@@ -1,8 +1,3 @@
-desc = '''
-GooseFEM is a C++ module, wrapped in Python, that provides several predefined finite element meshes.
-The original C++ module also includes element definitions and several standard finite element
-simulations.
-'''
 
 from setuptools import setup, Extension
 
@@ -10,6 +5,7 @@ import re
 import os
 import pybind11
 import pyxtensor
+import subprocess
 
 header = open('include/GooseFEM/config.h','r').read()
 major = re.split(r'(.*)(\#define GOOSEFEM_VERSION_MAJOR\ )([0-9]+)(.*)', header)[3]
@@ -36,6 +32,17 @@ if xsimd:
         build.c_opts['unix'] += ['-march=native', '-DXTENSOR_USE_XSIMD']
         build.c_opts['msvc'] += ['/DXTENSOR_USE_XSIMD']
 
+git_hash = subprocess.check_output(["git", "rev-parse", "HEAD"]).strip().decode('UTF-8')
+git_branch = subprocess.check_output(["git", "rev-parse", "--abbrev-ref", "HEAD"]).strip().decode('UTF-8')
+
+build.c_opts['unix'] += [
+    '-DGOOSEFEM_GIT_HASH="{0:s}"'.format(git_hash),
+    '-DGOOSEFEM_GIT_BRANCH="{0:s}"'.format(git_branch)]
+
+build.c_opts['msvc'] += [
+    '/DGOOSEFEM_GIT_HASH="{0:s}"'.format(git_hash),
+    '/DGOOSEFEM_GIT_BRANCH="{0:s}"'.format(git_branch)]
+
 ext_modules = [Extension(
     'GooseFEM',
     ['python/main.cpp'],
@@ -45,13 +52,13 @@ ext_modules = [Extension(
 setup(
     name = 'GooseFEM',
     description = 'Finite element meshes, quadrature, and assembly tools',
-    long_description = desc,
+    long_description = 'Finite element meshes, quadrature, and assembly tools',
     version = __version__,
     license = 'GPLv3',
     author = 'Tom de Geus',
     author_email = 'tom@geus.me',
     url = 'https://github.com/tdegeus/GooseFEM',
     ext_modules = ext_modules,
-    install_requires = ['pybind11>=2.2.0', 'pyxtensor>=0.1.1'],
+    install_requires = ['pybind11', 'pyxtensor'],
     cmdclass = {'build_ext': build},
     zip_safe = False)

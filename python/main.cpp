@@ -33,6 +33,7 @@ namespace py = pybind11;
 #include "MeshTri3.hpp"
 #include "MeshQuad4.hpp"
 #include "MeshHex8.hpp"
+#include "Version.hpp"
 
 PYBIND11_MODULE(GooseFEM, m) {
 
@@ -50,6 +51,7 @@ init_MatrixPartitioned(m);
 init_MatrixPartitionedTyings(m);
 init_MatrixDiagonal(m);
 init_MatrixDiagonalPartitioned(m);
+init_Version(m);
 
 // ----------------
 // GooseFEM.Element
