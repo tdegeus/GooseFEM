@@ -25,10 +25,37 @@ inline xt::xtensor<double, 2> xi(); // integration point coordinates (local coor
 inline xt::xtensor<double, 1> w();  // integration point weights
 } // namespace Gauss
 
+/**
+nodal quadrature: quadrature points coincide with the nodes.
+The order is the same as in the connectivity::
+
+    3 -- 2
+    |    |
+    0 -- 1
+*/
 namespace Nodal {
-inline size_t nip();                // number of integration points
-inline xt::xtensor<double, 2> xi(); // integration point coordinates (local coordinates)
-inline xt::xtensor<double, 1> w();  // integration point weights
+
+    /**
+    Number of integration points.
+
+    \return unsigned int
+    */
+    inline size_t nip();                // number of integration points
+
+    /**
+    Integration point coordinates (local coordinates).
+
+    \return Coordinates ``[nne, ndim]``.
+    */
+    inline xt::xtensor<double, 2> xi();
+
+    /**
+    Integration point weights.
+
+    \return Coordinates ``[nne]``.
+    */
+    inline xt::xtensor<double, 1> w();
+
 } // namespace Nodal
 
 namespace MidPoint {

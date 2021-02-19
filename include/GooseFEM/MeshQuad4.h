@@ -21,21 +21,71 @@ namespace Map {
     class FineLayer2Regular;
 }
 
-// Regular mesh: equi-sized elements
-
+/**
+Regular mesh: equi-sized elements.
+*/
 class Regular {
 public:
+
     Regular() = default;
+
+    /**
+    Constructor.
+
+    \param nelx Number of elements in horizontal (x) direction.
+    \param nely Number of elements in vertical (y) direction.
+    \param h Edge size (width == height).
+    */
     Regular(size_t nelx, size_t nely, double h = 1.0);
 
-    // size
-    size_t nelem() const; // number of elements
-    size_t nnode() const; // number of nodes
-    size_t nne() const;   // number of nodes-per-element
-    size_t ndim() const;  // number of dimensions
-    size_t nelx() const;  // number of elements in x-direction
-    size_t nely() const;  // number of elements in y-direction
-    double h() const;     // edge size
+    /**
+    Number of elements.
+
+    \return unsigned int.
+    */
+    size_t nelem() const;
+
+    /**
+    Number of nodes.
+
+    \return unsigned int.
+    */
+    size_t nnode() const;
+
+    /**
+    Number of nodes-per-element.
+
+    \return unsigned int.
+    */
+    size_t nne() const;
+
+    /**
+    Number of dimensions.
+
+    \return unsigned int.
+    */
+    size_t ndim() const;
+
+    /**
+    Number of elements in x-direction.
+
+    \return unsigned int.
+    */
+    size_t nelx() const;
+
+    /**
+    Number of elements in y-direction.
+
+    \return unsigned int.
+    */
+    size_t nely() const;
+
+    /**
+    Edge size.
+
+    \return double.
+    */
+    double h() const;
 
     /**
     Get the element type.
@@ -292,7 +342,14 @@ namespace Map {
         std::vector<std::vector<double>> getMapFraction() const;
 
         /**
-        Map integration point quantities to Regular.
+        Map element quantities to Regular.
+        The mapping is a bit simplistic: no interpolation is involved, the function just
+        accounts the fraction of overlap between the FineLayer element and the Regular element.
+        The mapping is such that::
+
+            ret[e, :, :] <- arg[e, :, :]
+
+        (for arbitrary rank).
 
         \tparam T The type of the data (e.g. ``double``).
         \tparam rank Rank of the data.

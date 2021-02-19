@@ -1589,8 +1589,7 @@ inline std::vector<std::vector<double>> FineLayer2Regular::getMapFraction() cons
 }
 
 template <class T, size_t rank>
-inline xt::xtensor<T, rank>
-FineLayer2Regular::mapToRegular(const xt::xtensor<T, rank>& data) const
+inline xt::xtensor<T, rank> FineLayer2Regular::mapToRegular(const xt::xtensor<T, rank>& data) const
 {
     GOOSEFEM_ASSERT(data.shape(0) == m_finelayer.nelem());
 
