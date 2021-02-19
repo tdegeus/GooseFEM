@@ -3,6 +3,27 @@
 Changelog
 *********
 
+v0.8.1
+======
+
+*   Various documentation updates: using doxygen (e.g. #168, #167, #157, #150)
+    *  Adding autodocs using doxygen/breathe.
+    *  Adding autodocs Python API with references to the C++ docs.
+*   Using GitHub pages for doxygen docs (#156, #155)
+*   Adding version information (incl. git commit hash) (#166)
+*   Adding GooseFEM::Element::Quad4::Quadrature::interp_N_vector
+*   Generalizing GooseFEM::Mesh::Quad4::Map::FineLayer2Regular::mapToRegular
+*   Generalising implementation:
+    *   Internally deriving from Vector
+    *   Python API: unifying Element
+    *   Python API: fixing overloaded methods
+    *   Removing internal use of deprecated method
+    *   Using "initQuadratureBase" in derived Quadrature classes
+    *   Introducing QuadratureBase class -> avoids copies of convenience functions
+*   [CI] Using ctest command to improve output in case of test failure
+*   Restructuring environment (#154)
+*   Fixing readthedocs setup (#153)
+
 v0.8.0
 ======
 

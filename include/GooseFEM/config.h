@@ -92,7 +92,7 @@ The advantage is that:
 
 #define GOOSEFEM_VERSION_MAJOR 0 ///< Define major version
 #define GOOSEFEM_VERSION_MINOR 8 ///< Define minor version
-#define GOOSEFEM_VERSION_PATCH 0 ///< Define patch version (no API changes)
+#define GOOSEFEM_VERSION_PATCH 1 ///< Define patch version (no API changes)
 
 #define GOOSEFEM_VERSION_AT_LEAST(x, y, z) \
     (GOOSEFEM_VERSION_MAJOR > x || (GOOSEFEM_VERSION_MAJOR >= x && \
