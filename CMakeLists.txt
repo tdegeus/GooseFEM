@@ -19,7 +19,7 @@ file(STRINGS "${CMAKE_CURRENT_SOURCE_DIR}/include/GooseFEM/config.h" GooseFEM_ve
      REGEX "#define GOOSEFEM_VERSION_(MAJOR|MINOR|PATCH)")
 
 foreach(ver ${GooseFEM_version_defines})
-    if(ver MATCHES "#define GOOSEFEM_VERSION_(MAJOR|MINOR|PATCH) +([^ ]+)$")
+    if(ver MATCHES "#define GOOSEFEM_VERSION_(MAJOR|MINOR|PATCH) ([0-9]*)(.*)")
         set(GOOSEFEM_VERSION_${CMAKE_MATCH_1}
             "${CMAKE_MATCH_2}"
             CACHE INTERNAL "")
