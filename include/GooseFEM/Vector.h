@@ -11,12 +11,13 @@
 
 namespace GooseFEM {
 
-/*
-  "nodevec"  -  nodal vectors                     -  [nnode, ndim]
-  "elemvec"  -  nodal vectors stored per element  -  [nelem, nne, ndim]
-  "dofval"   -  DOF values                        -  [ndof]
-*/
+/**
+Class to switch between:
 
+-   "nodevec": nodal vectors, shape ``[nnode, ndim]``.
+-   "elemvec": nodal vectors stored per element, shape: ``[nelem, nne, ndim]``.
+-   "dofval": DOF values, shape: ``[ndof]``.
+*/
 class Vector {
 public:
 

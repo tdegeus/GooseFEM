@@ -1,5 +1,5 @@
 [![CI](https://github.com/tdegeus/GooseFEM/workflows/CI/badge.svg)](https://github.com/tdegeus/GooseFEM/actions)
-[![Doxygen -> gh-pages](https://github.com/tdegeus/FrictionQPotFEM/workflows/gh-pages/badge.svg)](https://tdegeus.github.io/FrictionQPotFEM)
+[![Doxygen -> gh-pages](https://github.com/tdegeus/GooseFEM/workflows/gh-pages/badge.svg)](https://tdegeus.github.io/GooseFEM)
 [![readthedocs](https://readthedocs.org/projects/goosefem/badge/?version=latest)](https://readthedocs.org/projects/goosefem/badge/?version=latest)
 
 ## GooseFEM
