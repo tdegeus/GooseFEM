@@ -26,6 +26,7 @@
 #include "MeshTri3.h"
 #include "Vector.h"
 #include "VectorPartitioned.h"
+#include "Version.h"
 
 #ifdef GOOSEFEM_EIGEN
 #include "Matrix.h"

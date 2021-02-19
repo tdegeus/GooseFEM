@@ -83,3 +83,9 @@ using namespace xt::placeholders;
      GOOSEFEM_VERSION_PATCH == z)
 
 #endif
+
+#ifndef GOOSEFEM_GIT_HASH
+
+    #include "git.h"
+
+#endif
