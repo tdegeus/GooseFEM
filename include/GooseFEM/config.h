@@ -1,7 +1,14 @@
-/*
+/**
+Basic configuration:
 
-(c - GPLv3) T.W.J. de Geus (Tom) | tom@geus.me | www.geus.me | github.com/tdegeus/GooseFEM
+-   Include general dependencies.
+-   Define assertions.
+-   Define version.
+-   Define git commit hash/branch.
 
+\file config.h
+\copyright Copyright 2017. Tom de Geus. All rights reserved.
+\license This project is released under the GNU Public License (GPLv3).
 */
 
 #ifndef GOOSEFEM_CONFIG_H
@@ -40,6 +47,21 @@ using namespace xt::placeholders;
 
 #define UNUSED(p) ((void)(p))
 
+/**
+All assertions are implementation as::
+
+    GOOSEFEM_ASSERT(...)
+
+They can be enabled by::
+
+    #define GOOSEFEM_ENABLE_ASSERT
+
+(before including GooseFEM).
+The advantage is that:
+
+-   File and line-number are displayed if the assertion fails.
+-   GooseFEM's assertions can be enabled/disabled independently from those of other libraries.
+*/
 #ifdef GOOSEFEM_ENABLE_ASSERT
 #define GOOSEFEM_ASSERT(expr) GOOSEFEM_ASSERT_IMPL(expr, __FILE__, __LINE__)
 #define GOOSEFEM_ASSERT_IMPL(expr, file, line) \
@@ -68,9 +90,9 @@ using namespace xt::placeholders;
             ": WIP, please extend the code, assertion failed (" #expr ") \n\t"); \
     }
 
-#define GOOSEFEM_VERSION_MAJOR 0
-#define GOOSEFEM_VERSION_MINOR 8
-#define GOOSEFEM_VERSION_PATCH 0
+#define GOOSEFEM_VERSION_MAJOR 0 ///< Define major version
+#define GOOSEFEM_VERSION_MINOR 8 ///< Define minor version
+#define GOOSEFEM_VERSION_PATCH 0 ///< Define patch version (no API changes)
 
 #define GOOSEFEM_VERSION_AT_LEAST(x, y, z) \
     (GOOSEFEM_VERSION_MAJOR > x || (GOOSEFEM_VERSION_MAJOR >= x && \

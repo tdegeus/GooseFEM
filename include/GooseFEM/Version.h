@@ -15,6 +15,7 @@ namespace GooseFEM {
 
 /**
 Return git branch and hash (at the time of configuring).
+See GOOSEFEM_GIT_HASH() and GOOSEFEM_GIT_BRANCH().
 
 \return ``{branch, hash}``
 */
@@ -22,6 +23,7 @@ inline std::vector<std::string> git();
 
 /**
 Return version as string.
+See GOOSEFEM_VERSION_MAJOR(), GOOSEFEM_VERSION_MINOR(), and GOOSEFEM_VERSION_PATCH()
 
 \return Version string, e.g. ``v0.5.2``.
 */
