@@ -28,7 +28,7 @@ add_executable(${test_name}
     MeshQuad4.cpp
     Vector.cpp
     VectorPartitioned.cpp
-    Version.cpp)
+    version.cpp)
 
 target_link_libraries(${test_name} PRIVATE
     Catch2::Catch2
