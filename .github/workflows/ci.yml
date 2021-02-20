@@ -128,3 +128,4 @@ jobs:
     - name: Python tests
       run: |
         python test/basic-python/MeshQuad4.py
+        python test/basic-python/tmp.py
