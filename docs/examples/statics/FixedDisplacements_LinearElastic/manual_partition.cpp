@@ -114,7 +114,7 @@ int main()
     Solver.solve_u(K, fres_u, u_p, u_u);
 
     // assemble to nodal vector
-    vector.asNode(u_u, u_p, disp);
+    vector.nodeFromPartitioned(u_u, u_p, disp);
 
     // post-process
     // ------------
