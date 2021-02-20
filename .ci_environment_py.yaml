@@ -1,0 +1,9 @@
+channels:
+  - conda-forge
+dependencies:
+  - xtensor
+  - eigen
+  - setuptools_scm
+  - python
+  - pyxtensor
+  - numpy
