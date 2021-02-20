@@ -7,3 +7,4 @@ dependencies:
   - python
   - pyxtensor
   - numpy
+  - nomkl
