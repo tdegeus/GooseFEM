@@ -15,12 +15,20 @@ Version information.
 Current version.
 
 Either:
--   Configure using CMake at install time.
+
+-   Configure using CMake at install time. Internally uses::
+
+        python -c "from setuptools_scm import get_version; print(get_version())"
+
 -   Define externally using::
 
         -DGOOSEFEM_VERSION="`python -c "from setuptools_scm import get_version; print(get_version())"`"
 
     From the root of this project. This is what ``setup.py`` does.
+
+Note that both ``CMakeLists.txt`` and ``setup.py`` will construct the version string using
+*setuptools_scm* **unless** an environment ``PKG_VERSION`` is defined.
+If ``PKG_VERSION`` is defined the version string will be read from that variable.
 */
 #ifndef GOOSEFEM_VERSION
 #define GOOSEFEM_VERSION "@GOOSEFEM_VERSION@"
