@@ -27,7 +27,7 @@ Either:
     From the root of this project. This is what ``setup.py`` does.
 
 Note that both ``CMakeLists.txt`` and ``setup.py`` will construct the version string using
-*setuptools_scm* **unless** an environment ``PKG_VERSION`` is defined.
+``setuptools_scm`` **unless** an environment ``PKG_VERSION`` is defined.
 If ``PKG_VERSION`` is defined the version string will be read from that variable.
 */
 #ifndef GOOSEFEM_VERSION
