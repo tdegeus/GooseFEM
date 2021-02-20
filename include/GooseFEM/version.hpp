@@ -11,9 +11,20 @@
 
 namespace GooseFEM {
 
+namespace detail {
+
+    inline std::string unquote(const std::string& arg)
+    {
+        std::string ret = arg;
+        ret.erase(std::remove(ret.begin(), ret.end(), '\"'), ret.end());
+        return ret;
+    }
+
+}
+
 inline std::string version()
 {
-    return std::string(QUOTE(GOOSEFEM_VERSION));
+    return detail::unquote(std::string(QUOTE(GOOSEFEM_VERSION)));
 }
 
 inline std::vector<std::string> version_dependencies()
@@ -23,16 +34,16 @@ inline std::vector<std::string> version_dependencies()
     ret.push_back("goosefem=" + version());
 
     ret.push_back("xtensor=" +
-        std::to_string(QUOTE(XTENSOR_VERSION_MAJOR)) + "." +
-        std::to_string(QUOTE(XTENSOR_VERSION_MINOR)) + "." +
-        std::to_string(QUOTE(XTENSOR_VERSION_PATCH)));
+        detail::unquote(std::string(QUOTE(XTENSOR_VERSION_MAJOR))) + "." +
+        detail::unquote(std::string(QUOTE(XTENSOR_VERSION_MINOR))) + "." +
+        detail::unquote(std::string(QUOTE(XTENSOR_VERSION_PATCH))));
 
     #if defined(GOOSEFEM_EIGEN) || defined(EIGEN_WORLD_VERSION)
 
         ret.push_back("eigen=" +
-            std::to_string(QUOTE(EIGEN_WORLD_VERSION)) + "." +
-            std::to_string(QUOTE(EIGEN_MAJOR_VERSION)) + "." +
-            std::to_string(QUOTE(EIGEN_MINOR_VERSION)));
+            detail::unquote(std::string(QUOTE(EIGEN_WORLD_VERSION))) + "." +
+            detail::unquote(std::string(QUOTE(EIGEN_MAJOR_VERSION))) + "." +
+            detail::unquote(std::string(QUOTE(EIGEN_MINOR_VERSION))));
 
     #endif
 
