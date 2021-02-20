@@ -67,36 +67,46 @@ public:
     size_t ndim() const;
 
     /**
-    Number of elements in x-direction.
+    Number of elements in x-direction == width of the mesh in units of h().
 
     \return unsigned int.
     */
     size_t nelx() const;
 
     /**
-    Number of elements in y-direction.
+    Number of elements in y-direction == height of the mesh, in units of h(),
 
     \return unsigned int.
     */
     size_t nely() const;
 
     /**
-    Edge size.
+    Edge size of one element.
 
     \return double.
     */
     double h() const;
 
     /**
-    Get the element type.
+    Element type.
 
     \return GooseFEM::Mesh::ElementType().
     */
     ElementType getElementType() const;
 
-    // mesh
-    xt::xtensor<double, 2> coor() const; // nodal positions [nnode, ndim]
-    xt::xtensor<size_t, 2> conn() const; // connectivity [nelem, nne]
+    /**
+    Nodal coordinates.
+
+    \return ``[nnode, ndim]``.
+    */
+    xt::xtensor<double, 2> coor() const;
+
+    /**
+    Connectivity.
+
+    \return ``[nelem, nne]``.
+    */
+    xt::xtensor<size_t, 2> conn() const;
 
     // boundary nodes: edges
     xt::xtensor<size_t, 1> nodesBottomEdge() const;
@@ -149,32 +159,94 @@ private:
 
 class FineLayer {
 public:
+
     FineLayer() = default;
+
     FineLayer(size_t nelx, size_t nely, double h = 1.0, size_t nfine = 1);
 
-    // Reconstruct class for given coordinates / connectivity
+    /**
+    Reconstruct class for given coordinates / connectivity.
+
+    \param coor Nodal coordinates ``[nnode, ndim]`` with ``ndim == 2``.
+    \param conn Connectivity ``[nne, nne]`` with ``nne == 4``.
+    \throw GOOSEFEM_CHECK()
+    */
     FineLayer(const xt::xtensor<double, 2>& coor, const xt::xtensor<size_t, 2>& conn);
 
-    // size
-    size_t nelem() const; // number of elements
-    size_t nnode() const; // number of nodes
-    size_t nne() const;   // number of nodes-per-element
-    size_t ndim() const;  // number of dimensions
-    size_t nelx() const;  // number of elements in x-direction
-    size_t nely() const;  // number of elements in y-direction
-    double h() const;     // edge size
+    /**
+    Number of elements.
+
+    \return unsigned int.
+    */
+    size_t nelem() const;
+
+    /**
+    Number of nodes.
+
+    \return unsigned int.
+    */
+    size_t nnode() const;
+
+    /**
+    Number of nodes-per-element.
+
+    \return unsigned int.
+    */
+    size_t nne() const;
+
+    /**
+    Number of dimensions.
+
+    \return unsigned int.
+    */
+    size_t ndim() const;
+
+    /**
+    Number of elements in x-direction along the middle layer == width of the mesh in units of h().
+
+    \return unsigned int.
+    */
+    size_t nelx() const;
+
+    /**
+    Height of the mesh, in units of h()
+
+    \return unsigned int.
+    */
+    size_t nely() const;
+
+    /**
+    Edge size of the smallest elements (along the middle layer).
+
+    \return double.
+    */
+    double h() const;
 
     // edge size, per row of elements (in units of "h")
     xt::xtensor<size_t, 1> elemrow_nhx() const;
     xt::xtensor<size_t, 1> elemrow_nhy() const;
     xt::xtensor<size_t, 1> elemrow_nelem() const;
 
-    // type
+    /**
+    Element type.
+
+    \return GooseFEM::Mesh::ElementType().
+    */
     ElementType getElementType() const;
 
-    // mesh
-    xt::xtensor<double, 2> coor() const; // nodal positions [nnode, ndim]
-    xt::xtensor<size_t, 2> conn() const; // connectivity [nelem, nne]
+    /**
+    Nodal coordinates.
+
+    \return ``[nnode, ndim]``.
+    */
+    xt::xtensor<double, 2> coor() const;
+
+    /**
+    Connectivity.
+
+    \return ``[nelem, nne]``.
+    */
+    xt::xtensor<size_t, 2> conn() const;
 
     // elements in the middle (fine) layer
     xt::xtensor<size_t, 1> elementsMiddleLayer() const;

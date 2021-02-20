@@ -16,6 +16,7 @@ PREDEFINED = IN_DOXYGEN
 EXCLUDE_SYMBOLS = detail
 GENERATE_TREEVIEW = YES
 SOURCE_BROWSER = YES
+# WARN_IF_UNDOCUMENTED = YES
 
 # Allow for rst directives and advanced functions e.g. grid tables
 ALIASES  = "rst=\verbatim embed:rst:leading-asterisk"

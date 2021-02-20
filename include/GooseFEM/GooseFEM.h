@@ -11,6 +11,8 @@
 #define GOOSEFEM_EIGEN
 #endif
 
+#include "version.h"
+
 #include "Allocate.h"
 #include "Element.h"
 #include "ElementHex8.h"
@@ -26,7 +28,6 @@
 #include "MeshTri3.h"
 #include "Vector.h"
 #include "VectorPartitioned.h"
-#include "Version.h"
 
 #ifdef GOOSEFEM_EIGEN
 #include "Matrix.h"
