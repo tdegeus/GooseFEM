@@ -17,6 +17,7 @@ find_package(xtensor REQUIRED)
 
 add_executable(${test_name}
     main.cpp
+    version.cpp
     Allocate.cpp
     Element.cpp
     ElementHex8.cpp
@@ -27,8 +28,7 @@ add_executable(${test_name}
     Mesh.cpp
     MeshQuad4.cpp
     Vector.cpp
-    VectorPartitioned.cpp
-    version.cpp)
+    VectorPartitioned.cpp)
 
 target_link_libraries(${test_name} PRIVATE
     Catch2::Catch2
