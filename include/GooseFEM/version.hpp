@@ -13,11 +13,7 @@ namespace GooseFEM {
 
 inline std::string version()
 {
-    std::stringstream ss;
-    ss << GOOSEFEM_VERSION;
-    std::string ret;
-    ss >> ret;
-    return ret;
+    return std::string(GOOSEFEM_VERSION);
 }
 
 inline std::vector<std::string> version_dependencies()
