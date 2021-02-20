@@ -1,6 +1,7 @@
 
 #include <catch2/catch.hpp>
 #include <GooseFEM/GooseFEM.h>
+#include <iostream>
 
 TEST_CASE("GooseFEM::version", "version.h")
 {
