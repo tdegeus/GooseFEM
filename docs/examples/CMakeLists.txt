@@ -74,11 +74,11 @@ add_test(NAME ${exec} COMMAND ${exec})
 
 # create executable
 
-set(exec "statics_Periodic_ElastoPlastic_main")
-set(source "statics/Periodic_ElastoPlastic/main.cpp")
-add_executable(${exec} ${source})
-target_link_libraries(${exec} PRIVATE libraries)
-add_test(NAME ${exec} COMMAND ${exec})
+# set(exec "statics_Periodic_ElastoPlastic_main")
+# set(source "statics/Periodic_ElastoPlastic/main.cpp")
+# add_executable(${exec} ${source})
+# target_link_libraries(${exec} PRIVATE libraries)
+# add_test(NAME ${exec} COMMAND ${exec})
 
 # create executable
 
