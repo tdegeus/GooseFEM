@@ -90,18 +90,18 @@ add_test(NAME ${exec} COMMAND ${exec})
 
 # create executable
 
-set(exec "statics_Periodic_LinearElastic_main")
-set(source "statics/Periodic_LinearElastic/main.cpp")
-add_executable(${exec} ${source})
-target_link_libraries(${exec} PRIVATE libraries)
-add_test(NAME ${exec} COMMAND ${exec})
+# set(exec "statics_Periodic_LinearElastic_main")
+# set(source "statics/Periodic_LinearElastic/main.cpp")
+# add_executable(${exec} ${source})
+# target_link_libraries(${exec} PRIVATE libraries)
+# add_test(NAME ${exec} COMMAND ${exec})
 
 # create executable
 
-set(exec "statics_Periodic_NonLinearElastic_main")
-set(source "statics/Periodic_NonLinearElastic/main.cpp")
-add_executable(${exec} ${source})
-target_link_libraries(${exec} PRIVATE libraries)
-add_test(NAME ${exec} COMMAND ${exec})
+# set(exec "statics_Periodic_NonLinearElastic_main")
+# set(source "statics/Periodic_NonLinearElastic/main.cpp")
+# add_executable(${exec} ${source})
+# target_link_libraries(${exec} PRIVATE libraries)
+# add_test(NAME ${exec} COMMAND ${exec})
 
 
