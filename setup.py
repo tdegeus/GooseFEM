@@ -32,7 +32,7 @@ if xsimd:
         build.c_opts['msvc'] += ['/DXTENSOR_USE_XSIMD']
 
 build.c_opts['unix'] += ['-DGOOSEFEM_VERSION="{0:s}"'.format(version)]
-build.c_opts['msvc'] += ['/DGOOSEFEM_VERSION=\\"{0:s}\\"'.format(version)]
+build.c_opts['msvc'] += ['/DGOOSEFEM_VERSION="{0:s}"'.format(version)]
 
 ext_modules = [Extension(
     'GooseFEM',

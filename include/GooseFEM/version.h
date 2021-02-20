@@ -37,7 +37,9 @@ If ``PKG_VERSION`` is defined the version string will be read from that variable
 namespace GooseFEM {
 
 /**
-Return version string, e.g. "0.8.0"
+Return version string, e.g.::
+
+    "0.8.0"
 
 \return std::string
 */

@@ -14,7 +14,7 @@ Common allocation methods.
 namespace GooseFEM {
 
 /**
-"Broadcast" a scalar stored in an array (e.g.: ``[r, s]``) to the same scalar of all
+"Broadcast" a scalar stored in an array (e.g. ``[r, s]``) to the same scalar of all
 tensor components of a tensor of certain rank (e.g. for rank 2: ``[r, s, i, j]``).
 
 \tparam dim Number of dimensions of scalar array (rank of the input).
@@ -27,7 +27,7 @@ template <size_t dim, size_t rank, class T>
 inline void asTensor(const xt::xtensor<T, dim>& arg, xt::xtensor<T, dim + rank>& ret);
 
 /**
-"Broadcast" a scalar stored in an array (e.g.: ``[r, s]``) to the same scalar of all
+"Broadcast" a scalar stored in an array (e.g. ``[r, s]``) to the same scalar of all
 tensor components of a tensor of certain rank (e.g. for rank 2: ``[r, s, i, j]``).
 
 \tparam dim Number of dimensions of scalar array (rank of the input).
@@ -43,7 +43,7 @@ inline xt::xtensor<T, dim + rank> AsTensor(
     const std::array<size_t, rank>& shape);
 
 /**
-"Broadcast" a scalar stored in an array (e.g.: ``[r, s]``) to the same scalar of all
+"Broadcast" a scalar stored in an array (e.g. ``[r, s]``) to the same scalar of all
 tensor components of a tensor of certain rank (e.g. for rank 2: ``[r, s, n, n]``).
 
 \tparam dim Number of dimensions of scalar array (rank of the input).
@@ -56,7 +56,7 @@ template <size_t dim, size_t rank, class T>
 inline xt::xtensor<T, dim + rank> AsTensor(const xt::xtensor<T, dim>& arg, size_t n);
 
 /**
-"Broadcast" a scalar stored in an array (e.g.: ``[r, s]``) to the same scalar of all
+"Broadcast" a scalar stored in an array (e.g. ``[r, s]``) to the same scalar of all
 tensor components of a tensor of certain rank (e.g. for rank 2: ``[r, s, i, j]``).
 
 \tparam T Type of the data.
@@ -72,7 +72,7 @@ inline xt::xarray<typename T::value_type> AsTensor(
     const std::vector<size_t>& shape);
 
 /**
-"Broadcast" a scalar stored in an array (e.g.: ``[r, s]``) to the same scalar of all
+"Broadcast" a scalar stored in an array (e.g. ``[r, s]``) to the same scalar of all
 tensor components of a tensor of certain rank (e.g. for rank 2: ``[r, s, n, n]``).
 
 \param rank Number of tensor dimensions (number of dimensions to add to the input).
