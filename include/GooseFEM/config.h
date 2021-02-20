@@ -61,6 +61,8 @@ The advantage is that:
 
 -   File and line-number are displayed if the assertion fails.
 -   GooseFEM's assertions can be enabled/disabled independently from those of other libraries.
+
+\throw std::runtime_error
 */
 #ifdef GOOSEFEM_ENABLE_ASSERT
 #define GOOSEFEM_ASSERT(expr) GOOSEFEM_ASSERT_IMPL(expr, __FILE__, __LINE__)
@@ -74,6 +76,13 @@ The advantage is that:
 #define GOOSEFEM_ASSERT(expr)
 #endif
 
+/**
+Assertion that cannot be switched of. Implement assertion by::
+
+    GOOSEFEM_CHECK(...)
+
+\throw std::runtime_error
+*/
 #define GOOSEFEM_CHECK(expr) GOOSEFEM_CHECK_IMPL(expr, __FILE__, __LINE__)
 #define GOOSEFEM_CHECK_IMPL(expr, file, line) \
     if (!(expr)) { \
