@@ -3,6 +3,11 @@
 Changelog
 *********
 
+v0.8.2
+======
+
+*   Using setuptools_scm to manage version (#169)
+
 v0.8.1
 ======
 
