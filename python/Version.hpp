@@ -12,22 +12,17 @@
 
 namespace py = pybind11;
 
-void init_Version(py::module& m)
+void init_version(py::module& m)
 {
-
-    m.def("version_dependencies",
-          &GooseFEM::version_dependencies,
-          "Return version information of library and its dependencies."
-          "See :cpp:class:`GooseFEM::version_dependencies`.");
-
-    m.def("git",
-          &GooseFEM::git,
-          "Return git branch and hash at the time of building this library."
-          "See :cpp:class:`GooseFEM::git`.");
 
     m.def("version",
           &GooseFEM::version,
           "Return version string."
           "See :cpp:class:`GooseFEM::version`.");
+
+    m.def("version_dependencies",
+          &GooseFEM::version_dependencies,
+          "Return version information of library and its dependencies."
+          "See :cpp:class:`GooseFEM::version_dependencies`.");
 
 }

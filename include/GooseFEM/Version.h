@@ -1,7 +1,7 @@
 /**
 Version information.
 
-\file Version.h
+\file version.h
 \copyright Copyright 2017. Tom de Geus. All rights reserved.
 \license This project is released under the GNU Public License (GPLv3).
 */
@@ -11,33 +11,44 @@ Version information.
 
 #include "config.h"
 
+/**
+Current version.
+
+Either:
+-   Configure using CMake at install time.
+-   Define externally using::
+
+        -DGOOSEFEM_VERSION="`python -c "from setuptools_scm import get_version; print(get_version())"`"
+
+    From the root of this project. This is what ``setup.py`` does.
+*/
+#ifndef GOOSEFEM_VERSION
+#define GOOSEFEM_VERSION "@GOOSEFEM_VERSION@"
+#endif
+
 namespace GooseFEM {
 
 /**
-Return git branch and hash (at the time of configuring).
-See GOOSEFEM_GIT_HASH() and GOOSEFEM_GIT_BRANCH().
+Return version string, e.g. "0.8.0"
 
-\return ``{branch, hash}``
-*/
-inline std::vector<std::string> git();
-
-/**
-Return version as string.
-See GOOSEFEM_VERSION_MAJOR(), GOOSEFEM_VERSION_MINOR(), and GOOSEFEM_VERSION_PATCH()
-
-\return Version string, e.g. ``v0.5.2``.
+\return std::string
 */
 inline std::string version();
 
 /**
 Return versions of this library and of all of its dependencies.
+The output is a list of strings, e.g.::
 
-\return List of strings with version information.
+    "goosefem=0.7.0",
+    "xtensor=0.20.1"
+    ...
+
+\return List of strings.
 */
 inline std::vector<std::string> version_dependencies();
 
 } // namespace GooseFEM
 
-#include "Version.hpp"
+#include "version.hpp"
 
 #endif

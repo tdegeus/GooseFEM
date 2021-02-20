@@ -5,14 +5,13 @@ import re
 import os
 import pybind11
 import pyxtensor
-import subprocess
+from os import environ
 
-header = open('include/GooseFEM/config.h','r').read()
-major = re.split(r'(.*)(\#define GOOSEFEM_VERSION_MAJOR\ )([0-9]+)(.*)', header)[3]
-minor = re.split(r'(.*)(\#define GOOSEFEM_VERSION_MINOR\ )([0-9]+)(.*)', header)[3]
-patch = re.split(r'(.*)(\#define GOOSEFEM_VERSION_PATCH\ )([0-9]+)(.*)', header)[3]
+version = environ.get('PKG_VERSION')
 
-__version__ = '.'.join([major, minor, patch])
+if version is None:
+    from setuptools_scm import get_version
+    version = get_version()
 
 include_dirs = [
     os.path.abspath('include/'),
@@ -32,16 +31,8 @@ if xsimd:
         build.c_opts['unix'] += ['-march=native', '-DXTENSOR_USE_XSIMD']
         build.c_opts['msvc'] += ['/DXTENSOR_USE_XSIMD']
 
-git_hash = subprocess.check_output(["git", "rev-parse", "HEAD"]).strip().decode('UTF-8')
-git_branch = subprocess.check_output(["git", "rev-parse", "--abbrev-ref", "HEAD"]).strip().decode('UTF-8')
-
-build.c_opts['unix'] += [
-    '-DGOOSEFEM_GIT_HASH="{0:s}"'.format(git_hash),
-    '-DGOOSEFEM_GIT_BRANCH="{0:s}"'.format(git_branch)]
-
-build.c_opts['msvc'] += [
-    '/DGOOSEFEM_GIT_HASH="{0:s}"'.format(git_hash),
-    '/DGOOSEFEM_GIT_BRANCH="{0:s}"'.format(git_branch)]
+build.c_opts['unix'] += ['-DGOOSEFEM_VERSION="{0:s}"'.format(version)]
+build.c_opts['msvc'] += ['/DGOOSEFEM_VERSION="{0:s}"'.format(version)]
 
 ext_modules = [Extension(
     'GooseFEM',
@@ -53,7 +44,7 @@ setup(
     name = 'GooseFEM',
     description = 'Finite element meshes, quadrature, and assembly tools',
     long_description = 'Finite element meshes, quadrature, and assembly tools',
-    version = __version__,
+    version = version,
     license = 'GPLv3',
     author = 'Tom de Geus',
     author_email = 'tom@geus.me',

@@ -16,6 +16,7 @@
 
 namespace py = pybind11;
 
+#include "version.hpp"
 #include "Vector.hpp"
 #include "VectorPartitioned.hpp"
 #include "VectorPartitionedTyings.hpp"
@@ -33,7 +34,6 @@ namespace py = pybind11;
 #include "MeshTri3.hpp"
 #include "MeshQuad4.hpp"
 #include "MeshHex8.hpp"
-#include "Version.hpp"
 
 PYBIND11_MODULE(GooseFEM, m) {
 
@@ -43,6 +43,7 @@ PYBIND11_MODULE(GooseFEM, m) {
 
 m.doc() = "Some simple finite element meshes and operations";
 
+init_version(m);
 init_Vector(m);
 init_VectorPartitioned(m);
 init_VectorPartitionedTyings(m);
@@ -51,7 +52,6 @@ init_MatrixPartitioned(m);
 init_MatrixPartitionedTyings(m);
 init_MatrixDiagonal(m);
 init_MatrixDiagonalPartitioned(m);
-init_Version(m);
 
 // ----------------
 // GooseFEM.Element

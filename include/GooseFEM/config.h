@@ -99,24 +99,4 @@ Assertion that cannot be switched of. Implement assertion by::
             ": WIP, please extend the code, assertion failed (" #expr ") \n\t"); \
     }
 
-#define GOOSEFEM_VERSION_MAJOR 0 ///< Define major version
-#define GOOSEFEM_VERSION_MINOR 8 ///< Define minor version
-#define GOOSEFEM_VERSION_PATCH 1 ///< Define patch version (no API changes)
-
-#define GOOSEFEM_VERSION_AT_LEAST(x, y, z) \
-    (GOOSEFEM_VERSION_MAJOR > x || (GOOSEFEM_VERSION_MAJOR >= x && \
-    (GOOSEFEM_VERSION_MINOR > y || (GOOSEFEM_VERSION_MINOR >= y && \
-                                    GOOSEFEM_VERSION_PATCH >= z))))
-
-#define GOOSEFEM_VERSION(x, y, z) \
-    (GOOSEFEM_VERSION_MAJOR == x && \
-     GOOSEFEM_VERSION_MINOR == y && \
-     GOOSEFEM_VERSION_PATCH == z)
-
-#endif
-
-#ifndef GOOSEFEM_GIT_HASH
-
-    #include "git.h"
-
 #endif
