@@ -3,6 +3,11 @@
 Changelog
 *********
 
+v0.8.6
+======
+
+*   String-define safety: stringification + unquoting.
+
 v0.8.2
 ======
 
