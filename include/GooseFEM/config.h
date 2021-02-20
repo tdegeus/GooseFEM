@@ -45,6 +45,9 @@ Basic configuration:
 
 using namespace xt::placeholders;
 
+#define Q(x) #x
+#define QUOTE(x) Q(x)
+
 #define UNUSED(p) ((void)(p))
 
 /**
