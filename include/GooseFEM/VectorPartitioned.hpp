@@ -200,6 +200,52 @@ inline void VectorPartitioned::asDofs_p(
     }
 }
 
+inline void VectorPartitioned::nodeFromPartitioned(
+    const xt::xtensor<double, 1>& dofval_u,
+    const xt::xtensor<double, 1>& dofval_p,
+    xt::xtensor<double, 2>& nodevec) const
+{
+    GOOSEFEM_ASSERT(dofval_u.size() == m_nnu);
+    GOOSEFEM_ASSERT(dofval_p.size() == m_nnp);
+    GOOSEFEM_ASSERT(xt::has_shape(nodevec, {m_nnode, m_ndim}));
+
+    #pragma omp parallel for
+    for (size_t m = 0; m < m_nnode; ++m) {
+        for (size_t i = 0; i < m_ndim; ++i) {
+            if (m_part(m, i) < m_nnu) {
+                nodevec(m, i) = dofval_u(m_part(m, i));
+            }
+            else {
+                nodevec(m, i) = dofval_p(m_part(m, i) - m_nnu);
+            }
+        }
+    }
+}
+
+inline void VectorPartitioned::elementFromPartitioned(
+    const xt::xtensor<double, 1>& dofval_u,
+    const xt::xtensor<double, 1>& dofval_p,
+    xt::xtensor<double, 3>& elemvec) const
+{
+    GOOSEFEM_ASSERT(dofval_u.size() == m_nnu);
+    GOOSEFEM_ASSERT(dofval_p.size() == m_nnp);
+    GOOSEFEM_ASSERT(xt::has_shape(elemvec, {m_nelem, m_nne, m_ndim}));
+
+    #pragma omp parallel for
+    for (size_t e = 0; e < m_nelem; ++e) {
+        for (size_t m = 0; m < m_nne; ++m) {
+            for (size_t i = 0; i < m_ndim; ++i) {
+                if (m_part(m_conn(e, m), i) < m_nnu) {
+                    elemvec(e, m, i) = dofval_u(m_part(m_conn(e, m), i));
+                }
+                else {
+                    elemvec(e, m, i) = dofval_p(m_part(m_conn(e, m), i) - m_nnu);
+                }
+            }
+        }
+    }
+}
+
 inline void VectorPartitioned::assembleDofs_u(
     const xt::xtensor<double, 2>& nodevec, xt::xtensor<double, 1>& dofval_u) const
 {
@@ -266,52 +312,6 @@ inline void VectorPartitioned::assembleDofs_p(
             for (size_t i = 0; i < m_ndim; ++i) {
                 if (m_part(m_conn(e, m), i) >= m_nnu) {
                     dofval_p(m_part(m_conn(e, m), i) - m_nnu) += elemvec(e, m, i);
-                }
-            }
-        }
-    }
-}
-
-inline void VectorPartitioned::nodeFromPartitioned(
-    const xt::xtensor<double, 1>& dofval_u,
-    const xt::xtensor<double, 1>& dofval_p,
-    xt::xtensor<double, 2>& nodevec) const
-{
-    GOOSEFEM_ASSERT(dofval_u.size() == m_nnu);
-    GOOSEFEM_ASSERT(dofval_p.size() == m_nnp);
-    GOOSEFEM_ASSERT(xt::has_shape(nodevec, {m_nnode, m_ndim}));
-
-    #pragma omp parallel for
-    for (size_t m = 0; m < m_nnode; ++m) {
-        for (size_t i = 0; i < m_ndim; ++i) {
-            if (m_part(m, i) < m_nnu) {
-                nodevec(m, i) = dofval_u(m_part(m, i));
-            }
-            else {
-                nodevec(m, i) = dofval_p(m_part(m, i) - m_nnu);
-            }
-        }
-    }
-}
-
-inline void VectorPartitioned::elementFromPartitioned(
-    const xt::xtensor<double, 1>& dofval_u,
-    const xt::xtensor<double, 1>& dofval_p,
-    xt::xtensor<double, 3>& elemvec) const
-{
-    GOOSEFEM_ASSERT(dofval_u.size() == m_nnu);
-    GOOSEFEM_ASSERT(dofval_p.size() == m_nnp);
-    GOOSEFEM_ASSERT(xt::has_shape(elemvec, {m_nelem, m_nne, m_ndim}));
-
-    #pragma omp parallel for
-    for (size_t e = 0; e < m_nelem; ++e) {
-        for (size_t m = 0; m < m_nne; ++m) {
-            for (size_t i = 0; i < m_ndim; ++i) {
-                if (m_part(m_conn(e, m), i) < m_nnu) {
-                    elemvec(e, m, i) = dofval_u(m_part(m_conn(e, m), i));
-                }
-                else {
-                    elemvec(e, m, i) = dofval_p(m_part(m_conn(e, m), i) - m_nnu);
                 }
             }
         }
