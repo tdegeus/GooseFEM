@@ -78,7 +78,7 @@ inline void VectorPartitioned::copy_p(
     }
 }
 
-inline void VectorPartitioned::asDofs(
+inline void VectorPartitioned::dofsFromParitioned(
     const xt::xtensor<double, 1>& dofval_u,
     const xt::xtensor<double, 1>& dofval_p,
     xt::xtensor<double, 1>& dofval) const
@@ -200,7 +200,7 @@ inline void VectorPartitioned::asDofs_p(
     }
 }
 
-inline void VectorPartitioned::asNode(
+inline void VectorPartitioned::nodeFromPartitioned(
     const xt::xtensor<double, 1>& dofval_u,
     const xt::xtensor<double, 1>& dofval_p,
     xt::xtensor<double, 2>& nodevec) const
@@ -222,7 +222,7 @@ inline void VectorPartitioned::asNode(
     }
 }
 
-inline void VectorPartitioned::asElement(
+inline void VectorPartitioned::elementFromPartitioned(
     const xt::xtensor<double, 1>& dofval_u,
     const xt::xtensor<double, 1>& dofval_p,
     xt::xtensor<double, 3>& elemvec) const
@@ -318,11 +318,11 @@ inline void VectorPartitioned::assembleDofs_p(
     }
 }
 
-inline xt::xtensor<double, 1> VectorPartitioned::AsDofs(
+inline xt::xtensor<double, 1> VectorPartitioned::DofsFromParitioned(
     const xt::xtensor<double, 1>& dofval_u, const xt::xtensor<double, 1>& dofval_p) const
 {
     xt::xtensor<double, 1> dofval = xt::empty<double>({m_ndof});
-    this->asDofs(dofval_u, dofval_p, dofval);
+    this->dofsFromParitioned(dofval_u, dofval_p, dofval);
     return dofval;
 }
 
@@ -368,19 +368,19 @@ inline xt::xtensor<double, 1> VectorPartitioned::AsDofs_p(const xt::xtensor<doub
     return dofval_p;
 }
 
-inline xt::xtensor<double, 2> VectorPartitioned::AsNode(
+inline xt::xtensor<double, 2> VectorPartitioned::NodeFromPartitioned(
     const xt::xtensor<double, 1>& dofval_u, const xt::xtensor<double, 1>& dofval_p) const
 {
     xt::xtensor<double, 2> nodevec = xt::empty<double>({m_nnode, m_ndim});
-    this->asNode(dofval_u, dofval_p, nodevec);
+    this->nodeFromPartitioned(dofval_u, dofval_p, nodevec);
     return nodevec;
 }
 
-inline xt::xtensor<double, 3> VectorPartitioned::AsElement(
+inline xt::xtensor<double, 3> VectorPartitioned::ElementFromPartitioned(
     const xt::xtensor<double, 1>& dofval_u, const xt::xtensor<double, 1>& dofval_p) const
 {
     xt::xtensor<double, 3> elemvec = xt::empty<double>({m_nelem, m_nne, m_ndim});
-    this->asElement(dofval_u, dofval_p, elemvec);
+    this->elementFromPartitioned(dofval_u, dofval_p, elemvec);
     return elemvec;
 }
 

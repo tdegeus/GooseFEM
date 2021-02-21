@@ -3,6 +3,39 @@
 Changelog
 *********
 
+v0.9.0
+======
+
+API Changes
+-----------
+
+*   VectorPartitioned::asDofs(dofval_u, dofval_p, dofval) ->
+    VectorPartitioned::dofsFromParitioned(dofval_u, dofval_p, dofval)
+
+*   VectorPartitioned::asNode(dofval_u, dofval_p, nodevec) ->
+    VectorPartitioned::nodeFromPartitioned(dofval_u, dofval_p, nodevec)
+
+*   VectorPartitioned::asElement(dofval_u, dofval_p, elemvec) ->
+    VectorPartitioned::elementFromPartitioned(dofval_u, dofval_p, elemvec)
+
+*   Version defines as replaced by ``#define GOOSEFEM_VERSION``,
+    added convenience methods ``GooseFEM::version()`` and ``GooseFEM::version_dependencies()``.
+
+Deprecating in next version
+----------------------------
+
+*   VectorPartitioned::assembleDofs_u
+*   VectorPartitioned::assembleDofs_p
+*   Mesh::Renumber::get
+*   Mesh::Reordered::get
+
+Changes under the hood
+----------------------
+
+*   Overloading from Vector (also in Python API)
+*   Overloading from QuadratureBase (also in Python API)
+*   Added doxygen docs (published to GitHub pages)
+
 v0.8.6
 ======
 

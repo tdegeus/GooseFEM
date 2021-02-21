@@ -34,7 +34,7 @@ TEST_CASE("GooseFEM::VectorPartitioned", "VectorPartitioned.h")
         GooseFEM::VectorPartitioned vector(mesh.conn(), dofs, iip);
         auto u_u = vector.AsDofs_u(u);
         auto u_p = vector.AsDofs_p(u);
-        REQUIRE(xt::allclose(u, vector.AsNode(u_u, u_p)));
+        REQUIRE(xt::allclose(u, vector.NodeFromPartitioned(u_u, u_p)));
     }
 
     SECTION("copy_u, copy_p")

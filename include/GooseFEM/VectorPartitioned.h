@@ -23,14 +23,6 @@ namespace GooseFEM {
 class VectorPartitioned : public Vector {
 public:
 
-    // making overloads from parent visible
-    using Vector::asDofs;
-    using Vector::asNode;
-    using Vector::asElement;
-    using Vector::AsDofs;
-    using Vector::AsNode;
-    using Vector::AsElement;
-
     // Constructor
     VectorPartitioned() = default;
 
@@ -56,7 +48,7 @@ public:
 
     // Convert to "dofval" (overwrite entries that occur more than once)
 
-    void asDofs(
+    void dofsFromParitioned(
         const xt::xtensor<double, 1>& dofval_u,
         const xt::xtensor<double, 1>& dofval_p,
         xt::xtensor<double, 1>& dofval) const;
@@ -69,25 +61,33 @@ public:
     void asDofs_p(const xt::xtensor<double, 3>& elemvec, xt::xtensor<double, 1>& dofval_p) const;
 
     // Convert to "nodevec" (overwrite entries that occur more than once) -- (auto allocation below)
-    void asNode(
+    void nodeFromPartitioned(
         const xt::xtensor<double, 1>& dofval_u,
         const xt::xtensor<double, 1>& dofval_p,
         xt::xtensor<double, 2>& nodevec) const;
 
     // Convert to "elemvec" (overwrite entries that occur more than once) -- (auto allocation below)
-    void asElement(
+    void elementFromPartitioned(
         const xt::xtensor<double, 1>& dofval_u,
         const xt::xtensor<double, 1>& dofval_p,
         xt::xtensor<double, 3>& elemvec) const;
 
     // Assemble "dofval" (adds entries that occur more that once) -- (auto allocation below)
+
+    [[ deprecated ]]
     void assembleDofs_u(const xt::xtensor<double, 2>& nodevec, xt::xtensor<double, 1>& dofval_u) const;
+
+    [[ deprecated ]]
     void assembleDofs_u(const xt::xtensor<double, 3>& elemvec, xt::xtensor<double, 1>& dofval_u) const;
+
+    [[ deprecated ]]
     void assembleDofs_p(const xt::xtensor<double, 2>& nodevec, xt::xtensor<double, 1>& dofval_p) const;
+
+    [[ deprecated ]]
     void assembleDofs_p(const xt::xtensor<double, 3>& elemvec, xt::xtensor<double, 1>& dofval_p) const;
 
     // Auto-allocation of the functions above
-    xt::xtensor<double, 1> AsDofs(
+    xt::xtensor<double, 1> DofsFromParitioned(
         const xt::xtensor<double, 1>& dofval_u, const xt::xtensor<double, 1>& dofval_p) const;
 
     xt::xtensor<double, 1> AsDofs_u(const xt::xtensor<double, 1>& dofval) const;
@@ -97,15 +97,23 @@ public:
     xt::xtensor<double, 1> AsDofs_p(const xt::xtensor<double, 2>& nodevec) const;
     xt::xtensor<double, 1> AsDofs_p(const xt::xtensor<double, 3>& elemvec) const;
 
-    xt::xtensor<double, 2> AsNode(
+    xt::xtensor<double, 2> NodeFromPartitioned(
         const xt::xtensor<double, 1>& dofval_u, const xt::xtensor<double, 1>& dofval_p) const;
 
-    xt::xtensor<double, 3> AsElement(
+    xt::xtensor<double, 3> ElementFromPartitioned(
         const xt::xtensor<double, 1>& dofval_u, const xt::xtensor<double, 1>& dofval_p) const;
 
+
+    [[ deprecated ]]
     xt::xtensor<double, 1> AssembleDofs_u(const xt::xtensor<double, 2>& nodevec) const;
+
+    [[ deprecated ]]
     xt::xtensor<double, 1> AssembleDofs_u(const xt::xtensor<double, 3>& elemvec) const;
+
+    [[ deprecated ]]
     xt::xtensor<double, 1> AssembleDofs_p(const xt::xtensor<double, 2>& nodevec) const;
+
+    [[ deprecated ]]
     xt::xtensor<double, 1> AssembleDofs_p(const xt::xtensor<double, 3>& elemvec) const;
 
     xt::xtensor<double, 2> Copy_u(
