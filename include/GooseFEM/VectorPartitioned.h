@@ -39,6 +39,20 @@ public:
     xt::xtensor<size_t, 1> iiu() const;  // unknown    DOFs
     xt::xtensor<size_t, 1> iip() const;  // prescribed DOFs
 
+    /**
+    Per DOF (see Vector::dofs) list if unknown ("u").
+
+    \return Boolean "nodevec".
+    */
+    xt::xtensor<bool, 2> dofs_is_u() const;
+
+    /**
+    Per DOF (see Vector::dofs) list if prescribed ("p").
+
+    \return Boolean "nodevec".
+    */
+    xt::xtensor<bool, 2> dofs_is_p() const;
+
     // Copy (part of) nodevec/dofval to another nodevec/dofval
     void copy_u(
         const xt::xtensor<double, 2>& nodevec_src, xt::xtensor<double, 2>& nodevec_dest) const; // "iiu" updated
