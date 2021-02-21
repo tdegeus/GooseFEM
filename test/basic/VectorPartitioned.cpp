@@ -9,6 +9,34 @@
 TEST_CASE("GooseFEM::VectorPartitioned", "VectorPartitioned.h")
 {
 
+    SECTION("basic")
+    {
+        GooseFEM::Mesh::Quad4::Regular mesh(3, 3);
+        auto iip = xt::eval(xt::arange<size_t>(4 * 2));
+        GooseFEM::VectorPartitioned vector(mesh.conn(), mesh.dofs(), iip);
+
+        xt::xtensor<bool, 2> is_p = {
+            {true, true},
+            {true, true},
+            {true, true},
+            {true, true},
+            {false, false},
+            {false, false},
+            {false, false},
+            {false, false},
+            {false, false},
+            {false, false},
+            {false, false},
+            {false, false},
+            {false, false},
+            {false, false},
+            {false, false},
+            {false, false}};
+
+        REQUIRE(xt::all(xt::equal(vector.dofs_is_p(), is_p)));
+        REQUIRE(xt::all(xt::not_equal(vector.dofs_is_u(), is_p)));
+    }
+
     SECTION("asDofs")
     {
         GooseFEM::Mesh::Quad4::Regular mesh(9, 9);

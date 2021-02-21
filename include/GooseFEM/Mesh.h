@@ -348,11 +348,11 @@ private:
 };
 
 /**
-\rst
 List with DOF-numbers in sequential order.
 The output is a sequential list of DOF-numbers for each vector-component of each node.
 For example for 3 nodes in 2 dimensions the output is
 
+\rst
 .. math::
 
     \begin{bmatrix}

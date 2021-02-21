@@ -46,6 +46,38 @@ inline xt::xtensor<size_t, 1> VectorPartitioned::iip() const
     return m_iip;
 }
 
+inline xt::xtensor<bool, 2> VectorPartitioned::dofs_is_u() const
+{
+    xt::xtensor<bool, 2> ret = xt::zeros<bool>(this->ShapeNodevec());
+
+    #pragma omp parallel for
+    for (size_t m = 0; m < m_nnode; ++m) {
+        for (size_t i = 0; i < m_ndim; ++i) {
+            if (m_part(m, i) < m_nnu) {
+                ret(m, i) = true;
+            }
+        }
+    }
+
+    return ret;
+}
+
+inline xt::xtensor<bool, 2> VectorPartitioned::dofs_is_p() const
+{
+    xt::xtensor<bool, 2> ret = xt::zeros<bool>(this->ShapeNodevec());
+
+    #pragma omp parallel for
+    for (size_t m = 0; m < m_nnode; ++m) {
+        for (size_t i = 0; i < m_ndim; ++i) {
+            if (m_part(m, i) >= m_nnu) {
+                ret(m, i) = true;
+            }
+        }
+    }
+
+    return ret;
+}
+
 inline void VectorPartitioned::copy_u(
     const xt::xtensor<double, 2>& nodevec_src, xt::xtensor<double, 2>& nodevec_dest) const
 {
