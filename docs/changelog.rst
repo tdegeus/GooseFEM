@@ -29,6 +29,12 @@ Deprecating in next version
 *   Mesh::Renumber::get
 *   Mesh::Reordered::get
 
+New functions
+-------------
+
+*   VectorPartitioned::dofs_is_u
+*   VectorPartitioned::dofs_is_p
+
 Changes under the hood
 ----------------------
 

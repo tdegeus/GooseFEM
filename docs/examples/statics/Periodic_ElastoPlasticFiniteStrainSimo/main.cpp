@@ -82,8 +82,8 @@ int main()
 
     // material model
     // even though the problem is 2-d, the material model is 3-d, plane strain is implicitly assumed
-    GM::Matrix mat(nelem, nip);
-    size_t tdim = mat.ndim();
+    GM::Array<2> mat({nelem, nip});
+    size_t tdim = 3;
 
     // some artificial material definition
     xt::xtensor<size_t, 1> ehard = xt::ravel(xt::view(elmat, xt::range(0, 2), xt::range(0, 2)));
@@ -137,7 +137,9 @@ int main()
             F += I2;
 
             // stress & tangent
-            mat.tangent(F, Sig, C);
+            mat.setDefGrad(F);
+            mat.stress(Sig);
+            mat.tangent(C);
 
             // internal force
             elem.int_gradN_dot_tensor2_dV(Sig, fe);
@@ -194,7 +196,7 @@ int main()
             disp += du;
 
             // update shape functions
-            elem.update_x(vector.AsElement(coor + disp));
+            elem.update_x(vector.AsElement(xt::eval(coor + disp)));
         }
 
         // post-process
@@ -203,7 +205,8 @@ int main()
         elem0.gradN_vector_T(ue, F);
         F += I2;
         GM::strain(F, Eps);
-        mat.stress(F, Sig);
+        mat.setDefGrad(F);
+        mat.stress(Sig);
         // - integration point volume
         xt::xtensor<double, 4> dV = elem.AsTensor<2>(elem.dV());
         // - element average stress
@@ -215,8 +218,8 @@ int main()
         // - write to output-file: increment numbers
         H5::dump(file, "/stored", inc, {inc});
         // - write to output-file: macroscopic response
-        H5::dump(file, "/macroscopic/sigeq", GM::Sigeq(Sigbar), {inc});
-        H5::dump(file, "/macroscopic/epseq", GM::Epseq(Epsbar), {inc});
+        H5::dump(file, "/macroscopic/sigeq", GM::Sigeq(Sigbar)(), {inc});
+        H5::dump(file, "/macroscopic/epseq", GM::Epseq(Epsbar)(), {inc});
         // - write to output-file: element quantities
         H5::dump(file, "/sigeq/" + std::to_string(inc), GM::Sigeq(Sigelem));
         H5::dump(file, "/epseq/" + std::to_string(inc), GM::Epseq(Epselem));
