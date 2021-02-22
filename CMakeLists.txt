@@ -25,7 +25,7 @@ else()
         OUTPUT_STRIP_TRAILING_WHITESPACE)
 endif()
 
-message(STATUS "Building GooseFEM ${GOOSEFEM_VERSION}")
+message(STATUS "Building ${PROJECT_NAME} ${GOOSEFEM_VERSION}")
 
 # Set target
 # ==========

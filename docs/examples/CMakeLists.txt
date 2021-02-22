@@ -17,7 +17,7 @@ find_package(HighFive REQUIRED)
 find_package(XDMFWrite_HighFive REQUIRED)
 find_package(GMatElastic REQUIRED)
 find_package(GMatElastoPlastic REQUIRED)
-# find_package(GMatElastoPlasticFiniteStrainSimo REQUIRED)
+find_package(GMatElastoPlasticFiniteStrainSimo REQUIRED)
 find_package(GMatNonLinearElastic REQUIRED)
 
 add_library(libraries INTERFACE IMPORTED)
@@ -28,7 +28,7 @@ target_link_libraries(libraries INTERFACE
     XDMFWrite_HighFive
     GMatElastic
     GMatElastoPlastic
-    # GMatElastoPlasticFiniteStrainSimo
+    GMatElastoPlasticFiniteStrainSimo
     GMatNonLinearElastic)
 
 if(SIMD)
@@ -74,34 +74,34 @@ add_test(NAME ${exec} COMMAND ${exec})
 
 # create executable
 
-# set(exec "statics_Periodic_ElastoPlastic_main")
-# set(source "statics/Periodic_ElastoPlastic/main.cpp")
-# add_executable(${exec} ${source})
-# target_link_libraries(${exec} PRIVATE libraries)
-# add_test(NAME ${exec} COMMAND ${exec})
+set(exec "statics_Periodic_ElastoPlastic_main")
+set(source "statics/Periodic_ElastoPlastic/main.cpp")
+add_executable(${exec} ${source})
+target_link_libraries(${exec} PRIVATE libraries)
+add_test(NAME ${exec} COMMAND ${exec})
 
 # create executable
 
-# set(exec "statics_Periodic_ElastoPlasticFiniteStrainSimo_main")
-# set(source "statics/Periodic_ElastoPlasticFiniteStrainSimo/main.cpp")
-# add_executable(${exec} ${source})
-# target_link_libraries(${exec} PRIVATE libraries)
-# add_test(NAME ${exec} COMMAND ${exec})
+set(exec "statics_Periodic_ElastoPlasticFiniteStrainSimo_main")
+set(source "statics/Periodic_ElastoPlasticFiniteStrainSimo/main.cpp")
+add_executable(${exec} ${source})
+target_link_libraries(${exec} PRIVATE libraries)
+add_test(NAME ${exec} COMMAND ${exec})
 
 # create executable
 
-# set(exec "statics_Periodic_LinearElastic_main")
-# set(source "statics/Periodic_LinearElastic/main.cpp")
-# add_executable(${exec} ${source})
-# target_link_libraries(${exec} PRIVATE libraries)
-# add_test(NAME ${exec} COMMAND ${exec})
+set(exec "statics_Periodic_LinearElastic_main")
+set(source "statics/Periodic_LinearElastic/main.cpp")
+add_executable(${exec} ${source})
+target_link_libraries(${exec} PRIVATE libraries)
+add_test(NAME ${exec} COMMAND ${exec})
 
 # create executable
 
-# set(exec "statics_Periodic_NonLinearElastic_main")
-# set(source "statics/Periodic_NonLinearElastic/main.cpp")
-# add_executable(${exec} ${source})
-# target_link_libraries(${exec} PRIVATE libraries)
-# add_test(NAME ${exec} COMMAND ${exec})
+set(exec "statics_Periodic_NonLinearElastic_main")
+set(source "statics/Periodic_NonLinearElastic/main.cpp")
+add_executable(${exec} ${source})
+target_link_libraries(${exec} PRIVATE libraries)
+add_test(NAME ${exec} COMMAND ${exec})
 
 
