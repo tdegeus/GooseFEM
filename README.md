@@ -1,6 +1,8 @@
 [![CI](https://github.com/tdegeus/GooseFEM/workflows/CI/badge.svg)](https://github.com/tdegeus/GooseFEM/actions)
 [![Doxygen -> gh-pages](https://github.com/tdegeus/GooseFEM/workflows/gh-pages/badge.svg)](https://tdegeus.github.io/GooseFEM)
 [![readthedocs](https://readthedocs.org/projects/goosefem/badge/?version=latest)](https://readthedocs.org/projects/goosefem/badge/?version=latest)
+[![Conda Version](https://img.shields.io/conda/vn/conda-forge/goosefem.svg)](https://anaconda.org/conda-forge/goosefem)
+[![Conda Version](https://img.shields.io/conda/vn/conda-forge/python-goosefem.svg)](https://anaconda.org/conda-forge/python-goosefem)
 
 ## GooseFEM
 
