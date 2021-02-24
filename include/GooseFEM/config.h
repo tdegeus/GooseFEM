@@ -14,7 +14,13 @@ Basic configuration:
 #ifndef GOOSEFEM_CONFIG_H
 #define GOOSEFEM_CONFIG_H
 
+/**
+\cond
+*/
 #define _USE_MATH_DEFINES // to use "M_PI" from "math.h"
+/**
+\endcond
+*/
 
 #include <algorithm>
 #include <assert.h>
@@ -43,12 +49,25 @@ Basic configuration:
 #include <xtensor/xutils.hpp>
 #include <xtensor/xview.hpp>
 
+/**
+\cond
+*/
 using namespace xt::placeholders;
 
 #define Q(x) #x
 #define QUOTE(x) Q(x)
 
 #define UNUSED(p) ((void)(p))
+
+#define GOOSEFEM_ASSERT_IMPL(expr, file, line) \
+    if (!(expr)) { \
+        throw std::runtime_error( \
+            std::string(file) + ':' + std::to_string(line) + \
+            ": assertion failed (" #expr ") \n\t"); \
+    }
+/**
+\endcond
+*/
 
 /**
 All assertions are implementation as::
@@ -69,37 +88,28 @@ The advantage is that:
 */
 #ifdef GOOSEFEM_ENABLE_ASSERT
 #define GOOSEFEM_ASSERT(expr) GOOSEFEM_ASSERT_IMPL(expr, __FILE__, __LINE__)
-#define GOOSEFEM_ASSERT_IMPL(expr, file, line) \
-    if (!(expr)) { \
-        throw std::runtime_error( \
-            std::string(file) + ':' + std::to_string(line) + \
-            ": assertion failed (" #expr ") \n\t"); \
-    }
 #else
 #define GOOSEFEM_ASSERT(expr)
 #endif
 
 /**
-Assertion that cannot be switched of. Implement assertion by::
+Assertion that cannot be switched off. Implement assertion by::
 
     GOOSEFEM_CHECK(...)
 
 \throw std::runtime_error
 */
-#define GOOSEFEM_CHECK(expr) GOOSEFEM_CHECK_IMPL(expr, __FILE__, __LINE__)
-#define GOOSEFEM_CHECK_IMPL(expr, file, line) \
-    if (!(expr)) { \
-        throw std::runtime_error( \
-            std::string(file) + ':' + std::to_string(line) + \
-            ": assertion failed (" #expr ") \n\t"); \
-    }
+#define GOOSEFEM_CHECK(expr) GOOSEFEM_ASSERT_IMPL(expr, __FILE__, __LINE__)
 
-#define GOOSEFEM_WIP_ASSERT(expr) GOOSEFEM_CHECK_IMPL(expr, __FILE__, __LINE__)
-#define GOOSEFEM_WIP_ASSERT_IMPL(expr, file, line) \
-    if (!(expr)) { \
-        throw std::runtime_error( \
-            std::string(file) + ':' + std::to_string(line) + \
-            ": WIP, please extend the code, assertion failed (" #expr ") \n\t"); \
-    }
+/**
+Assertion that concerns temporary implementation limitations.
+Implement assertion by::
+
+    GOOSEFEM_WIP_ASSERT(...)
+
+\throw std::runtime_error
+*/
+#define GOOSEFEM_WIP_ASSERT(expr) GOOSEFEM_ASSERT_IMPL(expr, __FILE__, __LINE__)
+
 
 #endif
