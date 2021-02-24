@@ -440,11 +440,6 @@ namespace Map {
         template <class T, size_t rank>
         xt::xtensor<T, rank> mapToFine(const xt::xtensor<T, rank>& data) const;
 
-        // // map field
-        // xt::xtensor<double, 1> mapToFine(const xt::xtensor<double, 1>& data) const; // scalar per el
-        // xt::xtensor<double, 2> mapToFine(const xt::xtensor<double, 2>& data) const; // scalar per intpnt
-        // xt::xtensor<double, 4> mapToFine(const xt::xtensor<double, 4>& data) const; // tensor per intpnt
-
     private:
 
         GooseFEM::Mesh::Quad4::Regular m_coarse; ///< the coarse mesh
