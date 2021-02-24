@@ -8,7 +8,7 @@
 #define GOOSEFEM_ELEMENTQUAD4PLANAR_HPP
 
 #include "ElementQuad4Planar.h"
-#include "ElementQuad4.hpp"
+#include "ElementQuad4.hpp" // provides GooseFEM::Element::Quad4::detail::inv
 
 namespace GooseFEM {
 namespace Element {

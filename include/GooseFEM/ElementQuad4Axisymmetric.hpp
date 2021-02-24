@@ -8,7 +8,7 @@
 #define GOOSEFEM_ELEMENTQUADAXISYMMETRIC_HPP
 
 #include "ElementQuad4Axisymmetric.h"
-#include "ElementQuad4.hpp"
+#include "ElementQuad4.hpp" // provides GooseFEM::Element::Quad4::detail::inv
 
 namespace GooseFEM {
 namespace Element {
