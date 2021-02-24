@@ -1158,7 +1158,7 @@ namespace Map {
 
 inline RefineRegular::RefineRegular(
     const GooseFEM::Mesh::Quad4::Regular& mesh, size_t nx, size_t ny)
-    : m_coarse(mesh)
+    : m_coarse(mesh), m_nx(nx), m_ny(ny)
 {
     m_fine = Regular(nx * m_coarse.nelx(), ny * m_coarse.nely(), m_coarse.h());
 
@@ -1175,6 +1175,16 @@ inline RefineRegular::RefineRegular(
     }
 }
 
+inline size_t RefineRegular::nx() const
+{
+    return m_nx;
+}
+
+inline size_t RefineRegular::ny() const
+{
+    return m_ny;
+}
+
 inline GooseFEM::Mesh::Quad4::Regular RefineRegular::getCoarseMesh() const
 {
     return m_coarse;
@@ -1188,6 +1198,49 @@ inline GooseFEM::Mesh::Quad4::Regular RefineRegular::getFineMesh() const
 inline xt::xtensor<size_t, 2> RefineRegular::getMap() const
 {
     return m_coarse2fine;
+}
+
+template <class T, size_t rank>
+xt::xtensor<T, rank> RefineRegular::meanToCoarse(const xt::xtensor<T, rank>& data) const
+{
+    GOOSEFEM_ASSERT(data.shape(0) == m_coarse2fine.size());
+
+    std::array<size_t, rank> shape;
+    std::copy(data.shape().cbegin(), data.shape().cend(), &shape[0]);
+    shape[0] = m_coarse2fine.shape(0);
+
+    xt::xtensor<T, rank> ret = xt::empty<T>(shape);
+
+    for (size_t i = 0; i < m_coarse2fine.shape(0); ++i) {
+        auto e = xt::view(m_coarse2fine, i, xt::all());
+        auto d = xt::view(data, xt::keep(e));
+        xt::view(ret, i) = xt::mean(d, 0);
+    }
+
+    return ret;
+}
+
+template <class T, size_t rank, class S>
+xt::xtensor<T, rank> RefineRegular::averageToCoarse(
+    const xt::xtensor<T, rank>& data,
+    const xt::xtensor<S, rank>& weights) const
+{
+    GOOSEFEM_ASSERT(data.shape(0) == m_coarse2fine.size());
+
+    std::array<size_t, rank> shape;
+    std::copy(data.shape().cbegin(), data.shape().cend(), &shape[0]);
+    shape[0] = m_coarse2fine.shape(0);
+
+    xt::xtensor<T, rank> ret = xt::empty<T>(shape);
+
+    for (size_t i = 0; i < m_coarse2fine.shape(0); ++i) {
+        auto e = xt::view(m_coarse2fine, i, xt::all());
+        xt::xtensor<T, rank> d = xt::view(data, xt::keep(e));
+        xt::xtensor<T, rank> w = xt::view(weights, xt::keep(e));
+        xt::view(ret, i) = xt::average(d, w, {0});
+    }
+
+    return ret;
 }
 
 inline xt::xtensor<double, 2> RefineRegular::mapToCoarse(const xt::xtensor<double, 1>& data) const
@@ -1247,44 +1300,21 @@ inline xt::xtensor<double, 4> RefineRegular::mapToCoarse(const xt::xtensor<doubl
     return ret;
 }
 
-inline xt::xtensor<double, 1> RefineRegular::mapToFine(const xt::xtensor<double, 1>& data) const
+template <class T, size_t rank>
+inline xt::xtensor<T, rank> RefineRegular::mapToFine(const xt::xtensor<T, rank>& data) const
 {
     GOOSEFEM_ASSERT(data.shape(0) == m_coarse2fine.shape(0));
 
-    xt::xtensor<double, 1> ret = xt::empty<double>({m_coarse2fine.size()});
+    std::array<size_t, rank> shape;
+    std::copy(data.shape().cbegin(), data.shape().cend(), &shape[0]);
+    shape[0] = m_coarse2fine.size();
 
-    for (size_t i = 0; i < m_coarse2fine.shape(0); ++i) {
-        auto e = xt::view(m_coarse2fine, i, xt::all());
-        xt::view(ret, xt::keep(e)) = data(i);
-    }
+    xt::xtensor<T, rank> ret = xt::empty<T>(shape);
 
-    return ret;
-}
-
-inline xt::xtensor<double, 2> RefineRegular::mapToFine(const xt::xtensor<double, 2>& data) const
-{
-    GOOSEFEM_ASSERT(data.shape(0) == m_coarse2fine.shape(0));
-
-    xt::xtensor<double, 2> ret = xt::empty<double>({m_coarse2fine.size(), data.shape(1)});
-
-    for (size_t i = 0; i < m_coarse2fine.shape(0); ++i) {
-        auto e = xt::view(m_coarse2fine, i, xt::all());
-        xt::view(ret, xt::keep(e)) = xt::view(data, i);
-    }
-
-    return ret;
-}
-
-inline xt::xtensor<double, 4> RefineRegular::mapToFine(const xt::xtensor<double, 4>& data) const
-{
-    GOOSEFEM_ASSERT(data.shape(0) == m_coarse2fine.shape(0));
-
-    xt::xtensor<double, 4> ret =
-        xt::empty<double>({m_coarse2fine.size(), data.shape(1), data.shape(2), data.shape(3)});
-
-    for (size_t i = 0; i < m_coarse2fine.shape(0); ++i) {
-        auto e = xt::view(m_coarse2fine, i, xt::all());
-        xt::view(ret, xt::keep(e)) = xt::view(data, i);
+    for (size_t e = 0; e < m_coarse2fine.shape(0); ++e) {
+        for (size_t i = 0; i < m_coarse2fine.shape(1); ++i) {
+            xt::view(ret, m_coarse2fine(e, i)) = xt::view(data, e);
+        }
     }
 
     return ret;
