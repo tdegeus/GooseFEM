@@ -624,29 +624,81 @@ TEST_CASE("GooseFEM::MeshQuad4", "MeshQuad4.h")
         REQUIRE(xt::all(xt::equal(mesh.roll(5), m2)));
     }
 
-    SECTION("Map::RefineRegular")
+    SECTION("Map::RefineRegular::mapToFine")
     {
         GooseFEM::Mesh::Quad4::Regular mesh(5, 4);
-
         GooseFEM::Mesh::Quad4::Map::RefineRegular refine(mesh, 5, 3);
 
-        std::array<size_t, 1> as = {mesh.nelem()};
-        xt::xtensor<double, 1> a = xt::random::rand<double>(as);
-        auto a_ = refine.mapToCoarse(refine.mapToFine(a));
+        {
+            std::array<size_t, 1> shape = {mesh.nelem()};
+            xt::xtensor<double, 1> a = xt::ones<double>(shape);
+            auto a_ = refine.mapToFine(a);
+            REQUIRE(xt::allclose(a_, 1.0));
+        }
 
-        REQUIRE(xt::allclose(a, xt::mean(a_, {1})));
+        {
+            std::array<size_t, 4> shape = {mesh.nelem(), 1, 2, 3};
+            xt::xtensor<double, 4> a = xt::ones<double>(shape);
+            auto a_ = refine.mapToFine(a);
+            REQUIRE(xt::allclose(a_, 1.0));
+        }
+    }
 
-        std::array<size_t, 2> bs = {mesh.nelem(), 4};
-        xt::xtensor<double, 2> b = xt::random::rand<double>(bs);
-        auto b_ = refine.mapToCoarse(refine.mapToFine(b));
+    SECTION("Map::RefineRegular::meanToCoarse")
+    {
+        GooseFEM::Mesh::Quad4::Regular mesh(5, 4);
+        GooseFEM::Mesh::Quad4::Map::RefineRegular refine(mesh, 5, 3);
 
-        REQUIRE(xt::allclose(xt::mean(b, {1}), xt::mean(b_, {1})));
+        {
+            std::array<size_t, 1> shape = {mesh.nelem()};
+            xt::xtensor<double, 1> a = xt::random::rand<double>(shape);
+            auto a_ = refine.meanToCoarse(refine.mapToFine(a));
+            REQUIRE(xt::allclose(a, a_));
+        }
 
-        std::array<size_t, 4> cs = {mesh.nelem(), 4, 3, 3};
-        xt::xtensor<double, 4> c = xt::random::rand<double>(cs);
-        auto c_ = refine.mapToCoarse(refine.mapToFine(c));
+        {
+            std::array<size_t, 2> shape = {mesh.nelem(), 4};
+            xt::xtensor<double, 2> a = xt::random::rand<double>(shape);
+            auto a_ = refine.meanToCoarse(refine.mapToFine(a));
+            REQUIRE(xt::allclose(a, a_));
+        }
 
-        REQUIRE(xt::allclose(xt::mean(c, {1}), xt::mean(c_, {1})));
+        {
+            std::array<size_t, 4> shape = {mesh.nelem(), 4, 3, 3};
+            xt::xtensor<double, 4> a = xt::random::rand<double>(shape);
+            auto a_ = refine.meanToCoarse(refine.mapToFine(a));
+            REQUIRE(xt::allclose(a, a_));
+        }
+    }
+
+    SECTION("Map::RefineRegular::averageToCoarse")
+    {
+        GooseFEM::Mesh::Quad4::Regular mesh(5, 4);
+        GooseFEM::Mesh::Quad4::Map::RefineRegular refine(mesh, 5, 3);
+
+        {
+            std::array<size_t, 1> shape = {mesh.nelem()};
+            xt::xtensor<double, 1> a = xt::random::rand<double>(shape);
+            xt::xtensor<double, 1> w = xt::ones<double>(shape);
+            auto a_ = refine.averageToCoarse(refine.mapToFine(a), refine.mapToFine(w));
+            REQUIRE(xt::allclose(a, a_));
+        }
+
+        {
+            std::array<size_t, 2> shape = {mesh.nelem(), 4};
+            xt::xtensor<double, 2> a = xt::random::rand<double>(shape);
+            xt::xtensor<double, 2> w = xt::ones<double>(shape);
+            auto a_ = refine.averageToCoarse(refine.mapToFine(a), refine.mapToFine(w));
+            REQUIRE(xt::allclose(a, a_));
+        }
+
+        {
+            std::array<size_t, 4> shape = {mesh.nelem(), 4, 3, 3};
+            xt::xtensor<double, 4> a = xt::random::rand<double>(shape);
+            xt::xtensor<double, 4> w = xt::ones<double>(shape);
+            auto a_ = refine.averageToCoarse(refine.mapToFine(a), refine.mapToFine(w));
+            REQUIRE(xt::allclose(a, a_));
+        }
     }
 
     SECTION("Map::FineLayer2Regular")

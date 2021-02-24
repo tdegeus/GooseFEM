@@ -358,17 +358,33 @@ namespace Map {
     // Return "FineLayer"-class responsible for generating a connectivity
     // Throws if conversion is not possible
 
+    [[ deprecated ]]
     GooseFEM::Mesh::Quad4::FineLayer FineLayer(
         const xt::xtensor<double, 2>& coor,
         const xt::xtensor<size_t, 2>& conn);
 
-    // Refine a regular mesh: sub-divide elements in several smaller elements
-
+    /**
+    Refine a Regular mesh: subdivide elements in several smaller elements.
+    */
     class RefineRegular {
     public:
         // Constructors
         RefineRegular() = default;
         RefineRegular(const GooseFEM::Mesh::Quad4::Regular& mesh, size_t nx, size_t ny);
+
+        /**
+        For each coarse element: number of fine elements in x-direction.
+
+        \return unsigned int (same as used in constructor)
+        */
+        size_t nx() const;
+
+        /**
+        For each coarse element: number of fine elements in y-direction.
+
+        \return unsigned int (same as used in constructor)
+        */
+        size_t ny() const;
 
         // return the coarse or the fine mesh objects
         GooseFEM::Mesh::Quad4::Regular getCoarseMesh() const;
@@ -378,34 +394,98 @@ namespace Map {
         xt::xtensor<size_t, 2> getMap() const;
 
         // map field
+
+        [[ deprecated ]]
         xt::xtensor<double, 2> mapToCoarse(const xt::xtensor<double, 1>& data) const; // scalar per el
+
+        [[ deprecated ]]
         xt::xtensor<double, 2> mapToCoarse(const xt::xtensor<double, 2>& data) const; // scalar per intpnt
+
+        [[ deprecated ]]
         xt::xtensor<double, 4> mapToCoarse(const xt::xtensor<double, 4>& data) const; // tensor per intpnt
 
-        // map field
-        xt::xtensor<double, 1> mapToFine(const xt::xtensor<double, 1>& data) const; // scalar per el
-        xt::xtensor<double, 2> mapToFine(const xt::xtensor<double, 2>& data) const; // scalar per intpnt
-        xt::xtensor<double, 4> mapToFine(const xt::xtensor<double, 4>& data) const; // tensor per intpnt
+        /**
+        Compute the mean of the quantity define on the fine mesh when mapped on the coarse mesh.
+
+        \param data the data [nelem_fine, ...]
+        \return the average data of the coarse mesh [nelem_coarse, ...]
+        */
+        template <class T, size_t rank>
+        xt::xtensor<T, rank> meanToCoarse(const xt::xtensor<T, rank>& data) const;
+
+        /**
+        Compute the average of the quantity define on the fine mesh when mapped on the coarse mesh.
+
+        \param data the data [nelem_fine, ...]
+        \param weights the weights [nelem_fine, ...]
+        \return the average data of the coarse mesh [nelem_coarse, ...]
+        */
+        template <class T, size_t rank, class S>
+        xt::xtensor<T, rank> averageToCoarse(
+            const xt::xtensor<T, rank>& data,
+            const xt::xtensor<S, rank>& weights) const;
+
+        /**
+        Map element quantities to the fine mesh.
+        The mapping is a bit simplistic: no interpolation is involved.
+        The mapping is such that::
+
+            ret[e_fine, ...] <- arg[e_coarse, ...]
+
+        \tparam T type of the data (e.g. ``double``).
+        \tparam rank rank of the data.
+        \param arg data.
+        \return mapped data.
+        */
+        template <class T, size_t rank>
+        xt::xtensor<T, rank> mapToFine(const xt::xtensor<T, rank>& data) const;
+
+        // // map field
+        // xt::xtensor<double, 1> mapToFine(const xt::xtensor<double, 1>& data) const; // scalar per el
+        // xt::xtensor<double, 2> mapToFine(const xt::xtensor<double, 2>& data) const; // scalar per intpnt
+        // xt::xtensor<double, 4> mapToFine(const xt::xtensor<double, 4>& data) const; // tensor per intpnt
 
     private:
-        // the meshes
-        GooseFEM::Mesh::Quad4::Regular m_coarse;
-        GooseFEM::Mesh::Quad4::Regular m_fine;
 
-        // mapping
-        xt::xtensor<size_t, 1> m_fine2coarse;
-        xt::xtensor<size_t, 1> m_fine2coarse_index;
+        GooseFEM::Mesh::Quad4::Regular m_coarse; ///< the coarse mesh
+        GooseFEM::Mesh::Quad4::Regular m_fine; ///< the fine mesh
+        size_t m_nx; ///< for each coarse element: number of fine elements in x-direction
+        size_t m_ny; ///< for each coarse element: number of fine elements in y-direction
+
+        /**
+        Fine elements for each coarse elements [nelem_coarse, m_nx * m_ny]
+        */
         xt::xtensor<size_t, 2> m_coarse2fine;
     };
 
+    /**
+    Map a FineLayer mesh to a Regular mesh.
+    The element size is based on the element size of the FineLayer mesh.
+    */
     class FineLayer2Regular {
     public:
-        // constructor
+
         FineLayer2Regular() = default;
+
+        /**
+        Constructors.
+
+        \param mesh The FineLayer mesh.
+        */
         FineLayer2Regular(const GooseFEM::Mesh::Quad4::FineLayer& mesh);
 
-        // return either of the meshes
+        /**
+        Obtain Regular mesh.
+
+        \return mesh.
+        */
         GooseFEM::Mesh::Quad4::Regular getRegularMesh() const;
+
+        /**
+        Obtain FineLayer mesh (copy of the mesh passed to the constructor).
+
+        \return mesh.
+        */
         GooseFEM::Mesh::Quad4::FineLayer getFineLayerMesh() const;
 
         // elements of the Regular mesh per element of the FineLayer mesh
@@ -419,14 +499,12 @@ namespace Map {
         accounts the fraction of overlap between the FineLayer element and the Regular element.
         The mapping is such that::
 
-            ret[e, :, :] <- arg[e, :, :]
+            ret[e_regular, ...] <- arg[e_finelayer, ...]
 
-        (for arbitrary rank).
-
-        \tparam T The type of the data (e.g. ``double``).
-        \tparam rank Rank of the data.
-        \param arg The data.
-        \return The mapped data.
+        \tparam T type of the data (e.g. ``double``).
+        \tparam rank rank of the data.
+        \param arg data.
+        \return mapped data.
         */
         template <class T, size_t rank>
         xt::xtensor<T, rank> mapToRegular(const xt::xtensor<T, rank>& arg) const;
