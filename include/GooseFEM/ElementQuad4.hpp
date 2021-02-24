@@ -13,18 +13,28 @@ namespace GooseFEM {
 namespace Element {
 namespace Quad4 {
 
-template <class T>
-inline double inv(const T& A, T& Ainv)
-{
-    double det = A(0, 0) * A(1, 1) - A(0, 1) * A(1, 0);
+namespace detail {
 
-    Ainv(0, 0) = A(1, 1) / det;
-    Ainv(0, 1) = -1.0 * A(0, 1) / det;
-    Ainv(1, 0) = -1.0 * A(1, 0) / det;
-    Ainv(1, 1) = A(0, 0) / det;
+    /**
+    Inverse of a 2nd order tensor (shape: [2, 2]).
 
-    return det;
-}
+    \param The tensor.
+    \param The inverse (overwritten).
+    */
+    template <class T>
+    inline double inv(const T& A, T& Ainv)
+    {
+        double det = A(0, 0) * A(1, 1) - A(0, 1) * A(1, 0);
+
+        Ainv(0, 0) = A(1, 1) / det;
+        Ainv(0, 1) = -1.0 * A(0, 1) / det;
+        Ainv(1, 0) = -1.0 * A(1, 0) / det;
+        Ainv(1, 1) = A(0, 0) / det;
+
+        return det;
+    }
+
+} // namespace detail
 
 namespace Gauss {
 
@@ -236,7 +246,7 @@ inline void Quadrature::compute_dN()
                 J(1, 1) = dNxi(0, 1) * x(0, 1) + dNxi(1, 1) * x(1, 1) + dNxi(2, 1) * x(2, 1) +
                           dNxi(3, 1) * x(3, 1);
 
-                double Jdet = inv(J, Jinv);
+                double Jdet = detail::inv(J, Jinv);
 
                 // dNx(m,i) += Jinv(i,j) * dNxi(m,j);
                 for (size_t m = 0; m < m_nne; ++m) {
