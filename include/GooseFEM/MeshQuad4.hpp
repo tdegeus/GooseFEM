@@ -1201,7 +1201,7 @@ inline xt::xtensor<size_t, 2> RefineRegular::getMap() const
 }
 
 template <class T, size_t rank>
-xt::xtensor<T, rank> RefineRegular::meanToCoarse(const xt::xtensor<T, rank>& data) const
+inline xt::xtensor<T, rank> RefineRegular::meanToCoarse(const xt::xtensor<T, rank>& data) const
 {
     GOOSEFEM_ASSERT(data.shape(0) == m_coarse2fine.size());
 
@@ -1221,7 +1221,7 @@ xt::xtensor<T, rank> RefineRegular::meanToCoarse(const xt::xtensor<T, rank>& dat
 }
 
 template <class T, size_t rank, class S>
-xt::xtensor<T, rank> RefineRegular::averageToCoarse(
+inline xt::xtensor<T, rank> RefineRegular::averageToCoarse(
     const xt::xtensor<T, rank>& data,
     const xt::xtensor<S, rank>& weights) const
 {
