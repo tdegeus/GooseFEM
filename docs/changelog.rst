@@ -3,6 +3,23 @@
 Changelog
 *********
 
+v0.10.0
+=======
+
+API Changes
+-----------
+
+Mesh::Quad4::RefineRegular::mapToCoarse -> Mesh::Quad4::RefineRegular::meanToCoarse,
+or Mesh::Quad4::RefineRegular::averageToCoarse
+
+Changes under the hood
+----------------------
+
+*   Generalisation Mesh::Quad4::RefineRegular::mapToFine
+*   Documentation updates
+*   Adding explicit deprecation warnings
+*   Element::Quad4: moving inv -> detail::inv
+
 v0.9.0
 ======
 
