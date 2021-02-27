@@ -368,8 +368,16 @@ namespace Map {
     */
     class RefineRegular {
     public:
-        // Constructors
+
         RefineRegular() = default;
+
+        /**
+        Constructor.
+
+        \param mesh the coarse mesh.
+        \param nx for each coarse element: number of fine elements in x-direction.
+        \param ny for each coarse element: number of fine elements in y-direction.
+        */
         RefineRegular(const GooseFEM::Mesh::Quad4::Regular& mesh, size_t nx, size_t ny);
 
         /**
@@ -386,15 +394,28 @@ namespace Map {
         */
         size_t ny() const;
 
-        // return the coarse or the fine mesh objects
+        /**
+        Obtain the coarse mesh (copy of the mesh passed to the constructor).
+
+        \return mesh
+        */
         GooseFEM::Mesh::Quad4::Regular getCoarseMesh() const;
+
+        /**
+        Obtain the fine mesh.
+
+        \return mesh
+        */
         GooseFEM::Mesh::Quad4::Regular getFineMesh() const;
 
-        // elements of the fine mesh per element of the coarse mesh
+        /**
+        Get element-mapping: elements of the fine mesh per element of the coarse mesh.
+
+        \return [nelem_coarse, nx() * ny()]
+        */
         xt::xtensor<size_t, 2> getMap() const;
 
         // map field
-
         [[ deprecated ]]
         xt::xtensor<double, 2> mapToCoarse(const xt::xtensor<double, 1>& data) const; // scalar per el
 
@@ -407,6 +428,8 @@ namespace Map {
         /**
         Compute the mean of the quantity define on the fine mesh when mapped on the coarse mesh.
 
+        \tparam T type of the data (e.g. ``double``).
+        \tparam rank rank of the data.
         \param data the data [nelem_fine, ...]
         \return the average data of the coarse mesh [nelem_coarse, ...]
         */
@@ -416,6 +439,9 @@ namespace Map {
         /**
         Compute the average of the quantity define on the fine mesh when mapped on the coarse mesh.
 
+        \tparam T type of the data (e.g. ``double``).
+        \tparam rank rank of the data.
+        \tparam S type of the weights (e.g. ``double``).
         \param data the data [nelem_fine, ...]
         \param weights the weights [nelem_fine, ...]
         \return the average data of the coarse mesh [nelem_coarse, ...]
@@ -430,11 +456,11 @@ namespace Map {
         The mapping is a bit simplistic: no interpolation is involved.
         The mapping is such that::
 
-            ret[e_fine, ...] <- arg[e_coarse, ...]
+            ret[e_fine, ...] <- data[e_coarse, ...]
 
         \tparam T type of the data (e.g. ``double``).
         \tparam rank rank of the data.
-        \param arg data.
+        \param data the data.
         \return mapped data.
         */
         template <class T, size_t rank>
@@ -444,18 +470,15 @@ namespace Map {
 
         GooseFEM::Mesh::Quad4::Regular m_coarse; ///< the coarse mesh
         GooseFEM::Mesh::Quad4::Regular m_fine; ///< the fine mesh
-        size_t m_nx; ///< for each coarse element: number of fine elements in x-direction
-        size_t m_ny; ///< for each coarse element: number of fine elements in y-direction
-
-        /**
-        Fine elements for each coarse elements [nelem_coarse, m_nx * m_ny]
-        */
-        xt::xtensor<size_t, 2> m_coarse2fine;
+        size_t m_nx; ///< see nx()
+        size_t m_ny; ///< see ny()
+        xt::xtensor<size_t, 2> m_coarse2fine; ///< see getMap()
     };
 
     /**
     Map a FineLayer mesh to a Regular mesh.
-    The element size is based on the element size of the FineLayer mesh.
+    The element size of the Regular corresponds to the smallest elements of the FineLayer mesh
+    (along the middle layer).
     */
     class FineLayer2Regular {
     public:
@@ -470,14 +493,14 @@ namespace Map {
         FineLayer2Regular(const GooseFEM::Mesh::Quad4::FineLayer& mesh);
 
         /**
-        Obtain Regular mesh.
+        Obtain the Regular mesh.
 
         \return mesh.
         */
         GooseFEM::Mesh::Quad4::Regular getRegularMesh() const;
 
         /**
-        Obtain FineLayer mesh (copy of the mesh passed to the constructor).
+        Obtain the FineLayer mesh (copy of the mesh passed to the constructor).
 
         \return mesh.
         */
@@ -485,7 +508,20 @@ namespace Map {
 
         // elements of the Regular mesh per element of the FineLayer mesh
         // and the fraction by which the overlap is
+
+        /**
+        Get element-mapping: elements of the Regular mesh per element of the FineLayer mesh.
+        The number of Regular elements varies between elements of the FineLayer mesh.
+
+        \return [nelem_finelayer, ?]
+        */
         std::vector<std::vector<size_t>> getMap() const;
+
+        /**
+        To overlap fraction for each item in the mapping in getMap().
+
+        \return [nelem_finelayer, ?]
+        */
         std::vector<std::vector<double>> getMapFraction() const;
 
         /**
@@ -505,15 +541,11 @@ namespace Map {
         xt::xtensor<T, rank> mapToRegular(const xt::xtensor<T, rank>& arg) const;
 
     private:
-        // the "FineLayer" mesh to map
-        GooseFEM::Mesh::Quad4::FineLayer m_finelayer;
 
-        // the new "Regular" mesh to which to map
-        GooseFEM::Mesh::Quad4::Regular m_regular;
-
-        // mapping
-        std::vector<std::vector<size_t>> m_elem_regular;
-        std::vector<std::vector<double>> m_frac_regular;
+        GooseFEM::Mesh::Quad4::FineLayer m_finelayer; ///< the FineLayer mesh to map
+        GooseFEM::Mesh::Quad4::Regular m_regular; ///< the new Regular mesh to which to map
+        std::vector<std::vector<size_t>> m_elem_regular; ///< see getMap()
+        std::vector<std::vector<double>> m_frac_regular; ///< see getMapFraction()
     };
 
 } // namespace Map
