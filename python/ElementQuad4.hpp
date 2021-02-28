@@ -148,3 +148,13 @@ void init_ElementQuad4Nodal(py::module& m)
 
     m.def("w", &GooseFEM::Element::Quad4::Nodal::w, "Return integration point weights");
 }
+
+void init_ElementQuad4MidPoint(py::module& m)
+{
+
+    m.def("nip", &GooseFEM::Element::Quad4::MidPoint::nip, "Return number of integration point");
+
+    m.def("xi", &GooseFEM::Element::Quad4::MidPoint::xi, "Return integration point coordinates");
+
+    m.def("w", &GooseFEM::Element::Quad4::MidPoint::w, "Return integration point weights");
+}
