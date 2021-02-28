@@ -14,9 +14,9 @@ namespace GooseFEM {
 /**
 Class to switch between:
 
+-   "dofval": DOF values, shape: ``[ndof]``.
 -   "nodevec": nodal vectors, shape ``[nnode, ndim]``.
 -   "elemvec": nodal vectors stored per element, shape: ``[nelem, nne, ndim]``.
--   "dofval": DOF values, shape: ``[ndof]``.
 */
 class Vector {
 public:
@@ -31,12 +31,40 @@ public:
     */
     Vector(const xt::xtensor<size_t, 2>& conn, const xt::xtensor<size_t, 2>& dofs);
 
-    // Dimensions
-    size_t nelem() const; // number of elements
-    size_t nne() const;   // number of nodes per element
-    size_t nnode() const; // number of nodes
-    size_t ndim() const;  // number of dimensions
-    size_t ndof() const;  // number of DOFs
+    /**
+    Get number of elements.
+
+    \return unsigned int
+    */
+    size_t nelem() const;
+
+    /**
+    Get number of nodes per element.
+
+    \return unsigned int
+    */
+    size_t nne() const;
+
+    /**
+    Get number of nodes.
+
+    \return unsigned int
+    */
+    size_t nnode() const;
+
+    /**
+    Get number of dimensions.
+
+    \return unsigned int
+    */
+    size_t ndim() const;
+
+    /**
+    Get number of DOFs.
+
+    \return unsigned int
+    */
+    size_t ndof() const;
 
     // DOF lists
     xt::xtensor<size_t, 2> dofs() const; // DOFs
@@ -52,8 +80,24 @@ public:
     void asNode(const xt::xtensor<double, 1>& dofval, xt::xtensor<double, 2>& nodevec) const;
     void asNode(const xt::xtensor<double, 3>& elemvec, xt::xtensor<double, 2>& nodevec) const;
 
-    // Convert to "elemvec" (overwrite entries that occur more than once) -- (auto allocation below)
+    /**
+    Convert to ``elemvec`` (overwrite entries that occur more than once).
+    This function writes to the fully allocated last argument.
+    To use auto-allocation use AsElement().
+
+    \param dofval input [ndof()].
+    \param elemvec output [nelem(), nne(), ndim()].
+    */
     void asElement(const xt::xtensor<double, 1>& dofval, xt::xtensor<double, 3>& elemvec) const;
+
+    /**
+    Convert to ``elemvec`` (overwrite entries that occur more than once).
+    This function writes to the fully allocated last argument.
+    To use auto-allocation use AsElement().
+
+    \param nodevec input [nnode(), ndim()].
+    \param elemvec output [nelem(), nne(), ndim()].
+    */
     void asElement(const xt::xtensor<double, 2>& nodevec, xt::xtensor<double, 3>& elemvec) const;
 
     // Assemble "dofval" (adds entries that occur more that once) -- (auto allocation below)
@@ -68,7 +112,23 @@ public:
     xt::xtensor<double, 1> AsDofs(const xt::xtensor<double, 3>& elemvec) const;
     xt::xtensor<double, 2> AsNode(const xt::xtensor<double, 1>& dofval) const;
     xt::xtensor<double, 2> AsNode(const xt::xtensor<double, 3>& elemvec) const;
+
+    /**
+    Convert to ``elemvec`` (overwrite entries that occur more than once).
+    See asElement() to avoid allocation of return data.
+
+    \param dofval [ndof()].
+    \return ``elemvec`` [nelem(), nne(), ndim()].
+    */
     xt::xtensor<double, 3> AsElement(const xt::xtensor<double, 1>& dofval) const;
+
+    /**
+    Convert to ``elemvec`` (overwrite entries that occur more than once).
+    See asElement() to avoid allocation of return data.
+
+    \param nodevec [nnode(), ndim()].
+    \return ``elemvec`` [nelem(), nne(), ndim()].
+    */
     xt::xtensor<double, 3> AsElement(const xt::xtensor<double, 2>& nodevec) const;
     xt::xtensor<double, 1> AssembleDofs(const xt::xtensor<double, 2>& nodevec) const;
     xt::xtensor<double, 1> AssembleDofs(const xt::xtensor<double, 3>& elemvec) const;
