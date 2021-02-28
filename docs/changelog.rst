@@ -3,6 +3,11 @@
 Changelog
 *********
 
+v0.10.1
+=======
+
+*   Python API: Adding Element::Quad4::MidPoint
+
 v0.10.0
 =======
 
