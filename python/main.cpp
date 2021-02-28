@@ -68,12 +68,14 @@ init_Element(mElement);
 py::module mElementQuad4 = mElement.def_submodule("Quad4", "Linear quadrilateral elements (2D)");
 py::module mElementQuad4Gauss = mElementQuad4.def_submodule("Gauss", "Gauss quadrature");
 py::module mElementQuad4Nodal = mElementQuad4.def_submodule("Nodal", "Nodal quadrature");
+py::module mElementQuad4MidPoint = mElementQuad4.def_submodule("MidPoint", "MidPoint quadrature");
 
 init_ElementQuad4(mElementQuad4);
 init_ElementQuad4Planar(mElementQuad4);
 init_ElementQuad4Axisymmetric(mElementQuad4);
 init_ElementQuad4Gauss(mElementQuad4Gauss);
 init_ElementQuad4Nodal(mElementQuad4Nodal);
+init_ElementQuad4MidPoint(mElementQuad4MidPoint);
 
 // ---------------------
 // GooseFEM.Element.Hex8
