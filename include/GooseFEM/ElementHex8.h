@@ -1,6 +1,6 @@
 /**
 Quadrature for 8-noded hexahedral element in 3d (GooseFEM::Mesh::ElementType::Hex8),
-in a Cartesian coordinated system.
+in a Cartesian coordinate system.
 
 \file ElementHex8.h
 \copyright Copyright 2017. Tom de Geus. All rights reserved.

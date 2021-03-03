@@ -1,6 +1,6 @@
 /**
 Quadrature for 4-noded quadrilateral element in 2d (GooseFEM::Mesh::ElementType::Quad4),
-in a Cartesian coordinated system.
+in a Cartesian coordinate system.
 The different with ElementQuad4.h is that here the tensors live in 3d and are assumed plane strain.
 
 \file ElementQuad4Planar.h

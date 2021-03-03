@@ -1,7 +1,7 @@
 /**
 Generate simple meshes of 3-noded triangular elements in 2d (GooseFEM::Mesh::ElementType::Tri3).
 
-\file MeshQuad4.h
+\file MeshTri3.h
 \copyright Copyright 2017. Tom de Geus. All rights reserved.
 \license This project is released under the GNU Public License (GPLv3).
 */

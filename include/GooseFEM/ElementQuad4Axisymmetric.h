@@ -2,7 +2,7 @@
 Quadrature for 4-noded quadrilateral element in 2d (GooseFEM::Mesh::ElementType::Quad4),
 in an axisymmetric coordinated system.
 
-\file ElementQuad4.h
+\file ElementQuad4Axisymmetric.h
 \copyright Copyright 2017. Tom de Geus. All rights reserved.
 \license This project is released under the GNU Public License (GPLv3).
 */
