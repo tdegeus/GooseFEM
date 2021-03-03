@@ -1,7 +1,11 @@
-/*
+/**
+Quadrature for 4-noded quadrilateral element in 2d (GooseFEM::Mesh::ElementType::Quad4),
+in a Cartesian coordinated system.
+The different with ElementQuad4.h is that here the tensors live in 3d and are assumed plane strain.
 
-(c - GPLv3) T.W.J. de Geus (Tom) | tom@geus.me | www.geus.me | github.com/tdegeus/GooseFEM
-
+\file ElementQuad4Planar.h
+\copyright Copyright 2017. Tom de Geus. All rights reserved.
+\license This project is released under the GNU Public License (GPLv3).
 */
 
 #ifndef GOOSEFEM_ELEMENTQUAD4PLANAR_H
