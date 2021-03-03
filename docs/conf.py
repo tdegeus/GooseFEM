@@ -70,5 +70,5 @@ html_static_path = ['_static']
 # -- Breathe configuration ---------------------------------------------------
 
 breathe_projects = {
-    "GooseFEM": "./xml/",
+    "GooseFEM": "../build/xml/",
 }
