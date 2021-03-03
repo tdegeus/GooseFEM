@@ -61,7 +61,7 @@ int main()
 
     // material definition
 
-    GM::Matrix material({nelem, nip});
+    GM::Array<2> material({nelem, nip});
 
     xt::xtensor<size_t, 2> Ihard = xt::zeros<size_t>({nelem, nip});
     xt::xtensor<size_t, 2> Isoft = xt::ones<size_t>({nelem, nip});
@@ -70,8 +70,7 @@ int main()
 
     material.setElastic(Ihard, 100.0, 10.0);
     material.setElastic(Isoft, 100.0, 1.0);
-
-    material.check();
+    assert(xt::all(material.isElastic()));
 
     // mass matrix
 
@@ -103,7 +102,7 @@ int main()
     xt::xtensor<double, 1> Ekin = xt::zeros<double>({static_cast<size_t>(T / dt)});
     xt::xtensor<double, 1> t = xt::zeros<double>({static_cast<size_t>(T / dt)});
 
-    xt::xtensor<double, 2> dV = quad.DV();
+    xt::xtensor<double, 2> dV = quad.dV();
 
     // loop over increments
 
@@ -122,7 +121,8 @@ int main()
 
         vector.asElement(u, ue);
         quad.symGradN_vector(ue, Eps);
-        material.stress(Eps, Sig);
+        material.setStrain(Eps);
+        material.stress(Sig);
         quad.int_gradN_dot_tensor2_dV(Sig, fe);
         vector.assembleNode(fe, fint);
 
@@ -138,7 +138,7 @@ int main()
 
         // store output variables
 
-        xt::xtensor<double, 2> E = material.Energy(Eps);
+        xt::xtensor<double, 2> E = material.Energy();
         xt::xtensor<double, 1> V = vector.AsDofs(v);
 
         t(inc) = static_cast<double>(inc) * dt;
