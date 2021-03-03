@@ -1,5 +1,6 @@
 /**
-Quadrature for 4-noded quadrilateral element (GooseFEM::Mesh::ElementType::Quad4).
+Quadrature for 4-noded quadrilateral element in 2d (GooseFEM::Mesh::ElementType::Quad4),
+in a Cartesian coordinated system.
 
 \file ElementQuad4.h
 \copyright Copyright 2017. Tom de Geus. All rights reserved.

@@ -1,5 +1,5 @@
 /**
-Generate mesh with 4-noded quadrilateral elements.
+Generate simple meshes of 4-noded quadrilateral elements in 2d (GooseFEM::Mesh::ElementType::Quad4).
 
 \file MeshQuad4.h
 \copyright Copyright 2017. Tom de Geus. All rights reserved.

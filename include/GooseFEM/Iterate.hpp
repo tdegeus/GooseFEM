@@ -1,7 +1,9 @@
-/*
+/**
+Implementation of Iterate.h
 
-(c - GPLv3) T.W.J. de Geus (Tom) | tom@geus.me | www.geus.me | github.com/tdegeus/GooseFEM
-
+\file Iterate.hpp
+\copyright Copyright 2017. Tom de Geus. All rights reserved.
+\license This project is released under the GNU Public License (GPLv3).
 */
 
 #ifndef GOOSEFEM_ITERATE_HPP

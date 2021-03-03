@@ -1,7 +1,12 @@
-/*
+/**
+Methods to switch between storage types based on a mesh and DOFs that are partitioned in:
+-   unknown DOFs
+-   prescribed DOFs
+-   dependent DOFs
 
-(c - GPLv3) T.W.J. de Geus (Tom) | tom@geus.me | www.geus.me | github.com/tdegeus/GooseFEM
-
+\file VectorPartitionedTyings.h
+\copyright Copyright 2017. Tom de Geus. All rights reserved.
+\license This project is released under the GNU Public License (GPLv3).
 */
 
 #ifndef GOOSEFEM_VECTORPARTITIONEDTYINGS_H

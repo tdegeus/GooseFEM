@@ -1,7 +1,10 @@
-/*
+/**
+Quadrature for 8-noded hexahedral element in 3d (GooseFEM::Mesh::ElementType::Hex8),
+in a Cartesian coordinated system.
 
-(c - GPLv3) T.W.J. de Geus (Tom) | tom@geus.me | www.geus.me | github.com/tdegeus/GooseFEM
-
+\file ElementHex8.h
+\copyright Copyright 2017. Tom de Geus. All rights reserved.
+\license This project is released under the GNU Public License (GPLv3).
 */
 
 #ifndef GOOSEFEM_ELEMENTHEX8_H

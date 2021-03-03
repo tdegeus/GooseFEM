@@ -1,7 +1,12 @@
-/*
+/**
+Sparse matrix that is partitioned in:
+-   unknown DOFs
+-   prescribed DOFs
+-   tied DOFs
 
-(c - GPLv3) T.W.J. de Geus (Tom) | tom@geus.me | www.geus.me | github.com/tdegeus/GooseFEM
-
+\file MatrixPartitionedTyings.h
+\copyright Copyright 2017. Tom de Geus. All rights reserved.
+\license This project is released under the GNU Public License (GPLv3).
 */
 
 #ifndef GOOSEFEM_MATRIXPARTITIONEDTYINGS_H

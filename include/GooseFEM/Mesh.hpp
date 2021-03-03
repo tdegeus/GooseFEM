@@ -1,4 +1,6 @@
 /**
+Implementation of Mesh.h
+
 \file Mesh.hpp
 \copyright Copyright 2017. Tom de Geus. All rights reserved.
 \license This project is released under the GNU Public License (GPLv3).
