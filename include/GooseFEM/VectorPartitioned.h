@@ -24,24 +24,64 @@ namespace GooseFEM {
   "dofval_p"  -  DOF values (Prescribed) "== dofval[iiu]" -  [nnp]
 */
 
+/**
+Class to switch between:
+
+-   "dofval": DOF values [#ndof].
+-   "dofval_u": unknown DOF values [#nnu].
+-   "dofval_p": prescribed DOF values [#nnp].
+-   "nodevec": nodal vectors [#nnode, #ndim].
+-   "elemvec": nodal vectors stored per element [#nelem, #nne, #ndim].
+
+Based on a mesh and DOFs that are partitioned in:
+
+-   unknown DOFs (iiu()), indicated with "u".
+-   prescribed DOFs (iip()), indicated with "p".
+*/
 class VectorPartitioned : public Vector {
 public:
 
-    // Constructor
     VectorPartitioned() = default;
 
+    /**
+    Constructor.
+
+    \param conn connectivity [#nelem, #nne].
+    \param dofs DOFs per node [#nnode, #ndim].
+    \param iip prescribed DOFs [#nnp].
+    */
     VectorPartitioned(
         const xt::xtensor<size_t, 2>& conn,
         const xt::xtensor<size_t, 2>& dofs,
         const xt::xtensor<size_t, 1>& iip);
 
-    // Dimensions
-    size_t nnu() const;   // number of unknown DOFs
-    size_t nnp() const;   // number of prescribed DOFs
+    /**
+    Number of unknown DOFs.
 
-    // DOF lists
-    xt::xtensor<size_t, 1> iiu() const;  // unknown    DOFs
-    xt::xtensor<size_t, 1> iip() const;  // prescribed DOFs
+    \return unsigned int
+    */
+    size_t nnu() const;
+
+    /**
+    Number of prescribed DOFs.
+
+    \return unsigned int
+    */
+    size_t nnp() const;
+
+    /**
+    Unknown DOFs.
+
+    \return [#nnu]
+    */
+    xt::xtensor<size_t, 1> iiu() const;
+
+    /**
+    Prescribed DOFs.
+
+    \return [#nnp]
+    */
+    xt::xtensor<size_t, 1> iip() const;
 
     /**
     Per DOF (see Vector::dofs()) list if unknown ("u").
@@ -57,41 +97,262 @@ public:
     */
     xt::xtensor<bool, 2> dofs_is_p() const;
 
-    // Copy (part of) nodevec/dofval to another nodevec/dofval
+    /**
+    Copy unknown DOFs from "nodevec" to another "nodvec":
+
+        nodevec_dest[vector.dofs_is_u()] = nodevec_src
+
+    the other DOFs are taken from ``nodevec_dest``:
+
+        nodevec_dest[vector.dofs_is_p()] = nodevec_dest
+
+    \param nodevec_src input [#nnode, #ndim]
+    \param nodevec_dest input [#nnode, #ndim]
+    \return nodevec output [#nnode, #ndim]
+    */
+    xt::xtensor<double, 2> Copy_u(
+        const xt::xtensor<double, 2>& nodevec_src,
+        const xt::xtensor<double, 2>& nodevec_dest) const;
+
+    /**
+    Copy unknown DOFs from "nodevec" to another "nodvec":
+
+        nodevec_dest[vector.dofs_is_u()] = nodevec_src
+
+    the other DOFs are taken from ``nodevec_dest``:
+
+        nodevec_dest[vector.dofs_is_p()] = nodevec_dest
+
+    \param nodevec_src input [#nnode, #ndim]
+    \param nodevec_dest input/output [#nnode, #ndim]
+    */
     void copy_u(
-        const xt::xtensor<double, 2>& nodevec_src, xt::xtensor<double, 2>& nodevec_dest) const; // "iiu" updated
+        const xt::xtensor<double, 2>& nodevec_src, xt::xtensor<double, 2>& nodevec_dest) const;
 
+    /**
+    Copy prescribed DOFs from "nodevec" to another "nodvec":
+
+        nodevec_dest[vector.dofs_is_p()] = nodevec_src
+
+    the other DOFs are taken from ``nodevec_dest``:
+
+        nodevec_dest[vector.dofs_is_u()] = nodevec_dest
+
+    \param nodevec_src input [#nnode, #ndim]
+    \param nodevec_dest input [#nnode, #ndim]
+    \return nodevec output [#nnode, #ndim]
+    */
+    xt::xtensor<double, 2> Copy_p(
+        const xt::xtensor<double, 2>& nodevec_src,
+        const xt::xtensor<double, 2>& nodevec_dest) const;
+
+    /**
+    Copy prescribed DOFs from "nodevec" to another "nodvec":
+
+        nodevec_dest[vector.dofs_is_p()] = nodevec_src
+
+    the other DOFs are taken from ``nodevec_dest``:
+
+        nodevec_dest[vector.dofs_is_u()] = nodevec_dest
+
+    \param nodevec_src input [#nnode, #ndim]
+    \param nodevec_dest input/output [#nnode, #ndim]
+    */
     void copy_p(
-        const xt::xtensor<double, 2>& nodevec_src, xt::xtensor<double, 2>& nodevec_dest) const; // "iip"  updated
+        const xt::xtensor<double, 2>& nodevec_src, xt::xtensor<double, 2>& nodevec_dest) const;
 
-    // Convert to "dofval" (overwrite entries that occur more than once)
+    /**
+    Combine unknown and prescribed "dofval" into a single "dofval" list.
 
+    \param dofval_u input [#nnu]
+    \param dofval_p input [#nnp]
+    \return dofval output [#ndof]
+    */
+    xt::xtensor<double, 1> DofsFromParitioned(
+        const xt::xtensor<double, 1>& dofval_u,
+        const xt::xtensor<double, 1>& dofval_p) const;
+
+    /**
+    Combine unknown and prescribed "dofval" into a single "dofval" list.
+
+    \param dofval_u input [#nnu]
+    \param dofval_p input [#nnp]
+    \param dofval output [#ndof]
+    */
     void dofsFromParitioned(
         const xt::xtensor<double, 1>& dofval_u,
         const xt::xtensor<double, 1>& dofval_p,
         xt::xtensor<double, 1>& dofval) const;
 
-    void asDofs_u(const xt::xtensor<double, 1>& dofval, xt::xtensor<double, 1>& dofval_u) const;
-    void asDofs_u(const xt::xtensor<double, 2>& nodevec, xt::xtensor<double, 1>& dofval_u) const;
-    void asDofs_u(const xt::xtensor<double, 3>& elemvec, xt::xtensor<double, 1>& dofval_u) const;
-    void asDofs_p(const xt::xtensor<double, 1>& dofval, xt::xtensor<double, 1>& dofval_p) const;
-    void asDofs_p(const xt::xtensor<double, 2>& nodevec, xt::xtensor<double, 1>& dofval_p) const;
-    void asDofs_p(const xt::xtensor<double, 3>& elemvec, xt::xtensor<double, 1>& dofval_p) const;
+    /**
+    Combine unknown and prescribed "dofval" into a single "dofval" list
+    and directly convert to "nodeval" without a temporary
+    (overwrite entries that occur more than once).
 
-    // Convert to "nodevec" (overwrite entries that occur more than once) -- (auto allocation below)
+    \param dofval_u input [#nnu]
+    \param dofval_p input [#nnp]
+    \return nodevec output [#nnode, #ndim]
+    */
+    xt::xtensor<double, 2> NodeFromPartitioned(
+        const xt::xtensor<double, 1>& dofval_u,
+        const xt::xtensor<double, 1>& dofval_p) const;
+
+    /**
+    Combine unknown and prescribed "dofval" into a single "dofval" list
+    and directly convert to "nodeval" without a temporary
+    (overwrite entries that occur more than once).
+
+    \param dofval_u input [#nnu]
+    \param dofval_p input [#nnp]
+    \param nodevec output [#nnode, #ndim]
+    */
     void nodeFromPartitioned(
         const xt::xtensor<double, 1>& dofval_u,
         const xt::xtensor<double, 1>& dofval_p,
         xt::xtensor<double, 2>& nodevec) const;
 
-    // Convert to "elemvec" (overwrite entries that occur more than once) -- (auto allocation below)
+    /**
+    Combine unknown and prescribed "dofval" into a single "dofval" list
+    and directly convert to "elemvec" without a temporary
+    (overwrite entries that occur more than once).
+
+    \param dofval_u input [#nnu]
+    \param dofval_p input [#nnp]
+    \return elemvec output [#nelem, #nne, #ndim]
+    */
+    xt::xtensor<double, 3> ElementFromPartitioned(
+        const xt::xtensor<double, 1>& dofval_u,
+        const xt::xtensor<double, 1>& dofval_p) const;
+
+    /**
+    Combine unknown and prescribed "dofval" into a single "dofval" list
+    and directly convert to "elemvec" without a temporary
+    (overwrite entries that occur more than once).
+
+    \param dofval_u input [#nnu]
+    \param dofval_p input [#nnp]
+    \param elemvec output [#nelem, #nne, #ndim]
+    */
     void elementFromPartitioned(
         const xt::xtensor<double, 1>& dofval_u,
         const xt::xtensor<double, 1>& dofval_p,
         xt::xtensor<double, 3>& elemvec) const;
 
-    // Assemble "dofval" (adds entries that occur more that once) -- (auto allocation below)
+    /**
+    Extract the unknown "dofval":
 
+        dofval[iiu()]
+
+    \param dofval input [#ndof]
+    \return dofval_u input [#nnu]
+    */
+    xt::xtensor<double, 1> AsDofs_u(const xt::xtensor<double, 1>& dofval) const;
+
+    /**
+    Extract the unknown "dofval":
+
+        dofval[iiu()]
+
+    \param dofval input [#ndof]
+    \param dofval_u input [#nnu]
+    */
+    void asDofs_u(const xt::xtensor<double, 1>& dofval, xt::xtensor<double, 1>& dofval_u) const;
+
+    /**
+    Convert "nodevec" to "dofval" (overwrite entries that occur more than once)
+    and extract the unknown "dofval" without a temporary.
+
+    \param nodevec input [#nnode, #ndim]
+    \return dofval_u input [#nnu]
+    */
+    xt::xtensor<double, 1> AsDofs_u(const xt::xtensor<double, 2>& nodevec) const;
+
+    /**
+    Convert "nodevec" to "dofval" (overwrite entries that occur more than once)
+    and extract the unknown "dofval" without a temporary.
+
+    \param nodevec input [#nnode, #ndim]
+    \param dofval_u input [#nnu]
+    */
+    void asDofs_u(const xt::xtensor<double, 2>& nodevec, xt::xtensor<double, 1>& dofval_u) const;
+
+    /**
+    Convert "elemvec" to "dofval" (overwrite entries that occur more than once)
+    and extract the unknown "dofval" without a temporary.
+
+    \param elemvec input [#nelem, #nne, #ndim]
+    \return dofval_u input [#nnu]
+    */
+    xt::xtensor<double, 1> AsDofs_u(const xt::xtensor<double, 3>& elemvec) const;
+
+    /**
+    Convert "elemvec" to "dofval" (overwrite entries that occur more than once)
+    and extract the unknown "dofval" without a temporary.
+
+    \param elemvec input [#nelem, #nne, #ndim]
+    \param dofval_u input [#nnu]
+    */
+    void asDofs_u(const xt::xtensor<double, 3>& elemvec, xt::xtensor<double, 1>& dofval_u) const;
+
+    /**
+    Extract the prescribed "dofval":
+
+        dofval[iip()]
+
+    \param dofval input [#ndof]
+    \return dofval_p input [#nnp]
+    */
+    xt::xtensor<double, 1> AsDofs_p(const xt::xtensor<double, 1>& dofval) const;
+
+    /**
+    Extract the prescribed "dofval":
+
+        dofval[iip()]
+
+    \param dofval input [#ndof]
+    \param dofval_p input [#nnp]
+    */
+    void asDofs_p(const xt::xtensor<double, 1>& dofval, xt::xtensor<double, 1>& dofval_p) const;
+
+    /**
+    Convert "nodevec" to "dofval" (overwrite entries that occur more than once)
+    and extract the prescribed "dofval" without a temporary.
+
+    \param nodevec input [#nnode, #ndim]
+    \return dofval_p input [#nnp]
+    */
+    xt::xtensor<double, 1> AsDofs_p(const xt::xtensor<double, 2>& nodevec) const;
+
+    /**
+    Convert "nodevec" to "dofval" (overwrite entries that occur more than once)
+    and extract the prescribed "dofval" without a temporary.
+
+    \param nodevec input [#nnode, #ndim]
+    \param dofval_p input [#nnp]
+    */
+    void asDofs_p(const xt::xtensor<double, 2>& nodevec, xt::xtensor<double, 1>& dofval_p) const;
+
+    /**
+    Convert "elemvec" to "dofval" (overwrite entries that occur more than once)
+    and extract the prescribed "dofval" without a temporary.
+
+    \param elemvec input [#nelem, #nne, #ndim]
+    \return dofval_p input [#nnp]
+    */
+    xt::xtensor<double, 1> AsDofs_p(const xt::xtensor<double, 3>& elemvec) const;
+
+    /**
+    Convert "elemvec" to "dofval" (overwrite entries that occur more than once)
+    and extract the prescribed "dofval" without a temporary.
+
+    \param elemvec input [#nelem, #nne, #ndim]
+    \param dofval_p input [#nnp]
+    */
+    void asDofs_p(const xt::xtensor<double, 3>& elemvec, xt::xtensor<double, 1>& dofval_p) const;
+
+    /**
+    \cond
+    */
     [[ deprecated ]]
     void assembleDofs_u(const xt::xtensor<double, 2>& nodevec, xt::xtensor<double, 1>& dofval_u) const;
 
@@ -104,24 +365,6 @@ public:
     [[ deprecated ]]
     void assembleDofs_p(const xt::xtensor<double, 3>& elemvec, xt::xtensor<double, 1>& dofval_p) const;
 
-    // Auto-allocation of the functions above
-    xt::xtensor<double, 1> DofsFromParitioned(
-        const xt::xtensor<double, 1>& dofval_u, const xt::xtensor<double, 1>& dofval_p) const;
-
-    xt::xtensor<double, 1> AsDofs_u(const xt::xtensor<double, 1>& dofval) const;
-    xt::xtensor<double, 1> AsDofs_u(const xt::xtensor<double, 2>& nodevec) const;
-    xt::xtensor<double, 1> AsDofs_u(const xt::xtensor<double, 3>& elemvec) const;
-    xt::xtensor<double, 1> AsDofs_p(const xt::xtensor<double, 1>& dofval) const;
-    xt::xtensor<double, 1> AsDofs_p(const xt::xtensor<double, 2>& nodevec) const;
-    xt::xtensor<double, 1> AsDofs_p(const xt::xtensor<double, 3>& elemvec) const;
-
-    xt::xtensor<double, 2> NodeFromPartitioned(
-        const xt::xtensor<double, 1>& dofval_u, const xt::xtensor<double, 1>& dofval_p) const;
-
-    xt::xtensor<double, 3> ElementFromPartitioned(
-        const xt::xtensor<double, 1>& dofval_u, const xt::xtensor<double, 1>& dofval_p) const;
-
-
     [[ deprecated ]]
     xt::xtensor<double, 1> AssembleDofs_u(const xt::xtensor<double, 2>& nodevec) const;
 
@@ -133,33 +376,25 @@ public:
 
     [[ deprecated ]]
     xt::xtensor<double, 1> AssembleDofs_p(const xt::xtensor<double, 3>& elemvec) const;
-
-    xt::xtensor<double, 2> Copy_u(
-        const xt::xtensor<double, 2>& nodevec_src,
-        const xt::xtensor<double, 2>& nodevec_dest) const;
-
     /**
-    Copy prescribed DOFs from an "src" to "dest".
-
-    \param nodevec_src The input, from which to copy the prescribed DOFs.
-    \param nodevec_dest The destination, to which to copy the prescribed DOFs.
-    \returns The result after copying.
+    \endcond
     */
-    xt::xtensor<double, 2> Copy_p(
-        const xt::xtensor<double, 2>& nodevec_src,
-        const xt::xtensor<double, 2>& nodevec_dest) const;
 
 protected:
-    // Bookkeeping
-    xt::xtensor<size_t, 1> m_iiu;  // DOF-numbers that are unknown    [nnu]
-    xt::xtensor<size_t, 1> m_iip;  // DOF-numbers that are prescribed [nnp]
+    xt::xtensor<size_t, 1> m_iiu; ///< See iiu()
+    xt::xtensor<size_t, 1> m_iip; ///< See iip()
+    size_t m_nnu; ///< See #nnu
+    size_t m_nnp; ///< See #nnp
 
-    // DOFs per node, such that iiu = arange(nnu), iip = nnu + arange(nnp)
+    /**
+    Renumbered DOFs per node, such that
+
+        iiu = arange(nnu)
+        iip = nnu + arange(nnp)
+
+    making is much simpler to slice.
+    */
     xt::xtensor<size_t, 2> m_part;
-
-    // Dimensions
-    size_t m_nnu;   // number of unknown DOFs
-    size_t m_nnp;   // number of prescribed DOFs
 };
 
 } // namespace GooseFEM
