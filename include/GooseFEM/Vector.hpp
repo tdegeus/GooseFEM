@@ -51,6 +51,11 @@ inline size_t Vector::ndof() const
     return m_ndof;
 }
 
+inline xt::xtensor<size_t, 2> Vector::conn() const
+{
+    return m_conn;
+}
+
 inline xt::xtensor<size_t, 2> Vector::dofs() const
 {
     return m_dofs;

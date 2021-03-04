@@ -28,7 +28,7 @@ public:
     /**
     Constructor.
 
-    \param conn Connectivity [#nelem, #nne].
+    \param conn connectivity [#nelem, #nne].
     \param dofs DOFs per node [#nnode, #ndim].
     */
     Vector(const xt::xtensor<size_t, 2>& conn, const xt::xtensor<size_t, 2>& dofs);
@@ -67,6 +67,13 @@ public:
     \return unsigned int
     */
     size_t ndof() const;
+
+    /**
+    Connectivity (nodes per element).
+
+    \return [#nelem, #nne]
+    */
+    xt::xtensor<size_t, 2> conn() const;
 
     /**
     DOFs per node.
@@ -274,9 +281,9 @@ public:
     xt::xtensor<double, 1> AllocateDofval() const;
 
     /**
-    Allocated "dofval".
+    Allocated and initialised "dofval".
 
-    \param val Value with which to allocate.
+    \param val value to which to initialise.
     \return [#ndof]
     */
     xt::xtensor<double, 1> AllocateDofval(double val) const;
@@ -289,9 +296,9 @@ public:
     xt::xtensor<double, 2> AllocateNodevec() const;
 
     /**
-    Allocated "nodevec".
+    Allocated and initialised "nodevec".
 
-    \param val Value with which to allocate.
+    \param val value to which to initialise.
     \return [#nnode, #ndim]
     */
     xt::xtensor<double, 2> AllocateNodevec(double val) const;
@@ -304,9 +311,9 @@ public:
     xt::xtensor<double, 3> AllocateElemvec() const;
 
     /**
-    Allocated "elemvec".
+    Allocated and initialised "elemvec".
 
-    \param val Value with which to allocate.
+    \param val value to which to initialise.
     \return [#nelem, #nne, #ndim]
     */
     xt::xtensor<double, 3> AllocateElemvec(double val) const;
@@ -319,9 +326,9 @@ public:
     xt::xtensor<double, 3> AllocateElemmat() const;
 
     /**
-    Allocated "elemmat".
+    Allocated and initialised "elemmat".
 
-    \param val Value with which to allocate.
+    \param val value to which to initialise.
     \return [#nelem, #nne * #ndim, #nne * #ndim]
     */
     xt::xtensor<double, 3> AllocateElemmat(double val) const;

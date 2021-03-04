@@ -31,6 +31,8 @@ void init_Vector(py::module& m)
 
         .def("ndof", &GooseFEM::Vector::ndof, "Number of degrees-of-freedom")
 
+        .def("conn", &GooseFEM::Vector::conn, "Return connectivity")
+
         .def("dofs", &GooseFEM::Vector::dofs, "Return degrees-of-freedom")
 
         .def(
