@@ -45,7 +45,15 @@ jobs:
     - name: Basic GitHub action setup
       uses: actions/checkout@v2
 
-    - name: Set conda environment "test"
+    - name: Set conda environment
+    if: runner.os == 'Windows'
+      uses: mamba-org/provision-with-micromamba@main
+      with:
+        environment-file: ${{ matrix.conda }}
+        environment-name: myenv
+
+    - name: Set conda environment
+      if: runner.os == 'Windows'
       uses: conda-incubator/setup-miniconda@v2
       with:
         mamba-version: "*"
