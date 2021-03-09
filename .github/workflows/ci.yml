@@ -46,7 +46,7 @@ jobs:
       uses: actions/checkout@v2
 
     - name: Set conda environment
-    if: runner.os == 'Windows'
+      if: runner.os == 'Windows'
       uses: mamba-org/provision-with-micromamba@main
       with:
         environment-file: ${{ matrix.conda }}
