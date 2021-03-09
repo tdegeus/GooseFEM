@@ -25,7 +25,7 @@ namespace GooseFEM {
 */
 
 /**
-Class to switch between:
+Class to switch between storage types (for a partitioned system):
 
 -   "dofval": DOF values [#ndof].
 -   "dofval_u": unknown DOF values [#nnu].

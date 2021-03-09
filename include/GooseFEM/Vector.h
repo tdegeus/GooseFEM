@@ -14,7 +14,7 @@ Methods to switch between storage types based on a mesh.
 namespace GooseFEM {
 
 /**
-Class to switch between:
+Class to switch between storage types:
 
 -   "dofval": DOF values [#ndof].
 -   "nodevec": nodal vectors [#nnode, #ndim].
