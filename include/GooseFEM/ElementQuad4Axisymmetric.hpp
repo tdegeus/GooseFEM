@@ -10,7 +10,7 @@ Implementation of ElementQuad4Axisymmetric.h
 #define GOOSEFEM_ELEMENTQUADAXISYMMETRIC_HPP
 
 #include "ElementQuad4Axisymmetric.h"
-#include "ElementQuad4.hpp" // provides GooseFEM::Element::Quad4::detail::inv
+#include "detail.hpp"
 
 namespace GooseFEM {
 namespace Element {
@@ -105,7 +105,7 @@ inline void QuadratureAxisymmetric::compute_dN()
                 J(1, 1) = dNxi(0, 1) * x(0, 1) + dNxi(1, 1) * x(1, 1) + dNxi(2, 1) * x(2, 1) +
                           dNxi(3, 1) * x(3, 1);
 
-                double Jdet = detail::inv(J, Jinv);
+                double Jdet = detail::tensor<2>::inv(J, Jinv);
 
                 // radius for computation of volume
                 double rq = N(0) * x(0, 1) + N(1) * x(1, 1) + N(2) * x(2, 1) + N(3) * x(3, 1);

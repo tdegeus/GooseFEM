@@ -10,7 +10,7 @@ Implementation of ElementQuad4Planar.h
 #define GOOSEFEM_ELEMENTQUAD4PLANAR_HPP
 
 #include "ElementQuad4Planar.h"
-#include "ElementQuad4.hpp" // provides GooseFEM::Element::Quad4::detail::inv
+#include "detail.hpp"
 
 namespace GooseFEM {
 namespace Element {
@@ -107,7 +107,7 @@ inline void QuadraturePlanar::compute_dN()
                 J(1, 1) = dNxi(0, 1) * x(0, 1) + dNxi(1, 1) * x(1, 1) + dNxi(2, 1) * x(2, 1) +
                           dNxi(3, 1) * x(3, 1);
 
-                double Jdet = detail::inv(J, Jinv);
+                double Jdet = detail::tensor<2>::inv(J, Jinv);
 
                 // dNx(m,i) += Jinv(i,j) * dNxi(m,j);
                 for (size_t m = 0; m < m_nne; ++m) {
