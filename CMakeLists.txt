@@ -13,15 +13,11 @@ option(CHECK_DOCS "${PROJECT_NAME}: Check docs (throw error for every warning)" 
 # Version
 # =======
 
-IF(DEFINED ENV{PKG_VERSION})
-    set(GOOSEFEM_VERSION $ENV{PKG_VERSION})
-else()
-    execute_process(
-        COMMAND python -c "from setuptools_scm import get_version; print(get_version())"
-        WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
-        OUTPUT_VARIABLE GOOSEFEM_VERSION
-        OUTPUT_STRIP_TRAILING_WHITESPACE)
-endif()
+execute_process(
+    COMMAND python -c "from setuptools_scm import get_version; print(get_version())"
+    WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+    OUTPUT_VARIABLE GOOSEFEM_VERSION
+    OUTPUT_STRIP_TRAILING_WHITESPACE)
 
 message(STATUS "Building ${PROJECT_NAME} ${GOOSEFEM_VERSION}")
 

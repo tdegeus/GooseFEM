@@ -13,24 +13,15 @@ This will install all the necessary runtime dependencies as well.
 
 .. tip::
 
-    The runtime dependencies (for both the C++ and the Python APIs) are also listed in
-    ``environment.yaml``.
+    The runtime dependencies (for both the C++ and the Python APIs)
+    are also listed in ``environment.yaml``.
     One could install those dependencies in an activated environment by:
 
     .. code-block:: cpp
 
         conda env update --file environment.yaml
 
-    In addition, one could further extend one's environment
-    to also run the tests and the examples using:
-
-    .. code-block:: cpp
-
-        conda env update --file environment_test.yaml
-        conda env update --file environment_examples.yaml
-
-    Note that ``environment_test.yaml`` and ``environment_examples.yaml`` extend the environment.
-    In each case one **also** has to install the dependencies in ``environment.yaml``.
+    This will install the dependencies to run tests and examples.
 
 
 From source
@@ -41,10 +32,44 @@ Download the package::
     git checkout https://github.com/tdegeus/GooseFEM.git
     cd GooseFEM
 
-Install headers, *CMake* and *pkg-config* support::
+Install headers, *CMake* and *pkg-config* support:
 
-    cmake .
-    make install
+.. code-block:: none
+
+    cmake -Bbuild
+    cd build
+    cmake --install .
+
+.. note::
+
+    The version is determined from the latest git tag, and possible commits since that tag.
+    Internally Python's ``setuptools_scm`` is used to this end.
+    In case that you are not working from a clone of the repository you have to set
+    the version manually, **before** configuring with CMake:
+
+    .. code-block:: none
+
+        export SETUPTOOLS_SCM_PRETEND_VERSION="1.2.3"
+        cmake -Bbuild
+        cd build
+        cmake --install .
+
+    In Windows replace the first line with
+
+    .. code-block:: none
+
+        set SETUPTOOLS_SCM_PRETEND_VERSION="1.2.3"
+
+.. tip::
+
+    To install in a loaded conda environment use
+
+    .. code-block:: none
+
+        cmake -Bbuild -DCMAKE_INSTALL_PREFIX:PATH="${CONDA_PREFIX}"
+        cd build
+        cmake --install .
+
 
 .. _install_python:
 
