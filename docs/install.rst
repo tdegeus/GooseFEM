@@ -27,6 +27,11 @@ This will install all the necessary runtime dependencies as well.
 From source
 ===========
 
+.. tip::
+
+    It could be instructive to see how configuration / compilation is done in the
+    continuous integration: :download:`.github/workflows/ci.yml <../.github/workflows/ci.yml>`
+
 Download the package::
 
     git checkout https://github.com/tdegeus/GooseFEM.git
@@ -76,6 +81,11 @@ Install headers, *CMake* and *pkg-config* support:
 Python interface
 ================
 
+.. tip::
+
+    It could be instructive to see how configuration / compilation is done in the
+    continuous integration: :download:`.github/workflows/ci.yml <../.github/workflows/ci.yml>`
+
 Using conda
 ^^^^^^^^^^^
 
@@ -124,3 +134,31 @@ Install the package using::
 
         python setup.py build
         python setup.py install
+
+.. _install_docs:
+
+Docs
+====
+
+.. tip::
+
+    It could be instructive to see how configuration / compilation is done in the
+    continuous integration:
+    :download:`.github/workflows/gh-pages.yml <../.github/workflows/gh-pages.yml>`
+
+To build the docs there are two steps to be made:
+
+1.  Extract the code documentation using doxygen:
+
+    .. code-block:: none
+
+        cmake -Bbuild -DBUILD_DOCS=1
+        cd build
+        make docs
+
+2.  Build the docs using sphinx:
+
+    .. code-block:: none
+
+        cd docs
+        make html
