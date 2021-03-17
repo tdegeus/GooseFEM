@@ -36,12 +36,12 @@ TEST_CASE("GooseFEM::Vector", "Vector.h")
 
         auto V = vector.AsDofs(v);
 
-        REQUIRE(xt::has_shape(vector.AllocateDofval(), V.shape()));
-        REQUIRE(xt::has_shape(vector.AllocateNodevec(), v.shape()));
-        REQUIRE(xt::has_shape(vector.AllocateDofval(), vector.AsDofs(v).shape()));
-        REQUIRE(xt::has_shape(vector.AllocateElemvec(), vector.AsElement(v).shape()));
-        REQUIRE(xt::has_shape(vector.AllocateNodevec(), vector.AsNode(V).shape()));
-        REQUIRE(xt::has_shape(vector.AllocateElemvec(), vector.AsElement(V).shape()));
+        REQUIRE(xt::has_shape(vector.allocate_dofval(), V.shape()));
+        REQUIRE(xt::has_shape(vector.allocate_nodevec(), v.shape()));
+        REQUIRE(xt::has_shape(vector.allocate_dofval(), vector.AsDofs(v).shape()));
+        REQUIRE(xt::has_shape(vector.allocate_elemvec(), vector.AsElement(v).shape()));
+        REQUIRE(xt::has_shape(vector.allocate_nodevec(), vector.AsNode(V).shape()));
+        REQUIRE(xt::has_shape(vector.allocate_elemvec(), vector.AsElement(V).shape()));
         REQUIRE(V.size() == (mesh.nnode() - mesh.nodesPeriodic().shape(0)) * mesh.ndim());
         ISCLOSE(V(0), v(0, 0));
         ISCLOSE(V(1), v(0, 1));

@@ -50,7 +50,7 @@ inline xt::xtensor<size_t, 1> VectorPartitioned::iip() const
 
 inline xt::xtensor<bool, 2> VectorPartitioned::dofs_is_u() const
 {
-    xt::xtensor<bool, 2> ret = xt::zeros<bool>(this->ShapeNodevec());
+    xt::xtensor<bool, 2> ret = xt::zeros<bool>(this->shape_nodevec());
 
     #pragma omp parallel for
     for (size_t m = 0; m < m_nnode; ++m) {
@@ -66,7 +66,7 @@ inline xt::xtensor<bool, 2> VectorPartitioned::dofs_is_u() const
 
 inline xt::xtensor<bool, 2> VectorPartitioned::dofs_is_p() const
 {
-    xt::xtensor<bool, 2> ret = xt::zeros<bool>(this->ShapeNodevec());
+    xt::xtensor<bool, 2> ret = xt::zeros<bool>(this->shape_nodevec());
 
     #pragma omp parallel for
     for (size_t m = 0; m < m_nnode; ++m) {
@@ -280,6 +280,10 @@ inline void VectorPartitioned::elementFromPartitioned(
     }
 }
 
+/**
+\cond
+*/
+
 inline void VectorPartitioned::assembleDofs_u(
     const xt::xtensor<double, 2>& nodevec, xt::xtensor<double, 1>& dofval_u) const
 {
@@ -356,6 +360,10 @@ inline void VectorPartitioned::assembleDofs_p(
     }
 }
 
+/**
+\endcond
+*/
+
 inline xt::xtensor<double, 1> VectorPartitioned::DofsFromParitioned(
     const xt::xtensor<double, 1>& dofval_u, const xt::xtensor<double, 1>& dofval_p) const
 {
@@ -422,6 +430,10 @@ inline xt::xtensor<double, 3> VectorPartitioned::ElementFromPartitioned(
     return elemvec;
 }
 
+/**
+\cond
+*/
+
 inline xt::xtensor<double, 1> VectorPartitioned::AssembleDofs_u(const xt::xtensor<double, 2>& nodevec) const
 {
     xt::xtensor<double, 1> dofval_u = xt::empty<double>({m_nnu});
@@ -449,6 +461,10 @@ inline xt::xtensor<double, 1> VectorPartitioned::AssembleDofs_p(const xt::xtenso
     this->assembleDofs_p(elemvec, dofval_p);
     return dofval_p;
 }
+
+/**
+\endcond
+*/
 
 inline xt::xtensor<double, 2> VectorPartitioned::Copy_u(
     const xt::xtensor<double, 2>& nodevec_src, const xt::xtensor<double, 2>& nodevec_dest) const

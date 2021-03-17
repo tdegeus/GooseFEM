@@ -64,8 +64,8 @@ inline xt::xtensor<size_t, 2> Vector::dofs() const
 inline void Vector::copy(
     const xt::xtensor<double, 2>& nodevec_src, xt::xtensor<double, 2>& nodevec_dest) const
 {
-    GOOSEFEM_ASSERT(xt::has_shape(nodevec_src, this->ShapeNodevec()));
-    GOOSEFEM_ASSERT(xt::has_shape(nodevec_dest, this->ShapeNodevec()));
+    GOOSEFEM_ASSERT(xt::has_shape(nodevec_src, this->shape_nodevec()));
+    GOOSEFEM_ASSERT(xt::has_shape(nodevec_dest, this->shape_nodevec()));
 
     xt::noalias(nodevec_dest) = nodevec_src;
 }
@@ -73,7 +73,7 @@ inline void Vector::copy(
 inline void Vector::asDofs(
     const xt::xtensor<double, 2>& nodevec, xt::xtensor<double, 1>& dofval) const
 {
-    GOOSEFEM_ASSERT(xt::has_shape(nodevec, this->ShapeNodevec()));
+    GOOSEFEM_ASSERT(xt::has_shape(nodevec, this->shape_nodevec()));
     GOOSEFEM_ASSERT(dofval.size() == m_ndof);
 
     dofval.fill(0.0);
@@ -89,7 +89,7 @@ inline void Vector::asDofs(
 inline void Vector::asDofs(
     const xt::xtensor<double, 3>& elemvec, xt::xtensor<double, 1>& dofval) const
 {
-    GOOSEFEM_ASSERT(xt::has_shape(elemvec, this->ShapeElemvec()));
+    GOOSEFEM_ASSERT(xt::has_shape(elemvec, this->shape_elemvec()));
     GOOSEFEM_ASSERT(dofval.size() == m_ndof);
 
     dofval.fill(0.0);
@@ -108,7 +108,7 @@ inline void Vector::asNode(
     const xt::xtensor<double, 1>& dofval, xt::xtensor<double, 2>& nodevec) const
 {
     GOOSEFEM_ASSERT(dofval.size() == m_ndof);
-    GOOSEFEM_ASSERT(xt::has_shape(nodevec, this->ShapeNodevec()));
+    GOOSEFEM_ASSERT(xt::has_shape(nodevec, this->shape_nodevec()));
 
     #pragma omp parallel for
     for (size_t m = 0; m < m_nnode; ++m) {
@@ -121,8 +121,8 @@ inline void Vector::asNode(
 inline void Vector::asNode(
     const xt::xtensor<double, 3>& elemvec, xt::xtensor<double, 2>& nodevec) const
 {
-    GOOSEFEM_ASSERT(xt::has_shape(elemvec, this->ShapeElemvec()));
-    GOOSEFEM_ASSERT(xt::has_shape(nodevec, this->ShapeNodevec()));
+    GOOSEFEM_ASSERT(xt::has_shape(elemvec, this->shape_elemvec()));
+    GOOSEFEM_ASSERT(xt::has_shape(nodevec, this->shape_nodevec()));
 
     nodevec.fill(0.0);
 
@@ -140,7 +140,7 @@ inline void Vector::asElement(
     const xt::xtensor<double, 1>& dofval, xt::xtensor<double, 3>& elemvec) const
 {
     GOOSEFEM_ASSERT(dofval.size() == m_ndof);
-    GOOSEFEM_ASSERT(xt::has_shape(elemvec, this->ShapeElemvec()));
+    GOOSEFEM_ASSERT(xt::has_shape(elemvec, this->shape_elemvec()));
 
     #pragma omp parallel for
     for (size_t e = 0; e < m_nelem; ++e) {
@@ -155,8 +155,8 @@ inline void Vector::asElement(
 inline void Vector::asElement(
     const xt::xtensor<double, 2>& nodevec, xt::xtensor<double, 3>& elemvec) const
 {
-    GOOSEFEM_ASSERT(xt::has_shape(nodevec, this->ShapeNodevec()));
-    GOOSEFEM_ASSERT(xt::has_shape(elemvec, this->ShapeElemvec()));
+    GOOSEFEM_ASSERT(xt::has_shape(nodevec, this->shape_nodevec()));
+    GOOSEFEM_ASSERT(xt::has_shape(elemvec, this->shape_elemvec()));
 
     #pragma omp parallel for
     for (size_t e = 0; e < m_nelem; ++e) {
@@ -171,7 +171,7 @@ inline void Vector::asElement(
 inline void Vector::assembleDofs(
     const xt::xtensor<double, 2>& nodevec, xt::xtensor<double, 1>& dofval) const
 {
-    GOOSEFEM_ASSERT(xt::has_shape(nodevec, this->ShapeNodevec()));
+    GOOSEFEM_ASSERT(xt::has_shape(nodevec, this->shape_nodevec()));
     GOOSEFEM_ASSERT(dofval.size() == m_ndof);
 
     dofval.fill(0.0);
@@ -186,7 +186,7 @@ inline void Vector::assembleDofs(
 inline void Vector::assembleDofs(
     const xt::xtensor<double, 3>& elemvec, xt::xtensor<double, 1>& dofval) const
 {
-    GOOSEFEM_ASSERT(xt::has_shape(elemvec, this->ShapeElemvec()));
+    GOOSEFEM_ASSERT(xt::has_shape(elemvec, this->shape_elemvec()));
     GOOSEFEM_ASSERT(dofval.size() == m_ndof);
 
     dofval.fill(0.0);
@@ -203,8 +203,8 @@ inline void Vector::assembleDofs(
 inline void Vector::assembleNode(
     const xt::xtensor<double, 3>& elemvec, xt::xtensor<double, 2>& nodevec) const
 {
-    GOOSEFEM_ASSERT(xt::has_shape(elemvec, this->ShapeElemvec()));
-    GOOSEFEM_ASSERT(xt::has_shape(nodevec, this->ShapeNodevec()));
+    GOOSEFEM_ASSERT(xt::has_shape(elemvec, this->shape_elemvec()));
+    GOOSEFEM_ASSERT(xt::has_shape(nodevec, this->shape_nodevec()));
 
     xt::xtensor<double, 1> dofval = this->AssembleDofs(elemvec);
     this->asNode(dofval, nodevec);
@@ -212,63 +212,63 @@ inline void Vector::assembleNode(
 
 inline xt::xtensor<double, 1> Vector::AsDofs(const xt::xtensor<double, 2>& nodevec) const
 {
-    xt::xtensor<double, 1> dofval = xt::empty<double>(this->ShapeDofval());
+    xt::xtensor<double, 1> dofval = xt::empty<double>(this->shape_dofval());
     this->asDofs(nodevec, dofval);
     return dofval;
 }
 
 inline xt::xtensor<double, 1> Vector::AsDofs(const xt::xtensor<double, 3>& elemvec) const
 {
-    xt::xtensor<double, 1> dofval = xt::empty<double>(this->ShapeDofval());
+    xt::xtensor<double, 1> dofval = xt::empty<double>(this->shape_dofval());
     this->asDofs(elemvec, dofval);
     return dofval;
 }
 
 inline xt::xtensor<double, 2> Vector::AsNode(const xt::xtensor<double, 1>& dofval) const
 {
-    xt::xtensor<double, 2> nodevec = xt::empty<double>(this->ShapeNodevec());
+    xt::xtensor<double, 2> nodevec = xt::empty<double>(this->shape_nodevec());
     this->asNode(dofval, nodevec);
     return nodevec;
 }
 
 inline xt::xtensor<double, 2> Vector::AsNode(const xt::xtensor<double, 3>& elemvec) const
 {
-    xt::xtensor<double, 2> nodevec = xt::empty<double>(this->ShapeNodevec());
+    xt::xtensor<double, 2> nodevec = xt::empty<double>(this->shape_nodevec());
     this->asNode(elemvec, nodevec);
     return nodevec;
 }
 
 inline xt::xtensor<double, 3> Vector::AsElement(const xt::xtensor<double, 1>& dofval) const
 {
-    xt::xtensor<double, 3> elemvec = xt::empty<double>(this->ShapeElemvec());
+    xt::xtensor<double, 3> elemvec = xt::empty<double>(this->shape_elemvec());
     this->asElement(dofval, elemvec);
     return elemvec;
 }
 
 inline xt::xtensor<double, 3> Vector::AsElement(const xt::xtensor<double, 2>& nodevec) const
 {
-    xt::xtensor<double, 3> elemvec = xt::empty<double>(this->ShapeElemvec());
+    xt::xtensor<double, 3> elemvec = xt::empty<double>(this->shape_elemvec());
     this->asElement(nodevec, elemvec);
     return elemvec;
 }
 
 inline xt::xtensor<double, 1> Vector::AssembleDofs(const xt::xtensor<double, 2>& nodevec) const
 {
-    xt::xtensor<double, 1> dofval = xt::empty<double>(this->ShapeDofval());
+    xt::xtensor<double, 1> dofval = xt::empty<double>(this->shape_dofval());
     this->assembleDofs(nodevec, dofval);
     return dofval;
 }
 
 inline xt::xtensor<double, 1> Vector::AssembleDofs(const xt::xtensor<double, 3>& elemvec) const
 {
-    xt::xtensor<double, 1> dofval = xt::empty<double>(this->ShapeDofval());
+    xt::xtensor<double, 1> dofval = xt::empty<double>(this->shape_dofval());
     this->assembleDofs(elemvec, dofval);
     return dofval;
 }
 
 inline xt::xtensor<double, 2> Vector::AssembleNode(const xt::xtensor<double, 3>& elemvec) const
 {
-    xt::xtensor<double, 2> nodevec = xt::empty<double>(this->ShapeNodevec());
+    xt::xtensor<double, 2> nodevec = xt::empty<double>(this->shape_nodevec());
     this->assembleNode(elemvec, nodevec);
     return nodevec;
 }
@@ -316,55 +316,59 @@ inline std::array<size_t, 3> Vector::shape_elemmat() const
 
 inline xt::xtensor<double, 1> Vector::allocate_dofval() const
 {
-    xt::xtensor<double, 1> dofval = xt::empty<double>(this->ShapeDofval());
+    xt::xtensor<double, 1> dofval = xt::empty<double>(this->shape_dofval());
     return dofval;
 }
 
 inline xt::xtensor<double, 2> Vector::allocate_nodevec() const
 {
-    xt::xtensor<double, 2> nodevec = xt::empty<double>(this->ShapeNodevec());
+    xt::xtensor<double, 2> nodevec = xt::empty<double>(this->shape_nodevec());
     return nodevec;
 }
 
 inline xt::xtensor<double, 3> Vector::allocate_elemvec() const
 {
-    xt::xtensor<double, 3> elemvec = xt::empty<double>(this->ShapeElemvec());
+    xt::xtensor<double, 3> elemvec = xt::empty<double>(this->shape_elemvec());
     return elemvec;
 }
 
 inline xt::xtensor<double, 3> Vector::allocate_elemmat() const
 {
-    xt::xtensor<double, 3> elemmat = xt::empty<double>(this->ShapeElemmat());
+    xt::xtensor<double, 3> elemmat = xt::empty<double>(this->shape_elemmat());
     return elemmat;
 }
 
 inline xt::xtensor<double, 1> Vector::allocate_dofval(double val) const
 {
-    xt::xtensor<double, 1> dofval = xt::empty<double>(this->ShapeDofval());
+    xt::xtensor<double, 1> dofval = xt::empty<double>(this->shape_dofval());
     dofval.fill(val);
     return dofval;
 }
 
 inline xt::xtensor<double, 2> Vector::allocate_nodevec(double val) const
 {
-    xt::xtensor<double, 2> nodevec = xt::empty<double>(this->ShapeNodevec());
+    xt::xtensor<double, 2> nodevec = xt::empty<double>(this->shape_nodevec());
     nodevec.fill(val);
     return nodevec;
 }
 
 inline xt::xtensor<double, 3> Vector::allocate_elemvec(double val) const
 {
-    xt::xtensor<double, 3> elemvec = xt::empty<double>(this->ShapeElemvec());
+    xt::xtensor<double, 3> elemvec = xt::empty<double>(this->shape_elemvec());
     elemvec.fill(val);
     return elemvec;
 }
 
 inline xt::xtensor<double, 3> Vector::allocate_elemmat(double val) const
 {
-    xt::xtensor<double, 3> elemmat = xt::empty<double>(this->ShapeElemmat());
+    xt::xtensor<double, 3> elemmat = xt::empty<double>(this->shape_elemmat());
     elemmat.fill(val);
     return elemmat;
 }
+
+/**
+\cond
+*/
 
 inline std::array<size_t, 1> Vector::ShapeDofval() const
 {
@@ -422,29 +426,33 @@ inline xt::xtensor<double, 1> Vector::AllocateDofval(double val) const
 {
     GOOSEFEM_WARNING("Deprecation warning: AllocateDofval -> allocate_dofval");
     GOOSEFEM_WARNING_PYTHON("Deprecation warnings: using val * np.ones(this.allocate_dofval())")
-    return this->allocate_dofval();
+    return this->allocate_dofval(val);
 }
 
 inline xt::xtensor<double, 2> Vector::AllocateNodevec(double val) const
 {
     GOOSEFEM_WARNING("Deprecation warning: AllocateNodevec -> allocate_nodevec");
     GOOSEFEM_WARNING_PYTHON("Deprecation warnings: using val * np.ones(this.allocate_nodevec())")
-    return this->allocate_nodevec();
+    return this->allocate_nodevec(val);
 }
 
 inline xt::xtensor<double, 3> Vector::AllocateElemvec(double val) const
 {
     GOOSEFEM_WARNING("Deprecation warning: AllocateElemvec -> allocate_elemvec");
     GOOSEFEM_WARNING_PYTHON("Deprecation warnings: using val * np.ones(this.allocate_elemvec())")
-    return this->allocate_elemvec();
+    return this->allocate_elemvec(val);
 }
 
 inline xt::xtensor<double, 3> Vector::AllocateElemmat(double val) const
 {
     GOOSEFEM_WARNING("Deprecation warning: AllocateElemmat -> allocate_elemmat");
     GOOSEFEM_WARNING_PYTHON("Deprecation warnings: using val * np.ones(this.allocate_elemmat())")
-    return this->allocate_elemmat();
+    return this->allocate_elemmat(val);
 }
+
+/**
+\endcond
+*/
 
 } // namespace GooseFEM
 

@@ -218,6 +218,40 @@ inline std::vector<size_t> QuadratureBase<ne, nd, td>::shape_qscalar() const
 }
 
 template <size_t ne, size_t nd, size_t td>
+template <class T>
+inline xt::xtensor<T, 3> QuadratureBase<ne, nd, td>::allocate_elemvec() const
+{
+    xt::xtensor<T, 3> ret = xt::empty<T>(this->shape_elemvec());
+    return ret;
+}
+
+template <size_t ne, size_t nd, size_t td>
+template <class T>
+inline xt::xtensor<T, 3> QuadratureBase<ne, nd, td>::allocate_elemvec(T val) const
+{
+    xt::xtensor<T, 3> ret = xt::empty<T>(this->shape_elemvec());
+    ret.fill(val);
+    return ret;
+}
+
+template <size_t ne, size_t nd, size_t td>
+template <class T>
+inline xt::xtensor<T, 3> QuadratureBase<ne, nd, td>::allocate_elemmat() const
+{
+    xt::xtensor<T, 3> ret = xt::empty<T>(this->shape_elemmat());
+    return ret;
+}
+
+template <size_t ne, size_t nd, size_t td>
+template <class T>
+inline xt::xtensor<T, 3> QuadratureBase<ne, nd, td>::allocate_elemmat(T val) const
+{
+    xt::xtensor<T, 3> ret = xt::empty<T>(this->shape_elemmat());
+    ret.fill(val);
+    return ret;
+}
+
+template <size_t ne, size_t nd, size_t td>
 template <size_t rank, class T>
 inline xt::xtensor<T, 2 + rank> QuadratureBase<ne, nd, td>::allocate_qtensor() const
 {
@@ -264,6 +298,10 @@ inline xt::xtensor<T, 2> QuadratureBase<ne, nd, td>::allocate_qscalar(T val) con
 {
     return this->allocate_qtensor<0, T>(val);
 }
+
+/**
+\cond
+*/
 
 template <size_t ne, size_t nd, size_t td>
 template <size_t rank>
@@ -339,6 +377,10 @@ inline xt::xtensor<T, 2> QuadratureBase<ne, nd, td>::AllocateQscalar(T val) cons
     return this->allocate_qtensor<0, T>(val);
 }
 
+/**
+\endcond
+*/
+
 template <size_t ne, size_t nd, size_t td>
 inline QuadratureBaseCartesian<ne, nd, td>::QuadratureBaseCartesian(
     const xt::xtensor<double, 3>& x,
@@ -374,7 +416,7 @@ inline void QuadratureBaseCartesian<ne, nd, td>::initQuadratureBaseCartesian(
     GOOSEFEM_ASSERT(xt::has_shape(m_dNxi, {m_nip, m_nne, m_ndim}));
 
     m_dNx = xt::empty<double>({m_nelem, m_nip, m_nne, m_ndim});
-    m_vol = xt::empty<double>({m_nelem, m_nip});
+    m_vol = xt::empty<double>(this->shape_qscalar());
 
     this->compute_dN();
 }
@@ -457,7 +499,7 @@ template <size_t ne, size_t nd, size_t td>
 inline void QuadratureBaseCartesian<ne, nd, td>::interp_N_vector(
     const xt::xtensor<double, 3>& elemvec, xt::xtensor<double, 3>& qvector) const
 {
-    GOOSEFEM_ASSERT(xt::has_shape(elemvec, {m_nelem, m_nne, m_ndim}));
+    GOOSEFEM_ASSERT(xt::has_shape(elemvec, this->shape_elemvec()));
     GOOSEFEM_ASSERT(xt::has_shape(qvector, {m_nelem, m_nip, m_ndim}));
 
     qvector.fill(0.0);
