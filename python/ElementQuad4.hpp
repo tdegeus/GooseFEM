@@ -112,35 +112,35 @@ void init_ElementQuad4(py::module& m)
 
         .def("ShapeQtensor",
             (std::vector<size_t>(GooseFEM::Element::Quad4::Quadrature::*)(size_t) const)
-                &GooseFEM::Element::Quad4::Quadrature::ShapeQtensor,
+                &GooseFEM::Element::Quad4::Quadrature::shape_qtensor,
             "Shape of 'qtensor'",
             py::arg("rank"))
 
         .def("ShapeQscalar",
-            &GooseFEM::Element::Quad4::Quadrature::ShapeQscalar,
+            &GooseFEM::Element::Quad4::Quadrature::shape_qscalar,
             "Shape of 'qscalar'")
 
         .def("AllocateQtensor",
             (xt::xarray<double>(GooseFEM::Element::Quad4::Quadrature::*)(size_t) const)
-                &GooseFEM::Element::Quad4::Quadrature::AllocateQtensor<double>,
+                &GooseFEM::Element::Quad4::Quadrature::allocate_qtensor<double>,
             "Allocate 'qtensor'",
             py::arg("rank"))
 
         .def("AllocateQtensor",
             (xt::xarray<double>(GooseFEM::Element::Quad4::Quadrature::*)(size_t, double) const)
-                &GooseFEM::Element::Quad4::Quadrature::AllocateQtensor<double>,
+                &GooseFEM::Element::Quad4::Quadrature::allocate_qtensor<double>,
             "Allocate 'qtensor'",
             py::arg("rank"),
             py::arg("val"))
 
         .def("AllocateQscalar",
             py::overload_cast<>(
-                &GooseFEM::Element::Quad4::Quadrature::AllocateQscalar<double>, py::const_),
+                &GooseFEM::Element::Quad4::Quadrature::allocate_qscalar<double>, py::const_),
             "Allocate 'qscalar'")
 
         .def("AllocateQscalar",
             py::overload_cast<double>(
-                &GooseFEM::Element::Quad4::Quadrature::AllocateQscalar<double>, py::const_),
+                &GooseFEM::Element::Quad4::Quadrature::allocate_qscalar<double>, py::const_),
             "Allocate 'qscalar'",
             py::arg("val"))
 

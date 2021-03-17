@@ -191,7 +191,7 @@ void init_Mesh(py::module& m)
 
         .def(
             "get",
-            &GooseFEM::Mesh::Renumber::get,
+            &GooseFEM::Mesh::Renumber::apply<xt::xarray<size_t>>,
             "Get renumbered DOFs."
             "See :cpp:func:`GooseFEM::Mesh::Renumber::get`.")
 
@@ -244,7 +244,7 @@ void init_Mesh(py::module& m)
 
         .def(
             "get",
-            &GooseFEM::Mesh::Reorder::get,
+            &GooseFEM::Mesh::Reorder::apply<xt::xarray<size_t>>,
             "Reorder matrix (e.g. ``dofs``)."
             "See :cpp:func:`GooseFEM::Mesh::Reorder::get`.",
             py::arg("dofs"))
