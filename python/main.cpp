@@ -12,6 +12,7 @@
 #include <pyxtensor/pyxtensor.hpp>
 
 #define GOOSEFEM_ENABLE_ASSERT
+#define GOOSEFEM_ENABLE_WARNING_PYTHON
 #include <GooseFEM/GooseFEM.h>
 
 namespace py = pybind11;

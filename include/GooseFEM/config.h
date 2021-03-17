@@ -59,12 +59,18 @@ using namespace xt::placeholders;
 
 #define UNUSED(p) ((void)(p))
 
+#define GOOSEFEM_WARNING_IMPL(message, file, line) \
+    std::cout << \
+        std::string(file) + ':' + std::to_string(line) + \
+        ": " message ") \n\t"; \
+
 #define GOOSEFEM_ASSERT_IMPL(expr, file, line) \
     if (!(expr)) { \
         throw std::runtime_error( \
             std::string(file) + ':' + std::to_string(line) + \
             ": assertion failed (" #expr ") \n\t"); \
     }
+
 /**
 \endcond
 */
@@ -111,5 +117,34 @@ Implement assertion by::
 */
 #define GOOSEFEM_WIP_ASSERT(expr) GOOSEFEM_ASSERT_IMPL(expr, __FILE__, __LINE__)
 
+/**
+All warnings are implemented as::
+
+    GOOSEFEM_WARNING(...)
+
+They can be disable by::
+
+    #define GOOSEFEM_DISABLE_WARNING
+*/
+#ifdef GOOSEFEM_DISABLE_WARNING
+#define GOOSEFEM_WARNING(message)
+#else
+#define GOOSEFEM_WARNING(message) GOOSEFEM_WARNING_IMPL(message, __FILE__, __LINE__)
+#endif
+
+/**
+All warnings specific to the Python API are implemented as::
+
+    GOOSEFEM_WARNING_PYTHON(...)
+
+They can be enabled by::
+
+    #define GOOSEFEM_ENABLE_WARNING_PYTHON
+*/
+#ifdef GOOSEFEM_ENABLE_WARNING_PYTHON
+#define GOOSEFEM_WARNING_PYTHON(message) GOOSEFEM_WARNING_IMPL(message, __FILE__, __LINE__)
+#else
+#define GOOSEFEM_WARNING_PYTHON(message)
+#endif
 
 #endif

@@ -85,6 +85,26 @@ void init_ElementHex8(py::module& m)
                 &GooseFEM::Element::Hex8::Quadrature::AsTensor<double>,
             "Convert 'qscalar' to 'qtensor' of certain rank")
 
+        .def("shape_elemvec",
+            &GooseFEM::Element::Hex8::Quadrature::shape_elemvec,
+            "Shape of 'elemvec'")
+
+        .def("shape_elemmat",
+            &GooseFEM::Element::Hex8::Quadrature::shape_elemmat,
+            "Shape of 'elemmat'")
+
+        .def("shape_qtensor",
+            (std::vector<size_t>(GooseFEM::Element::Hex8::Quadrature::*)(size_t) const)
+                &GooseFEM::Element::Hex8::Quadrature::shape_qtensor,
+            "Shape of 'qtensor'",
+            py::arg("rank"))
+
+        .def("shape_qscalar",
+            &GooseFEM::Element::Hex8::Quadrature::shape_qscalar,
+            "Shape of 'qscalar'")
+
+        // Deprecated
+
         .def("AllocateQtensor",
             (xt::xarray<double>(GooseFEM::Element::Hex8::Quadrature::*)(size_t) const)
                 &GooseFEM::Element::Hex8::Quadrature::AllocateQtensor<double>,

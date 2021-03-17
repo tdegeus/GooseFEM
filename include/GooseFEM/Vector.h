@@ -250,35 +250,35 @@ public:
 
     \return [#ndof]
     */
-    std::array<size_t, 1> ShapeDofval() const;
+    std::array<size_t, 1> shape_dofval() const;
 
     /**
     Shape of "nodevec".
 
     \return [#nnode, #ndim]
     */
-    std::array<size_t, 2> ShapeNodevec() const;
+    std::array<size_t, 2> shape_nodevec() const;
 
     /**
     Shape of "elemvec".
 
     \return [#nelem, #nne, #ndim]
     */
-    std::array<size_t, 3> ShapeElemvec() const;
+    std::array<size_t, 3> shape_elemvec() const;
 
     /**
     Shape of "elemmat".
 
     \return [#nelem, #nne * #ndim, #nne * #ndim]
     */
-    std::array<size_t, 3> ShapeElemmat() const;
+    std::array<size_t, 3> shape_elemmat() const;
 
     /**
     Allocated "dofval".
 
     \return [#ndof]
     */
-    xt::xtensor<double, 1> AllocateDofval() const;
+    xt::xtensor<double, 1> allocate_dofval() const;
 
     /**
     Allocated and initialised "dofval".
@@ -286,14 +286,14 @@ public:
     \param val value to which to initialise.
     \return [#ndof]
     */
-    xt::xtensor<double, 1> AllocateDofval(double val) const;
+    xt::xtensor<double, 1> allocate_dofval(double val) const;
 
     /**
     Allocated "nodevec".
 
     \return [#nnode, #ndim]
     */
-    xt::xtensor<double, 2> AllocateNodevec() const;
+    xt::xtensor<double, 2> allocate_nodevec() const;
 
     /**
     Allocated and initialised "nodevec".
@@ -301,14 +301,14 @@ public:
     \param val value to which to initialise.
     \return [#nnode, #ndim]
     */
-    xt::xtensor<double, 2> AllocateNodevec(double val) const;
+    xt::xtensor<double, 2> allocate_nodevec(double val) const;
 
     /**
     Allocated "elemvec".
 
     \return [#nelem, #nne, #ndim]
     */
-    xt::xtensor<double, 3> AllocateElemvec() const;
+    xt::xtensor<double, 3> allocate_elemvec() const;
 
     /**
     Allocated and initialised "elemvec".
@@ -316,14 +316,14 @@ public:
     \param val value to which to initialise.
     \return [#nelem, #nne, #ndim]
     */
-    xt::xtensor<double, 3> AllocateElemvec(double val) const;
+    xt::xtensor<double, 3> allocate_elemvec(double val) const;
 
     /**
     Allocated "elemmat".
 
     \return [#nelem, #nne * #ndim, #nne * #ndim]
     */
-    xt::xtensor<double, 3> AllocateElemmat() const;
+    xt::xtensor<double, 3> allocate_elemmat() const;
 
     /**
     Allocated and initialised "elemmat".
@@ -331,7 +331,49 @@ public:
     \param val value to which to initialise.
     \return [#nelem, #nne * #ndim, #nne * #ndim]
     */
+    xt::xtensor<double, 3> allocate_elemmat(double val) const;
+
+    /**
+    \cond
+    */
+    [[ deprecated ]]
+    std::array<size_t, 1> ShapeDofval() const;
+
+    [[ deprecated ]]
+    std::array<size_t, 2> ShapeNodevec() const;
+
+    [[ deprecated ]]
+    std::array<size_t, 3> ShapeElemvec() const;
+
+    [[ deprecated ]]
+    std::array<size_t, 3> ShapeElemmat() const;
+
+    [[ deprecated ]]
+    xt::xtensor<double, 1> AllocateDofval() const;
+
+    [[ deprecated ]]
+    xt::xtensor<double, 1> AllocateDofval(double val) const;
+
+    [[ deprecated ]]
+    xt::xtensor<double, 2> AllocateNodevec() const;
+
+    [[ deprecated ]]
+    xt::xtensor<double, 2> AllocateNodevec(double val) const;
+
+    [[ deprecated ]]
+    xt::xtensor<double, 3> AllocateElemvec() const;
+
+    [[ deprecated ]]
+    xt::xtensor<double, 3> AllocateElemvec(double val) const;
+
+    [[ deprecated ]]
+    xt::xtensor<double, 3> AllocateElemmat() const;
+
+    [[ deprecated ]]
     xt::xtensor<double, 3> AllocateElemmat(double val) const;
+    /**
+    \endcond
+    */
 
 protected:
     xt::xtensor<size_t, 2> m_conn; ///< See conn()

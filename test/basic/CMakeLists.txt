@@ -22,6 +22,7 @@ add_executable(${test_name}
     Element.cpp
     ElementHex8.cpp
     ElementQuad4.cpp
+    ElementQuad4Planar.cpp
     Iterate.cpp
     Matrix.cpp
     MatrixDiagonal.cpp

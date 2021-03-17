@@ -144,30 +144,44 @@ public:
     xt::xarray<T> AsTensor(size_t rank, const xt::xtensor<T, 2>& qscalar) const;
 
     /**
+    Get the shape of an "elemvec".
+
+    \returns [#nelem, #nne, #ndim].
+    */
+    std::array<size_t, 3> shape_elemvec() const;
+
+    /**
+    Get the shape of an "elemmat".
+
+    \returns [#nelem, #nne * #ndim, #nne * #ndim].
+    */
+    std::array<size_t, 3> shape_elemmat() const;
+
+    /**
     Get the shape of a "qtensor" of a certain rank
     (0 = scalar, 1, vector, 2 = 2nd-order tensor, etc.).
     Default: rank = 0, a.k.a. scalar.
 
-    \returns Shape as `std::array`.
+    \returns [#nelem, #nip, #tdim, ...].
     */
     template <size_t rank = 0>
-    std::array<size_t, 2 + rank> ShapeQtensor() const;
+    std::array<size_t, 2 + rank> shape_qtensor() const;
 
     /**
     Get the shape of a "qtensor" of a certain rank
     (0 = scalar, 1, vector, 2 = 2nd-order tensor, etc.).
 
     \param rank The tensor rank.
-    \returns Shape as `std::vector`.
+    \returns [#nelem, #nip, #tdim, ...].
     */
-    std::vector<size_t> ShapeQtensor(size_t rank) const;
+    std::vector<size_t> shape_qtensor(size_t rank) const;
 
     /**
     Get the shape of a "qscalar" (a "qtensor" of rank 0)
 
-    \returns Shape as `std::vector`.
+    \returns [#nelem, #nip].
     */
-    std::vector<size_t> ShapeQscalar() const;
+    std::vector<size_t> shape_qscalar() const;
 
     /**
     Get an allocated `xt::xtensor` to store a "qtensor" of a certain rank
@@ -175,10 +189,10 @@ public:
     Default: rank = 0, a.k.a. scalar.
     Note: the container is not (zero-)initialised.
 
-    \returns `xt::xtensor` container of the correct shape (and rank).
+    \returns [#nelem, #nip].
     */
     template <size_t rank = 0, class T>
-    xt::xtensor<T, 2 + rank> AllocateQtensor() const;
+    xt::xtensor<T, 2 + rank> allocate_qtensor() const;
 
     /**
     Get an allocated and initialised `xt::xtensor` to store a "qtensor" of a certain rank
@@ -189,7 +203,7 @@ public:
     \returns `xt::xtensor` container of the correct shape (and rank).
     */
     template <size_t rank = 0, class T>
-    xt::xtensor<T, 2 + rank> AllocateQtensor(T val) const;
+    xt::xtensor<T, 2 + rank> allocate_qtensor(T val) const;
 
     /**
     Get an allocated `xt::xarray` to store a "qtensor" of a certain rank
@@ -200,7 +214,7 @@ public:
     \returns `xt::xarray` container of the correct shape.
     */
     template <class T>
-    xt::xarray<T> AllocateQtensor(size_t rank) const;
+    xt::xarray<T> allocate_qtensor(size_t rank) const;
 
     /**
     Get an allocated and initialised `xt::xarray` to store a "qtensor" of a certain rank
@@ -211,7 +225,7 @@ public:
     \returns `xt::xtensor` container of the correct shape (and rank).
     */
     template <class T>
-    xt::xarray<T> AllocateQtensor(size_t rank, T val) const;
+    xt::xarray<T> allocate_qtensor(size_t rank, T val) const;
 
     /**
     Get an allocated `xt::xtensor` to store a "qscalar" (a "qtensor" of rank 0).
@@ -220,7 +234,7 @@ public:
     \returns `xt::xarray` container of the correct shape.
     */
     template <class T>
-    xt::xtensor<T, 2> AllocateQscalar() const;
+    xt::xtensor<T, 2> allocate_qscalar() const;
 
     /**
     Get an allocated and initialised `xt::xarray` to store a "qscalar" (a "qtensor" of rank 0).
@@ -229,7 +243,47 @@ public:
     \returns `xt::xtensor` container of the correct shape (and rank).
     */
     template <class T>
+    xt::xtensor<T, 2> allocate_qscalar(T val) const;
+
+    /**
+    \cond
+    */
+    template <size_t rank = 0>
+    [[ deprecated ]]
+    std::array<size_t, 2 + rank> ShapeQtensor() const;
+
+    [[ deprecated ]]
+    std::vector<size_t> ShapeQtensor(size_t rank) const;
+
+    template <size_t rank = 0, class T>
+    [[ deprecated ]]
+    xt::xtensor<T, 2 + rank> AllocateQtensor() const;
+
+    [[ deprecated ]]
+    std::vector<size_t> ShapeQscalar() const;
+
+    template <size_t rank = 0, class T>
+    [[ deprecated ]]
+    xt::xtensor<T, 2 + rank> AllocateQtensor(T val) const;
+
+    template <class T>
+    [[ deprecated ]]
+    xt::xarray<T> AllocateQtensor(size_t rank) const;
+
+    template <class T>
+    [[ deprecated ]]
+    xt::xarray<T> AllocateQtensor(size_t rank, T val) const;
+
+    template <class T>
+    [[ deprecated ]]
+    xt::xtensor<T, 2> AllocateQscalar() const;
+
+    template <class T>
+    [[ deprecated ]]
     xt::xtensor<T, 2> AllocateQscalar(T val) const;
+    /**
+    \endcond
+    */
 
 protected:
     /**
@@ -251,7 +305,7 @@ Interpolation and quadrature for a generic element in Cartesian coordinates.
 Naming convention:
 -    ``elemmat``:  matrices stored per element, [#nelem, #nne * #ndim, #nne * #ndim]
 -    ``elemvec``:  nodal vectors stored per element, [#nelem, #nne, #ndim]
--    ``qtensor``:  integration point tensor, [#nelem, #nip, #ndim, #ndim]
+-    ``qtensor``:  integration point tensor, [#nelem, #nip, #tdim, #tdim]
 -    ``qscalar``:  integration point scalar, [#nelem, #nip]
 */
 template <size_t ne, size_t nd, size_t td>
@@ -344,7 +398,7 @@ public:
     or updated when calling update_x().
 
     \param elemvec [#nelem, #nne, #ndim]
-    \return qtensor [#nelem, #nip, #ndim, #ndim]
+    \return qtensor [#nelem, #nip, #tdim, #tdim]
     */
     xt::xtensor<double, 4> GradN_vector(const xt::xtensor<double, 3>& elemvec) const;
 
@@ -352,7 +406,7 @@ public:
     Same as GradN_vector(), but writing to preallocated return.
 
     \param elemvec [#nelem, #nne, #ndim]
-    \param qtensor overwritten [#nelem, #nip, #ndim, #ndim]
+    \param qtensor overwritten [#nelem, #nip, #tdim, #tdim]
     */
     virtual void gradN_vector(
         const xt::xtensor<double, 3>& elemvec, xt::xtensor<double, 4>& qtensor) const;
@@ -367,7 +421,7 @@ public:
                     qtensor(e, q, j, i) += dNdx(e, q, m, i) * elemvec(e, m, j)
 
     \param elemvec [#nelem, #nne, #ndim]
-    \return qtensor [#nelem, #nip, #ndim, #ndim]
+    \return qtensor [#nelem, #nip, #tdim, #tdim]
     */
     xt::xtensor<double, 4> GradN_vector_T(const xt::xtensor<double, 3>& elemvec) const;
 
@@ -375,7 +429,7 @@ public:
     Same as GradN_vector_T(), but writing to preallocated return.
 
     \param elemvec [#nelem, #nne, #ndim]
-    \param qtensor overwritten [#nelem, #nip, #ndim, #ndim]
+    \param qtensor overwritten [#nelem, #nip, #tdim, #tdim]
     */
     virtual void gradN_vector_T(
         const xt::xtensor<double, 3>& elemvec, xt::xtensor<double, 4>& qtensor) const;
@@ -391,7 +445,7 @@ public:
                     qtensor(e, q, j, i) += 0.5 * dNdx(e, q, m, i) * elemvec(e, m, j)
 
     \param elemvec [#nelem, #nne, #ndim]
-    \return qtensor [#nelem, #nip, #ndim, #ndim]
+    \return qtensor [#nelem, #nip, #tdim, #tdim]
     */
     xt::xtensor<double, 4> SymGradN_vector(const xt::xtensor<double, 3>& elemvec) const;
 
@@ -399,7 +453,7 @@ public:
     Same as SymGradN_vector(), but writing to preallocated return.
 
     \param elemvec [#nelem, #nne, #ndim]
-    \param qtensor overwritten [#nelem, #nip, #ndim, #ndim]
+    \param qtensor overwritten [#nelem, #nip, #tdim, #tdim]
     */
     virtual void symGradN_vector(
         const xt::xtensor<double, 3>& elemvec, xt::xtensor<double, 4>& qtensor) const;

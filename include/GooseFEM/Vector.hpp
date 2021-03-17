@@ -281,14 +281,14 @@ inline xt::xtensor<double, 2> Vector::Copy(
     return ret;
 }
 
-inline std::array<size_t, 1> Vector::ShapeDofval() const
+inline std::array<size_t, 1> Vector::shape_dofval() const
 {
     std::array<size_t, 1> shape;
     shape[0] = m_ndof;
     return shape;
 }
 
-inline std::array<size_t, 2> Vector::ShapeNodevec() const
+inline std::array<size_t, 2> Vector::shape_nodevec() const
 {
     std::array<size_t, 2> shape;
     shape[0] = m_nnode;
@@ -296,7 +296,7 @@ inline std::array<size_t, 2> Vector::ShapeNodevec() const
     return shape;
 }
 
-inline std::array<size_t, 3> Vector::ShapeElemvec() const
+inline std::array<size_t, 3> Vector::shape_elemvec() const
 {
     std::array<size_t, 3> shape;
     shape[0] = m_nelem;
@@ -305,7 +305,7 @@ inline std::array<size_t, 3> Vector::ShapeElemvec() const
     return shape;
 }
 
-inline std::array<size_t, 3> Vector::ShapeElemmat() const
+inline std::array<size_t, 3> Vector::shape_elemmat() const
 {
     std::array<size_t, 3> shape;
     shape[0] = m_nelem;
@@ -314,56 +314,136 @@ inline std::array<size_t, 3> Vector::ShapeElemmat() const
     return shape;
 }
 
-inline xt::xtensor<double, 1> Vector::AllocateDofval() const
+inline xt::xtensor<double, 1> Vector::allocate_dofval() const
 {
     xt::xtensor<double, 1> dofval = xt::empty<double>(this->ShapeDofval());
     return dofval;
 }
 
-inline xt::xtensor<double, 2> Vector::AllocateNodevec() const
+inline xt::xtensor<double, 2> Vector::allocate_nodevec() const
 {
     xt::xtensor<double, 2> nodevec = xt::empty<double>(this->ShapeNodevec());
     return nodevec;
 }
 
-inline xt::xtensor<double, 3> Vector::AllocateElemvec() const
+inline xt::xtensor<double, 3> Vector::allocate_elemvec() const
 {
     xt::xtensor<double, 3> elemvec = xt::empty<double>(this->ShapeElemvec());
     return elemvec;
 }
 
-inline xt::xtensor<double, 3> Vector::AllocateElemmat() const
+inline xt::xtensor<double, 3> Vector::allocate_elemmat() const
 {
     xt::xtensor<double, 3> elemmat = xt::empty<double>(this->ShapeElemmat());
     return elemmat;
 }
 
-inline xt::xtensor<double, 1> Vector::AllocateDofval(double val) const
+inline xt::xtensor<double, 1> Vector::allocate_dofval(double val) const
 {
     xt::xtensor<double, 1> dofval = xt::empty<double>(this->ShapeDofval());
     dofval.fill(val);
     return dofval;
 }
 
-inline xt::xtensor<double, 2> Vector::AllocateNodevec(double val) const
+inline xt::xtensor<double, 2> Vector::allocate_nodevec(double val) const
 {
     xt::xtensor<double, 2> nodevec = xt::empty<double>(this->ShapeNodevec());
     nodevec.fill(val);
     return nodevec;
 }
 
-inline xt::xtensor<double, 3> Vector::AllocateElemvec(double val) const
+inline xt::xtensor<double, 3> Vector::allocate_elemvec(double val) const
 {
     xt::xtensor<double, 3> elemvec = xt::empty<double>(this->ShapeElemvec());
     elemvec.fill(val);
     return elemvec;
 }
 
-inline xt::xtensor<double, 3> Vector::AllocateElemmat(double val) const
+inline xt::xtensor<double, 3> Vector::allocate_elemmat(double val) const
 {
     xt::xtensor<double, 3> elemmat = xt::empty<double>(this->ShapeElemmat());
     elemmat.fill(val);
     return elemmat;
+}
+
+inline std::array<size_t, 1> Vector::ShapeDofval() const
+{
+    GOOSEFEM_WARNING("Deprecation warning: ShapeDofval -> shape_dofval");
+    return this->shape_dofval();
+}
+
+inline std::array<size_t, 2> Vector::ShapeNodevec() const
+{
+    GOOSEFEM_WARNING("Deprecation warning: ShapeNodevec -> shape_nodevec");
+    return this->shape_nodevec();
+}
+
+inline std::array<size_t, 3> Vector::ShapeElemvec() const
+{
+    GOOSEFEM_WARNING("Deprecation warning: ShapeElemvec -> shape_elemvec");
+    return this->shape_elemvec();
+}
+
+inline std::array<size_t, 3> Vector::ShapeElemmat() const
+{
+    GOOSEFEM_WARNING("Deprecation warning: ShapeElemmat -> shape_elemmat");
+    return this->shape_elemmat();
+}
+
+inline xt::xtensor<double, 1> Vector::AllocateDofval() const
+{
+    GOOSEFEM_WARNING("Deprecation warning: AllocateDofval -> allocate_dofval");
+    GOOSEFEM_WARNING_PYTHON("Deprecation warnings: using np.empty(this.allocate_dofval())")
+    return this->allocate_dofval();
+}
+
+inline xt::xtensor<double, 2> Vector::AllocateNodevec() const
+{
+    GOOSEFEM_WARNING("Deprecation warning: AllocateNodevec -> allocate_nodevec");
+    GOOSEFEM_WARNING_PYTHON("Deprecation warnings: using np.empty(this.allocate_nodevec())")
+    return this->allocate_nodevec();
+}
+
+inline xt::xtensor<double, 3> Vector::AllocateElemvec() const
+{
+    GOOSEFEM_WARNING("Deprecation warning: AllocateElemvec -> allocate_elemvec");
+    GOOSEFEM_WARNING_PYTHON("Deprecation warnings: using np.empty(this.allocate_elemvec())")
+    return this->allocate_elemvec();
+}
+
+inline xt::xtensor<double, 3> Vector::AllocateElemmat() const
+{
+    GOOSEFEM_WARNING("Deprecation warning: AllocateElemmat -> allocate_elemmat");
+    GOOSEFEM_WARNING_PYTHON("Deprecation warnings: using np.empty(this.allocate_elemmat())")
+    return this->allocate_elemmat();
+}
+
+inline xt::xtensor<double, 1> Vector::AllocateDofval(double val) const
+{
+    GOOSEFEM_WARNING("Deprecation warning: AllocateDofval -> allocate_dofval");
+    GOOSEFEM_WARNING_PYTHON("Deprecation warnings: using val * np.ones(this.allocate_dofval())")
+    return this->allocate_dofval();
+}
+
+inline xt::xtensor<double, 2> Vector::AllocateNodevec(double val) const
+{
+    GOOSEFEM_WARNING("Deprecation warning: AllocateNodevec -> allocate_nodevec");
+    GOOSEFEM_WARNING_PYTHON("Deprecation warnings: using val * np.ones(this.allocate_nodevec())")
+    return this->allocate_nodevec();
+}
+
+inline xt::xtensor<double, 3> Vector::AllocateElemvec(double val) const
+{
+    GOOSEFEM_WARNING("Deprecation warning: AllocateElemvec -> allocate_elemvec");
+    GOOSEFEM_WARNING_PYTHON("Deprecation warnings: using val * np.ones(this.allocate_elemvec())")
+    return this->allocate_elemvec();
+}
+
+inline xt::xtensor<double, 3> Vector::AllocateElemmat(double val) const
+{
+    GOOSEFEM_WARNING("Deprecation warning: AllocateElemmat -> allocate_elemmat");
+    GOOSEFEM_WARNING_PYTHON("Deprecation warnings: using val * np.ones(this.allocate_elemmat())")
+    return this->allocate_elemmat();
 }
 
 } // namespace GooseFEM
