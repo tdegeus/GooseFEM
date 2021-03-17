@@ -3,6 +3,30 @@
 Changelog
 *********
 
+v0.10.2
+=======
+
+(Future) API Change
+-------------------
+
+Note that a new API is introduced, but the old API is kept under deprecation warnings.
+
+*   Renaming: ``Shape...`` -> ``shape_...``
+*   Renaming: ``Allocate...`` -> ``allocate_...``
+
+Changes under the hood
+----------------------
+
+*   ElementQuad4/ElementQuad4Axisymmetric/ElementQuad4Planar/ElementHex8: deriving from base class.
+*   [Python] Reducing compile time deprecation warnings.
+*   Using ``GOOSEFEM_WARNING(...)`` for all deprecation messages.
+*   Versioning: avoiding un-needed work-around for conda-forge.
+*   [CI] Using micromamba.
+*   [CI] Adding dynamics example.
+*   Adding headers to all files
+*   Documentation updates.
+*   Moving doxygen configuration to CMake
+
 v0.10.1
 =======
 
