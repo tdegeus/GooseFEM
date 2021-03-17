@@ -327,7 +327,7 @@ inline Renumber::Renumber(const T& dofs)
 
 inline xt::xtensor<size_t, 2> Renumber::get(const xt::xtensor<size_t, 2>& dofs) const
 {
-    std::cout << "Renumber::get is deprecated, use Renumber::apply" << std::endl;
+    GOOSEFEM_WARNING("Renumber::get is deprecated, use Renumber::apply");
     return this->apply(dofs);
 }
 
@@ -377,7 +377,7 @@ inline Reorder::Reorder(const std::initializer_list<xt::xtensor<size_t, 1>> args
 
 inline xt::xtensor<size_t, 2> Reorder::get(const xt::xtensor<size_t, 2>& dofs) const
 {
-    std::cout << "Reorder::get is deprecated, use Reorder::apply" << std::endl;
+    GOOSEFEM_WARNING("Reorder::get is deprecated, use Reorder::apply");
     return this->apply(dofs);
 }
 

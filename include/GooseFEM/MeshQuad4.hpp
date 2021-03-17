@@ -1247,8 +1247,7 @@ inline xt::xtensor<T, rank> RefineRegular::averageToCoarse(
 
 inline xt::xtensor<double, 2> RefineRegular::mapToCoarse(const xt::xtensor<double, 1>& data) const
 {
-    std::cout << "mapToCoarse is deprecated, use meanToCoarse or averageToCoarse" << std::endl;
-
+    GOOSEFEM_WARNING("mapToCoarse is deprecated, use meanToCoarse or averageToCoarse");
     GOOSEFEM_ASSERT(data.shape(0) == m_coarse2fine.size());
 
     size_t m = m_coarse2fine.shape(0);
@@ -1266,8 +1265,7 @@ inline xt::xtensor<double, 2> RefineRegular::mapToCoarse(const xt::xtensor<doubl
 
 inline xt::xtensor<double, 2> RefineRegular::mapToCoarse(const xt::xtensor<double, 2>& data) const
 {
-    std::cout << "mapToCoarse is deprecated, use meanToCoarse or averageToCoarse" << std::endl;
-
+    GOOSEFEM_WARNING("mapToCoarse is deprecated, use meanToCoarse or averageToCoarse");
     GOOSEFEM_ASSERT(data.shape(0) == m_coarse2fine.size());
 
     size_t m = m_coarse2fine.shape(0);
@@ -1288,8 +1286,7 @@ inline xt::xtensor<double, 2> RefineRegular::mapToCoarse(const xt::xtensor<doubl
 
 inline xt::xtensor<double, 4> RefineRegular::mapToCoarse(const xt::xtensor<double, 4>& data) const
 {
-    std::cout << "mapToCoarse is deprecated, use meanToCoarse or averageToCoarse" << std::endl;
-
+    GOOSEFEM_WARNING("mapToCoarse is deprecated, use meanToCoarse or averageToCoarse");
     GOOSEFEM_ASSERT(data.shape(0) == m_coarse2fine.size());
 
     size_t m = m_coarse2fine.shape(0);
