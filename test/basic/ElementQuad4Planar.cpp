@@ -4,13 +4,13 @@
 #include <xtensor/xmath.hpp>
 #include <GooseFEM/GooseFEM.h>
 
-TEST_CASE("GooseFEM::ElementQuad4", "ElementQuad4.h")
+TEST_CASE("GooseFEM::ElementQuad4Planar", "ElementQuad4Planar.h")
 {
     SECTION("GradN")
     {
         GooseFEM::Mesh::Quad4::Regular mesh(3, 3);
         GooseFEM::Vector vec(mesh.conn(), mesh.dofs());
-        GooseFEM::Element::Quad4::Quadrature quad(vec.AsElement(mesh.coor()));
+        GooseFEM::Element::Quad4::QuadraturePlanar quad(vec.AsElement(mesh.coor()));
         auto dNdx = quad.GradN();
         REQUIRE(xt::has_shape(dNdx, {mesh.nelem(), quad.nip(), mesh.nne(), mesh.ndim()}));
     }
@@ -19,31 +19,31 @@ TEST_CASE("GooseFEM::ElementQuad4", "ElementQuad4.h")
     {
         GooseFEM::Mesh::Quad4::Regular mesh(3, 3);
         GooseFEM::Vector vec(mesh.conn(), mesh.dofs());
-        GooseFEM::Element::Quad4::Quadrature quad(vec.AsElement(mesh.coor()));
+        GooseFEM::Element::Quad4::QuadraturePlanar quad(vec.AsElement(mesh.coor()));
         auto dV = quad.dV();
         REQUIRE(xt::allclose(dV, 0.5 * 0.5));
     }
 
-    SECTION("interp_N_vector")
-    {
-        GooseFEM::Mesh::Quad4::Regular mesh(3, 3);
-        GooseFEM::Vector vector(mesh.conn(), mesh.dofsPeriodic());
-        GooseFEM::Element::Quad4::Quadrature quad(vector.AsElement(mesh.coor()));
+    // SECTION("interp_N_vector")
+    // {
+    //     GooseFEM::Mesh::Quad4::Regular mesh(3, 3);
+    //     GooseFEM::Vector vector(mesh.conn(), mesh.dofsPeriodic());
+    //     GooseFEM::Element::Quad4::QuadraturePlanar quad(vector.AsElement(mesh.coor()));
 
-        auto u = vector.AllocateNodevec(1.0);
-        auto ue = vector.AsElement(u);
-        auto uq = quad.Interp_N_vector(ue);
+    //     auto u = vector.AllocateNodevec(1.0);
+    //     auto ue = vector.AsElement(u);
+    //     auto uq = quad.Interp_N_vector(ue);
 
-        REQUIRE(xt::allclose(uq, 1.0));
-    }
+    //     REQUIRE(xt::allclose(uq, 1.0));
+    // }
 
     SECTION("GradN_vector")
     {
         GooseFEM::Mesh::Quad4::Regular mesh(3, 3);
         GooseFEM::Vector vec(mesh.conn(), mesh.dofs());
-        GooseFEM::Element::Quad4::Quadrature quad(vec.AsElement(mesh.coor()));
+        GooseFEM::Element::Quad4::QuadraturePlanar quad(vec.AsElement(mesh.coor()));
 
-        size_t td = mesh.ndim();
+        size_t td = 3;
         xt::xtensor<double, 2> F = xt::zeros<double>({td, td});
         xt::xtensor<double, 2> EPS = xt::zeros<double>({td, td});
 
@@ -75,9 +75,9 @@ TEST_CASE("GooseFEM::ElementQuad4", "ElementQuad4.h")
     {
         GooseFEM::Mesh::Quad4::Regular mesh(3, 3);
         GooseFEM::Vector vec(mesh.conn(), mesh.dofs());
-        GooseFEM::Element::Quad4::Quadrature quad(vec.AsElement(mesh.coor()));
+        GooseFEM::Element::Quad4::QuadraturePlanar quad(vec.AsElement(mesh.coor()));
 
-        size_t td = mesh.ndim();
+        size_t td = 3;
         xt::xtensor<double, 2> F = xt::zeros<double>({td, td});
         xt::xtensor<double, 2> EPS = xt::zeros<double>({td, td});
 
@@ -109,9 +109,9 @@ TEST_CASE("GooseFEM::ElementQuad4", "ElementQuad4.h")
     {
         GooseFEM::Mesh::Quad4::Regular mesh(3, 3);
         GooseFEM::Vector vec(mesh.conn(), mesh.dofs());
-        GooseFEM::Element::Quad4::Quadrature quad(vec.AsElement(mesh.coor()));
+        GooseFEM::Element::Quad4::QuadraturePlanar quad(vec.AsElement(mesh.coor()));
 
-        size_t td = mesh.ndim();
+        size_t td = 3;
         xt::xtensor<double, 2> F = xt::zeros<double>({td, td});
         xt::xtensor<double, 2> EPS = xt::zeros<double>({td, td});
 
@@ -152,7 +152,7 @@ TEST_CASE("GooseFEM::ElementQuad4", "ElementQuad4.h")
         GooseFEM::Mesh::Quad4::Regular mesh(3, 3);
         GooseFEM::Vector vec(mesh.conn(), mesh.dofsPeriodic());
         GooseFEM::MatrixDiagonal mat(mesh.conn(), mesh.dofsPeriodic());
-        GooseFEM::Element::Quad4::Quadrature quad(
+        GooseFEM::Element::Quad4::QuadraturePlanar quad(
             vec.AsElement(mesh.coor()),
             GooseFEM::Element::Quad4::Nodal::xi(),
             GooseFEM::Element::Quad4::Nodal::w());
@@ -170,9 +170,9 @@ TEST_CASE("GooseFEM::ElementQuad4", "ElementQuad4.h")
     {
         GooseFEM::Mesh::Quad4::Regular mesh(3, 3);
         GooseFEM::Vector vec(mesh.conn(), mesh.dofsPeriodic());
-        GooseFEM::Element::Quad4::Quadrature quad(vec.AsElement(mesh.coor()));
+        GooseFEM::Element::Quad4::QuadraturePlanar quad(vec.AsElement(mesh.coor()));
 
-        size_t td = mesh.ndim();
+        size_t td = 3;
         xt::xtensor<double, 2> F = xt::zeros<double>({td, td});
 
         F(0, 1) = 0.1;

@@ -31,8 +31,6 @@ namespace detail {
         template <class T>
         static double inv(const T& A, T& Ainv)
         {
-            std::cout << "inv(2d)" << std::endl;
-
             double det = A(0, 0) * A(1, 1) - A(0, 1) * A(1, 0);
 
             Ainv(0, 0) = A(1, 1) / det;
@@ -57,8 +55,6 @@ namespace detail {
         template <class T>
         static double inv(const T& A, T& Ainv)
         {
-            std::cout << "inv(3d)" << std::endl;
-
             double det =
                 (A(0, 0) * A(1, 1) * A(2, 2) + A(0, 1) * A(1, 2) * A(2, 0) + A(0, 2) * A(1, 0) * A(2, 1)) -
                 (A(0, 2) * A(1, 1) * A(2, 0) + A(0, 1) * A(1, 0) * A(2, 2) + A(0, 0) * A(1, 2) * A(2, 1));

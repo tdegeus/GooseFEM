@@ -176,8 +176,20 @@ inline xt::xarray<T> QuadratureBase<ne, nd, td>::AsTensor(
 }
 
 template <size_t ne, size_t nd, size_t td>
+inline std::array<size_t, 3> QuadratureBase<ne, nd, td>::shape_elemvec() const
+{
+    return std::array<size_t, 3>{m_nelem, m_nne, m_ndim};
+}
+
+template <size_t ne, size_t nd, size_t td>
+inline std::array<size_t, 3> QuadratureBase<ne, nd, td>::shape_elemmat() const
+{
+    return std::array<size_t, 3>{m_nelem, m_nne * m_ndim, m_nne * m_ndim};
+}
+
+template <size_t ne, size_t nd, size_t td>
 template <size_t rank>
-inline std::array<size_t, 2 + rank> QuadratureBase<ne, nd, td>::ShapeQtensor() const
+inline std::array<size_t, 2 + rank> QuadratureBase<ne, nd, td>::shape_qtensor() const
 {
     std::array<size_t, 2 + rank> shape;
     shape[0] = m_nelem;
@@ -187,7 +199,7 @@ inline std::array<size_t, 2 + rank> QuadratureBase<ne, nd, td>::ShapeQtensor() c
 }
 
 template <size_t ne, size_t nd, size_t td>
-inline std::vector<size_t> QuadratureBase<ne, nd, td>::ShapeQtensor(size_t rank) const
+inline std::vector<size_t> QuadratureBase<ne, nd, td>::shape_qtensor(size_t rank) const
 {
     std::vector<size_t> shape(2 + rank);
     shape[0] = m_nelem;
@@ -197,7 +209,7 @@ inline std::vector<size_t> QuadratureBase<ne, nd, td>::ShapeQtensor(size_t rank)
 }
 
 template <size_t ne, size_t nd, size_t td>
-inline std::vector<size_t> QuadratureBase<ne, nd, td>::ShapeQscalar() const
+inline std::vector<size_t> QuadratureBase<ne, nd, td>::shape_qscalar() const
 {
     std::vector<size_t> shape(2);
     shape[0] = m_nelem;
@@ -207,50 +219,124 @@ inline std::vector<size_t> QuadratureBase<ne, nd, td>::ShapeQscalar() const
 
 template <size_t ne, size_t nd, size_t td>
 template <size_t rank, class T>
+inline xt::xtensor<T, 2 + rank> QuadratureBase<ne, nd, td>::allocate_qtensor() const
+{
+    xt::xtensor<T, 2 + rank> ret = xt::empty<T>(this->shape_qtensor<rank>());
+    return ret;
+}
+
+template <size_t ne, size_t nd, size_t td>
+template <size_t rank, class T>
+inline xt::xtensor<T, 2 + rank> QuadratureBase<ne, nd, td>::allocate_qtensor(T val) const
+{
+    xt::xtensor<T, 2 + rank> ret = xt::empty<T>(this->shape_qtensor<rank>());
+    ret.fill(val);
+    return ret;
+}
+
+template <size_t ne, size_t nd, size_t td>
+template <class T>
+inline xt::xarray<T> QuadratureBase<ne, nd, td>::allocate_qtensor(size_t rank) const
+{
+    xt::xarray<T> ret = xt::empty<T>(this->shape_qtensor(rank));
+    return ret;
+}
+
+template <size_t ne, size_t nd, size_t td>
+template <class T>
+inline xt::xarray<T> QuadratureBase<ne, nd, td>::allocate_qtensor(size_t rank, T val) const
+{
+    xt::xarray<T> ret = xt::empty<T>(this->shape_qtensor(rank));
+    ret.fill(val);
+    return ret;
+}
+
+template <size_t ne, size_t nd, size_t td>
+template <class T>
+inline xt::xtensor<T, 2> QuadratureBase<ne, nd, td>::allocate_qscalar() const
+{
+    return this->allocate_qtensor<0, T>();
+}
+
+template <size_t ne, size_t nd, size_t td>
+template <class T>
+inline xt::xtensor<T, 2> QuadratureBase<ne, nd, td>::allocate_qscalar(T val) const
+{
+    return this->allocate_qtensor<0, T>(val);
+}
+
+template <size_t ne, size_t nd, size_t td>
+template <size_t rank>
+inline std::array<size_t, 2 + rank> QuadratureBase<ne, nd, td>::ShapeQtensor() const
+{
+    GOOSEFEM_WARNING("Deprecation warning: ShapeQtensor<rank> -> shape_qtensor<rank>");
+    return this->shape_qtensor<rank>();
+}
+
+template <size_t ne, size_t nd, size_t td>
+inline std::vector<size_t> QuadratureBase<ne, nd, td>::ShapeQtensor(size_t rank) const
+{
+    GOOSEFEM_WARNING("Deprecation warning: ShapeQtensor(rank) -> shape_qtensor(rank)");
+    return this->shape_qtensor(rank);
+}
+
+template <size_t ne, size_t nd, size_t td>
+inline std::vector<size_t> QuadratureBase<ne, nd, td>::ShapeQscalar() const
+{
+    GOOSEFEM_WARNING("Deprecation warning: ShapeQscalar -> shape_qscalar");
+    return this->shape_qscalar();
+}
+
+template <size_t ne, size_t nd, size_t td>
+template <size_t rank, class T>
 inline xt::xtensor<T, 2 + rank> QuadratureBase<ne, nd, td>::AllocateQtensor() const
 {
-    xt::xtensor<T, 2 + rank> ret = xt::empty<T>(this->ShapeQtensor<rank>());
-    return ret;
+    GOOSEFEM_WARNING("Deprecation warning: AllocateQtensor<rank, T> -> allocate_qtensor<rank, T>");
+    return this->allocate_qtensor<rank, T>();
 }
 
 template <size_t ne, size_t nd, size_t td>
 template <size_t rank, class T>
 inline xt::xtensor<T, 2 + rank> QuadratureBase<ne, nd, td>::AllocateQtensor(T val) const
 {
-    xt::xtensor<T, 2 + rank> ret = xt::empty<T>(this->ShapeQtensor<rank>());
-    ret.fill(val);
-    return ret;
+    GOOSEFEM_WARNING("Deprecation warning: AllocateQtensor<rank, T> -> allocate_qtensor<rank, T>");
+    return this->allocate_qtensor<rank, T>(val);
 }
 
 template <size_t ne, size_t nd, size_t td>
 template <class T>
 inline xt::xarray<T> QuadratureBase<ne, nd, td>::AllocateQtensor(size_t rank) const
 {
-    xt::xarray<T> ret = xt::empty<T>(this->ShapeQtensor(rank));
-    return ret;
+    GOOSEFEM_WARNING_PYTHON("Deprecation warning: use np.empty(this.shape_qtensor(rank))")
+    GOOSEFEM_WARNING("Deprecation warning: AllocateQtensor(rank) -> allocate_qtensor(rank)");
+    return this->allocate_qtensor<T>(rank);
 }
 
 template <size_t ne, size_t nd, size_t td>
 template <class T>
 inline xt::xarray<T> QuadratureBase<ne, nd, td>::AllocateQtensor(size_t rank, T val) const
 {
-    xt::xarray<T> ret = xt::empty<T>(this->ShapeQtensor(rank));
-    ret.fill(val);
-    return ret;
+    GOOSEFEM_WARNING_PYTHON("Deprecation warning: use val * np.ones(this.shape_qtensor(rank))")
+    GOOSEFEM_WARNING("Deprecation warning: AllocateQtensor(rank) -> allocate_qtensor(rank)");
+    return this->allocate_qtensor<T>(rank, val);
 }
 
 template <size_t ne, size_t nd, size_t td>
 template <class T>
 inline xt::xtensor<T, 2> QuadratureBase<ne, nd, td>::AllocateQscalar() const
 {
-    return this->AllocateQtensor<0, T>();
+    GOOSEFEM_WARNING_PYTHON("Deprecation warning: use np.empty(this.shape_qscalar())")
+    GOOSEFEM_WARNING("Deprecation warning: AllocateQscalar -> allocate_qscalar");
+    return this->allocate_qtensor<0, T>();
 }
 
 template <size_t ne, size_t nd, size_t td>
 template <class T>
 inline xt::xtensor<T, 2> QuadratureBase<ne, nd, td>::AllocateQscalar(T val) const
 {
-    return this->AllocateQtensor<0, T>(val);
+    GOOSEFEM_WARNING_PYTHON("Deprecation warning: use np.empty(this.shape_qscalar())")
+    GOOSEFEM_WARNING("Deprecation warning: AllocateQscalar -> allocate_qscalar");
+    return this->allocate_qtensor<0, T>(val);
 }
 
 template <size_t ne, size_t nd, size_t td>
@@ -291,8 +377,6 @@ inline void QuadratureBaseCartesian<ne, nd, td>::initQuadratureBaseCartesian(
     m_vol = xt::empty<double>({m_nelem, m_nip});
 
     this->compute_dN();
-
-    std::cout << m_dNx << std::endl;
 }
 
 template <size_t ne, size_t nd, size_t td>
@@ -401,7 +485,7 @@ template <size_t ne, size_t nd, size_t td>
 inline xt::xtensor<double, 4> QuadratureBaseCartesian<ne, nd, td>::GradN_vector(
     const xt::xtensor<double, 3>& elemvec) const
 {
-    xt::xtensor<double, 4> qtensor = xt::empty<double>({m_nelem, m_nip, m_ndim, m_ndim});
+    xt::xtensor<double, 4> qtensor = xt::empty<double>({m_nelem, m_nip, m_tdim, m_tdim});
     this->gradN_vector(elemvec, qtensor);
     return qtensor;
 }
@@ -411,7 +495,7 @@ inline void QuadratureBaseCartesian<ne, nd, td>::gradN_vector(
     const xt::xtensor<double, 3>& elemvec, xt::xtensor<double, 4>& qtensor) const
 {
     GOOSEFEM_ASSERT(xt::has_shape(elemvec, {m_nelem, m_nne, m_ndim}));
-    GOOSEFEM_ASSERT(xt::has_shape(qtensor, {m_nelem, m_nip, m_ndim, m_ndim}));
+    GOOSEFEM_ASSERT(xt::has_shape(qtensor, {m_nelem, m_nip, m_tdim, m_tdim}));
 
     qtensor.fill(0.0);
 
@@ -423,7 +507,7 @@ inline void QuadratureBaseCartesian<ne, nd, td>::gradN_vector(
         for (size_t q = 0; q < m_nip; ++q) {
 
             auto dNx = xt::adapt(&m_dNx(e, q, 0, 0), xt::xshape<m_nne, m_ndim>());
-            auto gradu = xt::adapt(&qtensor(e, q, 0, 0), xt::xshape<m_ndim, m_ndim>());
+            auto gradu = xt::adapt(&qtensor(e, q, 0, 0), xt::xshape<m_tdim, m_tdim>());
 
             for (size_t m = 0; m < m_nne; ++m) {
                 for (size_t i = 0; i < m_ndim; ++i) {
@@ -440,7 +524,7 @@ template <size_t ne, size_t nd, size_t td>
 inline xt::xtensor<double, 4> QuadratureBaseCartesian<ne, nd, td>::GradN_vector_T(
     const xt::xtensor<double, 3>& elemvec) const
 {
-    xt::xtensor<double, 4> qtensor = xt::empty<double>({m_nelem, m_nip, m_ndim, m_ndim});
+    xt::xtensor<double, 4> qtensor = xt::empty<double>({m_nelem, m_nip, m_tdim, m_tdim});
     this->gradN_vector_T(elemvec, qtensor);
     return qtensor;
 }
@@ -450,7 +534,7 @@ inline void QuadratureBaseCartesian<ne, nd, td>::gradN_vector_T(
     const xt::xtensor<double, 3>& elemvec, xt::xtensor<double, 4>& qtensor) const
 {
     GOOSEFEM_ASSERT(xt::has_shape(elemvec, {m_nelem, m_nne, m_ndim}));
-    GOOSEFEM_ASSERT(xt::has_shape(qtensor, {m_nelem, m_nip, m_ndim, m_ndim}));
+    GOOSEFEM_ASSERT(xt::has_shape(qtensor, {m_nelem, m_nip, m_tdim, m_tdim}));
 
     qtensor.fill(0.0);
 
@@ -462,7 +546,7 @@ inline void QuadratureBaseCartesian<ne, nd, td>::gradN_vector_T(
         for (size_t q = 0; q < m_nip; ++q) {
 
             auto dNx = xt::adapt(&m_dNx(e, q, 0, 0), xt::xshape<m_nne, m_ndim>());
-            auto gradu = xt::adapt(&qtensor(e, q, 0, 0), xt::xshape<m_ndim, m_ndim>());
+            auto gradu = xt::adapt(&qtensor(e, q, 0, 0), xt::xshape<m_tdim, m_tdim>());
 
             for (size_t m = 0; m < m_nne; ++m) {
                 for (size_t i = 0; i < m_ndim; ++i) {
@@ -479,7 +563,7 @@ template <size_t ne, size_t nd, size_t td>
 inline xt::xtensor<double, 4> QuadratureBaseCartesian<ne, nd, td>::SymGradN_vector(
     const xt::xtensor<double, 3>& elemvec) const
 {
-    xt::xtensor<double, 4> qtensor = xt::empty<double>({m_nelem, m_nip, m_ndim, m_ndim});
+    xt::xtensor<double, 4> qtensor = xt::empty<double>({m_nelem, m_nip, m_tdim, m_tdim});
     this->symGradN_vector(elemvec, qtensor);
     return qtensor;
 }
@@ -489,7 +573,7 @@ inline void QuadratureBaseCartesian<ne, nd, td>::symGradN_vector(
     const xt::xtensor<double, 3>& elemvec, xt::xtensor<double, 4>& qtensor) const
 {
     GOOSEFEM_ASSERT(xt::has_shape(elemvec, {m_nelem, m_nne, m_ndim}));
-    GOOSEFEM_ASSERT(xt::has_shape(qtensor, {m_nelem, m_nip, m_ndim, m_ndim}));
+    GOOSEFEM_ASSERT(xt::has_shape(qtensor, {m_nelem, m_nip, m_tdim, m_tdim}));
 
     qtensor.fill(0.0);
 
@@ -501,7 +585,7 @@ inline void QuadratureBaseCartesian<ne, nd, td>::symGradN_vector(
         for (size_t q = 0; q < m_nip; ++q) {
 
             auto dNx = xt::adapt(&m_dNx(e, q, 0, 0), xt::xshape<m_nne, m_ndim>());
-            auto eps = xt::adapt(&qtensor(e, q, 0, 0), xt::xshape<m_ndim, m_ndim>());
+            auto eps = xt::adapt(&qtensor(e, q, 0, 0), xt::xshape<m_tdim, m_tdim>());
 
             for (size_t m = 0; m < m_nne; ++m) {
                 for (size_t i = 0; i < m_ndim; ++i) {
@@ -569,7 +653,7 @@ template <size_t ne, size_t nd, size_t td>
 inline void QuadratureBaseCartesian<ne, nd, td>::int_gradN_dot_tensor2_dV(
     const xt::xtensor<double, 4>& qtensor, xt::xtensor<double, 3>& elemvec) const
 {
-    GOOSEFEM_ASSERT(xt::has_shape(qtensor, {m_nelem, m_nip, m_ndim, m_ndim}));
+    GOOSEFEM_ASSERT(xt::has_shape(qtensor, {m_nelem, m_nip, m_tdim, m_tdim}));
     GOOSEFEM_ASSERT(xt::has_shape(elemvec, {m_nelem, m_nne, m_ndim}));
 
     elemvec.fill(0.0);
@@ -582,7 +666,7 @@ inline void QuadratureBaseCartesian<ne, nd, td>::int_gradN_dot_tensor2_dV(
         for (size_t q = 0; q < m_nip; ++q) {
 
             auto dNx = xt::adapt(&m_dNx(e, q, 0, 0), xt::xshape<m_nne, m_ndim>());
-            auto sig = xt::adapt(&qtensor(e, q, 0, 0), xt::xshape<m_ndim, m_ndim>());
+            auto sig = xt::adapt(&qtensor(e, q, 0, 0), xt::xshape<m_tdim, m_tdim>());
             auto& vol = m_vol(e, q);
 
             for (size_t m = 0; m < m_nne; ++m) {
@@ -609,7 +693,7 @@ template <size_t ne, size_t nd, size_t td>
 inline void QuadratureBaseCartesian<ne, nd, td>::int_gradN_dot_tensor4_dot_gradNT_dV(
     const xt::xtensor<double, 6>& qtensor, xt::xtensor<double, 3>& elemmat) const
 {
-    GOOSEFEM_ASSERT(xt::has_shape(qtensor, {m_nelem, m_nip, m_ndim, m_ndim, m_ndim, m_ndim}));
+    GOOSEFEM_ASSERT(xt::has_shape(qtensor, {m_nelem, m_nip, m_tdim, m_tdim, m_tdim, m_tdim}));
     GOOSEFEM_ASSERT(xt::has_shape(elemmat, {m_nelem, m_nne * m_ndim, m_nne * m_ndim}));
 
     elemmat.fill(0.0);
@@ -622,7 +706,7 @@ inline void QuadratureBaseCartesian<ne, nd, td>::int_gradN_dot_tensor4_dot_gradN
         for (size_t q = 0; q < m_nip; ++q) {
 
             auto dNx = xt::adapt(&m_dNx(e, q, 0, 0), xt::xshape<m_nne, m_ndim>());
-            auto C = xt::adapt(&qtensor(e, q, 0, 0, 0, 0), xt::xshape<m_ndim, m_ndim, m_ndim, m_ndim>());
+            auto C = xt::adapt(&qtensor(e, q, 0, 0, 0, 0), xt::xshape<m_tdim, m_tdim, m_tdim, m_tdim>());
             auto& vol = m_vol(e, q);
 
             for (size_t m = 0; m < m_nne; ++m) {

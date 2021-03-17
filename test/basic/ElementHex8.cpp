@@ -25,6 +25,19 @@ TEST_CASE("GooseFEM::ElementHex8", "ElementHex8.h")
         auto dV = quad.dV();
         REQUIRE(xt::allclose(dV, 0.5 * 0.5 * 0.5));
     }
+    
+    SECTION("interp_N_vector")
+    {
+        GooseFEM::Mesh::Hex8::Regular mesh(3, 3, 3);
+        GooseFEM::Vector vector(mesh.conn(), mesh.dofsPeriodic());
+        GooseFEM::Element::Hex8::Quadrature quad(vector.AsElement(mesh.coor()));
+
+        auto u = vector.AllocateNodevec(1.0);
+        auto ue = vector.AsElement(u);
+        auto uq = quad.Interp_N_vector(ue);
+
+        REQUIRE(xt::allclose(uq, 1.0));
+    }
 
     SECTION("GradN_vector")
     {
@@ -32,8 +45,9 @@ TEST_CASE("GooseFEM::ElementHex8", "ElementHex8.h")
         GooseFEM::Vector vec(mesh.conn(), mesh.dofs());
         GooseFEM::Element::Hex8::Quadrature quad(vec.AsElement(mesh.coor()));
 
-        xt::xtensor<double, 2> F = xt::zeros<double>({3, 3});
-        xt::xtensor<double, 2> EPS = xt::zeros<double>({3, 3});
+        size_t td = mesh.ndim();
+        xt::xtensor<double, 2> F = xt::zeros<double>({td, td});
+        xt::xtensor<double, 2> EPS = xt::zeros<double>({td, td});
 
         F(0, 1) = 0.1;
 
@@ -41,8 +55,8 @@ TEST_CASE("GooseFEM::ElementHex8", "ElementHex8.h")
         auto disp = xt::zeros_like(coor);
 
         for (size_t n = 0; n < mesh.nnode(); ++n) {
-            for (size_t i = 0; i < F.shape()[0]; ++i) {
-                for (size_t j = 0; j < F.shape()[1]; ++j) {
+            for (size_t i = 0; i < mesh.ndim(); ++i) {
+                for (size_t j = 0; j < mesh.ndim(); ++j) {
                     disp(n, i) += F(i, j) * coor(n, j);
                 }
             }
@@ -50,7 +64,7 @@ TEST_CASE("GooseFEM::ElementHex8", "ElementHex8.h")
 
         auto f = quad.GradN_vector(vec.AsElement(disp));
 
-        REQUIRE(xt::has_shape(f, {mesh.nelem(), quad.nip(), mesh.ndim(), mesh.ndim()}));
+        REQUIRE(xt::has_shape(f, {mesh.nelem(), quad.nip(), td, td}));
 
         for (size_t e = 0; e < mesh.nelem(); ++e) {
             for (size_t q = 0; q < quad.nip(); ++q) {
@@ -65,8 +79,9 @@ TEST_CASE("GooseFEM::ElementHex8", "ElementHex8.h")
         GooseFEM::Vector vec(mesh.conn(), mesh.dofs());
         GooseFEM::Element::Hex8::Quadrature quad(vec.AsElement(mesh.coor()));
 
-        xt::xtensor<double, 2> F = xt::zeros<double>({3, 3});
-        xt::xtensor<double, 2> EPS = xt::zeros<double>({3, 3});
+        size_t td = mesh.ndim();
+        xt::xtensor<double, 2> F = xt::zeros<double>({td, td});
+        xt::xtensor<double, 2> EPS = xt::zeros<double>({td, td});
 
         F(0, 1) = 0.1;
 
@@ -74,8 +89,8 @@ TEST_CASE("GooseFEM::ElementHex8", "ElementHex8.h")
         auto disp = xt::zeros_like(coor);
 
         for (size_t n = 0; n < mesh.nnode(); ++n) {
-            for (size_t i = 0; i < F.shape()[0]; ++i) {
-                for (size_t j = 0; j < F.shape()[1]; ++j) {
+            for (size_t i = 0; i < mesh.ndim(); ++i) {
+                for (size_t j = 0; j < mesh.ndim(); ++j) {
                     disp(n, i) += F(i, j) * coor(n, j);
                 }
             }
@@ -83,7 +98,7 @@ TEST_CASE("GooseFEM::ElementHex8", "ElementHex8.h")
 
         auto f = quad.GradN_vector_T(vec.AsElement(disp));
 
-        REQUIRE(xt::has_shape(f, {mesh.nelem(), quad.nip(), mesh.ndim(), mesh.ndim()}));
+        REQUIRE(xt::has_shape(f, {mesh.nelem(), quad.nip(), td, td}));
 
         for (size_t e = 0; e < mesh.nelem(); ++e) {
             for (size_t q = 0; q < quad.nip(); ++q) {
@@ -98,8 +113,9 @@ TEST_CASE("GooseFEM::ElementHex8", "ElementHex8.h")
         GooseFEM::Vector vec(mesh.conn(), mesh.dofs());
         GooseFEM::Element::Hex8::Quadrature quad(vec.AsElement(mesh.coor()));
 
-        xt::xtensor<double, 2> F = xt::zeros<double>({3, 3});
-        xt::xtensor<double, 2> EPS = xt::zeros<double>({3, 3});
+        size_t td = mesh.ndim();
+        xt::xtensor<double, 2> F = xt::zeros<double>({td, td});
+        xt::xtensor<double, 2> EPS = xt::zeros<double>({td, td});
 
         F(0, 1) = 0.1;
         EPS(0, 1) = 0.05;
@@ -109,8 +125,8 @@ TEST_CASE("GooseFEM::ElementHex8", "ElementHex8.h")
         auto disp = xt::zeros_like(coor);
 
         for (size_t n = 0; n < mesh.nnode(); ++n) {
-            for (size_t i = 0; i < F.shape()[0]; ++i) {
-                for (size_t j = 0; j < F.shape()[1]; ++j) {
+            for (size_t i = 0; i < mesh.ndim(); ++i) {
+                for (size_t j = 0; j < mesh.ndim(); ++j) {
                     disp(n, i) += F(i, j) * coor(n, j);
                 }
             }
@@ -120,9 +136,9 @@ TEST_CASE("GooseFEM::ElementHex8", "ElementHex8.h")
         auto dV = quad.AsTensor<2>(quad.dV());
         auto epsbar = xt::average(eps, dV, {0, 1});
 
-        REQUIRE(xt::has_shape(eps, {mesh.nelem(), quad.nip(), mesh.ndim(), mesh.ndim()}));
-        REQUIRE(xt::has_shape(dV, {mesh.nelem(), quad.nip(), mesh.ndim(), mesh.ndim()}));
-        REQUIRE(xt::has_shape(epsbar, {mesh.ndim(), mesh.ndim()}));
+        REQUIRE(xt::has_shape(eps, {mesh.nelem(), quad.nip(), td, td}));
+        REQUIRE(xt::has_shape(dV, {mesh.nelem(), quad.nip(), td, td}));
+        REQUIRE(xt::has_shape(epsbar, {td, td}));
 
         for (size_t e = 0; e < mesh.nelem(); ++e) {
             for (size_t q = 0; q < quad.nip(); ++q) {
@@ -158,7 +174,8 @@ TEST_CASE("GooseFEM::ElementHex8", "ElementHex8.h")
         GooseFEM::Vector vec(mesh.conn(), mesh.dofsPeriodic());
         GooseFEM::Element::Hex8::Quadrature quad(vec.AsElement(mesh.coor()));
 
-        xt::xtensor<double, 2> F = xt::zeros<double>({3, 3});
+        size_t td = mesh.ndim();
+        xt::xtensor<double, 2> F = xt::zeros<double>({td, td});
 
         F(0, 1) = 0.1;
 
@@ -166,8 +183,8 @@ TEST_CASE("GooseFEM::ElementHex8", "ElementHex8.h")
         xt::xtensor<double, 2> disp = xt::zeros<double>(coor.shape());
 
         for (size_t n = 0; n < mesh.nnode(); ++n) {
-            for (size_t i = 0; i < F.shape()[0]; ++i) {
-                for (size_t j = 0; j < F.shape()[1]; ++j) {
+            for (size_t i = 0; i < mesh.ndim(); ++i) {
+                for (size_t j = 0; j < mesh.ndim(); ++j) {
                     disp(n, i) += F(i, j) * coor(n, j);
                 }
             }

@@ -90,6 +90,26 @@ void init_ElementQuad4(py::module& m)
                 &GooseFEM::Element::Quad4::Quadrature::AsTensor<double>,
             "Convert 'qscalar' to 'qtensor' of certain rank")
 
+        .def("shape_elemvec",
+            &GooseFEM::Element::Quad4::Quadrature::shape_elemvec,
+            "Shape of 'elemvec'")
+
+        .def("shape_elemmat",
+            &GooseFEM::Element::Quad4::Quadrature::shape_elemmat,
+            "Shape of 'elemmat'")
+
+        .def("shape_qtensor",
+            (std::vector<size_t>(GooseFEM::Element::Quad4::Quadrature::*)(size_t) const)
+                &GooseFEM::Element::Quad4::Quadrature::shape_qtensor,
+            "Shape of 'qtensor'",
+            py::arg("rank"))
+
+        .def("shape_qscalar",
+            &GooseFEM::Element::Quad4::Quadrature::shape_qscalar,
+            "Shape of 'qscalar'")
+
+        // Deprecated
+
         .def("ShapeQtensor",
             (std::vector<size_t>(GooseFEM::Element::Quad4::Quadrature::*)(size_t) const)
                 &GooseFEM::Element::Quad4::Quadrature::ShapeQtensor,
