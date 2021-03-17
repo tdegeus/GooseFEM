@@ -184,6 +184,42 @@ public:
     std::vector<size_t> shape_qscalar() const;
 
     /**
+    Get an allocated `xt::xtensor` to store a "elemvec".
+    Note: the container is not (zero-)initialised.
+
+    \returns `xt::xarray` container of the correct shape.
+    */
+    template <class T>
+    xt::xtensor<T, 3> allocate_elemvec() const;
+
+    /**
+    Get an allocated and initialised `xt::xarray` to store a "elemvec".
+
+    \param val The value to which to initialise all items.
+    \returns `xt::xtensor` container of the correct shape.
+    */
+    template <class T>
+    xt::xtensor<T, 3> allocate_elemvec(T val) const;
+
+    /**
+    Get an allocated `xt::xtensor` to store a "elemmat".
+    Note: the container is not (zero-)initialised.
+
+    \returns `xt::xarray` container of the correct shape.
+    */
+    template <class T>
+    xt::xtensor<T, 3> allocate_elemmat() const;
+
+    /**
+    Get an allocated and initialised `xt::xarray` to store a "elemmat".
+
+    \param val The value to which to initialise all items.
+    \returns `xt::xtensor` container of the correct shape.
+    */
+    template <class T>
+    xt::xtensor<T, 3> allocate_elemmat(T val) const;
+
+    /**
     Get an allocated `xt::xtensor` to store a "qtensor" of a certain rank
     (0 = scalar, 1, vector, 2 = 2nd-order tensor, etc.).
     Default: rank = 0, a.k.a. scalar.

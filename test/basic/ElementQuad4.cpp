@@ -21,6 +21,8 @@ TEST_CASE("GooseFEM::ElementQuad4", "ElementQuad4.h")
         GooseFEM::Vector vec(mesh.conn(), mesh.dofs());
         GooseFEM::Element::Quad4::Quadrature quad(vec.AsElement(mesh.coor()));
         auto dV = quad.dV();
+        REQUIRE(xt::has_shape(dV, quad.shape_qtensor<0>()));
+        REQUIRE(xt::has_shape(dV, quad.shape_qscalar()));
         REQUIRE(xt::allclose(dV, 0.5 * 0.5));
     }
 
@@ -30,7 +32,7 @@ TEST_CASE("GooseFEM::ElementQuad4", "ElementQuad4.h")
         GooseFEM::Vector vector(mesh.conn(), mesh.dofsPeriodic());
         GooseFEM::Element::Quad4::Quadrature quad(vector.AsElement(mesh.coor()));
 
-        auto u = vector.AllocateNodevec(1.0);
+        auto u = vector.allocate_nodevec(1.0);
         auto ue = vector.AsElement(u);
         auto uq = quad.Interp_N_vector(ue);
 
@@ -63,6 +65,7 @@ TEST_CASE("GooseFEM::ElementQuad4", "ElementQuad4.h")
         auto f = quad.GradN_vector(vec.AsElement(disp));
 
         REQUIRE(xt::has_shape(f, {mesh.nelem(), quad.nip(), td, td}));
+        REQUIRE(xt::has_shape(f, quad.shape_qtensor<2>()));
 
         for (size_t e = 0; e < mesh.nelem(); ++e) {
             for (size_t q = 0; q < quad.nip(); ++q) {
@@ -97,6 +100,7 @@ TEST_CASE("GooseFEM::ElementQuad4", "ElementQuad4.h")
         auto f = quad.GradN_vector_T(vec.AsElement(disp));
 
         REQUIRE(xt::has_shape(f, {mesh.nelem(), quad.nip(), td, td}));
+        REQUIRE(xt::has_shape(f, quad.shape_qtensor<2>()));
 
         for (size_t e = 0; e < mesh.nelem(); ++e) {
             for (size_t q = 0; q < quad.nip(); ++q) {
@@ -135,7 +139,9 @@ TEST_CASE("GooseFEM::ElementQuad4", "ElementQuad4.h")
         auto epsbar = xt::average(eps, dV, {0, 1});
 
         REQUIRE(xt::has_shape(eps, {mesh.nelem(), quad.nip(), td, td}));
+        REQUIRE(xt::has_shape(eps, quad.shape_qtensor<2>()));
         REQUIRE(xt::has_shape(dV, {mesh.nelem(), quad.nip(), td, td}));
+        REQUIRE(xt::has_shape(dV, quad.shape_qtensor<2>()));
         REQUIRE(xt::has_shape(epsbar, {td, td}));
 
         for (size_t e = 0; e < mesh.nelem(); ++e) {

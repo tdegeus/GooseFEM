@@ -26,58 +26,33 @@ inline QuadraturePlanar::QuadraturePlanar(
     const xt::xtensor<double, 2>& xi,
     const xt::xtensor<double, 1>& w,
     double thick)
-    : m_x(x), m_w(w), m_xi(xi), m_thick(thick)
 {
-    this->initQuadratureBase(m_x.shape(0), m_w.size());
-    GOOSEFEM_ASSERT(m_x.shape(1) == m_nne);
-    GOOSEFEM_ASSERT(m_x.shape(2) == m_ndim);
-    GOOSEFEM_ASSERT(m_xi.shape(0) == m_nip);
-    GOOSEFEM_ASSERT(m_xi.shape(1) == m_ndim);
-    GOOSEFEM_ASSERT(m_w.size() == m_nip);
+    m_thick = thick;
+    size_t nip = w.size();
+    xt::xtensor<double, 2> N = xt::empty<double>({nip, m_nne});
+    xt::xtensor<double, 3> dNxi = xt::empty<double>({nip, m_nne, m_ndim});
 
-    m_N = xt::empty<double>({m_nip, m_nne});
-    m_dNxi = xt::empty<double>({m_nip, m_nne, m_ndim});
-    m_dNx = xt::empty<double>({m_nelem, m_nip, m_nne, m_ndim});
-    m_vol = xt::empty<double>({m_nelem, m_nip});
-
-    for (size_t q = 0; q < m_nip; ++q) {
-        m_N(q, 0) = 0.25 * (1.0 - m_xi(q, 0)) * (1.0 - m_xi(q, 1));
-        m_N(q, 1) = 0.25 * (1.0 + m_xi(q, 0)) * (1.0 - m_xi(q, 1));
-        m_N(q, 2) = 0.25 * (1.0 + m_xi(q, 0)) * (1.0 + m_xi(q, 1));
-        m_N(q, 3) = 0.25 * (1.0 - m_xi(q, 0)) * (1.0 + m_xi(q, 1));
+    for (size_t q = 0; q < nip; ++q) {
+        N(q, 0) = 0.25 * (1.0 - xi(q, 0)) * (1.0 - xi(q, 1));
+        N(q, 1) = 0.25 * (1.0 + xi(q, 0)) * (1.0 - xi(q, 1));
+        N(q, 2) = 0.25 * (1.0 + xi(q, 0)) * (1.0 + xi(q, 1));
+        N(q, 3) = 0.25 * (1.0 - xi(q, 0)) * (1.0 + xi(q, 1));
     }
 
-    for (size_t q = 0; q < m_nip; ++q) {
+    for (size_t q = 0; q < nip; ++q) {
         // - dN / dxi_0
-        m_dNxi(q, 0, 0) = -0.25 * (1.0 - m_xi(q, 1));
-        m_dNxi(q, 1, 0) = +0.25 * (1.0 - m_xi(q, 1));
-        m_dNxi(q, 2, 0) = +0.25 * (1.0 + m_xi(q, 1));
-        m_dNxi(q, 3, 0) = -0.25 * (1.0 + m_xi(q, 1));
+        dNxi(q, 0, 0) = -0.25 * (1.0 - xi(q, 1));
+        dNxi(q, 1, 0) = +0.25 * (1.0 - xi(q, 1));
+        dNxi(q, 2, 0) = +0.25 * (1.0 + xi(q, 1));
+        dNxi(q, 3, 0) = -0.25 * (1.0 + xi(q, 1));
         // - dN / dxi_1
-        m_dNxi(q, 0, 1) = -0.25 * (1.0 - m_xi(q, 0));
-        m_dNxi(q, 1, 1) = -0.25 * (1.0 + m_xi(q, 0));
-        m_dNxi(q, 2, 1) = +0.25 * (1.0 + m_xi(q, 0));
-        m_dNxi(q, 3, 1) = +0.25 * (1.0 - m_xi(q, 0));
+        dNxi(q, 0, 1) = -0.25 * (1.0 - xi(q, 0));
+        dNxi(q, 1, 1) = -0.25 * (1.0 + xi(q, 0));
+        dNxi(q, 2, 1) = +0.25 * (1.0 + xi(q, 0));
+        dNxi(q, 3, 1) = +0.25 * (1.0 - xi(q, 0));
     }
 
-    compute_dN();
-}
-
-inline xt::xtensor<double, 4> QuadraturePlanar::GradN() const
-{
-    return m_dNx;
-}
-
-inline xt::xtensor<double, 2> QuadraturePlanar::dV() const
-{
-    return m_vol;
-}
-
-inline void QuadraturePlanar::update_x(const xt::xtensor<double, 3>& x)
-{
-    GOOSEFEM_ASSERT(x.shape() == m_x.shape());
-    xt::noalias(m_x) = x;
-    compute_dN();
+    this->initQuadratureBaseCartesian(x, xi, w, N, dNxi);
 }
 
 inline void QuadraturePlanar::compute_dN()
@@ -270,91 +245,6 @@ inline void QuadraturePlanar::int_gradN_dot_tensor2_dV(
             }
         }
     }
-}
-
-inline void QuadraturePlanar::int_gradN_dot_tensor4_dot_gradNT_dV(
-    const xt::xtensor<double, 6>& qtensor, xt::xtensor<double, 3>& elemmat) const
-{
-    GOOSEFEM_ASSERT(xt::has_shape(qtensor, {m_nelem, m_nip, m_tdim, m_tdim, m_tdim, m_tdim}));
-    GOOSEFEM_ASSERT(xt::has_shape(elemmat, {m_nelem, m_nne * m_ndim, m_nne * m_ndim}));
-
-    elemmat.fill(0.0);
-
-    #pragma omp parallel for
-    for (size_t e = 0; e < m_nelem; ++e) {
-
-        auto K = xt::adapt(&elemmat(e, 0, 0), xt::xshape<m_nne * m_ndim, m_nne * m_ndim>());
-
-        for (size_t q = 0; q < m_nip; ++q) {
-
-            auto dNx = xt::adapt(&m_dNx(e, q, 0, 0), xt::xshape<m_nne, m_ndim>());
-            auto C = xt::adapt(&qtensor(e, q, 0, 0, 0, 0), xt::xshape<m_tdim, m_tdim, m_tdim, m_tdim>());
-            auto& vol = m_vol(e, q);
-
-            for (size_t m = 0; m < m_nne; ++m) {
-                for (size_t n = 0; n < m_nne; ++n) {
-                    for (size_t i = 0; i < m_ndim; ++i) {
-                        for (size_t j = 0; j < m_ndim; ++j) {
-                            for (size_t k = 0; k < m_ndim; ++k) {
-                                for (size_t l = 0; l < m_ndim; ++l) {
-                                    K(m * m_ndim + j, n * m_ndim + k) +=
-                                        dNx(m, i) * C(i, j, k, l) * dNx(n, l) * vol;
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
-}
-
-inline xt::xtensor<double, 4>
-QuadraturePlanar::GradN_vector(const xt::xtensor<double, 3>& elemvec) const
-{
-    xt::xtensor<double, 4> qtensor = xt::empty<double>({m_nelem, m_nip, m_tdim, m_tdim});
-    this->gradN_vector(elemvec, qtensor);
-    return qtensor;
-}
-
-inline xt::xtensor<double, 4>
-QuadraturePlanar::GradN_vector_T(const xt::xtensor<double, 3>& elemvec) const
-{
-    xt::xtensor<double, 4> qtensor = xt::empty<double>({m_nelem, m_nip, m_tdim, m_tdim});
-    this->gradN_vector_T(elemvec, qtensor);
-    return qtensor;
-}
-
-inline xt::xtensor<double, 4>
-QuadraturePlanar::SymGradN_vector(const xt::xtensor<double, 3>& elemvec) const
-{
-    xt::xtensor<double, 4> qtensor = xt::empty<double>({m_nelem, m_nip, m_tdim, m_tdim});
-    this->symGradN_vector(elemvec, qtensor);
-    return qtensor;
-}
-
-inline xt::xtensor<double, 3>
-QuadraturePlanar::Int_N_scalar_NT_dV(const xt::xtensor<double, 2>& qscalar) const
-{
-    xt::xtensor<double, 3> elemmat = xt::empty<double>({m_nelem, m_nne * m_ndim, m_nne * m_ndim});
-    this->int_N_scalar_NT_dV(qscalar, elemmat);
-    return elemmat;
-}
-
-inline xt::xtensor<double, 3>
-QuadraturePlanar::Int_gradN_dot_tensor2_dV(const xt::xtensor<double, 4>& qtensor) const
-{
-    xt::xtensor<double, 3> elemvec = xt::empty<double>({m_nelem, m_nne, m_ndim});
-    this->int_gradN_dot_tensor2_dV(qtensor, elemvec);
-    return elemvec;
-}
-
-inline xt::xtensor<double, 3>
-QuadraturePlanar::Int_gradN_dot_tensor4_dot_gradNT_dV(const xt::xtensor<double, 6>& qtensor) const
-{
-    xt::xtensor<double, 3> elemmat = xt::empty<double>({m_nelem, m_ndim * m_nne, m_ndim * m_nne});
-    this->int_gradN_dot_tensor4_dot_gradNT_dV(qtensor, elemmat);
-    return elemmat;
 }
 
 } // namespace Quad4
