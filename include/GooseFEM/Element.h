@@ -385,16 +385,16 @@ public:
 
     /**
     Get the shape function gradients (in global coordinates).
-    Note that the function and their gradient are precomputed upon construction,
+    Note that the functions and their gradients are precomputed upon construction,
     or updated when calling update_x().
 
     \return ``gradN`` stored per element, per integration point [#nelem, #nip, #nne, #ndim].
     */
-    xt::xtensor<double, 4> GradN() const;
+    virtual xt::xtensor<double, 4> GradN() const;
 
     /**
     Get the integration volume.
-    Note that the function and their gradient are precomputed upon construction,
+    Note that the functions and their gradients are precomputed upon construction,
     or updated when calling update_x().
 
     \return volume stored per element, per integration point [#nelem, #nip].
@@ -403,7 +403,7 @@ public:
 
     /**
     Interpolate element vector.
-    Note that the function and their gradient are precomputed upon construction,
+    Note that the functions and their gradients are precomputed upon construction,
     or updated when calling update_x().
 
     \param elemvec nodal vector stored per element (shape: [#nelem, #nne, #ndim]).
@@ -430,7 +430,7 @@ public:
                 for m in range(nne):
                     qtensor(e, q, i, j) += dNdx(e, q, m, i) * elemvec(e, m, j)
 
-    Note that the function and their gradient are precomputed upon construction,
+    Note that the functions and their gradients are precomputed upon construction,
     or updated when calling update_x().
 
     \param elemvec [#nelem, #nne, #ndim]
@@ -506,7 +506,7 @@ public:
                             N(e, q, m) * qscalar(e, q) * N(e, q, n) * dV(e, q)
 
     with ``i`` a tensor dimension.
-    Note that the function and their gradient are precomputed upon construction,
+    Note that the functions and their gradients are precomputed upon construction,
     or updated when calling update_x().
 
     \param qscalar [#nelem, #nip]
@@ -534,7 +534,7 @@ public:
                     elemvec(e, m, j) += dNdx(e, q, m, i) * qtensor(e, q, i, j) * dV(e, q)
 
     with ``i`` and ``j`` tensor dimensions.
-    Note that the function and their gradient are precomputed upon construction,
+    Note that the functions and their gradients are precomputed upon construction,
     or updated when calling update_x().
 
     \param qtensor [#nelem, #nip, #ndim, #ndim]
@@ -567,7 +567,7 @@ public:
                             dNdx(e, q, m, i) * qtensor(e, q, i, j, k, l) * dNdx(e, q, n, l) * dV(e, q)
 
     with ``i``, ``j``, ``k``, and ``l`` tensor dimensions.
-    Note that the function and their gradient are precomputed upon construction,
+    Note that the functions and their gradients are precomputed upon construction,
     or updated when calling update_x().
 
     \param qtensor [#nelem, #nip, #ndim, #ndim, #ndim, #ndim]

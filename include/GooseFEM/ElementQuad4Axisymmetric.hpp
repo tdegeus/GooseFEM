@@ -25,19 +25,22 @@ inline QuadratureAxisymmetric::QuadratureAxisymmetric(
     const xt::xtensor<double, 3>& x,
     const xt::xtensor<double, 2>& xi,
     const xt::xtensor<double, 1>& w)
-    : m_x(x), m_w(w), m_xi(xi)
 {
+    m_x = x;
+    m_w = w;
+    m_xi = xi;
+
     this->initQuadratureBase(m_x.shape(0), m_w.size());
+
     GOOSEFEM_ASSERT(m_x.shape(1) == m_nne);
     GOOSEFEM_ASSERT(m_x.shape(2) == m_ndim);
-    GOOSEFEM_ASSERT(m_xi.shape(0) == m_nip);
-    GOOSEFEM_ASSERT(m_xi.shape(1) == m_ndim);
-    GOOSEFEM_ASSERT(m_w.size() == m_nip);
+    GOOSEFEM_ASSERT(xt::has_shape(m_xi, {m_nip, m_ndim}));
+    GOOSEFEM_ASSERT(xt::has_shape(m_w, {m_nip}));
 
     m_N = xt::empty<double>({m_nip, m_nne});
     m_dNxi = xt::empty<double>({m_nip, m_nne, m_ndim});
     m_B = xt::empty<double>({m_nelem, m_nip, m_nne, m_tdim, m_tdim, m_tdim});
-    m_vol = xt::empty<double>({m_nelem, m_nip});
+    m_vol = xt::empty<double>(this->shape_qscalar());
 
     for (size_t q = 0; q < m_nip; ++q) {
         m_N(q, 0) = 0.25 * (1.0 - m_xi(q, 0)) * (1.0 - m_xi(q, 1));
@@ -59,19 +62,7 @@ inline QuadratureAxisymmetric::QuadratureAxisymmetric(
         m_dNxi(q, 3, 1) = +0.25 * (1.0 - m_xi(q, 0));
     }
 
-    compute_dN();
-}
-
-inline xt::xtensor<double, 2> QuadratureAxisymmetric::dV() const
-{
-    return m_vol;
-}
-
-inline void QuadratureAxisymmetric::update_x(const xt::xtensor<double, 3>& x)
-{
-    GOOSEFEM_ASSERT(x.shape() == m_x.shape());
-    xt::noalias(m_x) = x;
-    compute_dN();
+    this->compute_dN();
 }
 
 inline void QuadratureAxisymmetric::compute_dN()
@@ -128,6 +119,16 @@ inline void QuadratureAxisymmetric::compute_dN()
             }
         }
     }
+}
+
+inline xt::xtensor<double, 4> QuadratureAxisymmetric::GradN() const
+{
+    return m_dNx; // empty: but function is private to cannot be called
+}
+
+inline xt::xtensor<double, 6> QuadratureAxisymmetric::B() const
+{
+    return m_B;
 }
 
 inline void QuadratureAxisymmetric::gradN_vector(
@@ -375,54 +376,6 @@ inline void QuadratureAxisymmetric::int_gradN_dot_tensor4_dot_gradNT_dV(
             }
         }
     }
-}
-
-inline xt::xtensor<double, 4>
-QuadratureAxisymmetric::GradN_vector(const xt::xtensor<double, 3>& elemvec) const
-{
-    xt::xtensor<double, 4> qtensor = xt::empty<double>({m_nelem, m_nip, m_tdim, m_tdim});
-    this->gradN_vector(elemvec, qtensor);
-    return qtensor;
-}
-
-inline xt::xtensor<double, 4>
-QuadratureAxisymmetric::GradN_vector_T(const xt::xtensor<double, 3>& elemvec) const
-{
-    xt::xtensor<double, 4> qtensor = xt::empty<double>({m_nelem, m_nip, m_tdim, m_tdim});
-    this->gradN_vector_T(elemvec, qtensor);
-    return qtensor;
-}
-
-inline xt::xtensor<double, 4>
-QuadratureAxisymmetric::SymGradN_vector(const xt::xtensor<double, 3>& elemvec) const
-{
-    xt::xtensor<double, 4> qtensor = xt::empty<double>({m_nelem, m_nip, m_tdim, m_tdim});
-    this->symGradN_vector(elemvec, qtensor);
-    return qtensor;
-}
-
-inline xt::xtensor<double, 3>
-QuadratureAxisymmetric::Int_N_scalar_NT_dV(const xt::xtensor<double, 2>& qscalar) const
-{
-    xt::xtensor<double, 3> elemmat = xt::empty<double>({m_nelem, m_nne * m_ndim, m_nne * m_ndim});
-    this->int_N_scalar_NT_dV(qscalar, elemmat);
-    return elemmat;
-}
-
-inline xt::xtensor<double, 3>
-QuadratureAxisymmetric::Int_gradN_dot_tensor2_dV(const xt::xtensor<double, 4>& qtensor) const
-{
-    xt::xtensor<double, 3> elemvec = xt::empty<double>({m_nelem, m_nne, m_ndim});
-    this->int_gradN_dot_tensor2_dV(qtensor, elemvec);
-    return elemvec;
-}
-
-inline xt::xtensor<double, 3>
-QuadratureAxisymmetric::Int_gradN_dot_tensor4_dot_gradNT_dV(const xt::xtensor<double, 6>& qtensor) const
-{
-    xt::xtensor<double, 3> elemmat = xt::empty<double>({m_nelem, m_ndim * m_nne, m_ndim * m_nne});
-    this->int_gradN_dot_tensor4_dot_gradNT_dV(qtensor, elemmat);
-    return elemmat;
 }
 
 } // namespace Quad4
