@@ -100,53 +100,65 @@ void init_Vector(py::module& m)
             "Assemble 'nodevec'",
             py::arg("elemvec"))
 
-        .def(
-            "ShapeDofval",
-            &GooseFEM::Vector::ShapeDofval)
+        .def("shape_dofval", &GooseFEM::Vector::shape_dofval)
+        .def("shape_nodevec", &GooseFEM::Vector::shape_nodevec)
+        .def("shape_elemvec", &GooseFEM::Vector::shape_elemvec)
+        .def("shape_elemmat",&GooseFEM::Vector::shape_elemmat)
 
-        .def(
-            "ShapeNodevec",
-            &GooseFEM::Vector::ShapeNodevec)
+        .def("allocate_dofval",
+             py::overload_cast<>(&GooseFEM::Vector::allocate_dofval, py::const_))
 
-        .def(
-            "ShapeElemvec",
-            &GooseFEM::Vector::ShapeElemvec)
+        .def("allocate_dofval",
+             py::overload_cast<double>(&GooseFEM::Vector::allocate_dofval, py::const_))
 
-        .def(
-            "ShapeElemmat",
-            &GooseFEM::Vector::ShapeElemmat)
+        .def("allocate_nodevec",
+             py::overload_cast<>(&GooseFEM::Vector::allocate_nodevec, py::const_))
 
-        .def(
-            "AllocateDofval",
-            py::overload_cast<>(&GooseFEM::Vector::AllocateDofval, py::const_))
+        .def("allocate_nodevec",
+             py::overload_cast<double>(&GooseFEM::Vector::allocate_nodevec, py::const_))
 
-        .def(
-            "AllocateDofval",
-            py::overload_cast<double>(&GooseFEM::Vector::AllocateDofval, py::const_))
+        .def("allocate_elemvec",
+             py::overload_cast<>(&GooseFEM::Vector::allocate_elemvec, py::const_))
 
-        .def(
-            "AllocateNodevec",
-            py::overload_cast<>(&GooseFEM::Vector::AllocateNodevec, py::const_))
+        .def("allocate_elemvec",
+             py::overload_cast<double>(&GooseFEM::Vector::allocate_elemvec, py::const_))
 
-        .def(
-            "AllocateNodevec",
-            py::overload_cast<double>(&GooseFEM::Vector::AllocateNodevec, py::const_))
+        .def("allocate_elemmat",
+             py::overload_cast<>(&GooseFEM::Vector::allocate_elemmat, py::const_))
 
-        .def(
-            "AllocateElemvec",
-            py::overload_cast<>(&GooseFEM::Vector::AllocateElemvec, py::const_))
+        .def("allocate_elemmat",
+             py::overload_cast<double>(&GooseFEM::Vector::allocate_elemmat, py::const_))
 
-        .def(
-            "AllocateElemvec",
-            py::overload_cast<double>(&GooseFEM::Vector::AllocateElemvec, py::const_))
+        // Deprecated
 
-        .def(
-            "AllocateElemmat",
-            py::overload_cast<>(&GooseFEM::Vector::AllocateElemmat, py::const_))
+        .def("ShapeDofval", &GooseFEM::Vector::shape_dofval)
+        .def("ShapeNodevec", &GooseFEM::Vector::shape_nodevec)
+        .def("ShapeElemvec", &GooseFEM::Vector::shape_elemvec)
+        .def("ShapeElemmat",&GooseFEM::Vector::shape_elemmat)
 
-        .def(
-            "AllocateElemmat",
-            py::overload_cast<double>(&GooseFEM::Vector::AllocateElemmat, py::const_))
+        .def("AllocateDofval",
+             py::overload_cast<>(&GooseFEM::Vector::allocate_dofval, py::const_))
+
+        .def("AllocateDofval",
+             py::overload_cast<double>(&GooseFEM::Vector::allocate_dofval, py::const_))
+
+        .def("AllocateNodevec",
+             py::overload_cast<>(&GooseFEM::Vector::allocate_nodevec, py::const_))
+
+        .def("AllocateNodevec",
+             py::overload_cast<double>(&GooseFEM::Vector::allocate_nodevec, py::const_))
+
+        .def("AllocateElemvec",
+             py::overload_cast<>(&GooseFEM::Vector::allocate_elemvec, py::const_))
+
+        .def("AllocateElemvec",
+             py::overload_cast<double>(&GooseFEM::Vector::allocate_elemvec, py::const_))
+
+        .def("AllocateElemmat",
+             py::overload_cast<>(&GooseFEM::Vector::allocate_elemmat, py::const_))
+
+        .def("AllocateElemmat",
+             py::overload_cast<double>(&GooseFEM::Vector::allocate_elemmat, py::const_))
 
         .def("__repr__", [](const GooseFEM::Vector&) { return "<GooseFEM.Vector>"; });
 }
