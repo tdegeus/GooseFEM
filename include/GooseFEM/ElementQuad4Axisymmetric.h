@@ -35,8 +35,30 @@ public:
 
     QuadratureAxisymmetric() = default;
 
+    /**
+    Constructor: use default Gauss integration.
+    During construction the values of the shape functions and the shape function gradients
+    (in local and global) coordinates are computed. They can be reused without any cost.
+    They only have to be recomputed when the nodal position changes.
+    In that case use update_x() to update the nodal positions and to recompute the
+    shape functions and their gradients.
+
+    \param x nodal coordinates (``elemvec``).
+    */
     QuadratureAxisymmetric(const xt::xtensor<double, 3>& x);
 
+    /**
+    Constructor with custom integration.
+    During construction the values of the shape functions and the shape function gradients
+    (in local and global) coordinates are computed. They can be reused without any cost.
+    They only have to be recomputed when the nodal position changes.
+    In that case use update_x() to update the nodal positions and to recompute the
+    shape functions and their gradients.
+
+    \param x nodal coordinates (``elemvec``).
+    \param xi Integration point coordinates (local coordinates) [#nip].
+    \param w Integration point weights [#nip].
+    */
     QuadratureAxisymmetric(
         const xt::xtensor<double, 3>& x,
         const xt::xtensor<double, 2>& xi,
