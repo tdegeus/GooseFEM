@@ -287,7 +287,7 @@ inline void VectorPartitioned::elementFromPartitioned(
 inline void VectorPartitioned::assembleDofs_u(
     const xt::xtensor<double, 2>& nodevec, xt::xtensor<double, 1>& dofval_u) const
 {
-    std::cout << "assembleDofs_u is deprecated and will not be replaced" << std::endl;
+    GOOSEFEM_WARNING("assembleDofs_u is deprecated and will not be replaced");
     GOOSEFEM_ASSERT(xt::has_shape(nodevec, {m_nnode, m_ndim}));
     GOOSEFEM_ASSERT(dofval_u.size() == m_nnu);
 
@@ -305,7 +305,7 @@ inline void VectorPartitioned::assembleDofs_u(
 inline void VectorPartitioned::assembleDofs_p(
     const xt::xtensor<double, 2>& nodevec, xt::xtensor<double, 1>& dofval_p) const
 {
-    std::cout << "assembleDofs_p is deprecated and will not be replaced" << std::endl;
+    GOOSEFEM_WARNING("assembleDofs_p is deprecated and will not be replaced");
     GOOSEFEM_ASSERT(xt::has_shape(nodevec, {m_nnode, m_ndim}));
     GOOSEFEM_ASSERT(dofval_p.size() == m_nnp);
 
@@ -323,7 +323,7 @@ inline void VectorPartitioned::assembleDofs_p(
 inline void VectorPartitioned::assembleDofs_u(
     const xt::xtensor<double, 3>& elemvec, xt::xtensor<double, 1>& dofval_u) const
 {
-    std::cout << "assembleDofs_u is deprecated and will not be replaced" << std::endl;
+    GOOSEFEM_WARNING("assembleDofs_u is deprecated and will not be replaced");
     GOOSEFEM_ASSERT(xt::has_shape(elemvec, {m_nelem, m_nne, m_ndim}));
     GOOSEFEM_ASSERT(dofval_u.size() == m_nnu);
 
@@ -343,7 +343,7 @@ inline void VectorPartitioned::assembleDofs_u(
 inline void VectorPartitioned::assembleDofs_p(
     const xt::xtensor<double, 3>& elemvec, xt::xtensor<double, 1>& dofval_p) const
 {
-    std::cout << "assembleDofs_p is deprecated and will not be replaced" << std::endl;
+    GOOSEFEM_WARNING("assembleDofs_p is deprecated and will not be replaced");
     GOOSEFEM_ASSERT(xt::has_shape(elemvec, {m_nelem, m_nne, m_ndim}));
     GOOSEFEM_ASSERT(dofval_p.size() == m_nnp);
 
