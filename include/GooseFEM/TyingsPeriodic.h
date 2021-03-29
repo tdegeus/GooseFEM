@@ -1,5 +1,5 @@
 /**
-Methods to store and apply DOF tyings.
+Tools to store and apply nodal/DOF tyings.
 
 \file TyingsPeriodic.h
 \copyright Copyright 2017. Tom de Geus. All rights reserved.
@@ -15,58 +15,188 @@ Methods to store and apply DOF tyings.
 #include <Eigen/Sparse>
 
 namespace GooseFEM {
+
+/**
+Tools to store and apply nodal/DOF tyings.
+*/
 namespace Tyings {
 
+/**
+Nodal tyings per periodic boundary conditions.
+The idea is that the displacement of all DOFs of a node are tied to another node
+and to the average displacement gradient.
+The latter is applied/measured using 'virtual' control nodes.
+
+Consider the DOF list \f$ u \f$ renumbered such that it is split up in
+independent and dependent DOFs as follows
+
+\f$ u = \begin{bmatrix} u_i \\ u_d \end{bmatrix}\f$
+
+whereby the independent DOFs are furthermore split up in unknown and prescribed nodes as follows
+
+\f$ u_i = \begin{bmatrix} u_u \\ u_p \end{bmatrix}\f$
+
+such that
+
+\f$ u = \begin{bmatrix} u_u \\ u_p \\ u_d \end{bmatrix}\f$
+
+\todo Document how the DOFs are tied to the control nodes, and what the has to do with the mean.
+*/
 class Periodic {
 public:
-    // Constructors
+
     Periodic() = default;
 
-    Periodic(
-        const xt::xtensor<double, 2>& coor,
-        const xt::xtensor<size_t, 2>& dofs,
-        const xt::xtensor<size_t, 2>& control_dofs,
-        const xt::xtensor<size_t, 2>& nodal_tyings); // (independent, dependent)
+    /**
+    Constructor.
 
+    \param coor Nodal coordinates [nnode, ndim].
+    \param dofs DOF-numbers per node [nnode, ndim].
+    \param control_dofs DOF-numbers per control node [ndim, ndim].
+    \param nodal_tyings List of nodal tyings, see nodal_tyings(). [ntyings, 2].
+    */
     Periodic(
         const xt::xtensor<double, 2>& coor,
         const xt::xtensor<size_t, 2>& dofs,
         const xt::xtensor<size_t, 2>& control_dofs,
-        const xt::xtensor<size_t, 2>& nodal_tyings, // (independent, dependent)
+        const xt::xtensor<size_t, 2>& nodal_tyings);
+
+    /**
+    Constructor.
+
+    \param coor Nodal coordinates [nnode, ndim].
+    \param dofs DOF-numbers per node [nnode, ndim].
+    \param control_dofs DOF-numbers per control node [ndim, ndim].
+    \param nodal_tyings List of nodal tyings, see nodal_tyings(). [ntyings, 2].
+    \param iip List of prescribed DOF-numbers.
+    */
+    Periodic(
+        const xt::xtensor<double, 2>& coor,
+        const xt::xtensor<size_t, 2>& dofs,
+        const xt::xtensor<size_t, 2>& control_dofs,
+        const xt::xtensor<size_t, 2>& nodal_tyings,
         const xt::xtensor<size_t, 1>& iip);
 
-    // Dimensions
-    size_t nnd() const; // dependent DOFs
-    size_t nni() const; // independent DOFs
-    size_t nnu() const; // independent, unknown DOFs
-    size_t nnp() const; // independent, prescribed DOFs
+    /**
+    Number of dependent DOFs.
 
-    // DOF lists
-    xt::xtensor<size_t, 2> dofs() const;    // DOFs
-    xt::xtensor<size_t, 2> control() const; // control DOFs
-    xt::xtensor<size_t, 1> iid() const;     // dependent DOFs
-    xt::xtensor<size_t, 1> iii() const;     // independent DOFs
-    xt::xtensor<size_t, 1> iiu() const;     // independent, unknown DOFs
-    xt::xtensor<size_t, 1> iip() const;     // independent, prescribed DOFs
+    \return unsigned int
+    */
+    size_t nnd() const;
 
-    // Return the tying matrix
-    // u_d = C_di * u_i
-    // u_d = [C_du, C_dp]^T * [u_u, u_p] = C_du * u_u + C_dp * u_p
+    /**
+    Number of independent DOFs.
+
+    \return unsigned int
+    */
+    size_t nni() const;
+
+    /**
+    Number of independent unknown DOFs.
+
+    \return unsigned int
+    */
+    size_t nnu() const;
+
+    /**
+    Number of independent prescribed DOFs.
+
+    \return unsigned int
+    */
+    size_t nnp() const;
+
+    /**
+    Return the DOF-numbers per node, as used internally (after renumbering).
+
+    \return [nnode, ndim].
+    */
+    xt::xtensor<size_t, 2> dofs() const;
+
+    /**
+    Return the DOF-numbers for each control node, as used internally (after renumbering).
+
+    \return [ndim, ndim].
+    */
+    xt::xtensor<size_t, 2> control() const;
+
+    /**
+    Return the applied nodal tyings.
+    Per tying (row) two node numbers are specified,
+    according to the convention (independent, dependent).
+
+    \return [ntyings, 2].
+    */
+    xt::xtensor<size_t, 2> nodal_tyings() const;
+
+    /**
+    Dependent DOFs.
+
+    \return List of DOF numbers.
+    */
+    xt::xtensor<size_t, 1> iid() const;
+
+    /**
+    Independent DOFs.
+
+    \return List of DOF numbers.
+    */
+    xt::xtensor<size_t, 1> iii() const;
+
+    /**
+    Independent unknown DOFs.
+
+    \return List of DOF numbers.
+    */
+    xt::xtensor<size_t, 1> iiu() const;
+
+    /**
+    Independent prescribed DOFs.
+
+    \return List of DOF numbers.
+    */
+    xt::xtensor<size_t, 1> iip() const;
+
+    /**
+    Return tying matrix such as to get the dependent DOFs \f$ u_d \f$ from
+    the independent DOFs \f$ u_i \f$ as follows
+
+    \f$ u_d = C_{di} u_i \f$
+
+    Note that this can be further partitioned in
+
+    \f$ u_d = C_{du} u_u + C_{dp} u_p \f$
+
+    See Cdu() and Cdp().
+
+    \return Sparse matrix.
+    */
     Eigen::SparseMatrix<double> Cdi() const;
+
+    /**
+    Unknown part of the partitioned tying matrix, see Cdi().
+
+    \return Sparse matrix.
+    */
     Eigen::SparseMatrix<double> Cdu() const;
+
+    /**
+    Prescribed part of the partitioned tying matrix, see Cdi().
+
+    \return Sparse matrix.
+    */
     Eigen::SparseMatrix<double> Cdp() const;
 
 private:
-    size_t m_nnu;
-    size_t m_nnp;
-    size_t m_nni;
-    size_t m_nnd;
-    size_t m_ndim;
-    size_t m_nties; // number of nodal ties
-    xt::xtensor<size_t, 2> m_dofs;
-    xt::xtensor<size_t, 2> m_control;
-    xt::xtensor<size_t, 2> m_tyings; // nodal ties: (independent, dependent)
-    xt::xtensor<double, 2> m_coor;
+    size_t m_nnu; ///< See nnu().
+    size_t m_nnp; ///< See nnp().
+    size_t m_nni; ///< See nni().
+    size_t m_nnd; ///< See nnd().
+    size_t m_ndim; ///< Number of dimensions.
+    size_t m_nties; ///< Number of nodal ties.
+    xt::xtensor<size_t, 2> m_dofs; ///< See dofs().
+    xt::xtensor<size_t, 2> m_control; ///< See control().
+    xt::xtensor<size_t, 2> m_tyings; ///< See nodal_tyings().
+    xt::xtensor<double, 2> m_coor; ///< Nodal coordinates [nnode, ndim].
 };
 
 class Control {

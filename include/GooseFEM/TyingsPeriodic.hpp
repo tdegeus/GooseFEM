@@ -38,6 +38,15 @@ inline Periodic::Periodic(
     m_ndim = m_coor.shape(1);
     m_nties = m_tyings.shape(0);
 
+    GOOSEFEM_ASSERT(xt::has_shape(m_tyings, {m_nties, size_t(2)}));
+    GOOSEFEM_ASSERT(xt::has_shape(control, {m_ndim, m_ndim}));
+    GOOSEFEM_ASSERT(xt::has_shape(dofs, m_coor.shape()));
+    GOOSEFEM_ASSERT(xt::amax(control)() <= xt::amax(dofs)());
+    GOOSEFEM_ASSERT(xt::amin(control)() >= xt::amin(dofs)());
+    GOOSEFEM_ASSERT(xt::amax(iip)() <= xt::amax(dofs)());
+    GOOSEFEM_ASSERT(xt::amin(iip)() >= xt::amin(dofs)());
+    GOOSEFEM_ASSERT(xt::amax(nodal_tyings)() < m_coor.shape(0));
+
     xt::xtensor<size_t, 1> dependent = xt::view(m_tyings, xt::all(), 1);
     xt::xtensor<size_t, 2> dependent_dofs = xt::view(dofs, xt::keep(dependent), xt::all());
     xt::xtensor<size_t, 1> iid = xt::flatten(dependent_dofs);
@@ -63,6 +72,11 @@ inline xt::xtensor<size_t, 2> Periodic::dofs() const
 inline xt::xtensor<size_t, 2> Periodic::control() const
 {
     return m_control;
+}
+
+inline xt::xtensor<size_t, 2> Periodic::nodal_tyings() const
+{
+    return m_tyings;
 }
 
 inline size_t Periodic::nnu() const
