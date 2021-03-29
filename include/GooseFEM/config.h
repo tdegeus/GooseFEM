@@ -122,7 +122,7 @@ All warnings are implemented as::
 
     GOOSEFEM_WARNING(...)
 
-They can be disable by::
+They can be disabled by::
 
     #define GOOSEFEM_DISABLE_WARNING
 */
@@ -146,5 +146,10 @@ They can be enabled by::
 #else
 #define GOOSEFEM_WARNING_PYTHON(message)
 #endif
+
+/**
+Toolbox to perform finite element computations.
+*/
+namespace GooseFEM {}
 
 #endif
