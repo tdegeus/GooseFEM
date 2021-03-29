@@ -67,14 +67,14 @@ public:
     size_t ndim() const;
 
     /**
-    Number of elements in x-direction == width of the mesh in units of h().
+    Number of elements in x-direction == width of the mesh in units of #h.
 
     \return unsigned int.
     */
     size_t nelx() const;
 
     /**
-    Number of elements in y-direction == height of the mesh, in units of h(),
+    Number of elements in y-direction == height of the mesh, in units of #h,
 
     \return unsigned int.
     */
@@ -97,14 +97,14 @@ public:
     /**
     Nodal coordinates.
 
-    \return ``[nnode, ndim]``.
+    \return [#nnode, #ndim].
     */
     xt::xtensor<double, 2> coor() const;
 
     /**
     Connectivity.
 
-    \return ``[nelem, nne]``.
+    \return [#nelem, #nne].
     */
     xt::xtensor<size_t, 2> conn() const;
 
@@ -202,14 +202,15 @@ public:
     size_t ndim() const;
 
     /**
-    Number of elements in x-direction along the middle layer == width of the mesh in units of h().
+    Number of elements in x-direction along the middle layer.
+    By definition equal to the width of the mesh in units of #h.
 
     \return unsigned int.
     */
     size_t nelx() const;
 
     /**
-    Height of the mesh, in units of h()
+    Height of the mesh, in units of #h.
 
     \return unsigned int.
     */
@@ -222,9 +223,31 @@ public:
     */
     double h() const;
 
-    // edge size, per row of elements (in units of "h")
+    /**
+    Edge size in x-direction of a block, in units of #h, per row of blocks.
+    Note that a block is equal to an element except in refinement layers
+    where it contains three elements.
+
+    \returns List of size equal to the number of rows of blocks.
+    */
     xt::xtensor<size_t, 1> elemrow_nhx() const;
+
+    /**
+    Edge size in y-direction of a block, in units of #h, per row of blocks.
+    Note that a block is equal to an element except in refinement layers
+    where it contains three elements.
+
+    \returns List of size equal to the number of rows of blocks.
+    */
     xt::xtensor<size_t, 1> elemrow_nhy() const;
+
+    /**
+    Number of elements per row of blocks.
+    Note that a block is equal to an element except in refinement layers
+    where it contains three elements.
+
+    \returns List of size equal to the number of rows of blocks.
+    */
     xt::xtensor<size_t, 1> elemrow_nelem() const;
 
     /**
@@ -335,10 +358,10 @@ private:
     size_t m_nnode;                     // number of nodes
     static const size_t m_nne = 4;      // number of nodes-per-element
     static const size_t m_ndim = 2;     // number of dimensions
-    xt::xtensor<size_t, 1> m_nelx;      // number of elements in "x" (*)
+    xt::xtensor<size_t, 1> m_nelx; ///< See elemrow_nelem().
+    xt::xtensor<size_t, 1> m_nhx;  ///< See elemrow_nhx().
+    xt::xtensor<size_t, 1> m_nhy;  ///< See elemrow_nhy().
     xt::xtensor<size_t, 1> m_nnd;       // total number of nodes in the main node layer (**)
-    xt::xtensor<size_t, 1> m_nhx;       // element size in x-direction (*)
-    xt::xtensor<size_t, 1> m_nhy;       // element size in y-direction (*)
     xt::xtensor<int, 1> m_refine;       // refine direction (-1:no refine, 0:"x" (*)
     xt::xtensor<size_t, 1> m_startElem; // start element (*)
     xt::xtensor<size_t, 1> m_startNode; // start node (**)
