@@ -47,6 +47,6 @@ setup(
     author_email = 'tom@geus.me',
     url = 'https://github.com/tdegeus/GooseFEM',
     ext_modules = ext_modules,
-    install_requires = ['pybind11', 'pyxtensor'],
+    setup_requires = ['pybind11', 'pyxtensor'],
     cmdclass = {'build_ext': build},
     zip_safe = False)
