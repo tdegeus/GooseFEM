@@ -3,6 +3,16 @@
 Changelog
 *********
 
+v0.10.3
+=======
+
+*   Adding convenience functions to Mesh::Stitch
+*   Tyings::Periodic : documenting, adding convenience function, adding assertions
+*   Tyings::Control : documenting
+*   [Python] Reducing dependency requirements
+*   [docs] Various minor updates
+*   [docs] Doxygen: Using dark theme
+
 v0.10.2
 =======
 
