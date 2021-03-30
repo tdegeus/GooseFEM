@@ -145,6 +145,33 @@ inline xt::xtensor<size_t, 2> ManualStitch::conn() const
     return m_conn;
 }
 
+inline size_t ManualStitch::nelem() const
+{
+    return m_conn.shape(0);
+}
+
+inline size_t ManualStitch::nnode() const
+{
+    return m_coor.shape(0);
+}
+
+inline size_t ManualStitch::nne() const
+{
+    return m_conn.shape(1);
+}
+
+inline size_t ManualStitch::ndim() const
+{
+    return m_coor.shape(1);
+}
+
+inline xt::xtensor<size_t, 2> ManualStitch::dofs() const
+{
+    size_t nnode = this->nnode();
+    size_t ndim = this->ndim();
+    return xt::reshape_view(xt::arange<size_t>(nnode * ndim), {nnode, ndim});
+}
+
 inline xt::xtensor<size_t, 1> ManualStitch::nodemap(size_t mesh_index) const
 {
     GOOSEFEM_ASSERT(mesh_index <= 1);
@@ -237,6 +264,33 @@ inline xt::xtensor<double, 2> Stitch::coor() const
 inline xt::xtensor<size_t, 2> Stitch::conn() const
 {
     return m_conn;
+}
+
+inline size_t Stitch::nelem() const
+{
+    return m_conn.shape(0);
+}
+
+inline size_t Stitch::nnode() const
+{
+    return m_coor.shape(0);
+}
+
+inline size_t Stitch::nne() const
+{
+    return m_conn.shape(1);
+}
+
+inline size_t Stitch::ndim() const
+{
+    return m_coor.shape(1);
+}
+
+inline xt::xtensor<size_t, 2> Stitch::dofs() const
+{
+    size_t nnode = this->nnode();
+    size_t ndim = this->ndim();
+    return xt::reshape_view(xt::arange<size_t>(nnode * ndim), {nnode, ndim});
 }
 
 inline xt::xtensor<size_t, 1> Stitch::nodemap(size_t mesh_index) const
