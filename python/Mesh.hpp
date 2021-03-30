@@ -34,8 +34,7 @@ void init_Mesh(py::module& m)
 
     py::class_<GooseFEM::Mesh::ManualStitch>(m, "ManualStitch")
 
-        .def(
-            py::init<
+        .def(py::init<
                 const xt::xtensor<double, 2>&,
                 const xt::xtensor<size_t, 2>&,
                 const xt::xtensor<size_t, 1>&,
@@ -45,141 +44,173 @@ void init_Mesh(py::module& m)
                 bool,
                 double,
                 double>(),
-            "Manually stitch meshes."
-            "See :cpp:class:`GooseFEM::Mesh::ManualStitch`.",
-            py::arg("coor_a"),
-            py::arg("conn_a"),
-            py::arg("overlapping_nodes_a"),
-            py::arg("coor_b"),
-            py::arg("conn_b"),
-            py::arg("overlapping_nodes_b"),
-            py::arg("check_position") = true,
-            py::arg("rtol") = 1e-5,
-            py::arg("atol") = 1e-8)
+             "Manually stitch meshes."
+             "See :cpp:class:`GooseFEM::Mesh::ManualStitch`.",
+             py::arg("coor_a"),
+             py::arg("conn_a"),
+             py::arg("overlapping_nodes_a"),
+             py::arg("coor_b"),
+             py::arg("conn_b"),
+             py::arg("overlapping_nodes_b"),
+             py::arg("check_position") = true,
+             py::arg("rtol") = 1e-5,
+             py::arg("atol") = 1e-8)
 
-        .def(
-            "coor",
-            &GooseFEM::Mesh::ManualStitch::coor,
-            "Coordinates of stitched mesh."
-            "See :cpp:func:`GooseFEM::Mesh::ManualStitch::coor`.")
+        .def("nnode",
+             &GooseFEM::Mesh::ManualStitch::nnode,
+             "Number of nodes of stitched mesh."
+             "See :cpp:func:`GooseFEM::Mesh::ManualStitch::nnode`.")
 
-        .def(
-            "conn",
-            &GooseFEM::Mesh::ManualStitch::conn,
-            "Connectivity of stitched mesh."
-            "See :cpp:func:`GooseFEM::Mesh::ManualStitch::conn`.")
+        .def("nelem",
+             &GooseFEM::Mesh::ManualStitch::nelem,
+             "Number of elements of stitched mesh."
+             "See :cpp:func:`GooseFEM::Mesh::ManualStitch::nelem`.")
 
-        .def(
-            "nodemap",
-            &GooseFEM::Mesh::ManualStitch::nodemap,
-            "Map to new node-numbers."
-            "See :cpp:func:`GooseFEM::Mesh::ManualStitch::nodemap`.")
+        .def("ndim",
+             &GooseFEM::Mesh::ManualStitch::ndim,
+             "Number of dimensions (of stitched mesh)."
+             "See :cpp:func:`GooseFEM::Mesh::ManualStitch::ndim`.")
 
-        .def(
-            "elemmap",
-            &GooseFEM::Mesh::ManualStitch::elemmap,
-            "Map to new element-numbers."
-            "See :cpp:func:`GooseFEM::Mesh::ManualStitch::elemmap`.")
+        .def("nne",
+             &GooseFEM::Mesh::ManualStitch::nne,
+             "Number of nodes per element (of stitched mesh)."
+             "See :cpp:func:`GooseFEM::Mesh::ManualStitch::nne`.")
 
-        .def(
-            "nodeset",
-            &GooseFEM::Mesh::ManualStitch::nodeset,
-            "Convert node-set to the stitched mesh."
-            "See :cpp:func:`GooseFEM::Mesh::ManualStitch::nodeset`.",
-            py::arg("set"),
-            py::arg("mesh_index"))
+        .def("coor",
+             &GooseFEM::Mesh::ManualStitch::coor,
+             "Coordinates of stitched mesh."
+             "See :cpp:func:`GooseFEM::Mesh::ManualStitch::coor`.")
 
-        .def(
-            "elemset",
-            &GooseFEM::Mesh::ManualStitch::elemset,
-            "Convert element-set to the stitched mesh."
-            "See :cpp:func:`GooseFEM::Mesh::ManualStitch::elemset`.",
-            py::arg("set"),
-            py::arg("mesh_index"))
+        .def("conn",
+             &GooseFEM::Mesh::ManualStitch::conn,
+             "Connectivity of stitched mesh."
+             "See :cpp:func:`GooseFEM::Mesh::ManualStitch::conn`.")
 
-        .def(
-            "__repr__", [](const GooseFEM::Mesh::ManualStitch&) {
-                return "<GooseFEM.Mesh.ManualStitch>"; });
+        .def("dofs",
+             &GooseFEM::Mesh::ManualStitch::dofs,
+             "DOF numbers per node."
+             "See :cpp:func:`GooseFEM::Mesh::ManualStitch::dofs`.")
+
+        .def("nodemap",
+             &GooseFEM::Mesh::ManualStitch::nodemap,
+             "Map to new node-numbers."
+             "See :cpp:func:`GooseFEM::Mesh::ManualStitch::nodemap`.")
+
+        .def("elemmap",
+             &GooseFEM::Mesh::ManualStitch::elemmap,
+             "Map to new element-numbers."
+             "See :cpp:func:`GooseFEM::Mesh::ManualStitch::elemmap`.")
+
+        .def("nodeset",
+             &GooseFEM::Mesh::ManualStitch::nodeset,
+             "Convert node-set to the stitched mesh."
+             "See :cpp:func:`GooseFEM::Mesh::ManualStitch::nodeset`.",
+             py::arg("set"),
+             py::arg("mesh_index"))
+
+        .def("elemset",
+             &GooseFEM::Mesh::ManualStitch::elemset,
+             "Convert element-set to the stitched mesh."
+             "See :cpp:func:`GooseFEM::Mesh::ManualStitch::elemset`.",
+             py::arg("set"),
+             py::arg("mesh_index"))
+
+        .def("__repr__",
+            [](const GooseFEM::Mesh::ManualStitch&) { return "<GooseFEM.Mesh.ManualStitch>"; });
 
     py::class_<GooseFEM::Mesh::Stitch>(m, "Stitch")
 
-        .def(
-            py::init<double, double>(),
-            "Stitch meshes."
-            "See :cpp:class:`GooseFEM::Mesh::Stitch`.",
-            py::arg("rtol") = 1e-5,
-            py::arg("atol") = 1e-8)
+        .def(py::init<double, double>(),
+             "Stitch meshes."
+             "See :cpp:class:`GooseFEM::Mesh::Stitch`.",
+             py::arg("rtol") = 1e-5,
+             py::arg("atol") = 1e-8)
 
-        .def(
-            "push_back",
-            &GooseFEM::Mesh::Stitch::push_back,
-            "Add mesh to be stitched."
-            "See :cpp:func:`GooseFEM::Mesh::Stitch::push_back`.",
-            py::arg("coor"),
-            py::arg("conn"))
+        .def("push_back",
+             &GooseFEM::Mesh::Stitch::push_back,
+             "Add mesh to be stitched."
+             "See :cpp:func:`GooseFEM::Mesh::Stitch::push_back`.",
+             py::arg("coor"),
+             py::arg("conn"))
 
-        .def(
-            "coor",
-            &GooseFEM::Mesh::Stitch::coor,
-            "Coordinates of stitched mesh."
-            "See :cpp:func:`GooseFEM::Mesh::Stitch::coor`.")
+        .def("nnode",
+             &GooseFEM::Mesh::Stitch::nnode,
+             "Number of nodes of stitched mesh."
+             "See :cpp:func:`GooseFEM::Mesh::Stitch::nnode`.")
 
-        .def(
-            "conn",
-            &GooseFEM::Mesh::Stitch::conn,
-            "Connectivity of stitched mesh."
-            "See :cpp:func:`GooseFEM::Mesh::Stitch::coor`.")
+        .def("nelem",
+             &GooseFEM::Mesh::Stitch::nelem,
+             "Number of elements of stitched mesh."
+             "See :cpp:func:`GooseFEM::Mesh::Stitch::nelem`.")
 
-        .def(
-            "nodemap",
-            &GooseFEM::Mesh::Stitch::nodemap,
-            "Node-map for given mesh."
-            "See :cpp:func:`GooseFEM::Mesh::Stitch::nodemap`.",
-            py::arg("mesh_index"))
+        .def("ndim",
+             &GooseFEM::Mesh::Stitch::ndim,
+             "Number of dimensions (of stitched mesh)."
+             "See :cpp:func:`GooseFEM::Mesh::Stitch::ndim`.")
 
-        .def(
-            "elemmap",
-            &GooseFEM::Mesh::Stitch::elemmap,
-            "Element-map for given mesh."
-            "See :cpp:func:`GooseFEM::Mesh::Stitch::elemmap`.",
-            py::arg("mesh_index"))
+        .def("nne",
+             &GooseFEM::Mesh::Stitch::nne,
+             "Number of nodes per element (of stitched mesh)."
+             "See :cpp:func:`GooseFEM::Mesh::Stitch::nne`.")
 
-        .def(
-            "nodeset",
-            py::overload_cast<const xt::xtensor<size_t, 1>&, size_t>(
-                &GooseFEM::Mesh::Stitch::nodeset, py::const_),
-            "Convert node-set to the stitched mesh."
-            "See :cpp:func:`GooseFEM::Mesh::Stitch::nodeset`.",
-            py::arg("set"),
-            py::arg("mesh_index"))
+        .def("coor",
+             &GooseFEM::Mesh::Stitch::coor,
+             "Coordinates of stitched mesh."
+             "See :cpp:func:`GooseFEM::Mesh::Stitch::coor`.")
 
-        .def(
-            "elemset",
-            py::overload_cast<const xt::xtensor<size_t, 1>&, size_t>(
-                &GooseFEM::Mesh::Stitch::elemset, py::const_),
-            "Convert element-set to the stitched mesh."
-            "See :cpp:func:`GooseFEM::Mesh::Stitch::elemset`.",
-            py::arg("set"),
-            py::arg("mesh_index"))
+        .def("conn",
+             &GooseFEM::Mesh::Stitch::conn,
+             "Connectivity of stitched mesh."
+             "See :cpp:func:`GooseFEM::Mesh::Stitch::conn`.")
 
-        .def(
-            "nodeset",
-            py::overload_cast<const std::vector<xt::xtensor<size_t, 1>>&>(
-                &GooseFEM::Mesh::Stitch::nodeset, py::const_),
-            "Convert node-set to the stitched mesh."
-            "See :cpp:func:`GooseFEM::Mesh::Stitch::nodeset`.",
-            py::arg("set"))
+        .def("dofs",
+             &GooseFEM::Mesh::Stitch::dofs,
+             "DOF numbers per node."
+             "See :cpp:func:`GooseFEM::Mesh::Stitch::dofs`.")
 
-        .def(
-            "elemset",
-            py::overload_cast<const std::vector<xt::xtensor<size_t, 1>>&>(
-                &GooseFEM::Mesh::Stitch::elemset, py::const_),
-            "Convert element-set to the stitched mesh."
-            "See :cpp:func:`GooseFEM::Mesh::Stitch::elemset`.",
-            py::arg("set"))
+        .def("nodemap",
+             &GooseFEM::Mesh::Stitch::nodemap,
+             "Node-map for given mesh."
+             "See :cpp:func:`GooseFEM::Mesh::Stitch::nodemap`.",
+             py::arg("mesh_index"))
 
-        .def(
-            "__repr__", [](const GooseFEM::Mesh::Stitch&) { return "<GooseFEM.Mesh.Stitch>"; });
+        .def("elemmap",
+             &GooseFEM::Mesh::Stitch::elemmap,
+             "Element-map for given mesh."
+             "See :cpp:func:`GooseFEM::Mesh::Stitch::elemmap`.",
+             py::arg("mesh_index"))
+
+        .def("nodeset",
+             py::overload_cast<const xt::xtensor<size_t, 1>&, size_t>(
+                 &GooseFEM::Mesh::Stitch::nodeset, py::const_),
+             "Convert node-set to the stitched mesh."
+             "See :cpp:func:`GooseFEM::Mesh::Stitch::nodeset`.",
+             py::arg("set"),
+             py::arg("mesh_index"))
+
+        .def("elemset",
+             py::overload_cast<const xt::xtensor<size_t, 1>&, size_t>(
+                 &GooseFEM::Mesh::Stitch::elemset, py::const_),
+             "Convert element-set to the stitched mesh."
+             "See :cpp:func:`GooseFEM::Mesh::Stitch::elemset`.",
+             py::arg("set"),
+             py::arg("mesh_index"))
+
+        .def("nodeset",
+             py::overload_cast<const std::vector<xt::xtensor<size_t, 1>>&>(
+                 &GooseFEM::Mesh::Stitch::nodeset, py::const_),
+             "Convert node-set to the stitched mesh."
+             "See :cpp:func:`GooseFEM::Mesh::Stitch::nodeset`.",
+             py::arg("set"))
+
+        .def("elemset",
+             py::overload_cast<const std::vector<xt::xtensor<size_t, 1>>&>(
+                 &GooseFEM::Mesh::Stitch::elemset, py::const_),
+             "Convert element-set to the stitched mesh."
+             "See :cpp:func:`GooseFEM::Mesh::Stitch::elemset`.",
+             py::arg("set"))
+
+        .def("__repr__", [](const GooseFEM::Mesh::Stitch&) { return "<GooseFEM.Mesh.Stitch>"; });
 
     py::class_<GooseFEM::Mesh::Renumber>(m, "Renumber")
 

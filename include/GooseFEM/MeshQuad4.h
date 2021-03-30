@@ -108,16 +108,60 @@ public:
     */
     xt::xtensor<size_t, 2> conn() const;
 
-    // boundary nodes: edges
+    /**
+    Nodes along the bottom edge (y = 0).
+
+    \return List of node numbers.
+    */
     xt::xtensor<size_t, 1> nodesBottomEdge() const;
+
+    /**
+    Nodes along the top edge (y = #nely * #h).
+
+    \return List of node numbers.
+    */
     xt::xtensor<size_t, 1> nodesTopEdge() const;
+
+    /**
+    Nodes along the left edge (x = 0).
+
+    \return List of node numbers.
+    */
     xt::xtensor<size_t, 1> nodesLeftEdge() const;
+
+    /**
+    Nodes along the right edge (x = #nelx * #h).
+
+    \return List of node numbers.
+    */
     xt::xtensor<size_t, 1> nodesRightEdge() const;
 
-    // boundary nodes: edges, without corners
+    /**
+    Nodes along the bottom edge (y = 0), with the corners (at x = 0 and x = #nelx * #h).
+
+    \return List of node numbers.
+    */
     xt::xtensor<size_t, 1> nodesBottomOpenEdge() const;
+
+    /**
+    Nodes along the top edge (y = #nely * #h), with the corners (at x = 0 and x = #nelx * #h).
+
+    \return List of node numbers.
+    */
     xt::xtensor<size_t, 1> nodesTopOpenEdge() const;
+
+    /**
+    Nodes along the left edge (x = 0), with the corners (at y = 0 and y = #nely * #h).
+
+    \return List of node numbers.
+    */
     xt::xtensor<size_t, 1> nodesLeftOpenEdge() const;
+
+    /**
+    Nodes along the right edge (x = #nelx * #h), with the corners (at y = 0 and y = #nely * #h).
+
+    \return List of node numbers.
+    */
     xt::xtensor<size_t, 1> nodesRightOpenEdge() const;
 
     // boundary nodes: corners (including aliases)

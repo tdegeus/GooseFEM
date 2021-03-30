@@ -83,14 +83,53 @@ public:
         double atol = 1e-8);
 
     /**
-    \return Nodal coordinates of stitched mesh.
+    Number of elements.
+
+    \return unsigned int.
+    */
+    size_t nelem() const;
+
+    /**
+    Number of nodes.
+
+    \return unsigned int.
+    */
+    size_t nnode() const;
+
+    /**
+    Number of nodes-per-element.
+
+    \return unsigned int.
+    */
+    size_t nne() const;
+
+    /**
+    Number of dimensions.
+
+    \return unsigned int.
+    */
+    size_t ndim() const;
+
+    /**
+    Nodal coordinates.
+
+    \return [#nnode, #ndim].
     */
     xt::xtensor<double, 2> coor() const;
 
     /**
-    \return Connectivity of stitched mesh.
+    Connectivity.
+
+    \return [#nelem, #nne].
     */
     xt::xtensor<size_t, 2> conn() const;
+
+    /**
+    DOF numbers for each node (numbered sequentially).
+
+    \return [#nnode, #ndim].
+    */
+    xt::xtensor<size_t, 2> dofs() const;
 
     /**
     \param mesh_index Index of the mesh ("a" = 1, "b" = 1).
@@ -105,20 +144,20 @@ public:
     xt::xtensor<size_t, 1> elemmap(size_t mesh_index) const;
 
     /**
-    Convert set of node-numbers for an original mesh to the stitched mesh.
+    Convert set of node numbers for an original mesh to the stitched mesh.
 
-    \param set Set of node-numbers.
+    \param set List of node numbers.
     \param mesh_index Index of the mesh ("a" = 1, "b" = 1).
-    \return Set of node-number for the stitched mesh.
+    \return List of node numbers for the stitched mesh.
     */
     xt::xtensor<size_t, 1> nodeset(const xt::xtensor<size_t, 1>& set, size_t mesh_index) const;
 
     /**
-    Convert set of element-numbers for an original mesh to the stitched mesh.
+    Convert set of element numbers for an original mesh to the stitched mesh.
 
-    \param set Set of element-numbers.
+    \param set List of element numbers.
     \param mesh_index Index of the mesh ("a" = 1, "b" = 1).
-    \return Set of element-number for the stitched mesh.
+    \return List of element numbers for the stitched mesh.
     */
     xt::xtensor<size_t, 1> elemset(const xt::xtensor<size_t, 1>& set, size_t mesh_index) const;
 
@@ -151,58 +190,101 @@ public:
     void push_back(const xt::xtensor<double, 2>& coor, const xt::xtensor<size_t, 2>& conn);
 
     /**
-    \return Nodal coordinates.
+    Number of elements.
+
+    \return unsigned int.
+    */
+    size_t nelem() const;
+
+    /**
+    Number of nodes.
+
+    \return unsigned int.
+    */
+    size_t nnode() const;
+
+    /**
+    Number of nodes-per-element.
+
+    \return unsigned int.
+    */
+    size_t nne() const;
+
+    /**
+    Number of dimensions.
+
+    \return unsigned int.
+    */
+    size_t ndim() const;
+
+    /**
+    Nodal coordinates.
+
+    \return [#nnode, #ndim].
     */
     xt::xtensor<double, 2> coor() const;
 
     /**
-    \return Connectivity.
+    Connectivity.
+
+    \return [#nelem, #nne].
     */
     xt::xtensor<size_t, 2> conn() const;
 
     /**
-    \param mesh_index Index of the mesh.
-    \return Node-map for a given mesh.
+    DOF numbers for each node (numbered sequentially).
+
+    \return [#nnode, #ndim].
+    */
+    xt::xtensor<size_t, 2> dofs() const;
+
+    /**
+    The node numbers in the stitched mesh that are coming from a specific sub-mesh.
+
+    \param mesh_index Index of the sub-mesh.
+    \return List of node numbers.
     */
     xt::xtensor<size_t, 1> nodemap(size_t mesh_index) const;
 
     /**
-    \param mesh_index Index of the mesh.
-    \return Element-map for a given mesh.
+    The element numbers in the stitched mesh that are coming from a specific sub-mesh.
+
+    \param mesh_index Index of the sub-mesh.
+    \return List of element numbers.
     */
     xt::xtensor<size_t, 1> elemmap(size_t mesh_index) const;
 
     /**
-    Convert set of node-numbers for an original mesh to the stitched mesh.
+    Convert set of node-numbers for a sub-mesh to the stitched mesh.
 
-    \param set Set of node-numbers.
-    \param mesh_index Index of the mesh.
-    \return Set of node-number for the stitched mesh.
+    \param set List of node numbers.
+    \param mesh_index Index of the sub-mesh.
+    \return List of node numbers for the stitched mesh.
     */
     xt::xtensor<size_t, 1> nodeset(const xt::xtensor<size_t, 1>& set, size_t mesh_index) const;
 
     /**
-    Convert set of element-numbers for an original mesh to the stitched mesh.
+    Convert set of element-numbers for a sub-mesh to the stitched mesh.
 
-    \param set Set of element-numbers.
-    \param mesh_index Index of the mesh.
-    \return Set of element-number for the stitched mesh.
+    \param set List of element numbers.
+    \param mesh_index Index of the sub-mesh.
+    \return List of element numbers for the stitched mesh.
     */
     xt::xtensor<size_t, 1> elemset(const xt::xtensor<size_t, 1>& set, size_t mesh_index) const;
 
     /**
-    Combine set of node-numbers for an original to the final mesh (removes duplicates).
+    Combine set of node numbers for an original to the final mesh (removes duplicates).
 
-    \param set List of node-sets per mesh.
-    \return Combined node-set on the stitched mesh.
+    \param set List of node numbers per mesh.
+    \return List of node numbers for the stitched mesh.
     */
     xt::xtensor<size_t, 1> nodeset(const std::vector<xt::xtensor<size_t, 1>>& set) const;
 
     /**
-    Combine set of element-numbers for an original to the final mesh.
+    Combine set of element numbers for an original to the final mesh.
 
-    \param set List of element-sets per mesh.
-    \return Combined element-set on the stitched mesh.
+    \param set List of element numbers per mesh.
+    \return List of element numbers for the stitched mesh.
     */
     xt::xtensor<size_t, 1> elemset(const std::vector<xt::xtensor<size_t, 1>>& set) const;
 
@@ -210,7 +292,7 @@ private:
     xt::xtensor<double, 2> m_coor;
     xt::xtensor<size_t, 2> m_conn;
     std::vector<xt::xtensor<size_t, 1>> m_map;
-    std::vector<size_t> m_nel;
+    std::vector<size_t> m_nel; ///< Number of elements per sub-mesh.
     std::vector<size_t> m_el_offset;
     double m_rtol;
     double m_atol;
