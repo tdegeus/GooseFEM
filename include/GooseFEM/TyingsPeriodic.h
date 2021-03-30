@@ -199,23 +199,55 @@ private:
     xt::xtensor<double, 2> m_coor; ///< Nodal coordinates [nnode, ndim].
 };
 
+/**
+Add control nodes to an existing system.
+*/
 class Control {
 public:
-    // Constructors
+
     Control() = default;
+
+    /**
+    Constructor.
+
+    \param coor Nodal coordinates [nnode, ndim].
+    \param dofs DOF-numbers per node [nnode, ndim].
+    */
     Control(const xt::xtensor<double, 2>& coor, const xt::xtensor<size_t, 2>& dofs);
 
-    // Extract new lists
+    /**
+    Nodal coordinates, for the system with control nodes added to it.
+
+    \param [nnode + ndim, ndim], with nnode the number of nodes of the original system.
+    */
     xt::xtensor<double, 2> coor() const;
+
+    /**
+    DOF-numbers per node, for the system with control nodes added to it.
+
+    \param [nnode + ndim, ndim], with nnode the number of nodes of the original system.
+    */
     xt::xtensor<size_t, 2> dofs() const;
+
+    /**
+    DOF-numbers of each control node.
+
+    \param [ndim, ndim].
+    */
     xt::xtensor<size_t, 2> controlDofs() const;
+
+    /**
+    Node-numbers of the control nodes.
+
+    \param [ndim].
+    */
     xt::xtensor<size_t, 1> controlNodes() const;
 
 private:
-    xt::xtensor<double, 2> m_coor;
-    xt::xtensor<size_t, 2> m_dofs;
-    xt::xtensor<size_t, 2> m_control_dofs;
-    xt::xtensor<size_t, 1> m_control_nodes;
+    xt::xtensor<double, 2> m_coor; ///< See coor().
+    xt::xtensor<size_t, 2> m_dofs; ///< See dofs().
+    xt::xtensor<size_t, 2> m_control_dofs;  ///< See controlDofs().
+    xt::xtensor<size_t, 1> m_control_nodes; ///< See controlNodes().
 };
 
 } // namespace Tyings
