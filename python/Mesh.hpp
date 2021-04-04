@@ -56,6 +56,11 @@ void init_Mesh(py::module& m)
              py::arg("rtol") = 1e-5,
              py::arg("atol") = 1e-8)
 
+        .def("nmesh",
+             &GooseFEM::Mesh::ManualStitch::nmesh,
+             "Number of sub meshes."
+             "See :cpp:func:`GooseFEM::Mesh::ManualStitch::nmesh`.")
+
         .def("nnode",
              &GooseFEM::Mesh::ManualStitch::nnode,
              "Number of nodes of stitched mesh."
@@ -132,6 +137,11 @@ void init_Mesh(py::module& m)
              "See :cpp:func:`GooseFEM::Mesh::Stitch::push_back`.",
              py::arg("coor"),
              py::arg("conn"))
+
+        .def("nmesh",
+             &GooseFEM::Mesh::Stitch::nmesh,
+             "Number of sub meshes."
+             "See :cpp:func:`GooseFEM::Mesh::Stitch::nmesh`.")
 
         .def("nnode",
              &GooseFEM::Mesh::Stitch::nnode,

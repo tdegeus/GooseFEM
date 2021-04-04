@@ -83,6 +83,13 @@ public:
         double atol = 1e-8);
 
     /**
+    Number of sub meshes.
+
+    \return 2.
+    */
+    size_t nmesh() const;
+
+    /**
     Number of elements.
 
     \return unsigned int.
@@ -188,6 +195,13 @@ public:
     \param conn Connectivity.
     */
     void push_back(const xt::xtensor<double, 2>& coor, const xt::xtensor<size_t, 2>& conn);
+
+    /**
+    Number of sub meshes.
+
+    \return unsigned int
+    */
+    size_t nmesh() const;
 
     /**
     Number of elements.
