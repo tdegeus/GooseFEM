@@ -16,23 +16,23 @@ option(CHECK_DOCS "${PROJECT_NAME}: Check docs (throw error for every warning)" 
 execute_process(
     COMMAND python -c "from setuptools_scm import get_version; print(get_version())"
     WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
-    OUTPUT_VARIABLE GOOSEFEM_VERSION
+    OUTPUT_VARIABLE ${PROJECT_NAME}_VERSION
     OUTPUT_STRIP_TRAILING_WHITESPACE)
 
-message(STATUS "Building ${PROJECT_NAME} ${GOOSEFEM_VERSION}")
+message(STATUS "Building ${PROJECT_NAME} ${${PROJECT_NAME}_VERSION}")
 
 # Set target
 # ==========
 
 find_package(xtensor REQUIRED)
 
-add_library(GooseFEM INTERFACE)
+add_library(${PROJECT_NAME} INTERFACE)
 
-target_include_directories(GooseFEM INTERFACE
+target_include_directories(${PROJECT_NAME} INTERFACE
     $<INSTALL_INTERFACE:include>
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>)
 
-target_link_libraries(GooseFEM INTERFACE xtensor)
+target_link_libraries(${PROJECT_NAME} INTERFACE xtensor)
 
 # Installation
 # ============
@@ -49,22 +49,22 @@ configure_file("include/${PROJECT_NAME}/version.h"
 install(FILES "${CMAKE_CURRENT_BINARY_DIR}/version.h"
         DESTINATION "include/${PROJECT_NAME}/")
 
-install(TARGETS GooseFEM EXPORT GooseFEM-targets)
+install(TARGETS ${PROJECT_NAME} EXPORT ${PROJECT_NAME}-targets)
 
 install(
-    EXPORT GooseFEM-targets
+    EXPORT ${PROJECT_NAME}-targets
     FILE "${PROJECT_NAME}Targets.cmake"
     DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME}")
 
-set(_GOOSEFEM ${CMAKE_SIZEOF_VOID_P})
+set(_${PROJECT_NAME} ${CMAKE_SIZEOF_VOID_P})
 unset(CMAKE_SIZEOF_VOID_P)
 
 write_basic_package_version_file(
-    "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}ConfigVersion.cmake"
-    VERSION ${GOOSEFEM_VERSION}
+    "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}Version.cmake"
+    VERSION ${${PROJECT_NAME}_VERSION}
     COMPATIBILITY AnyNewerVersion)
 
-set(CMAKE_SIZEOF_VOID_P ${_GOOSEFEM})
+set(CMAKE_SIZEOF_VOID_P ${_${PROJECT_NAME}})
 
 install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/${PROJECT_NAME}Config.cmake"
               "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}ConfigVersion.cmake"
