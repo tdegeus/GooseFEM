@@ -3,8 +3,6 @@ Basic configuration:
 
 -   Include general dependencies.
 -   Define assertions.
--   Define version.
--   Define git commit hash/branch.
 
 \file config.h
 \copyright Copyright 2017. Tom de Geus. All rights reserved.
