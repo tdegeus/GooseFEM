@@ -145,6 +145,11 @@ inline xt::xtensor<size_t, 2> ManualStitch::conn() const
     return m_conn;
 }
 
+inline size_t ManualStitch::nmesh() const
+{
+    return 2;
+}
+
 inline size_t ManualStitch::nelem() const
 {
     return m_conn.shape(0);
@@ -254,6 +259,11 @@ inline void Stitch::push_back(
     m_map.push_back(stich.nodemap(1));
     m_nel.push_back(conn.shape(0));
     m_el_offset.push_back(m_el_offset[index - 1] + m_nel[index - 1]);
+}
+
+inline size_t Stitch::nmesh() const
+{
+    return m_map.size();
 }
 
 inline xt::xtensor<double, 2> Stitch::coor() const
