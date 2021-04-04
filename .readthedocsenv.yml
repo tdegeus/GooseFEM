@@ -5,6 +5,8 @@ dependencies:
   - breathe
   - sphinx
   - sphinx_rtd_theme
+  - cmake
+  - setuptools_scm
   - python-goosefem
   - pyxtensor
   - eigen

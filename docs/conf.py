@@ -12,18 +12,20 @@
 #
 import os
 import sys
+import tempfile
 # sys.path.insert(0, os.path.abspath('.'))
 
 # -- Run Doxygen -------------------------------------------------------------
 
 import subprocess
 
-read_the_docs_build = os.environ.get('READTHEDOCS', None) == 'True'
+doxydir = "_doxygen"
 
-if read_the_docs_build:
+if not os.path.isdir(doxydir):
+    os.mkdir(doxydir)
 
-    subprocess.call('doxygen', shell=True)
-
+subprocess.call('cmake .. -B{0:s} -DBUILD_DOCS=1'.format(doxydir), shell=True)
+subprocess.call('cd {0:s}; make docs'.format(doxydir), shell=True)
 
 # -- Project information -----------------------------------------------------
 
@@ -70,5 +72,5 @@ html_static_path = ['_static']
 # -- Breathe configuration ---------------------------------------------------
 
 breathe_projects = {
-    "GooseFEM": "../build/xml/",
+    "GooseFEM": "{0:s}/xml/".format(doxydir),
 }
