@@ -5,7 +5,6 @@ import re
 import os
 import pybind11
 import pyxtensor
-from os import environ
 from setuptools_scm import get_version
 
 version = get_version()
