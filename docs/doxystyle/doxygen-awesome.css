@@ -1,3 +1,32 @@
+/**
+
+Doxygen Awesome
+https://github.com/jothepro/doxygen-awesome-css
+
+MIT License
+
+Copyright (c) 2021 jothepro
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+ */
+
 :root {
     /* primary theme color. This will affect the entire websites color scheme: links, arrows, labels, ... */
     --primary-color: #1982d2;
@@ -26,6 +55,8 @@
 
     /* default box shadow used for raising an element above the normal content. Used in dropdowns, Searchresult, ... */
     --box-shadow: 0 2px 10px 0 rgba(0,0,0,.1);
+
+    --odd-color: rgba(0,0,0,.03);
 
     /* font-families. will affect all text on the website
      * font-family: the normal font for text, headlines, menus
@@ -58,6 +89,9 @@
     --bug-color: rgb(246, 208, 178);
     --bug-color-dark: #a53a00;
     --bug-color-darker: #5b1d00;
+    --invariant-color: #b7f8d0;
+    --invariant-color-dark: #00ba44;
+    --invariant-color-darker: #008622;
 
     /* blockquote colors */
     --blockquote-background: #f5f5f5;
@@ -75,13 +109,14 @@
 
     --menu-focus-foreground: var(--page-background-color);
     --menu-focus-background: var(--primary-color);
+    --menu-selected-background: rgba(0,0,0,.05);
 
 
     --header-background: var(--page-background-color);
     --header-foreground: var(--page-foreground-color);
 
     /* searchbar colors */
-    --searchbar-background: var(--page-background-color);
+    --searchbar-background: var(--side-nav-background);
     --searchbar-foreground: var(--page-foreground-color);
 
     /* searchbar size
@@ -105,6 +140,7 @@
     --fragment-preprocessor: #65cabe;
     --fragment-linenumber-color: #ccc;
     --fragment-linenumber-background: #35393c;
+    --fragment-whitespace: nowrap;
 
     /* sidebar navigation (treeview) colors */
     --side-nav-background: var(--page-background-color);
@@ -116,6 +152,15 @@
 
 }
 
+@media screen and (max-width: 767px) {
+    :root {
+        --page-font-size: 16px;
+        --navigation-font-size: 16px;
+        --code-font-size: 15px; /* affects code, fragment */
+        --title-font-size: 22px;
+    }
+}
+
 @media (prefers-color-scheme: dark) {
     :root {
         --primary-color: #00559f;
@@ -125,6 +170,10 @@
         --primary-lightest-color: #191a1c;
 
         --box-shadow: 0 2px 10px 0 rgba(0,0,0,.35);
+
+        --odd-color: rgba(0,0,0,.1);
+
+        --menu-selected-background: rgba(0,0,0,.4);
 
         --page-background-color: #1C1D1F;
         --page-foreground-color: #d2dbde;
@@ -243,9 +292,14 @@ a, a.el:visited, a.el:hover, a.el:focus, a.el:active {
     margin-right: var(--spacing-small);
 }
 
-.sm-dox {
+.sm-dox, .tabs, .tabs2, .tabs3 {
     background: none;
     padding: 0;
+}
+
+.tabs, .tabs2, .tabs3 {
+    border-bottom: 1px solid var(--separator-color);
+    margin-bottom: -1px;
 }
 
 @media screen and (max-width: 767px) {
@@ -256,7 +310,7 @@ a, a.el:visited, a.el:hover, a.el:focus, a.el:active {
 
 
 @media screen and (min-width: 768px) {
-    .sm-dox li {
+    .sm-dox li, .tablist li {
         display: var(--menu-display);
     }
 
@@ -322,23 +376,39 @@ a, a.el:visited, a.el:hover, a.el:focus, a.el:active {
     border-radius: var(--border-radius-small) !important;
 }
 
-.sm-dox a, .sm-dox a:focus {
+.sm-dox a, .sm-dox a:focus, .tablist li, .tablist li a, .tablist li.current a {
     text-shadow: none;
     background: transparent;
     background-image: none !important;
     color: var(--header-foreground);
     font-weight: normal;
     font-size: var(--navigation-font-size);
-
 }
 
-.sm-dox a:hover, .sm-dox a:active {
+.sm-dox a:focus {
+    outline: auto;
+}
+
+.sm-dox a:hover, .sm-dox a:active, .tablist li a:hover {
     text-shadow: none;
     font-weight: normal;
     background: var(--menu-focus-background);
     color: var(--menu-focus-foreground);
     border-radius: var(--border-radius-small) !important;
     font-size: var(--navigation-font-size);
+}
+
+.tablist li.current {
+    border-radius: var(--border-radius-small);
+    background: var(--menu-selected-background);
+}
+
+.tablist li {
+    margin: var(--spacing-small) 0 var(--spacing-small) var(--spacing-small);
+}
+
+.tablist a {
+    padding: 0 var(--spacing-large);
 }
 
 
@@ -355,6 +425,41 @@ a, a.el:visited, a.el:hover, a.el:focus, a.el:active {
     width: var(--searchbar-width);
     position: relative;
     box-shadow: none;
+    display: block;
+    margin-top: 0;
+}
+
+.left #MSearchSelect {
+    left: 0;
+}
+
+.tabs .left #MSearchSelect {
+    padding-left: 0;
+}
+
+.tabs #MSearchBox {
+    position: absolute;
+    right: var(--spacing-medium);
+}
+
+@media screen and (max-width: 767px) {
+    .tabs #MSearchBox {
+        position: relative;
+        right: 0;
+        margin-left: var(--spacing-medium);
+        margin-top: 0;
+    }
+}
+
+
+
+#MSearchSelectWindow, #MSearchResultsWindow {
+    z-index: 9999;
+}
+
+#MSearchBox.MSearchBoxActive {
+    border-color: var(--primary-color);
+    box-shadow: inset 0 0 0 1px var(--primary-color);
 }
 
 #main-menu > li:last-child {
@@ -370,8 +475,8 @@ a, a.el:visited, a.el:hover, a.el:focus, a.el:active {
 #MSearchField {
     font-size: var(--navigation-font-size);
     height: calc(var(--searchbar-height) - 2px);
-    background: var(--searchbar-background);
-    width: calc(var(--searchbar-width) - 60px);
+    background: transparent;
+    width: calc(var(--searchbar-width) - 64px);
 }
 
 .MSearchBoxActive #MSearchField {
@@ -393,6 +498,10 @@ a, a.el:visited, a.el:hover, a.el:focus, a.el:active {
 
 #MSearchBox span.right {
     padding-top: calc(calc(var(--searchbar-height) / 2) - 12px);
+}
+
+.tabs #MSearchBox span.right {
+    top: calc(calc(var(--searchbar-height) / 2) - 12px);
 }
 
 @keyframes slideInSearchResults {
@@ -449,7 +558,7 @@ iframe#MSearchResults {
     #MSearchBox {
         margin-top: var(--spacing-medium);
         margin-bottom: var(--spacing-medium);
-        width: calc(100vw - 32px);
+        width: calc(100vw - 30px);
     }
 
     #main-menu > li:last-child {
@@ -475,7 +584,7 @@ iframe#MSearchResults {
     #MSearchResultsWindow {
         left: var(--spacing-medium) !important;
         right: var(--spacing-medium);
-        overflow: scroll;
+        overflow: auto;
         transform: translate(0, 20px);
         animation: ease-out 280ms slideInSearchResultsMobile;
     }
@@ -488,7 +597,7 @@ iframe#MSearchResults {
  */
 
 #side-nav {
-    padding: 0 6px 0 0;
+    padding: 0 !important;
     background: var(--side-nav-background);
 }
 
@@ -506,7 +615,6 @@ iframe#MSearchResults {
 
 #nav-tree {
     background: transparent;
-    padding: var(--spacing-medium) 0;
 }
 
 #nav-tree .label {
@@ -534,6 +642,10 @@ iframe#MSearchResults {
     color: var(--side-nav-foreground);
 }
 
+#nav-tree a:focus {
+    outline-style: auto;
+}
+
 .arrow {
     color: var(--primary-light-color);
     font-family: serif;
@@ -545,7 +657,7 @@ iframe#MSearchResults {
     opacity: 0;
 }
 
-#nav-tree div.item:hover .arrow {
+#nav-tree div.item:hover .arrow, #nav-tree a:focus .arrow {
     opacity: 1;
 }
 
@@ -590,6 +702,7 @@ div.header .title {
     font-weight: 600;
     font-size: 210%;
     padding: var(--spacing-medium) var(--spacing-large);
+    word-break: break-word;
 }
 
 div.header .summary {
@@ -616,7 +729,11 @@ span.mlabel {
     border: none;
     padding: 4px 9px;
     border-radius: 12px;
-    margin-right: 10px;
+    margin-right: var(--spacing-medium);
+}
+
+span.mlabel:last-of-type {
+    margin-right: 2px;
 }
 
 div.contents {
@@ -733,6 +850,7 @@ code {
     background: var(--code-background);
     color: var(--code-foreground);
     padding: 2px 6px;
+    word-break: break-word;
 }
 
 div.fragment, pre.fragment {
@@ -740,12 +858,46 @@ div.fragment, pre.fragment {
     padding: 14px 16px;
     background: var(--fragment-background);
     color: var(--fragment-foreground);
+    overflow-x: auto;
 }
 
-code, code a, div.fragment, pre.fragment, div.fragment .line, div.fragment span {
+@media screen and (max-width: 767px) {
+    div.fragment, pre.fragment {
+        border-top-right-radius: 0;
+        border-bottom-right-radius: 0;
+    }
+
+    .contents > div.fragment, .textblock > div.fragment, .textblock > pre.fragment {
+        margin: var(--spacing-medium) calc(0px - var(--spacing-large));
+        border-radius: 0;
+    }
+
+    .textblock li > .fragment {
+        margin: var(--spacing-medium) calc(0px - var(--spacing-large));
+    }
+
+    .memdoc li > .fragment {
+        margin: var(--spacing-medium) calc(0px - var(--spacing-medium));
+    }
+
+    .memdoc > div.fragment, .memdoc > pre.fragment, dl dd > div.fragment, dl dd pre.fragment {
+        margin: var(--spacing-medium) calc(0px - var(--spacing-medium));
+        border-radius: 0;
+    }
+}
+
+code, code a, pre.fragment, div.fragment, div.fragment .line, div.fragment span {
     font-family: var(--font-family-monospace);
     font-size: var(--code-font-size);
     line-height: inherit;
+}
+
+div.fragment, div.fragment .line, div.fragment span {
+    white-space: var(--fragment-whitespace);
+}
+
+div.line:after {
+    content: '';
 }
 
 div.fragment span.keyword {
@@ -793,13 +945,17 @@ div.fragment .line:first-child .lineno {
 dl warning, attention, note, deprecated, bug, ...
  */
 
-dl.warning, dl.attention, dl.note, dl.deprecated, dl.bug {
-    padding: 12px;
+dl.warning, dl.attention, dl.note, dl.deprecated, dl.bug, dl.invariant, dl.pre {
+    padding: var(--spacing-medium);
     margin: var(--spacing-medium) 0;
     color: var(--page-background-color);
-
+    overflow: hidden;
     margin-left: 0;
     border-radius: var(--border-radius-small);
+}
+
+dl.section dd {
+    margin-bottom: 2px;
 }
 
 dl.warning, dl.attention {
@@ -846,6 +1002,12 @@ dl.section dd, dl.bug dd, dl.deprecated dd {
     margin-inline-start: 0px;
 }
 
+dl.invariant, dl.pre {
+    background: var(--invariant-color);
+    border-left: 8px solid var(--invariant-color-dark);
+    color: var(--invariant-color-darker);
+}
+
 /*
 memitem
  */
@@ -876,6 +1038,7 @@ h2.memtitle {
     border-bottom: none;
     border-top-left-radius: var(--border-radius-medium);
     border-top-right-radius: var(--border-radius-medium);
+    word-break: break-all;
 }
 
 a:target + h2.memtitle, a:target + h2.memtitle + div.memitem {
@@ -887,7 +1050,7 @@ a:target + h2.memtitle {
 }
 
 a:target + h2.memtitle + div.memitem {
-    box-shadow: 0 0px 10px 0 var(--primary-lighter-color);
+    box-shadow: 0 0 10px 0 var(--primary-lighter-color);
 }
 
 div.memitem {
@@ -895,6 +1058,7 @@ div.memitem {
     border-bottom-right-radius: var(--border-radius-medium);
     border-bottom-left-radius: var(--border-radius-medium);
     overflow: hidden;
+    display: block !important;
 }
 
 div.memdoc {
@@ -902,8 +1066,11 @@ div.memdoc {
 }
 
 div.memproto {
-    border-radius: 0;
+    border-radius: 0 var(--border-radius-small) 0 0;
+    overflow: auto;
     border-bottom: 1px solid var(--separator-color);
+    padding: var(--spacing-medium);
+    margin-bottom: -1px;
 }
 
 div.memtitle {
@@ -916,16 +1083,23 @@ div.memproto table.memname {
     color: var(--page-foreground-color);
 }
 
-@media screen and (max-width: 767px) {
-    .memname td {
-        display: block;
-    }
-
-    table.mlabels .mlabels-left, table.mlabels .mlabels-right {
-        display: block;
-    }
+table.mlabels, table.mlabels > tbody {
+    display: block;
 }
 
+td.mlabels-left {
+    width: auto;
+}
+
+table.mlabels > tbody > tr:first-child {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+}
+
+.memname, .memitem span.mlabels {
+    margin: 0
+}
 /*
 reflist
  */
@@ -948,6 +1122,7 @@ dl.reflist dt, dl.reflist dd {
 
 
 dl.reflist dt {
+    border-radius: 0;
     background: var(--code-background);
     border-bottom: 1px solid var(--separator-color);
     color: var(--page-foreground-color)
@@ -1007,6 +1182,12 @@ table.fieldtable th {
     box-shadow: 0 0 15px var(--primary-lighter-color);
 }
 
+table.memberdecls {
+    display: block;
+    overflow-x: auto;
+    overflow-y: hidden;
+}
+
 
 /*
 hr
@@ -1033,6 +1214,7 @@ hr {
 div.directory {
     border-top: 1px solid var(--separator-color);
     border-bottom: 1px solid var(--separator-color);
+    width: auto;
 }
 
 table.directory {
@@ -1048,7 +1230,7 @@ table.directory {
 }
 
 .directory tr.even {
-    background-color: rgba(0,0,0,.025);
+    background-color: var(--odd-color);
 }
 
 .icona {
@@ -1073,9 +1255,31 @@ table.directory {
     filter: saturate(0.2);
 }
 
+@media screen and (max-width: 767px) {
+    div.directory {
+        margin-left: calc(0px - var(--spacing-medium));
+        margin-right: calc(0px - var(--spacing-medium));
+    }
+}
+
 @media (prefers-color-scheme: dark) {
     .iconfopen, .iconfclosed {
         filter: hue-rotate(180deg) invert();
+    }
+}
+
+/*
+class list
+ */
+
+.classindex dl.odd {
+    background: var(--odd-color);
+    border-radius: var(--border-radius-small);
+}
+
+@media screen and (max-width: 767px) {
+    .classindex {
+        margin: 0 calc(0px - var(--spacing-small));
     }
 }
 
@@ -1086,6 +1290,7 @@ table.directory {
 
 #nav-path {
     margin-bottom: -1px;
+    width: 100%;
 }
 
 #nav-path ul {
