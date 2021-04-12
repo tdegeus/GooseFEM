@@ -12,9 +12,7 @@ jobs:
   standard:
 
     strategy:
-
       fail-fast: false
-
       matrix:
         runs-on: [ubuntu-latest, macos-latest, windows-latest]
         include:
@@ -58,23 +56,28 @@ jobs:
         channels: conda-forge,defaults
         channel-priority: true
         environment-file: ${{ matrix.conda }}
-        activate-environment: test
+        activate-environment: myenv
         auto-activate-base: false
+
+    - name: Set dummy version
+      run: echo "SETUPTOOLS_SCM_PRETEND_VERSION=ci" >> $GITHUB_ENV
 
     - name: Configure using CMake (!Windows)
       if: runner.os != 'Windows'
-      run: cmake . ${{ matrix.config }}
+      run: cmake -Bbuild ${{ matrix.config }}
 
     - name: Configure using CMake (Windows)
       if: runner.os == 'Windows'
       run: |
         conda install -c conda-forge clang_win-64 ninja
-        cmake . -G Ninja ${{ matrix.config }} -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++
+        cmake -Bbuild -G Ninja ${{ matrix.config }} -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++
 
     - name: Build C++ ${{ matrix.prop }}
+      working-directory: build
       run: cmake --build .
 
     - name: Run C++ ${{ matrix.prop }}
+      working-directory: build
       run: ctest --output-on-failure
 
     - name: Build and install Python module
@@ -82,10 +85,11 @@ jobs:
         python setup.py build
         python setup.py install
 
-    - name: Python tests
+    - name: Run Python tests
+      working-directory: test/basic-python
       run: |
-        python test/basic-python/version.py
-        python test/basic-python/MeshQuad4.py
+        python version.py
+        python MeshQuad4.py
 
   py:
 
@@ -126,7 +130,8 @@ jobs:
         python setup.py build
         python setup.py install
 
-    - name: Python tests
+    - name: Run Python tests
+      working-directory: test/basic-python
       run: |
-        python test/basic-python/version.py
-        python test/basic-python/MeshQuad4.py
+        python version.py
+        python MeshQuad4.py
