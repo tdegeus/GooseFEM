@@ -97,14 +97,30 @@ void init_Mesh(py::module& m)
              "See :cpp:func:`GooseFEM::Mesh::ManualStitch::dofs`.")
 
         .def("nodemap",
-             &GooseFEM::Mesh::ManualStitch::nodemap,
-             "Map to new node-numbers."
+             py::overload_cast<>(
+                &GooseFEM::Mesh::ManualStitch::nodemap, py::const_),
+             "Node-map for givall sub-meshes."
              "See :cpp:func:`GooseFEM::Mesh::ManualStitch::nodemap`.")
 
         .def("elemmap",
-             &GooseFEM::Mesh::ManualStitch::elemmap,
-             "Map to new element-numbers."
+             py::overload_cast<>(
+                &GooseFEM::Mesh::ManualStitch::elemmap, py::const_),
+             "Element-map for all sub-meshes."
              "See :cpp:func:`GooseFEM::Mesh::ManualStitch::elemmap`.")
+
+        .def("nodemap",
+             py::overload_cast<size_t>(
+                &GooseFEM::Mesh::ManualStitch::nodemap, py::const_),
+             "Node-map for given sub-mesh."
+             "See :cpp:func:`GooseFEM::Mesh::ManualStitch::nodemap`.",
+             py::arg("mesh_index"))
+
+        .def("elemmap",
+             py::overload_cast<size_t>(
+                &GooseFEM::Mesh::ManualStitch::elemmap, py::const_),
+             "Element-map for given sub-mesh."
+             "See :cpp:func:`GooseFEM::Mesh::ManualStitch::elemmap`.",
+             py::arg("mesh_index"))
 
         .def("nodeset",
              &GooseFEM::Mesh::ManualStitch::nodeset,
@@ -179,14 +195,28 @@ void init_Mesh(py::module& m)
              "See :cpp:func:`GooseFEM::Mesh::Stitch::dofs`.")
 
         .def("nodemap",
-             &GooseFEM::Mesh::Stitch::nodemap,
-             "Node-map for given mesh."
+             py::overload_cast<>(
+                &GooseFEM::Mesh::Stitch::nodemap, py::const_),
+             "Node-map for givall sub-meshes."
+             "See :cpp:func:`GooseFEM::Mesh::Stitch::nodemap`.")
+
+        .def("elemmap",
+             py::overload_cast<>(
+                &GooseFEM::Mesh::Stitch::elemmap, py::const_),
+             "Element-map for all sub-meshes."
+             "See :cpp:func:`GooseFEM::Mesh::Stitch::elemmap`.")
+
+        .def("nodemap",
+             py::overload_cast<size_t>(
+                &GooseFEM::Mesh::Stitch::nodemap, py::const_),
+             "Node-map for given sub-mesh."
              "See :cpp:func:`GooseFEM::Mesh::Stitch::nodemap`.",
              py::arg("mesh_index"))
 
         .def("elemmap",
-             &GooseFEM::Mesh::Stitch::elemmap,
-             "Element-map for given mesh."
+             py::overload_cast<size_t>(
+                &GooseFEM::Mesh::Stitch::elemmap, py::const_),
+             "Element-map for given sub-mesh."
              "See :cpp:func:`GooseFEM::Mesh::Stitch::elemmap`.",
              py::arg("mesh_index"))
 
