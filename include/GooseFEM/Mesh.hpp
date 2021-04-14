@@ -181,7 +181,7 @@ inline std::vector<xt::xtensor<size_t, 1>> ManualStitch::nodemap() const
 {
     std::vector<xt::xtensor<size_t, 1>> ret(this->nmesh());
     for (size_t i = 0; i < this->nmesh(); ++i) {
-        ret.push_back(this->nodemap(i));
+        ret[i] = this->nodemap(i);
     }
     return ret;
 }
@@ -190,7 +190,7 @@ inline std::vector<xt::xtensor<size_t, 1>> ManualStitch::elemmap() const
 {
     std::vector<xt::xtensor<size_t, 1>> ret(this->nmesh());
     for (size_t i = 0; i < this->nmesh(); ++i) {
-        ret.push_back(this->elemmap(i));
+        ret[i] = this->elemmap(i);
     }
     return ret;
 }
@@ -325,7 +325,7 @@ inline std::vector<xt::xtensor<size_t, 1>> Stitch::nodemap() const
 {
     std::vector<xt::xtensor<size_t, 1>> ret(this->nmesh());
     for (size_t i = 0; i < this->nmesh(); ++i) {
-        ret.push_back(this->nodemap(i));
+        ret[i] = this->nodemap(i);
     }
     return ret;
 }
@@ -334,7 +334,7 @@ inline std::vector<xt::xtensor<size_t, 1>> Stitch::elemmap() const
 {
     std::vector<xt::xtensor<size_t, 1>> ret(this->nmesh());
     for (size_t i = 0; i < this->nmesh(); ++i) {
-        ret.push_back(this->elemmap(i));
+        ret[i] = this->elemmap(i);
     }
     return ret;
 }
