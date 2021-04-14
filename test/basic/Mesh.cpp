@@ -45,6 +45,8 @@ TEST_CASE("GooseFEM::Mesh", "Mesh.h")
         REQUIRE(xt::allclose(stitch.coor(), res.coor()));
         REQUIRE(xt::all(xt::equal(stitch.conn(), res.conn())));
 
+        REQUIRE(stitch.nodemap().size() == 2);
+        REQUIRE(stitch.elemmap().size() == 2);
         REQUIRE(xt::all(xt::equal(stitch.nodemap(0), xt::arange<size_t>(6 * 6))));
         REQUIRE(xt::all(xt::equal(stitch.nodemap(1), xt::arange<size_t>(6 * 6) + 5 * 6)));
         REQUIRE(xt::all(xt::equal(stitch.elemmap(0), xt::arange<size_t>(5 * 5))));
@@ -82,6 +84,8 @@ TEST_CASE("GooseFEM::Mesh", "Mesh.h")
         REQUIRE(xt::allclose(stitch.coor(), res.coor()));
         REQUIRE(xt::all(xt::equal(stitch.conn(), res.conn())));
 
+        REQUIRE(stitch.nodemap().size() == 2);
+        REQUIRE(stitch.elemmap().size() == 2);
         REQUIRE(xt::all(xt::equal(stitch.nodemap(0), xt::arange<size_t>(6 * 6))));
         REQUIRE(xt::all(xt::equal(stitch.nodemap(1), xt::arange<size_t>(6 * 6) + 5 * 6)));
         REQUIRE(xt::all(xt::equal(stitch.elemmap(0), xt::arange<size_t>(5 * 5))));

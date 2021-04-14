@@ -139,6 +139,16 @@ public:
     xt::xtensor<size_t, 2> dofs() const;
 
     /**
+    \return Node-map per sub-mesh.
+    */
+    std::vector<xt::xtensor<size_t, 1>> nodemap() const;
+
+    /**
+    \return Element-map per sub-mesh.
+    */
+    std::vector<xt::xtensor<size_t, 1>> elemmap() const;
+
+    /**
     \param mesh_index Index of the mesh ("a" = 1, "b" = 1).
     \return Node-map for a given mesh.
     */
@@ -251,6 +261,16 @@ public:
     \return [#nnode, #ndim].
     */
     xt::xtensor<size_t, 2> dofs() const;
+
+    /**
+    \return Node-map per sub-mesh.
+    */
+    std::vector<xt::xtensor<size_t, 1>> nodemap() const;
+
+    /**
+    \return Element-map per sub-mesh.
+    */
+    std::vector<xt::xtensor<size_t, 1>> elemmap() const;
 
     /**
     The node numbers in the stitched mesh that are coming from a specific sub-mesh.
