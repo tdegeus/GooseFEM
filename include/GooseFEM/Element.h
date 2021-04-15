@@ -354,11 +354,15 @@ public:
 
     /**
     Constructor with custom integration.
-    During construction the values of the shape functions and the shape function gradients
-    (in local and global) coordinates are computed. They can be reused without any cost.
-    They only have to be recomputed when the nodal position changes.
-    In that case use update_x() to update the nodal positions and to recompute the
-    shape functions and their gradients.
+    The following is pre-computed during construction:
+    -   the shape functions,
+    -   the shape function gradients (in local and global) coordinates,
+    -   the integration points volumes.
+    They can be reused without any cost.
+    They only have to be recomputed when the nodal position changes
+    (note that they are assumed to be constant under a small-strain assumption).
+    In that case use update_x() to update the nodal positions and
+    to recompute the above listed quantities.
 
     \param x nodal coordinates (``elemvec``).
     \param xi Integration point coordinates (local coordinates) [#nip].
@@ -375,9 +379,11 @@ public:
 
     /**
     Update the nodal positions.
-    This recomputes the values of the shape functions and the shape function gradients
-    (in local and global) coordinates.
-    Under the small deformations assumption this should not be called.
+    This recomputes:
+    -   the shape functions,
+    -   the shape function gradients (in local and global) coordinates,
+    -   the integration points volumes.
+    Under the small deformations assumption this function should not be called.
 
     \param x nodal coordinates (``elemvec``). Shape should match the earlier definition.
     */
@@ -385,8 +391,6 @@ public:
 
     /**
     Get the shape function gradients (in global coordinates).
-    Note that the functions and their gradients are precomputed upon construction,
-    or updated when calling update_x().
 
     \return ``gradN`` stored per element, per integration point [#nelem, #nip, #nne, #ndim].
     */
@@ -394,8 +398,6 @@ public:
 
     /**
     Get the integration volume.
-    Note that the functions and their gradients are precomputed upon construction,
-    or updated when calling update_x().
 
     \return volume stored per element, per integration point [#nelem, #nip].
     */

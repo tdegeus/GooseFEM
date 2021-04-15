@@ -102,9 +102,15 @@ public:
 
     /**
     Constructor: use default Gauss integration.
-    During construction the values of the shape functions and the shape function gradients
-    (in local and global) coordinates are computed. They can be reused without any cost.
-    They only have to be recomputed when the nodal position changes, taken care of in update_x().
+    The following is pre-computed during construction:
+    -   the shape functions,
+    -   the shape function gradients (in local and global) coordinates,
+    -   the integration points volumes.
+    They can be reused without any cost.
+    They only have to be recomputed when the nodal position changes
+    (note that they are assumed to be constant under a small-strain assumption).
+    In that case use update_x() to update the nodal positions and
+    to recompute the above listed quantities.
 
     \param x nodal coordinates (``elemvec``).
     */
@@ -112,9 +118,15 @@ public:
 
     /**
     Constructor with custom integration.
-    During construction the values of the shape functions and the shape function gradients
-    (in local and global) coordinates are computed. They can be reused without any cost.
-    They only have to be recomputed when the nodal position changes, taken care of in update_x().
+    The following is pre-computed during construction:
+    -   the shape functions,
+    -   the shape function gradients (in local and global) coordinates,
+    -   the integration points volumes.
+    They can be reused without any cost.
+    They only have to be recomputed when the nodal position changes
+    (note that they are assumed to be constant under a small-strain assumption).
+    In that case use update_x() to update the nodal positions and
+    to recompute the above listed quantities.
 
     \param x nodal coordinates (``elemvec``).
     \param xi Integration point coordinates (local coordinates) [nip()].
