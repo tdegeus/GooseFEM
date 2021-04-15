@@ -487,16 +487,16 @@ inline void QuadratureBaseCartesian<ne, nd, td>::update_x(const xt::xtensor<doub
 }
 
 template <size_t ne, size_t nd, size_t td>
-inline xt::xtensor<double, 3> QuadratureBaseCartesian<ne, nd, td>::Interp_N_vector(
+inline xt::xtensor<double, 3> QuadratureBaseCartesian<ne, nd, td>::InterpQuad_vector(
     const xt::xtensor<double, 3>& elemvec) const
 {
     xt::xtensor<double, 3> qvector = xt::empty<double>({m_nelem, m_nip, m_ndim});
-    this->interp_N_vector(elemvec, qvector);
+    this->interpQuad_vector(elemvec, qvector);
     return qvector;
 }
 
 template <size_t ne, size_t nd, size_t td>
-inline void QuadratureBaseCartesian<ne, nd, td>::interp_N_vector(
+inline void QuadratureBaseCartesian<ne, nd, td>::interpQuad_vector(
     const xt::xtensor<double, 3>& elemvec, xt::xtensor<double, 3>& qvector) const
 {
     GOOSEFEM_ASSERT(xt::has_shape(elemvec, this->shape_elemvec()));
@@ -521,6 +521,24 @@ inline void QuadratureBaseCartesian<ne, nd, td>::interp_N_vector(
             }
         }
     }
+}
+
+template <size_t ne, size_t nd, size_t td>
+inline xt::xtensor<double, 3> QuadratureBaseCartesian<ne, nd, td>::Interp_N_vector(
+    const xt::xtensor<double, 3>& elemvec) const
+{
+    GOOSEFEM_WARNING("Deprecation warning: Interp_N_vector -> InterpQuad_vector");
+    GOOSEFEM_WARNING_PYTHON("Deprecation warning: Interp_N_vector -> InterpQuad_vector")
+    return this->InterpQuad_vector(elemvec);
+}
+
+template <size_t ne, size_t nd, size_t td>
+inline void QuadratureBaseCartesian<ne, nd, td>::interp_N_vector(
+    const xt::xtensor<double, 3>& elemvec, xt::xtensor<double, 3>& qvector) const
+{
+    GOOSEFEM_WARNING("Deprecation warning: interp_N_vector -> interpQuad_vector");
+    GOOSEFEM_WARNING_PYTHON("Deprecation warning: interp_N_vector -> interpQuad_vector")
+    this->interpQuad_vector(elemvec, qvector);
 }
 
 template <size_t ne, size_t nd, size_t td>

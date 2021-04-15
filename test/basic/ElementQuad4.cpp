@@ -26,7 +26,7 @@ TEST_CASE("GooseFEM::ElementQuad4", "ElementQuad4.h")
         REQUIRE(xt::allclose(dV, 0.5 * 0.5));
     }
 
-    SECTION("interp_N_vector")
+    SECTION("InterpQuad_vector")
     {
         GooseFEM::Mesh::Quad4::Regular mesh(3, 3);
         GooseFEM::Vector vector(mesh.conn(), mesh.dofsPeriodic());
@@ -34,7 +34,7 @@ TEST_CASE("GooseFEM::ElementQuad4", "ElementQuad4.h")
 
         auto u = vector.allocate_nodevec(1.0);
         auto ue = vector.AsElement(u);
-        auto uq = quad.Interp_N_vector(ue);
+        auto uq = quad.InterpQuad_vector(ue);
 
         REQUIRE(xt::allclose(uq, 1.0));
     }
