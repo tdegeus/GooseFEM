@@ -404,22 +404,35 @@ public:
     xt::xtensor<double, 2> dV() const;
 
     /**
-    Interpolate element vector.
-    Note that the functions and their gradients are precomputed upon construction,
-    or updated when calling update_x().
-
-    \param elemvec nodal vector stored per element (shape: [#nelem, #nne, #ndim]).
-    \return integration point vector (shape: [#nelem, #nip, #ndim]).
+    \cond
     */
+    [[ deprecated ]]
     xt::xtensor<double, 3> Interp_N_vector(const xt::xtensor<double, 3>& elemvec) const;
 
-    /**
-    Same as Interp_N_vector(), but writing to preallocated return.
-
-    \param elemvec nodal vector stored per element (shape: [#nelem, #nne, #ndim]).
-    \param qvector integration point vector, overwritten (shape: [#nelem, #nip, #ndim]).
-    */
+    [[ deprecated ]]
     virtual void interp_N_vector(
+        const xt::xtensor<double, 3>& elemvec, xt::xtensor<double, 3>& qvector) const;
+    /**
+    \endcond
+    */
+
+    /**
+    Interpolate element vector and evaluate at quadrature points.
+
+    \f$ \vec{u}(\vec{x}_q) = N_i^e(\vec{x}) \vec{u}_i^e
+
+    \param elemvec nodal vector stored per element [#nelem, #nne, #ndim].
+    \return qvector [#nelem, #nip, #ndim].
+    */
+    xt::xtensor<double, 3> InterpQuad_vector(const xt::xtensor<double, 3>& elemvec) const;
+
+    /**
+    Same as InterpQuad_vector(), but writing to preallocated return.
+
+    \param elemvec nodal vector stored per element [#nelem, #nne, #ndim].
+    \param qvector [#nelem, #nip, #ndim].
+    */
+    virtual void interpQuad_vector(
         const xt::xtensor<double, 3>& elemvec, xt::xtensor<double, 3>& qvector) const;
 
     /**

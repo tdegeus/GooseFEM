@@ -37,6 +37,11 @@ void init_ElementQuad4(py::module& m)
             "See :cpp:class:`GooseFEM::Quad4::Quadrature::Interp_N_vector`.",
             py::arg("elemvec"))
 
+        .def("InterpQuad_vector",
+            &GooseFEM::Element::Quad4::Quadrature::InterpQuad_vector,
+            "See :cpp:class:`GooseFEM::Quad4::Quadrature::Interp_N_vector`.",
+            py::arg("elemvec"))
+
         .def("GradN_vector",
             py::overload_cast<const xt::xtensor<double, 3>&>(
                 &GooseFEM::Element::Quad4::Quadrature::GradN_vector, py::const_),
