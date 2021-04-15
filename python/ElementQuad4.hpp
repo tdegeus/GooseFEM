@@ -60,6 +60,11 @@ void init_ElementQuad4(py::module& m)
             "Dyadic product, returns 'qtensor'",
             py::arg("elemvec"))
 
+        .def("Int_N_vector_dV",
+            &GooseFEM::Element::Quad4::Quadrature::Int_N_vector_dV,
+            "See :cpp:class:`GooseFEM::Quad4::Quadrature::Int_N_vector_dV`.",
+            py::arg("qvector"))
+
         .def("Int_N_scalar_NT_dV",
             py::overload_cast<const xt::xtensor<double, 2>&>(
                 &GooseFEM::Element::Quad4::Quadrature::Int_N_scalar_NT_dV, py::const_),

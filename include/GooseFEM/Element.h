@@ -510,6 +510,29 @@ public:
         const xt::xtensor<double, 3>& elemvec, xt::xtensor<double, 4>& qtensor) const;
 
     /**
+    Element-by-element: integral of a continuous vector-field.
+
+    \f$ \vec{f}_i^e = \int N_i^e(\vec{x}) \vec{f}(\vec{x}) d\Omega_e \f$
+
+    integrated by
+
+    \f$ \vec{f}_i^e = \sum\limits_q N_i^e(\vec{x}_q) \vec{f}(\vec{x}_q) \f$
+
+    \param qvector [#nelem, #nip. #ndim]
+    \return elemvec [#nelem, #nne. #ndim]
+    */
+    xt::xtensor<double, 3> Int_N_vector_dV(const xt::xtensor<double, 3>& qvector) const;
+
+    /**
+    Same as Int_N_vector_dV(), but writing to preallocated return.
+
+    \param qvector [#nelem, #nip. #ndim]
+    \return elemvec overwritten [#nelem, #nne. #ndim]
+    */
+    void int_N_vector_dV(
+        const xt::xtensor<double, 3>& qvector, xt::xtensor<double, 3>& elemvec) const;
+
+    /**
     Element-by-element: integral of the scalar product of the shape function with a scalar.
     Within one one element::
 
