@@ -153,6 +153,23 @@ TEST_CASE("GooseFEM::ElementQuad4", "ElementQuad4.h")
         REQUIRE(xt::allclose(epsbar, EPS));
     }
 
+    SECTION("Int_N_vector_dV")
+    {
+        GooseFEM::Mesh::Quad4::Regular mesh(3, 3);
+        GooseFEM::Vector vector(mesh.conn(), mesh.dofsPeriodic());
+        GooseFEM::Element::Quad4::Quadrature quad(vector.AsElement(mesh.coor()));
+
+        xt::xtensor<double, 3> qvector = xt::empty<double>({mesh.nelem(), quad.nip(), mesh.ndim()});
+        xt::view(qvector, xt::all(), xt::all(), 0) = 2.0;
+        xt::view(qvector, xt::all(), xt::all(), 1) = 5.0;
+
+        auto elemvec = quad.Int_N_vector_dV(qvector);
+        auto nodevec = vector.AssembleNode(elemvec);
+
+        REQUIRE(xt::allclose(xt::view(nodevec, xt::all(), 0), 2.0));
+        REQUIRE(xt::allclose(xt::view(nodevec, xt::all(), 1), 5.0));
+    }
+
     SECTION("Int_N_scalar_NT_dV")
     {
         GooseFEM::Mesh::Quad4::Regular mesh(3, 3);

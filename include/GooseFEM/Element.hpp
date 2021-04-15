@@ -660,6 +660,46 @@ inline void QuadratureBaseCartesian<ne, nd, td>::symGradN_vector(
 }
 
 template <size_t ne, size_t nd, size_t td>
+inline xt::xtensor<double, 3> QuadratureBaseCartesian<ne, nd, td>::Int_N_vector_dV(
+    const xt::xtensor<double, 3>& qvector) const
+{
+    size_t n = qvector.shape(2);
+    xt::xtensor<double, 3> elemvec = xt::empty<double>({m_nelem, m_nne, n});
+    this->int_N_vector_dV(qvector, elemvec);
+    return elemvec;
+}
+
+template <size_t ne, size_t nd, size_t td>
+inline void QuadratureBaseCartesian<ne, nd, td>::int_N_vector_dV(
+    const xt::xtensor<double, 3>& qvector, xt::xtensor<double, 3>& elemvec) const
+{
+    size_t n = qvector.shape(2);
+    GOOSEFEM_ASSERT(xt::has_shape(qvector, {m_nelem, m_nip, n}));
+    GOOSEFEM_ASSERT(xt::has_shape(elemvec, {m_nelem, m_nne, n}));
+
+    elemvec.fill(0.0);
+
+    #pragma omp parallel for
+    for (size_t e = 0; e < m_nelem; ++e) {
+
+        auto f = &elemvec(e, 0, 0);
+
+        for (size_t q = 0; q < m_nip; ++q) {
+
+            auto N = &m_N(q, 0);
+            auto t = &qvector(e, q, 0);
+            auto& vol = m_vol(e, q);
+
+            for (size_t m = 0; m < m_nne; ++m) {
+                for (size_t i = 0; i < n; ++i) {
+                    f[m * n + i] += N[m] * t[i] * vol;
+                }
+            }
+        }
+    }
+}
+
+template <size_t ne, size_t nd, size_t td>
 inline xt::xtensor<double, 3> QuadratureBaseCartesian<ne, nd, td>::Int_N_scalar_NT_dV(
     const xt::xtensor<double, 2>& qscalar) const
 {
