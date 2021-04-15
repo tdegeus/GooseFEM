@@ -10,13 +10,17 @@ Generate simple meshes of 4-noded quadrilateral elements in 2d (GooseFEM::Mesh::
 #define GOOSEFEM_MESHQUAD4_H
 
 #include "config.h"
+#include "Mesh.h"
 
 namespace GooseFEM {
 namespace Mesh {
+
+/**
+Simple meshes of quadrilateral elements of type ElementType::Quad4.
+*/
 namespace Quad4 {
 
 // pre-allocation
-
 namespace Map {
     class FineLayer2Regular;
 }
@@ -24,7 +28,7 @@ namespace Map {
 /**
 Regular mesh: equi-sized elements.
 */
-class Regular {
+class Regular : public RegularBase2d {
 public:
 
     Regular() = default;
@@ -38,165 +42,28 @@ public:
     */
     Regular(size_t nelx, size_t nely, double h = 1.0);
 
-    /**
-    Number of elements.
-
-    \return unsigned int.
-    */
-    size_t nelem() const;
-
-    /**
-    Number of nodes.
-
-    \return unsigned int.
-    */
-    size_t nnode() const;
-
-    /**
-    Number of nodes-per-element.
-
-    \return unsigned int.
-    */
-    size_t nne() const;
+    ElementType getElementType() const override;
+    xt::xtensor<double, 2> coor() const override;
+    xt::xtensor<size_t, 2> conn() const override;
+    xt::xtensor<size_t, 1> nodesBottomEdge() const override;
+    xt::xtensor<size_t, 1> nodesTopEdge() const override;
+    xt::xtensor<size_t, 1> nodesLeftEdge() const override;
+    xt::xtensor<size_t, 1> nodesRightEdge() const override;
+    xt::xtensor<size_t, 1> nodesBottomOpenEdge() const override;
+    xt::xtensor<size_t, 1> nodesTopOpenEdge() const override;
+    xt::xtensor<size_t, 1> nodesLeftOpenEdge() const override;
+    xt::xtensor<size_t, 1> nodesRightOpenEdge() const override;
+    size_t nodesBottomLeftCorner() const override;
+    size_t nodesBottomRightCorner() const override;
+    size_t nodesTopLeftCorner() const override;
+    size_t nodesTopRightCorner() const override;
 
     /**
-    Number of dimensions.
+    Element numbers as 'matrix'.
 
-    \return unsigned int.
+    \return [#nely, #nelx].
     */
-    size_t ndim() const;
-
-    /**
-    Number of elements in x-direction == width of the mesh in units of #h.
-
-    \return unsigned int.
-    */
-    size_t nelx() const;
-
-    /**
-    Number of elements in y-direction == height of the mesh, in units of #h,
-
-    \return unsigned int.
-    */
-    size_t nely() const;
-
-    /**
-    Edge size of one element.
-
-    \return double.
-    */
-    double h() const;
-
-    /**
-    Element type.
-
-    \return GooseFEM::Mesh::ElementType().
-    */
-    ElementType getElementType() const;
-
-    /**
-    Nodal coordinates.
-
-    \return [#nnode, #ndim].
-    */
-    xt::xtensor<double, 2> coor() const;
-
-    /**
-    Connectivity.
-
-    \return [#nelem, #nne].
-    */
-    xt::xtensor<size_t, 2> conn() const;
-
-    /**
-    Nodes along the bottom edge (y = 0).
-
-    \return List of node numbers.
-    */
-    xt::xtensor<size_t, 1> nodesBottomEdge() const;
-
-    /**
-    Nodes along the top edge (y = #nely * #h).
-
-    \return List of node numbers.
-    */
-    xt::xtensor<size_t, 1> nodesTopEdge() const;
-
-    /**
-    Nodes along the left edge (x = 0).
-
-    \return List of node numbers.
-    */
-    xt::xtensor<size_t, 1> nodesLeftEdge() const;
-
-    /**
-    Nodes along the right edge (x = #nelx * #h).
-
-    \return List of node numbers.
-    */
-    xt::xtensor<size_t, 1> nodesRightEdge() const;
-
-    /**
-    Nodes along the bottom edge (y = 0), with the corners (at x = 0 and x = #nelx * #h).
-
-    \return List of node numbers.
-    */
-    xt::xtensor<size_t, 1> nodesBottomOpenEdge() const;
-
-    /**
-    Nodes along the top edge (y = #nely * #h), with the corners (at x = 0 and x = #nelx * #h).
-
-    \return List of node numbers.
-    */
-    xt::xtensor<size_t, 1> nodesTopOpenEdge() const;
-
-    /**
-    Nodes along the left edge (x = 0), with the corners (at y = 0 and y = #nely * #h).
-
-    \return List of node numbers.
-    */
-    xt::xtensor<size_t, 1> nodesLeftOpenEdge() const;
-
-    /**
-    Nodes along the right edge (x = #nelx * #h), with the corners (at y = 0 and y = #nely * #h).
-
-    \return List of node numbers.
-    */
-    xt::xtensor<size_t, 1> nodesRightOpenEdge() const;
-
-    // boundary nodes: corners (including aliases)
-    size_t nodesBottomLeftCorner() const;
-    size_t nodesBottomRightCorner() const;
-    size_t nodesTopLeftCorner() const;
-    size_t nodesTopRightCorner() const;
-    size_t nodesLeftBottomCorner() const;
-    size_t nodesLeftTopCorner() const;
-    size_t nodesRightBottomCorner() const;
-    size_t nodesRightTopCorner() const;
-
-    // DOF-numbers for each component of each node (sequential)
-    xt::xtensor<size_t, 2> dofs() const;
-
-    // DOF-numbers for the case that the periodicity if fully eliminated
-    xt::xtensor<size_t, 2> dofsPeriodic() const;
-
-    // periodic node pairs [:,2]: (independent, dependent)
-    xt::xtensor<size_t, 2> nodesPeriodic() const;
-
-    // front-bottom-left node, used as reference for periodicity
-    size_t nodesOrigin() const;
-
-    // element numbers as matrix
     xt::xtensor<size_t, 2> elementgrid() const;
-
-private:
-    double m_h;                     // elementary element edge-size (in all directions)
-    size_t m_nelx;                  // number of elements in x-direction (length == "m_nelx * m_h")
-    size_t m_nely;                  // number of elements in y-direction (length == "m_nely * m_h")
-    size_t m_nelem;                 // number of elements
-    size_t m_nnode;                 // number of nodes
-    static const size_t m_nne = 4;  // number of nodes-per-element
-    static const size_t m_ndim = 2; // number of dimensions
 };
 
 // Mesh with fine middle layer, and coarser elements towards the top and bottom

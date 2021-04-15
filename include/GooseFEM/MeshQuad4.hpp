@@ -15,48 +15,19 @@ namespace GooseFEM {
 namespace Mesh {
 namespace Quad4 {
 
-inline Regular::Regular(size_t nelx, size_t nely, double h) : m_h(h), m_nelx(nelx), m_nely(nely)
+inline Regular::Regular(size_t nelx, size_t nely, double h)
 {
-    GOOSEFEM_ASSERT(m_nelx >= 1ul);
-    GOOSEFEM_ASSERT(m_nely >= 1ul);
+    m_h = h;
+    m_nelx = nelx;
+    m_nely = nely;
+    m_ndim = 2;
+    m_nne = 4;
+
+    GOOSEFEM_ASSERT(m_nelx >= 1);
+    GOOSEFEM_ASSERT(m_nely >= 1);
 
     m_nnode = (m_nelx + 1) * (m_nely + 1);
     m_nelem = m_nelx * m_nely;
-}
-
-inline size_t Regular::nelem() const
-{
-    return m_nelem;
-}
-
-inline size_t Regular::nnode() const
-{
-    return m_nnode;
-}
-
-inline size_t Regular::nne() const
-{
-    return m_nne;
-}
-
-inline size_t Regular::ndim() const
-{
-    return m_ndim;
-}
-
-inline size_t Regular::nelx() const
-{
-    return m_nelx;
-}
-
-inline size_t Regular::nely() const
-{
-    return m_nely;
-}
-
-inline double Regular::h() const
-{
-    return m_h;
 }
 
 inline ElementType Regular::getElementType() const
@@ -163,81 +134,6 @@ inline size_t Regular::nodesTopLeftCorner() const
 inline size_t Regular::nodesTopRightCorner() const
 {
     return m_nely * (m_nelx + 1) + m_nelx;
-}
-
-inline size_t Regular::nodesLeftBottomCorner() const
-{
-    return nodesBottomLeftCorner();
-}
-
-inline size_t Regular::nodesLeftTopCorner() const
-{
-    return nodesTopLeftCorner();
-}
-
-inline size_t Regular::nodesRightBottomCorner() const
-{
-    return nodesBottomRightCorner();
-}
-
-inline size_t Regular::nodesRightTopCorner() const
-{
-    return nodesTopRightCorner();
-}
-
-inline xt::xtensor<size_t, 2> Regular::nodesPeriodic() const
-{
-    xt::xtensor<size_t, 1> bot = nodesBottomOpenEdge();
-    xt::xtensor<size_t, 1> top = nodesTopOpenEdge();
-    xt::xtensor<size_t, 1> lft = nodesLeftOpenEdge();
-    xt::xtensor<size_t, 1> rgt = nodesRightOpenEdge();
-    std::array<size_t, 2> shape = {bot.size() + lft.size() + 3ul, 2ul};
-    xt::xtensor<size_t, 2> ret = xt::empty<size_t>(shape);
-
-    ret(0, 0) = nodesBottomLeftCorner();
-    ret(0, 1) = nodesBottomRightCorner();
-
-    ret(1, 0) = nodesBottomLeftCorner();
-    ret(1, 1) = nodesTopRightCorner();
-
-    ret(2, 0) = nodesBottomLeftCorner();
-    ret(2, 1) = nodesTopLeftCorner();
-
-    size_t i = 3;
-
-    xt::view(ret, xt::range(i, i + bot.size()), 0) = bot;
-    xt::view(ret, xt::range(i, i + bot.size()), 1) = top;
-
-    i += bot.size();
-
-    xt::view(ret, xt::range(i, i + lft.size()), 0) = lft;
-    xt::view(ret, xt::range(i, i + lft.size()), 1) = rgt;
-
-    return ret;
-}
-
-inline size_t Regular::nodesOrigin() const
-{
-    return nodesBottomLeftCorner();
-}
-
-inline xt::xtensor<size_t, 2> Regular::dofs() const
-{
-    return GooseFEM::Mesh::dofs(m_nnode, m_ndim);
-}
-
-inline xt::xtensor<size_t, 2> Regular::dofsPeriodic() const
-{
-    xt::xtensor<size_t, 2> ret = GooseFEM::Mesh::dofs(m_nnode, m_ndim);
-    xt::xtensor<size_t, 2> nodePer = nodesPeriodic();
-    xt::xtensor<size_t, 1> independent = xt::view(nodePer, xt::all(), 0);
-    xt::xtensor<size_t, 1> dependent = xt::view(nodePer, xt::all(), 1);
-
-    for (size_t j = 0; j < m_ndim; ++j) {
-        xt::view(ret, xt::keep(dependent), j) = xt::view(ret, xt::keep(independent), j);
-    }
-
-    return GooseFEM::Mesh::renumber(ret);
 }
 
 inline xt::xtensor<size_t, 2> Regular::elementgrid() const

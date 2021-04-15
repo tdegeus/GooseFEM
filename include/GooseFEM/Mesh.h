@@ -14,11 +14,11 @@ Generic mesh operations.
 namespace GooseFEM {
 namespace Mesh {
 
-
 /**
 Enumerator for element-types
 */
 enum class ElementType {
+    Unknown, ///< Unknown element-type
     Quad4, ///< Quadrilateral: 4-noded element in 2-d
     Hex8, ///< Hexahedron: 8-noded element in 3-d
     Tri3 ///< Triangle: 3-noded element in 2-d
@@ -34,6 +34,220 @@ Extract the element type based on the connectivity.
 inline ElementType defaultElementType(
     const xt::xtensor<double, 2>& coor,
     const xt::xtensor<size_t, 2>& conn);
+
+/**
+Base-class for regular meshes in 2-d.
+This class does not have a specific element-type in mind, it is used mostly internally
+to derive from such that common methods do not have to be reimplementation.
+*/
+class RegularBase2d {
+public:
+
+    RegularBase2d() = default;
+
+    /**
+    \return Number of elements.
+    */
+    size_t nelem() const;
+
+    /**
+    \return Number of nodes.
+    */
+    size_t nnode() const;
+
+    /**
+    \return Number of nodes-per-element == 4.
+    */
+    size_t nne() const;
+
+    /**
+    \return Number of dimensions == 2.
+    */
+    size_t ndim() const;
+
+    /**
+    \return Number of elements in x-direction == width of the mesh in units of #h.
+    */
+    size_t nelx() const;
+
+    /**
+    \return Number of elements in y-direction == height of the mesh, in units of #h,
+    */
+    size_t nely() const;
+
+    /**
+    \return Linear edge size of one 'block'.
+    */
+    double h() const;
+
+    /**
+    \return The ElementType().
+    */
+    virtual ElementType getElementType() const;
+
+    /**
+    \return Nodal coordinates [#nnode, #ndim].
+    */
+    virtual xt::xtensor<double, 2> coor() const;
+
+    /**
+    \return Connectivity [#nelem, #nne].
+    */
+    virtual xt::xtensor<size_t, 2> conn() const;
+
+    /**
+    \return DOF numbers for each node (numbered sequentially) [#nnode, #ndim].
+    */
+    virtual xt::xtensor<size_t, 2> dofs() const;
+
+    /**
+    Nodes along the bottom edge (y = 0), in order of increasing x.
+
+    \return List of node numbers.
+    */
+    virtual xt::xtensor<size_t, 1> nodesBottomEdge() const;
+
+    /**
+    Nodes along the top edge (y = #nely * #h), in order of increasing x.
+
+    \return List of node numbers.
+    */
+    virtual xt::xtensor<size_t, 1> nodesTopEdge() const;
+
+    /**
+    Nodes along the left edge (x = 0), in order of increasing y.
+
+    \return List of node numbers.
+    */
+    virtual xt::xtensor<size_t, 1> nodesLeftEdge() const;
+
+    /**
+    Nodes along the right edge (x = #nelx * #h), in order of increasing y.
+
+    \return List of node numbers.
+    */
+    virtual xt::xtensor<size_t, 1> nodesRightEdge() const;
+
+    /**
+    Nodes along the bottom edge (y = 0), without the corners (at x = 0 and x = #nelx * #h).
+    Same as: nodesBottomEdge()[1: -1].
+
+    \return List of node numbers.
+    */
+    virtual xt::xtensor<size_t, 1> nodesBottomOpenEdge() const;
+
+    /**
+    Nodes along the top edge (y = #nely * #h), without the corners (at x = 0 and x = #nelx * #h).
+    Same as: nodesTopEdge()[1: -1].
+
+    \return List of node numbers.
+    */
+    virtual xt::xtensor<size_t, 1> nodesTopOpenEdge() const;
+
+    /**
+    Nodes along the left edge (x = 0), without the corners (at y = 0 and y = #nely * #h).
+    Same as: nodesLeftEdge()[1: -1].
+
+    \return List of node numbers.
+    */
+    virtual xt::xtensor<size_t, 1> nodesLeftOpenEdge() const;
+
+    /**
+    Nodes along the right edge (x = #nelx * #h), without the corners (at y = 0 and y = #nely * #h).
+    Same as: nodesRightEdge()[1: -1].
+
+    \return List of node numbers.
+    */
+    virtual xt::xtensor<size_t, 1> nodesRightOpenEdge() const;
+
+    /**
+    The bottom-left corner node (at x = 0, y = 0).
+    Same as nodesBottomEdge()[0] and nodesLeftEdge()[0].
+
+    \return Node number.
+    */
+    virtual size_t nodesBottomLeftCorner() const;
+
+    /**
+    The bottom-right corner node (at x = #nelx * #h, y = 0).
+    Same as nodesBottomEdge()[-1] and nodesRightEdge()[0].
+
+    \return Node number.
+    */
+    virtual size_t nodesBottomRightCorner() const;
+
+    /**
+    The top-left corner node (at x = 0, y = #nely * #h).
+    Same as nodesTopEdge()[0] and nodesRightEdge()[-1].
+
+    \return Node number.
+    */
+    virtual size_t nodesTopLeftCorner() const;
+
+    /**
+    The top-right corner node (at x = #nelx * #h, y = #nely * #h).
+    Same as nodesTopEdge()[-1] and nodesRightEdge()[-1].
+
+    \return Node number.
+    */
+    virtual size_t nodesTopRightCorner() const;
+
+    /**
+    \return Alias of nodesBottomLeftCorner().
+    */
+    size_t nodesLeftBottomCorner() const;
+
+    /**
+    \return Alias of nodesTopLeftCorner().
+    */
+    size_t nodesLeftTopCorner() const;
+
+    /**
+    \return Alias of nodesBottomRightCorner().
+    */
+    size_t nodesRightBottomCorner() const;
+
+    /**
+    \return Alias of nodesTopRightCorner().
+    */
+    size_t nodesRightTopCorner() const;
+
+    /**
+    DOF-numbers for the case that the periodicity if fully eliminated. Such that:
+
+        dofs[nodesRightOpenEdge(), :] = dofs[nodesLeftOpenEdge(), :]
+        dofs[nodesTopOpenEdge(), :] = dofs[nodesBottomOpenEdge(), :]
+        dofs[nodesBottomRightCorner(), :] = dofs[nodesBottomLeftCorner(), :]
+        dofs[nodesTopRightCorner(), :] = dofs[nodesBottomLeftCorner(), :]
+        dofs[nodesTopLeftCorner(), :] = dofs[nodesBottomLeftCorner(), :]
+
+    \return DOF numbers for each node [#nnode, #ndim].
+    */
+    xt::xtensor<size_t, 2> dofsPeriodic() const;
+
+    /**
+    Periodic node pairs, in two columns: (independent, dependent)
+
+    \return [ntyings, #ndim].
+    */
+    xt::xtensor<size_t, 2> nodesPeriodic() const;
+
+    /**
+    Reference node to use for periodicity, because all corners are tied to it.
+
+    \return Alias of nodesBottomLeftCorner().
+    */
+    size_t nodesOrigin() const;
+
+protected:
+    double m_h;     ///< See h()
+    size_t m_nelx;  ///< See nelx()
+    size_t m_nely;  ///< See nely()
+    size_t m_nelem; ///< See nelem()
+    size_t m_nnode; ///< See nnode()
+    size_t m_nne;   ///< See nne()
+    size_t m_ndim;  ///< See ndim()
+};
 
 /**
 Find overlapping nodes. The output has the following structure:
@@ -83,58 +297,42 @@ public:
         double atol = 1e-8);
 
     /**
-    Number of sub meshes.
-
-    \return 2.
+    \return Number of sub meshes == 2.
     */
     size_t nmesh() const;
 
     /**
-    Number of elements.
-
-    \return unsigned int.
+    \return Number of elements.
     */
     size_t nelem() const;
 
     /**
-    Number of nodes.
-
-    \return unsigned int.
+    \return Number of nodes.
     */
     size_t nnode() const;
 
     /**
-    Number of nodes-per-element.
-
-    \return unsigned int.
+    \return Number of nodes-per-element.
     */
     size_t nne() const;
 
     /**
-    Number of dimensions.
-
-    \return unsigned int.
+    \return Number of dimensions.
     */
     size_t ndim() const;
 
     /**
-    Nodal coordinates.
-
-    \return [#nnode, #ndim].
+    \return Nodal coordinates [#nnode, #ndim].
     */
     xt::xtensor<double, 2> coor() const;
 
     /**
-    Connectivity.
-
-    \return [#nelem, #nne].
+    \return Connectivity [#nelem, #nne].
     */
     xt::xtensor<size_t, 2> conn() const;
 
     /**
-    DOF numbers for each node (numbered sequentially).
-
-    \return [#nnode, #ndim].
+    \return DOF numbers for each node (numbered sequentially) [#nnode, #ndim].
     */
     xt::xtensor<size_t, 2> dofs() const;
 
@@ -207,58 +405,42 @@ public:
     void push_back(const xt::xtensor<double, 2>& coor, const xt::xtensor<size_t, 2>& conn);
 
     /**
-    Number of sub meshes.
-
-    \return unsigned int
+    \return Number of sub meshes.
     */
     size_t nmesh() const;
 
     /**
-    Number of elements.
-
-    \return unsigned int.
+    \return Number of elements.
     */
     size_t nelem() const;
 
     /**
-    Number of nodes.
-
-    \return unsigned int.
+    \return Number of nodes.
     */
     size_t nnode() const;
 
     /**
-    Number of nodes-per-element.
-
-    \return unsigned int.
+    \return Number of nodes-per-element.
     */
     size_t nne() const;
 
     /**
-    Number of dimensions.
-
-    \return unsigned int.
+    \return Number of dimensions.
     */
     size_t ndim() const;
 
     /**
-    Nodal coordinates.
-
-    \return [#nnode, #ndim].
+    \return Nodal coordinates [#nnode, #ndim].
     */
     xt::xtensor<double, 2> coor() const;
 
     /**
-    Connectivity.
-
-    \return [#nelem, #nne].
+    \return Connectivity [#nelem, #nne].
     */
     xt::xtensor<size_t, 2> conn() const;
 
     /**
-    DOF numbers for each node (numbered sequentially).
-
-    \return [#nnode, #ndim].
+    \return DOF numbers for each node (numbered sequentially) [#nnode, #ndim].
     */
     xt::xtensor<size_t, 2> dofs() const;
 
