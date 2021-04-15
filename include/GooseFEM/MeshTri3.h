@@ -16,7 +16,7 @@ namespace GooseFEM {
 namespace Mesh {
 
 /**
-Simple meshes of triangular elements of type ElementType::Tri3.
+Simple meshes of and mesh operations for triangular elements of type ElementType::Tri3.
 */
 namespace Tri3 {
 
@@ -53,16 +53,42 @@ public:
 };
 
 // read / set the orientation (-1/+1) of all triangles
+
+/**
+Read the orientation of a mesh of triangular elements of type ElementType::Tri3.
+
+\param coor Nodal coordinates [nnode, ndim].
+\param conn Connectivity [nelem, nne].
+\return Orientation (-1 or +1) per element [nelem].
+*/
 inline xt::xtensor<int, 1> getOrientation(
     const xt::xtensor<double, 2>& coor, const xt::xtensor<size_t, 2>& conn);
 
+/**
+Set the orientation of a mesh of triangular elements of type ElementType::Tri3.
+
+\param coor Nodal coordinates [nnode, ndim].
+\param conn Connectivity [nelem, nne].
+\param orientation Target orientation (applied to all elements).
+\return Connectivity (order of nodes-per-element may have changed) [nelem, nne].
+*/
 inline xt::xtensor<size_t, 2> setOrientation(
     const xt::xtensor<double, 2>& coor, const xt::xtensor<size_t, 2>& conn, int orientation = -1);
 
+/**
+Set the orientation of a mesh of triangular elements of type ElementType::Tri3.
+For efficiency this function reuses the output of getOrientation().
+
+\param coor Nodal coordinates [nnode, ndim].
+\param conn Connectivity [nelem, nne].
+\param current Current orientation per element (output of getOrientation()) [nelem].
+\param orientation Target orientation (applied to all elements).
+\return Connectivity (order of nodes-per-element may have changed) [nelem, nne].
+*/
 inline xt::xtensor<size_t, 2> setOrientation(
     const xt::xtensor<double, 2>& coor,
     const xt::xtensor<size_t, 2>& conn,
-    const xt::xtensor<int, 1>& current, // (output of "getOrientation")
+    const xt::xtensor<int, 1>& current,
     int orientation = -1);
 
 } // namespace Tri3
