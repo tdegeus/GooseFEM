@@ -10,70 +10,46 @@ Generate simple meshes of 3-noded triangular elements in 2d (GooseFEM::Mesh::Ele
 #define GOOSEFEM_MESHTRI3_H
 
 #include "config.h"
+#include "Mesh.h"
 
 namespace GooseFEM {
 namespace Mesh {
+
+/**
+Simple meshes of triangular elements of type ElementType::Tri3.
+*/
 namespace Tri3 {
 
-class Regular {
+/**
+Regular grid of squares, with each square cut into two triangular elements.
+*/
+class Regular : public RegularBase2d {
 public:
+
+    /**
+    Constructor.
+
+    \param nelx Number of elements in x-direction.
+    \param nely Number of elements in y-direction.
+    \param h Edge-size (of the squares, and thus of two of three element-edges).
+    */
     Regular(size_t nelx, size_t nely, double h = 1.);
 
-    // size
-    size_t nelem() const; // number of elements
-    size_t nnode() const; // number of nodes
-    size_t nne() const;   // number of nodes-per-element
-    size_t ndim() const;  // number of dimensions
-
-    // type
-    ElementType getElementType() const;
-
-    // mesh
-    xt::xtensor<double, 2> coor() const; // nodal positions [nnode, ndim]
-    xt::xtensor<size_t, 2> conn() const; // connectivity [nelem, nne]
-
-    // boundary nodes: edges
-    xt::xtensor<size_t, 1> nodesBottomEdge() const;
-    xt::xtensor<size_t, 1> nodesTopEdge() const;
-    xt::xtensor<size_t, 1> nodesLeftEdge() const;
-    xt::xtensor<size_t, 1> nodesRightEdge() const;
-
-    // boundary nodes: edges, without corners
-    xt::xtensor<size_t, 1> nodesBottomOpenEdge() const;
-    xt::xtensor<size_t, 1> nodesTopOpenEdge() const;
-    xt::xtensor<size_t, 1> nodesLeftOpenEdge() const;
-    xt::xtensor<size_t, 1> nodesRightOpenEdge() const;
-
-    // boundary nodes: corners (including aliases)
-    size_t nodesBottomLeftCorner() const;
-    size_t nodesBottomRightCorner() const;
-    size_t nodesTopLeftCorner() const;
-    size_t nodesTopRightCorner() const;
-    size_t nodesLeftBottomCorner() const;
-    size_t nodesLeftTopCorner() const;
-    size_t nodesRightBottomCorner() const;
-    size_t nodesRightTopCorner() const;
-
-    // DOF-numbers for each component of each node (sequential)
-    xt::xtensor<size_t, 2> dofs() const;
-
-    // DOF-numbers for the case that the periodicity if fully eliminated
-    xt::xtensor<size_t, 2> dofsPeriodic() const;
-
-    // periodic node pairs [:,2]: (independent, dependent)
-    xt::xtensor<size_t, 2> nodesPeriodic() const;
-
-    // front-bottom-left node, used as reference for periodicity
-    size_t nodesOrigin() const;
-
-private:
-    double m_h;                     // elementary element edge-size (in all directions)
-    size_t m_nelx;                  // number of elements in x-direction (length == "m_nelx * m_h")
-    size_t m_nely;                  // number of elements in y-direction (length == "m_nely * m_h")
-    size_t m_nelem;                 // number of elements
-    size_t m_nnode;                 // number of nodes
-    static const size_t m_nne = 3;  // number of nodes-per-element
-    static const size_t m_ndim = 2; // number of dimensions
+    ElementType getElementType() const override;
+    xt::xtensor<double, 2> coor() const override;
+    xt::xtensor<size_t, 2> conn() const override;
+    xt::xtensor<size_t, 1> nodesBottomEdge() const override;
+    xt::xtensor<size_t, 1> nodesTopEdge() const override;
+    xt::xtensor<size_t, 1> nodesLeftEdge() const override;
+    xt::xtensor<size_t, 1> nodesRightEdge() const override;
+    xt::xtensor<size_t, 1> nodesBottomOpenEdge() const override;
+    xt::xtensor<size_t, 1> nodesTopOpenEdge() const override;
+    xt::xtensor<size_t, 1> nodesLeftOpenEdge() const override;
+    xt::xtensor<size_t, 1> nodesRightOpenEdge() const override;
+    size_t nodesBottomLeftCorner() const override;
+    size_t nodesBottomRightCorner() const override;
+    size_t nodesTopLeftCorner() const override;
+    size_t nodesTopRightCorner() const override;
 };
 
 // read / set the orientation (-1/+1) of all triangles

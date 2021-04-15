@@ -31,6 +31,191 @@ inline ElementType defaultElementType(
     throw std::runtime_error("Element-type not implemented");
 }
 
+inline size_t RegularBase2d::nelem() const
+{
+    return m_nelem;
+}
+
+inline size_t RegularBase2d::nnode() const
+{
+    return m_nnode;
+}
+
+inline size_t RegularBase2d::nne() const
+{
+    return m_nne;
+}
+
+inline size_t RegularBase2d::ndim() const
+{
+    return m_ndim;
+}
+
+inline size_t RegularBase2d::nelx() const
+{
+    return m_nelx;
+}
+
+inline size_t RegularBase2d::nely() const
+{
+    return m_nely;
+}
+
+inline double RegularBase2d::h() const
+{
+    return m_h;
+}
+
+inline ElementType RegularBase2d::getElementType() const
+{
+    return ElementType::Unknown;
+}
+
+inline xt::xtensor<double, 2> RegularBase2d::coor() const
+{
+    return xt::empty<double>({0, 0});
+}
+
+inline xt::xtensor<size_t, 2> RegularBase2d::conn() const
+{
+    return xt::empty<size_t>({0, 0});
+}
+
+inline xt::xtensor<size_t, 1> RegularBase2d::nodesBottomEdge() const
+{
+    return xt::empty<size_t>({0});
+}
+
+inline xt::xtensor<size_t, 1> RegularBase2d::nodesTopEdge() const
+{
+    return xt::empty<size_t>({0});
+}
+
+inline xt::xtensor<size_t, 1> RegularBase2d::nodesLeftEdge() const
+{
+    return xt::empty<size_t>({0});
+}
+
+inline xt::xtensor<size_t, 1> RegularBase2d::nodesRightEdge() const
+{
+    return xt::empty<size_t>({0});
+}
+
+inline xt::xtensor<size_t, 1> RegularBase2d::nodesBottomOpenEdge() const
+{
+    return xt::empty<size_t>({0});
+}
+
+inline xt::xtensor<size_t, 1> RegularBase2d::nodesTopOpenEdge() const
+{
+    return xt::empty<size_t>({0});
+}
+
+inline xt::xtensor<size_t, 1> RegularBase2d::nodesLeftOpenEdge() const
+{
+    return xt::empty<size_t>({0});
+}
+
+inline xt::xtensor<size_t, 1> RegularBase2d::nodesRightOpenEdge() const
+{
+    return xt::empty<size_t>({0});
+}
+
+inline size_t RegularBase2d::nodesBottomLeftCorner() const
+{
+    return 0;
+}
+
+inline size_t RegularBase2d::nodesBottomRightCorner() const
+{
+    return 0;
+}
+
+inline size_t RegularBase2d::nodesTopLeftCorner() const
+{
+    return 0;
+}
+
+inline size_t RegularBase2d::nodesTopRightCorner() const
+{
+    return 0;
+}
+
+inline size_t RegularBase2d::nodesLeftBottomCorner() const
+{
+    return nodesBottomLeftCorner();
+}
+
+inline size_t RegularBase2d::nodesLeftTopCorner() const
+{
+    return nodesTopLeftCorner();
+}
+
+inline size_t RegularBase2d::nodesRightBottomCorner() const
+{
+    return nodesBottomRightCorner();
+}
+
+inline size_t RegularBase2d::nodesRightTopCorner() const
+{
+    return nodesTopRightCorner();
+}
+
+inline xt::xtensor<size_t, 2> RegularBase2d::nodesPeriodic() const
+{
+    xt::xtensor<size_t, 1> bot = nodesBottomOpenEdge();
+    xt::xtensor<size_t, 1> top = nodesTopOpenEdge();
+    xt::xtensor<size_t, 1> lft = nodesLeftOpenEdge();
+    xt::xtensor<size_t, 1> rgt = nodesRightOpenEdge();
+    std::array<size_t, 2> shape = {bot.size() + lft.size() + size_t(3), size_t(2)};
+    xt::xtensor<size_t, 2> ret = xt::empty<size_t>(shape);
+
+    ret(0, 0) = nodesBottomLeftCorner();
+    ret(0, 1) = nodesBottomRightCorner();
+
+    ret(1, 0) = nodesBottomLeftCorner();
+    ret(1, 1) = nodesTopRightCorner();
+
+    ret(2, 0) = nodesBottomLeftCorner();
+    ret(2, 1) = nodesTopLeftCorner();
+
+    size_t i = 3;
+
+    xt::view(ret, xt::range(i, i + bot.size()), 0) = bot;
+    xt::view(ret, xt::range(i, i + bot.size()), 1) = top;
+
+    i += bot.size();
+
+    xt::view(ret, xt::range(i, i + lft.size()), 0) = lft;
+    xt::view(ret, xt::range(i, i + lft.size()), 1) = rgt;
+
+    return ret;
+}
+
+inline size_t RegularBase2d::nodesOrigin() const
+{
+    return nodesBottomLeftCorner();
+}
+
+inline xt::xtensor<size_t, 2> RegularBase2d::dofs() const
+{
+    return GooseFEM::Mesh::dofs(this->nnode(), this->ndim());
+}
+
+inline xt::xtensor<size_t, 2> RegularBase2d::dofsPeriodic() const
+{
+    xt::xtensor<size_t, 2> ret = this->dofs();
+    xt::xtensor<size_t, 2> nodePer = this->nodesPeriodic();
+    xt::xtensor<size_t, 1> independent = xt::view(nodePer, xt::all(), 0);
+    xt::xtensor<size_t, 1> dependent = xt::view(nodePer, xt::all(), 1);
+
+    for (size_t j = 0; j < this->ndim(); ++j) {
+        xt::view(ret, xt::keep(dependent), j) = xt::view(ret, xt::keep(independent), j);
+    }
+
+    return GooseFEM::Mesh::renumber(ret);
+}
+
 namespace detail {
 
     template <class T, class R>
