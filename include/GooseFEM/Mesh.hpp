@@ -143,22 +143,22 @@ inline size_t RegularBase2d::nodesTopRightCorner() const
 
 inline size_t RegularBase2d::nodesLeftBottomCorner() const
 {
-    return nodesBottomLeftCorner();
+    return this->nodesBottomLeftCorner();
 }
 
 inline size_t RegularBase2d::nodesLeftTopCorner() const
 {
-    return nodesTopLeftCorner();
+    return this->nodesTopLeftCorner();
 }
 
 inline size_t RegularBase2d::nodesRightBottomCorner() const
 {
-    return nodesBottomRightCorner();
+    return this->nodesBottomRightCorner();
 }
 
 inline size_t RegularBase2d::nodesRightTopCorner() const
 {
-    return nodesTopRightCorner();
+    return this->nodesTopRightCorner();
 }
 
 inline xt::xtensor<size_t, 2> RegularBase2d::nodesPeriodic() const
@@ -203,6 +203,719 @@ inline xt::xtensor<size_t, 2> RegularBase2d::dofs() const
 }
 
 inline xt::xtensor<size_t, 2> RegularBase2d::dofsPeriodic() const
+{
+    xt::xtensor<size_t, 2> ret = this->dofs();
+    xt::xtensor<size_t, 2> nodePer = this->nodesPeriodic();
+    xt::xtensor<size_t, 1> independent = xt::view(nodePer, xt::all(), 0);
+    xt::xtensor<size_t, 1> dependent = xt::view(nodePer, xt::all(), 1);
+
+    for (size_t j = 0; j < this->ndim(); ++j) {
+        xt::view(ret, xt::keep(dependent), j) = xt::view(ret, xt::keep(independent), j);
+    }
+
+    return GooseFEM::Mesh::renumber(ret);
+}
+
+inline size_t RegularBase3d::nelem() const
+{
+    return m_nelem;
+}
+
+inline size_t RegularBase3d::nnode() const
+{
+    return m_nnode;
+}
+
+inline size_t RegularBase3d::nne() const
+{
+    return m_nne;
+}
+
+inline size_t RegularBase3d::ndim() const
+{
+    return m_ndim;
+}
+
+inline size_t RegularBase3d::nelx() const
+{
+    return m_nelx;
+}
+
+inline size_t RegularBase3d::nely() const
+{
+    return m_nely;
+}
+
+inline size_t RegularBase3d::nelz() const
+{
+    return m_nelz;
+}
+
+inline double RegularBase3d::h() const
+{
+    return m_h;
+}
+
+inline ElementType RegularBase3d::getElementType() const
+{
+    return ElementType::Unknown;
+}
+
+inline xt::xtensor<double, 2> RegularBase3d::coor() const
+{
+    return xt::empty<double>({0, 0});
+}
+
+inline xt::xtensor<size_t, 2> RegularBase3d::conn() const
+{
+    return xt::empty<size_t>({0, 0});
+}
+
+inline xt::xtensor<size_t, 1> RegularBase3d::nodesBottom() const
+{
+    return xt::empty<size_t>({0});
+}
+
+inline xt::xtensor<size_t, 1> RegularBase3d::nodesTop() const
+{
+    return xt::empty<size_t>({0});
+}
+
+inline xt::xtensor<size_t, 1> RegularBase3d::nodesLeft() const
+{
+    return xt::empty<size_t>({0});
+}
+
+inline xt::xtensor<size_t, 1> RegularBase3d::nodesRight() const
+{
+    return xt::empty<size_t>({0});
+}
+
+inline xt::xtensor<size_t, 1> RegularBase3d::nodesFront() const
+{
+    return xt::empty<size_t>({0});
+}
+
+inline xt::xtensor<size_t, 1> RegularBase3d::nodesBack() const
+{
+    return xt::empty<size_t>({0});
+}
+
+inline xt::xtensor<size_t, 1> RegularBase3d::nodesFrontBottomEdge() const
+{
+    return xt::empty<size_t>({0});
+}
+
+inline xt::xtensor<size_t, 1> RegularBase3d::nodesFrontTopEdge() const
+{
+    return xt::empty<size_t>({0});
+}
+
+inline xt::xtensor<size_t, 1> RegularBase3d::nodesFrontLeftEdge() const
+{
+    return xt::empty<size_t>({0});
+}
+
+inline xt::xtensor<size_t, 1> RegularBase3d::nodesFrontRightEdge() const
+{
+    return xt::empty<size_t>({0});
+}
+
+inline xt::xtensor<size_t, 1> RegularBase3d::nodesBackBottomEdge() const
+{
+    return xt::empty<size_t>({0});
+}
+
+inline xt::xtensor<size_t, 1> RegularBase3d::nodesBackTopEdge() const
+{
+    return xt::empty<size_t>({0});
+}
+
+inline xt::xtensor<size_t, 1> RegularBase3d::nodesBackLeftEdge() const
+{
+    return xt::empty<size_t>({0});
+}
+
+inline xt::xtensor<size_t, 1> RegularBase3d::nodesBackRightEdge() const
+{
+    return xt::empty<size_t>({0});
+}
+
+inline xt::xtensor<size_t, 1> RegularBase3d::nodesBottomLeftEdge() const
+{
+    return xt::empty<size_t>({0});
+}
+
+inline xt::xtensor<size_t, 1> RegularBase3d::nodesBottomRightEdge() const
+{
+    return xt::empty<size_t>({0});
+}
+
+inline xt::xtensor<size_t, 1> RegularBase3d::nodesTopLeftEdge() const
+{
+    return xt::empty<size_t>({0});
+}
+
+inline xt::xtensor<size_t, 1> RegularBase3d::nodesTopRightEdge() const
+{
+    return xt::empty<size_t>({0});
+}
+
+inline xt::xtensor<size_t, 1> RegularBase3d::nodesBottomFrontEdge() const
+{
+    return this->nodesFrontBottomEdge();
+}
+inline xt::xtensor<size_t, 1> RegularBase3d::nodesBottomBackEdge() const
+{
+    return this->nodesBackBottomEdge();
+}
+inline xt::xtensor<size_t, 1> RegularBase3d::nodesTopFrontEdge() const
+{
+    return this->nodesFrontTopEdge();
+}
+inline xt::xtensor<size_t, 1> RegularBase3d::nodesTopBackEdge() const
+{
+    return this->nodesBackTopEdge();
+}
+inline xt::xtensor<size_t, 1> RegularBase3d::nodesLeftBottomEdge() const
+{
+    return this->nodesBottomLeftEdge();
+}
+inline xt::xtensor<size_t, 1> RegularBase3d::nodesLeftFrontEdge() const
+{
+    return this->nodesFrontLeftEdge();
+}
+inline xt::xtensor<size_t, 1> RegularBase3d::nodesLeftBackEdge() const
+{
+    return this->nodesBackLeftEdge();
+}
+inline xt::xtensor<size_t, 1> RegularBase3d::nodesLeftTopEdge() const
+{
+    return this->nodesTopLeftEdge();
+}
+inline xt::xtensor<size_t, 1> RegularBase3d::nodesRightBottomEdge() const
+{
+    return this->nodesBottomRightEdge();
+}
+inline xt::xtensor<size_t, 1> RegularBase3d::nodesRightTopEdge() const
+{
+    return this->nodesTopRightEdge();
+}
+inline xt::xtensor<size_t, 1> RegularBase3d::nodesRightFrontEdge() const
+{
+    return this->nodesFrontRightEdge();
+}
+inline xt::xtensor<size_t, 1> RegularBase3d::nodesRightBackEdge() const
+{
+    return this->nodesBackRightEdge();
+}
+
+inline xt::xtensor<size_t, 1> RegularBase3d::nodesFrontFace() const
+{
+    return xt::empty<size_t>({0});
+}
+
+inline xt::xtensor<size_t, 1> RegularBase3d::nodesBackFace() const
+{
+    return xt::empty<size_t>({0});
+}
+
+inline xt::xtensor<size_t, 1> RegularBase3d::nodesLeftFace() const
+{
+    return xt::empty<size_t>({0});
+}
+
+inline xt::xtensor<size_t, 1> RegularBase3d::nodesRightFace() const
+{
+    return xt::empty<size_t>({0});
+}
+
+inline xt::xtensor<size_t, 1> RegularBase3d::nodesBottomFace() const
+{
+    return xt::empty<size_t>({0});
+}
+
+inline xt::xtensor<size_t, 1> RegularBase3d::nodesTopFace() const
+{
+    return xt::empty<size_t>({0});
+}
+
+inline xt::xtensor<size_t, 1> RegularBase3d::nodesFrontBottomOpenEdge() const
+{
+    return xt::empty<size_t>({0});
+}
+
+inline xt::xtensor<size_t, 1> RegularBase3d::nodesFrontTopOpenEdge() const
+{
+    return xt::empty<size_t>({0});
+}
+
+inline xt::xtensor<size_t, 1> RegularBase3d::nodesFrontLeftOpenEdge() const
+{
+    return xt::empty<size_t>({0});
+}
+
+inline xt::xtensor<size_t, 1> RegularBase3d::nodesFrontRightOpenEdge() const
+{
+    return xt::empty<size_t>({0});
+}
+
+inline xt::xtensor<size_t, 1> RegularBase3d::nodesBackBottomOpenEdge() const
+{
+    return xt::empty<size_t>({0});
+}
+
+inline xt::xtensor<size_t, 1> RegularBase3d::nodesBackTopOpenEdge() const
+{
+    return xt::empty<size_t>({0});
+}
+
+inline xt::xtensor<size_t, 1> RegularBase3d::nodesBackLeftOpenEdge() const
+{
+    return xt::empty<size_t>({0});
+}
+
+inline xt::xtensor<size_t, 1> RegularBase3d::nodesBackRightOpenEdge() const
+{
+    return xt::empty<size_t>({0});
+}
+
+inline xt::xtensor<size_t, 1> RegularBase3d::nodesBottomLeftOpenEdge() const
+{
+    return xt::empty<size_t>({0});
+}
+
+inline xt::xtensor<size_t, 1> RegularBase3d::nodesBottomRightOpenEdge() const
+{
+    return xt::empty<size_t>({0});
+}
+
+inline xt::xtensor<size_t, 1> RegularBase3d::nodesTopLeftOpenEdge() const
+{
+    return xt::empty<size_t>({0});
+}
+
+inline xt::xtensor<size_t, 1> RegularBase3d::nodesTopRightOpenEdge() const
+{
+    return xt::empty<size_t>({0});
+}
+
+inline xt::xtensor<size_t, 1> RegularBase3d::nodesBottomFrontOpenEdge() const
+{
+    return this->nodesFrontBottomOpenEdge();
+}
+inline xt::xtensor<size_t, 1> RegularBase3d::nodesBottomBackOpenEdge() const
+{
+    return this->nodesBackBottomOpenEdge();
+}
+inline xt::xtensor<size_t, 1> RegularBase3d::nodesTopFrontOpenEdge() const
+{
+    return this->nodesFrontTopOpenEdge();
+}
+inline xt::xtensor<size_t, 1> RegularBase3d::nodesTopBackOpenEdge() const
+{
+    return this->nodesBackTopOpenEdge();
+}
+inline xt::xtensor<size_t, 1> RegularBase3d::nodesLeftBottomOpenEdge() const
+{
+    return this->nodesBottomLeftOpenEdge();
+}
+inline xt::xtensor<size_t, 1> RegularBase3d::nodesLeftFrontOpenEdge() const
+{
+    return this->nodesFrontLeftOpenEdge();
+}
+inline xt::xtensor<size_t, 1> RegularBase3d::nodesLeftBackOpenEdge() const
+{
+    return this->nodesBackLeftOpenEdge();
+}
+inline xt::xtensor<size_t, 1> RegularBase3d::nodesLeftTopOpenEdge() const
+{
+    return this->nodesTopLeftOpenEdge();
+}
+inline xt::xtensor<size_t, 1> RegularBase3d::nodesRightBottomOpenEdge() const
+{
+    return this->nodesBottomRightOpenEdge();
+}
+inline xt::xtensor<size_t, 1> RegularBase3d::nodesRightTopOpenEdge() const
+{
+    return this->nodesTopRightOpenEdge();
+}
+inline xt::xtensor<size_t, 1> RegularBase3d::nodesRightFrontOpenEdge() const
+{
+    return this->nodesFrontRightOpenEdge();
+}
+inline xt::xtensor<size_t, 1> RegularBase3d::nodesRightBackOpenEdge() const
+{
+    return this->nodesBackRightOpenEdge();
+}
+
+inline size_t RegularBase3d::nodesFrontBottomLeftCorner() const
+{
+    return 0;
+}
+
+inline size_t RegularBase3d::nodesFrontBottomRightCorner() const
+{
+    return 0;
+}
+
+inline size_t RegularBase3d::nodesFrontTopLeftCorner() const
+{
+    return 0;
+}
+
+inline size_t RegularBase3d::nodesFrontTopRightCorner() const
+{
+    return 0;
+}
+
+inline size_t RegularBase3d::nodesBackBottomLeftCorner() const
+{
+    return 0;
+}
+
+inline size_t RegularBase3d::nodesBackBottomRightCorner() const
+{
+    return 0;
+}
+
+inline size_t RegularBase3d::nodesBackTopLeftCorner() const
+{
+    return 0;
+}
+
+inline size_t RegularBase3d::nodesBackTopRightCorner() const
+{
+    return 0;
+}
+
+inline size_t RegularBase3d::nodesFrontLeftBottomCorner() const
+{
+    return this->nodesFrontBottomLeftCorner();
+}
+
+inline size_t RegularBase3d::nodesBottomFrontLeftCorner() const
+{
+    return this->nodesFrontBottomLeftCorner();
+}
+
+inline size_t RegularBase3d::nodesBottomLeftFrontCorner() const
+{
+    return this->nodesFrontBottomLeftCorner();
+}
+
+inline size_t RegularBase3d::nodesLeftFrontBottomCorner() const
+{
+    return this->nodesFrontBottomLeftCorner();
+}
+
+inline size_t RegularBase3d::nodesLeftBottomFrontCorner() const
+{
+    return this->nodesFrontBottomLeftCorner();
+}
+
+inline size_t RegularBase3d::nodesFrontRightBottomCorner() const
+{
+    return this->nodesFrontBottomRightCorner();
+}
+
+inline size_t RegularBase3d::nodesBottomFrontRightCorner() const
+{
+    return this->nodesFrontBottomRightCorner();
+}
+
+inline size_t RegularBase3d::nodesBottomRightFrontCorner() const
+{
+    return this->nodesFrontBottomRightCorner();
+}
+
+inline size_t RegularBase3d::nodesRightFrontBottomCorner() const
+{
+    return this->nodesFrontBottomRightCorner();
+}
+
+inline size_t RegularBase3d::nodesRightBottomFrontCorner() const
+{
+    return this->nodesFrontBottomRightCorner();
+}
+
+inline size_t RegularBase3d::nodesFrontLeftTopCorner() const
+{
+    return this->nodesFrontTopLeftCorner();
+}
+
+inline size_t RegularBase3d::nodesTopFrontLeftCorner() const
+{
+    return this->nodesFrontTopLeftCorner();
+}
+
+inline size_t RegularBase3d::nodesTopLeftFrontCorner() const
+{
+    return this->nodesFrontTopLeftCorner();
+}
+
+inline size_t RegularBase3d::nodesLeftFrontTopCorner() const
+{
+    return this->nodesFrontTopLeftCorner();
+}
+
+inline size_t RegularBase3d::nodesLeftTopFrontCorner() const
+{
+    return this->nodesFrontTopLeftCorner();
+}
+
+inline size_t RegularBase3d::nodesFrontRightTopCorner() const
+{
+    return this->nodesFrontTopRightCorner();
+}
+
+inline size_t RegularBase3d::nodesTopFrontRightCorner() const
+{
+    return this->nodesFrontTopRightCorner();
+}
+
+inline size_t RegularBase3d::nodesTopRightFrontCorner() const
+{
+    return this->nodesFrontTopRightCorner();
+}
+
+inline size_t RegularBase3d::nodesRightFrontTopCorner() const
+{
+    return this->nodesFrontTopRightCorner();
+}
+
+inline size_t RegularBase3d::nodesRightTopFrontCorner() const
+{
+    return this->nodesFrontTopRightCorner();
+}
+
+inline size_t RegularBase3d::nodesBackLeftBottomCorner() const
+{
+    return this->nodesBackBottomLeftCorner();
+}
+
+inline size_t RegularBase3d::nodesBottomBackLeftCorner() const
+{
+    return this->nodesBackBottomLeftCorner();
+}
+
+inline size_t RegularBase3d::nodesBottomLeftBackCorner() const
+{
+    return this->nodesBackBottomLeftCorner();
+}
+
+inline size_t RegularBase3d::nodesLeftBackBottomCorner() const
+{
+    return this->nodesBackBottomLeftCorner();
+}
+
+inline size_t RegularBase3d::nodesLeftBottomBackCorner() const
+{
+    return this->nodesBackBottomLeftCorner();
+}
+
+inline size_t RegularBase3d::nodesBackRightBottomCorner() const
+{
+    return this->nodesBackBottomRightCorner();
+}
+
+inline size_t RegularBase3d::nodesBottomBackRightCorner() const
+{
+    return this->nodesBackBottomRightCorner();
+}
+
+inline size_t RegularBase3d::nodesBottomRightBackCorner() const
+{
+    return this->nodesBackBottomRightCorner();
+}
+
+inline size_t RegularBase3d::nodesRightBackBottomCorner() const
+{
+    return this->nodesBackBottomRightCorner();
+}
+
+inline size_t RegularBase3d::nodesRightBottomBackCorner() const
+{
+    return this->nodesBackBottomRightCorner();
+}
+
+inline size_t RegularBase3d::nodesBackLeftTopCorner() const
+{
+    return this->nodesBackTopLeftCorner();
+}
+
+inline size_t RegularBase3d::nodesTopBackLeftCorner() const
+{
+    return this->nodesBackTopLeftCorner();
+}
+
+inline size_t RegularBase3d::nodesTopLeftBackCorner() const
+{
+    return this->nodesBackTopLeftCorner();
+}
+
+inline size_t RegularBase3d::nodesLeftBackTopCorner() const
+{
+    return this->nodesBackTopLeftCorner();
+}
+
+inline size_t RegularBase3d::nodesLeftTopBackCorner() const
+{
+    return this->nodesBackTopLeftCorner();
+}
+
+inline size_t RegularBase3d::nodesBackRightTopCorner() const
+{
+    return this->nodesBackTopRightCorner();
+}
+
+inline size_t RegularBase3d::nodesTopBackRightCorner() const
+{
+    return this->nodesBackTopRightCorner();
+}
+
+inline size_t RegularBase3d::nodesTopRightBackCorner() const
+{
+    return this->nodesBackTopRightCorner();
+}
+
+inline size_t RegularBase3d::nodesRightBackTopCorner() const
+{
+    return this->nodesBackTopRightCorner();
+}
+
+inline size_t RegularBase3d::nodesRightTopBackCorner() const
+{
+    return this->nodesBackTopRightCorner();
+}
+
+inline xt::xtensor<size_t, 2> RegularBase3d::nodesPeriodic() const
+{
+    xt::xtensor<size_t, 1> fro = nodesFrontFace();
+    xt::xtensor<size_t, 1> bck = nodesBackFace();
+    xt::xtensor<size_t, 1> lft = nodesLeftFace();
+    xt::xtensor<size_t, 1> rgt = nodesRightFace();
+    xt::xtensor<size_t, 1> bot = nodesBottomFace();
+    xt::xtensor<size_t, 1> top = nodesTopFace();
+
+    xt::xtensor<size_t, 1> froBot = nodesFrontBottomOpenEdge();
+    xt::xtensor<size_t, 1> froTop = nodesFrontTopOpenEdge();
+    xt::xtensor<size_t, 1> froLft = nodesFrontLeftOpenEdge();
+    xt::xtensor<size_t, 1> froRgt = nodesFrontRightOpenEdge();
+    xt::xtensor<size_t, 1> bckBot = nodesBackBottomOpenEdge();
+    xt::xtensor<size_t, 1> bckTop = nodesBackTopOpenEdge();
+    xt::xtensor<size_t, 1> bckLft = nodesBackLeftOpenEdge();
+    xt::xtensor<size_t, 1> bckRgt = nodesBackRightOpenEdge();
+    xt::xtensor<size_t, 1> botLft = nodesBottomLeftOpenEdge();
+    xt::xtensor<size_t, 1> botRgt = nodesBottomRightOpenEdge();
+    xt::xtensor<size_t, 1> topLft = nodesTopLeftOpenEdge();
+    xt::xtensor<size_t, 1> topRgt = nodesTopRightOpenEdge();
+
+    size_t tface = fro.size() + lft.size() + bot.size();
+    size_t tedge = 3 * froBot.size() + 3 * froLft.size() + 3 * botLft.size();
+    size_t tnode = 7;
+    xt::xtensor<size_t, 2> ret = xt::empty<size_t>({tface + tedge + tnode, std::size_t(2)});
+
+    size_t i = 0;
+
+    ret(i, 0) = nodesFrontBottomLeftCorner();
+    ret(i, 1) = nodesFrontBottomRightCorner();
+    ++i;
+    ret(i, 0) = nodesFrontBottomLeftCorner();
+    ret(i, 1) = nodesBackBottomRightCorner();
+    ++i;
+    ret(i, 0) = nodesFrontBottomLeftCorner();
+    ret(i, 1) = nodesBackBottomLeftCorner();
+    ++i;
+    ret(i, 0) = nodesFrontBottomLeftCorner();
+    ret(i, 1) = nodesFrontTopLeftCorner();
+    ++i;
+    ret(i, 0) = nodesFrontBottomLeftCorner();
+    ret(i, 1) = nodesFrontTopRightCorner();
+    ++i;
+    ret(i, 0) = nodesFrontBottomLeftCorner();
+    ret(i, 1) = nodesBackTopRightCorner();
+    ++i;
+    ret(i, 0) = nodesFrontBottomLeftCorner();
+    ret(i, 1) = nodesBackTopLeftCorner();
+    ++i;
+
+    for (size_t j = 0; j < froBot.size(); ++j) {
+        ret(i, 0) = froBot(j);
+        ret(i, 1) = bckBot(j);
+        ++i;
+    }
+    for (size_t j = 0; j < froBot.size(); ++j) {
+        ret(i, 0) = froBot(j);
+        ret(i, 1) = bckTop(j);
+        ++i;
+    }
+    for (size_t j = 0; j < froBot.size(); ++j) {
+        ret(i, 0) = froBot(j);
+        ret(i, 1) = froTop(j);
+        ++i;
+    }
+    for (size_t j = 0; j < botLft.size(); ++j) {
+        ret(i, 0) = botLft(j);
+        ret(i, 1) = botRgt(j);
+        ++i;
+    }
+    for (size_t j = 0; j < botLft.size(); ++j) {
+        ret(i, 0) = botLft(j);
+        ret(i, 1) = topRgt(j);
+        ++i;
+    }
+    for (size_t j = 0; j < botLft.size(); ++j) {
+        ret(i, 0) = botLft(j);
+        ret(i, 1) = topLft(j);
+        ++i;
+    }
+    for (size_t j = 0; j < froLft.size(); ++j) {
+        ret(i, 0) = froLft(j);
+        ret(i, 1) = froRgt(j);
+        ++i;
+    }
+    for (size_t j = 0; j < froLft.size(); ++j) {
+        ret(i, 0) = froLft(j);
+        ret(i, 1) = bckRgt(j);
+        ++i;
+    }
+    for (size_t j = 0; j < froLft.size(); ++j) {
+        ret(i, 0) = froLft(j);
+        ret(i, 1) = bckLft(j);
+        ++i;
+    }
+
+    for (size_t j = 0; j < fro.size(); ++j) {
+        ret(i, 0) = fro(j);
+        ret(i, 1) = bck(j);
+        ++i;
+    }
+    for (size_t j = 0; j < lft.size(); ++j) {
+        ret(i, 0) = lft(j);
+        ret(i, 1) = rgt(j);
+        ++i;
+    }
+    for (size_t j = 0; j < bot.size(); ++j) {
+        ret(i, 0) = bot(j);
+        ret(i, 1) = top(j);
+        ++i;
+    }
+
+    return ret;
+}
+
+inline size_t RegularBase3d::nodesOrigin() const
+{
+    return nodesFrontBottomLeftCorner();
+}
+
+inline xt::xtensor<size_t, 2> RegularBase3d::dofs() const
+{
+    return GooseFEM::Mesh::dofs(this->nnode(), this->ndim());
+}
+
+inline xt::xtensor<size_t, 2> RegularBase3d::dofsPeriodic() const
 {
     xt::xtensor<size_t, 2> ret = this->dofs();
     xt::xtensor<size_t, 2> nodePer = this->nodesPeriodic();
