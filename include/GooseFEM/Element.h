@@ -417,9 +417,9 @@ public:
     */
 
     /**
-    Interpolate element vector and evaluate at quadrature points.
+    Interpolate element vector and evaluate at each quadrature point.
 
-    \f$ \vec{u}(\vec{x}_q) = N_i^e(\vec{x}) \vec{u}_i^e
+    \f$ \vec{u}(\vec{x}_q) = N_i^e(\vec{x}) \vec{u}_i^e \f$
 
     \param elemvec nodal vector stored per element [#nelem, #nne, #ndim].
     \return qvector [#nelem, #nip, #ndim].
@@ -514,7 +514,7 @@ public:
 
     \f$ \vec{f}_i^e = \int N_i^e(\vec{x}) \vec{f}(\vec{x}) d\Omega_e \f$
 
-    integrated by
+    which is integration numerically as follows
 
     \f$ \vec{f}_i^e = \sum\limits_q N_i^e(\vec{x}_q) \vec{f}(\vec{x}_q) \f$
 
@@ -527,7 +527,7 @@ public:
     Same as Int_N_vector_dV(), but writing to preallocated return.
 
     \param qvector [#nelem, #nip. #ndim]
-    \return elemvec overwritten [#nelem, #nne. #ndim]
+    \param elemvec overwritten [#nelem, #nne. #ndim]
     */
     void int_N_vector_dV(
         const xt::xtensor<double, 3>& qvector, xt::xtensor<double, 3>& elemvec) const;

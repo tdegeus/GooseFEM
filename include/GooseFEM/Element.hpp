@@ -525,6 +525,9 @@ inline void QuadratureBaseCartesian<ne, nd, td>::interpQuad_vector(
     }
 }
 
+/**
+\cond
+*/
 template <size_t ne, size_t nd, size_t td>
 inline xt::xtensor<double, 3> QuadratureBaseCartesian<ne, nd, td>::Interp_N_vector(
     const xt::xtensor<double, 3>& elemvec) const
@@ -542,6 +545,9 @@ inline void QuadratureBaseCartesian<ne, nd, td>::interp_N_vector(
     GOOSEFEM_WARNING_PYTHON("Deprecation warning: interp_N_vector -> interpQuad_vector")
     this->interpQuad_vector(elemvec, qvector);
 }
+/**
+\endcond
+*/
 
 template <size_t ne, size_t nd, size_t td>
 inline xt::xtensor<double, 4> QuadratureBaseCartesian<ne, nd, td>::GradN_vector(

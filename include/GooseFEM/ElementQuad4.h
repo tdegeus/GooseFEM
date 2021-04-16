@@ -185,7 +185,7 @@ public:
         const xt::xtensor<double, 2>& xi,
         const xt::xtensor<double, 1>& w);
 
-    void interp_N_vector(
+    void interpQuad_vector(
         const xt::xtensor<double, 3>& elemvec, xt::xtensor<double, 3>& qvector) const override;
 
     void gradN_vector(
