@@ -66,13 +66,25 @@ public:
     xt::xtensor<size_t, 2> elementgrid() const;
 };
 
-// Mesh with fine middle layer, and coarser elements towards the top and bottom
-
-class FineLayer {
+/**
+Mesh with fine middle layer, and coarser elements towards the top and bottom.
+*/
+class FineLayer : public RegularBase2d {
 public:
 
     FineLayer() = default;
 
+    /**
+    Constructor.
+
+    \param nelx Number of elements (along the middle layer) in horizontal (x) direction.
+    \param nely Approximate equivalent number of elements in vertical (y) direction.
+    \param h Edge size (width == height) of elements along the weak layer.
+
+    \param nfine
+        Extra number of fine layers around the middle layer.
+        By default the element size is kept smaller than the distance to the middle layer.
+    */
     FineLayer(size_t nelx, size_t nely, double h = 1.0, size_t nfine = 1);
 
     /**
@@ -84,62 +96,40 @@ public:
     */
     FineLayer(const xt::xtensor<double, 2>& coor, const xt::xtensor<size_t, 2>& conn);
 
-    /**
-    Number of elements.
-
-    \return unsigned int.
-    */
-    size_t nelem() const;
-
-    /**
-    Number of nodes.
-
-    \return unsigned int.
-    */
-    size_t nnode() const;
-
-    /**
-    Number of nodes-per-element.
-
-    \return unsigned int.
-    */
-    size_t nne() const;
+    ElementType getElementType() const override;
+    xt::xtensor<double, 2> coor() const override;
+    xt::xtensor<size_t, 2> conn() const override;
+    xt::xtensor<size_t, 1> nodesBottomEdge() const override;
+    xt::xtensor<size_t, 1> nodesTopEdge() const override;
+    xt::xtensor<size_t, 1> nodesLeftEdge() const override;
+    xt::xtensor<size_t, 1> nodesRightEdge() const override;
+    xt::xtensor<size_t, 1> nodesBottomOpenEdge() const override;
+    xt::xtensor<size_t, 1> nodesTopOpenEdge() const override;
+    xt::xtensor<size_t, 1> nodesLeftOpenEdge() const override;
+    xt::xtensor<size_t, 1> nodesRightOpenEdge() const override;
+    size_t nodesBottomLeftCorner() const override;
+    size_t nodesBottomRightCorner() const override;
+    size_t nodesTopLeftCorner() const override;
+    size_t nodesTopRightCorner() const override;
 
     /**
-    Number of dimensions.
-
-    \return unsigned int.
+    \return
+        Number of elements in x-direction along the middle layer.
+        By definition equal to the width of the mesh in units of #h.
     */
-    size_t ndim() const;
+    size_t nelx() const override;
 
     /**
-    Number of elements in x-direction along the middle layer.
-    By definition equal to the width of the mesh in units of #h.
-
-    \return unsigned int.
+    \return Height of the mesh, in units of #h.
     */
-    size_t nelx() const;
-
-    /**
-    Height of the mesh, in units of #h.
-
-    \return unsigned int.
-    */
-    size_t nely() const;
-
-    /**
-    Edge size of the smallest elements (along the middle layer).
-
-    \return double.
-    */
-    double h() const;
+    size_t nely() const override;
 
     /**
     Edge size in x-direction of a block, in units of #h, per row of blocks.
     Note that a block is equal to an element except in refinement layers
     where it contains three elements.
 
-    \returns List of size equal to the number of rows of blocks.
+    \return List of size equal to the number of rows of blocks.
     */
     xt::xtensor<size_t, 1> elemrow_nhx() const;
 
@@ -148,7 +138,7 @@ public:
     Note that a block is equal to an element except in refinement layers
     where it contains three elements.
 
-    \returns List of size equal to the number of rows of blocks.
+    \return List of size equal to the number of rows of blocks.
     */
     xt::xtensor<size_t, 1> elemrow_nhy() const;
 
@@ -157,38 +147,29 @@ public:
     Note that a block is equal to an element except in refinement layers
     where it contains three elements.
 
-    \returns List of size equal to the number of rows of blocks.
+    \return List of size equal to the number of rows of blocks.
     */
     xt::xtensor<size_t, 1> elemrow_nelem() const;
 
     /**
-    Element type.
+    Elements in the middle (fine) layer.
 
-    \return GooseFEM::Mesh::ElementType().
+    \return List of element numbers.
     */
-    ElementType getElementType() const;
-
-    /**
-    Nodal coordinates.
-
-    \return ``[nnode, ndim]``.
-    */
-    xt::xtensor<double, 2> coor() const;
-
-    /**
-    Connectivity.
-
-    \return ``[nelem, nne]``.
-    */
-    xt::xtensor<size_t, 2> conn() const;
-
-    // elements in the middle (fine) layer
     xt::xtensor<size_t, 1> elementsMiddleLayer() const;
 
-    // extract elements along a layer
+    /**
+    Elements along a layer.
+
+    \return List of element numbers.
+    */
     xt::xtensor<size_t, 1> elementsLayer(size_t layer) const;
 
-    // select region of elements from 'matrix' of element numbers
+    /**
+    Select region of elements from 'matrix' of element numbers.
+
+    \return List of element numbers.
+    */
     xt::xtensor<size_t, 1> elementgrid_ravel(
         std::vector<size_t> rows_start_stop,
         std::vector<size_t> cols_start_stop) const;
@@ -200,7 +181,7 @@ public:
     \param element The element around which to select elements.
     \param size Edge size of the square box encapsulating the selected element.
     \param periodic Assume the mesh periodic.
-    \returns List of elements.
+    \return List of elements.
     */
     xt::xtensor<size_t, 1> elementgrid_around_ravel(
         size_t element,
@@ -215,7 +196,7 @@ public:
     \param left Number of elements to select to the left.
     \param right Number of elements to select to the right.
     \param periodic Assume the mesh periodic.
-    \returns List of elements.
+    \return List of elements.
     */
     // -
     xt::xtensor<size_t, 1> elementgrid_leftright(
@@ -224,62 +205,31 @@ public:
         size_t right,
         bool periodic = true);
 
-    // boundary nodes: edges
-    xt::xtensor<size_t, 1> nodesBottomEdge() const;
-    xt::xtensor<size_t, 1> nodesTopEdge() const;
-    xt::xtensor<size_t, 1> nodesLeftEdge() const;
-    xt::xtensor<size_t, 1> nodesRightEdge() const;
+    /**
+    Mapping to 'roll' periodically in the x-direction,
 
-    // boundary nodes: edges, without corners
-    xt::xtensor<size_t, 1> nodesBottomOpenEdge() const;
-    xt::xtensor<size_t, 1> nodesTopOpenEdge() const;
-    xt::xtensor<size_t, 1> nodesLeftOpenEdge() const;
-    xt::xtensor<size_t, 1> nodesRightOpenEdge() const;
-
-    // boundary nodes: corners (including aliases)
-    size_t nodesBottomLeftCorner() const;
-    size_t nodesBottomRightCorner() const;
-    size_t nodesTopLeftCorner() const;
-    size_t nodesTopRightCorner() const;
-    size_t nodesLeftBottomCorner() const;
-    size_t nodesLeftTopCorner() const;
-    size_t nodesRightBottomCorner() const;
-    size_t nodesRightTopCorner() const;
-
-    // DOF-numbers for each component of each node (sequential)
-    xt::xtensor<size_t, 2> dofs() const;
-
-    // DOF-numbers for the case that the periodicity if fully eliminated
-    xt::xtensor<size_t, 2> dofsPeriodic() const;
-
-    // periodic node pairs [:,2]: (independent, dependent)
-    xt::xtensor<size_t, 2> nodesPeriodic() const;
-
-    // front-bottom-left node, used as reference for periodicity
-    size_t nodesOrigin() const;
-
-    // mapping to 'roll' periodically in the x-direction,
-    // returns element mapping, such that: new_elemvar = elemvar[elem_map]
+    \return element mapping, such that: new_elemvar = elemvar[elem_map]
+    */
     xt::xtensor<size_t, 1> roll(size_t n);
 
 private:
-    double m_h;                         // elementary element edge-size (in all directions)
-    double m_Lx;                        // mesh size in "x"
-    size_t m_nelem;                     // number of elements
-    size_t m_nnode;                     // number of nodes
-    static const size_t m_nne = 4;      // number of nodes-per-element
-    static const size_t m_ndim = 2;     // number of dimensions
-    xt::xtensor<size_t, 1> m_nelx; ///< See elemrow_nelem().
-    xt::xtensor<size_t, 1> m_nhx;  ///< See elemrow_nhx().
-    xt::xtensor<size_t, 1> m_nhy;  ///< See elemrow_nhy().
-    xt::xtensor<size_t, 1> m_nnd;       // total number of nodes in the main node layer (**)
-    xt::xtensor<int, 1> m_refine;       // refine direction (-1:no refine, 0:"x" (*)
-    xt::xtensor<size_t, 1> m_startElem; // start element (*)
-    xt::xtensor<size_t, 1> m_startNode; // start node (**)
-    // (*) per element layer in "y"
-    // (**) per node layer in "y"
+    double m_Lx; ///< Mesh size in x-direction.
+    xt::xtensor<size_t, 1> m_layer_nelx; ///< See elemrow_nelem().
+    xt::xtensor<size_t, 1> m_nhx; ///< See elemrow_nhx().
+    xt::xtensor<size_t, 1> m_nhy; ///< See elemrow_nhy().
+    xt::xtensor<size_t, 1> m_nnd; ///< total number of nodes in the main node layer per node layer in "y"
+    xt::xtensor<int, 1> m_refine; ///< refine direction (-1:no refine, 0:"x" per element layer in "y"
+    xt::xtensor<size_t, 1> m_startElem; ///< start element per element layer in "y"
+    xt::xtensor<size_t, 1> m_startNode; ///< start node per node layer in "y"
 
+    /**
+    \copydoc FineLayer::FineLayer(size_t, size_t, double, size_t)
+    */
     void init(size_t nelx, size_t nely, double h, size_t nfine = 1);
+
+    /**
+    \copydoc FineLayer::FineLayer(const xt::xtensor<double, 2>&, const xt::xtensor<size_t, 2>&)
+    */
     void map(const xt::xtensor<double, 2>& coor, const xt::xtensor<size_t, 2>& conn);
 
     friend class GooseFEM::Mesh::Quad4::Map::FineLayer2Regular;
@@ -289,13 +239,18 @@ private:
 
 namespace Map {
 
+    /**
+    \cond
+    */
     // Return "FineLayer"-class responsible for generating a connectivity
     // Throws if conversion is not possible
-
     [[ deprecated ]]
     GooseFEM::Mesh::Quad4::FineLayer FineLayer(
         const xt::xtensor<double, 2>& coor,
         const xt::xtensor<size_t, 2>& conn);
+    /**
+    \endcond
+    */
 
     /**
     Refine a Regular mesh: subdivide elements in several smaller elements.
@@ -349,7 +304,9 @@ namespace Map {
         */
         xt::xtensor<size_t, 2> getMap() const;
 
-        // map field
+        /**
+        \cond
+        */
         [[ deprecated ]]
         xt::xtensor<double, 2> mapToCoarse(const xt::xtensor<double, 1>& data) const; // scalar per el
 
@@ -358,6 +315,9 @@ namespace Map {
 
         [[ deprecated ]]
         xt::xtensor<double, 4> mapToCoarse(const xt::xtensor<double, 4>& data) const; // tensor per intpnt
+        /**
+        \endcond
+        */
 
         /**
         Compute the mean of the quantity define on the fine mesh when mapped on the coarse mesh.

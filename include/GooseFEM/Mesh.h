@@ -68,12 +68,12 @@ public:
     /**
     \return Number of elements in x-direction == width of the mesh in units of #h.
     */
-    size_t nelx() const;
+    virtual size_t nelx() const;
 
     /**
     \return Number of elements in y-direction == height of the mesh, in units of #h,
     */
-    size_t nely() const;
+    virtual size_t nely() const;
 
     /**
     \return Linear edge size of one 'block'.
