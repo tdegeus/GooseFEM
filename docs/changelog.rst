@@ -3,6 +3,22 @@
 Changelog
 *********
 
+v0.11.0
+=======
+
+*   Adding ``Int_N_vector_dV``
+*   Renaming ``Interp_N_vector`` -> ``InterpQuad_vector``; generalizing dimensions
+*   Adding documentation Mesh::Tri3::Rugular (by deriving from Mesh::RegularBase2d)
+*   Adding documentation Mesh::Quad4::Rugular (by deriving from Mesh::RegularBase2d)
+*   Adding documentation Mesh::Quad4::FineLayer (by deriving from Mesh::RegularBase2d)
+*   Various documentation updates
+*   Minor updates CMake/version (#196)
+*   Minor updates setup.py
+*   Adding convenience functions (Manual)Stitch (#193)
+*   [CI] Minor updates
+*   [docs] Updating doxygen-awesome
+*   [docs] Updating sphinx+breathe build (#189)
+
 v0.10.3
 =======
 
