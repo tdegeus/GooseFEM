@@ -490,7 +490,8 @@ template <size_t ne, size_t nd, size_t td>
 inline xt::xtensor<double, 3> QuadratureBaseCartesian<ne, nd, td>::InterpQuad_vector(
     const xt::xtensor<double, 3>& elemvec) const
 {
-    xt::xtensor<double, 3> qvector = xt::empty<double>({m_nelem, m_nip, m_ndim});
+    size_t n = elemvec.shape(2);
+    xt::xtensor<double, 3> qvector = xt::empty<double>({m_nelem, m_nip, n});
     this->interpQuad_vector(elemvec, qvector);
     return qvector;
 }
@@ -499,24 +500,25 @@ template <size_t ne, size_t nd, size_t td>
 inline void QuadratureBaseCartesian<ne, nd, td>::interpQuad_vector(
     const xt::xtensor<double, 3>& elemvec, xt::xtensor<double, 3>& qvector) const
 {
-    GOOSEFEM_ASSERT(xt::has_shape(elemvec, this->shape_elemvec()));
-    GOOSEFEM_ASSERT(xt::has_shape(qvector, {m_nelem, m_nip, m_ndim}));
+    size_t n = elemvec.shape(2);
+    GOOSEFEM_ASSERT(xt::has_shape(elemvec, {m_nelem, m_nne, n}));
+    GOOSEFEM_ASSERT(xt::has_shape(qvector, {m_nelem, m_nip, n}));
 
     qvector.fill(0.0);
 
     #pragma omp parallel for
     for (size_t e = 0; e < m_nelem; ++e) {
 
-        auto u = xt::adapt(&elemvec(e, 0, 0), xt::xshape<m_nne, m_ndim>());
+        auto f = &elemvec(e, 0, 0);
 
         for (size_t q = 0; q < m_nip; ++q) {
 
-            auto N = xt::adapt(&m_N(q, 0), xt::xshape<m_nne>());
-            auto ui = xt::adapt(&qvector(e, q, 0), xt::xshape<m_ndim>());
+            auto N = &m_N(q, 0);
+            auto t = &qvector(e, q, 0);
 
             for (size_t m = 0; m < m_nne; ++m) {
-                for (size_t i = 0; i < m_ndim; ++i) {
-                    ui(i) += N(m) * u(m, i);
+                for (size_t i = 0; i < n; ++i) {
+                    t[i] += N[m] * f[m * n + i];
                 }
             }
         }
