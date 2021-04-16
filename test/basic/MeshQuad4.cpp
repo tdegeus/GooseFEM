@@ -121,6 +121,7 @@ TEST_CASE("GooseFEM::MeshQuad4", "MeshQuad4.h")
         REQUIRE(xt::allclose(coor, coor_));
 
         REQUIRE(xt::all(xt::equal(conn, conn_)));
+        REQUIRE(xt::all(xt::equal(dofs, dofs_)));
         REQUIRE(xt::all(xt::equal(nodesBottomEdge, nodesBottomEdge_)));
         REQUIRE(xt::all(xt::equal(nodesTopEdge, nodesTopEdge_)));
         REQUIRE(xt::all(xt::equal(nodesLeftEdge, nodesLeftEdge_)));
@@ -307,6 +308,7 @@ TEST_CASE("GooseFEM::MeshQuad4", "MeshQuad4.h")
 
         REQUIRE(xt::all(xt::equal(elementsMiddleLayer, elementsMiddleLayer_)));
         REQUIRE(xt::all(xt::equal(conn, conn_)));
+        REQUIRE(xt::all(xt::equal(dofs, dofs_)));
         REQUIRE(xt::all(xt::equal(nodesBottomEdge, nodesBottomEdge_)));
         REQUIRE(xt::all(xt::equal(nodesTopEdge, nodesTopEdge_)));
         REQUIRE(xt::all(xt::equal(nodesLeftEdge, nodesLeftEdge_)));
