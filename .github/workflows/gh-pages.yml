@@ -19,6 +19,8 @@ jobs:
 
     - name: Basic GitHub action setup
       uses: actions/checkout@v2
+      with:
+        fetch-depth: 0
 
     - name: Set conda environment (using micromamba for speed)
       uses: mamba-org/provision-with-micromamba@main
