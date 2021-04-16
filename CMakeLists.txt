@@ -5,20 +5,19 @@ cmake_minimum_required(VERSION 3.1..3.19)
 
 project(GooseFEM)
 
+execute_process(
+    COMMAND python -c "from setuptools_scm import get_version; print(get_version())"
+    WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+    OUTPUT_VARIABLE PROJECT_VERSION
+    OUTPUT_STRIP_TRAILING_WHITESPACE)
+
+message(STATUS "Building ${PROJECT_NAME} ${PROJECT_VERSION}")
+
 option(BUILD_TESTS "${PROJECT_NAME}: Build tests" OFF)
 option(BUILD_EXAMPLES "${PROJECT_NAME}: Build examples" OFF)
 option(BUILD_DOCS "${PROJECT_NAME}: Build docs" OFF)
 
-# Version
-# =======
-
-execute_process(
-    COMMAND python -c "from setuptools_scm import get_version; print(get_version())"
-    WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
-    OUTPUT_VARIABLE ${PROJECT_NAME}_VERSION
-    OUTPUT_STRIP_TRAILING_WHITESPACE)
-
-message(STATUS "Building ${PROJECT_NAME} ${${PROJECT_NAME}_VERSION}")
+string(TOUPPER "${PROJECT_NAME}" PROJECT_NAME_UPPER)
 
 # Set target
 # ==========
@@ -32,6 +31,9 @@ target_include_directories(${PROJECT_NAME} INTERFACE
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>)
 
 target_link_libraries(${PROJECT_NAME} INTERFACE xtensor)
+
+target_compile_definitions(${PROJECT_NAME} INTERFACE
+    ${PROJECT_NAME_UPPER}_VERSION="${PROJECT_VERSION}")
 
 # Installation
 # ============
@@ -55,15 +57,15 @@ install(
     FILE "${PROJECT_NAME}Targets.cmake"
     DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME}")
 
-set(_${PROJECT_NAME} ${CMAKE_SIZEOF_VOID_P})
+set(${PROJECT_NAME}_TMP ${CMAKE_SIZEOF_VOID_P})
 unset(CMAKE_SIZEOF_VOID_P)
 
 write_basic_package_version_file(
     "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}ConfigVersion.cmake"
-    VERSION "${${PROJECT_NAME}_VERSION}"
+    VERSION "${PROJECT_VERSION}"
     COMPATIBILITY AnyNewerVersion)
 
-set(CMAKE_SIZEOF_VOID_P ${_${PROJECT_NAME}})
+set(CMAKE_SIZEOF_VOID_P ${${PROJECT_NAME}_TMP})
 
 install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/${PROJECT_NAME}Config.cmake"
               "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}ConfigVersion.cmake"

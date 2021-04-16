@@ -31,7 +31,7 @@ Tip: use the environment variable ``SETUPTOOLS_SCM_PRETEND_VERSION``
 to overwrite the automatic version.
 */
 #ifndef GOOSEFEM_VERSION
-#define GOOSEFEM_VERSION "@GooseFEM_VERSION@"
+#define GOOSEFEM_VERSION "@PROJECT_VERSION@"
 #endif
 
 namespace GooseFEM {
