@@ -214,7 +214,7 @@ inline void Quadrature::compute_dN()
     }
 }
 
-inline void Quadrature::interp_N_vector(
+inline void Quadrature::interpQuad_vector(
     const xt::xtensor<double, 3>& elemvec, xt::xtensor<double, 3>& qvector) const
 {
     GOOSEFEM_ASSERT(xt::has_shape(elemvec, {m_nelem, m_nne, m_ndim}));
