@@ -16,20 +16,12 @@ Methods to switch between storage types based on a mesh and DOFs that are partit
 
 namespace GooseFEM {
 
-/*
-  "nodevec"   -  nodal vectors                            -  [nnode, ndim]
-  "elemvec"   -  nodal vectors stored per element         -  [nelem, nne, ndim]
-  "dofval"    -  DOF values                               -  [ndof]
-  "dofval_u"  -  DOF values (Unknown)    "== dofval[iiu]" -  [nnu]
-  "dofval_p"  -  DOF values (Prescribed) "== dofval[iiu]" -  [nnp]
-*/
-
 /**
 Class to switch between storage types (for a partitioned system):
 
 -   "dofval": DOF values [#ndof].
--   "dofval_u": unknown DOF values [#nnu].
--   "dofval_p": prescribed DOF values [#nnp].
+-   "dofval_u": unknown DOF values, `== dofval[iiu()]`, [#nnu].
+-   "dofval_p": prescribed DOF values, `== dofval[iip()]`, [#nnp].
 -   "nodevec": nodal vectors [#nnode, #ndim].
 -   "elemvec": nodal vectors stored per element [#nelem, #nne, #ndim].
 
@@ -56,30 +48,22 @@ public:
         const xt::xtensor<size_t, 1>& iip);
 
     /**
-    Number of unknown DOFs.
-
-    \return unsigned int
+    \return Number of unknown DOFs.
     */
     size_t nnu() const;
 
     /**
-    Number of prescribed DOFs.
-
-    \return unsigned int
+    \return Number of prescribed DOFs.
     */
     size_t nnp() const;
 
     /**
-    Unknown DOFs.
-
-    \return [#nnu]
+    \return Unknown DOFs [#nnu].
     */
     xt::xtensor<size_t, 1> iiu() const;
 
     /**
-    Prescribed DOFs.
-
-    \return [#nnp]
+    \return Prescribed DOFs [#nnp].
     */
     xt::xtensor<size_t, 1> iip() const;
 
