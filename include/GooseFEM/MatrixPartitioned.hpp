@@ -18,8 +18,10 @@ inline MatrixPartitioned::MatrixPartitioned(
     const xt::xtensor<size_t, 2>& conn,
     const xt::xtensor<size_t, 2>& dofs,
     const xt::xtensor<size_t, 1>& iip)
-    : m_conn(conn), m_dofs(dofs), m_iip(iip)
 {
+    m_conn = conn;
+    m_dofs = dofs;
+    m_iip = iip;
     m_nelem = m_conn.shape(0);
     m_nne = m_conn.shape(1);
     m_nnode = m_dofs.shape(0);
@@ -41,46 +43,6 @@ inline MatrixPartitioned::MatrixPartitioned(
     GOOSEFEM_ASSERT(xt::amax(m_conn)() + 1 <= m_nnode);
     GOOSEFEM_ASSERT(xt::amax(m_iip)() <= xt::amax(m_dofs)());
     GOOSEFEM_ASSERT(m_ndof <= m_nnode * m_ndim);
-}
-
-inline size_t MatrixPartitioned::nelem() const
-{
-    return m_nelem;
-}
-
-inline size_t MatrixPartitioned::nne() const
-{
-    return m_nne;
-}
-
-inline size_t MatrixPartitioned::nnode() const
-{
-    return m_nnode;
-}
-
-inline size_t MatrixPartitioned::ndim() const
-{
-    return m_ndim;
-}
-
-inline size_t MatrixPartitioned::ndof() const
-{
-    return m_ndof;
-}
-
-inline size_t MatrixPartitioned::nnu() const
-{
-    return m_nnu;
-}
-
-inline size_t MatrixPartitioned::nnp() const
-{
-    return m_nnp;
-}
-
-inline xt::xtensor<size_t, 2> MatrixPartitioned::dofs() const
-{
-    return m_dofs;
 }
 
 inline xt::xtensor<size_t, 1> MatrixPartitioned::iiu() const
@@ -270,13 +232,6 @@ inline void MatrixPartitioned::todense(xt::xtensor<double, 2>& ret) const
     }
 }
 
-inline xt::xtensor<double, 2> MatrixPartitioned::Todense() const
-{
-    xt::xtensor<double, 2> ret = xt::empty<double>({m_ndof, m_ndof});
-    this->todense(ret);
-    return ret;
-}
-
 inline void MatrixPartitioned::dot(const xt::xtensor<double, 2>& x, xt::xtensor<double, 2>& b) const
 {
     GOOSEFEM_ASSERT(xt::has_shape(b, {m_nnode, m_ndim}));
@@ -310,20 +265,6 @@ inline void MatrixPartitioned::dot(const xt::xtensor<double, 1>& x, xt::xtensor<
 
     Eigen::Map<Eigen::VectorXd>(b.data(), m_nnu).noalias() = m_Auu * X_u + m_Aup * X_p;
     Eigen::Map<Eigen::VectorXd>(b.data() + m_nnu, m_ndof).noalias() = m_Auu * X_u + m_Aup * X_p;
-}
-
-inline xt::xtensor<double, 2> MatrixPartitioned::Dot(const xt::xtensor<double, 2>& x) const
-{
-    xt::xtensor<double, 2> b = xt::empty<double>({m_nnode, m_ndim});
-    this->dot(x, b);
-    return b;
-}
-
-inline xt::xtensor<double, 1> MatrixPartitioned::Dot(const xt::xtensor<double, 1>& x) const
-{
-    xt::xtensor<double, 1> b = xt::empty<double>({m_ndof});
-    this->dot(x, b);
-    return b;
 }
 
 inline void

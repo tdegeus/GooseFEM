@@ -12,6 +12,7 @@ Sparse matrix that is partitioned in:
 #define GOOSEFEM_MATRIXPARTITIONED_H
 
 #include "config.h"
+#include "Matrix.h"
 
 #include <Eigen/Eigen>
 #include <Eigen/Sparse>
@@ -22,52 +23,65 @@ namespace GooseFEM {
 // forward declaration
 template <class> class MatrixPartitionedSolver;
 
-class MatrixPartitioned {
+/**
+Sparse matrix partitioned in an unknown and a prescribed part. In particular:
+
+\f$ \begin{bmatrix} A_{uu} & A_{up} \\ A_{pu} & A_{pp} \end{bmatrix} \f$
+
+See VectorPartitioned() for bookkeeping definitions.
+*/
+class MatrixPartitioned : public Matrix {
 public:
-    // Constructors
+
     MatrixPartitioned() = default;
 
+    /**
+    Constructor.
+
+    \param conn connectivity [#nelem, #nne].
+    \param dofs DOFs per node [#nnode, #ndim].
+    \param iip prescribed DOFs [#nnp].
+    */
     MatrixPartitioned(
         const xt::xtensor<size_t, 2>& conn,
         const xt::xtensor<size_t, 2>& dofs,
         const xt::xtensor<size_t, 1>& iip);
 
-    // Dimensions
-    size_t nelem() const; // number of elements
-    size_t nne() const;   // number of nodes per element
-    size_t nnode() const; // number of nodes
-    size_t ndim() const;  // number of dimensions
-    size_t ndof() const;  // number of DOFs
-    size_t nnu() const;   // number of unknown DOFs
-    size_t nnp() const;   // number of prescribed DOFs
+    /**
+    Number of unknown DOFs.
+    */
+    size_t nnu() const;
 
-    // DOF lists
-    xt::xtensor<size_t, 2> dofs() const; // DOFs
-    xt::xtensor<size_t, 1> iiu() const;  // unknown DOFs
-    xt::xtensor<size_t, 1> iip() const;  // prescribed DOFs
+    /**
+    Number of prescribed DOFs.
+    */
+    size_t nnp() const;
 
-    // Assemble from matrices stored per element [nelem, nne*ndim, nne*ndim]
-    void assemble(const xt::xtensor<double, 3>& elemmat);
+    /**
+    Unknown DOFs [#nnu].
+    */
+    xt::xtensor<size_t, 1> iiu() const;
 
-    // Overwrite with a dense (sub-) matrix
+    /**
+    Prescribed DOFs [#nnp].
+    */
+    xt::xtensor<size_t, 1> iip() const;
+
+    void assemble(const xt::xtensor<double, 3>& elemmat) override;
+
     void set(
         const xt::xtensor<size_t, 1>& rows,
         const xt::xtensor<size_t, 1>& cols,
-        const xt::xtensor<double, 2>& matrix);
+        const xt::xtensor<double, 2>& matrix) override;
 
-    // Add a dense (sub-) matrix to the current matrix
     void add(
         const xt::xtensor<size_t, 1>& rows,
         const xt::xtensor<size_t, 1>& cols,
-        const xt::xtensor<double, 2>& matrix);
+        const xt::xtensor<double, 2>& matrix) override;
 
-    // Return as dense matrix
-    void todense(xt::xtensor<double, 2>& ret) const;
-
-    // Dot-product:
-    // b_i = A_ij * x_j
-    void dot(const xt::xtensor<double, 2>& x, xt::xtensor<double, 2>& b) const;
-    void dot(const xt::xtensor<double, 1>& x, xt::xtensor<double, 1>& b) const;
+    void todense(xt::xtensor<double, 2>& ret) const override;
+    void dot(const xt::xtensor<double, 2>& x, xt::xtensor<double, 2>& b) const override;
+    void dot(const xt::xtensor<double, 1>& x, xt::xtensor<double, 1>& b) const override;
 
     // Get right-hand-size for corresponding to the prescribed DOFs:
     // b_p = A_pu * x_u + A_pp * x_p = A_pp * x_p
@@ -85,9 +99,7 @@ public:
         xt::xtensor<double, 1>& b_p) const;
 
     // Auto-allocation of the functions above
-    xt::xtensor<double, 2> Todense() const;
-    xt::xtensor<double, 2> Dot(const xt::xtensor<double, 2>& x) const;
-    xt::xtensor<double, 1> Dot(const xt::xtensor<double, 1>& x) const;
+
     xt::xtensor<double, 2> Reaction(
         const xt::xtensor<double, 2>& x, const xt::xtensor<double, 2>& b) const;
     xt::xtensor<double, 1> Reaction(
@@ -112,18 +124,11 @@ private:
     bool m_changed = true;
 
     // Bookkeeping
-    xt::xtensor<size_t, 2> m_conn; // connectivity                      [nelem, nne ]
-    xt::xtensor<size_t, 2> m_dofs; // DOF-numbers per node              [nnode, ndim]
     xt::xtensor<size_t, 2> m_part; // DOF-numbers per node, renumbered  [nnode, ndim]
     xt::xtensor<size_t, 1> m_iiu;  // unknown    DOFs                   [nnu]
     xt::xtensor<size_t, 1> m_iip;  // prescribed DOFs                   [nnp]
 
     // Dimensions
-    size_t m_nelem; // number of elements
-    size_t m_nne;   // number of nodes per element
-    size_t m_nnode; // number of nodes
-    size_t m_ndim;  // number of dimensions
-    size_t m_ndof;  // number of DOFs
     size_t m_nnu;   // number of unknown DOFs
     size_t m_nnp;   // number of prescribed DOFs
 

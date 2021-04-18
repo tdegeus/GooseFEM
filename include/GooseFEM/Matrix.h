@@ -22,6 +22,8 @@ template <class> class MatrixSolver;
 
 /**
 Sparse matrix.
+
+See Vector() for bookkeeping definitions.
 */
 class Matrix {
 public:
@@ -71,7 +73,7 @@ public:
 
     \param elemmat [#nelem, #nne * #ndim, #nne * #ndim].
     */
-    void assemble(const xt::xtensor<double, 3>& elemmat);
+    virtual void assemble(const xt::xtensor<double, 3>& elemmat);
 
     /**
     Overwrite matrix with dense matrix.
@@ -80,7 +82,7 @@ public:
     \param cols Column numbers in the matrix [n].
     \param matrix Data entries on (rows, cols) [n].
     */
-    void set(
+    virtual void set(
         const xt::xtensor<size_t, 1>& rows,
         const xt::xtensor<size_t, 1>& cols,
         const xt::xtensor<double, 2>& matrix);
@@ -92,7 +94,7 @@ public:
     \param cols Column numbers in the matrix [n].
     \param matrix Data entries on (rows, cols) [n].
     */
-    void add(
+    virtual void add(
         const xt::xtensor<size_t, 1>& rows,
         const xt::xtensor<size_t, 1>& cols,
         const xt::xtensor<double, 2>& matrix);
@@ -107,7 +109,7 @@ public:
 
     \param ret overwritten [#ndof, #ndof].
     */
-    void todense(xt::xtensor<double, 2>& ret) const;
+    virtual void todense(xt::xtensor<double, 2>& ret) const;
 
     /**
     Dot-product \f$ b_i = A_{ij} x_j \f$.
@@ -124,7 +126,7 @@ public:
     \param x nodevec [#nelem, #ndim].
     \param b nodevec overwritten [#nelem, #ndim].
     */
-    void dot(const xt::xtensor<double, 2>& x, xt::xtensor<double, 2>& b) const;
+    virtual void dot(const xt::xtensor<double, 2>& x, xt::xtensor<double, 2>& b) const;
 
     /**
     Dot-product \f$ b_i = A_{ij} x_j \f$.
@@ -141,12 +143,9 @@ public:
     \param x dofval [#ndof].
     \param b dofval overwritten [#ndof].
     */
-    void dot(const xt::xtensor<double, 1>& x, xt::xtensor<double, 1>& b) const;
+    virtual void dot(const xt::xtensor<double, 1>& x, xt::xtensor<double, 1>& b) const;
 
-private:
-    Eigen::SparseMatrix<double> m_A; ///< The matrix.
-    std::vector<Eigen::Triplet<double>> m_T; ///< Matrix entries.
-    bool m_changed = true; ///< Signal changes to data.
+protected:
     xt::xtensor<size_t, 2> m_conn; ///< Connectivity [#nelem, #nne].
     xt::xtensor<size_t, 2> m_dofs; ///< DOF-numbers per node [#nnode, #ndim].
     size_t m_nelem; ///< See nelem().
@@ -154,6 +153,11 @@ private:
     size_t m_nnode; ///< See nnode().
     size_t m_ndim; ///< See ndim().
     size_t m_ndof; ///< See ndof().
+    bool m_changed = true; ///< Signal changes to data.
+
+private:
+    Eigen::SparseMatrix<double> m_A; ///< The matrix.
+    std::vector<Eigen::Triplet<double>> m_T; ///< Matrix entries.
     template <class> friend class MatrixSolver; ///< Grant access to solver class
 
     /**
