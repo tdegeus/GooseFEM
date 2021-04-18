@@ -14,21 +14,44 @@ Support function for iterations.
 namespace GooseFEM {
 namespace Iterate {
 
+/**
+Class to perform a residual check based on the last "n" iterations.
+A typical usage is in dynamic simulations where equilibrium is checked based on a force residual.
+Fluctuations could however be responsible for this criterion to be triggered too early.
+By checking several time-steps such case can be avoided.
+*/
 class StopList {
 public:
-    // constructors
+
+    /**
+    Constructor.
+
+    \param n Number of consecutive iterations to consider.
+    */
     StopList(size_t n = 1);
 
-    // reset all residuals to infinity (and change the number of residuals to check)
+    /**
+    Reset all residuals to infinity.
+    */
     void reset();
+
+    /**
+    Reset all residuals to infinity, and change the number of residuals to check.
+
+    \param n Number of consecutive iterations to consider.
+    */
     void reset(size_t n);
 
-    // update list of residuals, return true if all residuals are below the tolerance
+    /**
+    Update list of residuals, return true if all residuals are below the tolerance.
+
+    \param res Current residual.
+    \param tol Tolerance below which all last "n" iterations must lie.
+    */
     bool stop(double res, double tol);
 
 private:
-    // list with residuals
-    std::vector<double> m_res;
+    std::vector<double> m_res; ///< List with residuals.
 };
 
 } // namespace Iterate
