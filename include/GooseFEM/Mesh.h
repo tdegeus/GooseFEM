@@ -36,7 +36,7 @@ inline ElementType defaultElementType(
     const xt::xtensor<size_t, 2>& conn);
 
 /**
-Base-class for regular meshes in 2-d.
+Abstract class for regular meshes in 2-d.
 This class does not have a specific element-type in mind, it is used mostly internally
 to derive from such that common methods do not have to be reimplementation.
 */
@@ -83,50 +83,50 @@ public:
     /**
     \return The ElementType().
     */
-    virtual ElementType getElementType() const;
+    virtual ElementType getElementType() const = 0;
 
     /**
     \return Nodal coordinates [#nnode, #ndim].
     */
-    virtual xt::xtensor<double, 2> coor() const;
+    virtual xt::xtensor<double, 2> coor() const = 0;
 
     /**
     \return Connectivity [#nelem, #nne].
     */
-    virtual xt::xtensor<size_t, 2> conn() const;
+    virtual xt::xtensor<size_t, 2> conn() const = 0;
 
     /**
     \return DOF numbers for each node (numbered sequentially) [#nnode, #ndim].
     */
-    virtual xt::xtensor<size_t, 2> dofs() const;
+    xt::xtensor<size_t, 2> dofs() const;
 
     /**
     Nodes along the bottom edge (y = 0), in order of increasing x.
 
     \return List of node numbers.
     */
-    virtual xt::xtensor<size_t, 1> nodesBottomEdge() const;
+    virtual xt::xtensor<size_t, 1> nodesBottomEdge() const = 0;
 
     /**
     Nodes along the top edge (y = #nely * #h), in order of increasing x.
 
     \return List of node numbers.
     */
-    virtual xt::xtensor<size_t, 1> nodesTopEdge() const;
+    virtual xt::xtensor<size_t, 1> nodesTopEdge() const = 0;
 
     /**
     Nodes along the left edge (x = 0), in order of increasing y.
 
     \return List of node numbers.
     */
-    virtual xt::xtensor<size_t, 1> nodesLeftEdge() const;
+    virtual xt::xtensor<size_t, 1> nodesLeftEdge() const = 0;
 
     /**
     Nodes along the right edge (x = #nelx * #h), in order of increasing y.
 
     \return List of node numbers.
     */
-    virtual xt::xtensor<size_t, 1> nodesRightEdge() const;
+    virtual xt::xtensor<size_t, 1> nodesRightEdge() const = 0;
 
     /**
     Nodes along the bottom edge (y = 0), without the corners (at x = 0 and x = #nelx * #h).
@@ -134,7 +134,7 @@ public:
 
     \return List of node numbers.
     */
-    virtual xt::xtensor<size_t, 1> nodesBottomOpenEdge() const;
+    virtual xt::xtensor<size_t, 1> nodesBottomOpenEdge() const = 0;
 
     /**
     Nodes along the top edge (y = #nely * #h), without the corners (at x = 0 and x = #nelx * #h).
@@ -142,7 +142,7 @@ public:
 
     \return List of node numbers.
     */
-    virtual xt::xtensor<size_t, 1> nodesTopOpenEdge() const;
+    virtual xt::xtensor<size_t, 1> nodesTopOpenEdge() const = 0;
 
     /**
     Nodes along the left edge (x = 0), without the corners (at y = 0 and y = #nely * #h).
@@ -150,7 +150,7 @@ public:
 
     \return List of node numbers.
     */
-    virtual xt::xtensor<size_t, 1> nodesLeftOpenEdge() const;
+    virtual xt::xtensor<size_t, 1> nodesLeftOpenEdge() const = 0;
 
     /**
     Nodes along the right edge (x = #nelx * #h), without the corners (at y = 0 and y = #nely * #h).
@@ -158,7 +158,7 @@ public:
 
     \return List of node numbers.
     */
-    virtual xt::xtensor<size_t, 1> nodesRightOpenEdge() const;
+    virtual xt::xtensor<size_t, 1> nodesRightOpenEdge() const = 0;
 
     /**
     The bottom-left corner node (at x = 0, y = 0).
@@ -166,7 +166,7 @@ public:
 
     \return Node number.
     */
-    virtual size_t nodesBottomLeftCorner() const;
+    virtual size_t nodesBottomLeftCorner() const = 0;
 
     /**
     The bottom-right corner node (at x = #nelx * #h, y = 0).
@@ -174,7 +174,7 @@ public:
 
     \return Node number.
     */
-    virtual size_t nodesBottomRightCorner() const;
+    virtual size_t nodesBottomRightCorner() const = 0;
 
     /**
     The top-left corner node (at x = 0, y = #nely * #h).
@@ -182,7 +182,7 @@ public:
 
     \return Node number.
     */
-    virtual size_t nodesTopLeftCorner() const;
+    virtual size_t nodesTopLeftCorner() const = 0;
 
     /**
     The top-right corner node (at x = #nelx * #h, y = #nely * #h).
@@ -190,7 +190,7 @@ public:
 
     \return Node number.
     */
-    virtual size_t nodesTopRightCorner() const;
+    virtual size_t nodesTopRightCorner() const = 0;
 
     /**
     \return Alias of nodesBottomLeftCorner().
@@ -256,7 +256,7 @@ protected:
 };
 
 /**
-Base-class for regular meshes in 3-d.
+Abstract class for regular meshes in 3-d.
 This class does not have a specific element-type in mind, it is used mostly internally
 to derive from such that common methods do not have to be reimplementation.
 */
@@ -308,64 +308,64 @@ public:
     /**
     \return The ElementType().
     */
-    virtual ElementType getElementType() const;
+    virtual ElementType getElementType() const = 0;
 
     /**
     \return Nodal coordinates [#nnode, #ndim].
     */
-    virtual xt::xtensor<double, 2> coor() const;
+    virtual xt::xtensor<double, 2> coor() const = 0;
 
     /**
     \return Connectivity [#nelem, #nne].
     */
-    virtual xt::xtensor<size_t, 2> conn() const;
+    virtual xt::xtensor<size_t, 2> conn() const = 0;
 
     /**
     \return DOF numbers for each node (numbered sequentially) [#nnode, #ndim].
     */
-    virtual xt::xtensor<size_t, 2> dofs() const;
+    xt::xtensor<size_t, 2> dofs() const;
 
     /**
     Nodes along the bottom face (y = 0).
 
     \return List of node numbers.
     */
-    virtual xt::xtensor<size_t, 1> nodesBottom() const;
+    virtual xt::xtensor<size_t, 1> nodesBottom() const = 0;
 
     /**
     Nodes along the top face (y = #nely * #h).
 
     \return List of node numbers.
     */
-    virtual xt::xtensor<size_t, 1> nodesTop() const;
+    virtual xt::xtensor<size_t, 1> nodesTop() const = 0;
 
     /**
     Nodes along the left face (x = 0).
 
     \return List of node numbers.
     */
-    virtual xt::xtensor<size_t, 1> nodesLeft() const;
+    virtual xt::xtensor<size_t, 1> nodesLeft() const = 0;
 
     /**
     Nodes along the right face (x = #nelx * #h).
 
     \return List of node numbers.
     */
-    virtual xt::xtensor<size_t, 1> nodesRight() const;
+    virtual xt::xtensor<size_t, 1> nodesRight() const = 0;
 
     /**
     Nodes along the front face (z = 0).
 
     \return List of node numbers.
     */
-    virtual xt::xtensor<size_t, 1> nodesFront() const;
+    virtual xt::xtensor<size_t, 1> nodesFront() const = 0;
 
     /**
     Nodes along the back face (z = #nelz * #h).
 
     \return List of node numbers.
     */
-    virtual xt::xtensor<size_t, 1> nodesBack() const;
+    virtual xt::xtensor<size_t, 1> nodesBack() const = 0;
 
     /**
     Nodes along the edge at the intersection of the front and bottom faces
@@ -373,7 +373,7 @@ public:
 
     \return List of node numbers.
     */
-    virtual xt::xtensor<size_t, 1> nodesFrontBottomEdge() const;
+    virtual xt::xtensor<size_t, 1> nodesFrontBottomEdge() const = 0;
 
     /**
     Nodes along the edge at the intersection of the front and top faces
@@ -381,7 +381,7 @@ public:
 
     \return List of node numbers.
     */
-    virtual xt::xtensor<size_t, 1> nodesFrontTopEdge() const;
+    virtual xt::xtensor<size_t, 1> nodesFrontTopEdge() const = 0;
 
     /**
     Nodes along the edge at the intersection of the front and left faces
@@ -389,7 +389,7 @@ public:
 
     \return List of node numbers.
     */
-    virtual xt::xtensor<size_t, 1> nodesFrontLeftEdge() const;
+    virtual xt::xtensor<size_t, 1> nodesFrontLeftEdge() const = 0;
 
     /**
     Nodes along the edge at the intersection of the front and right faces
@@ -397,7 +397,7 @@ public:
 
     \return List of node numbers.
     */
-    virtual xt::xtensor<size_t, 1> nodesFrontRightEdge() const;
+    virtual xt::xtensor<size_t, 1> nodesFrontRightEdge() const = 0;
 
     /**
     Nodes along the edge at the intersection of the back and bottom faces
@@ -405,7 +405,7 @@ public:
 
     \return List of node numbers.
     */
-    virtual xt::xtensor<size_t, 1> nodesBackBottomEdge() const;
+    virtual xt::xtensor<size_t, 1> nodesBackBottomEdge() const = 0;
 
     /**
     Nodes along the edge at the intersection of the back and top faces
@@ -413,7 +413,7 @@ public:
 
     \return List of node numbers.
     */
-    virtual xt::xtensor<size_t, 1> nodesBackTopEdge() const;
+    virtual xt::xtensor<size_t, 1> nodesBackTopEdge() const = 0;
 
     /**
     Nodes along the edge at the intersection of the back and left faces
@@ -421,7 +421,7 @@ public:
 
     \return List of node numbers.
     */
-    virtual xt::xtensor<size_t, 1> nodesBackLeftEdge() const;
+    virtual xt::xtensor<size_t, 1> nodesBackLeftEdge() const = 0;
 
     /**
     Nodes along the edge at the intersection of the back and right faces
@@ -429,7 +429,7 @@ public:
 
     \return List of node numbers.
     */
-    virtual xt::xtensor<size_t, 1> nodesBackRightEdge() const;
+    virtual xt::xtensor<size_t, 1> nodesBackRightEdge() const = 0;
 
     /**
     Nodes along the edge at the intersection of the bottom and left faces
@@ -437,7 +437,7 @@ public:
 
     \return List of node numbers.
     */
-    virtual xt::xtensor<size_t, 1> nodesBottomLeftEdge() const;
+    virtual xt::xtensor<size_t, 1> nodesBottomLeftEdge() const = 0;
 
     /**
     Nodes along the edge at the intersection of the bottom and right faces
@@ -445,7 +445,7 @@ public:
 
     \return List of node numbers.
     */
-    virtual xt::xtensor<size_t, 1> nodesBottomRightEdge() const;
+    virtual xt::xtensor<size_t, 1> nodesBottomRightEdge() const = 0;
 
     /**
     Nodes along the edge at the intersection of the top and left faces
@@ -453,7 +453,7 @@ public:
 
     \return List of node numbers.
     */
-    virtual xt::xtensor<size_t, 1> nodesTopLeftEdge() const;
+    virtual xt::xtensor<size_t, 1> nodesTopLeftEdge() const = 0;
 
     /**
     Nodes along the edge at the intersection of the top and right faces
@@ -461,7 +461,7 @@ public:
 
     \return List of node numbers.
     */
-    virtual xt::xtensor<size_t, 1> nodesTopRightEdge() const;
+    virtual xt::xtensor<size_t, 1> nodesTopRightEdge() const = 0;
 
     /**
     \return Alias of nodesFrontBottomEdge()
@@ -531,7 +531,7 @@ public:
 
     \return list of node numbers.
     */
-    virtual xt::xtensor<size_t, 1> nodesFrontFace() const;
+    virtual xt::xtensor<size_t, 1> nodesFrontFace() const = 0;
 
     /**
     Nodes along the back face excluding edges.
@@ -540,7 +540,7 @@ public:
 
     \return list of node numbers.
     */
-    virtual xt::xtensor<size_t, 1> nodesBackFace() const;
+    virtual xt::xtensor<size_t, 1> nodesBackFace() const = 0;
 
     /**
     Nodes along the left face excluding edges.
@@ -549,7 +549,7 @@ public:
 
     \return list of node numbers.
     */
-    virtual xt::xtensor<size_t, 1> nodesLeftFace() const;
+    virtual xt::xtensor<size_t, 1> nodesLeftFace() const = 0;
 
     /**
     Nodes along the right face excluding edges.
@@ -558,7 +558,7 @@ public:
 
     \return list of node numbers.
     */
-    virtual xt::xtensor<size_t, 1> nodesRightFace() const;
+    virtual xt::xtensor<size_t, 1> nodesRightFace() const = 0;
 
     /**
     Nodes along the bottom face excluding edges.
@@ -567,7 +567,7 @@ public:
 
     \return list of node numbers.
     */
-    virtual xt::xtensor<size_t, 1> nodesBottomFace() const;
+    virtual xt::xtensor<size_t, 1> nodesBottomFace() const = 0;
 
     /**
     Nodes along the top face excluding edges.
@@ -576,91 +576,91 @@ public:
 
     \return list of node numbers.
     */
-    virtual xt::xtensor<size_t, 1> nodesTopFace() const;
+    virtual xt::xtensor<size_t, 1> nodesTopFace() const = 0;
 
     /**
     Same as nodesFrontBottomEdge() but without corners.
 
     \return List of node numbers.
     */
-    virtual xt::xtensor<size_t, 1> nodesFrontBottomOpenEdge() const;
+    virtual xt::xtensor<size_t, 1> nodesFrontBottomOpenEdge() const = 0;
 
     /**
     Same as nodesFrontTopEdge() but without corners.
 
     \return List of node numbers.
     */
-    virtual xt::xtensor<size_t, 1> nodesFrontTopOpenEdge() const;
+    virtual xt::xtensor<size_t, 1> nodesFrontTopOpenEdge() const = 0;
 
     /**
     Same as nodesFrontLeftEdge() but without corners.
 
     \return List of node numbers.
     */
-    virtual xt::xtensor<size_t, 1> nodesFrontLeftOpenEdge() const;
+    virtual xt::xtensor<size_t, 1> nodesFrontLeftOpenEdge() const = 0;
 
     /**
     Same as nodesFrontRightEdge() but without corners.
 
     \return List of node numbers.
     */
-    virtual xt::xtensor<size_t, 1> nodesFrontRightOpenEdge() const;
+    virtual xt::xtensor<size_t, 1> nodesFrontRightOpenEdge() const = 0;
 
     /**
     Same as nodesBackBottomEdge() but without corners.
 
     \return List of node numbers.
     */
-    virtual xt::xtensor<size_t, 1> nodesBackBottomOpenEdge() const;
+    virtual xt::xtensor<size_t, 1> nodesBackBottomOpenEdge() const = 0;
 
     /**
     Same as nodesBackTopEdge() but without corners.
 
     \return List of node numbers.
     */
-    virtual xt::xtensor<size_t, 1> nodesBackTopOpenEdge() const;
+    virtual xt::xtensor<size_t, 1> nodesBackTopOpenEdge() const = 0;
 
     /**
     Same as nodesBackLeftEdge() but without corners.
 
     \return List of node numbers.
     */
-    virtual xt::xtensor<size_t, 1> nodesBackLeftOpenEdge() const;
+    virtual xt::xtensor<size_t, 1> nodesBackLeftOpenEdge() const = 0;
 
     /**
     Same as nodesBackRightEdge() but without corners.
 
     \return List of node numbers.
     */
-    virtual xt::xtensor<size_t, 1> nodesBackRightOpenEdge() const;
+    virtual xt::xtensor<size_t, 1> nodesBackRightOpenEdge() const = 0;
 
     /**
     Same as nodesBottomLeftEdge() but without corners.
 
     \return List of node numbers.
     */
-    virtual xt::xtensor<size_t, 1> nodesBottomLeftOpenEdge() const;
+    virtual xt::xtensor<size_t, 1> nodesBottomLeftOpenEdge() const = 0;
 
     /**
     Same as nodesBottomRightEdge() but without corners.
 
     \return List of node numbers.
     */
-    virtual xt::xtensor<size_t, 1> nodesBottomRightOpenEdge() const;
+    virtual xt::xtensor<size_t, 1> nodesBottomRightOpenEdge() const = 0;
 
     /**
     Same as nodesTopLeftEdge() but without corners.
 
     \return List of node numbers.
     */
-    virtual xt::xtensor<size_t, 1> nodesTopLeftOpenEdge() const;
+    virtual xt::xtensor<size_t, 1> nodesTopLeftOpenEdge() const = 0;
 
     /**
     Same as nodesTopRightEdge() but without corners.
 
     \return List of node numbers.
     */
-    virtual xt::xtensor<size_t, 1> nodesTopRightOpenEdge() const;
+    virtual xt::xtensor<size_t, 1> nodesTopRightOpenEdge() const = 0;
 
     /**
     \return Alias of nodesFrontBottomOpenEdge().
@@ -727,56 +727,56 @@ public:
 
     \return Node number.
     */
-    virtual size_t nodesFrontBottomLeftCorner() const;
+    virtual size_t nodesFrontBottomLeftCorner() const = 0;
 
     /**
     Front-Bottom-Right corner node.
 
     \return Node number.
     */
-    virtual size_t nodesFrontBottomRightCorner() const;
+    virtual size_t nodesFrontBottomRightCorner() const = 0;
 
     /**
     Front-Top-Left corner node.
 
     \return Node number.
     */
-    virtual size_t nodesFrontTopLeftCorner() const;
+    virtual size_t nodesFrontTopLeftCorner() const = 0;
 
     /**
     Front-Top-Right corner node.
 
     \return Node number.
     */
-    virtual size_t nodesFrontTopRightCorner() const;
+    virtual size_t nodesFrontTopRightCorner() const = 0;
 
     /**
     Back-Bottom-Left corner node.
 
     \return Node number.
     */
-    virtual size_t nodesBackBottomLeftCorner() const;
+    virtual size_t nodesBackBottomLeftCorner() const = 0;
 
     /**
     Back-Bottom-Right corner node.
 
     \return Node number.
     */
-    virtual size_t nodesBackBottomRightCorner() const;
+    virtual size_t nodesBackBottomRightCorner() const = 0;
 
     /**
     Back-Top-Left corner node.
 
     \return Node number.
     */
-    virtual size_t nodesBackTopLeftCorner() const;
+    virtual size_t nodesBackTopLeftCorner() const = 0;
 
     /**
     Back-Top-Right corner node.
 
     \return Node number.
     */
-    virtual size_t nodesBackTopRightCorner() const;
+    virtual size_t nodesBackTopRightCorner() const = 0;
 
     /**
     \return Alias of nodesFrontBottomLeftCorner().
