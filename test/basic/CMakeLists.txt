@@ -28,6 +28,7 @@ add_executable(${test_name}
     MatrixDiagonal.cpp
     Mesh.cpp
     MeshQuad4.cpp
+    MeshHex8.cpp
     Vector.cpp
     VectorPartitioned.cpp)
 
