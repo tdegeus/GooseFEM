@@ -78,44 +78,32 @@ public:
         const xt::xtensor<size_t, 1>& iip);
 
     /**
-    Number of dependent DOFs.
-
-    \return unsigned int
+    \return Number of dependent DOFs.
     */
     size_t nnd() const;
 
     /**
-    Number of independent DOFs.
-
-    \return unsigned int
+    \return Number of independent DOFs.
     */
     size_t nni() const;
 
     /**
-    Number of independent unknown DOFs.
-
-    \return unsigned int
+    \return Number of independent unknown DOFs.
     */
     size_t nnu() const;
 
     /**
-    Number of independent prescribed DOFs.
-
-    \return unsigned int
+    \return Number of independent prescribed DOFs.
     */
     size_t nnp() const;
 
     /**
-    Return the DOF-numbers per node, as used internally (after renumbering).
-
-    \return [nnode, ndim].
+    \return DOF-numbers per node, as used internally (after renumbering), [nnode, ndim].
     */
     xt::xtensor<size_t, 2> dofs() const;
 
     /**
-    Return the DOF-numbers for each control node, as used internally (after renumbering).
-
-    \return [ndim, ndim].
+    \return DOF-numbers for each control node, as used internally (after renumbering), [ndim, ndim].
     */
     xt::xtensor<size_t, 2> control() const;
 
