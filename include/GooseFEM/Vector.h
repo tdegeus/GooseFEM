@@ -34,51 +34,37 @@ public:
     Vector(const xt::xtensor<size_t, 2>& conn, const xt::xtensor<size_t, 2>& dofs);
 
     /**
-    Number of elements.
-
-    \return unsigned int
+    \return  Number of elements.
     */
     size_t nelem() const;
 
     /**
-    Number of nodes per element.
-
-    \return unsigned int
+    \return  Number of nodes per element.
     */
     size_t nne() const;
 
     /**
-    Number of nodes.
-
-    \return unsigned int
+    \return  Number of nodes.
     */
     size_t nnode() const;
 
     /**
-    Number of dimensions.
-
-    \return unsigned int
+    \return  Number of dimensions.
     */
     size_t ndim() const;
 
     /**
-    Number of DOFs.
-
-    \return unsigned int
+    \return  Number of DOFs.
     */
     size_t ndof() const;
 
     /**
-    Connectivity (nodes per element).
-
-    \return [#nelem, #nne]
+    \return Connectivity (nodes per element) [#nelem, #nne].
     */
     xt::xtensor<size_t, 2> conn() const;
 
     /**
-    DOFs per node.
-
-    \return [#nnode, #ndim]
+    \return DOFs per node [#nnode, #ndim]
     */
     xt::xtensor<size_t, 2> dofs() const;
 
