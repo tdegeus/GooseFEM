@@ -45,6 +45,16 @@ inline MatrixPartitioned::MatrixPartitioned(
     GOOSEFEM_ASSERT(m_ndof <= m_nnode * m_ndim);
 }
 
+inline size_t MatrixPartitioned::nnu() const
+{
+    return m_nnu;
+}
+
+inline size_t MatrixPartitioned::nnp() const
+{
+    return m_nnp;
+}
+
 inline xt::xtensor<size_t, 1> MatrixPartitioned::iiu() const
 {
     return m_iiu;
