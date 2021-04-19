@@ -1195,6 +1195,7 @@ Stitch mesh objects, automatically searching for overlapping nodes.
 */
 class Stitch {
 public:
+
     /**
     \param rtol Relative tolerance for position match.
     \param atol Absolute tolerance for position match.
@@ -1309,14 +1310,49 @@ public:
     */
     xt::xtensor<size_t, 1> elemset(const std::vector<xt::xtensor<size_t, 1>>& set) const;
 
-private:
-    xt::xtensor<double, 2> m_coor;
-    xt::xtensor<size_t, 2> m_conn;
-    std::vector<xt::xtensor<size_t, 1>> m_map;
+protected:
+    xt::xtensor<double, 2> m_coor; ///< Nodal coordinates [#nnode, #ndim]
+    xt::xtensor<size_t, 2> m_conn; ///< Connectivity [#nelem, #nne]
+    std::vector<xt::xtensor<size_t, 1>> m_map; ///< See nodemap(size_t)
     std::vector<size_t> m_nel; ///< Number of elements per sub-mesh.
-    std::vector<size_t> m_el_offset;
-    double m_rtol;
-    double m_atol;
+    std::vector<size_t> m_el_offset; ///< First element of every sub-mesh.
+    double m_rtol; ///< Relative tolerance to find overlapping nodes.
+    double m_atol; ///< Absolute tolerance to find overlapping nodes.
+};
+
+/**
+Vertically stack meshes.
+*/
+class Vstack : public Stitch {
+public:
+
+    /**
+    \param check_overlap Check if nodes are overlapping when adding a mesh.
+    \param rtol Relative tolerance for position match.
+    \param atol Absolute tolerance for position match.
+    */
+    Vstack(bool check_overlap = true, double rtol = 1e-5, double atol = 1e-8);
+
+    /**
+    Add a mesh to the top of the current stack.
+    Each time the current `nodes_bottom` are stitched with the then highest `nodes_top`.
+
+    \param coor Nodal coordinates.
+    \param conn Connectivity.
+    \param nodes_bottom Nodes along the bottom edge.
+    \param nodes_top Nodes along the top edge.
+    */
+    void push_back(
+        const xt::xtensor<double, 2>& coor,
+        const xt::xtensor<size_t, 2>& conn,
+        const xt::xtensor<size_t, 1>& nodes_bottom,
+        const xt::xtensor<size_t, 1>& nodes_top);
+
+private:
+
+    std::vector<xt::xtensor<size_t, 1>> m_nodes_bot; ///< Bottom nodes of each mesh (renumbered).
+    std::vector<xt::xtensor<size_t, 1>> m_nodes_top; ///< Top nodes of each mesh (renumbered).
+    bool m_check_overlap; ///< Check if nodes are overlapping when adding a mesh.
 };
 
 /**

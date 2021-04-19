@@ -997,7 +997,7 @@ inline ManualStitch::ManualStitch(
     GOOSEFEM_ASSERT(conn_a.shape(1) == conn_b.shape(1));
 
     if (check_position) {
-        GOOSEFEM_ASSERT(xt::allclose(
+        GOOSEFEM_CHECK(xt::allclose(
             xt::view(coor_a, xt::keep(overlapping_nodes_a), xt::all()),
             xt::view(coor_b, xt::keep(overlapping_nodes_b), xt::all()),
             rtol,
@@ -1165,14 +1165,14 @@ inline void Stitch::push_back(
     auto overlap = overlapping(m_coor, coor, m_rtol, m_atol);
     size_t index = m_map.size();
 
-    ManualStitch stich(
+    ManualStitch stitch(
         m_coor, m_conn, xt::view(overlap, 0, xt::all()),
         coor, conn, xt::view(overlap, 1, xt::all()),
         false);
 
-    m_coor = stich.coor();
-    m_conn = stich.conn();
-    m_map.push_back(stich.nodemap(1));
+    m_coor = stitch.coor();
+    m_conn = stitch.conn();
+    m_map.push_back(stitch.nodemap(1));
     m_nel.push_back(conn.shape(0));
     m_el_offset.push_back(m_el_offset[index - 1] + m_nel[index - 1]);
 }
@@ -1305,6 +1305,53 @@ inline xt::xtensor<size_t, 1> Stitch::elemset(const std::vector<xt::xtensor<size
     }
 
     return ret;
+}
+
+inline Vstack::Vstack(bool check_overlap, double rtol, double atol)
+{
+    m_check_overlap = check_overlap;
+    m_rtol = rtol;
+    m_atol = atol;
+}
+
+inline void Vstack::push_back(
+    const xt::xtensor<double, 2>& coor,
+    const xt::xtensor<size_t, 2>& conn,
+    const xt::xtensor<size_t, 1>& nodes_bot,
+    const xt::xtensor<size_t, 1>& nodes_top)
+{
+    if (m_map.size() == 0) {
+        m_coor = coor;
+        m_conn = conn;
+        m_map.push_back(xt::eval(xt::arange<size_t>(coor.shape(0))));
+        m_nel.push_back(conn.shape(0));
+        m_el_offset.push_back(0);
+        m_nodes_bot.push_back(nodes_bot);
+        m_nodes_top.push_back(nodes_top);
+        return;
+    }
+
+    GOOSEFEM_ASSERT(nodes_bot.size() == m_nodes_top.back().size());
+
+    size_t index = m_map.size();
+
+    double shift = xt::amax(xt::view(m_coor, xt::all(), 1))();
+    auto x = coor;
+    xt::view(x, xt::all(), 1) += shift;
+
+    ManualStitch stitch(
+        m_coor, m_conn, m_nodes_top.back(),
+        x, conn, nodes_bot,
+        m_check_overlap, m_rtol, m_atol);
+
+    m_nodes_bot.push_back(stitch.nodeset(nodes_bot, 1));
+    m_nodes_top.push_back(stitch.nodeset(nodes_top, 1));
+
+    m_coor = stitch.coor();
+    m_conn = stitch.conn();
+    m_map.push_back(stitch.nodemap(1));
+    m_nel.push_back(conn.shape(0));
+    m_el_offset.push_back(m_el_offset[index - 1] + m_nel[index - 1]);
 }
 
 template <class T>

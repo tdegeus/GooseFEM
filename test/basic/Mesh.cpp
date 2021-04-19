@@ -102,6 +102,58 @@ TEST_CASE("GooseFEM::Mesh", "Mesh.h")
         REQUIRE(xt::all(xt::equal(stitch.elemset({eset, eset}), xt::arange<size_t>(2 * 5 * 5))));
     }
 
+    SECTION("Vstack - equivalent test as 'Stitch'")
+    {
+        GooseFEM::Mesh::Quad4::Regular mesh(5, 5, 1.0);
+
+        GooseFEM::Mesh::Vstack stitch;
+        stitch.push_back(mesh.coor(), mesh.conn(), mesh.nodesBottomEdge(), mesh.nodesTopEdge());
+        stitch.push_back(mesh.coor(), mesh.conn(), mesh.nodesBottomEdge(), mesh.nodesTopEdge());
+
+        auto nset = mesh.nodesLeftEdge();
+        auto eset = xt::eval(xt::arange<size_t>(mesh.nelem()));
+
+        GooseFEM::Mesh::Quad4::Regular res(5, 10, 1.0);
+
+        REQUIRE(xt::allclose(stitch.coor(), res.coor()));
+        REQUIRE(xt::all(xt::equal(stitch.conn(), res.conn())));
+
+        REQUIRE(stitch.nodemap().size() == 2);
+        REQUIRE(stitch.elemmap().size() == 2);
+        REQUIRE(xt::all(xt::equal(stitch.nodemap(0), xt::arange<size_t>(6 * 6))));
+        REQUIRE(xt::all(xt::equal(stitch.nodemap(1), xt::arange<size_t>(6 * 6) + 5 * 6)));
+        REQUIRE(xt::all(xt::equal(stitch.elemmap(0), xt::arange<size_t>(5 * 5))));
+        REQUIRE(xt::all(xt::equal(stitch.elemmap(1), xt::arange<size_t>(5 * 5) + 5 * 5)));
+
+        REQUIRE(xt::all(xt::equal(stitch.nodeset(xt::arange<size_t>(6 * 6), 0), xt::arange<size_t>(6 * 6))));
+        REQUIRE(xt::all(xt::equal(stitch.nodeset(xt::arange<size_t>(6 * 6), 1), xt::arange<size_t>(6 * 6) + 5 * 6)));
+        REQUIRE(xt::all(xt::equal(stitch.elemset(xt::arange<size_t>(5 * 5), 0), xt::arange<size_t>(5 * 5))));
+        REQUIRE(xt::all(xt::equal(stitch.elemset(xt::arange<size_t>(5 * 5), 1), xt::arange<size_t>(5 * 5) + 5 * 5)));
+
+        REQUIRE(xt::all(xt::equal(stitch.nodeset({nset, nset}), xt::arange<size_t>(0, 6 * 6 + 5 * 6, 6))));
+        REQUIRE(xt::all(xt::equal(stitch.elemset({eset, eset}), xt::arange<size_t>(2 * 5 * 5))));
+    }
+
+    SECTION("Vstack - several layers")
+    {
+        GooseFEM::Mesh::Quad4::Regular mesh(5, 5, 1.0);
+
+        GooseFEM::Mesh::Vstack stitch;
+        stitch.push_back(mesh.coor(), mesh.conn(), mesh.nodesBottomEdge(), mesh.nodesTopEdge());
+        stitch.push_back(mesh.coor(), mesh.conn(), mesh.nodesBottomEdge(), mesh.nodesTopEdge());
+        stitch.push_back(mesh.coor(), mesh.conn(), mesh.nodesBottomEdge(), mesh.nodesTopEdge());
+        stitch.push_back(mesh.coor(), mesh.conn(), mesh.nodesBottomEdge(), mesh.nodesTopEdge());
+        stitch.push_back(mesh.coor(), mesh.conn(), mesh.nodesBottomEdge(), mesh.nodesTopEdge());
+
+        GooseFEM::Mesh::Quad4::Regular res(5, 5 * 5, 1.0);
+
+        REQUIRE(xt::allclose(stitch.coor(), res.coor()));
+        REQUIRE(xt::all(xt::equal(stitch.conn(), res.conn())));
+
+        REQUIRE(stitch.nodemap().size() == 5);
+        REQUIRE(stitch.elemmap().size() == 5);
+    }
+
     SECTION("edgesize")
     {
         GooseFEM::Mesh::Quad4::Regular mesh(2, 2, 10.0);
