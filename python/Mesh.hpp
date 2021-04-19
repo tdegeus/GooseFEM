@@ -252,6 +252,26 @@ void init_Mesh(py::module& m)
 
         .def("__repr__", [](const GooseFEM::Mesh::Stitch&) { return "<GooseFEM.Mesh.Stitch>"; });
 
+    py::class_<GooseFEM::Mesh::Vstack>(m, "Vstack")
+
+        .def(py::init<bool, double, double>(),
+             "Vstack meshes."
+             "See :cpp:class:`GooseFEM::Mesh::Vstack`.",
+             py::arg("check_overlap") = true,
+             py::arg("rtol") = 1e-5,
+             py::arg("atol") = 1e-8)
+
+        .def("push_back",
+             &GooseFEM::Mesh::Vstack::push_back,
+             "Add mesh to be stitched."
+             "See :cpp:func:`GooseFEM::Mesh::Vstack::push_back`.",
+             py::arg("coor"),
+             py::arg("conn"),
+             py::arg("nodes_bottom"),
+             py::arg("nodes_top"))
+
+        .def("__repr__", [](const GooseFEM::Mesh::Vstack&) { return "<GooseFEM.Mesh.Vstack>"; });
+
     py::class_<GooseFEM::Mesh::Renumber>(m, "Renumber")
 
         .def(
