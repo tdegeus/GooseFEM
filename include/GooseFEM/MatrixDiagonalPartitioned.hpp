@@ -18,14 +18,10 @@ inline MatrixDiagonalPartitioned::MatrixDiagonalPartitioned(
     const xt::xtensor<size_t, 2>& conn,
     const xt::xtensor<size_t, 2>& dofs,
     const xt::xtensor<size_t, 1>& iip)
-    : m_conn(conn), m_dofs(dofs), m_iip(iip)
+    : MatrixDiagonal(conn, dofs)
 {
-    m_nelem = m_conn.shape(0);
-    m_nne = m_conn.shape(1);
-    m_nnode = m_dofs.shape(0);
-    m_ndim = m_dofs.shape(1);
+    m_iip = iip;
     m_iiu = xt::setdiff1d(dofs, iip);
-    m_ndof = xt::amax(m_dofs)() + 1;
     m_nnp = m_iip.size();
     m_nnu = m_iiu.size();
     m_part = Mesh::Reorder({m_iiu, m_iip}).apply(m_dofs);
@@ -33,34 +29,7 @@ inline MatrixDiagonalPartitioned::MatrixDiagonalPartitioned(
     m_App = xt::empty<double>({m_nnp});
     m_inv_uu = xt::empty<double>({m_nnu});
 
-    GOOSEFEM_ASSERT(xt::amax(m_conn)() + 1 <= m_nnode);
     GOOSEFEM_ASSERT(xt::amax(m_iip)() <= xt::amax(m_dofs)());
-    GOOSEFEM_ASSERT(m_ndof <= m_nnode * m_ndim);
-}
-
-inline size_t MatrixDiagonalPartitioned::nelem() const
-{
-    return m_nelem;
-}
-
-inline size_t MatrixDiagonalPartitioned::nne() const
-{
-    return m_nne;
-}
-
-inline size_t MatrixDiagonalPartitioned::nnode() const
-{
-    return m_nnode;
-}
-
-inline size_t MatrixDiagonalPartitioned::ndim() const
-{
-    return m_ndim;
-}
-
-inline size_t MatrixDiagonalPartitioned::ndof() const
-{
-    return m_ndof;
 }
 
 inline size_t MatrixDiagonalPartitioned::nnu() const
@@ -71,11 +40,6 @@ inline size_t MatrixDiagonalPartitioned::nnu() const
 inline size_t MatrixDiagonalPartitioned::nnp() const
 {
     return m_nnp;
-}
-
-inline xt::xtensor<size_t, 2> MatrixDiagonalPartitioned::dofs() const
-{
-    return m_dofs;
 }
 
 inline xt::xtensor<size_t, 1> MatrixDiagonalPartitioned::iiu() const
@@ -90,7 +54,7 @@ inline xt::xtensor<size_t, 1> MatrixDiagonalPartitioned::iip() const
 
 inline void MatrixDiagonalPartitioned::factorize()
 {
-    if (!m_factor) {
+    if (!m_changed) {
         return;
     }
 
@@ -99,7 +63,7 @@ inline void MatrixDiagonalPartitioned::factorize()
         m_inv_uu(d) = 1.0 / m_Auu(d);
     }
 
-    m_factor = false;
+    m_changed = false;
 }
 
 inline void MatrixDiagonalPartitioned::assemble(const xt::xtensor<double, 3>& elemmat)
@@ -126,7 +90,7 @@ inline void MatrixDiagonalPartitioned::assemble(const xt::xtensor<double, 3>& el
         }
     }
 
-    m_factor = true;
+    m_changed = true;
 }
 
 inline void
@@ -315,20 +279,6 @@ inline xt::xtensor<double, 1> MatrixDiagonalPartitioned::Todiagonal() const
     return ret;
 }
 
-inline xt::xtensor<double, 2> MatrixDiagonalPartitioned::Dot(const xt::xtensor<double, 2>& x) const
-{
-    xt::xtensor<double, 2> b = xt::empty<double>({m_nnode, m_ndim});
-    this->dot(x, b);
-    return b;
-}
-
-inline xt::xtensor<double, 1> MatrixDiagonalPartitioned::Dot(const xt::xtensor<double, 1>& x) const
-{
-    xt::xtensor<double, 1> b = xt::empty<double>({m_ndof});
-    this->dot(x, b);
-    return b;
-}
-
 inline xt::xtensor<double, 1> MatrixDiagonalPartitioned::Dot_u(
     const xt::xtensor<double, 1>& x_u, const xt::xtensor<double, 1>& x_p) const
 {
@@ -343,22 +293,6 @@ inline xt::xtensor<double, 1> MatrixDiagonalPartitioned::Dot_p(
     xt::xtensor<double, 1> b_p = xt::empty<double>({m_nnp});
     this->dot_p(x_u, x_p, b_p);
     return b_p;
-}
-
-inline xt::xtensor<double, 2>
-MatrixDiagonalPartitioned::Solve(const xt::xtensor<double, 2>& b, const xt::xtensor<double, 2>& x)
-{
-    xt::xtensor<double, 2> ret = x;
-    this->solve(b, ret);
-    return ret;
-}
-
-inline xt::xtensor<double, 1>
-MatrixDiagonalPartitioned::Solve(const xt::xtensor<double, 1>& b, const xt::xtensor<double, 1>& x)
-{
-    xt::xtensor<double, 1> ret = x;
-    this->solve(b, ret);
-    return ret;
 }
 
 inline xt::xtensor<double, 1> MatrixDiagonalPartitioned::Solve_u(

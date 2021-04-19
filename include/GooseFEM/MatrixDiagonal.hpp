@@ -61,7 +61,7 @@ inline xt::xtensor<size_t, 2> MatrixDiagonal::dofs() const
 
 inline void MatrixDiagonal::factorize()
 {
-    if (!m_factor) {
+    if (!m_changed) {
         return;
     }
 
@@ -70,14 +70,14 @@ inline void MatrixDiagonal::factorize()
         m_inv(d) = 1.0 / m_A(d);
     }
 
-    m_factor = false;
+    m_changed = false;
 }
 
 inline void MatrixDiagonal::set(const xt::xtensor<double, 1>& A)
 {
     GOOSEFEM_ASSERT(A.size() == m_ndof);
     std::copy(A.begin(), A.end(), m_A.begin());
-    m_factor = true;
+    m_changed = true;
 }
 
 inline void MatrixDiagonal::assemble(const xt::xtensor<double, 3>& elemmat)
@@ -95,7 +95,7 @@ inline void MatrixDiagonal::assemble(const xt::xtensor<double, 3>& elemmat)
         }
     }
 
-    m_factor = true;
+    m_changed = true;
 }
 
 inline void MatrixDiagonal::dot(const xt::xtensor<double, 2>& x, xt::xtensor<double, 2>& b) const

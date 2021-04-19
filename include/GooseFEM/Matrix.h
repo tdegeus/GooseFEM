@@ -76,7 +76,7 @@ public:
     virtual void assemble(const xt::xtensor<double, 3>& elemmat);
 
     /**
-    Overwrite matrix with dense matrix.
+    Overwrite matrix with (sparse) matrix.
 
     \param rows Row numbers in the matrix [n].
     \param cols Column numbers in the matrix [n].
@@ -88,7 +88,7 @@ public:
         const xt::xtensor<double, 2>& matrix);
 
     /**
-    Add a dense matrix to the matrix.
+    Add a (sparse) matrix to the matrix.
 
     \param rows Row numbers in the matrix [n].
     \param cols Column numbers in the matrix [n].
@@ -146,6 +146,7 @@ public:
     virtual void dot(const xt::xtensor<double, 1>& x, xt::xtensor<double, 1>& b) const;
 
 protected:
+
     xt::xtensor<size_t, 2> m_conn; ///< Connectivity [#nelem, #nne].
     xt::xtensor<size_t, 2> m_dofs; ///< DOF-numbers per node [#nnode, #ndim].
     size_t m_nelem; ///< See nelem().
@@ -156,6 +157,7 @@ protected:
     bool m_changed = true; ///< Signal changes to data.
 
 private:
+
     Eigen::SparseMatrix<double> m_A; ///< The matrix.
     std::vector<Eigen::Triplet<double>> m_T; ///< Matrix entries.
     template <class> friend class MatrixSolver; ///< Grant access to solver class
@@ -208,7 +210,8 @@ public:
     void solve(Matrix& A, const xt::xtensor<double, 2>& b, xt::xtensor<double, 2>& x);
 
     /**
-    Solve \f$ x = A^{-1} b \f$.
+    Same as Solve(Matrix&, const xt::xtensor<double, 2>&)
+    but for "dofval" input and output.
 
     \param A sparse matrix, see Matrix().
     \param b dofval [ndof].
