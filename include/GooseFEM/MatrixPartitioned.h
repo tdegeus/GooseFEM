@@ -208,7 +208,7 @@ public:
     /**
     Solve \f$ x_u = A_{uu}^{-1} (b_u - A_{up} * x_p) \f$.
 
-    \param A sparse matrix, see Matrix().
+    \param A sparse matrix, see MatrixPartitioned().
     \param b nodevec [nelem, ndim].
     \param x nodevec [nelem, ndim], used to read \f$ x_p \f$.
     \return x nodevec [nelem, ndim], \f$ x_u \f$ filled, \f$ x_p \f$ copied.
@@ -222,7 +222,7 @@ public:
     Same as Solve(MatrixPartitioned&, const xt::xtensor<double, 2>&, const xt::xtensor<double, 2>&),
     but filling \f$ x_u \f$ in place.
 
-    \param A sparse matrix, see Matrix().
+    \param A sparse matrix, see MatrixPartitioned().
     \param b nodevec [nelem, ndim].
     \param x nodevec [nelem, ndim], \f$ x_p \f$ read, \f$ x_u \f$ filled.
     */
@@ -232,7 +232,7 @@ public:
     Same as Solve(MatrixPartitioned&, const xt::xtensor<double, 2>&, const xt::xtensor<double, 2>&),
     but for "dofval" input and output.
 
-    \param A sparse matrix, see Matrix().
+    \param A sparse matrix, see MatrixPartitioned().
     \param b dofval [ndof].
     \param x dofval [ndof], used to read \f$ x_p \f$.
     \return x dofval [ndof], \f$ x_u \f$ filled, \f$ x_p \f$ copied.
@@ -246,16 +246,17 @@ public:
     Same as Solve(MatrixPartitioned&, const xt::xtensor<double, 1>&, const xt::xtensor<double, 1>&),
     but filling \f$ x_u \f$ in place.
 
-    \param A sparse matrix, see Matrix().
+    \param A sparse matrix, see MatrixPartitioned().
     \param b dofval [ndof].
     \param x dofval [ndof], \f$ x_p \f$ read, \f$ x_u \f$ filled.
     */
     void solve(MatrixPartitioned& A, const xt::xtensor<double, 1>& b, xt::xtensor<double, 1>& x);
 
     /**
-    Solve \f$ x_u = A_{uu}^{-1} (b_u - A_{up} * x_p) \f$.
+    Same as Solve(MatrixPartitioned&, const xt::xtensor<double, 2>&, const xt::xtensor<double, 2>&),
+    but with partitioned input and output.
 
-    \param A sparse matrix, see Matrix().
+    \param A sparse matrix, see MatrixPartitioned().
     \param b_u unknown dofval [nnu].
     \param x_p prescribed dofval [nnp]
     \return x_u unknown dofval [nnu].
@@ -270,7 +271,7 @@ public:
     Solve_u(MatrixPartitioned&, const xt::xtensor<double, 1>&, const xt::xtensor<double, 1>&),
     but writing to pre-allocated output.
 
-    \param A sparse matrix, see Matrix().
+    \param A sparse matrix, see MatrixPartitioned().
     \param b_u unknown dofval [nnu].
     \param x_p prescribed dofval [nnp]
     \param x_u (overwritten) unknown dofval [nnu].

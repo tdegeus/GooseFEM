@@ -24,33 +24,86 @@ namespace GooseFEM {
 // forward declaration
 template <class> class MatrixPartitionedTyingsSolver;
 
+/**
+Sparse matrix from with dependent DOFs are eliminated,
+and the remaining (small) independent system is partitioned in an unknown and a prescribed part.
+In particular:
+
+\f$ A_{ii} = \begin{bmatrix} A_{uu} & A_{up} \\ A_{pu} & A_{pp} \end{bmatrix} \f$
+
+See VectorPartitionedTyings() for bookkeeping definitions.
+*/
 class MatrixPartitionedTyings : public Matrix {
 public:
 
     MatrixPartitionedTyings() = default;
 
+    /**
+    Constructor.
+
+    \param conn connectivity [#nelem, #nne].
+    \param dofs DOFs per node [#nnode, #ndim].
+    \param Cdu See Tyings::Periodic::Cdu().
+    \param Cdp See Tyings::Periodic::Cdp().
+    */
     MatrixPartitionedTyings(
         const xt::xtensor<size_t, 2>& conn,
         const xt::xtensor<size_t, 2>& dofs,
         const Eigen::SparseMatrix<double>& Cdu,
         const Eigen::SparseMatrix<double>& Cdp);
 
-    // Dimensions
-    size_t nnu() const;   // number of independent, unknown DOFs
-    size_t nnp() const;   // number of independent, prescribed DOFs
-    size_t nni() const;   // number of independent DOFs
-    size_t nnd() const;   // number of dependent DOFs
+    /**
+    \return Number of dependent DOFs.
+    */
+    size_t nnd() const;
 
-    // DOF lists
-    xt::xtensor<size_t, 1> iiu() const;  // independent, unknown DOFs
-    xt::xtensor<size_t, 1> iip() const;  // independent, prescribed DOFs
-    xt::xtensor<size_t, 1> iii() const;  // independent DOFs
-    xt::xtensor<size_t, 1> iid() const;  // dependent DOFs
+    /**
+    \return Number of independent DOFs.
+    */
+    size_t nni() const;
 
-    // Assemble from matrices stored per element [nelem, nne*ndim, nne*ndim]
+    /**
+    \return Number of independent unknown DOFs.
+    */
+    size_t nnu() const;
+
+    /**
+    \return Number of independent prescribed DOFs.
+    */
+    size_t nnp() const;
+
+    /**
+    Dependent DOFs.
+
+    \return List of DOF numbers.
+    */
+    xt::xtensor<size_t, 1> iid() const;
+
+    /**
+    Independent DOFs.
+
+    \return List of DOF numbers.
+    */
+    xt::xtensor<size_t, 1> iii() const;
+
+    /**
+    Independent unknown DOFs.
+
+    \return List of DOF numbers.
+    */
+    xt::xtensor<size_t, 1> iiu() const;
+
+    /**
+    Independent prescribed DOFs.
+
+    \return List of DOF numbers.
+    */
+    xt::xtensor<size_t, 1> iip() const;
+
     void assemble(const xt::xtensor<double, 3>& elemmat) override;
 
 private:
+
     using Matrix::set;
     using Matrix::add;
     using Matrix::Todense;
@@ -59,53 +112,45 @@ private:
     using Matrix::dot;
 
 private:
-    // The matrix
-    Eigen::SparseMatrix<double> m_Auu;
-    Eigen::SparseMatrix<double> m_Aup;
-    Eigen::SparseMatrix<double> m_Apu;
-    Eigen::SparseMatrix<double> m_App;
-    Eigen::SparseMatrix<double> m_Aud;
-    Eigen::SparseMatrix<double> m_Apd;
-    Eigen::SparseMatrix<double> m_Adu;
-    Eigen::SparseMatrix<double> m_Adp;
-    Eigen::SparseMatrix<double> m_Add;
 
-    // The matrix for which the tyings have been applied
-    Eigen::SparseMatrix<double> m_ACuu;
-    Eigen::SparseMatrix<double> m_ACup;
-    Eigen::SparseMatrix<double> m_ACpu;
-    Eigen::SparseMatrix<double> m_ACpp;
-
-    // Matrix entries
-    std::vector<Eigen::Triplet<double>> m_Tuu;
-    std::vector<Eigen::Triplet<double>> m_Tup;
-    std::vector<Eigen::Triplet<double>> m_Tpu;
-    std::vector<Eigen::Triplet<double>> m_Tpp;
-    std::vector<Eigen::Triplet<double>> m_Tud;
-    std::vector<Eigen::Triplet<double>> m_Tpd;
-    std::vector<Eigen::Triplet<double>> m_Tdu;
-    std::vector<Eigen::Triplet<double>> m_Tdp;
-    std::vector<Eigen::Triplet<double>> m_Tdd;
-
-    // Bookkeeping
-    xt::xtensor<size_t, 1> m_iiu;  // unknown     DOFs      [nnu]
-    xt::xtensor<size_t, 1> m_iip;  // prescribed  DOFs      [nnp]
-    xt::xtensor<size_t, 1> m_iid;  // dependent   DOFs      [nnd]
-
-    // Dimensions
-    size_t m_nnu;   // number of independent, unknown DOFs
-    size_t m_nnp;   // number of independent, prescribed DOFs
-    size_t m_nni;   // number of independent DOFs
-    size_t m_nnd;   // number of dependent DOFs
-
-    // Tyings
-    Eigen::SparseMatrix<double> m_Cdu;
-    Eigen::SparseMatrix<double> m_Cdp;
-    Eigen::SparseMatrix<double> m_Cud;
-    Eigen::SparseMatrix<double> m_Cpd;
+    Eigen::SparseMatrix<double> m_Auu; ///< The matrix.
+    Eigen::SparseMatrix<double> m_Aup; ///< The matrix.
+    Eigen::SparseMatrix<double> m_Apu; ///< The matrix.
+    Eigen::SparseMatrix<double> m_App; ///< The matrix.
+    Eigen::SparseMatrix<double> m_Aud; ///< The matrix.
+    Eigen::SparseMatrix<double> m_Apd; ///< The matrix.
+    Eigen::SparseMatrix<double> m_Adu; ///< The matrix.
+    Eigen::SparseMatrix<double> m_Adp; ///< The matrix.
+    Eigen::SparseMatrix<double> m_Add; ///< The matrix.
+    Eigen::SparseMatrix<double> m_ACuu; ///< // The matrix for which the tyings have been applied.
+    Eigen::SparseMatrix<double> m_ACup; ///< // The matrix for which the tyings have been applied.
+    Eigen::SparseMatrix<double> m_ACpu; ///< // The matrix for which the tyings have been applied.
+    Eigen::SparseMatrix<double> m_ACpp; ///< // The matrix for which the tyings have been applied.
+    std::vector<Eigen::Triplet<double>> m_Tuu; ///< Matrix entries.
+    std::vector<Eigen::Triplet<double>> m_Tup; ///< Matrix entries.
+    std::vector<Eigen::Triplet<double>> m_Tpu; ///< Matrix entries.
+    std::vector<Eigen::Triplet<double>> m_Tpp; ///< Matrix entries.
+    std::vector<Eigen::Triplet<double>> m_Tud; ///< Matrix entries.
+    std::vector<Eigen::Triplet<double>> m_Tpd; ///< Matrix entries.
+    std::vector<Eigen::Triplet<double>> m_Tdu; ///< Matrix entries.
+    std::vector<Eigen::Triplet<double>> m_Tdp; ///< Matrix entries.
+    std::vector<Eigen::Triplet<double>> m_Tdd; ///< Matrix entries.
+    xt::xtensor<size_t, 1> m_iiu; ///< See iiu()
+    xt::xtensor<size_t, 1> m_iip; ///< See iip()
+    xt::xtensor<size_t, 1> m_iid; ///< See iid()
+    size_t m_nnu; ///< See #nnu
+    size_t m_nnp; ///< See #nnp
+    size_t m_nni; ///< See #nni
+    size_t m_nnd; ///< See #nnd
+    Eigen::SparseMatrix<double> m_Cdu; ///< Tying matrix, see Tyings::Periodic::Cdu().
+    Eigen::SparseMatrix<double> m_Cdp; ///< Tying matrix, see Tyings::Periodic::Cdp().
+    Eigen::SparseMatrix<double> m_Cud; ///< Transpose of "m_Cdu".
+    Eigen::SparseMatrix<double> m_Cpd; ///< Transpose of "m_Cdp".
 
     // grant access to solver class
     template <class> friend class MatrixPartitionedTyingsSolver;
+
+private:
 
     // Convert arrays (Eigen version of VectorPartitioned, which contains public functions)
     Eigen::VectorXd AsDofs_u(const xt::xtensor<double, 1>& dofval) const;
@@ -116,56 +161,122 @@ private:
     Eigen::VectorXd AsDofs_d(const xt::xtensor<double, 2>& nodevec) const;
 };
 
+/**
+Solver for MatrixPartitionedTyings().
+The idea is that this solver class can be used to solve for multiple right-hand-sides
+using one factorisation.
+*/
 template <class Solver = Eigen::SimplicialLDLT<Eigen::SparseMatrix<double>>>
 class MatrixPartitionedTyingsSolver {
 public:
-    // Constructors
+
     MatrixPartitionedTyingsSolver() = default;
 
-    // Solve:
-    // A' = A_ii + K_id * C_di + C_di^T * K_di + C_di^T * K_dd * C_di
-    // b' = b_i + C_di^T * b_d
-    // x_u = A'_uu \ ( b'_u - A'_up * x_p )
-    // x_i = [x_u, x_p]
-    // x_d = C_di * x_i
-    void solve(
-        MatrixPartitionedTyings& matrix,
+    /**
+    Solve as follows.
+
+    \f$ A' = A_{ii} + A_{id} * C_{di} + C_{di}^T * A_{di} + C_{di}^T * A_{dd} * C_{di} \f$
+
+    \f$ b' = b_i + C_{di}^T * b_d \f$
+
+    \f$ x_u = A'_{uu} \ ( b'_u - A'_{up} * x_p ) \f$
+
+    \f$ x_i = \begin{bmatrix} x_u \\ x_p \end{bmatrix} \f$
+
+    \f$ x_d = C_{di} * x_i \f$
+
+    \param A sparse matrix, see MatrixPartitionedTyings().
+    \param b nodevec [nelem, ndim].
+    \param x nodevec [nelem, ndim], used to read \f$ x_p \f$.
+    \return x nodevec [nelem, ndim], \f$ x_u \f$ filled, \f$ x_p \f$ copied.
+    */
+    xt::xtensor<double, 2> Solve(
+        MatrixPartitionedTyings& A,
         const xt::xtensor<double, 2>& b,
-        xt::xtensor<double, 2>& x); // updates x_u and x_d
+        const xt::xtensor<double, 2>& x);
 
+    /**
+    Same as
+    Solve(MatrixPartitionedTyings&, const xt::xtensor<double, 2>&, const xt::xtensor<double, 2>&),
+    but filling \f$ x_u \f$ and \f$ x_d \f$ in place.
+
+    \param A sparse matrix, see MatrixPartitionedTyings().
+    \param b nodevec [nelem, ndim].
+    \param x nodevec [nelem, ndim], \f$ x_p \f$ read, \f$ x_u \f$ and \f$ x_d \f$ filled.
+    */
     void solve(
-        MatrixPartitionedTyings& matrix,
-        const xt::xtensor<double, 1>& b,
-        xt::xtensor<double, 1>& x); // updates x_u and x_d
+        MatrixPartitionedTyings& A,
+        const xt::xtensor<double, 2>& b,
+        xt::xtensor<double, 2>& x);
 
+    /**
+    Same as
+    Solve(MatrixPartitionedTyings&, const xt::xtensor<double, 2>&, const xt::xtensor<double, 2>&),
+    but for "dofval" input and output.
+
+    \param A sparse matrix, see MatrixPartitionedTyings().
+    \param b dofval [ndof].
+    \param x dofval [ndof], used to read \f$ x_p \f$.
+    \return x dofval [ndof], \f$ x_u \f$ and \f$ x_d \f$ filled, \f$ x_p \f$ copied.
+    */
+    xt::xtensor<double, 1> Solve(
+        MatrixPartitionedTyings& A,
+        const xt::xtensor<double, 1>& b,
+        const xt::xtensor<double, 1>& x);
+
+    /**
+    Same as
+    Solve(MatrixPartitionedTyings&, const xt::xtensor<double, 1>&, const xt::xtensor<double, 1>&),
+    but filling \f$ x_u \f$ and \f$ x_d \f$ in place.
+
+    \param A sparse matrix, see MatrixPartitionedTyings().
+    \param b dofval [ndof].
+    \param x dofval [ndof], \f$ x_p \f$ read, \f$ x_u \f$ and \f$ x_d \f$ filled.
+    */
+    void solve(
+        MatrixPartitionedTyings& A,
+        const xt::xtensor<double, 1>& b,
+        xt::xtensor<double, 1>& x);
+
+    /**
+    Same as
+    Solve(MatrixPartitionedTyings&, const xt::xtensor<double, 2>&, const xt::xtensor<double, 2>&),
+    but with partitioned input and output.
+
+    \param A sparse matrix, see MatrixPartitionedTyings().
+    \param b_u unknown dofval [nnu].
+    \param b_d dependent dofval [nnd].
+    \param x_p prescribed dofval [nnp]
+    \return x_u unknown dofval [nnu].
+    */
+    xt::xtensor<double, 1> Solve_u(
+        MatrixPartitionedTyings& A,
+        const xt::xtensor<double, 1>& b_u,
+        const xt::xtensor<double, 1>& b_d,
+        const xt::xtensor<double, 1>& x_p);
+
+    /**
+    Same as
+    Solve_u(MatrixPartitionedTyings&, const xt::xtensor<double, 1>&, const xt::xtensor<double, 1>&, const xt::xtensor<double, 1>&),
+    but writing to pre-allocated output.
+
+    \param A sparse matrix, see MatrixPartitionedTyings().
+    \param b_u unknown dofval [nnu].
+    \param b_d dependent dofval [nnd].
+    \param x_p prescribed dofval [nnp]
+    \param x_u (overwritten) unknown dofval [nnu].
+    */
     void solve_u(
-        MatrixPartitionedTyings& matrix,
+        MatrixPartitionedTyings& A,
         const xt::xtensor<double, 1>& b_u,
         const xt::xtensor<double, 1>& b_d,
         const xt::xtensor<double, 1>& x_p,
         xt::xtensor<double, 1>& x_u);
 
-    // Auto-allocation of the functions above
-    xt::xtensor<double, 2> Solve(
-        MatrixPartitionedTyings& matrix,
-        const xt::xtensor<double, 2>& b,
-        const xt::xtensor<double, 2>& x);
-
-    xt::xtensor<double, 1> Solve(
-        MatrixPartitionedTyings& matrix,
-        const xt::xtensor<double, 1>& b,
-        const xt::xtensor<double, 1>& x);
-
-    xt::xtensor<double, 1> Solve_u(
-        MatrixPartitionedTyings& matrix,
-        const xt::xtensor<double, 1>& b_u,
-        const xt::xtensor<double, 1>& b_d,
-        const xt::xtensor<double, 1>& x_p);
-
 private:
-    Solver m_solver; // solver
-    bool m_factor = true; // signal to force factorization
-    void factorize(MatrixPartitionedTyings& matrix); // compute inverse (evaluated by "solve")
+    Solver m_solver; ///< solver
+    bool m_factor = true; ///< signal to force factorization
+    void factorize(MatrixPartitionedTyings& matrix); ///< compute inverse (evaluated by "solve")
 };
 
 } // namespace GooseFEM
