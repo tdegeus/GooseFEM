@@ -45,6 +45,8 @@ public:
 
     RegularBase2d() = default;
 
+    virtual ~RegularBase2d() = default;
+
     /**
     \return Number of elements.
     */
@@ -264,6 +266,8 @@ class RegularBase3d {
 public:
 
     RegularBase3d() = default;
+
+    virtual ~RegularBase3d() = default;
 
     /**
     \return Number of elements.
