@@ -189,7 +189,7 @@ public:
     MatrixSolver() = default;
 
     /**
-    Solve \f$ x_u = A_{uu}^{-1} (b_u - A_{up} * x_p) \f$.
+    Solve \f$ x = A^{-1} b \f$.
 
     \param A sparse matrix, see Matrix().
     \param b nodevec [nelem, ndim].
@@ -208,7 +208,7 @@ public:
     void solve(Matrix& A, const xt::xtensor<double, 2>& b, xt::xtensor<double, 2>& x);
 
     /**
-    Solve \f$ x_u = A_{uu}^{-1} (b_u - A_{up} * x_p) \f$.
+    Solve \f$ x = A^{-1} b \f$.
 
     \param A sparse matrix, see Matrix().
     \param b dofval [ndof].

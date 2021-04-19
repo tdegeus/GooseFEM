@@ -18,10 +18,13 @@ inline MatrixPartitionedTyings::MatrixPartitionedTyings(
     const xt::xtensor<size_t, 2>& dofs,
     const Eigen::SparseMatrix<double>& Cdu,
     const Eigen::SparseMatrix<double>& Cdp)
-    : m_conn(conn), m_dofs(dofs), m_Cdu(Cdu), m_Cdp(Cdp)
 {
     GOOSEFEM_ASSERT(Cdu.rows() == Cdp.rows());
 
+    m_conn = conn;
+    m_dofs = dofs;
+    m_Cdu = Cdu;
+    m_Cdp = Cdp;
     m_nnu = static_cast<size_t>(m_Cdu.cols());
     m_nnp = static_cast<size_t>(m_Cdp.cols());
     m_nnd = static_cast<size_t>(m_Cdp.rows());
@@ -59,31 +62,6 @@ inline MatrixPartitionedTyings::MatrixPartitionedTyings(
     GOOSEFEM_ASSERT(m_ndof == xt::amax(m_dofs)() + 1);
 }
 
-inline size_t MatrixPartitionedTyings::nelem() const
-{
-    return m_nelem;
-}
-
-inline size_t MatrixPartitionedTyings::nne() const
-{
-    return m_nne;
-}
-
-inline size_t MatrixPartitionedTyings::nnode() const
-{
-    return m_nnode;
-}
-
-inline size_t MatrixPartitionedTyings::ndim() const
-{
-    return m_ndim;
-}
-
-inline size_t MatrixPartitionedTyings::ndof() const
-{
-    return m_ndof;
-}
-
 inline size_t MatrixPartitionedTyings::nnu() const
 {
     return m_nnu;
@@ -102,11 +80,6 @@ inline size_t MatrixPartitionedTyings::nni() const
 inline size_t MatrixPartitionedTyings::nnd() const
 {
     return m_nnd;
-}
-
-inline xt::xtensor<size_t, 2> MatrixPartitionedTyings::dofs() const
-{
-    return m_dofs;
 }
 
 inline xt::xtensor<size_t, 1> MatrixPartitionedTyings::iiu() const

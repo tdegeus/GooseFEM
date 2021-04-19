@@ -13,6 +13,7 @@ Sparse matrix that is partitioned in:
 #define GOOSEFEM_MATRIXPARTITIONEDTYINGS_H
 
 #include "config.h"
+#include "Matrix.h"
 
 #include <Eigen/Eigen>
 #include <Eigen/Sparse>
@@ -23,9 +24,9 @@ namespace GooseFEM {
 // forward declaration
 template <class> class MatrixPartitionedTyingsSolver;
 
-class MatrixPartitionedTyings {
+class MatrixPartitionedTyings : public Matrix {
 public:
-    // Constructors
+
     MatrixPartitionedTyings() = default;
 
     MatrixPartitionedTyings(
@@ -35,25 +36,27 @@ public:
         const Eigen::SparseMatrix<double>& Cdp);
 
     // Dimensions
-    size_t nelem() const; // number of elements
-    size_t nne() const;   // number of nodes per element
-    size_t nnode() const; // number of nodes
-    size_t ndim() const;  // number of dimensions
-    size_t ndof() const;  // number of DOFs
     size_t nnu() const;   // number of independent, unknown DOFs
     size_t nnp() const;   // number of independent, prescribed DOFs
     size_t nni() const;   // number of independent DOFs
     size_t nnd() const;   // number of dependent DOFs
 
     // DOF lists
-    xt::xtensor<size_t, 2> dofs() const; // DOFs
     xt::xtensor<size_t, 1> iiu() const;  // independent, unknown DOFs
     xt::xtensor<size_t, 1> iip() const;  // independent, prescribed DOFs
     xt::xtensor<size_t, 1> iii() const;  // independent DOFs
     xt::xtensor<size_t, 1> iid() const;  // dependent DOFs
 
     // Assemble from matrices stored per element [nelem, nne*ndim, nne*ndim]
-    void assemble(const xt::xtensor<double, 3>& elemmat);
+    void assemble(const xt::xtensor<double, 3>& elemmat) override;
+
+private:
+    using Matrix::set;
+    using Matrix::add;
+    using Matrix::Todense;
+    using Matrix::todense;
+    using Matrix::Dot;
+    using Matrix::dot;
 
 private:
     // The matrix
@@ -84,22 +87,12 @@ private:
     std::vector<Eigen::Triplet<double>> m_Tdp;
     std::vector<Eigen::Triplet<double>> m_Tdd;
 
-    // Signal changes to data
-    bool m_changed = true;
-
     // Bookkeeping
-    xt::xtensor<size_t, 2> m_conn; // connectivity          [nelem, nne ]
-    xt::xtensor<size_t, 2> m_dofs; // DOF-numbers per node  [nnode, ndim]
     xt::xtensor<size_t, 1> m_iiu;  // unknown     DOFs      [nnu]
     xt::xtensor<size_t, 1> m_iip;  // prescribed  DOFs      [nnp]
     xt::xtensor<size_t, 1> m_iid;  // dependent   DOFs      [nnd]
 
     // Dimensions
-    size_t m_nelem; // number of elements
-    size_t m_nne;   // number of nodes per element
-    size_t m_nnode; // number of nodes
-    size_t m_ndim;  // number of dimensions
-    size_t m_ndof;  // number of DOFs
     size_t m_nnu;   // number of independent, unknown DOFs
     size_t m_nnp;   // number of independent, prescribed DOFs
     size_t m_nni;   // number of independent DOFs

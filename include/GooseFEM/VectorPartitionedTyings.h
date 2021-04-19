@@ -13,6 +13,7 @@ Methods to switch between storage types based on a mesh and DOFs that are partit
 #define GOOSEFEM_VECTORPARTITIONEDTYINGS_H
 
 #include "config.h"
+#include "Vector.h"
 
 #include <Eigen/Eigen>
 #include <Eigen/Sparse>
