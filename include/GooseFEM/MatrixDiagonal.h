@@ -23,6 +23,8 @@ public:
 
     MatrixDiagonal() = default;
 
+    virtual ~MatrixDiagonal() = default;
+
     /**
     Constructor.
 

@@ -4,7 +4,7 @@
 
 ================================================================================================= */
 
-#include <GooseFEM/GooseFEM.h>
+#include <GooseFEM/MatrixDiagonalPartitioned.h>
 #include <pybind11/pybind11.h>
 #include <pyxtensor/pyxtensor.hpp>
 
@@ -13,27 +13,16 @@ namespace py = pybind11;
 void init_MatrixDiagonalPartitioned(py::module& m)
 {
 
-    py::class_<GooseFEM::MatrixDiagonalPartitioned>(m, "MatrixDiagonalPartitioned")
+    py::class_<GooseFEM::MatrixDiagonalPartitioned, GooseFEM::MatrixDiagonal>(m, "MatrixDiagonalPartitioned")
 
-        .def(
-            py::init<
+        .def(py::init<
                 const xt::xtensor<size_t, 2>&,
                 const xt::xtensor<size_t, 2>&,
                 const xt::xtensor<size_t, 1>&>(),
-            "Diagonal, partitioned, matrix",
-            py::arg("conn"),
-            py::arg("dofs"),
-            py::arg("iip"))
-
-        .def("nelem", &GooseFEM::MatrixDiagonalPartitioned::nelem, "Number of element")
-
-        .def("nne", &GooseFEM::MatrixDiagonalPartitioned::nne, "Number of nodes per element")
-
-        .def("nnode", &GooseFEM::MatrixDiagonalPartitioned::nnode, "Number of nodes")
-
-        .def("ndim", &GooseFEM::MatrixDiagonalPartitioned::ndim, "Number of dimensions")
-
-        .def("ndof", &GooseFEM::MatrixDiagonalPartitioned::ndof, "Number of degrees-of-freedom")
+             "Diagonal, partitioned, matrix",
+             py::arg("conn"),
+             py::arg("dofs"),
+             py::arg("iip"))
 
         .def(
             "nnu",
@@ -45,32 +34,12 @@ void init_MatrixDiagonalPartitioned(py::module& m)
             &GooseFEM::MatrixDiagonalPartitioned::nnp,
             "Number of prescribed degrees-of-freedom")
 
-        .def(
-            "assemble",
-            &GooseFEM::MatrixDiagonalPartitioned::assemble,
-            "Assemble matrix from 'elemmat",
-            py::arg("elemmat"))
-
-        .def("dofs", &GooseFEM::MatrixDiagonalPartitioned::dofs, "Return degrees-of-freedom")
-
         .def("iiu", &GooseFEM::MatrixDiagonalPartitioned::iiu, "Return unknown degrees-of-freedom")
 
         .def(
             "iip",
             &GooseFEM::MatrixDiagonalPartitioned::iip,
             "Return prescribed degrees-of-freedom")
-
-        .def(
-            "Todiagonal",
-            &GooseFEM::MatrixDiagonalPartitioned::Todiagonal,
-            "Return as diagonal matrix (column)")
-
-        .def(
-            "Dot",
-            py::overload_cast<const xt::xtensor<double, 1>&>(
-                &GooseFEM::MatrixDiagonalPartitioned::Dot, py::const_),
-            "Dot product 'b_i = A_ij * x_j",
-            py::arg("x"))
 
         .def(
             "Dot_u",
@@ -87,22 +56,6 @@ void init_MatrixDiagonalPartitioned(py::module& m)
             "Dot product 'b_i = A_ij * x_j (b_p = A_pu * x_u + A_pp * x_p == A_pp * x_p)",
             py::arg("x_u"),
             py::arg("x_p"))
-
-        .def(
-            "Solve",
-            py::overload_cast<const xt::xtensor<double, 1>&, const xt::xtensor<double, 1>&>(
-                &GooseFEM::MatrixDiagonalPartitioned::Solve),
-            "Solve",
-            py::arg("b"),
-            py::arg("x"))
-
-        .def(
-            "Solve",
-            py::overload_cast<const xt::xtensor<double, 2>&, const xt::xtensor<double, 2>&>(
-                &GooseFEM::MatrixDiagonalPartitioned::Solve),
-            "Solve",
-            py::arg("b"),
-            py::arg("x"))
 
         .def(
             "Solve_u",
