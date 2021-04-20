@@ -18,8 +18,19 @@ inline MatrixDiagonalPartitioned::MatrixDiagonalPartitioned(
     const xt::xtensor<size_t, 2>& conn,
     const xt::xtensor<size_t, 2>& dofs,
     const xt::xtensor<size_t, 1>& iip)
-    : MatrixDiagonal(conn, dofs)
 {
+    m_conn = conn;
+    m_dofs = dofs;
+    m_nelem = m_conn.shape(0);
+    m_nne = m_conn.shape(1);
+    m_nnode = m_dofs.shape(0);
+    m_ndim = m_dofs.shape(1);
+    m_ndof = xt::amax(m_dofs)() + 1;
+
+    GOOSEFEM_ASSERT(xt::amax(m_conn)() + 1 <= m_nnode);
+    GOOSEFEM_ASSERT(m_ndof <= m_nnode * m_ndim);
+    GOOSEFEM_ASSERT(xt::amax(iip)() <= xt::amax(m_dofs)());
+
     m_iip = iip;
     m_iiu = xt::setdiff1d(dofs, iip);
     m_nnp = m_iip.size();
@@ -28,8 +39,6 @@ inline MatrixDiagonalPartitioned::MatrixDiagonalPartitioned(
     m_Auu = xt::empty<double>({m_nnu});
     m_App = xt::empty<double>({m_nnp});
     m_inv_uu = xt::empty<double>({m_nnu});
-
-    GOOSEFEM_ASSERT(xt::amax(m_iip)() <= xt::amax(m_dofs)());
 }
 
 inline size_t MatrixDiagonalPartitioned::nnu() const
