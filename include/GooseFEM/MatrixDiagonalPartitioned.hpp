@@ -93,6 +93,23 @@ inline void MatrixDiagonalPartitioned::assemble(const xt::xtensor<double, 3>& el
     m_changed = true;
 }
 
+inline void MatrixDiagonalPartitioned::set(const xt::xtensor<double, 1>& A)
+{
+    GOOSEFEM_ASSERT(A.size() == m_ndof);
+
+    #pragma omp parallel for
+    for (size_t d = 0; d < m_nnu; ++d) {
+        m_Auu(d) = A(m_iiu(d));
+    }
+
+    #pragma omp parallel for
+    for (size_t d = 0; d < m_nnp; ++d) {
+        m_App(d) = A(m_iip(d));
+    }
+
+    m_changed = true;
+}
+
 inline void
 MatrixDiagonalPartitioned::dot(const xt::xtensor<double, 2>& x, xt::xtensor<double, 2>& b) const
 {

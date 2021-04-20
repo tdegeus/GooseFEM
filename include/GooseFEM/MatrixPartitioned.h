@@ -86,7 +86,7 @@ public:
     /**
     Get right-hand-size for corresponding to the prescribed DOFs.
 
-    \f$ b_p = A_{pu} * x_u + A_{pp} * x_p = A_{pp} * x_p \f$
+    \f$ b_p = A_{pu} * x_u + A_{pp} * x_p \f$
 
     and assemble them to the appropriate places in "nodevec".
 

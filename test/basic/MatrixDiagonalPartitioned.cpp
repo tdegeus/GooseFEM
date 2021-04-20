@@ -1,19 +1,20 @@
 #include <catch2/catch.hpp>
 #include <xtensor/xrandom.hpp>
-#include <GooseFEM/MatrixDiagonal.h>
+#include <GooseFEM/MatrixDiagonalPartitioned.h>
 #include <GooseFEM/MeshQuad4.h>
 #include <GooseFEM/ElementQuad4.h>
-#include <GooseFEM/Vector.h>
+#include <GooseFEM/VectorPartitioned.h>
 
 #define ISCLOSE(a,b) REQUIRE_THAT((a), Catch::WithinAbs((b), 1.e-12));
 
-TEST_CASE("GooseFEM::MatrixDiagonal", "MatrixDiagonal.h")
+TEST_CASE("GooseFEM::MatrixDiagonalPartitioned", "MatrixDiagonalPartitioned.h")
 {
     SECTION("assemble")
     {
         GooseFEM::Mesh::Quad4::Regular mesh(2, 2);
-        GooseFEM::Vector vector(mesh.conn(), mesh.dofs());
-        GooseFEM::MatrixDiagonal A(mesh.conn(), mesh.dofs());
+        xt::xtensor<size_t, 1> iip = {0, 2};
+        GooseFEM::VectorPartitioned vector(mesh.conn(), mesh.dofs(), iip);
+        GooseFEM::MatrixDiagonalPartitioned A(mesh.conn(), mesh.dofs(), iip);
 
         GooseFEM::Element::Quad4::Quadrature quad(
             vector.AsElement(mesh.coor()),
@@ -43,12 +44,13 @@ TEST_CASE("GooseFEM::MatrixDiagonal", "MatrixDiagonal.h")
     SECTION("dot")
     {
         GooseFEM::Mesh::Quad4::Regular mesh(2, 2);
+        xt::xtensor<size_t, 1> iip = {0, 2};
 
         xt::xtensor<double, 1> a = xt::random::rand<double>({mesh.nnode() * mesh.ndim()});
         xt::xtensor<double, 1> x = xt::random::rand<double>({mesh.nnode() * mesh.ndim()});
         xt::xtensor<double, 1> b = a * x;
 
-        GooseFEM::MatrixDiagonal A(mesh.conn(), mesh.dofs());
+        GooseFEM::MatrixDiagonalPartitioned A(mesh.conn(), mesh.dofs(), iip);
         A.set(a);
         xt::xtensor<double, 1> B = A.Dot(x);
 
@@ -60,15 +62,17 @@ TEST_CASE("GooseFEM::MatrixDiagonal", "MatrixDiagonal.h")
     SECTION("solve")
     {
         GooseFEM::Mesh::Quad4::Regular mesh(2, 2);
+        xt::xtensor<size_t, 1> iip = {0, 2};
 
         xt::xtensor<double, 1> a = xt::random::rand<double>({mesh.nnode() * mesh.ndim()});
         xt::xtensor<double, 1> x = xt::random::rand<double>({mesh.nnode() * mesh.ndim()});
         xt::xtensor<double, 1> b = a * x;
 
-        GooseFEM::MatrixDiagonal A(mesh.conn(), mesh.dofs());
+        GooseFEM::MatrixDiagonalPartitioned A(mesh.conn(), mesh.dofs(), iip);
         A.set(a);
         xt::xtensor<double, 1> B = A.Dot(x);
         xt::xtensor<double, 1> X = A.Solve(B);
+        xt::view(X, xt::keep(iip)) = xt::view(x, xt::keep(iip));
 
         REQUIRE(B.size() == b.size());
         REQUIRE(X.size() == x.size());
