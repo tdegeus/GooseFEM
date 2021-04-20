@@ -14,6 +14,10 @@ Generate simple meshes of 8-noded hexahedral elements in 3d (GooseFEM::Mesh::Ele
 
 namespace GooseFEM {
 namespace Mesh {
+
+/**
+Simple meshes of 8-noded hexahedral elements in 3d (ElementType::Hex8).
+*/
 namespace Hex8 {
 
 /**

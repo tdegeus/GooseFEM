@@ -16,7 +16,7 @@ namespace GooseFEM {
 namespace Mesh {
 
 /**
-Simple meshes of quadrilateral elements of type ElementType::Quad4.
+Simple meshes of 3-noded quadrilateral elements in 2d (ElementType::Quad4).
 */
 namespace Quad4 {
 
@@ -235,8 +235,9 @@ private:
     friend class GooseFEM::Mesh::Quad4::Map::FineLayer2Regular;
 };
 
-// Mesh mappings
-
+/**
+Mesh mappings.
+*/
 namespace Map {
 
     /**

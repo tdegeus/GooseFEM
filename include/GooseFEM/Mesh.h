@@ -12,6 +12,10 @@ Generic mesh operations.
 #include "config.h"
 
 namespace GooseFEM {
+
+/**
+Generic mesh operations, and simple mesh definitions.
+*/
 namespace Mesh {
 
 /**
@@ -1356,38 +1360,20 @@ private:
 };
 
 /**
-\rst
 Renumber indices to lowest possible index. For example:
 
-.. math::
-
-    \begin{bmatrix}
-        0 & 1 \\
-        5 & 4
-    \end{bmatrix}
+\f$ \begin{bmatrix} 0 & 1 \\ 5 & 4 \end{bmatrix} \f$
 
 is renumbered to
 
-.. math::
-
-    \begin{bmatrix}
-        0 & 1 \\
-        3 & 2
-    \end{bmatrix}
+\f$ \begin{bmatrix} 0 & 1 \\ 3 & 2 \end{bmatrix} \f$
 
 Or, in pseudo-code, the result of this function is that:
 
-.. code-block:: python
-
     dofs = renumber(dofs)
-
     sort(unique(dofs[:])) == range(max(dofs+1))
 
-.. tip::
-
-    One can use the wrapper function :cpp:func:`GooseFEM::Mesh::renumber`.
-    This class gives more advanced features.
-\endrst
+\note One can use the wrapper function renumber(). This class gives more advanced features.
 */
 class Renumber {
 public:
