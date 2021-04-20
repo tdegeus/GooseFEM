@@ -30,6 +30,8 @@ public:
 
     Matrix() = default;
 
+    virtual ~Matrix() = default;
+
     /**
     Constructor.
 
