@@ -18,9 +18,9 @@ TEST_CASE("GooseFEM::MatrixPartitioned", "MatrixPartitioned.h")
         size_t nelem = mesh.nelem();
         size_t nnode = mesh.nnode();
         auto dofs = mesh.dofs();
-        size_t npp = xt::amax(dofs)();
-        npp = (npp - npp % 2) / 2;
-        xt::xtensor<size_t, 1> iip = xt::arange<size_t<(npp);
+        size_t nnp = xt::amax(dofs)();
+        nnp = (nnp - nnp % 2) / 2;
+        xt::xtensor<size_t, 1> iip = xt::arange<size_t<(nnp);
 
         xt::xtensor<double, 3> a = xt::empty<double>({nelem, nne * ndim, nne * ndim});
         xt::xtensor<double, 1> b = xt::random::rand<double>({nnode * ndim});
@@ -64,7 +64,7 @@ TEST_CASE("GooseFEM::MatrixPartitioned", "MatrixPartitioned.h")
 
         xt::xtensor<size_t, 2> conn = xt::zeros<size_t>({1, 5});
         xt::xtensor<size_t, 2> dofs = xt::arange<size_t>(10).reshape({5, 2});
-        xt::xtensor<size_t, 1> iip = xt::arange<size_t<(5);
+        xt::xtensor<size_t, 1> iip = {0, 2, 4};
 
         GooseFEM::MatrixPartitioned K(conn, dofs, iip);
         GooseFEM::MatrixPartitionedSolver<> Solver;
@@ -96,7 +96,7 @@ TEST_CASE("GooseFEM::MatrixPartitioned", "MatrixPartitioned.h")
 
         xt::xtensor<size_t, 2> conn = xt::zeros<size_t>({1, 5});
         xt::xtensor<size_t, 2> dofs = xt::arange<size_t>(10).reshape({5, 2});
-        xt::xtensor<size_t, 1> iip = xt::arange<size_t<(5);
+        xt::xtensor<size_t, 1> iip = {0, 2, 4};
 
         GooseFEM::MatrixPartitioned K(conn, dofs, iip);
         GooseFEM::MatrixPartitionedSolver<> Solver;

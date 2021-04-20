@@ -10,6 +10,7 @@ Diagonal matrix.
 #define GOOSEFEM_MATRIXDIAGONAL_H
 
 #include "config.h"
+#include "Element.h"
 
 namespace GooseFEM {
 
@@ -76,7 +77,7 @@ public:
 
     \param A The matrix [#ndof].
     */
-    void set(const xt::xtensor<double, 1>& A);
+    virtual void set(const xt::xtensor<double, 1>& A);
 
     /**
     Return matrix as diagonal matrix.

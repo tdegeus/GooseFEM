@@ -60,6 +60,8 @@ public:
 
     void assemble(const xt::xtensor<double, 3>& elemmat) override;
 
+    void set(const xt::xtensor<double, 1>& A) override;
+
     xt::xtensor<double, 1> Todiagonal() const override;
 
     void dot(const xt::xtensor<double, 2>& x, xt::xtensor<double, 2>& b) const override;
@@ -103,8 +105,21 @@ public:
         const xt::xtensor<double, 1>& x_p,
               xt::xtensor<double, 1>& b_p) const;
 
-    void solve(const xt::xtensor<double, 2>& b, xt::xtensor<double, 2>& x) override; // modified with "x_u"
-    void solve(const xt::xtensor<double, 1>& b, xt::xtensor<double, 1>& x) override; // modified with "x_u"
+    /**
+    Solve \f$ x_u = A_{uu}^{-1} (b_u - A_{up} * x_p) \equiv A_{uu}^{-1} b_u \f$.
+
+    \param b nodevec [#nelem, #ndim].
+    \param x nodevec, modified with `x_u` [#nelem, #ndim].
+    */
+    void solve(const xt::xtensor<double, 2>& b, xt::xtensor<double, 2>& x) override;
+
+    /**
+    Solve \f$ x_u = A_{uu}^{-1} (b_u - A_{up} * x_p) \equiv A_{uu}^{-1} b_u \f$.
+
+    \param b dofval [#ndof].
+    \param x dofval, modified with `x_u` [#ndof].
+    */
+    void solve(const xt::xtensor<double, 1>& b, xt::xtensor<double, 1>& x) override;
 
     /**
     \param b_u dofval [#nnu].

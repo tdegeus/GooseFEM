@@ -1,9 +1,7 @@
-
 #include <catch2/catch.hpp>
 #include <xtensor/xrandom.hpp>
-#include <xtensor/xmath.hpp>
-#include <Eigen/Eigen>
-#include <GooseFEM/GooseFEM.h>
+#include <GooseFEM/Matrix.h>
+#include <GooseFEM/MeshQuad4.h>
 
 #define ISCLOSE(a,b) REQUIRE_THAT((a), Catch::WithinAbs((b), 1.e-12));
 
