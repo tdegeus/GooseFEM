@@ -22,4 +22,9 @@ void init_Allocate(py::module& m)
           py::arg("rank"),
           py::arg("arg"),
           py::arg("shape"));
+
+    m.def("as3d",
+          &GooseFEM::as3d<double>,
+          "See :cpp:func:`GooseFEM::as3d`.",
+          py::arg("arg"));
 }
