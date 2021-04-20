@@ -12,6 +12,10 @@ Support function for iterations.
 #include "config.h"
 
 namespace GooseFEM {
+
+/**
+Support function for iterations in end-user programs.
+*/
 namespace Iterate {
 
 /**
