@@ -18,6 +18,7 @@
 namespace py = pybind11;
 
 #include "version.hpp"
+#include "Allocate.hpp"
 #include "Vector.hpp"
 #include "VectorPartitioned.hpp"
 #include "VectorPartitionedTyings.hpp"
@@ -45,6 +46,7 @@ PYBIND11_MODULE(GooseFEM, m) {
 m.doc() = "Some simple finite element meshes and operations";
 
 init_version(m);
+init_Allocate(m);
 init_Vector(m);
 init_VectorPartitioned(m);
 init_VectorPartitionedTyings(m);
