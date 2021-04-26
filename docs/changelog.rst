@@ -3,6 +3,29 @@
 Changelog
 *********
 
+v0.12.0
+=======
+
+*   Add "as3d" and "GooseFEM::AsTensor" to Python API
+*   Minor documentation updates
+*   Adding virtual destructor to silence warning
+*   Documenting MatrixDiagonal and MatrixDiagonalPartitioned
+*   Documenting MatrixPartitionedTyings
+*   Documenting MatrixPartitioned
+*   MatrixPartitioned : deriving from Matrix
+*   Documentation: minor style updates
+*   Documenting Matrix
+*   Documentation: minor style updates
+*   Documenting VectorPartitionedTyings
+*   Documentation: minor style updates
+*   Documenting Iterate
+*   Mesh::RegularBase* : converting to abstract classes
+*   Adding Mesh::Vstack (wraps ManualStich)
+*   Adding simple tests Mesh::Hex8
+*   Adding version to GH Pages
+*   Mesh::Hex8::Regular and Mesh::Hex8::FineLayer : deriving from Base-class
+*   Mesh::Hex8::FineLayer renaming private member
+
 v0.11.0
 =======
 
