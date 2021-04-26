@@ -21,3 +21,8 @@ dependencies:
   - catch2
   - gmatelastic
   - gmatelastoplasticqpot
+
+  # build docs
+  - doxygen
+  - mathjax
+
