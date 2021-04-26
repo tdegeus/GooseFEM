@@ -52,57 +52,68 @@ public:
     virtual ~RegularBase2d() = default;
 
     /**
-    \return Number of elements.
+    Number of elements.
+    \return unsigned int
     */
     size_t nelem() const;
 
     /**
-    \return Number of nodes.
+    Number of nodes.
+    \return unsigned int
     */
     size_t nnode() const;
 
     /**
-    \return Number of nodes-per-element == 4.
+    Number of nodes-per-element == 4.
+    \return unsigned int
     */
     size_t nne() const;
 
     /**
-    \return Number of dimensions == 2.
+    Number of dimensions == 2.
+    \return unsigned int
     */
     size_t ndim() const;
 
     /**
-    \return Number of elements in x-direction == width of the mesh in units of #h.
+    Number of elements in x-direction == width of the mesh in units of #h.
+    \return unsigned int
     */
     virtual size_t nelx() const;
 
     /**
-    \return Number of elements in y-direction == height of the mesh, in units of #h,
+    Number of elements in y-direction == height of the mesh, in units of #h,
+    \return unsigned int
     */
     virtual size_t nely() const;
 
     /**
-    \return Linear edge size of one 'block'.
+    Linear edge size of one 'block'.
+    \return double
     */
     double h() const;
 
     /**
-    \return The ElementType().
+    The ElementType().
+    \return element type
     */
     virtual ElementType getElementType() const = 0;
 
     /**
-    \return Nodal coordinates [#nnode, #ndim].
+    Nodal coordinates [#nnode, #ndim].
+    \return coordinates per node
     */
     virtual xt::xtensor<double, 2> coor() const = 0;
 
     /**
-    \return Connectivity [#nelem, #nne].
+    Connectivity [#nelem, #nne].
+    \return nodes per element
     */
     virtual xt::xtensor<size_t, 2> conn() const = 0;
 
     /**
-    \return DOF numbers for each node (numbered sequentially) [#nnode, #ndim].
+    DOF numbers for each node (numbered sequentially) [#nnode, #ndim].
+    \return DOFs per node
     */
     xt::xtensor<size_t, 2> dofs() const;
 
@@ -199,22 +210,22 @@ public:
     virtual size_t nodesTopRightCorner() const = 0;
 
     /**
-    \return Alias of nodesBottomLeftCorner().
+    Alias of nodesBottomLeftCorner().
     */
     size_t nodesLeftBottomCorner() const;
 
     /**
-    \return Alias of nodesTopLeftCorner().
+    Alias of nodesTopLeftCorner().
     */
     size_t nodesLeftTopCorner() const;
 
     /**
-    \return Alias of nodesBottomRightCorner().
+    Alias of nodesBottomRightCorner().
     */
     size_t nodesRightBottomCorner() const;
 
     /**
-    \return Alias of nodesTopRightCorner().
+    Alias of nodesTopRightCorner().
     */
     size_t nodesRightTopCorner() const;
 
@@ -274,62 +285,74 @@ public:
     virtual ~RegularBase3d() = default;
 
     /**
-    \return Number of elements.
+    Number of elements.
+    \return unsigned int
     */
     size_t nelem() const;
 
     /**
-    \return Number of nodes.
+    Number of nodes.
+    \return unsigned int
     */
     size_t nnode() const;
 
     /**
-    \return Number of nodes-per-element == 4.
+    Number of nodes-per-element == 4.
+    \return unsigned int
     */
     size_t nne() const;
 
     /**
-    \return Number of dimensions == 2.
+    Number of dimensions == 2.
+    \return unsigned int
     */
     size_t ndim() const;
 
     /**
-    \return Number of elements in x-direction == width of the mesh in units of #h.
+    Number of elements in x-direction == width of the mesh in units of #h.
+    \return unsigned int
     */
     virtual size_t nelx() const;
 
     /**
-    \return Number of elements in y-direction == height of the mesh, in units of #h,
+    Number of elements in y-direction == height of the mesh, in units of #h,
+    \return unsigned int
     */
     virtual size_t nely() const;
 
     /**
-    \return Number of elements in y-direction == height of the mesh, in units of #h,
+    Number of elements in y-direction == height of the mesh, in units of #h,
+    \return unsigned int
     */
     virtual size_t nelz() const;
 
     /**
-    \return Linear edge size of one 'block'.
+    Linear edge size of one 'block'.
+    \return double
     */
     double h() const;
 
     /**
-    \return The ElementType().
+    The ElementType().
+    \return element type
     */
     virtual ElementType getElementType() const = 0;
 
     /**
-    \return Nodal coordinates [#nnode, #ndim].
+    Nodal coordinates [#nnode, #ndim].
+    \return coordinates per node
     */
     virtual xt::xtensor<double, 2> coor() const = 0;
 
     /**
-    \return Connectivity [#nelem, #nne].
+    Connectivity [#nelem, #nne].
+    \return nodes per element
     */
     virtual xt::xtensor<size_t, 2> conn() const = 0;
 
     /**
-    \return DOF numbers for each node (numbered sequentially) [#nnode, #ndim].
+    DOF numbers for each node (numbered sequentially) [#nnode, #ndim].
+    \return DOFs per node
     */
     xt::xtensor<size_t, 2> dofs() const;
 
@@ -472,62 +495,62 @@ public:
     virtual xt::xtensor<size_t, 1> nodesTopRightEdge() const = 0;
 
     /**
-    \return Alias of nodesFrontBottomEdge()
+    Alias of nodesFrontBottomEdge()
     */
     xt::xtensor<size_t, 1> nodesBottomFrontEdge() const;
 
     /**
-    \return Alias of nodesBackBottomEdge()
+    Alias of nodesBackBottomEdge()
     */
     xt::xtensor<size_t, 1> nodesBottomBackEdge() const;
 
     /**
-    \return Alias of nodesFrontTopEdge()
+    Alias of nodesFrontTopEdge()
     */
     xt::xtensor<size_t, 1> nodesTopFrontEdge() const;
 
     /**
-    \return Alias of nodesBackTopEdge()
+    Alias of nodesBackTopEdge()
     */
     xt::xtensor<size_t, 1> nodesTopBackEdge() const;
 
     /**
-    \return Alias of nodesBottomLeftEdge()
+    Alias of nodesBottomLeftEdge()
     */
     xt::xtensor<size_t, 1> nodesLeftBottomEdge() const;
 
     /**
-    \return Alias of nodesFrontLeftEdge()
+    Alias of nodesFrontLeftEdge()
     */
     xt::xtensor<size_t, 1> nodesLeftFrontEdge() const;
 
     /**
-    \return Alias of nodesBackLeftEdge()
+    Alias of nodesBackLeftEdge()
     */
     xt::xtensor<size_t, 1> nodesLeftBackEdge() const;
 
     /**
-    \return Alias of nodesTopLeftEdge()
+    Alias of nodesTopLeftEdge()
     */
     xt::xtensor<size_t, 1> nodesLeftTopEdge() const;
 
     /**
-    \return Alias of nodesBottomRightEdge()
+    Alias of nodesBottomRightEdge()
     */
     xt::xtensor<size_t, 1> nodesRightBottomEdge() const;
 
     /**
-    \return Alias of nodesTopRightEdge()
+    Alias of nodesTopRightEdge()
     */
     xt::xtensor<size_t, 1> nodesRightTopEdge() const;
 
     /**
-    \return Alias of nodesFrontRightEdge()
+    Alias of nodesFrontRightEdge()
     */
     xt::xtensor<size_t, 1> nodesRightFrontEdge() const;
 
     /**
-    \return Alias of nodesBackRightEdge()
+    Alias of nodesBackRightEdge()
     */
     xt::xtensor<size_t, 1> nodesRightBackEdge() const;
 
@@ -671,62 +694,62 @@ public:
     virtual xt::xtensor<size_t, 1> nodesTopRightOpenEdge() const = 0;
 
     /**
-    \return Alias of nodesFrontBottomOpenEdge().
+    Alias of nodesFrontBottomOpenEdge().
     */
     xt::xtensor<size_t, 1> nodesBottomFrontOpenEdge() const;
 
     /**
-    \return Alias of nodesBackBottomOpenEdge().
+    Alias of nodesBackBottomOpenEdge().
     */
     xt::xtensor<size_t, 1> nodesBottomBackOpenEdge() const;
 
     /**
-    \return Alias of nodesFrontTopOpenEdge().
+    Alias of nodesFrontTopOpenEdge().
     */
     xt::xtensor<size_t, 1> nodesTopFrontOpenEdge() const;
 
     /**
-    \return Alias of nodesBackTopOpenEdge().
+    Alias of nodesBackTopOpenEdge().
     */
     xt::xtensor<size_t, 1> nodesTopBackOpenEdge() const;
 
     /**
-    \return Alias of nodesBottomLeftOpenEdge().
+    Alias of nodesBottomLeftOpenEdge().
     */
     xt::xtensor<size_t, 1> nodesLeftBottomOpenEdge() const;
 
     /**
-    \return Alias of nodesFrontLeftOpenEdge().
+    Alias of nodesFrontLeftOpenEdge().
     */
     xt::xtensor<size_t, 1> nodesLeftFrontOpenEdge() const;
 
     /**
-    \return Alias of nodesBackLeftOpenEdge().
+    Alias of nodesBackLeftOpenEdge().
     */
     xt::xtensor<size_t, 1> nodesLeftBackOpenEdge() const;
 
     /**
-    \return Alias of nodesTopLeftOpenEdge().
+    Alias of nodesTopLeftOpenEdge().
     */
     xt::xtensor<size_t, 1> nodesLeftTopOpenEdge() const;
 
     /**
-    \return Alias of nodesBottomRightOpenEdge().
+    Alias of nodesBottomRightOpenEdge().
     */
     xt::xtensor<size_t, 1> nodesRightBottomOpenEdge() const;
 
     /**
-    \return Alias of nodesTopRightOpenEdge().
+    Alias of nodesTopRightOpenEdge().
     */
     xt::xtensor<size_t, 1> nodesRightTopOpenEdge() const;
 
     /**
-    \return Alias of nodesFrontRightOpenEdge().
+    Alias of nodesFrontRightOpenEdge().
     */
     xt::xtensor<size_t, 1> nodesRightFrontOpenEdge() const;
 
     /**
-    \return Alias of nodesBackRightOpenEdge().
+    Alias of nodesBackRightOpenEdge().
     */
     xt::xtensor<size_t, 1> nodesRightBackOpenEdge() const;
 
@@ -787,202 +810,202 @@ public:
     virtual size_t nodesBackTopRightCorner() const = 0;
 
     /**
-    \return Alias of nodesFrontBottomLeftCorner().
+    Alias of nodesFrontBottomLeftCorner().
     */
     size_t nodesFrontLeftBottomCorner() const;
 
     /**
-    \return Alias of nodesFrontBottomLeftCorner().
+    Alias of nodesFrontBottomLeftCorner().
     */
     size_t nodesBottomFrontLeftCorner() const;
 
     /**
-    \return Alias of nodesFrontBottomLeftCorner().
+    Alias of nodesFrontBottomLeftCorner().
     */
     size_t nodesBottomLeftFrontCorner() const;
 
     /**
-    \return Alias of nodesFrontBottomLeftCorner().
+    Alias of nodesFrontBottomLeftCorner().
     */
     size_t nodesLeftFrontBottomCorner() const;
 
     /**
-    \return Alias of nodesFrontBottomLeftCorner().
+    Alias of nodesFrontBottomLeftCorner().
     */
     size_t nodesLeftBottomFrontCorner() const;
 
     /**
-    \return Alias of nodesFrontBottomRightCorner().
+    Alias of nodesFrontBottomRightCorner().
     */
     size_t nodesFrontRightBottomCorner() const;
 
     /**
-    \return Alias of nodesFrontBottomRightCorner().
+    Alias of nodesFrontBottomRightCorner().
     */
     size_t nodesBottomFrontRightCorner() const;
 
     /**
-    \return Alias of nodesFrontBottomRightCorner().
+    Alias of nodesFrontBottomRightCorner().
     */
     size_t nodesBottomRightFrontCorner() const;
 
     /**
-    \return Alias of nodesFrontBottomRightCorner().
+    Alias of nodesFrontBottomRightCorner().
     */
     size_t nodesRightFrontBottomCorner() const;
 
     /**
-    \return Alias of nodesFrontBottomRightCorner().
+    Alias of nodesFrontBottomRightCorner().
     */
     size_t nodesRightBottomFrontCorner() const;
 
     /**
-    \return Alias of nodesFrontTopLeftCorner().
+    Alias of nodesFrontTopLeftCorner().
     */
     size_t nodesFrontLeftTopCorner() const;
 
     /**
-    \return Alias of nodesFrontTopLeftCorner().
+    Alias of nodesFrontTopLeftCorner().
     */
     size_t nodesTopFrontLeftCorner() const;
 
     /**
-    \return Alias of nodesFrontTopLeftCorner().
+    Alias of nodesFrontTopLeftCorner().
     */
     size_t nodesTopLeftFrontCorner() const;
 
     /**
-    \return Alias of nodesFrontTopLeftCorner().
+    Alias of nodesFrontTopLeftCorner().
     */
     size_t nodesLeftFrontTopCorner() const;
 
     /**
-    \return Alias of nodesFrontTopLeftCorner().
+    Alias of nodesFrontTopLeftCorner().
     */
     size_t nodesLeftTopFrontCorner() const;
 
     /**
-    \return Alias of nodesFrontTopRightCorner().
+    Alias of nodesFrontTopRightCorner().
     */
     size_t nodesFrontRightTopCorner() const;
 
     /**
-    \return Alias of nodesFrontTopRightCorner().
+    Alias of nodesFrontTopRightCorner().
     */
     size_t nodesTopFrontRightCorner() const;
 
     /**
-    \return Alias of nodesFrontTopRightCorner().
+    Alias of nodesFrontTopRightCorner().
     */
     size_t nodesTopRightFrontCorner() const;
 
     /**
-    \return Alias of nodesFrontTopRightCorner().
+    Alias of nodesFrontTopRightCorner().
     */
     size_t nodesRightFrontTopCorner() const;
 
     /**
-    \return Alias of nodesFrontTopRightCorner().
+    Alias of nodesFrontTopRightCorner().
     */
     size_t nodesRightTopFrontCorner() const;
 
     /**
-    \return Alias of nodesBackBottomLeftCorner().
+    Alias of nodesBackBottomLeftCorner().
     */
     size_t nodesBackLeftBottomCorner() const;
 
     /**
-    \return Alias of nodesBackBottomLeftCorner().
+    Alias of nodesBackBottomLeftCorner().
     */
     size_t nodesBottomBackLeftCorner() const;
 
     /**
-    \return Alias of nodesBackBottomLeftCorner().
+    Alias of nodesBackBottomLeftCorner().
     */
     size_t nodesBottomLeftBackCorner() const;
 
     /**
-    \return Alias of nodesBackBottomLeftCorner().
+    Alias of nodesBackBottomLeftCorner().
     */
     size_t nodesLeftBackBottomCorner() const;
 
     /**
-    \return Alias of nodesBackBottomLeftCorner().
+    Alias of nodesBackBottomLeftCorner().
     */
     size_t nodesLeftBottomBackCorner() const;
 
     /**
-    \return Alias of nodesBackBottomRightCorner().
+    Alias of nodesBackBottomRightCorner().
     */
     size_t nodesBackRightBottomCorner() const;
 
     /**
-    \return Alias of nodesBackBottomRightCorner().
+    Alias of nodesBackBottomRightCorner().
     */
     size_t nodesBottomBackRightCorner() const;
 
     /**
-    \return Alias of nodesBackBottomRightCorner().
+    Alias of nodesBackBottomRightCorner().
     */
     size_t nodesBottomRightBackCorner() const;
 
     /**
-    \return Alias of nodesBackBottomRightCorner().
+    Alias of nodesBackBottomRightCorner().
     */
     size_t nodesRightBackBottomCorner() const;
 
     /**
-    \return Alias of nodesBackBottomRightCorner().
+    Alias of nodesBackBottomRightCorner().
     */
     size_t nodesRightBottomBackCorner() const;
 
     /**
-    \return Alias of nodesBackTopLeftCorner().
+    Alias of nodesBackTopLeftCorner().
     */
     size_t nodesBackLeftTopCorner() const;
 
     /**
-    \return Alias of nodesBackTopLeftCorner().
+    Alias of nodesBackTopLeftCorner().
     */
     size_t nodesTopBackLeftCorner() const;
 
     /**
-    \return Alias of nodesBackTopLeftCorner().
+    Alias of nodesBackTopLeftCorner().
     */
     size_t nodesTopLeftBackCorner() const;
 
     /**
-    \return Alias of nodesBackTopLeftCorner().
+    Alias of nodesBackTopLeftCorner().
     */
     size_t nodesLeftBackTopCorner() const;
 
     /**
-    \return Alias of nodesBackTopLeftCorner().
+    Alias of nodesBackTopLeftCorner().
     */
     size_t nodesLeftTopBackCorner() const;
 
     /**
-    \return Alias of nodesBackTopRightCorner().
+    Alias of nodesBackTopRightCorner().
     */
     size_t nodesBackRightTopCorner() const;
 
     /**
-    \return Alias of nodesBackTopRightCorner().
+    Alias of nodesBackTopRightCorner().
     */
     size_t nodesTopBackRightCorner() const;
 
     /**
-    \return Alias of nodesBackTopRightCorner().
+    Alias of nodesBackTopRightCorner().
     */
     size_t nodesTopRightBackCorner() const;
 
     /**
-    \return Alias of nodesBackTopRightCorner().
+    Alias of nodesBackTopRightCorner().
     */
     size_t nodesRightBackTopCorner() const;
 
     /**
-    \return Alias of nodesBackTopRightCorner().
+    Alias of nodesBackTopRightCorner().
     */
     size_t nodesRightTopBackCorner() const;
 
@@ -1106,52 +1129,62 @@ public:
         double atol = 1e-8);
 
     /**
-    \return Number of sub meshes == 2.
+    Number of sub meshes == 2.
+    \return unsigned int
     */
     size_t nmesh() const;
 
     /**
-    \return Number of elements.
+    Number of elements.
+    \return unsigned int
     */
     size_t nelem() const;
 
     /**
-    \return Number of nodes.
+    Number of nodes.
+    \return unsigned int
     */
     size_t nnode() const;
 
     /**
-    \return Number of nodes-per-element.
+    Number of nodes-per-element.
+    \return unsigned int
     */
     size_t nne() const;
 
     /**
-    \return Number of dimensions.
+    Number of dimensions.
+    \return unsigned int
     */
     size_t ndim() const;
 
     /**
-    \return Nodal coordinates [#nnode, #ndim].
+    Nodal coordinates [#nnode, #ndim].
+    \return coordinates per node
     */
     xt::xtensor<double, 2> coor() const;
 
     /**
-    \return Connectivity [#nelem, #nne].
+    Connectivity [#nelem, #nne].
+    \return nodes per element
     */
     xt::xtensor<size_t, 2> conn() const;
 
     /**
-    \return DOF numbers for each node (numbered sequentially) [#nnode, #ndim].
+    DOF numbers for each node (numbered sequentially) [#nnode, #ndim].
+    \return DOFs per node
     */
     xt::xtensor<size_t, 2> dofs() const;
 
     /**
-    \return Node-map per sub-mesh.
+    Node-map per sub-mesh.
+    \return nodes per mesh
     */
     std::vector<xt::xtensor<size_t, 1>> nodemap() const;
 
     /**
-    \return Element-map per sub-mesh.
+    Element-map per sub-mesh.
+    \return elements per mesh
     */
     std::vector<xt::xtensor<size_t, 1>> elemmap() const;
 
@@ -1215,52 +1248,62 @@ public:
     void push_back(const xt::xtensor<double, 2>& coor, const xt::xtensor<size_t, 2>& conn);
 
     /**
-    \return Number of sub meshes.
+    Number of sub meshes.
+    \return unsigned int
     */
     size_t nmesh() const;
 
     /**
-    \return Number of elements.
+    Number of elements.
+    \return unsigned int
     */
     size_t nelem() const;
 
     /**
-    \return Number of nodes.
+    Number of nodes.
+    \return unsigned int
     */
     size_t nnode() const;
 
     /**
-    \return Number of nodes-per-element.
+    Number of nodes-per-element.
+    \return unsigned int
     */
     size_t nne() const;
 
     /**
-    \return Number of dimensions.
+    Number of dimensions.
+    \return unsigned int
     */
     size_t ndim() const;
 
     /**
-    \return Nodal coordinates [#nnode, #ndim].
+    Nodal coordinates [#nnode, #ndim].
+    \return coordinates per node
     */
     xt::xtensor<double, 2> coor() const;
 
     /**
-    \return Connectivity [#nelem, #nne].
+    Connectivity [#nelem, #nne].
+    \return nodes per element
     */
     xt::xtensor<size_t, 2> conn() const;
 
     /**
-    \return DOF numbers for each node (numbered sequentially) [#nnode, #ndim].
+    DOF numbers for each node (numbered sequentially) [#nnode, #ndim].
+    \return DOFs per node
     */
     xt::xtensor<size_t, 2> dofs() const;
 
     /**
-    \return Node-map per sub-mesh.
+    Node-map per sub-mesh.
+    \return nodes per mesh
     */
     std::vector<xt::xtensor<size_t, 1>> nodemap() const;
 
     /**
-    \return Element-map per sub-mesh.
+    Element-map per sub-mesh.
+    \return elements per mesh
     */
     std::vector<xt::xtensor<size_t, 1>> elemmap() const;
 

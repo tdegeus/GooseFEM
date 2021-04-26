@@ -21,7 +21,7 @@ jobs:
             conda: docs/examples/environment.yaml
             prop: tests & examples
           - runs-on: macos-latest
-            config: -DBUILD_TESTS=1 -DBUILD_EXAMPLES=0
+            config: -DBUILD_TESTS=1 -DBUILD_EXAMPLES=0 -DBUILD_DOCS=1
             conda: environment.yaml
             prop: tests
           - runs-on: windows-latest
@@ -90,6 +90,11 @@ jobs:
       run: |
         python version.py
         python MeshQuad4.py
+
+    - name: Build doxygen-docs (error on warning)
+      if: runner.os == 'macOS'
+      working-directory: build
+      run: make docs
 
   py:
 
