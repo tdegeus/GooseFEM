@@ -1520,15 +1520,7 @@ List with DOF-numbers in sequential order.
 The output is a sequential list of DOF-numbers for each vector-component of each node.
 For example for 3 nodes in 2 dimensions the output is
 
-\rst
-.. math::
-
-    \begin{bmatrix}
-        0 & 1 \\
-        2 & 3 \\
-        4 & 5
-    \end{bmatrix}
-\endrst
+\f$ \begin{bmatrix} 0 & 1 \\ 2 & 3 \\ 4 & 5 \end{bmatrix} \f$
 
 \param nnode Number of nodes.
 \param ndim Number of dimensions.
