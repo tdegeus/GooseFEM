@@ -3,8 +3,11 @@ channels:
 dependencies:
   - xtensor
   - eigen
+  - cmake
+  - ninja
   - setuptools_scm
   - python
+  - pybind11
   - pyxtensor
   - numpy
   - nomkl

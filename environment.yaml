@@ -10,11 +10,13 @@ dependencies:
 
   # build tools
   - cmake
+  - ninja
   - setuptools_scm
 
   # Python API
   - python
   - numpy
+  - pybind11
   - pyxtensor
 
   # to run tests

@@ -5,6 +5,11 @@ cmake_minimum_required(VERSION 3.1..3.19)
 
 project(GooseFEM)
 
+option(BUILD_ALL "${PROJECT_NAME}: Build tests, Python API & docs" OFF)
+option(BUILD_TESTS "${PROJECT_NAME}: Build tests" OFF)
+option(BUILD_PYTHON "${PROJECT_NAME}: Build Python API" OFF)
+option(BUILD_DOCS "${PROJECT_NAME}: Build docs" OFF)
+
 execute_process(
     COMMAND python -c "from setuptools_scm import get_version; print(get_version())"
     WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
@@ -12,10 +17,6 @@ execute_process(
     OUTPUT_STRIP_TRAILING_WHITESPACE)
 
 message(STATUS "Building ${PROJECT_NAME} ${PROJECT_VERSION}")
-
-option(BUILD_TESTS "${PROJECT_NAME}: Build tests" OFF)
-option(BUILD_EXAMPLES "${PROJECT_NAME}: Build examples" OFF)
-option(BUILD_DOCS "${PROJECT_NAME}: Build docs" OFF)
 
 string(TOUPPER "${PROJECT_NAME}" PROJECT_NAME_UPPER)
 
@@ -85,7 +86,7 @@ include(CTest)
 
 # Tests
 
-if(BUILD_TESTS)
+if(BUILD_TESTS OR BUILD_ALL)
     enable_testing()
     add_subdirectory(test/basic)
 
@@ -100,9 +101,22 @@ if(BUILD_EXAMPLES)
     add_subdirectory(docs/examples)
 endif()
 
-# Build docs: include dependencies
+# Python API
 
-if(BUILD_DOCS)
+if(BUILD_PYTHON OR BUILD_ALL)
+    find_package(pybind11 CONFIG REQUIRED)
+    find_package(pyxtensor REQUIRED)
+
+    pybind11_add_module(python python/main.cpp)
+    set_target_properties(python PROPERTIES OUTPUT_NAME ${PROJECT_NAME})
+    target_link_libraries(python PUBLIC ${PROJECT_NAME} pybind11::module pyxtensor)
+
+    target_compile_definitions(python PRIVATE VERSION_INFO=${PROJECT_VERSION})
+endif()
+
+# Documentation
+
+if(BUILD_DOCS OR BUILD_ALL)
     find_package(Doxygen REQUIRED)
 
     set(DOXYGEN_EXCLUDE_SYMBOLS detail)
