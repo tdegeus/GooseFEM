@@ -3,6 +3,12 @@
 Changelog
 *********
 
+v0.12.1
+=======
+
+*   Integrating Python in CMake (#206)
+*   Minor documentation updates
+
 v0.12.0
 =======
 
