@@ -57,7 +57,7 @@ jobs:
     - name: Configure using CMake (Windows)
       if: runner.os == 'Windows'
       run: |
-        mamba install -c conda-forge clang_win-64 ninja
+        micromamba install -c conda-forge clang_win-64 ninja
         cmake -Bbuild -G Ninja ${{ matrix.config }} -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++
 
     - name: Build C++ ${{ matrix.prop }}
