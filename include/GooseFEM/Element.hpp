@@ -299,88 +299,6 @@ inline xt::xtensor<T, 2> QuadratureBase<ne, nd, td>::allocate_qscalar(T val) con
     return this->allocate_qtensor<0, T>(val);
 }
 
-/**
-\cond
-*/
-
-template <size_t ne, size_t nd, size_t td>
-template <size_t rank>
-inline std::array<size_t, 2 + rank> QuadratureBase<ne, nd, td>::ShapeQtensor() const
-{
-    GOOSEFEM_WARNING("Deprecation warning: ShapeQtensor<rank> -> shape_qtensor<rank>");
-    return this->shape_qtensor<rank>();
-}
-
-template <size_t ne, size_t nd, size_t td>
-inline std::vector<size_t> QuadratureBase<ne, nd, td>::ShapeQtensor(size_t rank) const
-{
-    GOOSEFEM_WARNING("Deprecation warning: ShapeQtensor(rank) -> shape_qtensor(rank)");
-    return this->shape_qtensor(rank);
-}
-
-template <size_t ne, size_t nd, size_t td>
-inline std::vector<size_t> QuadratureBase<ne, nd, td>::ShapeQscalar() const
-{
-    GOOSEFEM_WARNING("Deprecation warning: ShapeQscalar -> shape_qscalar");
-    return this->shape_qscalar();
-}
-
-template <size_t ne, size_t nd, size_t td>
-template <size_t rank, class T>
-inline xt::xtensor<T, 2 + rank> QuadratureBase<ne, nd, td>::AllocateQtensor() const
-{
-    GOOSEFEM_WARNING("Deprecation warning: AllocateQtensor<rank, T> -> allocate_qtensor<rank, T>");
-    return this->allocate_qtensor<rank, T>();
-}
-
-template <size_t ne, size_t nd, size_t td>
-template <size_t rank, class T>
-inline xt::xtensor<T, 2 + rank> QuadratureBase<ne, nd, td>::AllocateQtensor(T val) const
-{
-    GOOSEFEM_WARNING("Deprecation warning: AllocateQtensor<rank, T> -> allocate_qtensor<rank, T>");
-    return this->allocate_qtensor<rank, T>(val);
-}
-
-template <size_t ne, size_t nd, size_t td>
-template <class T>
-inline xt::xarray<T> QuadratureBase<ne, nd, td>::AllocateQtensor(size_t rank) const
-{
-    GOOSEFEM_WARNING_PYTHON("Deprecation warning: use np.empty(this.shape_qtensor(rank))")
-    GOOSEFEM_WARNING("Deprecation warning: AllocateQtensor(rank) -> allocate_qtensor(rank)");
-    return this->allocate_qtensor<T>(rank);
-}
-
-template <size_t ne, size_t nd, size_t td>
-template <class T>
-inline xt::xarray<T> QuadratureBase<ne, nd, td>::AllocateQtensor(size_t rank, T val) const
-{
-    GOOSEFEM_WARNING_PYTHON("Deprecation warning: use val * np.ones(this.shape_qtensor(rank))")
-    GOOSEFEM_WARNING("Deprecation warning: AllocateQtensor(rank) -> allocate_qtensor(rank)");
-    return this->allocate_qtensor<T>(rank, val);
-}
-
-template <size_t ne, size_t nd, size_t td>
-template <class T>
-inline xt::xtensor<T, 2> QuadratureBase<ne, nd, td>::AllocateQscalar() const
-{
-    GOOSEFEM_WARNING_PYTHON("Deprecation warning: use np.empty(this.shape_qscalar())")
-    GOOSEFEM_WARNING("Deprecation warning: AllocateQscalar -> allocate_qscalar");
-    return this->allocate_qtensor<0, T>();
-}
-
-template <size_t ne, size_t nd, size_t td>
-template <class T>
-inline xt::xtensor<T, 2> QuadratureBase<ne, nd, td>::AllocateQscalar(T val) const
-{
-    GOOSEFEM_WARNING_PYTHON("Deprecation warning: use np.empty(this.shape_qscalar())")
-    GOOSEFEM_WARNING("Deprecation warning: AllocateQscalar -> allocate_qscalar");
-    return this->allocate_qtensor<0, T>(val);
-}
-
-/**
-\endcond
-*/
-
 template <size_t ne, size_t nd, size_t td>
 inline QuadratureBaseCartesian<ne, nd, td>::QuadratureBaseCartesian(
     const xt::xtensor<double, 3>& x,
@@ -524,30 +442,6 @@ inline void QuadratureBaseCartesian<ne, nd, td>::interpQuad_vector(
         }
     }
 }
-
-/**
-\cond
-*/
-template <size_t ne, size_t nd, size_t td>
-inline xt::xtensor<double, 3> QuadratureBaseCartesian<ne, nd, td>::Interp_N_vector(
-    const xt::xtensor<double, 3>& elemvec) const
-{
-    GOOSEFEM_WARNING("Deprecation warning: Interp_N_vector -> InterpQuad_vector");
-    GOOSEFEM_WARNING_PYTHON("Deprecation warning: Interp_N_vector -> InterpQuad_vector")
-    return this->InterpQuad_vector(elemvec);
-}
-
-template <size_t ne, size_t nd, size_t td>
-inline void QuadratureBaseCartesian<ne, nd, td>::interp_N_vector(
-    const xt::xtensor<double, 3>& elemvec, xt::xtensor<double, 3>& qvector) const
-{
-    GOOSEFEM_WARNING("Deprecation warning: interp_N_vector -> interpQuad_vector");
-    GOOSEFEM_WARNING_PYTHON("Deprecation warning: interp_N_vector -> interpQuad_vector")
-    this->interpQuad_vector(elemvec, qvector);
-}
-/**
-\endcond
-*/
 
 template <size_t ne, size_t nd, size_t td>
 inline xt::xtensor<double, 4> QuadratureBaseCartesian<ne, nd, td>::GradN_vector(

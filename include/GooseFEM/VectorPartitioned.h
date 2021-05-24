@@ -334,36 +334,6 @@ public:
     */
     void asDofs_p(const xt::xtensor<double, 3>& elemvec, xt::xtensor<double, 1>& dofval_p) const;
 
-    /**
-    \cond
-    */
-    [[ deprecated ]]
-    void assembleDofs_u(const xt::xtensor<double, 2>& nodevec, xt::xtensor<double, 1>& dofval_u) const;
-
-    [[ deprecated ]]
-    void assembleDofs_u(const xt::xtensor<double, 3>& elemvec, xt::xtensor<double, 1>& dofval_u) const;
-
-    [[ deprecated ]]
-    void assembleDofs_p(const xt::xtensor<double, 2>& nodevec, xt::xtensor<double, 1>& dofval_p) const;
-
-    [[ deprecated ]]
-    void assembleDofs_p(const xt::xtensor<double, 3>& elemvec, xt::xtensor<double, 1>& dofval_p) const;
-
-    [[ deprecated ]]
-    xt::xtensor<double, 1> AssembleDofs_u(const xt::xtensor<double, 2>& nodevec) const;
-
-    [[ deprecated ]]
-    xt::xtensor<double, 1> AssembleDofs_u(const xt::xtensor<double, 3>& elemvec) const;
-
-    [[ deprecated ]]
-    xt::xtensor<double, 1> AssembleDofs_p(const xt::xtensor<double, 2>& nodevec) const;
-
-    [[ deprecated ]]
-    xt::xtensor<double, 1> AssembleDofs_p(const xt::xtensor<double, 3>& elemvec) const;
-    /**
-    \endcond
-    */
-
 protected:
     xt::xtensor<size_t, 1> m_iiu; ///< See iiu()
     xt::xtensor<size_t, 1> m_iip; ///< See iip()

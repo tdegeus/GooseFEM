@@ -281,46 +281,6 @@ public:
     template <class T>
     xt::xtensor<T, 2> allocate_qscalar(T val) const;
 
-    /**
-    \cond
-    */
-    template <size_t rank = 0>
-    [[ deprecated ]]
-    std::array<size_t, 2 + rank> ShapeQtensor() const;
-
-    [[ deprecated ]]
-    std::vector<size_t> ShapeQtensor(size_t rank) const;
-
-    template <size_t rank = 0, class T>
-    [[ deprecated ]]
-    xt::xtensor<T, 2 + rank> AllocateQtensor() const;
-
-    [[ deprecated ]]
-    std::vector<size_t> ShapeQscalar() const;
-
-    template <size_t rank = 0, class T>
-    [[ deprecated ]]
-    xt::xtensor<T, 2 + rank> AllocateQtensor(T val) const;
-
-    template <class T>
-    [[ deprecated ]]
-    xt::xarray<T> AllocateQtensor(size_t rank) const;
-
-    template <class T>
-    [[ deprecated ]]
-    xt::xarray<T> AllocateQtensor(size_t rank, T val) const;
-
-    template <class T>
-    [[ deprecated ]]
-    xt::xtensor<T, 2> AllocateQscalar() const;
-
-    template <class T>
-    [[ deprecated ]]
-    xt::xtensor<T, 2> AllocateQscalar(T val) const;
-    /**
-    \endcond
-    */
-
 protected:
     /**
     Wrapper of constructor, for derived classes.
@@ -402,19 +362,6 @@ public:
     \return volume stored per element, per integration point [#nelem, #nip].
     */
     xt::xtensor<double, 2> dV() const;
-
-    /**
-    \cond
-    */
-    [[ deprecated ]]
-    xt::xtensor<double, 3> Interp_N_vector(const xt::xtensor<double, 3>& elemvec) const;
-
-    [[ deprecated ]]
-    virtual void interp_N_vector(
-        const xt::xtensor<double, 3>& elemvec, xt::xtensor<double, 3>& qvector) const;
-    /**
-    \endcond
-    */
 
     /**
     Interpolate element vector and evaluate at each quadrature point.

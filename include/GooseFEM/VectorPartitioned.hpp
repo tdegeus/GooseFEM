@@ -280,90 +280,6 @@ inline void VectorPartitioned::elementFromPartitioned(
     }
 }
 
-/**
-\cond
-*/
-
-inline void VectorPartitioned::assembleDofs_u(
-    const xt::xtensor<double, 2>& nodevec, xt::xtensor<double, 1>& dofval_u) const
-{
-    GOOSEFEM_WARNING("assembleDofs_u is deprecated and will not be replaced");
-    GOOSEFEM_ASSERT(xt::has_shape(nodevec, {m_nnode, m_ndim}));
-    GOOSEFEM_ASSERT(dofval_u.size() == m_nnu);
-
-    dofval_u.fill(0.0);
-
-    for (size_t m = 0; m < m_nnode; ++m) {
-        for (size_t i = 0; i < m_ndim; ++i) {
-            if (m_part(m, i) < m_nnu) {
-                dofval_u(m_part(m, i)) += nodevec(m, i);
-            }
-        }
-    }
-}
-
-inline void VectorPartitioned::assembleDofs_p(
-    const xt::xtensor<double, 2>& nodevec, xt::xtensor<double, 1>& dofval_p) const
-{
-    GOOSEFEM_WARNING("assembleDofs_p is deprecated and will not be replaced");
-    GOOSEFEM_ASSERT(xt::has_shape(nodevec, {m_nnode, m_ndim}));
-    GOOSEFEM_ASSERT(dofval_p.size() == m_nnp);
-
-    dofval_p.fill(0.0);
-
-    for (size_t m = 0; m < m_nnode; ++m) {
-        for (size_t i = 0; i < m_ndim; ++i) {
-            if (m_part(m, i) >= m_nnu) {
-                dofval_p(m_part(m, i) - m_nnu) += nodevec(m, i);
-            }
-        }
-    }
-}
-
-inline void VectorPartitioned::assembleDofs_u(
-    const xt::xtensor<double, 3>& elemvec, xt::xtensor<double, 1>& dofval_u) const
-{
-    GOOSEFEM_WARNING("assembleDofs_u is deprecated and will not be replaced");
-    GOOSEFEM_ASSERT(xt::has_shape(elemvec, {m_nelem, m_nne, m_ndim}));
-    GOOSEFEM_ASSERT(dofval_u.size() == m_nnu);
-
-    dofval_u.fill(0.0);
-
-    for (size_t e = 0; e < m_nelem; ++e) {
-        for (size_t m = 0; m < m_nne; ++m) {
-            for (size_t i = 0; i < m_ndim; ++i) {
-                if (m_part(m_conn(e, m), i) < m_nnu) {
-                    dofval_u(m_part(m_conn(e, m), i)) += elemvec(e, m, i);
-                }
-            }
-        }
-    }
-}
-
-inline void VectorPartitioned::assembleDofs_p(
-    const xt::xtensor<double, 3>& elemvec, xt::xtensor<double, 1>& dofval_p) const
-{
-    GOOSEFEM_WARNING("assembleDofs_p is deprecated and will not be replaced");
-    GOOSEFEM_ASSERT(xt::has_shape(elemvec, {m_nelem, m_nne, m_ndim}));
-    GOOSEFEM_ASSERT(dofval_p.size() == m_nnp);
-
-    dofval_p.fill(0.0);
-
-    for (size_t e = 0; e < m_nelem; ++e) {
-        for (size_t m = 0; m < m_nne; ++m) {
-            for (size_t i = 0; i < m_ndim; ++i) {
-                if (m_part(m_conn(e, m), i) >= m_nnu) {
-                    dofval_p(m_part(m_conn(e, m), i) - m_nnu) += elemvec(e, m, i);
-                }
-            }
-        }
-    }
-}
-
-/**
-\endcond
-*/
-
 inline xt::xtensor<double, 1> VectorPartitioned::DofsFromParitioned(
     const xt::xtensor<double, 1>& dofval_u, const xt::xtensor<double, 1>& dofval_p) const
 {
@@ -429,42 +345,6 @@ inline xt::xtensor<double, 3> VectorPartitioned::ElementFromPartitioned(
     this->elementFromPartitioned(dofval_u, dofval_p, elemvec);
     return elemvec;
 }
-
-/**
-\cond
-*/
-
-inline xt::xtensor<double, 1> VectorPartitioned::AssembleDofs_u(const xt::xtensor<double, 2>& nodevec) const
-{
-    xt::xtensor<double, 1> dofval_u = xt::empty<double>({m_nnu});
-    this->assembleDofs_u(nodevec, dofval_u);
-    return dofval_u;
-}
-
-inline xt::xtensor<double, 1> VectorPartitioned::AssembleDofs_p(const xt::xtensor<double, 2>& nodevec) const
-{
-    xt::xtensor<double, 1> dofval_p = xt::empty<double>({m_nnp});
-    this->assembleDofs_p(nodevec, dofval_p);
-    return dofval_p;
-}
-
-inline xt::xtensor<double, 1> VectorPartitioned::AssembleDofs_u(const xt::xtensor<double, 3>& elemvec) const
-{
-    xt::xtensor<double, 1> dofval_u = xt::empty<double>({m_nnu});
-    this->assembleDofs_u(elemvec, dofval_u);
-    return dofval_u;
-}
-
-inline xt::xtensor<double, 1> VectorPartitioned::AssembleDofs_p(const xt::xtensor<double, 3>& elemvec) const
-{
-    xt::xtensor<double, 1> dofval_p = xt::empty<double>({m_nnp});
-    this->assembleDofs_p(elemvec, dofval_p);
-    return dofval_p;
-}
-
-/**
-\endcond
-*/
 
 inline xt::xtensor<double, 2> VectorPartitioned::Copy_u(
     const xt::xtensor<double, 2>& nodevec_src, const xt::xtensor<double, 2>& nodevec_dest) const

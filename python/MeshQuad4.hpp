@@ -71,12 +71,6 @@ void init_MeshQuad4(py::module& m)
             py::arg("h") = 1.,
             py::arg("nfine") = 1)
 
-        .def(
-            py::init<const xt::xtensor<double, 2>&, const xt::xtensor<size_t, 2>&>(),
-            "Map connectivity to generating FineLayer-object.",
-            py::arg("coor"),
-            py::arg("conn"))
-
         .def("coor", &GooseFEM::Mesh::Quad4::FineLayer::coor)
         .def("conn", &GooseFEM::Mesh::Quad4::FineLayer::conn)
         .def("nelem", &GooseFEM::Mesh::Quad4::FineLayer::nelem)
@@ -158,21 +152,6 @@ void init_MeshQuad4Map(py::module& m)
         .def("getFineMesh", &GooseFEM::Mesh::Quad4::Map::RefineRegular::getFineMesh)
 
         .def("getMap", &GooseFEM::Mesh::Quad4::Map::RefineRegular::getMap)
-
-        .def(
-            "mapToCoarse",
-            py::overload_cast<const xt::xtensor<double, 1>&>(
-                &GooseFEM::Mesh::Quad4::Map::RefineRegular::mapToCoarse, py::const_))
-
-        .def(
-            "mapToCoarse",
-            py::overload_cast<const xt::xtensor<double, 2>&>(
-                &GooseFEM::Mesh::Quad4::Map::RefineRegular::mapToCoarse, py::const_))
-
-        .def(
-            "mapToCoarse",
-            py::overload_cast<const xt::xtensor<double, 4>&>(
-                &GooseFEM::Mesh::Quad4::Map::RefineRegular::mapToCoarse, py::const_))
 
         .def("meanToCoarse",
              py::overload_cast<const xt::xtensor<double, 1>&>(

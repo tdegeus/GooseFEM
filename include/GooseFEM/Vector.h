@@ -319,48 +319,6 @@ public:
     */
     xt::xtensor<double, 3> allocate_elemmat(double val) const;
 
-    /**
-    \cond
-    */
-    [[ deprecated ]]
-    std::array<size_t, 1> ShapeDofval() const;
-
-    [[ deprecated ]]
-    std::array<size_t, 2> ShapeNodevec() const;
-
-    [[ deprecated ]]
-    std::array<size_t, 3> ShapeElemvec() const;
-
-    [[ deprecated ]]
-    std::array<size_t, 3> ShapeElemmat() const;
-
-    [[ deprecated ]]
-    xt::xtensor<double, 1> AllocateDofval() const;
-
-    [[ deprecated ]]
-    xt::xtensor<double, 1> AllocateDofval(double val) const;
-
-    [[ deprecated ]]
-    xt::xtensor<double, 2> AllocateNodevec() const;
-
-    [[ deprecated ]]
-    xt::xtensor<double, 2> AllocateNodevec(double val) const;
-
-    [[ deprecated ]]
-    xt::xtensor<double, 3> AllocateElemvec() const;
-
-    [[ deprecated ]]
-    xt::xtensor<double, 3> AllocateElemvec(double val) const;
-
-    [[ deprecated ]]
-    xt::xtensor<double, 3> AllocateElemmat() const;
-
-    [[ deprecated ]]
-    xt::xtensor<double, 3> AllocateElemmat(double val) const;
-    /**
-    \endcond
-    */
-
 protected:
     xt::xtensor<size_t, 2> m_conn; ///< See conn()
     xt::xtensor<size_t, 2> m_dofs; ///< See dofs()
