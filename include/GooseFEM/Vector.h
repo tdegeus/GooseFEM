@@ -31,7 +31,8 @@ public:
     \param conn connectivity [#nelem, #nne].
     \param dofs DOFs per node [#nnode, #ndim].
     */
-    Vector(const xt::xtensor<size_t, 2>& conn, const xt::xtensor<size_t, 2>& dofs);
+    template <class S, class T>
+    Vector(const S& conn, const T& dofs);
 
     /**
     \return  Number of elements.
@@ -75,9 +76,8 @@ public:
     \param nodevec_dest input [#nnode, #ndim]
     \return nodevec output [#nnode, #ndim]
     */
-    xt::xtensor<double, 2> Copy(
-        const xt::xtensor<double, 2>& nodevec_src,
-        const xt::xtensor<double, 2>& nodevec_dest) const;
+    template <class T>
+    T Copy(const T& nodevec_src, const T& nodevec_dest) const;
 
     /**
     Copy "nodevec" to another "nodevec".
@@ -85,71 +85,44 @@ public:
     \param nodevec_src input [#nnode, #ndim]
     \param nodevec_dest output [#nnode, #ndim]
     */
-    void copy(const xt::xtensor<double, 2>& nodevec_src, xt::xtensor<double, 2>& nodevec_dest) const;
+    template <class T>
+    void copy(const T& nodevec_src, T& nodevec_dest) const;
 
     /**
-    Convert "nodevec" to "dofval" (overwrite entries that occur more than once).
+    Convert "nodevec" or "elemvec" to "dofval" (overwrite entries that occur more than once).
 
-    \param nodevec input [#nnode, #ndim]
-    \return dofval output [#ndof]
+    \param arg nodevec [#nnode, #ndim] or elemvec [#nelem, #nne, #ndim]
+    \return dofval [#ndof]
     */
-    xt::xtensor<double, 1> AsDofs(const xt::xtensor<double, 2>& nodevec) const;
+    template <class T>
+    xt::xtensor<double, 1> AsDofs(const T& arg) const;
 
     /**
-    Convert "nodevec" to "dofval" (overwrite entries that occur more than once).
+    Convert "nodevec" or "elemvec" to "dofval" (overwrite entries that occur more than once).
 
-    \param nodevec input [#nnode, #ndim]
-    \param dofval output [#ndof]
+    \param arg nodevec [#nnode, #ndim] or elemvec [#nelem, #nne, #ndim]
+    \param dofval (output) [#ndof]
     */
-    void asDofs(const xt::xtensor<double, 2>& nodevec, xt::xtensor<double, 1>& dofval) const;
+    template <class T, class R>
+    void asDofs(const T& arg, R& dofval) const;
 
     /**
-    Convert "elemvec" to "dofval" (overwrite entries that occur more than once).
+    Convert "dofval" or "elemvec" to "nodevec" (overwrite entries that occur more than once).
 
-    \param elemvec input [#nelem, #nne, #ndim]
-    \return dofval output [#ndof]
-    */
-    xt::xtensor<double, 1> AsDofs(const xt::xtensor<double, 3>& elemvec) const;
-
-    /**
-    Convert "elemvec" to "dofval" (overwrite entries that occur more than once).
-
-    \param elemvec input [#nelem, #nne, #ndim]
-    \param dofval output [#ndof]
-    */
-    void asDofs(const xt::xtensor<double, 3>& elemvec, xt::xtensor<double, 1>& dofval) const;
-
-    /**
-    Convert "dofval" to "nodevec" (overwrite entries that occur more than once).
-
-    \param dofval input [#ndof]
+    \param arg dofval [#ndof] or elemvec [#nelem, #nne, #ndim]
     \return nodevec output [#nnode, #ndim]
     */
-    xt::xtensor<double, 2> AsNode(const xt::xtensor<double, 1>& dofval) const;
+    template <class T>
+    xt::xtensor<double, 2> AsNode(const T& arg) const;
 
     /**
-    Convert "dofval" to "nodevec" (overwrite entries that occur more than once).
+    Convert "dofval" or "elemvec" to "nodevec" (overwrite entries that occur more than once).
 
-    \param dofval input [#ndof]
-    \param nodevec input [#nnode, #ndim]
+    \param arg dofval [#ndof] or elemvec [#nelem, #nne, #ndim]
+    \param nodevec output [#nnode, #ndim]
     */
-    void asNode(const xt::xtensor<double, 1>& dofval, xt::xtensor<double, 2>& nodevec) const;
-
-    /**
-    Convert "elemvec" to "nodevec" (overwrite entries that occur more than once).
-
-    \param elemvec input [#nelem, #nne, #ndim]
-    \return nodevec output [#nnode, #ndim]
-    */
-    xt::xtensor<double, 2> AsNode(const xt::xtensor<double, 3>& elemvec) const;
-
-    /**
-    Convert "elemvec" to "nodevec" (overwrite entries that occur more than once).
-
-    \param elemvec input [#nelem, #nne, #ndim]
-    \param nodevec [#nnode, #ndim]
-    */
-    void asNode(const xt::xtensor<double, 3>& elemvec, xt::xtensor<double, 2>& nodevec) const;
+    template <class T, class R>
+    void asNode(const T& arg, R& nodevec) const;
 
     /**
     Convert "dofval" to "elemvec" (overwrite entries that occur more than once).
@@ -360,6 +333,20 @@ public:
     /**
     \endcond
     */
+
+protected:
+
+    template <class T, class R>
+    void asDofs_nodevec(const T& nodevec, R& dofval) const;
+
+    template <class T, class R>
+    void asDofs_elemvec(const T& elemvec, R& dofval) const;
+
+    template <class T, class R>
+    void asNode_dofval(const T& dofval, R& nodevec) const;
+
+    template <class T, class R>
+    void asNode_elemvec(const T& elemvec, R& nodevec) const;
 
 protected:
     xt::xtensor<size_t, 2> m_conn; ///< See conn()
