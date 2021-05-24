@@ -14,18 +14,15 @@ namespace py = pybind11;
 void init_Allocate(py::module& m)
 {
     m.def("AsTensor",
-          py::overload_cast<
-            const xt::xarray<double>&,
-            const std::vector<size_t>&>(&GooseFEM::AsTensor<xt::xarray<double>, std::vector<size_t>>),
+          static_cast<xt::xarray<double> (*)(
+          const xt::xarray<double>&, const std::vector<size_t>&)>(&GooseFEM::AsTensor),
           "See :cpp:func:`GooseFEM::AsTensor`.",
           py::arg("arg"),
           py::arg("shape"));
 
     m.def("AsTensor",
-          py::overload_cast<
-            size_t,
-            const xt::xarray<double>&,
-            size_t>(&GooseFEM::AsTensor<xt::xarray<double>>),
+          static_cast<xt::xarray<double> (*)(
+            size_t, const xt::xarray<double>&, size_t)>(&GooseFEM::AsTensor),
           "See :cpp:func:`GooseFEM::AsTensor`.",
           py::arg("rank"),
           py::arg("arg"),

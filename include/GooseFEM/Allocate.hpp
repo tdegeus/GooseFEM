@@ -107,7 +107,6 @@ namespace detail {
     struct asTensor_allocate
     {
         static auto impl(const T& arg, const S& shape)
-        -> xt::xarray<typename T::value_type>
         {
             using value_type = typename T::value_type;
             size_t dim = arg.dimension();
@@ -128,7 +127,6 @@ namespace detail {
     struct asTensor_allocate<T, S, typename std::enable_if_t<detail::is_std_array<S>::value>>
     {
         static auto impl(const T& arg, const S& shape)
-        -> xt::xtensor<typename T::value_type, T::rank + std_array_size<S>::value>
         {
             using value_type = typename T::value_type;
             static constexpr size_t dim = T::rank;
