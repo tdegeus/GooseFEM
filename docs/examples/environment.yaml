@@ -17,7 +17,7 @@ dependencies:
   - python
   - numpy
   - pybind11
-  - pyxtensor
+  - xtensor-python
 
   # to run tests
   - catch2

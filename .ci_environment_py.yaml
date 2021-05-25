@@ -8,6 +8,6 @@ dependencies:
   - setuptools_scm
   - python
   - pybind11
-  - pyxtensor
+  - xtensor-python
   - numpy
   - nomkl
