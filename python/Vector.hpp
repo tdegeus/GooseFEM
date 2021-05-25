@@ -15,7 +15,7 @@ void init_Vector(py::module& m)
 
     py::class_<GooseFEM::Vector>(m, "Vector")
 
-        .def(py::init<const xt::xtensor<size_t, 2>&, const xt::xtensor<size_t, 2>&>(),
+        .def(py::init<const xt::pytensor<size_t, 2>&, const xt::pytensor<size_t, 2>&>(),
              "Switch between dofval/nodevec/elemvec",
              py::arg("conn"),
              py::arg("dofs"))
