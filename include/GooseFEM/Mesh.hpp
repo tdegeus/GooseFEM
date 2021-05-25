@@ -14,10 +14,12 @@ Implementation of Mesh.h
 namespace GooseFEM {
 namespace Mesh {
 
-inline ElementType defaultElementType(
-    const xt::xtensor<double, 2>& coor,
-    const xt::xtensor<size_t, 2>& conn)
+template <class S, class T>
+inline ElementType defaultElementType(const S& coor, const T& conn)
 {
+    GOOSEFEM_ASSERT(coor.dimension() == 2);
+    GOOSEFEM_ASSERT(conn.dimension() == 2);
+
     if (coor.shape(1) == 2ul && conn.shape(1) == 3ul) {
         return ElementType::Tri3;
     }
@@ -637,12 +639,15 @@ namespace detail {
 
 } // namespace detail
 
+template <class S, class T>
 inline xt::xtensor<size_t, 2> overlapping(
-    const xt::xtensor<double, 2>& coor_a,
-    const xt::xtensor<double, 2>& coor_b,
+    const S& coor_a,
+    const T& coor_b,
     double rtol,
     double atol)
 {
+    GOOSEFEM_ASSERT(coor_a.dimension() == 2);
+    GOOSEFEM_ASSERT(coor_b.dimension() == 2);
     GOOSEFEM_ASSERT(coor_a.shape(1) == coor_b.shape(1));
 
     std::vector<size_t> ret_a;
@@ -668,13 +673,14 @@ inline xt::xtensor<size_t, 2> overlapping(
     return ret;
 }
 
+template <class C, class E, class N>
 inline ManualStitch::ManualStitch(
-    const xt::xtensor<double, 2>& coor_a,
-    const xt::xtensor<size_t, 2>& conn_a,
-    const xt::xtensor<size_t, 1>& overlapping_nodes_a,
-    const xt::xtensor<double, 2>& coor_b,
-    const xt::xtensor<size_t, 2>& conn_b,
-    const xt::xtensor<size_t, 1>& overlapping_nodes_b,
+    const C& coor_a,
+    const E& conn_a,
+    const N& overlapping_nodes_a,
+    const C& coor_b,
+    const E& conn_b,
+    const N& overlapping_nodes_b,
     bool check_position,
     double rtol,
     double atol)
@@ -682,6 +688,12 @@ inline ManualStitch::ManualStitch(
     UNUSED(rtol);
     UNUSED(atol);
 
+    GOOSEFEM_ASSERT(coor_a.dimension() == 2);
+    GOOSEFEM_ASSERT(conn_a.dimension() == 2);
+    GOOSEFEM_ASSERT(overlapping_nodes_a.dimension() == 1);
+    GOOSEFEM_ASSERT(coor_b.dimension() == 2);
+    GOOSEFEM_ASSERT(conn_b.dimension() == 2);
+    GOOSEFEM_ASSERT(overlapping_nodes_b.dimension() == 1);
     GOOSEFEM_ASSERT(xt::has_shape(overlapping_nodes_a, overlapping_nodes_b.shape()));
     GOOSEFEM_ASSERT(coor_a.shape(1) == coor_b.shape(1));
     GOOSEFEM_ASSERT(conn_a.shape(1) == conn_b.shape(1));
@@ -805,8 +817,8 @@ inline xt::xtensor<size_t, 1> ManualStitch::elemmap(size_t mesh_index) const
     return xt::arange<size_t>(m_nel_b) + m_nel_a;
 }
 
-inline xt::xtensor<size_t, 1>
-ManualStitch::nodeset(const xt::xtensor<size_t, 1>& set, size_t mesh_index) const
+template <class T>
+inline T ManualStitch::nodeset(const T& set, size_t mesh_index) const
 {
     GOOSEFEM_ASSERT(mesh_index <= 1);
 
@@ -819,8 +831,8 @@ ManualStitch::nodeset(const xt::xtensor<size_t, 1>& set, size_t mesh_index) cons
     return detail::renum(set, m_map_b);
 }
 
-inline xt::xtensor<size_t, 1>
-ManualStitch::elemset(const xt::xtensor<size_t, 1>& set, size_t mesh_index) const
+template <class T>
+inline T ManualStitch::elemset(const T& set, size_t mesh_index) const
 {
     GOOSEFEM_ASSERT(mesh_index <= 1);
 
@@ -839,10 +851,12 @@ inline Stitch::Stitch(double rtol, double atol)
     m_atol = atol;
 }
 
-inline void Stitch::push_back(
-    const xt::xtensor<double, 2>& coor,
-    const xt::xtensor<size_t, 2>& conn)
+template <class C, class E>
+inline void Stitch::push_back(const C& coor, const E& conn)
 {
+    GOOSEFEM_ASSERT(coor.dimension() == 2);
+    GOOSEFEM_ASSERT(conn.dimension() == 2);
+
     if (m_map.size() == 0) {
         m_coor = coor;
         m_conn = conn;
@@ -939,21 +953,24 @@ inline xt::xtensor<size_t, 1> Stitch::elemmap(size_t mesh_index) const
     return xt::arange<size_t>(m_nel[mesh_index]) + m_el_offset[mesh_index];
 }
 
-inline xt::xtensor<size_t, 1> Stitch::nodeset(const xt::xtensor<size_t, 1>& set, size_t mesh_index) const
+template <class T>
+inline T Stitch::nodeset(const T& set, size_t mesh_index) const
 {
     GOOSEFEM_ASSERT(mesh_index < m_map.size());
     GOOSEFEM_ASSERT(xt::amax(set)() < m_map[mesh_index].size());
     return detail::renum(set, m_map[mesh_index]);
 }
 
-inline xt::xtensor<size_t, 1> Stitch::elemset(const xt::xtensor<size_t, 1>& set, size_t mesh_index) const
+template <class T>
+inline T Stitch::elemset(const T& set, size_t mesh_index) const
 {
     GOOSEFEM_ASSERT(mesh_index < m_map.size());
     GOOSEFEM_ASSERT(xt::amax(set)() < m_nel[mesh_index]);
     return set + m_el_offset[mesh_index];
 }
 
-inline xt::xtensor<size_t, 1> Stitch::nodeset(const std::vector<xt::xtensor<size_t, 1>>& set) const
+template <class T>
+inline T Stitch::nodeset(const std::vector<T>& set) const
 {
     GOOSEFEM_ASSERT(set.size() == m_map.size());
 
@@ -975,7 +992,8 @@ inline xt::xtensor<size_t, 1> Stitch::nodeset(const std::vector<xt::xtensor<size
     return xt::unique(ret);
 }
 
-inline xt::xtensor<size_t, 1> Stitch::elemset(const std::vector<xt::xtensor<size_t, 1>>& set) const
+template <class T>
+inline T Stitch::elemset(const std::vector<T>& set) const
 {
     GOOSEFEM_ASSERT(set.size() == m_map.size());
 
@@ -997,6 +1015,18 @@ inline xt::xtensor<size_t, 1> Stitch::elemset(const std::vector<xt::xtensor<size
     return ret;
 }
 
+template <class T>
+inline T Stitch::nodeset(std::initializer_list<T> set) const
+{
+    return this->nodeset(std::vector<T>(set));
+}
+
+template <class T>
+inline T Stitch::elemset(std::initializer_list<T> set) const
+{
+    return this->elemset(std::vector<T>(set));
+}
+
 inline Vstack::Vstack(bool check_overlap, double rtol, double atol)
 {
     m_check_overlap = check_overlap;
@@ -1004,11 +1034,8 @@ inline Vstack::Vstack(bool check_overlap, double rtol, double atol)
     m_atol = atol;
 }
 
-inline void Vstack::push_back(
-    const xt::xtensor<double, 2>& coor,
-    const xt::xtensor<size_t, 2>& conn,
-    const xt::xtensor<size_t, 1>& nodes_bot,
-    const xt::xtensor<size_t, 1>& nodes_top)
+template <class C, class E, class N>
+inline void Vstack::push_back(const C& coor, const E& conn, const N& nodes_bot, const N& nodes_top)
 {
     if (m_map.size() == 0) {
         m_coor = coor;
@@ -1060,12 +1087,6 @@ inline Renumber::Renumber(const T& dofs)
     }
 }
 
-inline xt::xtensor<size_t, 2> Renumber::get(const xt::xtensor<size_t, 2>& dofs) const
-{
-    GOOSEFEM_WARNING("Renumber::get is deprecated, use Renumber::apply");
-    return this->apply(dofs);
-}
-
 template <class T>
 inline T Renumber::apply(const T& list) const
 {
@@ -1077,12 +1098,14 @@ inline xt::xtensor<size_t, 1> Renumber::index() const
     return m_renum;
 }
 
-inline xt::xtensor<size_t, 2> renumber(const xt::xtensor<size_t, 2>& dofs)
+template <class T>
+inline T renumber(const T& dofs)
 {
     return Renumber(dofs).apply(dofs);
 }
 
-inline Reorder::Reorder(const std::initializer_list<xt::xtensor<size_t, 1>> args)
+template <class T>
+inline Reorder::Reorder(const std::initializer_list<T> args)
 {
     size_t n = 0;
     size_t i = 0;
@@ -1110,12 +1133,6 @@ inline Reorder::Reorder(const std::initializer_list<xt::xtensor<size_t, 1>> args
     }
 }
 
-inline xt::xtensor<size_t, 2> Reorder::get(const xt::xtensor<size_t, 2>& dofs) const
-{
-    GOOSEFEM_WARNING("Reorder::get is deprecated, use Reorder::apply");
-    return this->apply(dofs);
-}
-
 template <class T>
 inline T Reorder::apply(const T& list) const
 {
@@ -1140,8 +1157,11 @@ inline xt::xtensor<size_t, 2> dofs(size_t nnode, size_t ndim)
     return xt::reshape_view(xt::arange<size_t>(nnode * ndim), {nnode, ndim});
 }
 
-inline xt::xtensor<size_t, 1> coordination(const xt::xtensor<size_t, 2>& conn)
+template <class E>
+inline xt::xtensor<size_t, 1> coordination(const E& conn)
 {
+    GOOSEFEM_ASSERT(conn.dimension() == 2);
+
     size_t nnode = xt::amax(conn)() + 1;
 
     xt::xtensor<size_t, 1> N = xt::zeros<size_t>({nnode});

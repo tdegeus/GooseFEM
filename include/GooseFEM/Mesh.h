@@ -31,13 +31,12 @@ enum class ElementType {
 /**
 Extract the element type based on the connectivity.
 
-\param coor Nodal coordinates.
-\param conn Connectivity.
+\param coor Nodal coordinates [nnode, ndim].
+\param conn Connectivity [nelem, nne].
 \return ElementType().
 */
-inline ElementType defaultElementType(
-    const xt::xtensor<double, 2>& coor,
-    const xt::xtensor<size_t, 2>& conn);
+template <class S, class T>
+inline ElementType defaultElementType(const S& coor, const T& conn);
 
 /**
 Abstract class for regular meshes in 2-d.
@@ -1087,15 +1086,16 @@ Find overlapping nodes. The output has the following structure:
     [[nodes_from_mesh_a],
      [nodes_from_mesh_b]]
 
-\param coor_a Nodal coordinates of mesh "a".
-\param coor_b Nodal coordinates of mesh "b".
+\param coor_a Nodal coordinates of mesh "a" [nnode, ndim].
+\param coor_b Nodal coordinates of mesh "b" [nnode, ndim].
 \param rtol Relative tolerance for position match.
 \param atol Absolute tolerance for position match.
 \return Overlapping nodes.
 */
+template <class S, class T>
 inline xt::xtensor<size_t, 2> overlapping(
-    const xt::xtensor<double, 2>& coor_a,
-    const xt::xtensor<double, 2>& coor_b,
+    const S& coor_a,
+    const T& coor_b,
     double rtol = 1e-5,
     double atol = 1e-8);
 
@@ -1107,23 +1107,24 @@ public:
     ManualStitch() = default;
 
     /**
-    \param coor_a Nodal coordinates of mesh "a".
-    \param conn_a Connectivity of mesh "a".
-    \param overlapping_nodes_a Node-numbers of mesh "a" that overlap with mesh "b".
-    \param coor_b Nodal coordinates of mesh "b".
-    \param conn_b Connectivity of mesh "b".
-    \param overlapping_nodes_b Node-numbers of mesh "b" that overlap with mesh "a".
+    \param coor_a Nodal coordinates of mesh "a"  [nnode, ndim].
+    \param conn_a Connectivity of mesh "a" [nelem, nne].
+    \param overlapping_nodes_a Node-numbers of mesh "a" that overlap with mesh "b" [n].
+    \param coor_b Nodal coordinates of mesh "b"  [nnode, ndim].
+    \param conn_b Connectivity of mesh "b" [nelem, nne].
+    \param overlapping_nodes_b Node-numbers of mesh "b" that overlap with mesh "a" [n].
     \param check_position If ``true`` the nodes are checked for position overlap.
     \param rtol Relative tolerance for check on position overlap.
     \param atol Absolute tolerance for check on position overlap.
     */
+    template <class C, class E, class N>
     ManualStitch(
-        const xt::xtensor<double, 2>& coor_a,
-        const xt::xtensor<size_t, 2>& conn_a,
-        const xt::xtensor<size_t, 1>& overlapping_nodes_a,
-        const xt::xtensor<double, 2>& coor_b,
-        const xt::xtensor<size_t, 2>& conn_b,
-        const xt::xtensor<size_t, 1>& overlapping_nodes_b,
+        const C& coor_a,
+        const E& conn_a,
+        const N& overlapping_nodes_a,
+        const C& coor_b,
+        const E& conn_b,
+        const N& overlapping_nodes_b,
         bool check_position = true,
         double rtol = 1e-5,
         double atol = 1e-8);
@@ -1207,7 +1208,8 @@ public:
     \param mesh_index Index of the mesh ("a" = 1, "b" = 1).
     \return List of node numbers for the stitched mesh.
     */
-    xt::xtensor<size_t, 1> nodeset(const xt::xtensor<size_t, 1>& set, size_t mesh_index) const;
+    template <class T>
+    T nodeset(const T& set, size_t mesh_index) const;
 
     /**
     Convert set of element numbers for an original mesh to the stitched mesh.
@@ -1216,7 +1218,8 @@ public:
     \param mesh_index Index of the mesh ("a" = 1, "b" = 1).
     \return List of element numbers for the stitched mesh.
     */
-    xt::xtensor<size_t, 1> elemset(const xt::xtensor<size_t, 1>& set, size_t mesh_index) const;
+    template <class T>
+    T elemset(const T& set, size_t mesh_index) const;
 
 private:
     xt::xtensor<double, 2> m_coor;
@@ -1242,10 +1245,11 @@ public:
     /**
     Add mesh to be stitched.
 
-    \param coor Nodal coordinates.
-    \param conn Connectivity.
+    \param coor Nodal coordinates [nnode, ndim].
+    \param conn Connectivity [nelem, nne].
     */
-    void push_back(const xt::xtensor<double, 2>& coor, const xt::xtensor<size_t, 2>& conn);
+    template <class C, class E>
+    void push_back(const C& coor, const E& conn);
 
     /**
     Number of sub meshes.
@@ -1330,7 +1334,8 @@ public:
     \param mesh_index Index of the sub-mesh.
     \return List of node numbers for the stitched mesh.
     */
-    xt::xtensor<size_t, 1> nodeset(const xt::xtensor<size_t, 1>& set, size_t mesh_index) const;
+    template <class T>
+    T nodeset(const T& set, size_t mesh_index) const;
 
     /**
     Convert set of element-numbers for a sub-mesh to the stitched mesh.
@@ -1339,7 +1344,8 @@ public:
     \param mesh_index Index of the sub-mesh.
     \return List of element numbers for the stitched mesh.
     */
-    xt::xtensor<size_t, 1> elemset(const xt::xtensor<size_t, 1>& set, size_t mesh_index) const;
+    template <class T>
+    T elemset(const T& set, size_t mesh_index) const;
 
     /**
     Combine set of node numbers for an original to the final mesh (removes duplicates).
@@ -1347,7 +1353,12 @@ public:
     \param set List of node numbers per mesh.
     \return List of node numbers for the stitched mesh.
     */
-    xt::xtensor<size_t, 1> nodeset(const std::vector<xt::xtensor<size_t, 1>>& set) const;
+    template <class T>
+    T nodeset(const std::vector<T>& set) const;
+
+    /** \copydoc nodeset(const std::vector<T>&) const */
+    template <class T>
+    T nodeset(std::initializer_list<T> set) const;
 
     /**
     Combine set of element numbers for an original to the final mesh.
@@ -1355,7 +1366,12 @@ public:
     \param set List of element numbers per mesh.
     \return List of element numbers for the stitched mesh.
     */
-    xt::xtensor<size_t, 1> elemset(const std::vector<xt::xtensor<size_t, 1>>& set) const;
+    template <class T>
+    T elemset(const std::vector<T>& set) const;
+
+    /** \copydoc elemset(const std::vector<T>&) const */
+    template <class T>
+    T elemset(std::initializer_list<T> set) const;
 
 protected:
     xt::xtensor<double, 2> m_coor; ///< Nodal coordinates [#nnode, #ndim]
@@ -1384,16 +1400,13 @@ public:
     Add a mesh to the top of the current stack.
     Each time the current `nodes_bottom` are stitched with the then highest `nodes_top`.
 
-    \param coor Nodal coordinates.
-    \param conn Connectivity.
-    \param nodes_bottom Nodes along the bottom edge.
-    \param nodes_top Nodes along the top edge.
+    \param coor Nodal coordinates [nnode, ndim].
+    \param conn Connectivity [nelem, nne].
+    \param nodes_bottom Nodes along the bottom edge [n].
+    \param nodes_top Nodes along the top edge [n].
     */
-    void push_back(
-        const xt::xtensor<double, 2>& coor,
-        const xt::xtensor<size_t, 2>& conn,
-        const xt::xtensor<size_t, 1>& nodes_bottom,
-        const xt::xtensor<size_t, 1>& nodes_top);
+    template <class C, class E, class N>
+    void push_back(const C& coor, const E& conn, const N& nodes_bottom, const N& nodes_top);
 
 private:
 
@@ -1429,15 +1442,6 @@ public:
     Renumber(const T& dofs);
 
     /**
-    Get renumbered DOFs (same as ``Renumber::apply(dofs)``).
-
-    \param dofs List of (DOF-)numbers.
-    \return Renumbered list of (DOF-)numbers.
-    */
-    [[deprecated]]
-    xt::xtensor<size_t, 2> get(const xt::xtensor<size_t, 2>& dofs) const;
-
-    /**
     Apply renumbering to other set.
 
     \param list List of (DOF-)numbers.
@@ -1462,10 +1466,11 @@ private:
 /**
 Renumber to lowest possible index (see GooseFEM::Mesh::Renumber).
 
-\param dofs DOF-numbers.
+\param dofs DOF-numbers [nnode, ndim].
 \return Renumbered DOF-numbers.
 */
-inline xt::xtensor<size_t, 2> renumber(const xt::xtensor<size_t, 2>& dofs);
+template <class T>
+inline T renumber(const T& dofs);
 
 /**
 Reorder to lowest possible index, in specific order.
@@ -1482,16 +1487,8 @@ public:
     /**
     \param args List of (DOF-)numbers.
     */
-    Reorder(const std::initializer_list<xt::xtensor<size_t, 1>> args);
-
-    /**
-    Get reordered DOFs (same as ``Reorder::apply(dofs)``).
-
-    \param dofs List of (DOF-)numbers.
-    \return Reordered list of (DOF-)numbers.
-    */
-    [[deprecated]]
-    xt::xtensor<size_t, 2> get(const xt::xtensor<size_t, 2>& dofs) const;
+    template <class T>
+    Reorder(const std::initializer_list<T> args);
 
     /**
     Apply reordering to other set.
@@ -1531,10 +1528,11 @@ inline xt::xtensor<size_t, 2> dofs(size_t nnode, size_t ndim);
 /**
 Number of elements connected to each node.
 
-\param conn Connectivity.
+\param conn Connectivity [nelem, nne].
 \return Coordination per node.
 */
-inline xt::xtensor<size_t, 1> coordination(const xt::xtensor<size_t, 2>& conn);
+template <class E>
+inline xt::xtensor<size_t, 1> coordination(const E& conn);
 
 /**
 Elements connected to each node.
