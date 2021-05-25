@@ -268,25 +268,61 @@ public:
 
 private:
 
-    /** Distribution of \copydoc asDofs(const T&, R&) const */
+    /** Distribution to relevant implementation of \copydoc asDofs(const T&, R&) const */
     template <class T, class R, typename std::enable_if_t<!xt::has_fixed_rank_t<T>::value, int> = 0>
     void asDofs_impl(const T& arg, R& dofval) const;
 
-    /** Distribution of \copydoc asDofs(const T&, R&) const */
-    template <class T, class R, typename std::enable_if_t<xt::get_rank<T>::value == 1, int> = 0>
-    void asDofs_impl(const T& arg, R& dofval) const;
-
-    /** Distribution of \copydoc asDofs(const T&, R&) const */
+    /** Distribution to relevant implementation of \copydoc asDofs(const T&, R&) const */
     template <class T, class R, typename std::enable_if_t<xt::get_rank<T>::value == 2, int> = 0>
     void asDofs_impl(const T& arg, R& dofval) const;
 
-    /** Distribution of \copydoc asDofs(const T&, R&) const */
+    /** Distribution to relevant implementation of \copydoc asDofs(const T&, R&) const */
     template <class T, class R, typename std::enable_if_t<xt::get_rank<T>::value == 3, int> = 0>
     void asDofs_impl(const T& arg, R& dofval) const;
 
-    /** Implementation for 'nodevec' input of \copydoc asDofs(const T&, R&) const */
-    template <class T, class R>
-    void asDofs_impl_dofval(const T& arg, R& dofval) const;
+    /** Distribution to relevant implementation of \copydoc asNode(const T&, R&) const */
+    template <class T, class R, typename std::enable_if_t<!xt::has_fixed_rank_t<T>::value, int> = 0>
+    void asNode_impl(const T& arg, R& dofval) const;
+
+    /** Distribution to relevant implementation of \copydoc asNode(const T&, R&) const */
+    template <class T, class R, typename std::enable_if_t<xt::get_rank<T>::value == 1, int> = 0>
+    void asNode_impl(const T& arg, R& dofval) const;
+
+    /** Distribution to relevant implementation of \copydoc asNode(const T&, R&) const */
+    template <class T, class R, typename std::enable_if_t<xt::get_rank<T>::value == 3, int> = 0>
+    void asNode_impl(const T& arg, R& dofval) const;
+
+    /** Distribution to relevant implementation of \copydoc asElement(const T&, R&) const */
+    template <class T, class R, typename std::enable_if_t<!xt::has_fixed_rank_t<T>::value, int> = 0>
+    void asElement_impl(const T& arg, R& dofval) const;
+
+    /** Distribution to relevant implementation of \copydoc asElement(const T&, R&) const */
+    template <class T, class R, typename std::enable_if_t<xt::get_rank<T>::value == 1, int> = 0>
+    void asElement_impl(const T& arg, R& dofval) const;
+
+    /** Distribution to relevant implementation of \copydoc asElement(const T&, R&) const */
+    template <class T, class R, typename std::enable_if_t<xt::get_rank<T>::value == 2, int> = 0>
+    void asElement_impl(const T& arg, R& dofval) const;
+
+    /** Distribution to relevant implementation of \copydoc assembleDofs(const T&, R&) const */
+    template <class T, class R, typename std::enable_if_t<!xt::has_fixed_rank_t<T>::value, int> = 0>
+    void assembleDofs_impl(const T& arg, R& dofval) const;
+
+    /** Distribution to relevant implementation of \copydoc assembleDofs(const T&, R&) const */
+    template <class T, class R, typename std::enable_if_t<xt::get_rank<T>::value == 2, int> = 0>
+    void assembleDofs_impl(const T& arg, R& dofval) const;
+
+    /** Distribution to relevant implementation of \copydoc assembleDofs(const T&, R&) const */
+    template <class T, class R, typename std::enable_if_t<xt::get_rank<T>::value == 3, int> = 0>
+    void assembleDofs_impl(const T& arg, R& dofval) const;
+
+    /** Distribution to relevant implementation of \copydoc assembleNode(const T&, R&) const */
+    template <class T, class R, typename std::enable_if_t<!xt::has_fixed_rank_t<T>::value, int> = 0>
+    void assembleNode_impl(const T& arg, R& dofval) const;
+
+    /** Distribution to relevant implementation of \copydoc assembleNode(const T&, R&) const */
+    template <class T, class R, typename std::enable_if_t<xt::get_rank<T>::value == 3, int> = 0>
+    void assembleNode_impl(const T& arg, R& dofval) const;
 
     /** Implementation for 'nodevec' input of \copydoc asDofs(const T&, R&) const */
     template <class T, class R>
@@ -298,31 +334,31 @@ private:
 
     /** Implementation for 'dofval' input of \copydoc asNode(const T&, R&) const */
     template <class T, class R>
-    void asNode_dofval(const T& arg, R& nodevec) const;
+    void asNode_impl_dofval(const T& arg, R& nodevec) const;
 
     /** Implementation for 'elemvec' input of \copydoc asNode(const T&, R&) const */
     template <class T, class R>
-    void asNode_elemvec(const T& arg, R& nodevec) const;
+    void asNode_impl_elemvec(const T& arg, R& nodevec) const;
 
     /** Implementation for 'dofval' input of \copydoc asElement(const T&, R&) const */
     template <class T, class R>
-    void asElement_dofval(const T& arg, R& elemvec) const;
+    void asElement_impl_dofval(const T& arg, R& elemvec) const;
 
     /** Implementation for 'nodevec' input of \copydoc asElement(const T&, R&) const */
     template <class T, class R>
-    void asElement_nodevec(const T& arg, R& elemvec) const;
+    void asElement_impl_nodevec(const T& arg, R& elemvec) const;
 
     /** Implementation for 'nodevec' input of \copydoc assembleDofs(const T&, R&) const */
     template <class T, class R>
-    void assembleDofs_nodevec(const T& arg, R& dofval) const;
+    void assembleDofs_impl_nodevec(const T& arg, R& dofval) const;
 
     /** Implementation for 'elemvec' input of \copydoc assembleDofs(const T&, R&) const */
     template <class T, class R>
-    void assembleDofs_elemvec(const T& arg, R& dofval) const;
+    void assembleDofs_impl_elemvec(const T& arg, R& dofval) const;
 
     /** Implementation for 'elemvec' input of \copydoc assembleNode(const T&, R&) const */
     template <class T, class R>
-    void assembleNode_elemvec(const T& arg, R& nodevec) const;
+    void assembleNode_impl_elemvec(const T& arg, R& nodevec) const;
 
 protected:
     xt::xtensor<size_t, 2> m_conn; ///< See conn()
