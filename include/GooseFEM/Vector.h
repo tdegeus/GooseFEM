@@ -149,7 +149,7 @@ public:
     \return dofval output [#ndof]
     */
     template <class T>
-    xt::xtensor<double, 1> AssembleDofs(const T& nodevec) const;
+    xt::xtensor<double, 1> AssembleDofs(const T& arg) const;
 
     /**
     Assemble "nodevec" or "elemvec" to "dofval" (adds entries that occur more that once).
@@ -310,32 +310,41 @@ public:
 
 protected:
 
+    /** Implementation for 'nodevec' input of \copydoc asDofs(const T&, R&) const */
     template <class T, class R>
-    void asDofs_nodevec(const T& nodevec, R& dofval) const;
+    void asDofs_nodevec(const T& arg, R& dofval) const;
 
+    /** Implementation for 'elemvec' input of \copydoc asDofs(const T&, R&) const */
     template <class T, class R>
-    void asDofs_elemvec(const T& elemvec, R& dofval) const;
+    void asDofs_elemvec(const T& arg, R& dofval) const;
 
+    /** Implementation for 'dofval' input of \copydoc asNode(const T&, R&) const */
     template <class T, class R>
-    void asNode_dofval(const T& dofval, R& nodevec) const;
+    void asNode_dofval(const T& arg, R& nodevec) const;
 
+    /** Implementation for 'elemvec' input of \copydoc asNode(const T&, R&) const */
     template <class T, class R>
-    void asNode_elemvec(const T& elemvec, R& nodevec) const;
+    void asNode_elemvec(const T& arg, R& nodevec) const;
 
+    /** Implementation for 'dofval' input of \copydoc asElement(const T&, R&) const */
     template <class T, class R>
-    void asElement_dofval(const T& dofval, R& elemvec) const;
+    void asElement_dofval(const T& arg, R& elemvec) const;
 
+    /** Implementation for 'nodevec' input of \copydoc asElement(const T&, R&) const */
     template <class T, class R>
-    void asElement_nodevec(const T& nodevec, R& elemvec) const;
+    void asElement_nodevec(const T& arg, R& elemvec) const;
 
+    /** Implementation for 'nodevec' input of \copydoc assembleDofs(const T&, R&) const */
     template <class T, class R>
-    void assembleDofs_nodevec(const T& nodevec, R& dofval) const;
+    void assembleDofs_nodevec(const T& arg, R& dofval) const;
 
+    /** Implementation for 'elemvec' input of \copydoc assembleDofs(const T&, R&) const */
     template <class T, class R>
-    void assembleDofs_elemvec(const T& elemvec, R& dofval) const;
+    void assembleDofs_elemvec(const T& arg, R& dofval) const;
 
+    /** Implementation for 'elemvec' input of \copydoc assembleNode(const T&, R&) const */
     template <class T, class R>
-    void assembleNode_elemvec(const T& elemvec, R& nodevec) const;
+    void assembleNode_elemvec(const T& arg, R& nodevec) const;
 
 protected:
     xt::xtensor<size_t, 2> m_conn; ///< See conn()
