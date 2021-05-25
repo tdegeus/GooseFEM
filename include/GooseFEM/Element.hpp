@@ -155,7 +155,7 @@ inline void QuadratureBase<ne, nd, td>::asTensor(
     xt::xtensor<T, 2 + rank>& ret) const
 {
     GOOSEFEM_ASSERT(xt::has_shape(arg, {m_nelem, m_nne}));
-    GooseFEM::asTensor<2, rank>(arg, ret);
+    GooseFEM::asTensor(arg, ret);
 }
 
 template <size_t ne, size_t nd, size_t td>
@@ -163,7 +163,7 @@ template <size_t rank, class T>
 inline xt::xtensor<T, 2 + rank> QuadratureBase<ne, nd, td>::AsTensor(
     const xt::xtensor<T, 2>& qscalar) const
 {
-    return GooseFEM::AsTensor<2, rank>(qscalar, m_tdim);
+    return GooseFEM::AsTensor<rank>(qscalar, m_tdim);
 }
 
 template <size_t ne, size_t nd, size_t td>
