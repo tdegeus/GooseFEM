@@ -87,26 +87,8 @@ void Vector::asDofs(const T& arg, R& dofval) const
 template <class T, class R, typename std::enable_if_t<!xt::has_fixed_rank_t<T>::value, int>>
 inline void Vector::asDofs_impl(const T& arg, R& dofval) const
 {
-    this->asDofs_impl_dofval(arg, dofval);
-}
-
-template <class T, class R, typename std::enable_if_t<xt::get_rank<T>::value == 1, int>>
-inline void Vector::asDofs_impl(const T& arg, R& dofval) const
-{
-    this->asDofs_impl_nodevec(arg, dofval);
-}
-
-template <class T, class R, typename std::enable_if_t<xt::get_rank<T>::value == 2, int>>
-inline void Vector::asDofs_impl(const T& arg, R& dofval) const
-{
-    this->asDofs_impl_elemvec(arg, dofval);
-}
-
-template <class T, class R, typename std::enable_if_t<xt::get_rank<T>::value == 3, int>>
-inline void Vector::asDofs_impl(const T& arg, R& dofval) const
-{
     if (arg.dimension() == 1) {
-        dofval = arg;
+        this->asDofs_impl_dofval(arg, dofval);
     }
     else if (arg.dimension() == 2) {
         this->asDofs_impl_nodevec(arg, dofval);
@@ -117,6 +99,24 @@ inline void Vector::asDofs_impl(const T& arg, R& dofval) const
     else {
         throw std::runtime_error("Vector::asDofs unknown dimension first argument");
     }
+}
+
+template <class T, class R, typename std::enable_if_t<xt::get_rank<T>::value == 1, int>>
+inline void Vector::asDofs_impl(const T& arg, R& dofval) const
+{
+    this->asDofs_impl_dofval(arg, dofval);
+}
+
+template <class T, class R, typename std::enable_if_t<xt::get_rank<T>::value == 2, int>>
+inline void Vector::asDofs_impl(const T& arg, R& dofval) const
+{
+    this->asDofs_impl_nodevec(arg, dofval);
+}
+
+template <class T, class R, typename std::enable_if_t<xt::get_rank<T>::value == 3, int>>
+inline void Vector::asDofs_impl(const T& arg, R& dofval) const
+{
+    this->asDofs_impl_elemvec(arg, dofval);
 }
 
 template <class T, class R>
