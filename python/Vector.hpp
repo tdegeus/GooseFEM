@@ -29,32 +29,32 @@ void init_Vector(py::module& m)
         .def("dofs", &GooseFEM::Vector::dofs, "Return degrees-of-freedom")
 
         .def("Copy",
-             &GooseFEM::Vector::Copy<xt::xarray<double>>,
+             &GooseFEM::Vector::Copy<xt::pyarray<double>>,
              py::arg("nodevec_src"),
              py::arg("nodevec_dest"))
 
         .def("AsDofs",
-             &GooseFEM::Vector::AsDofs<xt::xarray<double>>,
+             &GooseFEM::Vector::AsDofs<xt::pyarray<double>>,
              "Convert to 'dofval' (overwrite entries that occur more than once",
              py::arg("arg"))
 
         .def("AsNode",
-             &GooseFEM::Vector::AsNode<xt::xarray<double>>,
+             &GooseFEM::Vector::AsNode<xt::pyarray<double>>,
              "Convert to 'nodevec' (overwrite entries that occur more than once",
              py::arg("arg"))
 
         .def("AsElement",
-             &GooseFEM::Vector::AsElement<xt::xarray<double>>,
+             &GooseFEM::Vector::AsElement<xt::pyarray<double>>,
              "Convert to 'elemvec' (overwrite entries that occur more than once",
              py::arg("arg"))
 
         .def("AssembleDofs",
-             &GooseFEM::Vector::AssembleDofs<xt::xarray<double>>,
+             &GooseFEM::Vector::AssembleDofs<xt::pyarray<double>>,
              "Assemble to 'dofval' (add entries that occur more than once",
              py::arg("arg"))
 
         .def("AssembleNode",
-            &GooseFEM::Vector::AssembleNode<xt::xarray<double>>,
+            &GooseFEM::Vector::AssembleNode<xt::pyarray<double>>,
              "Assemble to 'nodevec' (add entries that occur more than once",
              py::arg("arg"))
 

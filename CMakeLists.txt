@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.1..3.19)
+cmake_minimum_required(VERSION 3.18..3.20)
 
 # Basic settings
 # ==============
@@ -104,14 +104,16 @@ endif()
 # Python API
 
 if(BUILD_PYTHON OR BUILD_ALL)
-    find_package(pybind11 CONFIG REQUIRED)
-    find_package(pyxtensor REQUIRED)
+    find_package(Python REQUIRED COMPONENTS Interpreter Development NumPy)
+    find_package(pybind11 REQUIRED CONFIG)
+    find_package(xtensor-python REQUIRED)
 
-    pybind11_add_module(python python/main.cpp)
-    set_target_properties(python PROPERTIES OUTPUT_NAME ${PROJECT_NAME})
-    target_link_libraries(python PUBLIC ${PROJECT_NAME} pybind11::module pyxtensor)
+    pybind11_add_module(mypymod python/main.cpp)
+    set_target_properties(mypymod PROPERTIES OUTPUT_NAME ${PROJECT_NAME})
+    target_link_libraries(mypymod PUBLIC ${PROJECT_NAME}
+        pybind11::module xtensor-python Python::NumPy)
 
-    target_compile_definitions(python PRIVATE VERSION_INFO=${PROJECT_VERSION})
+    target_compile_definitions(mypymod PRIVATE VERSION_INFO=${PROJECT_VERSION})
 endif()
 
 # Documentation

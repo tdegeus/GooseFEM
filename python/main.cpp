@@ -8,8 +8,11 @@
 
 #include <pybind11/pybind11.h>
 #include <pybind11/eigen.h>
+#include <pybind11/stl.h>
 
-#include <pyxtensor/pyxtensor.hpp>
+#define FORCE_IMPORT_ARRAY
+#include <xtensor-python/pyarray.hpp>
+#include <xtensor-python/pytensor.hpp>
 
 #define GOOSEFEM_ENABLE_ASSERT
 #define GOOSEFEM_ENABLE_WARNING_PYTHON
@@ -38,6 +41,8 @@ namespace py = pybind11;
 #include "MeshHex8.hpp"
 
 PYBIND11_MODULE(GooseFEM, m) {
+
+xt::import_numpy();
 
 // --------
 // GooseFEM
