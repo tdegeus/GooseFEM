@@ -37,18 +37,16 @@ public:
     /**
     Constructor.
 
+    \tparam E e.g. `xt::xtensor<size_t, 2>`
+    \tparam M e.g. `Eigen::SparseMatrix<double>`
     \param conn connectivity [#nelem, #nne].
     \param dofs DOFs per node [#nnode, #ndim].
     \param Cdu See Tyings::Periodic::Cdu().
     \param Cdp See Tyings::Periodic::Cdp().
     \param Cdi See Tyings::Periodic::Cdi().
     */
-    VectorPartitionedTyings(
-        const xt::xtensor<size_t, 2>& conn,
-        const xt::xtensor<size_t, 2>& dofs,
-        const Eigen::SparseMatrix<double>& Cdu,
-        const Eigen::SparseMatrix<double>& Cdp,
-        const Eigen::SparseMatrix<double>& Cdi);
+    template <class E, class M>
+    VectorPartitionedTyings(const E& conn, const E& dofs, const M& Cdu, const M& Cdp, const M& Cdi);
 
     /**
     \return Number of dependent DOFs.
@@ -104,8 +102,8 @@ public:
     \param dofval_src DOF values, iip() updated, [#ndof].
     \param dofval_dest DOF values, iip() updated, [#ndof].
     */
-    void copy_p(
-        const xt::xtensor<double, 1>& dofval_src, xt::xtensor<double, 1>& dofval_dest) const;
+    template <class T>
+    void copy_p(const T& dofval_src, T& dofval_dest) const;
 
     /**
     Convert to "dofval" (overwrite entries that occur more than once).
@@ -114,7 +112,8 @@ public:
     \param nodevec nodal vectors [#nnode, #ndim].
     \return dofval[iii()] [#nni].
     */
-    xt::xtensor<double, 1> AsDofs_i(const xt::xtensor<double, 2>& nodevec) const;
+    template <class T>
+    xt::xtensor<double, 1> AsDofs_i(const T& nodevec) const;
 
     /**
     Same as InterpQuad_vector(), but writing to preallocated return.
@@ -123,10 +122,8 @@ public:
     \param dofval_i [#nni].
     \param apply_tyings If `true` the dependent DOFs are eliminated.
     */
-    void asDofs_i(
-        const xt::xtensor<double, 2>& nodevec,
-        xt::xtensor<double, 1>& dofval_i,
-        bool apply_tyings = true) const;
+    template <class T, class R>
+    void asDofs_i(const T& nodevec, R& dofval_i, bool apply_tyings = true) const;
 
 private:
     xt::xtensor<size_t, 1> m_iiu; ///< See iiu().
@@ -150,7 +147,8 @@ private:
     \param nodevec nodal vectors [#nnode, #ndim].
     \return dofval[iid()] [#nnd].
     */
-    Eigen::VectorXd Eigen_asDofs_d(const xt::xtensor<double, 2>& nodevec) const;
+    template <class T>
+    Eigen::VectorXd Eigen_asDofs_d(const T& nodevec) const;
 };
 
 } // namespace GooseFEM

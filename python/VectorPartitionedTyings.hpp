@@ -30,26 +30,18 @@ void init_VectorPartitionedTyings(py::module& m)
             py::arg("Cdi"))
 
         .def("nnu", &GooseFEM::VectorPartitionedTyings::nnu, "Number of unknown DOFs")
-
         .def("nnp", &GooseFEM::VectorPartitionedTyings::nnp, "Number of prescribed DOFs")
-
         .def("nni", &GooseFEM::VectorPartitionedTyings::nni, "Number of independent DOFs")
-
         .def("nnd", &GooseFEM::VectorPartitionedTyings::nnd, "Number of dependent DOFs")
-
         .def("iiu", &GooseFEM::VectorPartitionedTyings::iiu, "Unknown DOFs")
-
         .def("iip", &GooseFEM::VectorPartitionedTyings::iip, "Prescribed DOFs")
-
         .def("iii", &GooseFEM::VectorPartitionedTyings::iii, "Independent DOFs")
-
         .def("iid", &GooseFEM::VectorPartitionedTyings::iid, "Dependent DOFs")
 
-        .def(
-            "AsDofs_i",
-            &GooseFEM::VectorPartitionedTyings::AsDofs_i,
-            "Set 'dofval",
-            py::arg("nodevec"))
+        .def("AsDofs_i",
+             &GooseFEM::VectorPartitionedTyings::AsDofs_i<xt::xtensor<double, 2>>,
+             "Set 'dofval",
+             py::arg("nodevec"))
 
         .def("__repr__", [](const GooseFEM::VectorPartitionedTyings&) {
             return "<GooseFEM.VectorPartitionedTyings>";

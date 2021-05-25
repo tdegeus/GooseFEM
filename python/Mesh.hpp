@@ -363,7 +363,7 @@ void init_Mesh(py::module& m)
           py::arg("conn"));
 
     m.def("elem2node",
-          &GooseFEM::Mesh::elem2node,
+          &GooseFEM::Mesh::elem2node<xt::xtensor<size_t, 2>>,
           "Element-numbers connected to each node."
           "See :cpp:func:`GooseFEM::Mesh::elem2node`.",
           py::arg("conn"),
@@ -371,7 +371,7 @@ void init_Mesh(py::module& m)
 
     m.def("edgesize",
           py::overload_cast<const xt::xtensor<double, 2>&, const xt::xtensor<size_t, 2>&>(
-            &GooseFEM::Mesh::edgesize),
+            &GooseFEM::Mesh::edgesize<xt::xtensor<double, 2>, xt::xtensor<size_t, 2>>),
           "Get the edge size of all elements."
           "See :cpp:func:`GooseFEM::Mesh::edgesize`.",
           py::arg("coor"),
@@ -381,7 +381,7 @@ void init_Mesh(py::module& m)
           py::overload_cast<
             const xt::xtensor<double, 2>&,
             const xt::xtensor<size_t, 2>&,
-            GooseFEM::Mesh::ElementType>(&GooseFEM::Mesh::edgesize),
+            GooseFEM::Mesh::ElementType>(&GooseFEM::Mesh::edgesize<xt::xtensor<double, 2>, xt::xtensor<size_t, 2>>),
           "Get the edge size of all elements."
           "See :cpp:func:`GooseFEM::Mesh::edgesize`.",
           py::arg("coor"),
@@ -390,7 +390,7 @@ void init_Mesh(py::module& m)
 
     m.def("centers",
           py::overload_cast<const xt::xtensor<double, 2>&, const xt::xtensor<size_t, 2>&>(
-            &GooseFEM::Mesh::centers),
+            &GooseFEM::Mesh::centers<xt::xtensor<double, 2>, xt::xtensor<size_t, 2>>),
           "Coordinates of the center of each element."
           "See :cpp:func:`GooseFEM::Mesh::centers`.",
           py::arg("coor"),
@@ -400,7 +400,7 @@ void init_Mesh(py::module& m)
           py::overload_cast<
             const xt::xtensor<double, 2>&,
             const xt::xtensor<size_t, 2>&,
-            GooseFEM::Mesh::ElementType>(&GooseFEM::Mesh::centers),
+            GooseFEM::Mesh::ElementType>(&GooseFEM::Mesh::centers<xt::xtensor<double, 2>, xt::xtensor<size_t, 2>>),
           "Coordinates of the center of each element."
           "See :cpp:func:`GooseFEM::Mesh::centers`.",
           py::arg("coor"),
@@ -411,7 +411,8 @@ void init_Mesh(py::module& m)
           py::overload_cast<
             const xt::xtensor<size_t, 1>&,
             const xt::xtensor<double, 2>&,
-            const xt::xtensor<size_t, 2>&>(&GooseFEM::Mesh::elemmap2nodemap),
+            const xt::xtensor<size_t, 2>&>(&GooseFEM::Mesh::elemmap2nodemap<
+                xt::xtensor<size_t, 1>, xt::xtensor<double, 2>, xt::xtensor<size_t, 2>>),
           "Convert an element-map to a node-map."
           "See :cpp:func:`GooseFEM::Mesh::elemmap2nodemap`.",
           py::arg("elem_map"),
@@ -423,7 +424,8 @@ void init_Mesh(py::module& m)
             const xt::xtensor<size_t, 1>&,
             const xt::xtensor<double, 2>&,
             const xt::xtensor<size_t, 2>&,
-            GooseFEM::Mesh::ElementType>(&GooseFEM::Mesh::elemmap2nodemap),
+            GooseFEM::Mesh::ElementType>(&GooseFEM::Mesh::elemmap2nodemap<
+                xt::xtensor<size_t, 1>, xt::xtensor<double, 2>, xt::xtensor<size_t, 2>>),
           "Convert an element-map to a node-map."
           "See :cpp:func:`GooseFEM::Mesh::elemmap2nodemap`.",
           py::arg("elem_map"),
