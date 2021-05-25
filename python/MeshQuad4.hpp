@@ -71,6 +71,12 @@ void init_MeshQuad4(py::module& m)
             py::arg("h") = 1.,
             py::arg("nfine") = 1)
 
+        .def(
+            py::init<const xt::xtensor<double, 2>&, const xt::xtensor<size_t, 2>&>(),
+            "Map connectivity to generating FineLayer-object.",
+            py::arg("coor"),
+            py::arg("conn"))
+
         .def("coor", &GooseFEM::Mesh::Quad4::FineLayer::coor)
         .def("conn", &GooseFEM::Mesh::Quad4::FineLayer::conn)
         .def("nelem", &GooseFEM::Mesh::Quad4::FineLayer::nelem)
