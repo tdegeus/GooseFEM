@@ -77,9 +77,17 @@ inline void Vector::copy(const T& nodevec_src, T& nodevec_dest) const
 }
 
 template <class T, class R>
+void Vector::asDofs(const T& arg, R& dofval) const
+{
+    this->asDofs_impl(arg, dofval);
+}
+
+// asDofs : distribution
+
+template <class T, class R>
 inline
 typename std::enable_if_t<std::equal<xt::get_rank<T>::value, 1>>
-Vector::asDofs(const T& arg, R& dofval) const
+Vector::asDofs_impl(const T& arg, R& dofval) const
 {
     dofval = arg;
 }
@@ -87,32 +95,32 @@ Vector::asDofs(const T& arg, R& dofval) const
 template <class T, class R>
 inline
 typename std::enable_if_t<std::equal<xt::get_rank<T>::value, 2>>
-Vector::asDofs(const T& arg, R& dofval) const
+Vector::asDofs_impl(const T& arg, R& dofval) const
 {
-    this->asDofs_nodevec(arg, dofval);
+    this->asDofs_impl_nodevec(arg, dofval);
 }
 
 template <class T, class R>
 inline
 typename std::enable_if_t<std::equal<xt::get_rank<T>::value, 3>>
-Vector::asDofs(const T& arg, R& dofval) const
+Vector::asDofs_impl(const T& arg, R& dofval) const
 {
-    this->asDofs_elemvec(arg, dofval);
+    this->asDofs_impl_elemvec(arg, dofval);
 }
 
 template <class T, class R>
 inline
 typename std::enable_if_t<!xt::has_fixed_rank_t<T>::value>
-Vector::asDofs(const T& arg, R& dofval) const
+Vector::asDofs_impl(const T& arg, R& dofval) const
 {
     if (arg.dimension() == 1) {
         dofval = arg;
     }
     else if (arg.dimension() == 2) {
-        this->asDofs_nodevec(arg, dofval);
+        this->asDofs_impl_nodevec(arg, dofval);
     }
     else if (arg.dimension() == 3) {
-        this->asDofs_elemvec(arg, dofval);
+        this->asDofs_impl_elemvec(arg, dofval);
     }
     else {
         throw std::runtime_error("Vector::asDofs unknown dimension first argument");
@@ -184,10 +192,21 @@ inline void Vector::assembleNode(const T& arg, R& nodevec) const
     }
 }
 
+// asDofs : implementation
+
 template <class T, class R>
-inline void Vector::asDofs_nodevec(const T& nodevec, R& dofval) const
+inline void Vector::asDofs_impl_dofval(const T& arg, R& dofval) const
 {
-    GOOSEFEM_ASSERT(xt::has_shape(nodevec, this->shape_nodevec()));
+    GOOSEFEM_ASSERT(xt::has_shape(arg, this->shape_dofval()));
+    GOOSEFEM_ASSERT(xt::has_shape(dofval, this->shape_dofval()));
+
+    dofval = arg;
+}
+
+template <class T, class R>
+inline void Vector::asDofs_impl_nodevec(const T& arg, R& dofval) const
+{
+    GOOSEFEM_ASSERT(xt::has_shape(arg, this->shape_nodevec()));
     GOOSEFEM_ASSERT(xt::has_shape(dofval, this->shape_dofval()));
 
     dofval.fill(0.0);
@@ -195,15 +214,15 @@ inline void Vector::asDofs_nodevec(const T& nodevec, R& dofval) const
     #pragma omp parallel for
     for (size_t m = 0; m < m_nnode; ++m) {
         for (size_t i = 0; i < m_ndim; ++i) {
-            dofval(m_dofs(m, i)) = nodevec(m, i);
+            dofval(m_dofs(m, i)) = arg(m, i);
         }
     }
 }
 
 template <class T, class R>
-inline void Vector::asDofs_elemvec(const T& elemvec, R& dofval) const
+inline void Vector::asDofs_impl_elemvec(const T& arg, R& dofval) const
 {
-    GOOSEFEM_ASSERT(xt::has_shape(elemvec, this->shape_elemvec()));
+    GOOSEFEM_ASSERT(xt::has_shape(arg, this->shape_elemvec()));
     GOOSEFEM_ASSERT(xt::has_shape(dofval, this->shape_dofval()));
 
     dofval.fill(0.0);
@@ -212,7 +231,7 @@ inline void Vector::asDofs_elemvec(const T& elemvec, R& dofval) const
     for (size_t e = 0; e < m_nelem; ++e) {
         for (size_t m = 0; m < m_nne; ++m) {
             for (size_t i = 0; i < m_ndim; ++i) {
-                dofval(m_dofs(m_conn(e, m), i)) = elemvec(e, m, i);
+                dofval(m_dofs(m_conn(e, m), i)) = arg(e, m, i);
             }
         }
     }

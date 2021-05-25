@@ -104,23 +104,7 @@ public:
     \param dofval (output) [#ndof]
     */
     template <class T, class R>
-    typename std::enable_if_t<!xt::has_fixed_rank_t<T>::value>
-    asDofs(const T& arg, R& dofval) const;
-
-    /** copydoc asDofs(const T&, R&) const */
-    template <class T, class R>
-    typename std::enable_if_t<std::equal<xt::get_rank<T>::value, 1>>
-    asDofs(const T& arg, R& dofval) const;
-
-    /** copydoc asDofs(const T&, R&) const */
-    template <class T, class R>
-    typename std::enable_if_t<std::equal<xt::get_rank<T>::value, 2>>
-    asDofs(const T& arg, R& dofval) const;
-
-    /** copydoc asDofs(const T&, R&) const */
-    template <class T, class R>
-    typename std::enable_if_t<std::equal<xt::get_rank<T>::value, 3>>
-    asDofs(const T& arg, R& dofval) const;
+    void asDofs(const T& arg, R& dofval) const;
 
     /**
     Convert "dofval" or "elemvec" to "nodevec" (overwrite entries that occur more than once).
@@ -282,15 +266,39 @@ public:
     */
     xt::xtensor<double, 3> allocate_elemmat(double val) const;
 
-protected:
+private:
+
+    /** Distribution of \copydoc asDofs(const T&, R&) const */
+    template <class T, class R>
+    typename std::enable_if_t<!xt::has_fixed_rank_t<T>::value>
+    asDofs_impl(const T& arg, R& dofval) const;
+
+    /** Distribution of \copydoc asDofs(const T&, R&) const */
+    template <class T, class R>
+    typename std::enable_if_t<std::equal<xt::get_rank<T>::value, 1>>
+    asDofs_impl(const T& arg, R& dofval) const;
+
+    /** Distribution of \copydoc asDofs(const T&, R&) const */
+    template <class T, class R>
+    typename std::enable_if_t<std::equal<xt::get_rank<T>::value, 2>>
+    asDofs_impl(const T& arg, R& dofval) const;
+
+    /** Distribution of \copydoc asDofs(const T&, R&) const */
+    template <class T, class R>
+    typename std::enable_if_t<std::equal<xt::get_rank<T>::value, 3>>
+    asDofs_impl(const T& arg, R& dofval) const;
 
     /** Implementation for 'nodevec' input of \copydoc asDofs(const T&, R&) const */
     template <class T, class R>
-    void asDofs_nodevec(const T& arg, R& dofval) const;
+    void asDofs_impl_dofval(const T& arg, R& dofval) const;
+
+    /** Implementation for 'nodevec' input of \copydoc asDofs(const T&, R&) const */
+    template <class T, class R>
+    void asDofs_impl_nodevec(const T& arg, R& dofval) const;
 
     /** Implementation for 'elemvec' input of \copydoc asDofs(const T&, R&) const */
     template <class T, class R>
-    void asDofs_elemvec(const T& arg, R& dofval) const;
+    void asDofs_impl_elemvec(const T& arg, R& dofval) const;
 
     /** Implementation for 'dofval' input of \copydoc asNode(const T&, R&) const */
     template <class T, class R>
