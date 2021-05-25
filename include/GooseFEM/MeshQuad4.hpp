@@ -146,6 +146,11 @@ inline FineLayer::FineLayer(size_t nelx, size_t nely, double h, size_t nfine)
     this->init(nelx, nely, h, nfine);
 }
 
+inline FineLayer::FineLayer(const xt::xtensor<double, 2>& coor, const xt::xtensor<size_t, 2>& conn)
+{
+    this->map(coor, conn);
+}
+
 inline void FineLayer::init(size_t nelx, size_t nely, double h, size_t nfine)
 {
     GOOSEFEM_ASSERT(nelx >= 1ul);
