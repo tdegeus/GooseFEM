@@ -13,9 +13,15 @@ Implementation of Vector.h
 
 namespace GooseFEM {
 
-inline Vector::Vector(const xt::xtensor<size_t, 2>& conn, const xt::xtensor<size_t, 2>& dofs)
-    : m_conn(conn), m_dofs(dofs)
+template <class S, class T>
+inline Vector::Vector(const S& conn, const T& dofs)
 {
+    GOOSEFEM_ASSERT(conn.dimension() == 2);
+    GOOSEFEM_ASSERT(dofs.dimension() == 2);
+
+    m_conn = conn;
+    m_dofs = dofs;
+
     m_nelem = m_conn.shape(0);
     m_nne = m_conn.shape(1);
     m_nnode = m_dofs.shape(0);
@@ -61,8 +67,8 @@ inline xt::xtensor<size_t, 2> Vector::dofs() const
     return m_dofs;
 }
 
-inline void Vector::copy(
-    const xt::xtensor<double, 2>& nodevec_src, xt::xtensor<double, 2>& nodevec_dest) const
+template <class T>
+inline void Vector::copy(const T& nodevec_src, T& nodevec_dest) const
 {
     GOOSEFEM_ASSERT(xt::has_shape(nodevec_src, this->shape_nodevec()));
     GOOSEFEM_ASSERT(xt::has_shape(nodevec_dest, this->shape_nodevec()));
@@ -70,11 +76,93 @@ inline void Vector::copy(
     xt::noalias(nodevec_dest) = nodevec_src;
 }
 
-inline void Vector::asDofs(
-    const xt::xtensor<double, 2>& nodevec, xt::xtensor<double, 1>& dofval) const
+template <class T, class R>
+inline void Vector::asDofs(const T& arg, R& dofval) const
+{
+    if (arg.dimension() == 2) {
+        this->asDofs_nodevec(arg, dofval);
+    }
+    else if (arg.dimension() == 3) {
+        this->asDofs_elemvec(arg, dofval);
+    }
+    else if (arg.dimension() == 1) {
+        dofval = arg;
+    }
+    else {
+        throw std::runtime_error("Vector::asDofs unknown dimension first argument");
+    }
+}
+
+template <class T, class R>
+inline void Vector::asNode(const T& arg, R& nodevec) const
+{
+    if (arg.dimension() == 1) {
+        this->asNode_dofval(arg, nodevec);
+    }
+    else if (arg.dimension() == 3) {
+        this->asNode_elemvec(arg, nodevec);
+    }
+    else if (arg.dimension() == 2) {
+        nodevec = arg;
+    }
+    else {
+        throw std::runtime_error("Vector::asNode unknown dimension first argument");
+    }
+}
+
+template <class T, class R>
+inline void Vector::asElement(const T& arg, R& elemvec) const
+{
+    if (arg.dimension() == 1) {
+        this->asElement_dofval(arg, elemvec);
+    }
+    else if (arg.dimension() == 2) {
+        this->asElement_nodevec(arg, elemvec);
+    }
+    else if (arg.dimension() == 3) {
+        elemvec = arg;
+    }
+    else {
+        throw std::runtime_error("Vector::asElement unknown dimension first argument");
+    }
+}
+
+template <class T, class R>
+inline void Vector::assembleDofs(const T& arg, R& dofval) const
+{
+    if (arg.dimension() == 2) {
+        this->assembleDofs_nodevec(arg, dofval);
+    }
+    else if (arg.dimension() == 3) {
+        this->assembleDofs_elemvec(arg, dofval);
+    }
+    else if (arg.dimension() == 1) {
+        dofval = arg;
+    }
+    else {
+        throw std::runtime_error("Vector::assembleDofs unknown dimension first argument");
+    }
+}
+
+template <class T, class R>
+inline void Vector::assembleNode(const T& arg, R& nodevec) const
+{
+    if (arg.dimension() == 3) {
+        this->assembleNode_elemvec(arg, nodevec);
+    }
+    else if (arg.dimension() == 2) {
+        nodevec = arg;
+    }
+    else {
+        throw std::runtime_error("Vector::assembleNode unknown dimension first argument");
+    }
+}
+
+template <class T, class R>
+inline void Vector::asDofs_nodevec(const T& nodevec, R& dofval) const
 {
     GOOSEFEM_ASSERT(xt::has_shape(nodevec, this->shape_nodevec()));
-    GOOSEFEM_ASSERT(dofval.size() == m_ndof);
+    GOOSEFEM_ASSERT(xt::has_shape(dofval, this->shape_dofval()));
 
     dofval.fill(0.0);
 
@@ -86,11 +174,11 @@ inline void Vector::asDofs(
     }
 }
 
-inline void Vector::asDofs(
-    const xt::xtensor<double, 3>& elemvec, xt::xtensor<double, 1>& dofval) const
+template <class T, class R>
+inline void Vector::asDofs_elemvec(const T& elemvec, R& dofval) const
 {
     GOOSEFEM_ASSERT(xt::has_shape(elemvec, this->shape_elemvec()));
-    GOOSEFEM_ASSERT(dofval.size() == m_ndof);
+    GOOSEFEM_ASSERT(xt::has_shape(dofval, this->shape_dofval()));
 
     dofval.fill(0.0);
 
@@ -104,10 +192,10 @@ inline void Vector::asDofs(
     }
 }
 
-inline void Vector::asNode(
-    const xt::xtensor<double, 1>& dofval, xt::xtensor<double, 2>& nodevec) const
+template <class T, class R>
+inline void Vector::asNode_dofval(const T& dofval, R& nodevec) const
 {
-    GOOSEFEM_ASSERT(dofval.size() == m_ndof);
+    GOOSEFEM_ASSERT(xt::has_shape(dofval, this->shape_dofval()));
     GOOSEFEM_ASSERT(xt::has_shape(nodevec, this->shape_nodevec()));
 
     #pragma omp parallel for
@@ -118,8 +206,8 @@ inline void Vector::asNode(
     }
 }
 
-inline void Vector::asNode(
-    const xt::xtensor<double, 3>& elemvec, xt::xtensor<double, 2>& nodevec) const
+template <class T, class R>
+inline void Vector::asNode_elemvec(const T& elemvec, R& nodevec) const
 {
     GOOSEFEM_ASSERT(xt::has_shape(elemvec, this->shape_elemvec()));
     GOOSEFEM_ASSERT(xt::has_shape(nodevec, this->shape_nodevec()));
@@ -136,8 +224,8 @@ inline void Vector::asNode(
     }
 }
 
-inline void Vector::asElement(
-    const xt::xtensor<double, 1>& dofval, xt::xtensor<double, 3>& elemvec) const
+template <class T, class R>
+inline void Vector::asElement_dofval(const T& dofval, R& elemvec) const
 {
     GOOSEFEM_ASSERT(dofval.size() == m_ndof);
     GOOSEFEM_ASSERT(xt::has_shape(elemvec, this->shape_elemvec()));
@@ -152,8 +240,8 @@ inline void Vector::asElement(
     }
 }
 
-inline void Vector::asElement(
-    const xt::xtensor<double, 2>& nodevec, xt::xtensor<double, 3>& elemvec) const
+template <class T, class R>
+inline void Vector::asElement_nodevec(const T& nodevec,R& elemvec) const
 {
     GOOSEFEM_ASSERT(xt::has_shape(nodevec, this->shape_nodevec()));
     GOOSEFEM_ASSERT(xt::has_shape(elemvec, this->shape_elemvec()));
@@ -168,11 +256,11 @@ inline void Vector::asElement(
     }
 }
 
-inline void Vector::assembleDofs(
-    const xt::xtensor<double, 2>& nodevec, xt::xtensor<double, 1>& dofval) const
+template <class T, class R>
+inline void Vector::assembleDofs_nodevec(const T& nodevec, R& dofval) const
 {
     GOOSEFEM_ASSERT(xt::has_shape(nodevec, this->shape_nodevec()));
-    GOOSEFEM_ASSERT(dofval.size() == m_ndof);
+    GOOSEFEM_ASSERT(xt::has_shape(dofval, this->shape_dofval()));
 
     dofval.fill(0.0);
 
@@ -183,11 +271,11 @@ inline void Vector::assembleDofs(
     }
 }
 
-inline void Vector::assembleDofs(
-    const xt::xtensor<double, 3>& elemvec, xt::xtensor<double, 1>& dofval) const
+template <class T, class R>
+inline void Vector::assembleDofs_elemvec(const T& elemvec, R& dofval) const
 {
     GOOSEFEM_ASSERT(xt::has_shape(elemvec, this->shape_elemvec()));
-    GOOSEFEM_ASSERT(dofval.size() == m_ndof);
+    GOOSEFEM_ASSERT(xt::has_shape(dofval, this->shape_dofval()));
 
     dofval.fill(0.0);
 
@@ -200,8 +288,8 @@ inline void Vector::assembleDofs(
     }
 }
 
-inline void Vector::assembleNode(
-    const xt::xtensor<double, 3>& elemvec, xt::xtensor<double, 2>& nodevec) const
+template <class T, class R>
+inline void Vector::assembleNode_elemvec(const T& elemvec, R& nodevec) const
 {
     GOOSEFEM_ASSERT(xt::has_shape(elemvec, this->shape_elemvec()));
     GOOSEFEM_ASSERT(xt::has_shape(nodevec, this->shape_nodevec()));
@@ -210,73 +298,50 @@ inline void Vector::assembleNode(
     this->asNode(dofval, nodevec);
 }
 
-inline xt::xtensor<double, 1> Vector::AsDofs(const xt::xtensor<double, 2>& nodevec) const
+template <class T>
+inline xt::xtensor<double, 1> Vector::AsDofs(const T& arg) const
 {
     xt::xtensor<double, 1> dofval = xt::empty<double>(this->shape_dofval());
-    this->asDofs(nodevec, dofval);
+    this->asDofs(arg, dofval);
     return dofval;
 }
 
-inline xt::xtensor<double, 1> Vector::AsDofs(const xt::xtensor<double, 3>& elemvec) const
-{
-    xt::xtensor<double, 1> dofval = xt::empty<double>(this->shape_dofval());
-    this->asDofs(elemvec, dofval);
-    return dofval;
-}
-
-inline xt::xtensor<double, 2> Vector::AsNode(const xt::xtensor<double, 1>& dofval) const
+template <class T>
+inline xt::xtensor<double, 2> Vector::AsNode(const T& arg) const
 {
     xt::xtensor<double, 2> nodevec = xt::empty<double>(this->shape_nodevec());
-    this->asNode(dofval, nodevec);
+    this->asNode(arg, nodevec);
     return nodevec;
 }
 
-inline xt::xtensor<double, 2> Vector::AsNode(const xt::xtensor<double, 3>& elemvec) const
-{
-    xt::xtensor<double, 2> nodevec = xt::empty<double>(this->shape_nodevec());
-    this->asNode(elemvec, nodevec);
-    return nodevec;
-}
-
-inline xt::xtensor<double, 3> Vector::AsElement(const xt::xtensor<double, 1>& dofval) const
+template <class T>
+inline xt::xtensor<double, 3> Vector::AsElement(const T& arg) const
 {
     xt::xtensor<double, 3> elemvec = xt::empty<double>(this->shape_elemvec());
-    this->asElement(dofval, elemvec);
+    this->asElement(arg, elemvec);
     return elemvec;
 }
 
-inline xt::xtensor<double, 3> Vector::AsElement(const xt::xtensor<double, 2>& nodevec) const
-{
-    xt::xtensor<double, 3> elemvec = xt::empty<double>(this->shape_elemvec());
-    this->asElement(nodevec, elemvec);
-    return elemvec;
-}
-
-inline xt::xtensor<double, 1> Vector::AssembleDofs(const xt::xtensor<double, 2>& nodevec) const
+template <class T>
+inline xt::xtensor<double, 1> Vector::AssembleDofs(const T& arg) const
 {
     xt::xtensor<double, 1> dofval = xt::empty<double>(this->shape_dofval());
-    this->assembleDofs(nodevec, dofval);
+    this->assembleDofs(arg, dofval);
     return dofval;
 }
 
-inline xt::xtensor<double, 1> Vector::AssembleDofs(const xt::xtensor<double, 3>& elemvec) const
-{
-    xt::xtensor<double, 1> dofval = xt::empty<double>(this->shape_dofval());
-    this->assembleDofs(elemvec, dofval);
-    return dofval;
-}
-
-inline xt::xtensor<double, 2> Vector::AssembleNode(const xt::xtensor<double, 3>& elemvec) const
+template <class T>
+inline xt::xtensor<double, 2> Vector::AssembleNode(const T& arg) const
 {
     xt::xtensor<double, 2> nodevec = xt::empty<double>(this->shape_nodevec());
-    this->assembleNode(elemvec, nodevec);
+    this->assembleNode(arg, nodevec);
     return nodevec;
 }
 
-inline xt::xtensor<double, 2> Vector::Copy(
-    const xt::xtensor<double, 2>& nodevec_src, const xt::xtensor<double, 2>& nodevec_dest) const
+template <class T>
+inline T Vector::Copy(const T& nodevec_src, const T& nodevec_dest) const
 {
-    xt::xtensor<double, 2> ret = nodevec_dest;
+    T ret = T::from_shape(nodevec_dest.shape());
     this->copy(nodevec_src, ret);
     return ret;
 }

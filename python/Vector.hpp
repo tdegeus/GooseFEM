@@ -15,95 +15,53 @@ void init_Vector(py::module& m)
 
     py::class_<GooseFEM::Vector>(m, "Vector")
 
-        .def(
-            py::init<const xt::xtensor<size_t, 2>&, const xt::xtensor<size_t, 2>&>(),
-            "Switch between dofval/nodevec/elemvec",
-            py::arg("conn"),
-            py::arg("dofs"))
+        .def(py::init<const xt::xtensor<size_t, 2>&, const xt::xtensor<size_t, 2>&>(),
+             "Switch between dofval/nodevec/elemvec",
+             py::arg("conn"),
+             py::arg("dofs"))
 
         .def("nelem", &GooseFEM::Vector::nelem, "Number of element")
-
         .def("nne", &GooseFEM::Vector::nne, "Number of nodes per element")
-
         .def("nnode", &GooseFEM::Vector::nnode, "Number of nodes")
-
         .def("ndim", &GooseFEM::Vector::ndim, "Number of dimensions")
-
         .def("ndof", &GooseFEM::Vector::ndof, "Number of degrees-of-freedom")
-
         .def("conn", &GooseFEM::Vector::conn, "Return connectivity")
-
         .def("dofs", &GooseFEM::Vector::dofs, "Return degrees-of-freedom")
 
-        .def(
-            "Copy",
-            &GooseFEM::Vector::Copy,
-            py::arg("nodevec_src"),
-            py::arg("nodevec_dest"))
+        .def("Copy",
+             &GooseFEM::Vector::Copy<xt::xarray<double>>,
+             py::arg("nodevec_src"),
+             py::arg("nodevec_dest"))
 
-        .def(
-            "AsDofs",
-            py::overload_cast<const xt::xtensor<double, 2>&>(&GooseFEM::Vector::AsDofs, py::const_),
-            "Set 'dofval",
-            py::arg("nodevec"))
+        .def("AsDofs",
+             &GooseFEM::Vector::AsDofs<xt::xarray<double>>,
+             "Convert to 'dofval' (overwrite entries that occur more than once",
+             py::arg("arg"))
 
-        .def(
-            "AsDofs",
-            py::overload_cast<const xt::xtensor<double, 3>&>(&GooseFEM::Vector::AsDofs, py::const_),
-            "Set 'dofval",
-            py::arg("elemvec"))
+        .def("AsNode",
+             &GooseFEM::Vector::AsNode<xt::xarray<double>>,
+             "Convert to 'nodevec' (overwrite entries that occur more than once",
+             py::arg("arg"))
 
-        .def(
-            "AsNode",
-            py::overload_cast<const xt::xtensor<double, 1>&>(&GooseFEM::Vector::AsNode, py::const_),
-            "Set 'nodevec",
-            py::arg("dofval"))
+        .def("AsElement",
+             &GooseFEM::Vector::AsElement<xt::xarray<double>>,
+             "Convert to 'elemvec' (overwrite entries that occur more than once",
+             py::arg("arg"))
 
-        .def(
-            "AsNode",
-            py::overload_cast<const xt::xtensor<double, 3>&>(&GooseFEM::Vector::AsNode, py::const_),
-            "Set 'nodevec",
-            py::arg("elemvec"))
+        .def("AssembleDofs",
+             &GooseFEM::Vector::AssembleDofs<xt::xarray<double>>,
+             "Assemble to 'dofval' (add entries that occur more than once",
+             py::arg("arg"))
 
-        .def(
-            "AsElement",
-            py::overload_cast<const xt::xtensor<double, 1>&>(
-                &GooseFEM::Vector::AsElement, py::const_),
-            "Set 'elemvec",
-            py::arg("dofval"))
-
-        .def(
-            "AsElement",
-            py::overload_cast<const xt::xtensor<double, 2>&>(
-                &GooseFEM::Vector::AsElement, py::const_),
-            "Set 'elemvec",
-            py::arg("nodevec"))
-
-        .def(
-            "AssembleDofs",
-            py::overload_cast<const xt::xtensor<double, 2>&>(
-                &GooseFEM::Vector::AssembleDofs, py::const_),
-            "Assemble 'dofval'",
-            py::arg("nodevec"))
-
-        .def(
-            "AssembleDofs",
-            py::overload_cast<const xt::xtensor<double, 3>&>(
-                &GooseFEM::Vector::AssembleDofs, py::const_),
-            "Assemble 'dofval'",
-            py::arg("elemvec"))
-
-        .def(
-            "AssembleNode",
-            py::overload_cast<const xt::xtensor<double, 3>&>(
-                &GooseFEM::Vector::AssembleNode, py::const_),
-            "Assemble 'nodevec'",
-            py::arg("elemvec"))
+        .def("AssembleNode",
+            &GooseFEM::Vector::AssembleNode<xt::xarray<double>>,
+             "Assemble to 'nodevec' (add entries that occur more than once",
+             py::arg("arg"))
 
         .def("shape_dofval", &GooseFEM::Vector::shape_dofval)
         .def("shape_nodevec", &GooseFEM::Vector::shape_nodevec)
         .def("shape_elemvec", &GooseFEM::Vector::shape_elemvec)
-        .def("shape_elemmat",&GooseFEM::Vector::shape_elemmat)
+        .def("shape_elemmat", &GooseFEM::Vector::shape_elemmat)
 
         .def("allocate_dofval",
              py::overload_cast<>(&GooseFEM::Vector::allocate_dofval, py::const_))
