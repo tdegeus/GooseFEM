@@ -84,34 +84,26 @@ void Vector::asDofs(const T& arg, R& dofval) const
 
 // asDofs : distribution
 
-template <class T, class R>
-inline
-typename std::enable_if_t<std::equal<xt::get_rank<T>::value, 1>>
-Vector::asDofs_impl(const T& arg, R& dofval) const
+template <class T, class R, typename std::enable_if_t<!xt::has_fixed_rank_t<T>::value, int>>
+inline void Vector::asDofs_impl(const T& arg, R& dofval) const
 {
-    dofval = arg;
+    this->asDofs_impl_dofval(arg, dofval);
 }
 
-template <class T, class R>
-inline
-typename std::enable_if_t<std::equal<xt::get_rank<T>::value, 2>>
-Vector::asDofs_impl(const T& arg, R& dofval) const
+template <class T, class R, typename std::enable_if_t<xt::get_rank<T>::value == 1, int>>
+inline void Vector::asDofs_impl(const T& arg, R& dofval) const
 {
     this->asDofs_impl_nodevec(arg, dofval);
 }
 
-template <class T, class R>
-inline
-typename std::enable_if_t<std::equal<xt::get_rank<T>::value, 3>>
-Vector::asDofs_impl(const T& arg, R& dofval) const
+template <class T, class R, typename std::enable_if_t<xt::get_rank<T>::value == 2, int>>
+inline void Vector::asDofs_impl(const T& arg, R& dofval) const
 {
     this->asDofs_impl_elemvec(arg, dofval);
 }
 
-template <class T, class R>
-inline
-typename std::enable_if_t<!xt::has_fixed_rank_t<T>::value>
-Vector::asDofs_impl(const T& arg, R& dofval) const
+template <class T, class R, typename std::enable_if_t<xt::get_rank<T>::value == 3, int>>
+inline void Vector::asDofs_impl(const T& arg, R& dofval) const
 {
     if (arg.dimension() == 1) {
         dofval = arg;

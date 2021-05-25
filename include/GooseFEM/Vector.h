@@ -269,24 +269,20 @@ public:
 private:
 
     /** Distribution of \copydoc asDofs(const T&, R&) const */
-    template <class T, class R>
-    typename std::enable_if_t<!xt::has_fixed_rank_t<T>::value>
-    asDofs_impl(const T& arg, R& dofval) const;
+    template <class T, class R, typename std::enable_if_t<!xt::has_fixed_rank_t<T>::value, int> = 0>
+    void asDofs_impl(const T& arg, R& dofval) const;
 
     /** Distribution of \copydoc asDofs(const T&, R&) const */
-    template <class T, class R>
-    typename std::enable_if_t<std::equal<xt::get_rank<T>::value, 1>>
-    asDofs_impl(const T& arg, R& dofval) const;
+    template <class T, class R, typename std::enable_if_t<xt::get_rank<T>::value == 1, int> = 0>
+    void asDofs_impl(const T& arg, R& dofval) const;
 
     /** Distribution of \copydoc asDofs(const T&, R&) const */
-    template <class T, class R>
-    typename std::enable_if_t<std::equal<xt::get_rank<T>::value, 2>>
-    asDofs_impl(const T& arg, R& dofval) const;
+    template <class T, class R, typename std::enable_if_t<xt::get_rank<T>::value == 2, int> = 0>
+    void asDofs_impl(const T& arg, R& dofval) const;
 
     /** Distribution of \copydoc asDofs(const T&, R&) const */
-    template <class T, class R>
-    typename std::enable_if_t<std::equal<xt::get_rank<T>::value, 3>>
-    asDofs_impl(const T& arg, R& dofval) const;
+    template <class T, class R, typename std::enable_if_t<xt::get_rank<T>::value == 3, int> = 0>
+    void asDofs_impl(const T& arg, R& dofval) const;
 
     /** Implementation for 'nodevec' input of \copydoc asDofs(const T&, R&) const */
     template <class T, class R>
