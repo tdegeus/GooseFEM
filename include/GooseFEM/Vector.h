@@ -104,7 +104,23 @@ public:
     \param dofval (output) [#ndof]
     */
     template <class T, class R>
-    void asDofs(const T& arg, R& dofval) const;
+    typename std::enable_if_t<!xt::has_fixed_rank_t<T>::value>
+    asDofs(const T& arg, R& dofval) const;
+
+    /** copydoc asDofs(const T&, R&) const */
+    template <class T, class R>
+    typename std::enable_if_t<std::equal<xt::get_rank<T>::value, 1>>
+    asDofs(const T& arg, R& dofval) const;
+
+    /** copydoc asDofs(const T&, R&) const */
+    template <class T, class R>
+    typename std::enable_if_t<std::equal<xt::get_rank<T>::value, 2>>
+    asDofs(const T& arg, R& dofval) const;
+
+    /** copydoc asDofs(const T&, R&) const */
+    template <class T, class R>
+    typename std::enable_if_t<std::equal<xt::get_rank<T>::value, 3>>
+    asDofs(const T& arg, R& dofval) const;
 
     /**
     Convert "dofval" or "elemvec" to "nodevec" (overwrite entries that occur more than once).

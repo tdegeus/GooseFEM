@@ -77,16 +77,42 @@ inline void Vector::copy(const T& nodevec_src, T& nodevec_dest) const
 }
 
 template <class T, class R>
-inline void Vector::asDofs(const T& arg, R& dofval) const
+inline
+typename std::enable_if_t<std::equal<xt::get_rank<T>::value, 1>>
+Vector::asDofs(const T& arg, R& dofval) const
 {
-    if (arg.dimension() == 2) {
+    dofval = arg;
+}
+
+template <class T, class R>
+inline
+typename std::enable_if_t<std::equal<xt::get_rank<T>::value, 2>>
+Vector::asDofs(const T& arg, R& dofval) const
+{
+    this->asDofs_nodevec(arg, dofval);
+}
+
+template <class T, class R>
+inline
+typename std::enable_if_t<std::equal<xt::get_rank<T>::value, 3>>
+Vector::asDofs(const T& arg, R& dofval) const
+{
+    this->asDofs_elemvec(arg, dofval);
+}
+
+template <class T, class R>
+inline
+typename std::enable_if_t<!xt::has_fixed_rank_t<T>::value>
+Vector::asDofs(const T& arg, R& dofval) const
+{
+    if (arg.dimension() == 1) {
+        dofval = arg;
+    }
+    else if (arg.dimension() == 2) {
         this->asDofs_nodevec(arg, dofval);
     }
     else if (arg.dimension() == 3) {
         this->asDofs_elemvec(arg, dofval);
-    }
-    else if (arg.dimension() == 1) {
-        dofval = arg;
     }
     else {
         throw std::runtime_error("Vector::asDofs unknown dimension first argument");
