@@ -159,21 +159,6 @@ void init_MeshQuad4Map(py::module& m)
 
         .def("getMap", &GooseFEM::Mesh::Quad4::Map::RefineRegular::getMap)
 
-        .def(
-            "mapToCoarse",
-            py::overload_cast<const xt::xtensor<double, 1>&>(
-                &GooseFEM::Mesh::Quad4::Map::RefineRegular::mapToCoarse, py::const_))
-
-        .def(
-            "mapToCoarse",
-            py::overload_cast<const xt::xtensor<double, 2>&>(
-                &GooseFEM::Mesh::Quad4::Map::RefineRegular::mapToCoarse, py::const_))
-
-        .def(
-            "mapToCoarse",
-            py::overload_cast<const xt::xtensor<double, 4>&>(
-                &GooseFEM::Mesh::Quad4::Map::RefineRegular::mapToCoarse, py::const_))
-
         .def("meanToCoarse",
              py::overload_cast<const xt::xtensor<double, 1>&>(
                 &GooseFEM::Mesh::Quad4::Map::RefineRegular::meanToCoarse<double, 1>, py::const_))

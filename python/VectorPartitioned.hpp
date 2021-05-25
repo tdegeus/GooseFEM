@@ -95,34 +95,6 @@ void init_VectorPartitioned(py::module& m)
             py::arg("dofval_u"),
             py::arg("dofval_p"))
 
-        .def(
-            "AssembleDofs_u",
-            py::overload_cast<const xt::xtensor<double, 2>&>(
-                &GooseFEM::VectorPartitioned::AssembleDofs_u, py::const_),
-            "Assemble 'dofval'",
-            py::arg("nodevec"))
-
-        .def(
-            "AssembleDofs_u",
-            py::overload_cast<const xt::xtensor<double, 3>&>(
-                &GooseFEM::VectorPartitioned::AssembleDofs_u, py::const_),
-            "Assemble 'dofval'",
-            py::arg("elemvec"))
-
-        .def(
-            "AssembleDofs_p",
-            py::overload_cast<const xt::xtensor<double, 2>&>(
-                &GooseFEM::VectorPartitioned::AssembleDofs_p, py::const_),
-            "Assemble 'dofval'",
-            py::arg("nodevec"))
-
-        .def(
-            "AssembleDofs_p",
-            py::overload_cast<const xt::xtensor<double, 3>&>(
-                &GooseFEM::VectorPartitioned::AssembleDofs_p, py::const_),
-            "Assemble 'dofval'",
-            py::arg("elemvec"))
-
         .def("Copy_u", &GooseFEM::VectorPartitioned::Copy_u, "Copy iiu")
 
         .def("Copy_p", &GooseFEM::VectorPartitioned::Copy_p, "Copy iip")

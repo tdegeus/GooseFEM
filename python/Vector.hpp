@@ -129,36 +129,5 @@ void init_Vector(py::module& m)
         .def("allocate_elemmat",
              py::overload_cast<double>(&GooseFEM::Vector::allocate_elemmat, py::const_))
 
-        // Deprecated
-
-        .def("ShapeDofval", &GooseFEM::Vector::shape_dofval)
-        .def("ShapeNodevec", &GooseFEM::Vector::shape_nodevec)
-        .def("ShapeElemvec", &GooseFEM::Vector::shape_elemvec)
-        .def("ShapeElemmat",&GooseFEM::Vector::shape_elemmat)
-
-        .def("AllocateDofval",
-             py::overload_cast<>(&GooseFEM::Vector::allocate_dofval, py::const_))
-
-        .def("AllocateDofval",
-             py::overload_cast<double>(&GooseFEM::Vector::allocate_dofval, py::const_))
-
-        .def("AllocateNodevec",
-             py::overload_cast<>(&GooseFEM::Vector::allocate_nodevec, py::const_))
-
-        .def("AllocateNodevec",
-             py::overload_cast<double>(&GooseFEM::Vector::allocate_nodevec, py::const_))
-
-        .def("AllocateElemvec",
-             py::overload_cast<>(&GooseFEM::Vector::allocate_elemvec, py::const_))
-
-        .def("AllocateElemvec",
-             py::overload_cast<double>(&GooseFEM::Vector::allocate_elemvec, py::const_))
-
-        .def("AllocateElemmat",
-             py::overload_cast<>(&GooseFEM::Vector::allocate_elemmat, py::const_))
-
-        .def("AllocateElemmat",
-             py::overload_cast<double>(&GooseFEM::Vector::allocate_elemmat, py::const_))
-
         .def("__repr__", [](const GooseFEM::Vector&) { return "<GooseFEM.Vector>"; });
 }

@@ -241,19 +241,6 @@ Mesh mappings.
 namespace Map {
 
     /**
-    \cond
-    */
-    // Return "FineLayer"-class responsible for generating a connectivity
-    // Throws if conversion is not possible
-    [[ deprecated ]]
-    GooseFEM::Mesh::Quad4::FineLayer FineLayer(
-        const xt::xtensor<double, 2>& coor,
-        const xt::xtensor<size_t, 2>& conn);
-    /**
-    \endcond
-    */
-
-    /**
     Refine a Regular mesh: subdivide elements in several smaller elements.
     */
     class RefineRegular {
@@ -304,21 +291,6 @@ namespace Map {
         \return [nelem_coarse, nx() * ny()]
         */
         xt::xtensor<size_t, 2> getMap() const;
-
-        /**
-        \cond
-        */
-        [[ deprecated ]]
-        xt::xtensor<double, 2> mapToCoarse(const xt::xtensor<double, 1>& data) const; // scalar per el
-
-        [[ deprecated ]]
-        xt::xtensor<double, 2> mapToCoarse(const xt::xtensor<double, 2>& data) const; // scalar per intpnt
-
-        [[ deprecated ]]
-        xt::xtensor<double, 4> mapToCoarse(const xt::xtensor<double, 4>& data) const; // tensor per intpnt
-        /**
-        \endcond
-        */
 
         /**
         Compute the mean of the quantity define on the fine mesh when mapped on the coarse mesh.

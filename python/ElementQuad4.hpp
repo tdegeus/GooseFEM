@@ -32,14 +32,9 @@ void init_ElementQuad4(py::module& m)
 
         .def("dV", &GooseFEM::Element::Quad4::Quadrature::dV, "Integration point volume (qscalar)")
 
-        .def("Interp_N_vector",
-            &GooseFEM::Element::Quad4::Quadrature::Interp_N_vector,
-            "See :cpp:class:`GooseFEM::Quad4::Quadrature::Interp_N_vector`.",
-            py::arg("elemvec"))
-
         .def("InterpQuad_vector",
             &GooseFEM::Element::Quad4::Quadrature::InterpQuad_vector,
-            "See :cpp:class:`GooseFEM::Quad4::Quadrature::Interp_N_vector`.",
+            "See :cpp:class:`GooseFEM::Quad4::Quadrature::InterpQuad_vector`.",
             py::arg("elemvec"))
 
         .def("GradN_vector",
