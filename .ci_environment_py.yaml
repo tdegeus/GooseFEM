@@ -9,5 +9,6 @@ dependencies:
   - python
   - pybind11
   - xtensor-python
+  - pyxtensor
   - numpy
   - nomkl
