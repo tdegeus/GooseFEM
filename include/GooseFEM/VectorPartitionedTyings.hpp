@@ -13,12 +13,13 @@ Implementation of VectorPartitionedTyings.h
 
 namespace GooseFEM {
 
+template <class E, class M>
 inline VectorPartitionedTyings::VectorPartitionedTyings(
-    const xt::xtensor<size_t, 2>& conn,
-    const xt::xtensor<size_t, 2>& dofs,
-    const Eigen::SparseMatrix<double>& Cdu,
-    const Eigen::SparseMatrix<double>& Cdp,
-    const Eigen::SparseMatrix<double>& Cdi)
+    const E& conn,
+    const E& dofs,
+    const M& Cdu,
+    const M& Cdp,
+    const M& Cdi)
     : Vector(conn, dofs), m_Cdu(Cdu), m_Cdp(Cdp), m_Cdi(Cdi)
 {
     GOOSEFEM_ASSERT(Cdu.rows() == Cdp.rows());
@@ -79,9 +80,11 @@ inline xt::xtensor<size_t, 1> VectorPartitionedTyings::iid() const
     return m_iid;
 }
 
-inline void VectorPartitionedTyings::copy_p(
-    const xt::xtensor<double, 1>& dofval_src, xt::xtensor<double, 1>& dofval_dest) const
+template <class T>
+inline void VectorPartitionedTyings::copy_p(const T& dofval_src, T& dofval_dest) const
 {
+    GOOSEFEM_ASSERT(dofval_src.dimension() == 1);
+    GOOSEFEM_ASSERT(dofval_dest.dimension() == 1);
     GOOSEFEM_ASSERT(dofval_src.size() == m_ndof || dofval_src.size() == m_nni);
     GOOSEFEM_ASSERT(dofval_dest.size() == m_ndof || dofval_dest.size() == m_nni);
 
@@ -91,10 +94,8 @@ inline void VectorPartitionedTyings::copy_p(
     }
 }
 
-inline void VectorPartitionedTyings::asDofs_i(
-    const xt::xtensor<double, 2>& nodevec,
-    xt::xtensor<double, 1>& dofval_i,
-    bool apply_tyings) const
+template <class T, class R>
+inline void VectorPartitionedTyings::asDofs_i(const T& nodevec, R& dofval_i, bool apply_tyings) const
 {
     GOOSEFEM_ASSERT(xt::has_shape(nodevec, {m_nnode, m_ndim}));
     GOOSEFEM_ASSERT(dofval_i.size() == m_nni);
@@ -123,14 +124,16 @@ inline void VectorPartitionedTyings::asDofs_i(
     }
 }
 
-inline xt::xtensor<double, 1> VectorPartitionedTyings::AsDofs_i(const xt::xtensor<double, 2>& nodevec) const
+template <class T>
+inline xt::xtensor<double, 1> VectorPartitionedTyings::AsDofs_i(const T& nodevec) const
 {
     xt::xtensor<double, 1> dofval = xt::empty<double>({m_nni});
     this->asDofs_i(nodevec, dofval);
     return dofval;
 }
 
-inline Eigen::VectorXd VectorPartitionedTyings::Eigen_asDofs_d(const xt::xtensor<double, 2>& nodevec) const
+template <class T>
+inline Eigen::VectorXd VectorPartitionedTyings::Eigen_asDofs_d(const T& nodevec) const
 {
     GOOSEFEM_ASSERT(xt::has_shape(nodevec, {m_nnode, m_ndim}));
 
