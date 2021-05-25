@@ -1173,7 +1173,8 @@ inline xt::xtensor<size_t, 1> coordination(const E& conn)
     return N;
 }
 
-inline std::vector<std::vector<size_t>> elem2node(const xt::xtensor<size_t, 2>& conn, bool sorted)
+template <class E>
+inline std::vector<std::vector<size_t>> elem2node(const E& conn, bool sorted)
 {
     auto N = coordination(conn);
     auto nnode = N.size();
@@ -1198,11 +1199,11 @@ inline std::vector<std::vector<size_t>> elem2node(const xt::xtensor<size_t, 2>& 
     return ret;
 }
 
-inline xt::xtensor<double, 2> edgesize(
-    const xt::xtensor<double, 2>& coor,
-    const xt::xtensor<size_t, 2>& conn,
-    ElementType type)
+template <class C, class E>
+inline xt::xtensor<double, 2> edgesize(const C& coor, const E& conn, ElementType type)
 {
+    GOOSEFEM_ASSERT(coor.dimension() == 2);
+    GOOSEFEM_ASSERT(conn.dimension() == 2);
     GOOSEFEM_ASSERT(xt::amax(conn)() < coor.shape(0));
 
     if (type == ElementType::Quad4) {
@@ -1231,18 +1232,17 @@ inline xt::xtensor<double, 2> edgesize(
     throw std::runtime_error("Element-type not implemented");
 }
 
-inline xt::xtensor<double, 2> edgesize(
-    const xt::xtensor<double, 2>& coor,
-    const xt::xtensor<size_t, 2>& conn)
+template <class C, class E>
+inline xt::xtensor<double, 2> edgesize(const C& coor, const E& conn)
 {
     return edgesize(coor, conn, defaultElementType(coor, conn));
 }
 
-inline xt::xtensor<double, 2> centers(
-    const xt::xtensor<double, 2>& coor,
-    const xt::xtensor<size_t, 2>& conn,
-    ElementType type)
+template <class C, class E>
+inline xt::xtensor<double, 2> centers(const C& coor, const E& conn, ElementType type)
 {
+    GOOSEFEM_ASSERT(coor.dimension() == 2);
+    GOOSEFEM_ASSERT(conn.dimension() == 2);
     GOOSEFEM_ASSERT(xt::amax(conn)() < coor.shape(0));
     xt::xtensor<double, 2> ret = xt::zeros<double>({conn.shape(0), coor.shape(1)});
 
@@ -1260,19 +1260,22 @@ inline xt::xtensor<double, 2> centers(
     throw std::runtime_error("Element-type not implemented");
 }
 
-inline xt::xtensor<double, 2> centers(
-    const xt::xtensor<double, 2>& coor,
-    const xt::xtensor<size_t, 2>& conn)
+template <class C, class E>
+inline xt::xtensor<double, 2> centers(const C& coor, const E& conn)
 {
     return centers(coor, conn, defaultElementType(coor, conn));
 }
 
+template <class T, class C, class E>
 inline xt::xtensor<size_t, 1> elemmap2nodemap(
-    const xt::xtensor<size_t, 1>& elem_map,
-    const xt::xtensor<double, 2>& coor,
-    const xt::xtensor<size_t, 2>& conn,
+    const T& elem_map,
+    const C& coor,
+    const E& conn,
     ElementType type)
 {
+    GOOSEFEM_ASSERT(elem_map.dimension() == 1);
+    GOOSEFEM_ASSERT(coor.dimension() == 2);
+    GOOSEFEM_ASSERT(conn.dimension() == 2);
     GOOSEFEM_ASSERT(xt::amax(conn)() < coor.shape(0));
     GOOSEFEM_ASSERT(elem_map.size() == conn.shape(0));
     size_t N = coor.shape(0);
@@ -1297,10 +1300,8 @@ inline xt::xtensor<size_t, 1> elemmap2nodemap(
     throw std::runtime_error("Element-type not implemented");
 }
 
-inline xt::xtensor<size_t, 1> elemmap2nodemap(
-    const xt::xtensor<size_t, 1>& elem_map,
-    const xt::xtensor<double, 2>& coor,
-    const xt::xtensor<size_t, 2>& conn)
+template <class T, class C, class E>
+inline xt::xtensor<size_t, 1> elemmap2nodemap(const T& elem_map,const C& coor, const E& conn)
 {
     return elemmap2nodemap(elem_map, coor, conn, defaultElementType(coor, conn));
 }

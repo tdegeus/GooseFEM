@@ -1541,9 +1541,8 @@ Elements connected to each node.
 \param sorted If ``true`` the output is sorted.
 \return Elements per node.
 */
-inline std::vector<std::vector<size_t>> elem2node(
-    const xt::xtensor<size_t, 2>& conn,
-    bool sorted = true);
+template <class E>
+inline std::vector<std::vector<size_t>> elem2node(const E& conn,  bool sorted = true);
 
 /**
 Return size of each element edge.
@@ -1553,10 +1552,8 @@ Return size of each element edge.
 \param type ElementType.
 \return Edge-sizes per element.
 */
-inline xt::xtensor<double, 2> edgesize(
-    const xt::xtensor<double, 2>& coor,
-    const xt::xtensor<size_t, 2>& conn,
-    ElementType type);
+template <class C, class E>
+inline xt::xtensor<double, 2> edgesize(const C& coor, const E& conn, ElementType type);
 
 /**
 Return size of each element edge.
@@ -1566,9 +1563,8 @@ The element-type is automatically determined, see defaultElementType().
 \param conn Connectivity.
 \return Edge-sizes per element.
 */
-inline xt::xtensor<double, 2> edgesize(
-    const xt::xtensor<double, 2>& coor,
-    const xt::xtensor<size_t, 2>& conn);
+template <class C, class E>
+inline xt::xtensor<double, 2> edgesize(const C& coor, const E& conn);
 
 /**
 Coordinates of the center of each element.
@@ -1578,10 +1574,8 @@ Coordinates of the center of each element.
 \param type ElementType.
 \return Center of each element.
 */
-inline xt::xtensor<double, 2> centers(
-    const xt::xtensor<double, 2>& coor,
-    const xt::xtensor<size_t, 2>& conn,
-    ElementType type);
+template <class C, class E>
+inline xt::xtensor<double, 2> centers(const C& coor, const E& conn, ElementType type);
 
 /**
 Coordinates of the center of each element.
@@ -1591,9 +1585,8 @@ The element-type is automatically determined, see defaultElementType().
 \param conn Connectivity.
 \return Center of each element.
 */
-inline xt::xtensor<double, 2> centers(
-    const xt::xtensor<double, 2>& coor,
-    const xt::xtensor<size_t, 2>& conn);
+template <class C, class E>
+inline xt::xtensor<double, 2> centers(const C& coor, const E& conn);
 
 /**
 Convert an element-map to a node-map.
@@ -1604,10 +1597,11 @@ Convert an element-map to a node-map.
 \param type ElementType.
 \return Node-map such that ``new_nodevar = nodevar[node_map]``
 */
+template <class T, class C, class E>
 inline xt::xtensor<size_t, 1> elemmap2nodemap(
-    const xt::xtensor<size_t, 1>& elem_map,
-    const xt::xtensor<double, 2>& coor,
-    const xt::xtensor<size_t, 2>& conn,
+    const T& elem_map,
+    const C& coor,
+    const E& conn,
     ElementType type);
 
 /**
@@ -1619,10 +1613,8 @@ The element-type is automatically determined, see defaultElementType().
 \param conn Connectivity.
 \return Node-map such that ``new_nodevar = nodevar[node_map]``
 */
-inline xt::xtensor<size_t, 1> elemmap2nodemap(
-    const xt::xtensor<size_t, 1>& elem_map,
-    const xt::xtensor<double, 2>& coor,
-    const xt::xtensor<size_t, 2>& conn);
+template <class T, class C, class E>
+inline xt::xtensor<size_t, 1> elemmap2nodemap(const T& elem_map,const C& coor, const E& conn);
 
 } // namespace Mesh
 } // namespace GooseFEM
