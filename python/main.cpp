@@ -4,8 +4,6 @@
 
 ================================================================================================= */
 
-#include <Eigen/Eigen>
-
 #include <pybind11/pybind11.h>
 #include <pybind11/eigen.h>
 #include <pybind11/stl.h>
@@ -13,10 +11,12 @@
 #define FORCE_IMPORT_ARRAY
 #include <xtensor-python/pyarray.hpp>
 #include <xtensor-python/pytensor.hpp>
+#include <pyxtensor/pyxtensor.hpp>
+
+#include <Eigen/Eigen>
 
 #define GOOSEFEM_ENABLE_ASSERT
 #define GOOSEFEM_ENABLE_WARNING_PYTHON
-#include <GooseFEM/GooseFEM.h>
 
 namespace py = pybind11;
 

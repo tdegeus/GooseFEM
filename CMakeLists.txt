@@ -107,11 +107,12 @@ if(BUILD_PYTHON OR BUILD_ALL)
     find_package(Python REQUIRED COMPONENTS Interpreter Development NumPy)
     find_package(pybind11 REQUIRED CONFIG)
     find_package(xtensor-python REQUIRED)
+    find_package(pyxtensor REQUIRED)
 
     pybind11_add_module(mypymod python/main.cpp)
     set_target_properties(mypymod PROPERTIES OUTPUT_NAME ${PROJECT_NAME})
     target_link_libraries(mypymod PUBLIC ${PROJECT_NAME}
-        pybind11::module xtensor-python Python::NumPy)
+        pybind11::module xtensor-python Python::NumPy pyxtensor)
 
     target_compile_definitions(mypymod PRIVATE VERSION_INFO=${PROJECT_VERSION})
 endif()

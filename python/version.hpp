@@ -4,11 +4,8 @@
 
 ================================================================================================= */
 
-#include <Eigen/Eigen>
-#include <GooseFEM/GooseFEM.h>
-#include <pybind11/eigen.h>
 #include <pybind11/pybind11.h>
-#include <pyxtensor/pyxtensor.hpp>
+#include <GooseFEM/version.h>
 
 namespace py = pybind11;
 
