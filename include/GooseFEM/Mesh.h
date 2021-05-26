@@ -1117,14 +1117,14 @@ public:
     \param rtol Relative tolerance for check on position overlap.
     \param atol Absolute tolerance for check on position overlap.
     */
-    template <class C, class E, class N>
+    template <class CA, class EA, class NA, class CB, class EB, class NB>
     ManualStitch(
-        const C& coor_a,
-        const E& conn_a,
-        const N& overlapping_nodes_a,
-        const C& coor_b,
-        const E& conn_b,
-        const N& overlapping_nodes_b,
+        const CA& coor_a,
+        const EA& conn_a,
+        const NA& overlapping_nodes_a,
+        const CB& coor_b,
+        const EB& conn_b,
+        const NB& overlapping_nodes_b,
         bool check_position = true,
         double rtol = 1e-5,
         double atol = 1e-8);

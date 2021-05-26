@@ -673,14 +673,14 @@ inline xt::xtensor<size_t, 2> overlapping(
     return ret;
 }
 
-template <class C, class E, class N>
+template <class CA, class EA, class NA, class CB, class EB, class NB>
 inline ManualStitch::ManualStitch(
-    const C& coor_a,
-    const E& conn_a,
-    const N& overlapping_nodes_a,
-    const C& coor_b,
-    const E& conn_b,
-    const N& overlapping_nodes_b,
+    const CA& coor_a,
+    const EA& conn_a,
+    const NA& overlapping_nodes_a,
+    const CB& coor_b,
+    const EB& conn_b,
+    const NB& overlapping_nodes_b,
     bool check_position,
     double rtol,
     double atol)
@@ -870,8 +870,8 @@ inline void Stitch::push_back(const C& coor, const E& conn)
     size_t index = m_map.size();
 
     ManualStitch stitch(
-        m_coor, m_conn, xt::view(overlap, 0, xt::all()),
-        coor, conn, xt::view(overlap, 1, xt::all()),
+        m_coor, m_conn, xt::eval(xt::view(overlap, 0, xt::all())),
+        coor, conn, xt::eval(xt::view(overlap, 1, xt::all())),
         false);
 
     m_coor = stitch.coor();
