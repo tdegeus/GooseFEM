@@ -4,11 +4,10 @@
 
 ================================================================================================= */
 
-#include <GooseFEM/GooseFEM.h>
+#include <GooseFEM/Mesh.h>
 #include <pybind11/pybind11.h>
 #include <xtensor-python/pyarray.hpp>
 #include <xtensor-python/pytensor.hpp>
-#include <pyxtensor/pyxtensor.hpp>
 
 namespace py = pybind11;
 
@@ -26,7 +25,7 @@ void init_Mesh(py::module& m)
         .export_values();
 
     m.def("overlapping",
-          &GooseFEM::Mesh::overlapping<xt::xtensor<double, 2>, xt::xtensor<double, 2>>,
+          &GooseFEM::Mesh::overlapping<xt::pytensor<double, 2>, xt::pytensor<double, 2>>,
           "Find overlapping nodes."
           "See :cpp:func:`GooseFEM::Mesh::overlapping`.",
           py::arg("coor_a"),
@@ -37,12 +36,12 @@ void init_Mesh(py::module& m)
     py::class_<GooseFEM::Mesh::ManualStitch>(m, "ManualStitch")
 
         .def(py::init<
-                const xt::xtensor<double, 2>&,
-                const xt::xtensor<size_t, 2>&,
-                const xt::xtensor<size_t, 1>&,
-                const xt::xtensor<double, 2>&,
-                const xt::xtensor<size_t, 2>&,
-                const xt::xtensor<size_t, 1>&,
+                const xt::pytensor<double, 2>&,
+                const xt::pytensor<size_t, 2>&,
+                const xt::pytensor<size_t, 1>&,
+                const xt::pytensor<double, 2>&,
+                const xt::pytensor<size_t, 2>&,
+                const xt::pytensor<size_t, 1>&,
                 bool,
                 double,
                 double>(),
@@ -125,14 +124,14 @@ void init_Mesh(py::module& m)
              py::arg("mesh_index"))
 
         .def("nodeset",
-             &GooseFEM::Mesh::ManualStitch::nodeset<xt::xtensor<size_t, 1>>,
+             &GooseFEM::Mesh::ManualStitch::nodeset<xt::pytensor<size_t, 1>>,
              "Convert node-set to the stitched mesh."
              "See :cpp:func:`GooseFEM::Mesh::ManualStitch::nodeset`.",
              py::arg("set"),
              py::arg("mesh_index"))
 
         .def("elemset",
-             &GooseFEM::Mesh::ManualStitch::elemset<xt::xtensor<size_t, 1>>,
+             &GooseFEM::Mesh::ManualStitch::elemset<xt::pytensor<size_t, 1>>,
              "Convert element-set to the stitched mesh."
              "See :cpp:func:`GooseFEM::Mesh::ManualStitch::elemset`.",
              py::arg("set"),
@@ -150,7 +149,7 @@ void init_Mesh(py::module& m)
              py::arg("atol") = 1e-8)
 
         .def("push_back",
-             &GooseFEM::Mesh::Stitch::push_back<xt::xtensor<double, 2>, xt::xtensor<size_t, 2>>,
+             &GooseFEM::Mesh::Stitch::push_back<xt::pytensor<double, 2>, xt::pytensor<size_t, 2>>,
              "Add mesh to be stitched."
              "See :cpp:func:`GooseFEM::Mesh::Stitch::push_back`.",
              py::arg("coor"),
@@ -223,31 +222,31 @@ void init_Mesh(py::module& m)
              py::arg("mesh_index"))
 
         .def("nodeset",
-             static_cast<xt::xtensor<size_t, 1> (GooseFEM::Mesh::Stitch::*)(
-                const xt::xtensor<size_t, 1>&, size_t) const>(&GooseFEM::Mesh::Stitch::nodeset),
+             static_cast<xt::pytensor<size_t, 1> (GooseFEM::Mesh::Stitch::*)(
+                const xt::pytensor<size_t, 1>&, size_t) const>(&GooseFEM::Mesh::Stitch::nodeset),
              "Convert node-set to the stitched mesh."
              "See :cpp:func:`GooseFEM::Mesh::Stitch::nodeset`.",
              py::arg("set"),
              py::arg("mesh_index"))
 
         .def("elemset",
-             static_cast<xt::xtensor<size_t, 1> (GooseFEM::Mesh::Stitch::*)(
-                const xt::xtensor<size_t, 1>&, size_t) const>(&GooseFEM::Mesh::Stitch::elemset),
+             static_cast<xt::pytensor<size_t, 1> (GooseFEM::Mesh::Stitch::*)(
+                const xt::pytensor<size_t, 1>&, size_t) const>(&GooseFEM::Mesh::Stitch::elemset),
              "Convert element-set to the stitched mesh."
              "See :cpp:func:`GooseFEM::Mesh::Stitch::elemset`.",
              py::arg("set"),
              py::arg("mesh_index"))
 
         .def("nodeset",
-             static_cast<xt::xtensor<size_t, 1> (GooseFEM::Mesh::Stitch::*)(
-                const std::vector<xt::xtensor<size_t, 1>>&) const>(&GooseFEM::Mesh::Stitch::nodeset),
+             static_cast<xt::pytensor<size_t, 1> (GooseFEM::Mesh::Stitch::*)(
+                const std::vector<xt::pytensor<size_t, 1>>&) const>(&GooseFEM::Mesh::Stitch::nodeset),
              "Convert node-set to the stitched mesh."
              "See :cpp:func:`GooseFEM::Mesh::Stitch::nodeset`.",
              py::arg("set"))
 
         .def("elemset",
-             static_cast<xt::xtensor<size_t, 1> (GooseFEM::Mesh::Stitch::*)(
-                const std::vector<xt::xtensor<size_t, 1>>&) const>(&GooseFEM::Mesh::Stitch::elemset),
+             static_cast<xt::pytensor<size_t, 1> (GooseFEM::Mesh::Stitch::*)(
+                const std::vector<xt::pytensor<size_t, 1>>&) const>(&GooseFEM::Mesh::Stitch::elemset),
              "Convert element-set to the stitched mesh."
              "See :cpp:func:`GooseFEM::Mesh::Stitch::elemset`.",
              py::arg("set"))
@@ -264,7 +263,7 @@ void init_Mesh(py::module& m)
              py::arg("atol") = 1e-8)
 
         .def("push_back",
-             &GooseFEM::Mesh::Vstack::push_back<xt::xtensor<double, 2>, xt::xtensor<size_t, 2>, xt::xtensor<size_t, 1>>,
+             &GooseFEM::Mesh::Vstack::push_back<xt::pytensor<double, 2>, xt::pytensor<size_t, 2>, xt::pytensor<size_t, 1>>,
              "Add mesh to be stitched."
              "See :cpp:func:`GooseFEM::Mesh::Vstack::push_back`.",
              py::arg("coor"),
@@ -276,18 +275,18 @@ void init_Mesh(py::module& m)
 
     py::class_<GooseFEM::Mesh::Renumber>(m, "Renumber")
 
-        .def(py::init<const xt::xarray<size_t>&>(),
+        .def(py::init<const xt::pyarray<size_t>&>(),
              "Renumber to lowest possible index."
              "See :cpp:class:`GooseFEM::Mesh::Renumber`.",
              py::arg("dofs"))
 
         .def("get",
-             &GooseFEM::Mesh::Renumber::apply<xt::xarray<size_t>>,
+             &GooseFEM::Mesh::Renumber::apply<xt::pyarray<size_t>>,
              "Get renumbered DOFs."
              "See :cpp:func:`GooseFEM::Mesh::Renumber::get`.")
 
         .def("apply",
-             &GooseFEM::Mesh::Renumber::apply<xt::xarray<size_t>>,
+             &GooseFEM::Mesh::Renumber::apply<xt::pyarray<size_t>>,
              "Get renumbered list."
              "See :cpp:func:`GooseFEM::Mesh::Renumber::apply`.")
 
@@ -301,40 +300,40 @@ void init_Mesh(py::module& m)
 
     py::class_<GooseFEM::Mesh::Reorder>(m, "Reorder")
 
-        .def(py::init([](xt::xtensor<size_t, 1>& a) { return new GooseFEM::Mesh::Reorder({a}); }),
+        .def(py::init([](xt::pytensor<size_t, 1>& a) { return new GooseFEM::Mesh::Reorder({a}); }),
              "Reorder to lowest possible index."
              "See :cpp:class:`GooseFEM::Mesh::Reorder`.")
 
-        .def(py::init([](xt::xtensor<size_t, 1>& a, xt::xtensor<size_t, 1>& b) {
+        .def(py::init([](xt::pytensor<size_t, 1>& a, xt::pytensor<size_t, 1>& b) {
                 return new GooseFEM::Mesh::Reorder({a, b});
              }),
              "Reorder to lowest possible index."
              "See :cpp:class:`GooseFEM::Mesh::Reorder`.")
 
         .def(py::init(
-                [](xt::xtensor<size_t, 1>& a, xt::xtensor<size_t, 1>& b, xt::xtensor<size_t, 1>& c) {
+                [](xt::pytensor<size_t, 1>& a, xt::pytensor<size_t, 1>& b, xt::pytensor<size_t, 1>& c) {
                     return new GooseFEM::Mesh::Reorder({a, b, c});
                 }),
              "Reorder to lowest possible index."
              "See :cpp:class:`GooseFEM::Mesh::Reorder`.")
 
-        .def(py::init([](xt::xtensor<size_t, 1>& a,
-                         xt::xtensor<size_t, 1>& b,
-                         xt::xtensor<size_t, 1>& c,
-                         xt::xtensor<size_t, 1>& d) {
+        .def(py::init([](xt::pytensor<size_t, 1>& a,
+                         xt::pytensor<size_t, 1>& b,
+                         xt::pytensor<size_t, 1>& c,
+                         xt::pytensor<size_t, 1>& d) {
                 return new GooseFEM::Mesh::Reorder({a, b, c, d});
                 }),
              "Reorder to lowest possible index."
              "See :cpp:class:`GooseFEM::Mesh::Reorder`.")
 
         .def("get",
-             &GooseFEM::Mesh::Reorder::apply<xt::xarray<size_t>>,
+             &GooseFEM::Mesh::Reorder::apply<xt::pyarray<size_t>>,
              "Reorder matrix (e.g. ``dofs``)."
              "See :cpp:func:`GooseFEM::Mesh::Reorder::get`.",
              py::arg("dofs"))
 
         .def("apply",
-             &GooseFEM::Mesh::Reorder::apply<xt::xarray<size_t>>,
+             &GooseFEM::Mesh::Reorder::apply<xt::pyarray<size_t>>,
              "Get reordered list."
              "See :cpp:func:`GooseFEM::Mesh::Reorder::apply`.")
 
@@ -353,27 +352,27 @@ void init_Mesh(py::module& m)
           py::arg("ndim"));
 
     m.def("renumber",
-          &GooseFEM::Mesh::renumber<xt::xtensor<size_t, 2>>,
+          &GooseFEM::Mesh::renumber<xt::pytensor<size_t, 2>>,
           "Renumber to lowest possible indices."
           "See :cpp:func:`GooseFEM::Mesh::renumber`.",
           py::arg("dofs"));
 
     m.def("coordination",
-          &GooseFEM::Mesh::coordination<xt::xtensor<size_t, 2>>,
+          &GooseFEM::Mesh::coordination<xt::pytensor<size_t, 2>>,
           "Coordination number of each node."
           "See :cpp:func:`GooseFEM::Mesh::coordination`.",
           py::arg("conn"));
 
     m.def("elem2node",
-          &GooseFEM::Mesh::elem2node<xt::xtensor<size_t, 2>>,
+          &GooseFEM::Mesh::elem2node<xt::pytensor<size_t, 2>>,
           "Element-numbers connected to each node."
           "See :cpp:func:`GooseFEM::Mesh::elem2node`.",
           py::arg("conn"),
           py::arg("sorted") = true);
 
     m.def("edgesize",
-          py::overload_cast<const xt::xtensor<double, 2>&, const xt::xtensor<size_t, 2>&>(
-            &GooseFEM::Mesh::edgesize<xt::xtensor<double, 2>, xt::xtensor<size_t, 2>>),
+          py::overload_cast<const xt::pytensor<double, 2>&, const xt::pytensor<size_t, 2>&>(
+            &GooseFEM::Mesh::edgesize<xt::pytensor<double, 2>, xt::pytensor<size_t, 2>>),
           "Get the edge size of all elements."
           "See :cpp:func:`GooseFEM::Mesh::edgesize`.",
           py::arg("coor"),
@@ -381,9 +380,9 @@ void init_Mesh(py::module& m)
 
     m.def("edgesize",
           py::overload_cast<
-            const xt::xtensor<double, 2>&,
-            const xt::xtensor<size_t, 2>&,
-            GooseFEM::Mesh::ElementType>(&GooseFEM::Mesh::edgesize<xt::xtensor<double, 2>, xt::xtensor<size_t, 2>>),
+            const xt::pytensor<double, 2>&,
+            const xt::pytensor<size_t, 2>&,
+            GooseFEM::Mesh::ElementType>(&GooseFEM::Mesh::edgesize<xt::pytensor<double, 2>, xt::pytensor<size_t, 2>>),
           "Get the edge size of all elements."
           "See :cpp:func:`GooseFEM::Mesh::edgesize`.",
           py::arg("coor"),
@@ -391,8 +390,8 @@ void init_Mesh(py::module& m)
           py::arg("type"));
 
     m.def("centers",
-          py::overload_cast<const xt::xtensor<double, 2>&, const xt::xtensor<size_t, 2>&>(
-            &GooseFEM::Mesh::centers<xt::xtensor<double, 2>, xt::xtensor<size_t, 2>>),
+          py::overload_cast<const xt::pytensor<double, 2>&, const xt::pytensor<size_t, 2>&>(
+            &GooseFEM::Mesh::centers<xt::pytensor<double, 2>, xt::pytensor<size_t, 2>>),
           "Coordinates of the center of each element."
           "See :cpp:func:`GooseFEM::Mesh::centers`.",
           py::arg("coor"),
@@ -400,9 +399,9 @@ void init_Mesh(py::module& m)
 
     m.def("centers",
           py::overload_cast<
-            const xt::xtensor<double, 2>&,
-            const xt::xtensor<size_t, 2>&,
-            GooseFEM::Mesh::ElementType>(&GooseFEM::Mesh::centers<xt::xtensor<double, 2>, xt::xtensor<size_t, 2>>),
+            const xt::pytensor<double, 2>&,
+            const xt::pytensor<size_t, 2>&,
+            GooseFEM::Mesh::ElementType>(&GooseFEM::Mesh::centers<xt::pytensor<double, 2>, xt::pytensor<size_t, 2>>),
           "Coordinates of the center of each element."
           "See :cpp:func:`GooseFEM::Mesh::centers`.",
           py::arg("coor"),
@@ -411,10 +410,10 @@ void init_Mesh(py::module& m)
 
     m.def("elemmap2nodemap",
           py::overload_cast<
-            const xt::xtensor<size_t, 1>&,
-            const xt::xtensor<double, 2>&,
-            const xt::xtensor<size_t, 2>&>(&GooseFEM::Mesh::elemmap2nodemap<
-                xt::xtensor<size_t, 1>, xt::xtensor<double, 2>, xt::xtensor<size_t, 2>>),
+            const xt::pytensor<size_t, 1>&,
+            const xt::pytensor<double, 2>&,
+            const xt::pytensor<size_t, 2>&>(&GooseFEM::Mesh::elemmap2nodemap<
+                xt::pytensor<size_t, 1>, xt::pytensor<double, 2>, xt::pytensor<size_t, 2>>),
           "Convert an element-map to a node-map."
           "See :cpp:func:`GooseFEM::Mesh::elemmap2nodemap`.",
           py::arg("elem_map"),
@@ -423,11 +422,11 @@ void init_Mesh(py::module& m)
 
     m.def("elemmap2nodemap",
           py::overload_cast<
-            const xt::xtensor<size_t, 1>&,
-            const xt::xtensor<double, 2>&,
-            const xt::xtensor<size_t, 2>&,
+            const xt::pytensor<size_t, 1>&,
+            const xt::pytensor<double, 2>&,
+            const xt::pytensor<size_t, 2>&,
             GooseFEM::Mesh::ElementType>(&GooseFEM::Mesh::elemmap2nodemap<
-                xt::xtensor<size_t, 1>, xt::xtensor<double, 2>, xt::xtensor<size_t, 2>>),
+                xt::pytensor<size_t, 1>, xt::pytensor<double, 2>, xt::pytensor<size_t, 2>>),
           "Convert an element-map to a node-map."
           "See :cpp:func:`GooseFEM::Mesh::elemmap2nodemap`.",
           py::arg("elem_map"),
