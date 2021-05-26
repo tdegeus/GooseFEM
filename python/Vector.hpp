@@ -4,11 +4,10 @@
 
 ================================================================================================= */
 
-#include <GooseFEM/GooseFEM.h>
+#include <GooseFEM/Vector.h>
 #include <pybind11/pybind11.h>
 #include <xtensor-python/pyarray.hpp>
 #include <xtensor-python/pytensor.hpp>
-#include <pyxtensor/pyxtensor.hpp>
 
 namespace py = pybind11;
 
@@ -30,6 +29,11 @@ void init_Vector(py::module& m)
         .def("conn", &GooseFEM::Vector::conn, "Return connectivity")
         .def("dofs", &GooseFEM::Vector::dofs, "Return degrees-of-freedom")
 
+        .def("copy",
+             &GooseFEM::Vector::copy<xt::pyarray<double>>,
+             py::arg("nodevec_src"),
+             py::arg("nodevec_dest"))
+
         .def("Copy",
              &GooseFEM::Vector::Copy<xt::pyarray<double>>,
              py::arg("nodevec_src"),
@@ -37,28 +41,58 @@ void init_Vector(py::module& m)
 
         .def("AsDofs",
              &GooseFEM::Vector::AsDofs<xt::pyarray<double>>,
-             "Convert to 'dofval' (overwrite entries that occur more than once",
+             "Convert to 'dofval' (overwrite entries that occur more than once)",
              py::arg("arg"))
+
+        .def("asDofs",
+             &GooseFEM::Vector::asDofs<xt::pyarray<double>, xt::pytensor<double, 1>>,
+             "Convert to 'dofval' (overwrite entries that occur more than once)",
+             py::arg("arg"),
+             py::arg("ret"))
 
         .def("AsNode",
              &GooseFEM::Vector::AsNode<xt::pyarray<double>>,
-             "Convert to 'nodevec' (overwrite entries that occur more than once",
+             "Convert to 'nodevec' (overwrite entries that occur more than once)",
              py::arg("arg"))
+
+        .def("asNode",
+             &GooseFEM::Vector::asNode<xt::pyarray<double>, xt::pytensor<double, 2>>,
+             "Convert to 'nodevec' (overwrite entries that occur more than once)",
+             py::arg("arg"),
+             py::arg("ret"))
 
         .def("AsElement",
              &GooseFEM::Vector::AsElement<xt::pyarray<double>>,
-             "Convert to 'elemvec' (overwrite entries that occur more than once",
+             "Convert to 'elemvec' (overwrite entries that occur more than once)",
              py::arg("arg"))
+
+        .def("asElement",
+             &GooseFEM::Vector::asElement<xt::pyarray<double>, xt::pytensor<double, 3>>,
+             "Convert to 'elemvec' (overwrite entries that occur more than once)",
+             py::arg("arg"),
+             py::arg("ret"))
 
         .def("AssembleDofs",
              &GooseFEM::Vector::AssembleDofs<xt::pyarray<double>>,
-             "Assemble to 'dofval' (add entries that occur more than once",
+             "Assemble to 'dofval' (add entries that occur more than once)",
              py::arg("arg"))
+
+        .def("assembleDofs",
+             &GooseFEM::Vector::assembleDofs<xt::pyarray<double>, xt::pytensor<double, 1>>,
+             "Assemble to 'dofval' (add entries that occur more than once)",
+             py::arg("arg"),
+             py::arg("ret"))
 
         .def("AssembleNode",
             &GooseFEM::Vector::AssembleNode<xt::pyarray<double>>,
-             "Assemble to 'nodevec' (add entries that occur more than once",
+             "Assemble to 'nodevec' (add entries that occur more than once)",
              py::arg("arg"))
+
+        .def("assembleNode",
+            &GooseFEM::Vector::assembleNode<xt::pyarray<double>, xt::pytensor<double, 2>>,
+             "Assemble to 'nodevec' (add entries that occur more than once)",
+             py::arg("arg"),
+             py::arg("ret"))
 
         .def("shape_dofval", &GooseFEM::Vector::shape_dofval)
         .def("shape_nodevec", &GooseFEM::Vector::shape_nodevec)

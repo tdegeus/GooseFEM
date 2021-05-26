@@ -133,6 +133,7 @@ inline void Vector::asDofs_impl(const T& arg, R& ret) const
 template <class T, class R>
 inline void Vector::asDofs_impl_nodevec(const T& arg, R& dofval) const
 {
+    static_assert(xt::get_rank<R>::value == 1 || !xt::has_fixed_rank_t<R>::value, "Unknown rank 'ret'");
     GOOSEFEM_ASSERT(xt::has_shape(arg, this->shape_nodevec()));
     GOOSEFEM_ASSERT(xt::has_shape(dofval, this->shape_dofval()));
 
@@ -149,6 +150,7 @@ inline void Vector::asDofs_impl_nodevec(const T& arg, R& dofval) const
 template <class T, class R>
 inline void Vector::asDofs_impl_elemvec(const T& arg, R& dofval) const
 {
+    static_assert(xt::get_rank<R>::value == 1 || !xt::has_fixed_rank_t<R>::value, "Unknown rank 'ret'");
     GOOSEFEM_ASSERT(xt::has_shape(arg, this->shape_elemvec()));
     GOOSEFEM_ASSERT(xt::has_shape(dofval, this->shape_dofval()));
 
@@ -213,6 +215,7 @@ inline void Vector::asNode_impl(const T& arg, R& ret) const
 template <class T, class R>
 inline void Vector::asNode_impl_dofval(const T& dofval, R& nodevec) const
 {
+    static_assert(xt::get_rank<R>::value == 2 || !xt::has_fixed_rank_t<R>::value, "Unknown rank 'ret'");
     GOOSEFEM_ASSERT(xt::has_shape(dofval, this->shape_dofval()));
     GOOSEFEM_ASSERT(xt::has_shape(nodevec, this->shape_nodevec()));
 
@@ -227,6 +230,7 @@ inline void Vector::asNode_impl_dofval(const T& dofval, R& nodevec) const
 template <class T, class R>
 inline void Vector::asNode_impl_elemvec(const T& elemvec, R& nodevec) const
 {
+    static_assert(xt::get_rank<R>::value == 2 || !xt::has_fixed_rank_t<R>::value, "Unknown rank 'ret'");
     GOOSEFEM_ASSERT(xt::has_shape(elemvec, this->shape_elemvec()));
     GOOSEFEM_ASSERT(xt::has_shape(nodevec, this->shape_nodevec()));
 
@@ -291,6 +295,7 @@ inline void Vector::asElement_impl(const T& arg, R& ret) const
 template <class T, class R>
 inline void Vector::asElement_impl_dofval(const T& dofval, R& elemvec) const
 {
+    static_assert(xt::get_rank<R>::value == 3 || !xt::has_fixed_rank_t<R>::value, "Unknown rank 'ret'");
     GOOSEFEM_ASSERT(dofval.size() == m_ndof);
     GOOSEFEM_ASSERT(xt::has_shape(elemvec, this->shape_elemvec()));
 
@@ -307,6 +312,7 @@ inline void Vector::asElement_impl_dofval(const T& dofval, R& elemvec) const
 template <class T, class R>
 inline void Vector::asElement_impl_nodevec(const T& nodevec,R& elemvec) const
 {
+    static_assert(xt::get_rank<R>::value == 3 || !xt::has_fixed_rank_t<R>::value, "Unknown rank 'ret'");
     GOOSEFEM_ASSERT(xt::has_shape(nodevec, this->shape_nodevec()));
     GOOSEFEM_ASSERT(xt::has_shape(elemvec, this->shape_elemvec()));
 
@@ -369,6 +375,7 @@ inline void Vector::assembleDofs_impl(const T& arg, R& ret) const
 template <class T, class R>
 inline void Vector::assembleDofs_impl_nodevec(const T& nodevec, R& dofval) const
 {
+    static_assert(xt::get_rank<R>::value == 1 || !xt::has_fixed_rank_t<R>::value, "Unknown rank 'ret'");
     GOOSEFEM_ASSERT(xt::has_shape(nodevec, this->shape_nodevec()));
     GOOSEFEM_ASSERT(xt::has_shape(dofval, this->shape_dofval()));
 
@@ -384,6 +391,7 @@ inline void Vector::assembleDofs_impl_nodevec(const T& nodevec, R& dofval) const
 template <class T, class R>
 inline void Vector::assembleDofs_impl_elemvec(const T& elemvec, R& dofval) const
 {
+    static_assert(xt::get_rank<R>::value == 1 || !xt::has_fixed_rank_t<R>::value, "Unknown rank 'ret'");
     GOOSEFEM_ASSERT(xt::has_shape(elemvec, this->shape_elemvec()));
     GOOSEFEM_ASSERT(xt::has_shape(dofval, this->shape_dofval()));
 
@@ -438,6 +446,7 @@ inline void Vector::assembleNode_impl(const T& arg, R& ret) const
 template <class T, class R>
 inline void Vector::assembleNode_impl_elemvec(const T& elemvec, R& nodevec) const
 {
+    static_assert(xt::get_rank<R>::value == 2 || !xt::has_fixed_rank_t<R>::value, "Unknown rank 'ret'");
     GOOSEFEM_ASSERT(xt::has_shape(elemvec, this->shape_elemvec()));
     GOOSEFEM_ASSERT(xt::has_shape(nodevec, this->shape_nodevec()));
 
