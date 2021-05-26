@@ -128,19 +128,19 @@ public:
     Convert "dofval" or "nodevec" to "elemvec" (overwrite entries that occur more than once).
 
     \param arg dofval [#ndof] or nodevec [#nnode, #ndim].
-    \param elemvec output [#nelem, #nne, #ndim].
+    \return elemvec output [#nelem, #nne, #ndim].
     */
-    template <class T, class R>
-    void asElement(const T& arg, R& elemvec) const;
+    template <class T>
+    xt::xtensor<double, 3> AsElement(const T& arg) const;
 
     /**
     Convert "dofval" or "nodevec" to "elemvec" (overwrite entries that occur more than once).
 
     \param arg dofval [#ndof] or nodevec [#nnode, #ndim].
-    \return elemvec output [#nelem, #nne, #ndim].
+    \param elemvec output [#nelem, #nne, #ndim].
     */
-    template <class T>
-    xt::xtensor<double, 3> AsElement(const T& arg) const;
+    template <class T, class R>
+    void asElement(const T& arg, R& elemvec) const;
 
     /**
     Assemble "nodevec" or "elemvec" to "dofval" (adds entries that occur more that once).
@@ -282,27 +282,27 @@ private:
 
     /** Distribution to relevant implementation of \copydoc asNode(const T&, R&) const */
     template <class T, class R, typename std::enable_if_t<!xt::has_fixed_rank_t<T>::value, int> = 0>
-    void asNode_impl(const T& arg, R& dofval) const;
+    void asNode_impl(const T& arg, R& nodevec) const;
 
     /** Distribution to relevant implementation of \copydoc asNode(const T&, R&) const */
     template <class T, class R, typename std::enable_if_t<xt::get_rank<T>::value == 1, int> = 0>
-    void asNode_impl(const T& arg, R& dofval) const;
+    void asNode_impl(const T& arg, R& nodevec) const;
 
     /** Distribution to relevant implementation of \copydoc asNode(const T&, R&) const */
     template <class T, class R, typename std::enable_if_t<xt::get_rank<T>::value == 3, int> = 0>
-    void asNode_impl(const T& arg, R& dofval) const;
+    void asNode_impl(const T& arg, R& nodevec) const;
 
     /** Distribution to relevant implementation of \copydoc asElement(const T&, R&) const */
     template <class T, class R, typename std::enable_if_t<!xt::has_fixed_rank_t<T>::value, int> = 0>
-    void asElement_impl(const T& arg, R& dofval) const;
+    void asElement_impl(const T& arg, R& elemvec) const;
 
     /** Distribution to relevant implementation of \copydoc asElement(const T&, R&) const */
     template <class T, class R, typename std::enable_if_t<xt::get_rank<T>::value == 1, int> = 0>
-    void asElement_impl(const T& arg, R& dofval) const;
+    void asElement_impl(const T& arg, R& elemvec) const;
 
     /** Distribution to relevant implementation of \copydoc asElement(const T&, R&) const */
     template <class T, class R, typename std::enable_if_t<xt::get_rank<T>::value == 2, int> = 0>
-    void asElement_impl(const T& arg, R& dofval) const;
+    void asElement_impl(const T& arg, R& elemvec) const;
 
     /** Distribution to relevant implementation of \copydoc assembleDofs(const T&, R&) const */
     template <class T, class R, typename std::enable_if_t<!xt::has_fixed_rank_t<T>::value, int> = 0>
@@ -318,11 +318,11 @@ private:
 
     /** Distribution to relevant implementation of \copydoc assembleNode(const T&, R&) const */
     template <class T, class R, typename std::enable_if_t<!xt::has_fixed_rank_t<T>::value, int> = 0>
-    void assembleNode_impl(const T& arg, R& dofval) const;
+    void assembleNode_impl(const T& arg, R& nodevec) const;
 
     /** Distribution to relevant implementation of \copydoc assembleNode(const T&, R&) const */
     template <class T, class R, typename std::enable_if_t<xt::get_rank<T>::value == 3, int> = 0>
-    void assembleNode_impl(const T& arg, R& dofval) const;
+    void assembleNode_impl(const T& arg, R& nodevec) const;
 
     /** Implementation for 'nodevec' input of \copydoc asDofs(const T&, R&) const */
     template <class T, class R>
