@@ -28,7 +28,7 @@ namespace Map {
 /**
 Regular mesh: equi-sized elements.
 */
-class Regular : public RegularBase2d {
+class Regular : public RegularBase2d<Regular> {
 public:
 
     Regular() = default;
@@ -42,34 +42,48 @@ public:
     */
     Regular(size_t nelx, size_t nely, double h = 1.0);
 
-    ElementType getElementType() const override;
-    xt::xtensor<double, 2> coor() const override;
-    xt::xtensor<size_t, 2> conn() const override;
-    xt::xtensor<size_t, 1> nodesBottomEdge() const override;
-    xt::xtensor<size_t, 1> nodesTopEdge() const override;
-    xt::xtensor<size_t, 1> nodesLeftEdge() const override;
-    xt::xtensor<size_t, 1> nodesRightEdge() const override;
-    xt::xtensor<size_t, 1> nodesBottomOpenEdge() const override;
-    xt::xtensor<size_t, 1> nodesTopOpenEdge() const override;
-    xt::xtensor<size_t, 1> nodesLeftOpenEdge() const override;
-    xt::xtensor<size_t, 1> nodesRightOpenEdge() const override;
-    size_t nodesBottomLeftCorner() const override;
-    size_t nodesBottomRightCorner() const override;
-    size_t nodesTopLeftCorner() const override;
-    size_t nodesTopRightCorner() const override;
-
     /**
     Element numbers as 'matrix'.
 
     \return [#nely, #nelx].
     */
     xt::xtensor<size_t, 2> elementgrid() const;
+
+private:
+    friend class RegularBase<Regular>;
+    friend class RegularBase2d<Regular>;
+
+    size_t nelx_impl() const;
+    size_t nely_impl() const;
+    ElementType getElementType_impl() const;
+    xt::xtensor<double, 2> coor_impl() const;
+    xt::xtensor<size_t, 2> conn_impl() const;
+    xt::xtensor<size_t, 1> nodesBottomEdge_impl() const;
+    xt::xtensor<size_t, 1> nodesTopEdge_impl() const;
+    xt::xtensor<size_t, 1> nodesLeftEdge_impl() const;
+    xt::xtensor<size_t, 1> nodesRightEdge_impl() const;
+    xt::xtensor<size_t, 1> nodesBottomOpenEdge_impl() const;
+    xt::xtensor<size_t, 1> nodesTopOpenEdge_impl() const;
+    xt::xtensor<size_t, 1> nodesLeftOpenEdge_impl() const;
+    xt::xtensor<size_t, 1> nodesRightOpenEdge_impl() const;
+    size_t nodesBottomLeftCorner_impl() const;
+    size_t nodesBottomRightCorner_impl() const;
+    size_t nodesTopLeftCorner_impl() const;
+    size_t nodesTopRightCorner_impl() const;
+
+    double m_h;     ///< See h()
+    size_t m_nelx;  ///< See nelx()
+    size_t m_nely;  ///< See nely()
+    size_t m_nelem; ///< See nelem()
+    size_t m_nnode; ///< See nnode()
+    size_t m_nne;   ///< See nne()
+    size_t m_ndim;  ///< See ndim()
 };
 
 /**
 Mesh with fine middle layer, and coarser elements towards the top and bottom.
 */
-class FineLayer : public RegularBase2d {
+class FineLayer : public RegularBase2d<FineLayer> {
 public:
 
     FineLayer() = default;
@@ -95,34 +109,6 @@ public:
     \throw GOOSEFEM_CHECK()
     */
     FineLayer(const xt::xtensor<double, 2>& coor, const xt::xtensor<size_t, 2>& conn);
-
-    ElementType getElementType() const override;
-    xt::xtensor<double, 2> coor() const override;
-    xt::xtensor<size_t, 2> conn() const override;
-    xt::xtensor<size_t, 1> nodesBottomEdge() const override;
-    xt::xtensor<size_t, 1> nodesTopEdge() const override;
-    xt::xtensor<size_t, 1> nodesLeftEdge() const override;
-    xt::xtensor<size_t, 1> nodesRightEdge() const override;
-    xt::xtensor<size_t, 1> nodesBottomOpenEdge() const override;
-    xt::xtensor<size_t, 1> nodesTopOpenEdge() const override;
-    xt::xtensor<size_t, 1> nodesLeftOpenEdge() const override;
-    xt::xtensor<size_t, 1> nodesRightOpenEdge() const override;
-    size_t nodesBottomLeftCorner() const override;
-    size_t nodesBottomRightCorner() const override;
-    size_t nodesTopLeftCorner() const override;
-    size_t nodesTopRightCorner() const override;
-
-    /**
-    \return
-        Number of elements in x-direction along the middle layer.
-        By definition equal to the width of the mesh in units of #h.
-    */
-    size_t nelx() const override;
-
-    /**
-    \return Height of the mesh, in units of #h.
-    */
-    size_t nely() const override;
 
     /**
     Edge size in x-direction of a block, in units of #h, per row of blocks.
@@ -213,7 +199,34 @@ public:
     xt::xtensor<size_t, 1> roll(size_t n);
 
 private:
-    double m_Lx; ///< Mesh size in x-direction.
+    friend class RegularBase<FineLayer>;
+    friend class RegularBase2d<FineLayer>;
+    friend class GooseFEM::Mesh::Quad4::Map::FineLayer2Regular;
+
+    size_t nelx_impl() const;
+    size_t nely_impl() const;
+    ElementType getElementType_impl() const;
+    xt::xtensor<double, 2> coor_impl() const;
+    xt::xtensor<size_t, 2> conn_impl() const;
+    xt::xtensor<size_t, 1> nodesBottomEdge_impl() const;
+    xt::xtensor<size_t, 1> nodesTopEdge_impl() const;
+    xt::xtensor<size_t, 1> nodesLeftEdge_impl() const;
+    xt::xtensor<size_t, 1> nodesRightEdge_impl() const;
+    xt::xtensor<size_t, 1> nodesBottomOpenEdge_impl() const;
+    xt::xtensor<size_t, 1> nodesTopOpenEdge_impl() const;
+    xt::xtensor<size_t, 1> nodesLeftOpenEdge_impl() const;
+    xt::xtensor<size_t, 1> nodesRightOpenEdge_impl() const;
+    size_t nodesBottomLeftCorner_impl() const;
+    size_t nodesBottomRightCorner_impl() const;
+    size_t nodesTopLeftCorner_impl() const;
+    size_t nodesTopRightCorner_impl() const;
+
+    double m_h;     ///< See h()
+    size_t m_nelem; ///< See nelem()
+    size_t m_nnode; ///< See nnode()
+    size_t m_nne;   ///< See nne()
+    size_t m_ndim;  ///< See ndim()
+    double m_Lx;    ///< Mesh size in x-direction.
     xt::xtensor<size_t, 1> m_layer_nelx; ///< See elemrow_nelem().
     xt::xtensor<size_t, 1> m_nhx; ///< See elemrow_nhx().
     xt::xtensor<size_t, 1> m_nhy; ///< See elemrow_nhy().
@@ -231,8 +244,6 @@ private:
     \copydoc FineLayer::FineLayer(const xt::xtensor<double, 2>&, const xt::xtensor<size_t, 2>&)
     */
     void map(const xt::xtensor<double, 2>& coor, const xt::xtensor<size_t, 2>& conn);
-
-    friend class GooseFEM::Mesh::Quad4::Map::FineLayer2Regular;
 };
 
 /**

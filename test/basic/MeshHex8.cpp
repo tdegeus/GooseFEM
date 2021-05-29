@@ -386,7 +386,7 @@ TEST_CASE("GooseFEM::MeshHex8", "MeshHex8.h")
     {
         GooseFEM::Mesh::Hex8::FineLayer mesh(3, 3, 3);
 
-                xt::xtensor<double, 2> coor_ =
+        xt::xtensor<double, 2> coor_ =
             {{ 0.,  0.,  0.},
              { 1.,  0.,  0.},
              { 2.,  0.,  0.},

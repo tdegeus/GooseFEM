@@ -30,12 +30,22 @@ inline Regular::Regular(size_t nelx, size_t nely, double h)
     m_nelem = m_nelx * m_nely * 2;
 }
 
-inline ElementType Regular::getElementType() const
+inline ElementType Regular::getElementType_impl() const
 {
     return ElementType::Tri3;
 }
 
-inline xt::xtensor<double, 2> Regular::coor() const
+inline size_t Regular::nelx_impl() const
+{
+    return m_nelx;
+}
+
+inline size_t Regular::nely_impl() const
+{
+    return m_nely;
+}
+
+inline xt::xtensor<double, 2> Regular::coor_impl() const
 {
     xt::xtensor<double, 2> ret = xt::empty<double>({m_nnode, m_ndim});
 
@@ -57,7 +67,7 @@ inline xt::xtensor<double, 2> Regular::coor() const
     return ret;
 }
 
-inline xt::xtensor<size_t, 2> Regular::conn() const
+inline xt::xtensor<size_t, 2> Regular::conn_impl() const
 {
     xt::xtensor<size_t, 2> ret = xt::empty<size_t>({m_nelem, m_nne});
 
@@ -79,7 +89,7 @@ inline xt::xtensor<size_t, 2> Regular::conn() const
     return ret;
 }
 
-inline xt::xtensor<size_t, 1> Regular::nodesBottomEdge() const
+inline xt::xtensor<size_t, 1> Regular::nodesBottomEdge_impl() const
 {
     xt::xtensor<size_t, 1> ret = xt::empty<size_t>({m_nelx + 1});
 
@@ -90,7 +100,7 @@ inline xt::xtensor<size_t, 1> Regular::nodesBottomEdge() const
     return ret;
 }
 
-inline xt::xtensor<size_t, 1> Regular::nodesTopEdge() const
+inline xt::xtensor<size_t, 1> Regular::nodesTopEdge_impl() const
 {
     xt::xtensor<size_t, 1> ret = xt::empty<size_t>({m_nelx + 1});
 
@@ -101,7 +111,7 @@ inline xt::xtensor<size_t, 1> Regular::nodesTopEdge() const
     return ret;
 }
 
-inline xt::xtensor<size_t, 1> Regular::nodesLeftEdge() const
+inline xt::xtensor<size_t, 1> Regular::nodesLeftEdge_impl() const
 {
     xt::xtensor<size_t, 1> ret = xt::empty<size_t>({m_nely + 1});
 
@@ -112,7 +122,7 @@ inline xt::xtensor<size_t, 1> Regular::nodesLeftEdge() const
     return ret;
 }
 
-inline xt::xtensor<size_t, 1> Regular::nodesRightEdge() const
+inline xt::xtensor<size_t, 1> Regular::nodesRightEdge_impl() const
 {
     xt::xtensor<size_t, 1> ret = xt::empty<size_t>({m_nely + 1});
 
@@ -123,7 +133,7 @@ inline xt::xtensor<size_t, 1> Regular::nodesRightEdge() const
     return ret;
 }
 
-inline xt::xtensor<size_t, 1> Regular::nodesBottomOpenEdge() const
+inline xt::xtensor<size_t, 1> Regular::nodesBottomOpenEdge_impl() const
 {
     xt::xtensor<size_t, 1> ret = xt::empty<size_t>({m_nelx - 1});
 
@@ -134,7 +144,7 @@ inline xt::xtensor<size_t, 1> Regular::nodesBottomOpenEdge() const
     return ret;
 }
 
-inline xt::xtensor<size_t, 1> Regular::nodesTopOpenEdge() const
+inline xt::xtensor<size_t, 1> Regular::nodesTopOpenEdge_impl() const
 {
     xt::xtensor<size_t, 1> ret = xt::empty<size_t>({m_nelx - 1});
 
@@ -145,7 +155,7 @@ inline xt::xtensor<size_t, 1> Regular::nodesTopOpenEdge() const
     return ret;
 }
 
-inline xt::xtensor<size_t, 1> Regular::nodesLeftOpenEdge() const
+inline xt::xtensor<size_t, 1> Regular::nodesLeftOpenEdge_impl() const
 {
     xt::xtensor<size_t, 1> ret = xt::empty<size_t>({m_nely - 1});
 
@@ -156,7 +166,7 @@ inline xt::xtensor<size_t, 1> Regular::nodesLeftOpenEdge() const
     return ret;
 }
 
-inline xt::xtensor<size_t, 1> Regular::nodesRightOpenEdge() const
+inline xt::xtensor<size_t, 1> Regular::nodesRightOpenEdge_impl() const
 {
     xt::xtensor<size_t, 1> ret = xt::empty<size_t>({m_nely - 1});
 
@@ -167,22 +177,22 @@ inline xt::xtensor<size_t, 1> Regular::nodesRightOpenEdge() const
     return ret;
 }
 
-inline size_t Regular::nodesBottomLeftCorner() const
+inline size_t Regular::nodesBottomLeftCorner_impl() const
 {
     return 0;
 }
 
-inline size_t Regular::nodesBottomRightCorner() const
+inline size_t Regular::nodesBottomRightCorner_impl() const
 {
     return m_nelx;
 }
 
-inline size_t Regular::nodesTopLeftCorner() const
+inline size_t Regular::nodesTopLeftCorner_impl() const
 {
     return m_nely * (m_nelx + 1);
 }
 
-inline size_t Regular::nodesTopRightCorner() const
+inline size_t Regular::nodesTopRightCorner_impl() const
 {
     return m_nely * (m_nelx + 1) + m_nelx;
 }
