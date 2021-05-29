@@ -104,11 +104,14 @@ public:
     /**
     Reconstruct class for given coordinates / connectivity.
 
+    \tparam C e.g. `xt::xtensor<double, 2>`
+    \tparam E e.g. `xt::xtensor<size_t, 2>`
     \param coor Nodal coordinates ``[nnode, ndim]`` with ``ndim == 2``.
     \param conn Connectivity ``[nne, nne]`` with ``nne == 4``.
     \throw GOOSEFEM_CHECK()
     */
-    FineLayer(const xt::xtensor<double, 2>& coor, const xt::xtensor<size_t, 2>& conn);
+    template <class C, class E, std::enable_if_t<xt::is_xexpression<C>::value, bool> = true>
+    FineLayer(const C& coor, const E& conn);
 
     /**
     Edge size in x-direction of a block, in units of #h, per row of blocks.
@@ -241,9 +244,10 @@ private:
     void init(size_t nelx, size_t nely, double h, size_t nfine = 1);
 
     /**
-    \copydoc FineLayer::FineLayer(const xt::xtensor<double, 2>&, const xt::xtensor<size_t, 2>&)
+    \copydoc FineLayer::FineLayer(const C&, const E&)
     */
-    void map(const xt::xtensor<double, 2>& coor, const xt::xtensor<size_t, 2>& conn);
+    template <class C, class E>
+    void map(const C& coor, const E& conn);
 };
 
 /**
