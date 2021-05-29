@@ -156,7 +156,8 @@ inline FineLayer::FineLayer(size_t nelx, size_t nely, double h, size_t nfine)
     this->init(nelx, nely, h, nfine);
 }
 
-inline FineLayer::FineLayer(const xt::xtensor<double, 2>& coor, const xt::xtensor<size_t, 2>& conn)
+template <class C, class E, std::enable_if_t<xt::is_xexpression<C>::value, bool>>
+inline FineLayer::FineLayer(const C& coor, const E& conn)
 {
     this->map(coor, conn);
 }
@@ -909,8 +910,11 @@ inline xt::xtensor<size_t, 1> FineLayer::roll(size_t n)
     return ret;
 }
 
-inline void FineLayer::map(const xt::xtensor<double, 2>& coor, const xt::xtensor<size_t, 2>& conn)
+template <class C, class E>
+inline void FineLayer::map(const C& coor, const E& conn)
 {
+    GOOSEFEM_ASSERT(coor.dimension() == 2);
+    GOOSEFEM_ASSERT(conn.dimension() == 2);
     GOOSEFEM_ASSERT(coor.shape(1) == 2);
     GOOSEFEM_ASSERT(conn.shape(1) == 4);
     GOOSEFEM_ASSERT(conn.shape(0) > 0);
