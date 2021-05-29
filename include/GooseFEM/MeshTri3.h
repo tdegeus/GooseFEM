@@ -23,7 +23,7 @@ namespace Tri3 {
 /**
 Regular grid of squares, with each square cut into two triangular elements.
 */
-class Regular : public RegularBase2d {
+class Regular : public RegularBase2d<Regular> {
 public:
 
     /**
@@ -33,23 +33,37 @@ public:
     \param nely Number of elements in y-direction.
     \param h Edge-size (of the squares, and thus of two of three element-edges).
     */
-    Regular(size_t nelx, size_t nely, double h = 1.);
+    Regular(size_t nelx, size_t nely, double h = 1.0);
 
-    ElementType getElementType() const override;
-    xt::xtensor<double, 2> coor() const override;
-    xt::xtensor<size_t, 2> conn() const override;
-    xt::xtensor<size_t, 1> nodesBottomEdge() const override;
-    xt::xtensor<size_t, 1> nodesTopEdge() const override;
-    xt::xtensor<size_t, 1> nodesLeftEdge() const override;
-    xt::xtensor<size_t, 1> nodesRightEdge() const override;
-    xt::xtensor<size_t, 1> nodesBottomOpenEdge() const override;
-    xt::xtensor<size_t, 1> nodesTopOpenEdge() const override;
-    xt::xtensor<size_t, 1> nodesLeftOpenEdge() const override;
-    xt::xtensor<size_t, 1> nodesRightOpenEdge() const override;
-    size_t nodesBottomLeftCorner() const override;
-    size_t nodesBottomRightCorner() const override;
-    size_t nodesTopLeftCorner() const override;
-    size_t nodesTopRightCorner() const override;
+private:
+    friend class RegularBase<Regular>;
+    friend class RegularBase2d<Regular>;
+
+    size_t nelx_impl() const;
+    size_t nely_impl() const;
+    ElementType getElementType_impl() const;
+    xt::xtensor<double, 2> coor_impl() const;
+    xt::xtensor<size_t, 2> conn_impl() const;
+    xt::xtensor<size_t, 1> nodesBottomEdge_impl() const;
+    xt::xtensor<size_t, 1> nodesTopEdge_impl() const;
+    xt::xtensor<size_t, 1> nodesLeftEdge_impl() const;
+    xt::xtensor<size_t, 1> nodesRightEdge_impl() const;
+    xt::xtensor<size_t, 1> nodesBottomOpenEdge_impl() const;
+    xt::xtensor<size_t, 1> nodesTopOpenEdge_impl() const;
+    xt::xtensor<size_t, 1> nodesLeftOpenEdge_impl() const;
+    xt::xtensor<size_t, 1> nodesRightOpenEdge_impl() const;
+    size_t nodesBottomLeftCorner_impl() const;
+    size_t nodesBottomRightCorner_impl() const;
+    size_t nodesTopLeftCorner_impl() const;
+    size_t nodesTopRightCorner_impl() const;
+
+    double m_h;     ///< See h()
+    size_t m_nelx;  ///< See nelx()
+    size_t m_nely;  ///< See nely()
+    size_t m_nelem; ///< See nelem()
+    size_t m_nnode; ///< See nnode()
+    size_t m_nne;   ///< See nne()
+    size_t m_ndim;  ///< See ndim()
 };
 
 // read / set the orientation (-1/+1) of all triangles

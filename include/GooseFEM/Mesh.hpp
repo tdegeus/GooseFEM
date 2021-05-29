@@ -33,78 +33,225 @@ inline ElementType defaultElementType(const S& coor, const T& conn)
     throw std::runtime_error("Element-type not implemented");
 }
 
-inline size_t RegularBase2d::nelem() const
+template <class D>
+inline auto RegularBase<D>::nelem() const
 {
-    return m_nelem;
+    return derived_cast().m_nelem;
 }
 
-inline size_t RegularBase2d::nnode() const
+template <class D>
+inline auto RegularBase<D>::nnode() const
 {
-    return m_nnode;
+    return derived_cast().m_nnode;
 }
 
-inline size_t RegularBase2d::nne() const
+template <class D>
+inline auto RegularBase<D>::nne() const
 {
-    return m_nne;
+    return derived_cast().m_nne;
 }
 
-inline size_t RegularBase2d::ndim() const
+template <class D>
+inline auto RegularBase<D>::ndim() const
 {
-    return m_ndim;
+    return derived_cast().m_ndim;
 }
 
-inline size_t RegularBase2d::nelx() const
+template <class D>
+inline auto RegularBase<D>::nelx() const
 {
-    return m_nelx;
+    return derived_cast().nelx_impl();
 }
 
-inline size_t RegularBase2d::nely() const
+template <class D>
+inline auto RegularBase<D>::nely() const
 {
-    return m_nely;
+    return derived_cast().nely_impl();
 }
 
-inline double RegularBase2d::h() const
+template <class D>
+inline auto RegularBase<D>::h() const
 {
-    return m_h;
+    return derived_cast().m_h;
 }
 
-inline size_t RegularBase2d::nodesLeftBottomCorner() const
+template <class D>
+inline auto RegularBase<D>::getElementType() const
 {
-    return this->nodesBottomLeftCorner();
+    return derived_cast().getElementType_impl();
 }
 
-inline size_t RegularBase2d::nodesLeftTopCorner() const
+template <class D>
+inline auto RegularBase<D>::coor() const
 {
-    return this->nodesTopLeftCorner();
+    return derived_cast().coor_impl();
 }
 
-inline size_t RegularBase2d::nodesRightBottomCorner() const
+template <class D>
+inline auto RegularBase<D>::conn() const
 {
-    return this->nodesBottomRightCorner();
+    return derived_cast().conn_impl();
 }
 
-inline size_t RegularBase2d::nodesRightTopCorner() const
+template <class D>
+inline auto RegularBase<D>::dofs() const
 {
-    return this->nodesTopRightCorner();
+    return GooseFEM::Mesh::dofs(this->nnode(), this->ndim());
 }
 
-inline xt::xtensor<size_t, 2> RegularBase2d::nodesPeriodic() const
+template <class D>
+inline auto RegularBase<D>::dofsPeriodic() const
 {
-    xt::xtensor<size_t, 1> bot = nodesBottomOpenEdge();
-    xt::xtensor<size_t, 1> top = nodesTopOpenEdge();
-    xt::xtensor<size_t, 1> lft = nodesLeftOpenEdge();
-    xt::xtensor<size_t, 1> rgt = nodesRightOpenEdge();
+    xt::xtensor<size_t, 2> ret = this->dofs();
+    xt::xtensor<size_t, 2> nodePer = this->nodesPeriodic();
+    xt::xtensor<size_t, 1> independent = xt::view(nodePer, xt::all(), 0);
+    xt::xtensor<size_t, 1> dependent = xt::view(nodePer, xt::all(), 1);
+
+    for (size_t j = 0; j < this->ndim(); ++j) {
+        xt::view(ret, xt::keep(dependent), j) = xt::view(ret, xt::keep(independent), j);
+    }
+
+    return GooseFEM::Mesh::renumber(ret);
+}
+
+template <class D>
+inline auto RegularBase<D>::derived_cast() -> derived_type&
+{
+    return *static_cast<derived_type*>(this);
+}
+
+template <class D>
+inline auto RegularBase<D>::derived_cast() const -> const derived_type&
+{
+    return *static_cast<const derived_type*>(this);
+}
+
+template <class D>
+inline auto RegularBase<D>::nodesPeriodic() const
+{
+    return derived_cast().nodesPeriodic_impl();
+}
+
+template <class D>
+inline auto RegularBase<D>::nodesOrigin() const
+{
+    return derived_cast().nodesOrigin_impl();
+}
+
+template <class D>
+inline auto RegularBase2d<D>::nodesBottomEdge() const
+{
+    return derived_cast().nodesBottomEdge_impl();
+}
+
+template <class D>
+inline auto RegularBase2d<D>::nodesTopEdge() const
+{
+    return derived_cast().nodesTopEdge_impl();
+}
+
+template <class D>
+inline auto RegularBase2d<D>::nodesLeftEdge() const
+{
+    return derived_cast().nodesLeftEdge_impl();
+}
+
+template <class D>
+inline auto RegularBase2d<D>::nodesRightEdge() const
+{
+    return derived_cast().nodesRightEdge_impl();
+}
+
+template <class D>
+inline auto RegularBase2d<D>::nodesBottomOpenEdge() const
+{
+    return derived_cast().nodesBottomOpenEdge_impl();
+}
+
+template <class D>
+inline auto RegularBase2d<D>::nodesTopOpenEdge() const
+{
+    return derived_cast().nodesTopOpenEdge_impl();
+}
+
+template <class D>
+inline auto RegularBase2d<D>::nodesLeftOpenEdge() const
+{
+    return derived_cast().nodesLeftOpenEdge_impl();
+}
+
+template <class D>
+inline auto RegularBase2d<D>::nodesRightOpenEdge() const
+{
+    return derived_cast().nodesRightOpenEdge_impl();
+}
+
+template <class D>
+inline auto RegularBase2d<D>::nodesBottomLeftCorner() const
+{
+    return derived_cast().nodesBottomLeftCorner_impl();
+}
+
+template <class D>
+inline auto RegularBase2d<D>::nodesTopLeftCorner() const
+{
+    return derived_cast().nodesTopLeftCorner_impl();
+}
+
+template <class D>
+inline auto RegularBase2d<D>::nodesBottomRightCorner() const
+{
+    return derived_cast().nodesBottomRightCorner_impl();
+}
+
+template <class D>
+inline auto RegularBase2d<D>::nodesTopRightCorner() const
+{
+    return derived_cast().nodesTopRightCorner_impl();
+}
+
+template <class D>
+inline auto RegularBase2d<D>::nodesLeftBottomCorner() const
+{
+    return derived_cast().nodesBottomLeftCorner_impl();
+}
+
+template <class D>
+inline auto RegularBase2d<D>::nodesLeftTopCorner() const
+{
+    return derived_cast().nodesTopLeftCorner_impl();
+}
+
+template <class D>
+inline auto RegularBase2d<D>::nodesRightBottomCorner() const
+{
+    return derived_cast().nodesBottomRightCorner_impl();
+}
+
+template <class D>
+inline auto RegularBase2d<D>::nodesRightTopCorner() const
+{
+    return derived_cast().nodesTopRightCorner_impl();
+}
+
+template <class D>
+inline xt::xtensor<size_t, 2> RegularBase2d<D>::nodesPeriodic_impl() const
+{
+    xt::xtensor<size_t, 1> bot = derived_cast().nodesBottomOpenEdge_impl();
+    xt::xtensor<size_t, 1> top = derived_cast().nodesTopOpenEdge_impl();
+    xt::xtensor<size_t, 1> lft = derived_cast().nodesLeftOpenEdge_impl();
+    xt::xtensor<size_t, 1> rgt = derived_cast().nodesRightOpenEdge_impl();
     std::array<size_t, 2> shape = {bot.size() + lft.size() + size_t(3), size_t(2)};
-    xt::xtensor<size_t, 2> ret = xt::empty<size_t>(shape);
+    auto ret = xt::xtensor<size_t, 2>::from_shape(shape);
 
-    ret(0, 0) = nodesBottomLeftCorner();
-    ret(0, 1) = nodesBottomRightCorner();
+    ret(0, 0) = derived_cast().nodesBottomLeftCorner_impl();
+    ret(0, 1) = derived_cast().nodesBottomRightCorner_impl();
 
-    ret(1, 0) = nodesBottomLeftCorner();
-    ret(1, 1) = nodesTopRightCorner();
+    ret(1, 0) = derived_cast().nodesBottomLeftCorner_impl();
+    ret(1, 1) = derived_cast().nodesTopRightCorner_impl();
 
-    ret(2, 0) = nodesBottomLeftCorner();
-    ret(2, 1) = nodesTopLeftCorner();
+    ret(2, 0) = derived_cast().nodesBottomLeftCorner_impl();
+    ret(2, 1) = derived_cast().nodesTopLeftCorner_impl();
 
     size_t i = 3;
 
@@ -119,389 +266,700 @@ inline xt::xtensor<size_t, 2> RegularBase2d::nodesPeriodic() const
     return ret;
 }
 
-inline size_t RegularBase2d::nodesOrigin() const
+template <class D>
+inline auto RegularBase2d<D>::nodesOrigin_impl() const
 {
-    return nodesBottomLeftCorner();
+    return derived_cast().nodesBottomLeftCorner_impl();
 }
 
-inline xt::xtensor<size_t, 2> RegularBase2d::dofs() const
+template <class D>
+inline auto RegularBase2d<D>::derived_cast() -> derived_type&
 {
-    return GooseFEM::Mesh::dofs(this->nnode(), this->ndim());
+    return *static_cast<derived_type*>(this);
 }
 
-inline xt::xtensor<size_t, 2> RegularBase2d::dofsPeriodic() const
+template <class D>
+inline auto RegularBase2d<D>::derived_cast() const -> const derived_type&
 {
-    xt::xtensor<size_t, 2> ret = this->dofs();
-    xt::xtensor<size_t, 2> nodePer = this->nodesPeriodic();
-    xt::xtensor<size_t, 1> independent = xt::view(nodePer, xt::all(), 0);
-    xt::xtensor<size_t, 1> dependent = xt::view(nodePer, xt::all(), 1);
-
-    for (size_t j = 0; j < this->ndim(); ++j) {
-        xt::view(ret, xt::keep(dependent), j) = xt::view(ret, xt::keep(independent), j);
-    }
-
-    return GooseFEM::Mesh::renumber(ret);
+    return *static_cast<const derived_type*>(this);
 }
 
-inline size_t RegularBase3d::nelem() const
+template <class D>
+inline auto RegularBase3d<D>::nelz() const
 {
-    return m_nelem;
+    return derived_cast().nelz_impl();
 }
 
-inline size_t RegularBase3d::nnode() const
+template <class D>
+inline auto RegularBase3d<D>::nodesBottom() const
 {
-    return m_nnode;
+    return derived_cast().nodesBottom_impl();
 }
 
-inline size_t RegularBase3d::nne() const
+template <class D>
+inline auto RegularBase3d<D>::nodesTop() const
 {
-    return m_nne;
+    return derived_cast().nodesTop_impl();
 }
 
-inline size_t RegularBase3d::ndim() const
+template <class D>
+inline auto RegularBase3d<D>::nodesLeft() const
 {
-    return m_ndim;
+    return derived_cast().nodesLeft_impl();
 }
 
-inline size_t RegularBase3d::nelx() const
+template <class D>
+inline auto RegularBase3d<D>::nodesRight() const
 {
-    return m_nelx;
+    return derived_cast().nodesRight_impl();
 }
 
-inline size_t RegularBase3d::nely() const
+template <class D>
+inline auto RegularBase3d<D>::nodesFront() const
 {
-    return m_nely;
+    return derived_cast().nodesFront_impl();
 }
 
-inline size_t RegularBase3d::nelz() const
+template <class D>
+inline auto RegularBase3d<D>::nodesBack() const
 {
-    return m_nelz;
+    return derived_cast().nodesBack_impl();
 }
 
-inline double RegularBase3d::h() const
+template <class D>
+inline auto RegularBase3d<D>::nodesFrontBottomEdge() const
 {
-    return m_h;
+    return derived_cast().nodesFrontBottomEdge_impl();
 }
 
-inline xt::xtensor<size_t, 1> RegularBase3d::nodesBottomFrontEdge() const
+template <class D>
+inline auto RegularBase3d<D>::nodesFrontTopEdge() const
 {
-    return this->nodesFrontBottomEdge();
-}
-inline xt::xtensor<size_t, 1> RegularBase3d::nodesBottomBackEdge() const
-{
-    return this->nodesBackBottomEdge();
-}
-inline xt::xtensor<size_t, 1> RegularBase3d::nodesTopFrontEdge() const
-{
-    return this->nodesFrontTopEdge();
-}
-inline xt::xtensor<size_t, 1> RegularBase3d::nodesTopBackEdge() const
-{
-    return this->nodesBackTopEdge();
-}
-inline xt::xtensor<size_t, 1> RegularBase3d::nodesLeftBottomEdge() const
-{
-    return this->nodesBottomLeftEdge();
-}
-inline xt::xtensor<size_t, 1> RegularBase3d::nodesLeftFrontEdge() const
-{
-    return this->nodesFrontLeftEdge();
-}
-inline xt::xtensor<size_t, 1> RegularBase3d::nodesLeftBackEdge() const
-{
-    return this->nodesBackLeftEdge();
-}
-inline xt::xtensor<size_t, 1> RegularBase3d::nodesLeftTopEdge() const
-{
-    return this->nodesTopLeftEdge();
-}
-inline xt::xtensor<size_t, 1> RegularBase3d::nodesRightBottomEdge() const
-{
-    return this->nodesBottomRightEdge();
-}
-inline xt::xtensor<size_t, 1> RegularBase3d::nodesRightTopEdge() const
-{
-    return this->nodesTopRightEdge();
-}
-inline xt::xtensor<size_t, 1> RegularBase3d::nodesRightFrontEdge() const
-{
-    return this->nodesFrontRightEdge();
-}
-inline xt::xtensor<size_t, 1> RegularBase3d::nodesRightBackEdge() const
-{
-    return this->nodesBackRightEdge();
+    return derived_cast().nodesFrontTopEdge_impl();
 }
 
-inline xt::xtensor<size_t, 1> RegularBase3d::nodesBottomFrontOpenEdge() const
+template <class D>
+inline auto RegularBase3d<D>::nodesFrontLeftEdge() const
 {
-    return this->nodesFrontBottomOpenEdge();
-}
-inline xt::xtensor<size_t, 1> RegularBase3d::nodesBottomBackOpenEdge() const
-{
-    return this->nodesBackBottomOpenEdge();
-}
-inline xt::xtensor<size_t, 1> RegularBase3d::nodesTopFrontOpenEdge() const
-{
-    return this->nodesFrontTopOpenEdge();
-}
-inline xt::xtensor<size_t, 1> RegularBase3d::nodesTopBackOpenEdge() const
-{
-    return this->nodesBackTopOpenEdge();
-}
-inline xt::xtensor<size_t, 1> RegularBase3d::nodesLeftBottomOpenEdge() const
-{
-    return this->nodesBottomLeftOpenEdge();
-}
-inline xt::xtensor<size_t, 1> RegularBase3d::nodesLeftFrontOpenEdge() const
-{
-    return this->nodesFrontLeftOpenEdge();
-}
-inline xt::xtensor<size_t, 1> RegularBase3d::nodesLeftBackOpenEdge() const
-{
-    return this->nodesBackLeftOpenEdge();
-}
-inline xt::xtensor<size_t, 1> RegularBase3d::nodesLeftTopOpenEdge() const
-{
-    return this->nodesTopLeftOpenEdge();
-}
-inline xt::xtensor<size_t, 1> RegularBase3d::nodesRightBottomOpenEdge() const
-{
-    return this->nodesBottomRightOpenEdge();
-}
-inline xt::xtensor<size_t, 1> RegularBase3d::nodesRightTopOpenEdge() const
-{
-    return this->nodesTopRightOpenEdge();
-}
-inline xt::xtensor<size_t, 1> RegularBase3d::nodesRightFrontOpenEdge() const
-{
-    return this->nodesFrontRightOpenEdge();
-}
-inline xt::xtensor<size_t, 1> RegularBase3d::nodesRightBackOpenEdge() const
-{
-    return this->nodesBackRightOpenEdge();
+    return derived_cast().nodesFrontLeftEdge_impl();
 }
 
-inline size_t RegularBase3d::nodesFrontLeftBottomCorner() const
+template <class D>
+inline auto RegularBase3d<D>::nodesFrontRightEdge() const
 {
-    return this->nodesFrontBottomLeftCorner();
+    return derived_cast().nodesFrontRightEdge_impl();
 }
 
-inline size_t RegularBase3d::nodesBottomFrontLeftCorner() const
+template <class D>
+inline auto RegularBase3d<D>::nodesBackBottomEdge() const
 {
-    return this->nodesFrontBottomLeftCorner();
+    return derived_cast().nodesBackBottomEdge_impl();
 }
 
-inline size_t RegularBase3d::nodesBottomLeftFrontCorner() const
+template <class D>
+inline auto RegularBase3d<D>::nodesBackTopEdge() const
 {
-    return this->nodesFrontBottomLeftCorner();
+    return derived_cast().nodesBackTopEdge_impl();
 }
 
-inline size_t RegularBase3d::nodesLeftFrontBottomCorner() const
+template <class D>
+inline auto RegularBase3d<D>::nodesBackLeftEdge() const
 {
-    return this->nodesFrontBottomLeftCorner();
+    return derived_cast().nodesBackLeftEdge_impl();
 }
 
-inline size_t RegularBase3d::nodesLeftBottomFrontCorner() const
+template <class D>
+inline auto RegularBase3d<D>::nodesBackRightEdge() const
 {
-    return this->nodesFrontBottomLeftCorner();
+    return derived_cast().nodesBackRightEdge_impl();
 }
 
-inline size_t RegularBase3d::nodesFrontRightBottomCorner() const
+template <class D>
+inline auto RegularBase3d<D>::nodesBottomLeftEdge() const
 {
-    return this->nodesFrontBottomRightCorner();
+    return derived_cast().nodesBottomLeftEdge_impl();
 }
 
-inline size_t RegularBase3d::nodesBottomFrontRightCorner() const
+template <class D>
+inline auto RegularBase3d<D>::nodesBottomRightEdge() const
 {
-    return this->nodesFrontBottomRightCorner();
+    return derived_cast().nodesBottomRightEdge_impl();
 }
 
-inline size_t RegularBase3d::nodesBottomRightFrontCorner() const
+template <class D>
+inline auto RegularBase3d<D>::nodesTopLeftEdge() const
 {
-    return this->nodesFrontBottomRightCorner();
+    return derived_cast().nodesTopLeftEdge_impl();
 }
 
-inline size_t RegularBase3d::nodesRightFrontBottomCorner() const
+template <class D>
+inline auto RegularBase3d<D>::nodesTopRightEdge() const
 {
-    return this->nodesFrontBottomRightCorner();
+    return derived_cast().nodesTopRightEdge_impl();
 }
 
-inline size_t RegularBase3d::nodesRightBottomFrontCorner() const
+template <class D>
+inline auto RegularBase3d<D>::nodesBottomFrontEdge() const
 {
-    return this->nodesFrontBottomRightCorner();
+    return derived_cast().nodesFrontBottomEdge_impl();
 }
 
-inline size_t RegularBase3d::nodesFrontLeftTopCorner() const
+template <class D>
+inline auto RegularBase3d<D>::nodesBottomBackEdge() const
 {
-    return this->nodesFrontTopLeftCorner();
+    return derived_cast().nodesBackBottomEdge_impl();
 }
 
-inline size_t RegularBase3d::nodesTopFrontLeftCorner() const
+template <class D>
+inline auto RegularBase3d<D>::nodesTopFrontEdge() const
 {
-    return this->nodesFrontTopLeftCorner();
+    return derived_cast().nodesFrontTopEdge_impl();
 }
 
-inline size_t RegularBase3d::nodesTopLeftFrontCorner() const
+template <class D>
+inline auto RegularBase3d<D>::nodesTopBackEdge() const
 {
-    return this->nodesFrontTopLeftCorner();
+    return derived_cast().nodesBackTopEdge_impl();
 }
 
-inline size_t RegularBase3d::nodesLeftFrontTopCorner() const
+template <class D>
+inline auto RegularBase3d<D>::nodesLeftBottomEdge() const
 {
-    return this->nodesFrontTopLeftCorner();
+    return derived_cast().nodesBottomLeftEdge_impl();
 }
 
-inline size_t RegularBase3d::nodesLeftTopFrontCorner() const
+template <class D>
+inline auto RegularBase3d<D>::nodesLeftFrontEdge() const
 {
-    return this->nodesFrontTopLeftCorner();
+    return derived_cast().nodesFrontLeftEdge_impl();
 }
 
-inline size_t RegularBase3d::nodesFrontRightTopCorner() const
+template <class D>
+inline auto RegularBase3d<D>::nodesLeftBackEdge() const
 {
-    return this->nodesFrontTopRightCorner();
+    return derived_cast().nodesBackLeftEdge_impl();
 }
 
-inline size_t RegularBase3d::nodesTopFrontRightCorner() const
+template <class D>
+inline auto RegularBase3d<D>::nodesLeftTopEdge() const
 {
-    return this->nodesFrontTopRightCorner();
+    return derived_cast().nodesTopLeftEdge_impl();
 }
 
-inline size_t RegularBase3d::nodesTopRightFrontCorner() const
+template <class D>
+inline auto RegularBase3d<D>::nodesRightBottomEdge() const
 {
-    return this->nodesFrontTopRightCorner();
+    return derived_cast().nodesBottomRightEdge_impl();
 }
 
-inline size_t RegularBase3d::nodesRightFrontTopCorner() const
+template <class D>
+inline auto RegularBase3d<D>::nodesRightTopEdge() const
 {
-    return this->nodesFrontTopRightCorner();
+    return derived_cast().nodesTopRightEdge_impl();
 }
 
-inline size_t RegularBase3d::nodesRightTopFrontCorner() const
+template <class D>
+inline auto RegularBase3d<D>::nodesRightFrontEdge() const
 {
-    return this->nodesFrontTopRightCorner();
+    return derived_cast().nodesFrontRightEdge_impl();
 }
 
-inline size_t RegularBase3d::nodesBackLeftBottomCorner() const
+template <class D>
+inline auto RegularBase3d<D>::nodesRightBackEdge() const
 {
-    return this->nodesBackBottomLeftCorner();
+    return derived_cast().nodesBackRightEdge_impl();
 }
 
-inline size_t RegularBase3d::nodesBottomBackLeftCorner() const
+template <class D>
+inline auto RegularBase3d<D>::nodesFrontFace() const
 {
-    return this->nodesBackBottomLeftCorner();
+    return derived_cast().nodesFrontFace_impl();
 }
 
-inline size_t RegularBase3d::nodesBottomLeftBackCorner() const
+template <class D>
+inline auto RegularBase3d<D>::nodesBackFace() const
 {
-    return this->nodesBackBottomLeftCorner();
+    return derived_cast().nodesBackFace_impl();
 }
 
-inline size_t RegularBase3d::nodesLeftBackBottomCorner() const
+template <class D>
+inline auto RegularBase3d<D>::nodesLeftFace() const
 {
-    return this->nodesBackBottomLeftCorner();
+    return derived_cast().nodesLeftFace_impl();
 }
 
-inline size_t RegularBase3d::nodesLeftBottomBackCorner() const
+template <class D>
+inline auto RegularBase3d<D>::nodesRightFace() const
 {
-    return this->nodesBackBottomLeftCorner();
+    return derived_cast().nodesRightFace_impl();
 }
 
-inline size_t RegularBase3d::nodesBackRightBottomCorner() const
+template <class D>
+inline auto RegularBase3d<D>::nodesBottomFace() const
 {
-    return this->nodesBackBottomRightCorner();
+    return derived_cast().nodesBottomFace_impl();
 }
 
-inline size_t RegularBase3d::nodesBottomBackRightCorner() const
+template <class D>
+inline auto RegularBase3d<D>::nodesTopFace() const
 {
-    return this->nodesBackBottomRightCorner();
+    return derived_cast().nodesTopFace_impl();
 }
 
-inline size_t RegularBase3d::nodesBottomRightBackCorner() const
+template <class D>
+inline auto RegularBase3d<D>::nodesFrontBottomOpenEdge() const
 {
-    return this->nodesBackBottomRightCorner();
+    return derived_cast().nodesFrontBottomOpenEdge_impl();
 }
 
-inline size_t RegularBase3d::nodesRightBackBottomCorner() const
+template <class D>
+inline auto RegularBase3d<D>::nodesFrontTopOpenEdge() const
 {
-    return this->nodesBackBottomRightCorner();
+    return derived_cast().nodesFrontTopOpenEdge_impl();
 }
 
-inline size_t RegularBase3d::nodesRightBottomBackCorner() const
+template <class D>
+inline auto RegularBase3d<D>::nodesFrontLeftOpenEdge() const
 {
-    return this->nodesBackBottomRightCorner();
+    return derived_cast().nodesFrontLeftOpenEdge_impl();
 }
 
-inline size_t RegularBase3d::nodesBackLeftTopCorner() const
+template <class D>
+inline auto RegularBase3d<D>::nodesFrontRightOpenEdge() const
 {
-    return this->nodesBackTopLeftCorner();
+    return derived_cast().nodesFrontRightOpenEdge_impl();
 }
 
-inline size_t RegularBase3d::nodesTopBackLeftCorner() const
+template <class D>
+inline auto RegularBase3d<D>::nodesBackBottomOpenEdge() const
 {
-    return this->nodesBackTopLeftCorner();
+    return derived_cast().nodesBackBottomOpenEdge_impl();
 }
 
-inline size_t RegularBase3d::nodesTopLeftBackCorner() const
+template <class D>
+inline auto RegularBase3d<D>::nodesBackTopOpenEdge() const
 {
-    return this->nodesBackTopLeftCorner();
+    return derived_cast().nodesBackTopOpenEdge_impl();
 }
 
-inline size_t RegularBase3d::nodesLeftBackTopCorner() const
+template <class D>
+inline auto RegularBase3d<D>::nodesBackLeftOpenEdge() const
 {
-    return this->nodesBackTopLeftCorner();
+    return derived_cast().nodesBackLeftOpenEdge_impl();
 }
 
-inline size_t RegularBase3d::nodesLeftTopBackCorner() const
+template <class D>
+inline auto RegularBase3d<D>::nodesBackRightOpenEdge() const
 {
-    return this->nodesBackTopLeftCorner();
+    return derived_cast().nodesBackRightOpenEdge_impl();
 }
 
-inline size_t RegularBase3d::nodesBackRightTopCorner() const
+template <class D>
+inline auto RegularBase3d<D>::nodesBottomLeftOpenEdge() const
 {
-    return this->nodesBackTopRightCorner();
+    return derived_cast().nodesBottomLeftOpenEdge_impl();
 }
 
-inline size_t RegularBase3d::nodesTopBackRightCorner() const
+template <class D>
+inline auto RegularBase3d<D>::nodesBottomRightOpenEdge() const
 {
-    return this->nodesBackTopRightCorner();
+    return derived_cast().nodesBottomRightOpenEdge_impl();
 }
 
-inline size_t RegularBase3d::nodesTopRightBackCorner() const
+template <class D>
+inline auto RegularBase3d<D>::nodesTopLeftOpenEdge() const
 {
-    return this->nodesBackTopRightCorner();
+    return derived_cast().nodesTopLeftOpenEdge_impl();
 }
 
-inline size_t RegularBase3d::nodesRightBackTopCorner() const
+template <class D>
+inline auto RegularBase3d<D>::nodesTopRightOpenEdge() const
 {
-    return this->nodesBackTopRightCorner();
+    return derived_cast().nodesTopRightOpenEdge_impl();
 }
 
-inline size_t RegularBase3d::nodesRightTopBackCorner() const
+template <class D>
+inline auto RegularBase3d<D>::nodesBottomFrontOpenEdge() const
 {
-    return this->nodesBackTopRightCorner();
+    return derived_cast().nodesFrontBottomOpenEdge_impl();
 }
 
-inline xt::xtensor<size_t, 2> RegularBase3d::nodesPeriodic() const
+template <class D>
+inline auto RegularBase3d<D>::nodesBottomBackOpenEdge() const
 {
-    xt::xtensor<size_t, 1> fro = nodesFrontFace();
-    xt::xtensor<size_t, 1> bck = nodesBackFace();
-    xt::xtensor<size_t, 1> lft = nodesLeftFace();
-    xt::xtensor<size_t, 1> rgt = nodesRightFace();
-    xt::xtensor<size_t, 1> bot = nodesBottomFace();
-    xt::xtensor<size_t, 1> top = nodesTopFace();
+    return derived_cast().nodesBackBottomOpenEdge_impl();
+}
 
-    xt::xtensor<size_t, 1> froBot = nodesFrontBottomOpenEdge();
-    xt::xtensor<size_t, 1> froTop = nodesFrontTopOpenEdge();
-    xt::xtensor<size_t, 1> froLft = nodesFrontLeftOpenEdge();
-    xt::xtensor<size_t, 1> froRgt = nodesFrontRightOpenEdge();
-    xt::xtensor<size_t, 1> bckBot = nodesBackBottomOpenEdge();
-    xt::xtensor<size_t, 1> bckTop = nodesBackTopOpenEdge();
-    xt::xtensor<size_t, 1> bckLft = nodesBackLeftOpenEdge();
-    xt::xtensor<size_t, 1> bckRgt = nodesBackRightOpenEdge();
-    xt::xtensor<size_t, 1> botLft = nodesBottomLeftOpenEdge();
-    xt::xtensor<size_t, 1> botRgt = nodesBottomRightOpenEdge();
-    xt::xtensor<size_t, 1> topLft = nodesTopLeftOpenEdge();
-    xt::xtensor<size_t, 1> topRgt = nodesTopRightOpenEdge();
+template <class D>
+inline auto RegularBase3d<D>::nodesTopFrontOpenEdge() const
+{
+    return derived_cast().nodesFrontTopOpenEdge_impl();
+}
+
+template <class D>
+inline auto RegularBase3d<D>::nodesTopBackOpenEdge() const
+{
+    return derived_cast().nodesBackTopOpenEdge_impl();
+}
+
+template <class D>
+inline auto RegularBase3d<D>::nodesLeftBottomOpenEdge() const
+{
+    return derived_cast().nodesBottomLeftOpenEdge_impl();
+}
+
+template <class D>
+inline auto RegularBase3d<D>::nodesLeftFrontOpenEdge() const
+{
+    return derived_cast().nodesFrontLeftOpenEdge_impl();
+}
+
+template <class D>
+inline auto RegularBase3d<D>::nodesLeftBackOpenEdge() const
+{
+    return derived_cast().nodesBackLeftOpenEdge_impl();
+}
+
+template <class D>
+inline auto RegularBase3d<D>::nodesLeftTopOpenEdge() const
+{
+    return derived_cast().nodesTopLeftOpenEdge_impl();
+}
+
+template <class D>
+inline auto RegularBase3d<D>::nodesRightBottomOpenEdge() const
+{
+    return derived_cast().nodesBottomRightOpenEdge_impl();
+}
+
+template <class D>
+inline auto RegularBase3d<D>::nodesRightTopOpenEdge() const
+{
+    return derived_cast().nodesTopRightOpenEdge_impl();
+}
+
+template <class D>
+inline auto RegularBase3d<D>::nodesRightFrontOpenEdge() const
+{
+    return derived_cast().nodesFrontRightOpenEdge_impl();
+}
+
+template <class D>
+inline auto RegularBase3d<D>::nodesRightBackOpenEdge() const
+{
+    return derived_cast().nodesBackRightOpenEdge_impl();
+}
+
+template <class D>
+inline auto RegularBase3d<D>::nodesFrontBottomLeftCorner() const
+{
+    return derived_cast().nodesFrontBottomLeftCorner_impl();
+}
+
+template <class D>
+inline auto RegularBase3d<D>::nodesFrontBottomRightCorner() const
+{
+    return derived_cast().nodesFrontBottomRightCorner_impl();
+}
+
+template <class D>
+inline auto RegularBase3d<D>::nodesFrontTopLeftCorner() const
+{
+    return derived_cast().nodesFrontTopLeftCorner_impl();
+}
+
+template <class D>
+inline auto RegularBase3d<D>::nodesFrontTopRightCorner() const
+{
+    return derived_cast().nodesFrontTopRightCorner_impl();
+}
+
+template <class D>
+inline auto RegularBase3d<D>::nodesBackBottomLeftCorner() const
+{
+    return derived_cast().nodesBackBottomLeftCorner_impl();
+}
+
+template <class D>
+inline auto RegularBase3d<D>::nodesBackBottomRightCorner() const
+{
+    return derived_cast().nodesBackBottomRightCorner_impl();
+}
+
+template <class D>
+inline auto RegularBase3d<D>::nodesBackTopLeftCorner() const
+{
+    return derived_cast().nodesBackTopLeftCorner_impl();
+}
+
+template <class D>
+inline auto RegularBase3d<D>::nodesBackTopRightCorner() const
+{
+    return derived_cast().nodesBackTopRightCorner_impl();
+}
+
+template <class D>
+inline auto RegularBase3d<D>::nodesFrontLeftBottomCorner() const
+{
+    return derived_cast().nodesFrontBottomLeftCorner_impl();
+}
+
+template <class D>
+inline auto RegularBase3d<D>::nodesBottomFrontLeftCorner() const
+{
+    return derived_cast().nodesFrontBottomLeftCorner_impl();
+}
+
+template <class D>
+inline auto RegularBase3d<D>::nodesBottomLeftFrontCorner() const
+{
+    return derived_cast().nodesFrontBottomLeftCorner_impl();
+}
+
+template <class D>
+inline auto RegularBase3d<D>::nodesLeftFrontBottomCorner() const
+{
+    return derived_cast().nodesFrontBottomLeftCorner_impl();
+}
+
+template <class D>
+inline auto RegularBase3d<D>::nodesLeftBottomFrontCorner() const
+{
+    return derived_cast().nodesFrontBottomLeftCorner_impl();
+}
+
+template <class D>
+inline auto RegularBase3d<D>::nodesFrontRightBottomCorner() const
+{
+    return derived_cast().nodesFrontBottomRightCorner_impl();
+}
+
+template <class D>
+inline auto RegularBase3d<D>::nodesBottomFrontRightCorner() const
+{
+    return derived_cast().nodesFrontBottomRightCorner_impl();
+}
+
+template <class D>
+inline auto RegularBase3d<D>::nodesBottomRightFrontCorner() const
+{
+    return derived_cast().nodesFrontBottomRightCorner_impl();
+}
+
+template <class D>
+inline auto RegularBase3d<D>::nodesRightFrontBottomCorner() const
+{
+    return derived_cast().nodesFrontBottomRightCorner_impl();
+}
+
+template <class D>
+inline auto RegularBase3d<D>::nodesRightBottomFrontCorner() const
+{
+    return derived_cast().nodesFrontBottomRightCorner_impl();
+}
+
+template <class D>
+inline auto RegularBase3d<D>::nodesFrontLeftTopCorner() const
+{
+    return derived_cast().nodesFrontTopLeftCorner_impl();
+}
+
+template <class D>
+inline auto RegularBase3d<D>::nodesTopFrontLeftCorner() const
+{
+    return derived_cast().nodesFrontTopLeftCorner_impl();
+}
+
+template <class D>
+inline auto RegularBase3d<D>::nodesTopLeftFrontCorner() const
+{
+    return derived_cast().nodesFrontTopLeftCorner_impl();
+}
+
+template <class D>
+inline auto RegularBase3d<D>::nodesLeftFrontTopCorner() const
+{
+    return derived_cast().nodesFrontTopLeftCorner_impl();
+}
+
+template <class D>
+inline auto RegularBase3d<D>::nodesLeftTopFrontCorner() const
+{
+    return derived_cast().nodesFrontTopLeftCorner_impl();
+}
+
+template <class D>
+inline auto RegularBase3d<D>::nodesFrontRightTopCorner() const
+{
+    return derived_cast().nodesFrontTopRightCorner_impl();
+}
+
+template <class D>
+inline auto RegularBase3d<D>::nodesTopFrontRightCorner() const
+{
+    return derived_cast().nodesFrontTopRightCorner_impl();
+}
+
+template <class D>
+inline auto RegularBase3d<D>::nodesTopRightFrontCorner() const
+{
+    return derived_cast().nodesFrontTopRightCorner_impl();
+}
+
+template <class D>
+inline auto RegularBase3d<D>::nodesRightFrontTopCorner() const
+{
+    return derived_cast().nodesFrontTopRightCorner_impl();
+}
+
+template <class D>
+inline auto RegularBase3d<D>::nodesRightTopFrontCorner() const
+{
+    return derived_cast().nodesFrontTopRightCorner_impl();
+}
+
+template <class D>
+inline auto RegularBase3d<D>::nodesBackLeftBottomCorner() const
+{
+    return derived_cast().nodesBackBottomLeftCorner_impl();
+}
+
+template <class D>
+inline auto RegularBase3d<D>::nodesBottomBackLeftCorner() const
+{
+    return derived_cast().nodesBackBottomLeftCorner_impl();
+}
+
+template <class D>
+inline auto RegularBase3d<D>::nodesBottomLeftBackCorner() const
+{
+    return derived_cast().nodesBackBottomLeftCorner_impl();
+}
+
+template <class D>
+inline auto RegularBase3d<D>::nodesLeftBackBottomCorner() const
+{
+    return derived_cast().nodesBackBottomLeftCorner_impl();
+}
+
+template <class D>
+inline auto RegularBase3d<D>::nodesLeftBottomBackCorner() const
+{
+    return derived_cast().nodesBackBottomLeftCorner_impl();
+}
+
+template <class D>
+inline auto RegularBase3d<D>::nodesBackRightBottomCorner() const
+{
+    return derived_cast().nodesBackBottomRightCorner_impl();
+}
+
+template <class D>
+inline auto RegularBase3d<D>::nodesBottomBackRightCorner() const
+{
+    return derived_cast().nodesBackBottomRightCorner_impl();
+}
+
+template <class D>
+inline auto RegularBase3d<D>::nodesBottomRightBackCorner() const
+{
+    return derived_cast().nodesBackBottomRightCorner_impl();
+}
+
+template <class D>
+inline auto RegularBase3d<D>::nodesRightBackBottomCorner() const
+{
+    return derived_cast().nodesBackBottomRightCorner_impl();
+}
+
+template <class D>
+inline auto RegularBase3d<D>::nodesRightBottomBackCorner() const
+{
+    return derived_cast().nodesBackBottomRightCorner_impl();
+}
+
+template <class D>
+inline auto RegularBase3d<D>::nodesBackLeftTopCorner() const
+{
+    return derived_cast().nodesBackTopLeftCorner_impl();
+}
+
+template <class D>
+inline auto RegularBase3d<D>::nodesTopBackLeftCorner() const
+{
+    return derived_cast().nodesBackTopLeftCorner_impl();
+}
+
+template <class D>
+inline auto RegularBase3d<D>::nodesTopLeftBackCorner() const
+{
+    return derived_cast().nodesBackTopLeftCorner_impl();
+}
+
+template <class D>
+inline auto RegularBase3d<D>::nodesLeftBackTopCorner() const
+{
+    return derived_cast().nodesBackTopLeftCorner_impl();
+}
+
+template <class D>
+inline auto RegularBase3d<D>::nodesLeftTopBackCorner() const
+{
+    return derived_cast().nodesBackTopLeftCorner_impl();
+}
+
+template <class D>
+inline auto RegularBase3d<D>::nodesBackRightTopCorner() const
+{
+    return derived_cast().nodesBackTopRightCorner_impl();
+}
+
+template <class D>
+inline auto RegularBase3d<D>::nodesTopBackRightCorner() const
+{
+    return derived_cast().nodesBackTopRightCorner_impl();
+}
+
+template <class D>
+inline auto RegularBase3d<D>::nodesTopRightBackCorner() const
+{
+    return derived_cast().nodesBackTopRightCorner_impl();
+}
+
+template <class D>
+inline auto RegularBase3d<D>::nodesRightBackTopCorner() const
+{
+    return derived_cast().nodesBackTopRightCorner_impl();
+}
+
+template <class D>
+inline auto RegularBase3d<D>::nodesRightTopBackCorner() const
+{
+    return derived_cast().nodesBackTopRightCorner_impl();
+}
+
+template <class D>
+inline xt::xtensor<size_t, 2> RegularBase3d<D>::nodesPeriodic_impl() const
+{
+    xt::xtensor<size_t, 1> fro = derived_cast().nodesFrontFace_impl();
+    xt::xtensor<size_t, 1> bck = derived_cast().nodesBackFace_impl();
+    xt::xtensor<size_t, 1> lft = derived_cast().nodesLeftFace_impl();
+    xt::xtensor<size_t, 1> rgt = derived_cast().nodesRightFace_impl();
+    xt::xtensor<size_t, 1> bot = derived_cast().nodesBottomFace_impl();
+    xt::xtensor<size_t, 1> top = derived_cast().nodesTopFace_impl();
+
+    xt::xtensor<size_t, 1> froBot = derived_cast().nodesFrontBottomOpenEdge_impl();
+    xt::xtensor<size_t, 1> froTop = derived_cast().nodesFrontTopOpenEdge_impl();
+    xt::xtensor<size_t, 1> froLft = derived_cast().nodesFrontLeftOpenEdge_impl();
+    xt::xtensor<size_t, 1> froRgt = derived_cast().nodesFrontRightOpenEdge_impl();
+    xt::xtensor<size_t, 1> bckBot = derived_cast().nodesBackBottomOpenEdge_impl();
+    xt::xtensor<size_t, 1> bckTop = derived_cast().nodesBackTopOpenEdge_impl();
+    xt::xtensor<size_t, 1> bckLft = derived_cast().nodesBackLeftOpenEdge_impl();
+    xt::xtensor<size_t, 1> bckRgt = derived_cast().nodesBackRightOpenEdge_impl();
+    xt::xtensor<size_t, 1> botLft = derived_cast().nodesBottomLeftOpenEdge_impl();
+    xt::xtensor<size_t, 1> botRgt = derived_cast().nodesBottomRightOpenEdge_impl();
+    xt::xtensor<size_t, 1> topLft = derived_cast().nodesTopLeftOpenEdge_impl();
+    xt::xtensor<size_t, 1> topRgt = derived_cast().nodesTopRightOpenEdge_impl();
 
     size_t tface = fro.size() + lft.size() + bot.size();
     size_t tedge = 3 * froBot.size() + 3 * froLft.size() + 3 * botLft.size();
@@ -510,26 +968,26 @@ inline xt::xtensor<size_t, 2> RegularBase3d::nodesPeriodic() const
 
     size_t i = 0;
 
-    ret(i, 0) = nodesFrontBottomLeftCorner();
-    ret(i, 1) = nodesFrontBottomRightCorner();
+    ret(i, 0) = derived_cast().nodesFrontBottomLeftCorner_impl();
+    ret(i, 1) = derived_cast().nodesFrontBottomRightCorner_impl();
     ++i;
-    ret(i, 0) = nodesFrontBottomLeftCorner();
-    ret(i, 1) = nodesBackBottomRightCorner();
+    ret(i, 0) = derived_cast().nodesFrontBottomLeftCorner_impl();
+    ret(i, 1) = derived_cast().nodesBackBottomRightCorner_impl();
     ++i;
-    ret(i, 0) = nodesFrontBottomLeftCorner();
-    ret(i, 1) = nodesBackBottomLeftCorner();
+    ret(i, 0) = derived_cast().nodesFrontBottomLeftCorner_impl();
+    ret(i, 1) = derived_cast().nodesBackBottomLeftCorner_impl();
     ++i;
-    ret(i, 0) = nodesFrontBottomLeftCorner();
-    ret(i, 1) = nodesFrontTopLeftCorner();
+    ret(i, 0) = derived_cast().nodesFrontBottomLeftCorner_impl();
+    ret(i, 1) = derived_cast().nodesFrontTopLeftCorner_impl();
     ++i;
-    ret(i, 0) = nodesFrontBottomLeftCorner();
-    ret(i, 1) = nodesFrontTopRightCorner();
+    ret(i, 0) = derived_cast().nodesFrontBottomLeftCorner_impl();
+    ret(i, 1) = derived_cast().nodesFrontTopRightCorner_impl();
     ++i;
-    ret(i, 0) = nodesFrontBottomLeftCorner();
-    ret(i, 1) = nodesBackTopRightCorner();
+    ret(i, 0) = derived_cast().nodesFrontBottomLeftCorner_impl();
+    ret(i, 1) = derived_cast().nodesBackTopRightCorner_impl();
     ++i;
-    ret(i, 0) = nodesFrontBottomLeftCorner();
-    ret(i, 1) = nodesBackTopLeftCorner();
+    ret(i, 0) = derived_cast().nodesFrontBottomLeftCorner_impl();
+    ret(i, 1) = derived_cast().nodesBackTopLeftCorner_impl();
     ++i;
 
     for (size_t j = 0; j < froBot.size(); ++j) {
@@ -597,28 +1055,22 @@ inline xt::xtensor<size_t, 2> RegularBase3d::nodesPeriodic() const
     return ret;
 }
 
-inline size_t RegularBase3d::nodesOrigin() const
+template <class D>
+inline auto RegularBase3d<D>::nodesOrigin_impl() const
 {
-    return nodesFrontBottomLeftCorner();
+    return derived_cast().nodesFrontBottomLeftCorner_impl();
 }
 
-inline xt::xtensor<size_t, 2> RegularBase3d::dofs() const
+template <class D>
+inline auto RegularBase3d<D>::derived_cast() -> derived_type&
 {
-    return GooseFEM::Mesh::dofs(this->nnode(), this->ndim());
+    return *static_cast<derived_type*>(this);
 }
 
-inline xt::xtensor<size_t, 2> RegularBase3d::dofsPeriodic() const
+template <class D>
+inline auto RegularBase3d<D>::derived_cast() const -> const derived_type&
 {
-    xt::xtensor<size_t, 2> ret = this->dofs();
-    xt::xtensor<size_t, 2> nodePer = this->nodesPeriodic();
-    xt::xtensor<size_t, 1> independent = xt::view(nodePer, xt::all(), 0);
-    xt::xtensor<size_t, 1> dependent = xt::view(nodePer, xt::all(), 1);
-
-    for (size_t j = 0; j < this->ndim(); ++j) {
-        xt::view(ret, xt::keep(dependent), j) = xt::view(ret, xt::keep(independent), j);
-    }
-
-    return GooseFEM::Mesh::renumber(ret);
+    return *static_cast<const derived_type*>(this);
 }
 
 namespace detail {

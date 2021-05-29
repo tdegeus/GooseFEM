@@ -30,12 +30,22 @@ inline Regular::Regular(size_t nelx, size_t nely, double h)
     m_nelem = m_nelx * m_nely;
 }
 
-inline ElementType Regular::getElementType() const
+inline ElementType Regular::getElementType_impl() const
 {
     return ElementType::Quad4;
 }
 
-inline xt::xtensor<double, 2> Regular::coor() const
+inline size_t Regular::nelx_impl() const
+{
+    return m_nelx;
+}
+
+inline size_t Regular::nely_impl() const
+{
+    return m_nely;
+}
+
+inline xt::xtensor<double, 2> Regular::coor_impl() const
 {
     xt::xtensor<double, 2> ret = xt::empty<double>({m_nnode, m_ndim});
 
@@ -57,7 +67,7 @@ inline xt::xtensor<double, 2> Regular::coor() const
     return ret;
 }
 
-inline xt::xtensor<size_t, 2> Regular::conn() const
+inline xt::xtensor<size_t, 2> Regular::conn_impl() const
 {
     xt::xtensor<size_t, 2> ret = xt::empty<size_t>({m_nelem, m_nne});
 
@@ -76,62 +86,62 @@ inline xt::xtensor<size_t, 2> Regular::conn() const
     return ret;
 }
 
-inline xt::xtensor<size_t, 1> Regular::nodesBottomEdge() const
+inline xt::xtensor<size_t, 1> Regular::nodesBottomEdge_impl() const
 {
     return xt::arange<size_t>(m_nelx + 1);
 }
 
-inline xt::xtensor<size_t, 1> Regular::nodesTopEdge() const
+inline xt::xtensor<size_t, 1> Regular::nodesTopEdge_impl() const
 {
     return xt::arange<size_t>(m_nelx + 1) + m_nely * (m_nelx + 1);
 }
 
-inline xt::xtensor<size_t, 1> Regular::nodesLeftEdge() const
+inline xt::xtensor<size_t, 1> Regular::nodesLeftEdge_impl() const
 {
     return xt::arange<size_t>(m_nely + 1) * (m_nelx + 1);
 }
 
-inline xt::xtensor<size_t, 1> Regular::nodesRightEdge() const
+inline xt::xtensor<size_t, 1> Regular::nodesRightEdge_impl() const
 {
     return xt::arange<size_t>(m_nely + 1) * (m_nelx + 1) + m_nelx;
 }
 
-inline xt::xtensor<size_t, 1> Regular::nodesBottomOpenEdge() const
+inline xt::xtensor<size_t, 1> Regular::nodesBottomOpenEdge_impl() const
 {
     return xt::arange<size_t>(1, m_nelx);
 }
 
-inline xt::xtensor<size_t, 1> Regular::nodesTopOpenEdge() const
+inline xt::xtensor<size_t, 1> Regular::nodesTopOpenEdge_impl() const
 {
     return xt::arange<size_t>(1, m_nelx) + m_nely * (m_nelx + 1);
 }
 
-inline xt::xtensor<size_t, 1> Regular::nodesLeftOpenEdge() const
+inline xt::xtensor<size_t, 1> Regular::nodesLeftOpenEdge_impl() const
 {
     return xt::arange<size_t>(1, m_nely) * (m_nelx + 1);
 }
 
-inline xt::xtensor<size_t, 1> Regular::nodesRightOpenEdge() const
+inline xt::xtensor<size_t, 1> Regular::nodesRightOpenEdge_impl() const
 {
     return xt::arange<size_t>(1, m_nely) * (m_nelx + 1) + m_nelx;
 }
 
-inline size_t Regular::nodesBottomLeftCorner() const
+inline size_t Regular::nodesBottomLeftCorner_impl() const
 {
     return 0;
 }
 
-inline size_t Regular::nodesBottomRightCorner() const
+inline size_t Regular::nodesBottomRightCorner_impl() const
 {
     return m_nelx;
 }
 
-inline size_t Regular::nodesTopLeftCorner() const
+inline size_t Regular::nodesTopLeftCorner_impl() const
 {
     return m_nely * (m_nelx + 1);
 }
 
-inline size_t Regular::nodesTopRightCorner() const
+inline size_t Regular::nodesTopRightCorner_impl() const
 {
     return m_nely * (m_nelx + 1) + m_nelx;
 }
@@ -324,12 +334,12 @@ inline void FineLayer::init(size_t nelx, size_t nely, double h, size_t nfine)
     m_nnode += m_layer_nelx(nely - 1) + 1;
 }
 
-inline size_t FineLayer::nelx() const
+inline size_t FineLayer::nelx_impl() const
 {
     return xt::amax(m_layer_nelx)();
 }
 
-inline size_t FineLayer::nely() const
+inline size_t FineLayer::nely_impl() const
 {
     return xt::sum(m_nhy)();
 }
@@ -349,12 +359,12 @@ inline xt::xtensor<size_t, 1> FineLayer::elemrow_nelem() const
     return m_layer_nelx;
 }
 
-inline ElementType FineLayer::getElementType() const
+inline ElementType FineLayer::getElementType_impl() const
 {
     return ElementType::Quad4;
 }
 
-inline xt::xtensor<double, 2> FineLayer::coor() const
+inline xt::xtensor<double, 2> FineLayer::coor_impl() const
 {
     // allocate output
     xt::xtensor<double, 2> ret = xt::empty<double>({m_nnode, m_ndim});
@@ -439,7 +449,7 @@ inline xt::xtensor<double, 2> FineLayer::coor() const
     return ret;
 }
 
-inline xt::xtensor<size_t, 2> FineLayer::conn() const
+inline xt::xtensor<size_t, 2> FineLayer::conn_impl() const
 {
     // allocate output
     xt::xtensor<size_t, 2> ret = xt::empty<size_t>({m_nelem, m_nne});
@@ -751,18 +761,18 @@ inline xt::xtensor<size_t, 1> FineLayer::elementgrid_leftright(
     return xt::view(map, xt::keep(ret));
 }
 
-inline xt::xtensor<size_t, 1> FineLayer::nodesBottomEdge() const
+inline xt::xtensor<size_t, 1> FineLayer::nodesBottomEdge_impl() const
 {
     return m_startNode(0) + xt::arange<size_t>(m_layer_nelx(0) + 1);
 }
 
-inline xt::xtensor<size_t, 1> FineLayer::nodesTopEdge() const
+inline xt::xtensor<size_t, 1> FineLayer::nodesTopEdge_impl() const
 {
     size_t nely = m_nhy.size();
     return m_startNode(nely) + xt::arange<size_t>(m_layer_nelx(nely - 1) + 1);
 }
 
-inline xt::xtensor<size_t, 1> FineLayer::nodesLeftEdge() const
+inline xt::xtensor<size_t, 1> FineLayer::nodesLeftEdge_impl() const
 {
     size_t nely = m_nhy.size();
 
@@ -779,7 +789,7 @@ inline xt::xtensor<size_t, 1> FineLayer::nodesLeftEdge() const
     return ret;
 }
 
-inline xt::xtensor<size_t, 1> FineLayer::nodesRightEdge() const
+inline xt::xtensor<size_t, 1> FineLayer::nodesRightEdge_impl() const
 {
     size_t nely = m_nhy.size();
 
@@ -799,19 +809,19 @@ inline xt::xtensor<size_t, 1> FineLayer::nodesRightEdge() const
     return ret;
 }
 
-inline xt::xtensor<size_t, 1> FineLayer::nodesBottomOpenEdge() const
+inline xt::xtensor<size_t, 1> FineLayer::nodesBottomOpenEdge_impl() const
 {
     return m_startNode(0) + xt::arange<size_t>(1, m_layer_nelx(0));
 }
 
-inline xt::xtensor<size_t, 1> FineLayer::nodesTopOpenEdge() const
+inline xt::xtensor<size_t, 1> FineLayer::nodesTopOpenEdge_impl() const
 {
     size_t nely = m_nhy.size();
 
     return m_startNode(nely) + xt::arange<size_t>(1, m_layer_nelx(nely - 1));
 }
 
-inline xt::xtensor<size_t, 1> FineLayer::nodesLeftOpenEdge() const
+inline xt::xtensor<size_t, 1> FineLayer::nodesLeftOpenEdge_impl() const
 {
     size_t nely = m_nhy.size();
 
@@ -828,7 +838,7 @@ inline xt::xtensor<size_t, 1> FineLayer::nodesLeftOpenEdge() const
     return ret;
 }
 
-inline xt::xtensor<size_t, 1> FineLayer::nodesRightOpenEdge() const
+inline xt::xtensor<size_t, 1> FineLayer::nodesRightOpenEdge_impl() const
 {
     size_t nely = m_nhy.size();
 
@@ -848,24 +858,24 @@ inline xt::xtensor<size_t, 1> FineLayer::nodesRightOpenEdge() const
     return ret;
 }
 
-inline size_t FineLayer::nodesBottomLeftCorner() const
+inline size_t FineLayer::nodesBottomLeftCorner_impl() const
 {
     return m_startNode(0);
 }
 
-inline size_t FineLayer::nodesBottomRightCorner() const
+inline size_t FineLayer::nodesBottomRightCorner_impl() const
 {
     return m_startNode(0) + m_layer_nelx(0);
 }
 
-inline size_t FineLayer::nodesTopLeftCorner() const
+inline size_t FineLayer::nodesTopLeftCorner_impl() const
 {
     size_t nely = m_nhy.size();
 
     return m_startNode(nely);
 }
 
-inline size_t FineLayer::nodesTopRightCorner() const
+inline size_t FineLayer::nodesTopRightCorner_impl() const
 {
     size_t nely = m_nhy.size();
 

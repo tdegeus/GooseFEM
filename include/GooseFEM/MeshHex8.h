@@ -23,7 +23,7 @@ namespace Hex8 {
 /**
 Regular mesh: equi-sized elements.
 */
-class Regular : public RegularBase3d {
+class Regular : public RegularBase3d<Regular> {
 public:
 
     /**
@@ -36,59 +36,72 @@ public:
     */
     Regular(size_t nelx, size_t nely, size_t nelz, double h = 1.0);
 
-    ElementType getElementType() const override;
-    xt::xtensor<double, 2> coor() const override;
-    xt::xtensor<size_t, 2> conn() const override;
-    xt::xtensor<size_t, 1> nodesFront() const override;
-    xt::xtensor<size_t, 1> nodesBack() const override;
-    xt::xtensor<size_t, 1> nodesLeft() const override;
-    xt::xtensor<size_t, 1> nodesRight() const override;
-    xt::xtensor<size_t, 1> nodesBottom() const override;
-    xt::xtensor<size_t, 1> nodesTop() const override;
-    xt::xtensor<size_t, 1> nodesFrontFace() const override;
-    xt::xtensor<size_t, 1> nodesBackFace() const override;
-    xt::xtensor<size_t, 1> nodesLeftFace() const override;
-    xt::xtensor<size_t, 1> nodesRightFace() const override;
-    xt::xtensor<size_t, 1> nodesBottomFace() const override;
-    xt::xtensor<size_t, 1> nodesTopFace() const override;
-    xt::xtensor<size_t, 1> nodesFrontBottomEdge() const override;
-    xt::xtensor<size_t, 1> nodesFrontTopEdge() const override;
-    xt::xtensor<size_t, 1> nodesFrontLeftEdge() const override;
-    xt::xtensor<size_t, 1> nodesFrontRightEdge() const override;
-    xt::xtensor<size_t, 1> nodesBackBottomEdge() const override;
-    xt::xtensor<size_t, 1> nodesBackTopEdge() const override;
-    xt::xtensor<size_t, 1> nodesBackLeftEdge() const override;
-    xt::xtensor<size_t, 1> nodesBackRightEdge() const override;
-    xt::xtensor<size_t, 1> nodesBottomLeftEdge() const override;
-    xt::xtensor<size_t, 1> nodesBottomRightEdge() const override;
-    xt::xtensor<size_t, 1> nodesTopLeftEdge() const override;
-    xt::xtensor<size_t, 1> nodesTopRightEdge() const override;
-    xt::xtensor<size_t, 1> nodesFrontBottomOpenEdge() const override;
-    xt::xtensor<size_t, 1> nodesFrontTopOpenEdge() const override;
-    xt::xtensor<size_t, 1> nodesFrontLeftOpenEdge() const override;
-    xt::xtensor<size_t, 1> nodesFrontRightOpenEdge() const override;
-    xt::xtensor<size_t, 1> nodesBackBottomOpenEdge() const override;
-    xt::xtensor<size_t, 1> nodesBackTopOpenEdge() const override;
-    xt::xtensor<size_t, 1> nodesBackLeftOpenEdge() const override;
-    xt::xtensor<size_t, 1> nodesBackRightOpenEdge() const override;
-    xt::xtensor<size_t, 1> nodesBottomLeftOpenEdge() const override;
-    xt::xtensor<size_t, 1> nodesBottomRightOpenEdge() const override;
-    xt::xtensor<size_t, 1> nodesTopLeftOpenEdge() const override;
-    xt::xtensor<size_t, 1> nodesTopRightOpenEdge() const override;
-    size_t nodesFrontBottomLeftCorner() const override;
-    size_t nodesFrontBottomRightCorner() const override;
-    size_t nodesFrontTopLeftCorner() const override;
-    size_t nodesFrontTopRightCorner() const override;
-    size_t nodesBackBottomLeftCorner() const override;
-    size_t nodesBackBottomRightCorner() const override;
-    size_t nodesBackTopLeftCorner() const override;
-    size_t nodesBackTopRightCorner() const override;
+private:
+    friend class RegularBase<Regular>;
+    friend class RegularBase3d<Regular>;
+
+    ElementType getElementType_impl() const;
+    xt::xtensor<double, 2> coor_impl() const;
+    xt::xtensor<size_t, 2> conn_impl() const;
+    xt::xtensor<size_t, 1> nodesFront_impl() const;
+    xt::xtensor<size_t, 1> nodesBack_impl() const;
+    xt::xtensor<size_t, 1> nodesLeft_impl() const;
+    xt::xtensor<size_t, 1> nodesRight_impl() const;
+    xt::xtensor<size_t, 1> nodesBottom_impl() const;
+    xt::xtensor<size_t, 1> nodesTop_impl() const;
+    xt::xtensor<size_t, 1> nodesFrontFace_impl() const;
+    xt::xtensor<size_t, 1> nodesBackFace_impl() const;
+    xt::xtensor<size_t, 1> nodesLeftFace_impl() const;
+    xt::xtensor<size_t, 1> nodesRightFace_impl() const;
+    xt::xtensor<size_t, 1> nodesBottomFace_impl() const;
+    xt::xtensor<size_t, 1> nodesTopFace_impl() const;
+    xt::xtensor<size_t, 1> nodesFrontBottomEdge_impl() const;
+    xt::xtensor<size_t, 1> nodesFrontTopEdge_impl() const;
+    xt::xtensor<size_t, 1> nodesFrontLeftEdge_impl() const;
+    xt::xtensor<size_t, 1> nodesFrontRightEdge_impl() const;
+    xt::xtensor<size_t, 1> nodesBackBottomEdge_impl() const;
+    xt::xtensor<size_t, 1> nodesBackTopEdge_impl() const;
+    xt::xtensor<size_t, 1> nodesBackLeftEdge_impl() const;
+    xt::xtensor<size_t, 1> nodesBackRightEdge_impl() const;
+    xt::xtensor<size_t, 1> nodesBottomLeftEdge_impl() const;
+    xt::xtensor<size_t, 1> nodesBottomRightEdge_impl() const;
+    xt::xtensor<size_t, 1> nodesTopLeftEdge_impl() const;
+    xt::xtensor<size_t, 1> nodesTopRightEdge_impl() const;
+    xt::xtensor<size_t, 1> nodesFrontBottomOpenEdge_impl() const;
+    xt::xtensor<size_t, 1> nodesFrontTopOpenEdge_impl() const;
+    xt::xtensor<size_t, 1> nodesFrontLeftOpenEdge_impl() const;
+    xt::xtensor<size_t, 1> nodesFrontRightOpenEdge_impl() const;
+    xt::xtensor<size_t, 1> nodesBackBottomOpenEdge_impl() const;
+    xt::xtensor<size_t, 1> nodesBackTopOpenEdge_impl() const;
+    xt::xtensor<size_t, 1> nodesBackLeftOpenEdge_impl() const;
+    xt::xtensor<size_t, 1> nodesBackRightOpenEdge_impl() const;
+    xt::xtensor<size_t, 1> nodesBottomLeftOpenEdge_impl() const;
+    xt::xtensor<size_t, 1> nodesBottomRightOpenEdge_impl() const;
+    xt::xtensor<size_t, 1> nodesTopLeftOpenEdge_impl() const;
+    xt::xtensor<size_t, 1> nodesTopRightOpenEdge_impl() const;
+    size_t nodesFrontBottomLeftCorner_impl() const;
+    size_t nodesFrontBottomRightCorner_impl() const;
+    size_t nodesFrontTopLeftCorner_impl() const;
+    size_t nodesFrontTopRightCorner_impl() const;
+    size_t nodesBackBottomLeftCorner_impl() const;
+    size_t nodesBackBottomRightCorner_impl() const;
+    size_t nodesBackTopLeftCorner_impl() const;
+    size_t nodesBackTopRightCorner_impl() const;
+
+    double m_h;     ///< See h()
+    size_t m_nelx;  ///< See nelx()
+    size_t m_nely;  ///< See nely()
+    size_t m_nelz;  ///< See nely()
+    size_t m_nelem; ///< See nelem()
+    size_t m_nnode; ///< See nnode()
+    size_t m_nne;   ///< See nne()
+    size_t m_ndim;  ///< See ndim()
 };
 
 /**
 Mesh with fine middle layer, and coarser elements towards the top and bottom.
 */
-class FineLayer : public RegularBase3d {
+class FineLayer : public RegularBase3d<FineLayer> {
 public:
 
     /**
@@ -105,58 +118,6 @@ public:
     */
     FineLayer(size_t nelx, size_t nely, size_t nelz, double h = 1.0, size_t nfine = 1);
 
-    ElementType getElementType() const override;
-    xt::xtensor<double, 2> coor() const override;
-    xt::xtensor<size_t, 2> conn() const override;
-    xt::xtensor<size_t, 1> nodesFront() const override;
-    xt::xtensor<size_t, 1> nodesBack() const override;
-    xt::xtensor<size_t, 1> nodesLeft() const override;
-    xt::xtensor<size_t, 1> nodesRight() const override;
-    xt::xtensor<size_t, 1> nodesBottom() const override;
-    xt::xtensor<size_t, 1> nodesTop() const override;
-    xt::xtensor<size_t, 1> nodesFrontFace() const override;
-    xt::xtensor<size_t, 1> nodesBackFace() const override;
-    xt::xtensor<size_t, 1> nodesLeftFace() const override;
-    xt::xtensor<size_t, 1> nodesRightFace() const override;
-    xt::xtensor<size_t, 1> nodesBottomFace() const override;
-    xt::xtensor<size_t, 1> nodesTopFace() const override;
-    xt::xtensor<size_t, 1> nodesFrontBottomEdge() const override;
-    xt::xtensor<size_t, 1> nodesFrontTopEdge() const override;
-    xt::xtensor<size_t, 1> nodesFrontLeftEdge() const override;
-    xt::xtensor<size_t, 1> nodesFrontRightEdge() const override;
-    xt::xtensor<size_t, 1> nodesBackBottomEdge() const override;
-    xt::xtensor<size_t, 1> nodesBackTopEdge() const override;
-    xt::xtensor<size_t, 1> nodesBackLeftEdge() const override;
-    xt::xtensor<size_t, 1> nodesBackRightEdge() const override;
-    xt::xtensor<size_t, 1> nodesBottomLeftEdge() const override;
-    xt::xtensor<size_t, 1> nodesBottomRightEdge() const override;
-    xt::xtensor<size_t, 1> nodesTopLeftEdge() const override;
-    xt::xtensor<size_t, 1> nodesTopRightEdge() const override;
-    xt::xtensor<size_t, 1> nodesFrontBottomOpenEdge() const override;
-    xt::xtensor<size_t, 1> nodesFrontTopOpenEdge() const override;
-    xt::xtensor<size_t, 1> nodesFrontLeftOpenEdge() const override;
-    xt::xtensor<size_t, 1> nodesFrontRightOpenEdge() const override;
-    xt::xtensor<size_t, 1> nodesBackBottomOpenEdge() const override;
-    xt::xtensor<size_t, 1> nodesBackTopOpenEdge() const override;
-    xt::xtensor<size_t, 1> nodesBackLeftOpenEdge() const override;
-    xt::xtensor<size_t, 1> nodesBackRightOpenEdge() const override;
-    xt::xtensor<size_t, 1> nodesBottomLeftOpenEdge() const override;
-    xt::xtensor<size_t, 1> nodesBottomRightOpenEdge() const override;
-    xt::xtensor<size_t, 1> nodesTopLeftOpenEdge() const override;
-    xt::xtensor<size_t, 1> nodesTopRightOpenEdge() const override;
-    size_t nodesFrontBottomLeftCorner() const override;
-    size_t nodesFrontBottomRightCorner() const override;
-    size_t nodesFrontTopLeftCorner() const override;
-    size_t nodesFrontTopRightCorner() const override;
-    size_t nodesBackBottomLeftCorner() const override;
-    size_t nodesBackBottomRightCorner() const override;
-    size_t nodesBackTopLeftCorner() const override;
-    size_t nodesBackTopRightCorner() const override;
-
-    size_t nelx() const override;
-    size_t nely() const override;
-    size_t nelz() const override;
-
     /**
     Elements in the middle (fine) layer.
 
@@ -165,6 +126,68 @@ public:
     xt::xtensor<size_t, 1> elementsMiddleLayer() const;
 
 private:
+    friend class RegularBase<FineLayer>;
+    friend class RegularBase3d<FineLayer>;
+
+    size_t nelx_impl() const;
+    size_t nely_impl() const;
+    size_t nelz_impl() const;
+    ElementType getElementType_impl() const;
+    xt::xtensor<double, 2> coor_impl() const;
+    xt::xtensor<size_t, 2> conn_impl() const;
+    xt::xtensor<size_t, 1> nodesFront_impl() const;
+    xt::xtensor<size_t, 1> nodesBack_impl() const;
+    xt::xtensor<size_t, 1> nodesLeft_impl() const;
+    xt::xtensor<size_t, 1> nodesRight_impl() const;
+    xt::xtensor<size_t, 1> nodesBottom_impl() const;
+    xt::xtensor<size_t, 1> nodesTop_impl() const;
+    xt::xtensor<size_t, 1> nodesFrontFace_impl() const;
+    xt::xtensor<size_t, 1> nodesBackFace_impl() const;
+    xt::xtensor<size_t, 1> nodesLeftFace_impl() const;
+    xt::xtensor<size_t, 1> nodesRightFace_impl() const;
+    xt::xtensor<size_t, 1> nodesBottomFace_impl() const;
+    xt::xtensor<size_t, 1> nodesTopFace_impl() const;
+    xt::xtensor<size_t, 1> nodesFrontBottomEdge_impl() const;
+    xt::xtensor<size_t, 1> nodesFrontTopEdge_impl() const;
+    xt::xtensor<size_t, 1> nodesFrontLeftEdge_impl() const;
+    xt::xtensor<size_t, 1> nodesFrontRightEdge_impl() const;
+    xt::xtensor<size_t, 1> nodesBackBottomEdge_impl() const;
+    xt::xtensor<size_t, 1> nodesBackTopEdge_impl() const;
+    xt::xtensor<size_t, 1> nodesBackLeftEdge_impl() const;
+    xt::xtensor<size_t, 1> nodesBackRightEdge_impl() const;
+    xt::xtensor<size_t, 1> nodesBottomLeftEdge_impl() const;
+    xt::xtensor<size_t, 1> nodesBottomRightEdge_impl() const;
+    xt::xtensor<size_t, 1> nodesTopLeftEdge_impl() const;
+    xt::xtensor<size_t, 1> nodesTopRightEdge_impl() const;
+    xt::xtensor<size_t, 1> nodesFrontBottomOpenEdge_impl() const;
+    xt::xtensor<size_t, 1> nodesFrontTopOpenEdge_impl() const;
+    xt::xtensor<size_t, 1> nodesFrontLeftOpenEdge_impl() const;
+    xt::xtensor<size_t, 1> nodesFrontRightOpenEdge_impl() const;
+    xt::xtensor<size_t, 1> nodesBackBottomOpenEdge_impl() const;
+    xt::xtensor<size_t, 1> nodesBackTopOpenEdge_impl() const;
+    xt::xtensor<size_t, 1> nodesBackLeftOpenEdge_impl() const;
+    xt::xtensor<size_t, 1> nodesBackRightOpenEdge_impl() const;
+    xt::xtensor<size_t, 1> nodesBottomLeftOpenEdge_impl() const;
+    xt::xtensor<size_t, 1> nodesBottomRightOpenEdge_impl() const;
+    xt::xtensor<size_t, 1> nodesTopLeftOpenEdge_impl() const;
+    xt::xtensor<size_t, 1> nodesTopRightOpenEdge_impl() const;
+    size_t nodesFrontBottomLeftCorner_impl() const;
+    size_t nodesFrontBottomRightCorner_impl() const;
+    size_t nodesFrontTopLeftCorner_impl() const;
+    size_t nodesFrontTopRightCorner_impl() const;
+    size_t nodesBackBottomLeftCorner_impl() const;
+    size_t nodesBackBottomRightCorner_impl() const;
+    size_t nodesBackTopLeftCorner_impl() const;
+    size_t nodesBackTopRightCorner_impl() const;
+
+    double m_h;                          ///< See h()
+    size_t m_nelx;                       ///< See nelx()
+    size_t m_nely;                       ///< See nely()
+    size_t m_nelz;                       ///< See nely()
+    size_t m_nelem;                      ///< See nelem()
+    size_t m_nnode;                      ///< See nnode()
+    size_t m_nne;                        ///< See nne()
+    size_t m_ndim;                       ///< See ndim()
     double m_Lx;                         ///< mesh size in "x"
     double m_Lz;                         ///< mesh size in "z"
     xt::xtensor<size_t, 1> m_layer_nelx; ///< number of elements in "x" per element layer in "y"
