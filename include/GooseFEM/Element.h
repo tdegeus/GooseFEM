@@ -61,58 +61,51 @@ are diagonal.
 bool isDiagonal(const xt::xtensor<double, 3>& elemmat);
 
 /**
-Base quadrature-class.
-This class does not have a specific element-type in mind, it is used mostly internally
-to derive from such that common methods do not have to be reimplementation.
-
-\tparam ne Number of nodes per element.
-\tparam nd Number of dimensions for node vectors.
-\tparam td Number of dimensions for integration point tensors.
+CRTP base class for quadrature.
 */
-template <size_t ne, size_t nd, size_t td>
+template <class D>
 class QuadratureBase {
 public:
-    QuadratureBase() = default;
 
     /**
-    Constructor
+    Underlying type.
     */
-    QuadratureBase(size_t nelem, size_t nip);
+    using derived_type = D;
 
     /**
     Number of elements.
 
     \return Scalar.
     */
-    size_t nelem() const;
+    auto nelem() const;
 
     /**
     Number of nodes per element.
 
     \return Scalar.
     */
-    size_t nne() const;
+    auto nne() const;
 
     /**
     Number of dimensions for node vectors.
 
     \return Scalar.
     */
-    size_t ndim() const;
+    auto ndim() const;
 
     /**
     Number of dimensions for integration point tensors.
 
     \return Scalar.
     */
-    size_t tdim() const;
+    auto tdim() const;
 
     /**
     Number of integration points.
 
     \return Scalar.
     */
-    size_t nip() const;
+    auto nip() const;
 
     /**
     Convert "qscalar" to "qtensor" of certain rank.
@@ -121,8 +114,8 @@ public:
     \param qscalar A "qscalar".
     \param qtensor A "qtensor".
     */
-    template <size_t rank = 0, class T>
-    void asTensor(const xt::xtensor<T, 2>& qscalar, xt::xtensor<T, 2 + rank>& qtensor) const;
+    template <class T, class R>
+    void asTensor(const T& qscalar, R& qtensor) const;
 
     /**
     Convert "qscalar" to "qtensor" of certain rank.
@@ -130,8 +123,8 @@ public:
     \param "qscalar".
     \return "qtensor".
     */
-    template <size_t rank = 0, class T>
-    xt::xtensor<T, 2 + rank> AsTensor(const xt::xtensor<T, 2>& qscalar) const;
+    template <size_t rank, class T>
+    auto AsTensor(const T& qscalar) const;
 
     /**
     Convert "qscalar" to "qtensor" of certain rank.
@@ -141,31 +134,41 @@ public:
     \return "qtensor".
     */
     template <class T>
-    xt::xarray<T> AsTensor(size_t rank, const xt::xtensor<T, 2>& qscalar) const;
+    auto AsTensor(size_t rank, const T& qscalar) const;
 
     /**
     Get the shape of an "elemvec".
 
     \returns [#nelem, #nne, #ndim].
     */
-    std::array<size_t, 3> shape_elemvec() const;
+    auto shape_elemvec() const;
+
+    /**
+    Get the shape of an "elemvec".
+
+    \param tdim The vector dimension.
+    \returns [#nelem, #nne, tdim].
+    */
+    auto shape_elemvec(size_t tdim) const;
 
     /**
     Get the shape of an "elemmat".
 
     \returns [#nelem, #nne * #ndim, #nne * #ndim].
     */
-    std::array<size_t, 3> shape_elemmat() const;
+    auto shape_elemmat() const;
 
     /**
     Get the shape of a "qtensor" of a certain rank
     (0 = scalar, 1, vector, 2 = 2nd-order tensor, etc.).
-    Default: rank = 0, a.k.a. scalar.
+
+    \tparam rank The rank of the tensor.
+        Since this function is templated, the output is fixed-size of type `std::array<size_t, n>`.
 
     \returns [#nelem, #nip, #tdim, ...].
     */
     template <size_t rank = 0>
-    std::array<size_t, 2 + rank> shape_qtensor() const;
+    auto shape_qtensor() const;
 
     /**
     Get the shape of a "qtensor" of a certain rank
@@ -174,50 +177,91 @@ public:
     \param rank The tensor rank.
     \returns [#nelem, #nip, #tdim, ...].
     */
-    std::vector<size_t> shape_qtensor(size_t rank) const;
+    auto shape_qtensor(size_t rank) const;
+
+    /**
+    Get the shape of a "qtensor" of a certain rank
+    (0 = scalar, 1, vector, 2 = 2nd-order tensor, etc.).
+
+    \tparam rank The rank of the tensor.
+        Since this function is templated, the output is fixed-size of type `std::array<size_t, n>`.
+
+    \param rank The tensor rank.
+        Effectively useless, but is there to distinguish from the dynamic-sized overloads.
+    \param tdim The tensor dimension.
+    \returns [#nelem, #nip, tdim, ...].
+    */
+    template <size_t trank>
+    auto shape_qtensor(size_t rank, size_t tdim) const;
+
+    /**
+    Get the shape of a "qtensor" of a certain rank
+    (0 = scalar, 1, vector, 2 = 2nd-order tensor, etc.).
+
+    \param rank The tensor rank.
+    \param tdim The tensor dimension.
+    \returns [#nelem, #nip, tdim, ...].
+    */
+    auto shape_qtensor(size_t rank, size_t tdim) const;
 
     /**
     Get the shape of a "qscalar" (a "qtensor" of rank 0)
-
     \returns [#nelem, #nip].
     */
-    std::vector<size_t> shape_qscalar() const;
+    auto shape_qscalar() const;
+
+    /**
+    Get the shape of a "qvector" (a "qtensor" of rank 1)
+    \returns [#nelem, #nip, #tdim].
+    */
+    auto shape_qvector() const;
+
+    /**
+    Get the shape of a "qvector" (a "qtensor" of rank 1)
+    \param tdim Tensor dimension.
+    \returns [#nelem, #nip, #tdim].
+    */
+    auto shape_qvector(size_t tdim) const;
 
     /**
     Get an allocated `xt::xtensor` to store a "elemvec".
     Note: the container is not (zero-)initialised.
 
+    \tparam R value-type of the array, e.g. `double`.
     \returns `xt::xarray` container of the correct shape.
     */
-    template <class T>
-    xt::xtensor<T, 3> allocate_elemvec() const;
+    template <class R>
+    auto allocate_elemvec() const;
 
     /**
     Get an allocated and initialised `xt::xarray` to store a "elemvec".
 
+    \tparam R value-type of the array, e.g. `double`.
     \param val The value to which to initialise all items.
     \returns `xt::xtensor` container of the correct shape.
     */
-    template <class T>
-    xt::xtensor<T, 3> allocate_elemvec(T val) const;
+    template <class R>
+    auto allocate_elemvec(R val) const;
 
     /**
     Get an allocated `xt::xtensor` to store a "elemmat".
     Note: the container is not (zero-)initialised.
 
+    \tparam R value-type of the array, e.g. `double`.
     \returns `xt::xarray` container of the correct shape.
     */
-    template <class T>
-    xt::xtensor<T, 3> allocate_elemmat() const;
+    template <class R>
+    auto allocate_elemmat() const;
 
     /**
     Get an allocated and initialised `xt::xarray` to store a "elemmat".
 
+    \tparam R value-type of the array, e.g. `double`.
     \param val The value to which to initialise all items.
     \returns `xt::xtensor` container of the correct shape.
     */
-    template <class T>
-    xt::xtensor<T, 3> allocate_elemmat(T val) const;
+    template <class R>
+    auto allocate_elemmat(R val) const;
 
     /**
     Get an allocated `xt::xtensor` to store a "qtensor" of a certain rank
@@ -225,78 +269,78 @@ public:
     Default: rank = 0, a.k.a. scalar.
     Note: the container is not (zero-)initialised.
 
+    \tparam R value-type of the array, e.g. `double`.
     \returns [#nelem, #nip].
     */
-    template <size_t rank = 0, class T>
-    xt::xtensor<T, 2 + rank> allocate_qtensor() const;
+    template <size_t rank = 0, class R>
+    auto allocate_qtensor() const;
 
     /**
     Get an allocated and initialised `xt::xtensor` to store a "qtensor" of a certain rank
     (0 = scalar, 1, vector, 2 = 2nd-order tensor, etc.).
     Default: rank = 0, a.k.a. scalar.
 
+    \tparam R value-type of the array, e.g. `double`.
     \param val The value to which to initialise all items.
     \returns `xt::xtensor` container of the correct shape (and rank).
     */
-    template <size_t rank = 0, class T>
-    xt::xtensor<T, 2 + rank> allocate_qtensor(T val) const;
+    template <size_t rank = 0, class R>
+    auto allocate_qtensor(R val) const;
 
     /**
     Get an allocated `xt::xarray` to store a "qtensor" of a certain rank
     (0 = scalar, 1, vector, 2 = 2nd-order tensor, etc.).
     Note: the container is not (zero-)initialised.
 
+    \tparam R value-type of the array, e.g. `double`.
     \param rank The tensor rank.
     \returns `xt::xarray` container of the correct shape.
     */
-    template <class T>
-    xt::xarray<T> allocate_qtensor(size_t rank) const;
+    template <class R>
+    auto allocate_qtensor(size_t rank) const;
 
     /**
     Get an allocated and initialised `xt::xarray` to store a "qtensor" of a certain rank
     (0 = scalar, 1, vector, 2 = 2nd-order tensor, etc.).
 
+    \tparam R value-type of the array, e.g. `double`.
     \param rank The tensor rank.
     \param val The value to which to initialise all items.
     \returns `xt::xtensor` container of the correct shape (and rank).
     */
-    template <class T>
-    xt::xarray<T> allocate_qtensor(size_t rank, T val) const;
+    template <class R>
+    auto allocate_qtensor(size_t rank, R val) const;
 
     /**
     Get an allocated `xt::xtensor` to store a "qscalar" (a "qtensor" of rank 0).
     Note: the container is not (zero-)initialised.
 
+    \tparam R value-type of the array, e.g. `double`.
     \returns `xt::xarray` container of the correct shape.
     */
-    template <class T>
-    xt::xtensor<T, 2> allocate_qscalar() const;
+    template <class R>
+    auto allocate_qscalar() const;
 
     /**
     Get an allocated and initialised `xt::xarray` to store a "qscalar" (a "qtensor" of rank 0).
 
+    \tparam R value-type of the array, e.g. `double`.
     \param val The value to which to initialise all items.
     \returns `xt::xtensor` container of the correct shape (and rank).
     */
-    template <class T>
-    xt::xtensor<T, 2> allocate_qscalar(T val) const;
+    template <class R>
+    auto allocate_qscalar(R val) const;
 
-protected:
-    /**
-    Wrapper of constructor, for derived classes.
-    */
-    void initQuadratureBase(size_t nelem, size_t nip);
+private:
 
-protected:
-    size_t m_nelem; ///< Number of elements.
-    size_t m_nip; ///< Number of integration points per element.
-    constexpr static size_t m_nne = ne; ///< Number of nodes per element.
-    constexpr static size_t m_ndim = nd; ///< Number of dimensions for nodal vectors.
-    constexpr static size_t m_tdim = td; ///< Number of dimensions for integration point tensors.
+    auto derived_cast() -> derived_type&;
+    auto derived_cast() const -> const derived_type&;
+
+    friend class QuadratureBase<D>;
 };
 
 /**
-Interpolation and quadrature for a generic element in Cartesian coordinates.
+CRTP base class for interpolation and quadrature for a generic element in Cartesian coordinates.
 
 Naming convention:
 -    ``elemmat``:  matrices stored per element, [#nelem, #nne * #ndim, #nne * #ndim]
@@ -304,38 +348,14 @@ Naming convention:
 -    ``qtensor``:  integration point tensor, [#nelem, #nip, #tdim, #tdim]
 -    ``qscalar``:  integration point scalar, [#nelem, #nip]
 */
-template <size_t ne, size_t nd, size_t td>
-class QuadratureBaseCartesian : public QuadratureBase<ne, nd, td> {
+template <class D>
+class QuadratureBaseCartesian : public QuadratureBase<D> {
 public:
 
-    QuadratureBaseCartesian() = default;
-
-    virtual ~QuadratureBaseCartesian(){};
-
     /**
-    Constructor with custom integration.
-    The following is pre-computed during construction:
-    -   the shape functions,
-    -   the shape function gradients (in local and global) coordinates,
-    -   the integration points volumes.
-    They can be reused without any cost.
-    They only have to be recomputed when the nodal position changes
-    (note that they are assumed to be constant under a small-strain assumption).
-    In that case use update_x() to update the nodal positions and
-    to recompute the above listed quantities.
-
-    \param x nodal coordinates (``elemvec``).
-    \param xi Integration point coordinates (local coordinates) [#nip].
-    \param w Integration point weights [#nip].
-    \param N Shape functions in local coordinates [#nip, #nne].
-    \param dNdxi Shape function gradient w.r.t. local coordinates [#nip, #nne, #ndim].
+    Underlying type.
     */
-    QuadratureBaseCartesian(
-        const xt::xtensor<double, 3>& x,
-        const xt::xtensor<double, 2>& xi,
-        const xt::xtensor<double, 1>& w,
-        const xt::xtensor<double, 2>& N,
-        const xt::xtensor<double, 3>& dNdxi);
+    using derived_type = D;
 
     /**
     Update the nodal positions.
@@ -347,21 +367,22 @@ public:
 
     \param x nodal coordinates (``elemvec``). Shape should match the earlier definition.
     */
-    void update_x(const xt::xtensor<double, 3>& x);
+    template <class T>
+    void update_x(const T& x);
 
     /**
     Get the shape function gradients (in global coordinates).
 
     \return ``gradN`` stored per element, per integration point [#nelem, #nip, #nne, #ndim].
     */
-    virtual xt::xtensor<double, 4> GradN() const;
+    auto GradN() const;
 
     /**
     Get the integration volume.
 
     \return volume stored per element, per integration point [#nelem, #nip].
     */
-    xt::xtensor<double, 2> dV() const;
+    auto dV() const;
 
     /**
     Interpolate element vector and evaluate at each quadrature point.
@@ -371,7 +392,8 @@ public:
     \param elemvec nodal vector stored per element [#nelem, #nne, #ndim].
     \return qvector [#nelem, #nip, #ndim].
     */
-    xt::xtensor<double, 3> InterpQuad_vector(const xt::xtensor<double, 3>& elemvec) const;
+    template <class T>
+    auto InterpQuad_vector(const T& elemvec) const;
 
     /**
     Same as InterpQuad_vector(), but writing to preallocated return.
@@ -379,8 +401,8 @@ public:
     \param elemvec nodal vector stored per element [#nelem, #nne, #ndim].
     \param qvector [#nelem, #nip, #ndim].
     */
-    virtual void interpQuad_vector(
-        const xt::xtensor<double, 3>& elemvec, xt::xtensor<double, 3>& qvector) const;
+    template <class T, class R>
+    void interpQuad_vector(const T& elemvec, R& qvector) const;
 
     /**
     Element-by-element: dyadic product of the shape function gradients and a nodal vector.
@@ -398,7 +420,8 @@ public:
     \param elemvec [#nelem, #nne, #ndim]
     \return qtensor [#nelem, #nip, #tdim, #tdim]
     */
-    xt::xtensor<double, 4> GradN_vector(const xt::xtensor<double, 3>& elemvec) const;
+    template <class T>
+    auto GradN_vector(const T& elemvec) const;
 
     /**
     Same as GradN_vector(), but writing to preallocated return.
@@ -406,8 +429,8 @@ public:
     \param elemvec [#nelem, #nne, #ndim]
     \param qtensor overwritten [#nelem, #nip, #tdim, #tdim]
     */
-    virtual void gradN_vector(
-        const xt::xtensor<double, 3>& elemvec, xt::xtensor<double, 4>& qtensor) const;
+    template <class T, class R>
+    void gradN_vector(const T& elemvec, R& qtensor) const;
 
     /**
     The transposed output of GradN_vector().
@@ -421,7 +444,8 @@ public:
     \param elemvec [#nelem, #nne, #ndim]
     \return qtensor [#nelem, #nip, #tdim, #tdim]
     */
-    xt::xtensor<double, 4> GradN_vector_T(const xt::xtensor<double, 3>& elemvec) const;
+    template <class T>
+    auto GradN_vector_T(const T& elemvec) const;
 
     /**
     Same as GradN_vector_T(), but writing to preallocated return.
@@ -429,8 +453,8 @@ public:
     \param elemvec [#nelem, #nne, #ndim]
     \param qtensor overwritten [#nelem, #nip, #tdim, #tdim]
     */
-    virtual void gradN_vector_T(
-        const xt::xtensor<double, 3>& elemvec, xt::xtensor<double, 4>& qtensor) const;
+    template <class T, class R>
+    void gradN_vector_T(const T& elemvec, R& qtensor) const;
 
     /**
     The symmetric output of GradN_vector().
@@ -445,7 +469,8 @@ public:
     \param elemvec [#nelem, #nne, #ndim]
     \return qtensor [#nelem, #nip, #tdim, #tdim]
     */
-    xt::xtensor<double, 4> SymGradN_vector(const xt::xtensor<double, 3>& elemvec) const;
+    template <class T>
+    auto SymGradN_vector(const T& elemvec) const;
 
     /**
     Same as SymGradN_vector(), but writing to preallocated return.
@@ -453,8 +478,8 @@ public:
     \param elemvec [#nelem, #nne, #ndim]
     \param qtensor overwritten [#nelem, #nip, #tdim, #tdim]
     */
-    virtual void symGradN_vector(
-        const xt::xtensor<double, 3>& elemvec, xt::xtensor<double, 4>& qtensor) const;
+    template <class T, class R>
+    void symGradN_vector(const T& elemvec, R& qtensor) const;
 
     /**
     Element-by-element: integral of a continuous vector-field.
@@ -468,7 +493,8 @@ public:
     \param qvector [#nelem, #nip. #ndim]
     \return elemvec [#nelem, #nne. #ndim]
     */
-    xt::xtensor<double, 3> Int_N_vector_dV(const xt::xtensor<double, 3>& qvector) const;
+    template <class T>
+    auto Int_N_vector_dV(const T& qvector) const;
 
     /**
     Same as Int_N_vector_dV(), but writing to preallocated return.
@@ -476,8 +502,8 @@ public:
     \param qvector [#nelem, #nip. #ndim]
     \param elemvec overwritten [#nelem, #nne. #ndim]
     */
-    void int_N_vector_dV(
-        const xt::xtensor<double, 3>& qvector, xt::xtensor<double, 3>& elemvec) const;
+    template <class T, class R>
+    void int_N_vector_dV(const T& qvector, R& elemvec) const;
 
     /**
     Element-by-element: integral of the scalar product of the shape function with a scalar.
@@ -497,7 +523,8 @@ public:
     \param qscalar [#nelem, #nip]
     \return elemmat [#nelem, #nne * #ndim, #nne * #ndim]
     */
-    xt::xtensor<double, 3> Int_N_scalar_NT_dV(const xt::xtensor<double, 2>& qscalar) const;
+    template <class T>
+    auto Int_N_scalar_NT_dV(const T& qscalar) const;
 
     /**
     Same as Int_N_scalar_NT_dV(), but writing to preallocated return.
@@ -505,8 +532,8 @@ public:
     \param qscalar [#nelem, #nip]
     \param elemmat overwritten [#nelem, #nne * #ndim, #nne * #ndim]
     */
-    virtual void int_N_scalar_NT_dV(
-        const xt::xtensor<double, 2>& qscalar, xt::xtensor<double, 3>& elemmat) const;
+    template <class T, class R>
+    void int_N_scalar_NT_dV(const T& qscalar, R& elemmat) const;
 
     /**
     Element-by-element: integral of the dot product of the shape function gradients with
@@ -525,7 +552,8 @@ public:
     \param qtensor [#nelem, #nip, #ndim, #ndim]
     \return elemvec [#nelem, #nne. #ndim]
     */
-    xt::xtensor<double, 3> Int_gradN_dot_tensor2_dV(const xt::xtensor<double, 4>& qtensor) const;
+    template <class T>
+    auto Int_gradN_dot_tensor2_dV(const T& qtensor) const;
 
     /**
     Same as Int_gradN_dot_tensor2_dV(), but writing to preallocated return.
@@ -533,8 +561,8 @@ public:
     \param qtensor [#nelem, #nip, #ndim, #ndim]
     \param elemvec overwritten [#nelem, #nne. #ndim]
     */
-    virtual void int_gradN_dot_tensor2_dV(
-        const xt::xtensor<double, 4>& qtensor, xt::xtensor<double, 3>& elemvec) const;
+    template <class T, class R>
+    void int_gradN_dot_tensor2_dV(const T& qtensor, R& elemvec) const;
 
     // Integral of the dot product
     // elemmat(m*2+j, n*2+k) += dNdx(m,i) * qtensor(i,j,k,l) * dNdx(n,l) * dV
@@ -558,8 +586,8 @@ public:
     \param qtensor [#nelem, #nip, #ndim, #ndim, #ndim, #ndim]
     \return elemmat [#nelem, #nne * #ndim, #nne * #ndim]
     */
-    xt::xtensor<double, 3> Int_gradN_dot_tensor4_dot_gradNT_dV(
-        const xt::xtensor<double, 6>& qtensor) const;
+    template <class T>
+    auto Int_gradN_dot_tensor4_dot_gradNT_dV(const T& qtensor) const;
 
     /**
     Same as Int_gradN_dot_tensor4_dot_gradNT_dV(), but writing to preallocated return.
@@ -567,44 +595,49 @@ public:
     \param qtensor [#nelem, #nip, #ndim, #ndim, #ndim, #ndim]
     \param elemmat overwritten [#nelem, #nne * #ndim, #nne * #ndim]
     */
-    virtual void int_gradN_dot_tensor4_dot_gradNT_dV(
-        const xt::xtensor<double, 6>& qtensor, xt::xtensor<double, 3>& elemmat) const;
+    template <class T, class R>
+    void int_gradN_dot_tensor4_dot_gradNT_dV(const T& qtensor, R& elemmat) const;
 
 protected:
-    /**
-    Constructor alias.
-    \param x nodal coordinates (``elemvec``).
-    \param xi Integration point coordinates (local coordinates) [#nip].
-    \param w Integration point weights [#nip].
-    \param N Shape functions in the integration points [#nip, #nne].
-    \param dNdxi Shape function gradient w.r.t. local coordinates [#nip, #nne, #ndim].
-    */
-    void initQuadratureBaseCartesian(
-        const xt::xtensor<double, 3>& x,
-        const xt::xtensor<double, 2>& xi,
-        const xt::xtensor<double, 1>& w,
-        const xt::xtensor<double, 2>& N,
-        const xt::xtensor<double, 3>& dNdxi);
 
     /**
-    Compute m_vol and m_dNdx based on current m_x.
+    Update the shape function gradients (called when the nodal positions are updated).
     */
-    virtual void compute_dN();
+    void compute_dN();
 
-protected:
-    using QuadratureBase<ne, nd, td>::m_nelem;
-    using QuadratureBase<ne, nd, td>::m_nip;
-    using QuadratureBase<ne, nd, td>::m_nne;
-    using QuadratureBase<ne, nd, td>::m_ndim;
-    using QuadratureBase<ne, nd, td>::m_tdim;
+private:
 
-    xt::xtensor<double, 3> m_x;    ///< nodal positions stored per element [#nelem, #nne, #ndim]
-    xt::xtensor<double, 1> m_w;    ///< weight of each integration point [nip]
-    xt::xtensor<double, 2> m_xi;   ///< local coordinate of each integration point [#nip, #ndim]
-    xt::xtensor<double, 2> m_N;    ///< shape functions [#nip, #nne]
-    xt::xtensor<double, 3> m_dNxi; ///< shape function grad. wrt local  coor. [#nip, #nne, #ndim]
-    xt::xtensor<double, 4> m_dNx;  ///< shape function grad. wrt global coor. [#nelem, #nip, #nne, #ndim]
-    xt::xtensor<double, 2> m_vol;  ///< integration point volume [#nelem, #nip]
+    auto derived_cast() -> derived_type&;
+    auto derived_cast() const -> const derived_type&;
+
+    friend class QuadratureBase<D>;
+    friend class QuadratureBaseCartesian<D>;
+
+    template <class T, class R>
+    void interpQuad_vector_impl(const T& elemvec, R& qvector) const;
+
+    template <class T, class R>
+    void gradN_vector_impl(const T& elemvec, R& qtensor) const;
+
+    template <class T, class R>
+    void gradN_vector_T_impl(const T& elemvec, R& qtensor) const;
+
+    template <class T, class R>
+    void symGradN_vector_impl(const T& elemvec, R& qtensor) const;
+
+    template <class T, class R>
+    void int_N_vector_dV_impl(const T& qvector, R& elemvec) const;
+
+    template <class T, class R>
+    void int_N_scalar_NT_dV_impl(const T& qscalar, R& elemmat) const;
+
+    template <class T, class R>
+    void int_gradN_dot_tensor2_dV_impl(const T& qtensor, R& elemvec) const;
+
+    template <class T, class R>
+    void int_gradN_dot_tensor4_dot_gradNT_dV_impl(const T& qtensor, R& elemmat) const;
+
+    void compute_dN_impl();
 };
 
 } // namespace Element
