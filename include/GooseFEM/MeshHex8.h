@@ -40,6 +40,9 @@ private:
     friend class RegularBase<Regular>;
     friend class RegularBase3d<Regular>;
 
+    size_t nelx_impl() const;
+    size_t nely_impl() const;
+    size_t nelz_impl() const;
     ElementType getElementType_impl() const;
     xt::xtensor<double, 2> coor_impl() const;
     xt::xtensor<size_t, 2> conn_impl() const;

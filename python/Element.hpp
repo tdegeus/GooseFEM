@@ -7,7 +7,7 @@
 #ifndef PYGOOSEFEM_ELEMENT_H
 #define PYGOOSEFEM_ELEMENT_H
 
-#include <GooseFEM/GooseFEM.h>
+#include <GooseFEM/Element.h>
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
 #include <xtensor-python/pyarray.hpp>

@@ -1,114 +1,65 @@
-/* =================================================================================================
+/**
+\file
+\copyright Copyright 2017. Tom de Geus. All rights reserved.
+\license This project is released under the GNU Public License (GPLv3).
+*/
 
-(c - GPLv3) T.W.J. de Geus (Tom) | tom@geus.me | www.geus.me | github.com/tdegeus/GooseFEM
+#ifndef PYGOOSEFEM_MESHTRI3_H
+#define PYGOOSEFEM_MESHTRI3_H
 
-================================================================================================= */
-
-#include <GooseFEM/GooseFEM.h>
+#include <GooseFEM/MeshTri3.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/stl.h>
 #include <xtensor-python/pyarray.hpp>
 #include <xtensor-python/pytensor.hpp>
 #include <pyxtensor/pyxtensor.hpp>
 
+#include "Mesh.hpp"
+
 namespace py = pybind11;
 
-void init_MeshTri3(py::module& m)
+void init_MeshTri3(py::module& mod)
 {
+    py::class_<GooseFEM::Mesh::Tri3::Regular> cls(mod, "Regular");
 
-    py::class_<GooseFEM::Mesh::Tri3::Regular>(m, "Regular")
-
-        .def(
-            py::init<size_t, size_t, double>(),
-            "Regular mesh: 'nx' pixels in horizontal direction, 'ny' in vertical direction, edge "
-            "size 'h'",
+    cls.def(py::init<size_t, size_t, double>(),
+            "Regular mesh: 'nx' pixels in horizontal direction, 'ny' in vertical direction, edge size 'h'",
             py::arg("nx"),
             py::arg("ny"),
-            py::arg("h") = 1.)
+            py::arg("h") = 1.);
 
-        .def("coor", &GooseFEM::Mesh::Tri3::Regular::coor)
+    register_Element_RegularBase<GooseFEM::Mesh::Tri3::Regular>(cls);
+    register_Element_RegularBase2d<GooseFEM::Mesh::Tri3::Regular>(cls);
 
-        .def("conn", &GooseFEM::Mesh::Tri3::Regular::conn)
+    cls.def("__repr__", [](const GooseFEM::Mesh::Tri3::Regular&) {
+        return "<GooseFEM.Mesh.Tri3.Regular>";
+    });
 
-        .def("nelem", &GooseFEM::Mesh::Tri3::Regular::nelem)
+    mod.def("getOrientation",
+            &GooseFEM::Mesh::Tri3::getOrientation,
+            "Get the orientation of each element",
+            py::arg("coor"),
+            py::arg("conn"));
 
-        .def("nnode", &GooseFEM::Mesh::Tri3::Regular::nnode)
+    mod.def("setOrientation",
+            py::overload_cast<const xt::xtensor<double, 2>&, const xt::xtensor<size_t, 2>&, int>(
+                &GooseFEM::Mesh::Tri3::setOrientation),
+            "Set the orientation of each element",
+            py::arg("coor"),
+            py::arg("conn"),
+            py::arg("orientation"));
 
-        .def("nne", &GooseFEM::Mesh::Tri3::Regular::nne)
-
-        .def("ndim", &GooseFEM::Mesh::Tri3::Regular::ndim)
-
-        .def("getElementType", &GooseFEM::Mesh::Tri3::Regular::getElementType)
-
-        .def("nodesBottomEdge", &GooseFEM::Mesh::Tri3::Regular::nodesBottomEdge)
-
-        .def("nodesTopEdge", &GooseFEM::Mesh::Tri3::Regular::nodesTopEdge)
-
-        .def("nodesLeftEdge", &GooseFEM::Mesh::Tri3::Regular::nodesLeftEdge)
-
-        .def("nodesRightEdge", &GooseFEM::Mesh::Tri3::Regular::nodesRightEdge)
-
-        .def("nodesBottomOpenEdge", &GooseFEM::Mesh::Tri3::Regular::nodesBottomOpenEdge)
-
-        .def("nodesTopOpenEdge", &GooseFEM::Mesh::Tri3::Regular::nodesTopOpenEdge)
-
-        .def("nodesLeftOpenEdge", &GooseFEM::Mesh::Tri3::Regular::nodesLeftOpenEdge)
-
-        .def("nodesRightOpenEdge", &GooseFEM::Mesh::Tri3::Regular::nodesRightOpenEdge)
-
-        .def("nodesBottomLeftCorner", &GooseFEM::Mesh::Tri3::Regular::nodesBottomLeftCorner)
-
-        .def("nodesBottomRightCorner", &GooseFEM::Mesh::Tri3::Regular::nodesBottomRightCorner)
-
-        .def("nodesTopLeftCorner", &GooseFEM::Mesh::Tri3::Regular::nodesTopLeftCorner)
-
-        .def("nodesTopRightCorner", &GooseFEM::Mesh::Tri3::Regular::nodesTopRightCorner)
-
-        .def("nodesLeftBottomCorner", &GooseFEM::Mesh::Tri3::Regular::nodesLeftBottomCorner)
-
-        .def("nodesLeftTopCorner", &GooseFEM::Mesh::Tri3::Regular::nodesLeftTopCorner)
-
-        .def("nodesRightBottomCorner", &GooseFEM::Mesh::Tri3::Regular::nodesRightBottomCorner)
-
-        .def("nodesRightTopCorner", &GooseFEM::Mesh::Tri3::Regular::nodesRightTopCorner)
-
-        .def("nodesPeriodic", &GooseFEM::Mesh::Tri3::Regular::nodesPeriodic)
-
-        .def("nodesOrigin", &GooseFEM::Mesh::Tri3::Regular::nodesOrigin)
-
-        .def("dofs", &GooseFEM::Mesh::Tri3::Regular::dofs)
-
-        .def("dofsPeriodic", &GooseFEM::Mesh::Tri3::Regular::dofsPeriodic)
-
-        .def("__repr__", [](const GooseFEM::Mesh::Tri3::Regular&) {
-            return "<GooseFEM.Mesh.Tri3.Regular>";
-        });
-
-    m.def(
-        "getOrientation",
-        &GooseFEM::Mesh::Tri3::getOrientation,
-        "Get the orientation of each element",
-        py::arg("coor"),
-        py::arg("conn"));
-
-    m.def(
-        "setOrientation",
-        py::overload_cast<const xt::xtensor<double, 2>&, const xt::xtensor<size_t, 2>&, int>(
-            &GooseFEM::Mesh::Tri3::setOrientation),
-        "Set the orientation of each element",
-        py::arg("coor"),
-        py::arg("conn"),
-        py::arg("orientation"));
-
-    m.def(
-        "setOrientation",
-        py::overload_cast<
-            const xt::xtensor<double, 2>&,
-            const xt::xtensor<size_t, 2>&,
-            const xt::xtensor<int, 1>&,
-            int>(&GooseFEM::Mesh::Tri3::setOrientation),
-        "Set the orientation of each element",
-        py::arg("coor"),
-        py::arg("conn"),
-        py::arg("val"),
-        py::arg("orientation"));
+    mod.def("setOrientation",
+            py::overload_cast<
+                const xt::xtensor<double, 2>&,
+                const xt::xtensor<size_t, 2>&,
+                const xt::xtensor<int, 1>&,
+                int>(&GooseFEM::Mesh::Tri3::setOrientation),
+            "Set the orientation of each element",
+            py::arg("coor"),
+            py::arg("conn"),
+            py::arg("val"),
+            py::arg("orientation"));
 }
+
+#endif
