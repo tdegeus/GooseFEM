@@ -37,6 +37,21 @@ inline ElementType Regular::getElementType_impl() const
     return ElementType::Hex8;
 }
 
+inline size_t Regular::nelx_impl() const
+{
+    return m_nelx;
+}
+
+inline size_t Regular::nely_impl() const
+{
+    return m_nely;
+}
+
+inline size_t Regular::nelz_impl() const
+{
+    return m_nelz;
+}
+
 inline xt::xtensor<double, 2> Regular::coor_impl() const
 {
     xt::xtensor<double, 2> ret = xt::empty<double>({m_nnode, m_ndim});
@@ -76,15 +91,11 @@ inline xt::xtensor<size_t, 2> Regular::conn_impl() const
                 ret(ielem, 0) = iy * (m_nelx + 1) + ix + iz * (m_nely + 1) * (m_nelx + 1);
                 ret(ielem, 1) = iy * (m_nelx + 1) + (ix + 1) + iz * (m_nely + 1) * (m_nelx + 1);
                 ret(ielem, 3) = (iy + 1) * (m_nelx + 1) + ix + iz * (m_nely + 1) * (m_nelx + 1);
-                ret(ielem, 2) =
-                    (iy + 1) * (m_nelx + 1) + (ix + 1) + iz * (m_nely + 1) * (m_nelx + 1);
+                ret(ielem, 2) = (iy + 1) * (m_nelx + 1) + (ix + 1) + iz * (m_nely + 1) * (m_nelx + 1);
                 ret(ielem, 4) = iy * (m_nelx + 1) + ix + (iz + 1) * (m_nely + 1) * (m_nelx + 1);
-                ret(ielem, 5) =
-                    (iy) * (m_nelx + 1) + (ix + 1) + (iz + 1) * (m_nely + 1) * (m_nelx + 1);
-                ret(ielem, 7) =
-                    (iy + 1) * (m_nelx + 1) + ix + (iz + 1) * (m_nely + 1) * (m_nelx + 1);
-                ret(ielem, 6) =
-                    (iy + 1) * (m_nelx + 1) + (ix + 1) + (iz + 1) * (m_nely + 1) * (m_nelx + 1);
+                ret(ielem, 5) = (iy) * (m_nelx + 1) + (ix + 1) + (iz + 1) * (m_nely + 1) * (m_nelx + 1);
+                ret(ielem, 7) = (iy + 1) * (m_nelx + 1) + ix + (iz + 1) * (m_nely + 1) * (m_nelx + 1);
+                ret(ielem, 6) = (iy + 1) * (m_nelx + 1) + (ix + 1) + (iz + 1) * (m_nely + 1) * (m_nelx + 1);
                 ++ielem;
             }
         }
