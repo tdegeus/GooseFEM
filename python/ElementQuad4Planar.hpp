@@ -1,139 +1,44 @@
-/* =================================================================================================
+/**
+\file
+\copyright Copyright 2017. Tom de Geus. All rights reserved.
+\license This project is released under the GNU Public License (GPLv3).
+*/
 
-(c - GPLv3) T.W.J. de Geus (Tom) | tom@geus.me | www.geus.me | github.com/tdegeus/GooseFEM
+#ifndef PYGOOSEFEM_ELEMENTQUAD4PLANAR_H
+#define PYGOOSEFEM_ELEMENTQUAD4PLANAR_H
 
-================================================================================================= */
-
-#include <GooseFEM/GooseFEM.h>
+#include <GooseFEM/ElementQuad4Planar.h>
 #include <pybind11/pybind11.h>
-#include <xtensor-python/pyarray.hpp>
 #include <xtensor-python/pytensor.hpp>
-#include <pyxtensor/pyxtensor.hpp>
+
+#include "Element.hpp"
 
 namespace py = pybind11;
 
 void init_ElementQuad4Planar(py::module& m)
 {
+    py::class_<GooseFEM::Element::Quad4::QuadraturePlanar> cls(m, "QuadraturePlanar");
 
-    py::class_<GooseFEM::Element::Quad4::QuadraturePlanar>(m, "QuadraturePlanar")
+    cls.def(py::init<const xt::pytensor<double, 3>&, double>(), "QuadraturePlanar", py::arg("x"), py::arg("thick") = 1.0);
 
-        .def(py::init<const xt::xtensor<double, 3>&>(), "QuadraturePlanar", py::arg("x"))
-
-        .def(py::init<
-                const xt::xtensor<double, 3>&,
-                const xt::xtensor<double, 2>&,
-                const xt::xtensor<double, 1>&>(),
+    cls.def(py::init<const xt::pytensor<double, 3>&,
+                     const xt::pytensor<double, 2>&,
+                     const xt::pytensor<double, 1>&,
+                     double>(),
             "QuadraturePlanar",
             py::arg("x"),
             py::arg("xi"),
-            py::arg("w"))
+            py::arg("w"),
+            py::arg("thick") = 1.0);
 
-        .def("update_x",
-            &GooseFEM::Element::Quad4::QuadraturePlanar::update_x,
-            "Update the nodal positions")
+    register_Element_QuadratureBase<GooseFEM::Element::Quad4::QuadraturePlanar>(cls);
+    register_Element_QuadratureBaseCartesian<GooseFEM::Element::Quad4::QuadraturePlanar>(cls);
 
-        .def("dV",
-            &GooseFEM::Element::Quad4::QuadraturePlanar::dV,
-            "Integration point volume (qscalar)")
+    cls.def("GradN", &GooseFEM::Element::Quad4::QuadraturePlanar::GradN, "Shape function gradients");
 
-        .def("GradN_vector",
-            py::overload_cast<const xt::xtensor<double, 3>&>(
-                &GooseFEM::Element::Quad4::QuadraturePlanar::GradN_vector, py::const_),
-            "Dyadic product, returns 'qtensor'",
-            py::arg("elemvec"))
-
-        .def("GradN_vector_T",
-            py::overload_cast<const xt::xtensor<double, 3>&>(
-                &GooseFEM::Element::Quad4::QuadraturePlanar::GradN_vector_T, py::const_),
-            "Dyadic product, returns 'qtensor'",
-            py::arg("elemvec"))
-
-        .def("SymGradN_vector",
-            py::overload_cast<const xt::xtensor<double, 3>&>(
-                &GooseFEM::Element::Quad4::QuadraturePlanar::SymGradN_vector, py::const_),
-            "Dyadic product, returns 'qtensor'",
-            py::arg("elemvec"))
-
-        .def("Int_N_scalar_NT_dV",
-            py::overload_cast<const xt::xtensor<double, 2>&>(
-                &GooseFEM::Element::Quad4::QuadraturePlanar::Int_N_scalar_NT_dV, py::const_),
-            "Integration, returns 'elemmat'",
-            py::arg("qscalar"))
-
-        .def("Int_gradN_dot_tensor2_dV",
-            py::overload_cast<const xt::xtensor<double, 4>&>(
-                &GooseFEM::Element::Quad4::QuadraturePlanar::Int_gradN_dot_tensor2_dV, py::const_),
-            "Integration, returns 'elemvec'",
-            py::arg("qtensor"))
-
-        .def("Int_gradN_dot_tensor4_dot_gradNT_dV",
-            py::overload_cast<const xt::xtensor<double, 6>&>(
-                &GooseFEM::Element::Quad4::QuadraturePlanar::Int_gradN_dot_tensor4_dot_gradNT_dV,
-                py::const_),
-            "Integration, returns 'elemvec'",
-            py::arg("qtensor"))
-
-        // Derived from QuadratureBase
-
-        .def("nelem", &GooseFEM::Element::Quad4::QuadraturePlanar::nelem, "Number of elements")
-
-        .def("nne", &GooseFEM::Element::Quad4::QuadraturePlanar::nne, "Number of nodes per element")
-
-        .def("ndim", &GooseFEM::Element::Quad4::QuadraturePlanar::ndim, "Number of dimensions")
-
-        .def("nip", &GooseFEM::Element::Quad4::QuadraturePlanar::nip, "Number of integration points")
-
-        .def("AsTensor",
-            (xt::xarray<double>(GooseFEM::Element::Quad4::QuadraturePlanar::*)(
-                size_t, const xt::xtensor<double, 2>&) const)
-                &GooseFEM::Element::Quad4::QuadraturePlanar::AsTensor<double>,
-            "Convert 'qscalar' to 'qtensor' of certain rank")
-
-        .def("shape_elemvec",
-            &GooseFEM::Element::Quad4::QuadraturePlanar::shape_elemvec,
-            "Shape of 'elemvec'")
-
-        .def("shape_elemmat",
-            &GooseFEM::Element::Quad4::QuadraturePlanar::shape_elemmat,
-            "Shape of 'elemmat'")
-
-        .def("shape_qtensor",
-            (std::vector<size_t>(GooseFEM::Element::Quad4::QuadraturePlanar::*)(size_t) const)
-                &GooseFEM::Element::Quad4::QuadraturePlanar::shape_qtensor,
-            "Shape of 'qtensor'",
-            py::arg("rank"))
-
-        .def("shape_qscalar",
-            &GooseFEM::Element::Quad4::QuadraturePlanar::shape_qscalar,
-            "Shape of 'qscalar'")
-
-        // Deprecated
-
-        .def("AllocateQtensor",
-            (xt::xarray<double>(GooseFEM::Element::Quad4::QuadraturePlanar::*)(size_t) const)
-                &GooseFEM::Element::Quad4::QuadraturePlanar::allocate_qtensor<double>,
-            "Allocate 'qtensor'",
-            py::arg("rank"))
-
-        .def("AllocateQtensor",
-            (xt::xarray<double>(GooseFEM::Element::Quad4::QuadraturePlanar::*)(size_t, double) const)
-                &GooseFEM::Element::Quad4::QuadraturePlanar::allocate_qtensor<double>,
-            "Allocate 'qtensor'",
-            py::arg("rank"),
-            py::arg("val"))
-
-        .def("AllocateQscalar",
-            py::overload_cast<>(
-                &GooseFEM::Element::Quad4::QuadraturePlanar::allocate_qscalar<double>, py::const_),
-            "Allocate 'qscalar'")
-
-        .def("AllocateQscalar",
-            py::overload_cast<double>(
-                &GooseFEM::Element::Quad4::QuadraturePlanar::allocate_qscalar<double>, py::const_),
-            "Allocate 'qscalar'",
-            py::arg("val"))
-
-        .def("__repr__", [](const GooseFEM::Element::Quad4::QuadraturePlanar&) {
-            return "<GooseFEM.Element.Quad4.QuadraturePlanar>";
-        });
+    cls.def("__repr__", [](const GooseFEM::Element::Quad4::QuadraturePlanar&) {
+        return "<GooseFEM.Element.Quad4.QuadraturePlanar>";
+    });
 }
+
+#endif

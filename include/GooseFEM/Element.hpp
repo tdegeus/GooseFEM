@@ -158,26 +158,26 @@ inline auto QuadratureBase<D>::AsTensor(size_t rank, const T& arg) const
 }
 
 template <class D>
-inline auto QuadratureBase<D>::shape_elemvec() const
+inline auto QuadratureBase<D>::shape_elemvec() const -> std::array<size_t, 3>
 {
     return std::array<size_t, 3>{derived_cast().m_nelem, D::s_nne, D::s_ndim};
 }
 
 template <class D>
-inline auto QuadratureBase<D>::shape_elemvec(size_t arg) const
+inline auto QuadratureBase<D>::shape_elemvec(size_t arg) const -> std::array<size_t, 3>
 {
     return std::array<size_t, 3>{derived_cast().m_nelem, D::s_nne, arg};
 }
 
 template <class D>
-inline auto QuadratureBase<D>::shape_elemmat() const
+inline auto QuadratureBase<D>::shape_elemmat() const -> std::array<size_t, 3>
 {
     return std::array<size_t, 3>{derived_cast().m_nelem, D::s_nne * D::s_ndim, D::s_nne * D::s_ndim};
 }
 
 template <class D>
 template <size_t rank>
-inline auto QuadratureBase<D>::shape_qtensor() const
+inline auto QuadratureBase<D>::shape_qtensor() const -> std::array<size_t, 2 + rank>
 {
     std::array<size_t, 2 + rank> shape;
     shape[0] = derived_cast().m_nelem;
@@ -187,7 +187,7 @@ inline auto QuadratureBase<D>::shape_qtensor() const
 }
 
 template <class D>
-inline auto QuadratureBase<D>::shape_qtensor(size_t rank) const
+inline auto QuadratureBase<D>::shape_qtensor(size_t rank) const -> std::vector<size_t>
 {
     std::vector<size_t> shape(2 + rank);
     shape[0] = derived_cast().m_nelem;
@@ -198,7 +198,7 @@ inline auto QuadratureBase<D>::shape_qtensor(size_t rank) const
 
 template <class D>
 template <size_t trank>
-inline auto QuadratureBase<D>::shape_qtensor(size_t rank, size_t arg) const
+inline auto QuadratureBase<D>::shape_qtensor(size_t rank, size_t arg) const -> std::array<size_t, 2 + trank>
 {
     GOOSEFEM_ASSERT(trank == rank);
     std::array<size_t, 2 + trank> shape;
@@ -209,7 +209,7 @@ inline auto QuadratureBase<D>::shape_qtensor(size_t rank, size_t arg) const
 }
 
 template <class D>
-inline auto QuadratureBase<D>::shape_qtensor(size_t rank, size_t arg) const
+inline auto QuadratureBase<D>::shape_qtensor(size_t rank, size_t arg) const -> std::vector<size_t>
 {
     std::vector<size_t> shape(2 + rank);
     shape[0] = derived_cast().m_nelem;
@@ -219,99 +219,99 @@ inline auto QuadratureBase<D>::shape_qtensor(size_t rank, size_t arg) const
 }
 
 template <class D>
-inline auto QuadratureBase<D>::shape_qscalar() const
+inline auto QuadratureBase<D>::shape_qscalar() const -> std::array<size_t, 2>
 {
     return std::array<size_t, 2>{derived_cast().m_nelem, derived_cast().m_nip};
 }
 
 template <class D>
-inline auto QuadratureBase<D>::shape_qvector() const
+inline auto QuadratureBase<D>::shape_qvector() const -> std::array<size_t, 3>
 {
     return std::array<size_t, 3>{derived_cast().m_nelem, derived_cast().m_nip, D::s_tdim};
 }
 
 template <class D>
-inline auto QuadratureBase<D>::shape_qvector(size_t arg) const
+inline auto QuadratureBase<D>::shape_qvector(size_t arg) const -> std::array<size_t, 3>
 {
     return std::array<size_t, 3>{derived_cast().m_nelem, derived_cast().m_nip, arg};
 }
 
 template <class D>
-template <class T>
+template <class R>
 inline auto QuadratureBase<D>::allocate_elemvec() const
 {
-    return xt::xtensor<T, 3>::from_shape(this->shape_elemvec());
+    return xt::xtensor<R, 3>::from_shape(this->shape_elemvec());
 }
 
 template <class D>
-template <class T>
-inline auto QuadratureBase<D>::allocate_elemvec(T val) const
+template <class R>
+inline auto QuadratureBase<D>::allocate_elemvec(R val) const
 {
-    auto ret = xt::xtensor<T, 3>::from_shape(this->shape_elemvec());
+    auto ret = xt::xtensor<R, 3>::from_shape(this->shape_elemvec());
     ret.fill(val);
     return ret;
 }
 
 template <class D>
-template <class T>
+template <class R>
 inline auto QuadratureBase<D>::allocate_elemmat() const
 {
-    return xt::xtensor<T, 3>::from_shape(this->shape_elemmat());
+    return xt::xtensor<R, 3>::from_shape(this->shape_elemmat());
 }
 
 template <class D>
-template <class T>
-inline auto QuadratureBase<D>::allocate_elemmat(T val) const
+template <class R>
+inline auto QuadratureBase<D>::allocate_elemmat(R val) const
 {
-    auto ret = xt::xtensor<T, 3>::from_shape(this->shape_elemmat());
+    auto ret = xt::xtensor<R, 3>::from_shape(this->shape_elemmat());
     ret.fill(val);
     return ret;
 }
 
 template <class D>
-template <size_t rank, class T>
+template <size_t rank, class R>
 inline auto QuadratureBase<D>::allocate_qtensor() const
 {
-    return xt::xtensor<T, 2 + rank>::from_shape(this->shape_qtensor<rank>());
+    return xt::xtensor<R, 2 + rank>::from_shape(this->shape_qtensor<rank>());
 }
 
 template <class D>
-template <size_t rank, class T>
-inline auto QuadratureBase<D>::allocate_qtensor(T val) const
+template <size_t rank, class R>
+inline auto QuadratureBase<D>::allocate_qtensor(R val) const
 {
-    auto ret = xt::xtensor<T, 2 + rank>::from_shape(this->shape_qtensor<rank>());
+    auto ret = xt::xtensor<R, 2 + rank>::from_shape(this->shape_qtensor<rank>());
     ret.fill(val);
     return ret;
 }
 
 template <class D>
-template <class T>
+template <class R>
 inline auto QuadratureBase<D>::allocate_qtensor(size_t rank) const
 {
-    return xt::xarray<T>::from_shape(this->shape_qtensor(rank));
+    return xt::xarray<R>::from_shape(this->shape_qtensor(rank));
 }
 
 template <class D>
-template <class T>
-inline auto QuadratureBase<D>::allocate_qtensor(size_t rank, T val) const
+template <class R>
+inline auto QuadratureBase<D>::allocate_qtensor(size_t rank, R val) const
 {
-    auto ret = xt::xarray<T>::from_shape(this->shape_qtensor(rank));
+    auto ret = xt::xarray<R>::from_shape(this->shape_qtensor(rank));
     ret.fill(val);
     return ret;
 }
 
 template <class D>
-template <class T>
+template <class R>
 inline auto QuadratureBase<D>::allocate_qscalar() const
 {
-    return this->allocate_qtensor<0, T>();
+    return this->allocate_qtensor<0, R>();
 }
 
 template <class D>
-template <class T>
-inline auto QuadratureBase<D>::allocate_qscalar(T val) const
+template <class R>
+inline auto QuadratureBase<D>::allocate_qscalar(R val) const
 {
-    return this->allocate_qtensor<0, T>(val);
+    return this->allocate_qtensor<0, R>(val);
 }
 
 template <class D>
@@ -387,13 +387,13 @@ inline void QuadratureBaseCartesian<D>::compute_dN_impl()
 }
 
 template <class D>
-inline auto QuadratureBaseCartesian<D>::GradN() const
+inline auto QuadratureBaseCartesian<D>::GradN() const -> xt::xtensor<double, 4>
 {
     return derived_cast().m_dNx;
 }
 
 template <class D>
-inline auto QuadratureBaseCartesian<D>::dV() const
+inline auto QuadratureBaseCartesian<D>::dV() const -> xt::xtensor<double, 2>
 {
     return derived_cast().m_vol;
 }
@@ -409,7 +409,7 @@ inline void QuadratureBaseCartesian<D>::update_x(const T& x)
 
 template <class D>
 template <class T>
-inline auto QuadratureBaseCartesian<D>::InterpQuad_vector(const T& elemvec) const
+inline auto QuadratureBaseCartesian<D>::InterpQuad_vector(const T& elemvec) const -> xt::xtensor<double, 3>
 {
     size_t n = elemvec.shape(2);
     auto qvector = xt::xtensor<double, 3>::from_shape(this->shape_qvector(n));
@@ -459,7 +459,7 @@ inline void QuadratureBaseCartesian<D>::interpQuad_vector_impl(const T& elemvec,
 
 template <class D>
 template <class T>
-inline auto QuadratureBaseCartesian<D>::GradN_vector(const T& elemvec) const
+inline auto QuadratureBaseCartesian<D>::GradN_vector(const T& elemvec) const -> xt::xtensor<double, 4>
 {
     auto qtensor = xt::xtensor<double, 4>::from_shape(this->template shape_qtensor<2>());
     derived_cast().gradN_vector_impl(elemvec, qtensor);
@@ -509,7 +509,7 @@ inline void QuadratureBaseCartesian<D>::gradN_vector_impl(const T& elemvec, R& q
 
 template <class D>
 template <class T>
-inline auto QuadratureBaseCartesian<D>::GradN_vector_T(const T& elemvec) const
+inline auto QuadratureBaseCartesian<D>::GradN_vector_T(const T& elemvec) const -> xt::xtensor<double, 4>
 {
     auto qtensor = xt::xtensor<double, 4>::from_shape(this->template shape_qtensor<2>());
     derived_cast().gradN_vector_T_impl(elemvec, qtensor);
@@ -559,7 +559,7 @@ inline void QuadratureBaseCartesian<D>::gradN_vector_T_impl(const T& elemvec, R&
 
 template <class D>
 template <class T>
-inline auto QuadratureBaseCartesian<D>::SymGradN_vector(const T& elemvec) const
+inline auto QuadratureBaseCartesian<D>::SymGradN_vector(const T& elemvec) const -> xt::xtensor<double, 4>
 {
     auto qtensor = xt::xtensor<double, 4>::from_shape(this->template shape_qtensor<2>());
     derived_cast().symGradN_vector_impl(elemvec, qtensor);
@@ -610,7 +610,7 @@ inline void QuadratureBaseCartesian<D>::symGradN_vector_impl(const T& elemvec, R
 
 template <class D>
 template <class T>
-inline auto QuadratureBaseCartesian<D>::Int_N_vector_dV(const T& qvector) const
+inline auto QuadratureBaseCartesian<D>::Int_N_vector_dV(const T& qvector) const -> xt::xtensor<double, 3>
 {
     size_t n = qvector.shape(2);
     auto elemvec = xt::xtensor<double, 3>::from_shape(this->shape_elemvec(n));
@@ -662,7 +662,7 @@ inline void QuadratureBaseCartesian<D>::int_N_vector_dV_impl(const T& qvector, R
 
 template <class D>
 template <class T>
-inline auto QuadratureBaseCartesian<D>::Int_N_scalar_NT_dV(const T& qscalar) const
+inline auto QuadratureBaseCartesian<D>::Int_N_scalar_NT_dV(const T& qscalar) const -> xt::xtensor<double, 3>
 {
     auto elemmat = xt::xtensor<double, 3>::from_shape(this->shape_elemmat());
     derived_cast().int_N_scalar_NT_dV_impl(qscalar, elemmat);
@@ -715,7 +715,7 @@ inline void QuadratureBaseCartesian<D>::int_N_scalar_NT_dV_impl(const T& qscalar
 
 template <class D>
 template <class T>
-inline auto QuadratureBaseCartesian<D>::Int_gradN_dot_tensor2_dV(const T& qtensor) const
+inline auto QuadratureBaseCartesian<D>::Int_gradN_dot_tensor2_dV(const T& qtensor) const -> xt::xtensor<double, 3>
 {
     auto elemvec = xt::xtensor<double, 3>::from_shape(this->shape_elemvec());
     derived_cast().int_gradN_dot_tensor2_dV_impl(qtensor, elemvec);
@@ -767,7 +767,7 @@ inline void QuadratureBaseCartesian<D>::int_gradN_dot_tensor2_dV_impl(const T& q
 
 template <class D>
 template <class T>
-inline auto QuadratureBaseCartesian<D>::Int_gradN_dot_tensor4_dot_gradNT_dV(const T& qtensor) const
+inline auto QuadratureBaseCartesian<D>::Int_gradN_dot_tensor4_dot_gradNT_dV(const T& qtensor) const -> xt::xtensor<double, 3>
 {
     auto elemmat = xt::xtensor<double, 3>::from_shape(this->shape_elemmat());
     derived_cast().int_gradN_dot_tensor4_dot_gradNT_dV_impl(qtensor, elemmat);

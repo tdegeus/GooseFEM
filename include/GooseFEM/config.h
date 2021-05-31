@@ -30,6 +30,7 @@ Basic configuration:
 #include <memory>
 #include <numeric>
 #include <string>
+#include <array>
 #include <vector>
 
 #include <xtensor/xadapt.hpp>
