@@ -141,7 +141,7 @@ public:
 
     \returns [#nelem, #nne, #ndim].
     */
-    auto shape_elemvec() const;
+    auto shape_elemvec() const -> std::array<size_t, 3>;
 
     /**
     Get the shape of an "elemvec".
@@ -149,14 +149,14 @@ public:
     \param tdim The vector dimension.
     \returns [#nelem, #nne, tdim].
     */
-    auto shape_elemvec(size_t tdim) const;
+    auto shape_elemvec(size_t tdim) const -> std::array<size_t, 3>;
 
     /**
     Get the shape of an "elemmat".
 
     \returns [#nelem, #nne * #ndim, #nne * #ndim].
     */
-    auto shape_elemmat() const;
+    auto shape_elemmat() const -> std::array<size_t, 3>;
 
     /**
     Get the shape of a "qtensor" of a certain rank
@@ -168,7 +168,7 @@ public:
     \returns [#nelem, #nip, #tdim, ...].
     */
     template <size_t rank = 0>
-    auto shape_qtensor() const;
+    auto shape_qtensor() const -> std::array<size_t, 2 + rank>;
 
     /**
     Get the shape of a "qtensor" of a certain rank
@@ -177,7 +177,7 @@ public:
     \param rank The tensor rank.
     \returns [#nelem, #nip, #tdim, ...].
     */
-    auto shape_qtensor(size_t rank) const;
+    auto shape_qtensor(size_t rank) const -> std::vector<size_t>;
 
     /**
     Get the shape of a "qtensor" of a certain rank
@@ -192,7 +192,7 @@ public:
     \returns [#nelem, #nip, tdim, ...].
     */
     template <size_t trank>
-    auto shape_qtensor(size_t rank, size_t tdim) const;
+    auto shape_qtensor(size_t rank, size_t tdim) const -> std::array<size_t, 2 + trank>;
 
     /**
     Get the shape of a "qtensor" of a certain rank
@@ -202,26 +202,26 @@ public:
     \param tdim The tensor dimension.
     \returns [#nelem, #nip, tdim, ...].
     */
-    auto shape_qtensor(size_t rank, size_t tdim) const;
+    auto shape_qtensor(size_t rank, size_t tdim) const -> std::vector<size_t>;
 
     /**
     Get the shape of a "qscalar" (a "qtensor" of rank 0)
     \returns [#nelem, #nip].
     */
-    auto shape_qscalar() const;
+    auto shape_qscalar() const -> std::array<size_t, 2>;
 
     /**
     Get the shape of a "qvector" (a "qtensor" of rank 1)
     \returns [#nelem, #nip, #tdim].
     */
-    auto shape_qvector() const;
+    auto shape_qvector() const -> std::array<size_t, 3>;
 
     /**
     Get the shape of a "qvector" (a "qtensor" of rank 1)
     \param tdim Tensor dimension.
     \returns [#nelem, #nip, #tdim].
     */
-    auto shape_qvector(size_t tdim) const;
+    auto shape_qvector(size_t tdim) const -> std::array<size_t, 3>;
 
     /**
     Get an allocated `xt::xtensor` to store a "elemvec".
@@ -335,8 +335,6 @@ private:
 
     auto derived_cast() -> derived_type&;
     auto derived_cast() const -> const derived_type&;
-
-    friend class QuadratureBase<D>;
 };
 
 /**
@@ -375,14 +373,14 @@ public:
 
     \return ``gradN`` stored per element, per integration point [#nelem, #nip, #nne, #ndim].
     */
-    auto GradN() const;
+    auto GradN() const -> xt::xtensor<double, 4>;
 
     /**
     Get the integration volume.
 
     \return volume stored per element, per integration point [#nelem, #nip].
     */
-    auto dV() const;
+    auto dV() const -> xt::xtensor<double, 2>;
 
     /**
     Interpolate element vector and evaluate at each quadrature point.
@@ -393,7 +391,7 @@ public:
     \return qvector [#nelem, #nip, #ndim].
     */
     template <class T>
-    auto InterpQuad_vector(const T& elemvec) const;
+    auto InterpQuad_vector(const T& elemvec) const -> xt::xtensor<double, 3>;
 
     /**
     Same as InterpQuad_vector(), but writing to preallocated return.
@@ -421,7 +419,7 @@ public:
     \return qtensor [#nelem, #nip, #tdim, #tdim]
     */
     template <class T>
-    auto GradN_vector(const T& elemvec) const;
+    auto GradN_vector(const T& elemvec) const -> xt::xtensor<double, 4>;
 
     /**
     Same as GradN_vector(), but writing to preallocated return.
@@ -445,7 +443,7 @@ public:
     \return qtensor [#nelem, #nip, #tdim, #tdim]
     */
     template <class T>
-    auto GradN_vector_T(const T& elemvec) const;
+    auto GradN_vector_T(const T& elemvec) const -> xt::xtensor<double, 4>;
 
     /**
     Same as GradN_vector_T(), but writing to preallocated return.
@@ -470,7 +468,7 @@ public:
     \return qtensor [#nelem, #nip, #tdim, #tdim]
     */
     template <class T>
-    auto SymGradN_vector(const T& elemvec) const;
+    auto SymGradN_vector(const T& elemvec) const -> xt::xtensor<double, 4>;
 
     /**
     Same as SymGradN_vector(), but writing to preallocated return.
@@ -494,7 +492,7 @@ public:
     \return elemvec [#nelem, #nne. #ndim]
     */
     template <class T>
-    auto Int_N_vector_dV(const T& qvector) const;
+    auto Int_N_vector_dV(const T& qvector) const -> xt::xtensor<double, 3>;
 
     /**
     Same as Int_N_vector_dV(), but writing to preallocated return.
@@ -524,7 +522,7 @@ public:
     \return elemmat [#nelem, #nne * #ndim, #nne * #ndim]
     */
     template <class T>
-    auto Int_N_scalar_NT_dV(const T& qscalar) const;
+    auto Int_N_scalar_NT_dV(const T& qscalar) const -> xt::xtensor<double, 3>;
 
     /**
     Same as Int_N_scalar_NT_dV(), but writing to preallocated return.
@@ -553,7 +551,7 @@ public:
     \return elemvec [#nelem, #nne. #ndim]
     */
     template <class T>
-    auto Int_gradN_dot_tensor2_dV(const T& qtensor) const;
+    auto Int_gradN_dot_tensor2_dV(const T& qtensor) const -> xt::xtensor<double, 3>;
 
     /**
     Same as Int_gradN_dot_tensor2_dV(), but writing to preallocated return.
@@ -587,7 +585,7 @@ public:
     \return elemmat [#nelem, #nne * #ndim, #nne * #ndim]
     */
     template <class T>
-    auto Int_gradN_dot_tensor4_dot_gradNT_dV(const T& qtensor) const;
+    auto Int_gradN_dot_tensor4_dot_gradNT_dV(const T& qtensor) const -> xt::xtensor<double, 3>;
 
     /**
     Same as Int_gradN_dot_tensor4_dot_gradNT_dV(), but writing to preallocated return.

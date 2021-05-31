@@ -95,9 +95,6 @@ private:
     template <class T, class R>
     void symGradN_vector_impl(const T& elemvec, R& qtensor) const;
 
-    template <class T, class R>
-    void int_N_vector_dV_impl(const T& qvector, R& elemvec) const;
-
     // elemmat(e, q, m * ndim + i, n * ndim + i) +=
     //     N(e, q, m) * qscalar(e, q) * N(e, q, n) * dV(e, q)
     template <class T, class R>
