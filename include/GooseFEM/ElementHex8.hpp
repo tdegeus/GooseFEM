@@ -227,8 +227,8 @@ inline Quadrature::Quadrature(const T& x, const X& xi, const W& w)
 template <class T, class R>
 inline void Quadrature::int_N_scalar_NT_dV_impl(const T& qscalar, R& elemmat) const
 {
-    GOOSEFEM_ASSERT(xt::has_shape(qscalar, {m_nelem, m_nip}));
-    GOOSEFEM_ASSERT(xt::has_shape(elemmat, {m_nelem, s_nne * s_ndim, s_nne * s_ndim}));
+    GOOSEFEM_ASSERT(xt::has_shape(qscalar, this->shape_qscalar()));
+    GOOSEFEM_ASSERT(xt::has_shape(elemmat, this->shape_elemmat()));
 
     elemmat.fill(0.0);
 
@@ -258,8 +258,8 @@ inline void Quadrature::int_N_scalar_NT_dV_impl(const T& qscalar, R& elemmat) co
 template <class T, class R>
 inline void Quadrature::int_gradN_dot_tensor2_dV_impl(const T& qtensor, R& elemvec) const
 {
-    GOOSEFEM_ASSERT(xt::has_shape(qtensor, {m_nelem, m_nip, s_ndim, s_ndim}));
-    GOOSEFEM_ASSERT(xt::has_shape(elemvec, {m_nelem, s_nne, s_ndim}));
+    GOOSEFEM_ASSERT(xt::has_shape(qtensor, this->shape_qtensor<2>()));
+    GOOSEFEM_ASSERT(xt::has_shape(elemvec, this->shape_elemvec()));
 
     elemvec.fill(0.0);
 
