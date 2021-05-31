@@ -111,8 +111,8 @@ inline void QuadraturePlanar::compute_dN_impl()
 template <class T, class R>
 inline void QuadraturePlanar::gradN_vector_impl(const T& elemvec, R& qtensor) const
 {
-    GOOSEFEM_ASSERT(xt::has_shape(elemvec, {m_nelem, s_nne, s_ndim}));
-    GOOSEFEM_ASSERT(xt::has_shape(qtensor, {m_nelem, m_nip, s_tdim, s_tdim}));
+    GOOSEFEM_ASSERT(xt::has_shape(elemvec, this->shape_elemvec()));
+    GOOSEFEM_ASSERT(xt::has_shape(qtensor, this->shape_qtensor<2>()));
 
     qtensor.fill(0.0);
 
@@ -142,8 +142,8 @@ inline void QuadraturePlanar::gradN_vector_impl(const T& elemvec, R& qtensor) co
 template <class T, class R>
 inline void QuadraturePlanar::gradN_vector_T_impl(const T& elemvec, R& qtensor) const
 {
-    GOOSEFEM_ASSERT(xt::has_shape(elemvec, {m_nelem, s_nne, s_ndim}));
-    GOOSEFEM_ASSERT(xt::has_shape(qtensor, {m_nelem, m_nip, s_tdim, s_tdim}));
+    GOOSEFEM_ASSERT(xt::has_shape(elemvec, this->shape_elemvec()));
+    GOOSEFEM_ASSERT(xt::has_shape(qtensor, this->shape_qtensor<2>()));
 
     qtensor.fill(0.0);
 
@@ -173,8 +173,8 @@ inline void QuadraturePlanar::gradN_vector_T_impl(const T& elemvec, R& qtensor) 
 template <class T, class R>
 inline void QuadraturePlanar::symGradN_vector_impl(const T& elemvec, R& qtensor) const
 {
-    GOOSEFEM_ASSERT(xt::has_shape(elemvec, {m_nelem, s_nne, s_ndim}));
-    GOOSEFEM_ASSERT(xt::has_shape(qtensor, {m_nelem, m_nip, s_tdim, s_tdim}));
+    GOOSEFEM_ASSERT(xt::has_shape(elemvec, this->shape_elemvec()));
+    GOOSEFEM_ASSERT(xt::has_shape(qtensor, this->shape_qtensor<2>()));
 
     qtensor.fill(0.0);
 
@@ -205,8 +205,8 @@ inline void QuadraturePlanar::symGradN_vector_impl(const T& elemvec, R& qtensor)
 template <class T, class R>
 inline void QuadraturePlanar::int_N_scalar_NT_dV_impl(const T& qscalar, R& elemmat) const
 {
-    GOOSEFEM_ASSERT(xt::has_shape(qscalar, {m_nelem, m_nip}));
-    GOOSEFEM_ASSERT(xt::has_shape(elemmat, {m_nelem, s_nne * s_ndim, s_nne * s_ndim}));
+    GOOSEFEM_ASSERT(xt::has_shape(qscalar, this->shape_qscalar()));
+    GOOSEFEM_ASSERT(xt::has_shape(elemmat, this->shape_elemmat()));
 
     elemmat.fill(0.0);
 
@@ -235,8 +235,8 @@ inline void QuadraturePlanar::int_N_scalar_NT_dV_impl(const T& qscalar, R& elemm
 template <class T, class R>
 inline void QuadraturePlanar::int_gradN_dot_tensor2_dV_impl(const T& qtensor, R& elemvec) const
 {
-    GOOSEFEM_ASSERT(xt::has_shape(qtensor, {m_nelem, m_nip, s_tdim, s_tdim}));
-    GOOSEFEM_ASSERT(xt::has_shape(elemvec, {m_nelem, s_nne, s_ndim}));
+    GOOSEFEM_ASSERT(xt::has_shape(qtensor, this->shape_qtensor<2>()));
+    GOOSEFEM_ASSERT(xt::has_shape(elemvec, this->shape_elemvec()));
 
     elemvec.fill(0.0);
 
