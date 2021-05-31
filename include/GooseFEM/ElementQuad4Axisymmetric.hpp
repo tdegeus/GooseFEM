@@ -16,30 +16,29 @@ namespace GooseFEM {
 namespace Element {
 namespace Quad4 {
 
-inline QuadratureAxisymmetric::QuadratureAxisymmetric(const xt::xtensor<double, 3>& x)
+template <class T>
+inline QuadratureAxisymmetric::QuadratureAxisymmetric(const T& x)
     : QuadratureAxisymmetric(x, Gauss::xi(), Gauss::w())
 {
 }
 
-inline QuadratureAxisymmetric::QuadratureAxisymmetric(
-    const xt::xtensor<double, 3>& x,
-    const xt::xtensor<double, 2>& xi,
-    const xt::xtensor<double, 1>& w)
+template <class T, class X, class W>
+inline QuadratureAxisymmetric::QuadratureAxisymmetric(const T& x, const X& xi, const W& w)
 {
     m_x = x;
     m_w = w;
     m_xi = xi;
+    m_nip = w.size();
+    m_nelem = m_x.shape(0);
 
-    this->initQuadratureBase(m_x.shape(0), m_w.size());
-
-    GOOSEFEM_ASSERT(m_x.shape(1) == m_nne);
-    GOOSEFEM_ASSERT(m_x.shape(2) == m_ndim);
-    GOOSEFEM_ASSERT(xt::has_shape(m_xi, {m_nip, m_ndim}));
+    GOOSEFEM_ASSERT(m_x.shape(1) == s_nne);
+    GOOSEFEM_ASSERT(m_x.shape(2) == s_ndim);
+    GOOSEFEM_ASSERT(xt::has_shape(m_xi, {m_nip, s_ndim}));
     GOOSEFEM_ASSERT(xt::has_shape(m_w, {m_nip}));
 
-    m_N = xt::empty<double>({m_nip, m_nne});
-    m_dNxi = xt::empty<double>({m_nip, m_nne, m_ndim});
-    m_B = xt::empty<double>({m_nelem, m_nip, m_nne, m_tdim, m_tdim, m_tdim});
+    m_N = xt::empty<double>({m_nip, s_nne});
+    m_dNxi = xt::empty<double>({m_nip, s_nne, s_ndim});
+    m_B = xt::empty<double>({m_nelem, m_nip, s_nne, s_tdim, s_tdim, s_tdim});
     m_vol = xt::empty<double>(this->shape_qscalar());
 
     for (size_t q = 0; q < m_nip; ++q) {
@@ -62,10 +61,10 @@ inline QuadratureAxisymmetric::QuadratureAxisymmetric(
         m_dNxi(q, 3, 1) = +0.25 * (1.0 - m_xi(q, 0));
     }
 
-    this->compute_dN();
+    this->compute_dN_impl();
 }
 
-inline void QuadratureAxisymmetric::compute_dN()
+inline void QuadratureAxisymmetric::compute_dN_impl()
 {
     // most components remain zero, and are not written
     m_B.fill(0.0);
@@ -78,13 +77,13 @@ inline void QuadratureAxisymmetric::compute_dN()
         #pragma omp for
         for (size_t e = 0; e < m_nelem; ++e) {
 
-            auto x = xt::adapt(&m_x(e, 0, 0), xt::xshape<m_nne, m_ndim>());
+            auto x = xt::adapt(&m_x(e, 0, 0), xt::xshape<s_nne, s_ndim>());
 
             for (size_t q = 0; q < m_nip; ++q) {
 
-                auto dNxi = xt::adapt(&m_dNxi(q, 0, 0), xt::xshape<m_nne, m_ndim>());
-                auto B = xt::adapt(&m_B(e, q, 0, 0, 0, 0), xt::xshape<m_nne, m_tdim, m_tdim, m_tdim>());
-                auto N = xt::adapt(&m_N(q, 0), xt::xshape<m_nne>());
+                auto dNxi = xt::adapt(&m_dNxi(q, 0, 0), xt::xshape<s_nne, s_ndim>());
+                auto B = xt::adapt(&m_B(e, q, 0, 0, 0, 0), xt::xshape<s_nne, s_tdim, s_tdim, s_tdim>());
+                auto N = xt::adapt(&m_N(q, 0), xt::xshape<s_nne>());
 
                 // J(i,j) += dNxi(m,i) * x(m,j);
                 J(0, 0) = dNxi(0, 0) * x(0, 0) + dNxi(1, 0) * x(1, 0) + dNxi(2, 0) * x(2, 0) +
@@ -102,7 +101,7 @@ inline void QuadratureAxisymmetric::compute_dN()
                 double rq = N(0) * x(0, 1) + N(1) * x(1, 1) + N(2) * x(2, 1) + N(3) * x(3, 1);
 
                 // dNx(m,i) += Jinv(i,j) * dNxi(m,j)
-                for (size_t m = 0; m < m_nne; ++m) {
+                for (size_t m = 0; m < s_nne; ++m) {
                     // B(m, r, r, r) = dNdx(m,1)
                     B(m, 0, 0, 0) = Jinv(1, 0) * dNxi(m, 0) + Jinv(1, 1) * dNxi(m, 1);
                     // B(m, r, z, z) = dNdx(m,1)
@@ -121,33 +120,28 @@ inline void QuadratureAxisymmetric::compute_dN()
     }
 }
 
-inline xt::xtensor<double, 4> QuadratureAxisymmetric::GradN() const
-{
-    return m_dNx; // empty: but function is private to cannot be called
-}
-
 inline xt::xtensor<double, 6> QuadratureAxisymmetric::B() const
 {
     return m_B;
 }
 
-inline void QuadratureAxisymmetric::gradN_vector(
-    const xt::xtensor<double, 3>& elemvec, xt::xtensor<double, 4>& qtensor) const
+template <class T, class R>
+inline void QuadratureAxisymmetric::gradN_vector_impl(const T& elemvec, R& qtensor) const
 {
-    GOOSEFEM_ASSERT(xt::has_shape(elemvec, {m_nelem, m_nne, m_ndim}));
-    GOOSEFEM_ASSERT(xt::has_shape(qtensor, {m_nelem, m_nip, m_tdim, m_tdim}));
+    GOOSEFEM_ASSERT(xt::has_shape(elemvec, {m_nelem, s_nne, s_ndim}));
+    GOOSEFEM_ASSERT(xt::has_shape(qtensor, {m_nelem, m_nip, s_tdim, s_tdim}));
 
     qtensor.fill(0.0);
 
     #pragma omp parallel for
     for (size_t e = 0; e < m_nelem; ++e) {
 
-        auto u = xt::adapt(&elemvec(e, 0, 0), xt::xshape<m_nne, m_ndim>());
+        auto u = xt::adapt(&elemvec(e, 0, 0), xt::xshape<s_nne, s_ndim>());
 
         for (size_t q = 0; q < m_nip; ++q) {
 
-            auto B = xt::adapt(&m_B(e, q, 0, 0, 0, 0), xt::xshape<m_nne, m_tdim, m_tdim, m_tdim>());
-            auto gradu = xt::adapt(&qtensor(e, q, 0, 0), xt::xshape<m_tdim, m_tdim>());
+            auto B = xt::adapt(&m_B(e, q, 0, 0, 0, 0), xt::xshape<s_nne, s_tdim, s_tdim, s_tdim>());
+            auto gradu = xt::adapt(&qtensor(e, q, 0, 0), xt::xshape<s_tdim, s_tdim>());
 
             // gradu(i,j) += B(m,i,j,k) * u(m,perm(k))
             // (where perm(0) = 1, perm(2) = 0)
@@ -165,23 +159,23 @@ inline void QuadratureAxisymmetric::gradN_vector(
     }
 }
 
-inline void QuadratureAxisymmetric::gradN_vector_T(
-    const xt::xtensor<double, 3>& elemvec, xt::xtensor<double, 4>& qtensor) const
+template <class T, class R>
+inline void QuadratureAxisymmetric::gradN_vector_T_impl(const T& elemvec, R& qtensor) const
 {
-    GOOSEFEM_ASSERT(xt::has_shape(elemvec, {m_nelem, m_nne, m_ndim}));
-    GOOSEFEM_ASSERT(xt::has_shape(qtensor, {m_nelem, m_nip, m_tdim, m_tdim}));
+    GOOSEFEM_ASSERT(xt::has_shape(elemvec, {m_nelem, s_nne, s_ndim}));
+    GOOSEFEM_ASSERT(xt::has_shape(qtensor, {m_nelem, m_nip, s_tdim, s_tdim}));
 
     qtensor.fill(0.0);
 
     #pragma omp parallel for
     for (size_t e = 0; e < m_nelem; ++e) {
 
-        auto u = xt::adapt(&elemvec(e, 0, 0), xt::xshape<m_nne, m_ndim>());
+        auto u = xt::adapt(&elemvec(e, 0, 0), xt::xshape<s_nne, s_ndim>());
 
         for (size_t q = 0; q < m_nip; ++q) {
 
-            auto B = xt::adapt(&m_B(e, q, 0, 0, 0, 0), xt::xshape<m_nne, m_tdim, m_tdim, m_tdim>());
-            auto gradu = xt::adapt(&qtensor(e, q, 0, 0), xt::xshape<m_tdim, m_tdim>());
+            auto B = xt::adapt(&m_B(e, q, 0, 0, 0, 0), xt::xshape<s_nne, s_tdim, s_tdim, s_tdim>());
+            auto gradu = xt::adapt(&qtensor(e, q, 0, 0), xt::xshape<s_tdim, s_tdim>());
 
             // gradu(j,i) += B(m,i,j,k) * u(m,perm(k))
             // (where perm(0) = 1, perm(2) = 0)
@@ -199,23 +193,23 @@ inline void QuadratureAxisymmetric::gradN_vector_T(
     }
 }
 
-inline void QuadratureAxisymmetric::symGradN_vector(
-    const xt::xtensor<double, 3>& elemvec, xt::xtensor<double, 4>& qtensor) const
+template <class T, class R>
+inline void QuadratureAxisymmetric::symGradN_vector_impl(const T& elemvec, R& qtensor) const
 {
-    GOOSEFEM_ASSERT(xt::has_shape(elemvec, {m_nelem, m_nne, m_ndim}));
-    GOOSEFEM_ASSERT(xt::has_shape(qtensor, {m_nelem, m_nip, m_tdim, m_tdim}));
+    GOOSEFEM_ASSERT(xt::has_shape(elemvec, {m_nelem, s_nne, s_ndim}));
+    GOOSEFEM_ASSERT(xt::has_shape(qtensor, {m_nelem, m_nip, s_tdim, s_tdim}));
 
     qtensor.fill(0.0);
 
     #pragma omp parallel for
     for (size_t e = 0; e < m_nelem; ++e) {
 
-        auto u = xt::adapt(&elemvec(e, 0, 0), xt::xshape<m_nne, m_ndim>());
+        auto u = xt::adapt(&elemvec(e, 0, 0), xt::xshape<s_nne, s_ndim>());
 
         for (size_t q = 0; q < m_nip; ++q) {
 
-            auto B = xt::adapt(&m_B(e, q, 0, 0, 0, 0), xt::xshape<m_nne, m_tdim, m_tdim, m_tdim>());
-            auto eps = xt::adapt(&qtensor(e, q, 0, 0), xt::xshape<m_tdim, m_tdim>());
+            auto B = xt::adapt(&m_B(e, q, 0, 0, 0, 0), xt::xshape<s_nne, s_tdim, s_tdim, s_tdim>());
+            auto eps = xt::adapt(&qtensor(e, q, 0, 0), xt::xshape<s_tdim, s_tdim>());
 
             // gradu(j,i) += B(m,i,j,k) * u(m,perm(k))
             // eps(j,i) = 0.5 * (gradu(i,j) + gradu(j,i))
@@ -235,58 +229,58 @@ inline void QuadratureAxisymmetric::symGradN_vector(
     }
 }
 
-inline void QuadratureAxisymmetric::int_N_scalar_NT_dV(
-    const xt::xtensor<double, 2>& qscalar, xt::xtensor<double, 3>& elemmat) const
+template <class T, class R>
+inline void QuadratureAxisymmetric::int_N_scalar_NT_dV_impl(const T& qscalar, R& elemmat) const
 {
     GOOSEFEM_ASSERT(xt::has_shape(qscalar, {m_nelem, m_nip}));
-    GOOSEFEM_ASSERT(xt::has_shape(elemmat, {m_nelem, m_nne * m_ndim, m_nne * m_ndim}));
+    GOOSEFEM_ASSERT(xt::has_shape(elemmat, {m_nelem, s_nne * s_ndim, s_nne * s_ndim}));
 
     elemmat.fill(0.0);
 
     #pragma omp parallel for
     for (size_t e = 0; e < m_nelem; ++e) {
 
-        auto M = xt::adapt(&elemmat(e, 0, 0), xt::xshape<m_nne * m_ndim, m_nne * m_ndim>());
+        auto M = xt::adapt(&elemmat(e, 0, 0), xt::xshape<s_nne * s_ndim, s_nne * s_ndim>());
 
         for (size_t q = 0; q < m_nip; ++q) {
 
-            auto N = xt::adapt(&m_N(q, 0), xt::xshape<m_nne>());
+            auto N = xt::adapt(&m_N(q, 0), xt::xshape<s_nne>());
             auto& vol = m_vol(e, q);
             auto& rho = qscalar(e, q);
 
             // M(m*ndim+i,n*ndim+i) += N(m) * scalar * N(n) * dV
-            for (size_t m = 0; m < m_nne; ++m) {
-                for (size_t n = 0; n < m_nne; ++n) {
-                    M(m * m_ndim + 0, n * m_ndim + 0) += N(m) * rho * N(n) * vol;
-                    M(m * m_ndim + 1, n * m_ndim + 1) += N(m) * rho * N(n) * vol;
+            for (size_t m = 0; m < s_nne; ++m) {
+                for (size_t n = 0; n < s_nne; ++n) {
+                    M(m * s_ndim + 0, n * s_ndim + 0) += N(m) * rho * N(n) * vol;
+                    M(m * s_ndim + 1, n * s_ndim + 1) += N(m) * rho * N(n) * vol;
                 }
             }
         }
     }
 }
 
-inline void QuadratureAxisymmetric::int_gradN_dot_tensor2_dV(
-    const xt::xtensor<double, 4>& qtensor, xt::xtensor<double, 3>& elemvec) const
+template <class T, class R>
+inline void QuadratureAxisymmetric::int_gradN_dot_tensor2_dV_impl(const T& qtensor, R& elemvec) const
 {
-    GOOSEFEM_ASSERT(xt::has_shape(qtensor, {m_nelem, m_nip, m_tdim, m_tdim}));
-    GOOSEFEM_ASSERT(xt::has_shape(elemvec, {m_nelem, m_nne, m_ndim}));
+    GOOSEFEM_ASSERT(xt::has_shape(qtensor, {m_nelem, m_nip, s_tdim, s_tdim}));
+    GOOSEFEM_ASSERT(xt::has_shape(elemvec, {m_nelem, s_nne, s_ndim}));
 
     elemvec.fill(0.0);
 
     #pragma omp parallel for
     for (size_t e = 0; e < m_nelem; ++e) {
 
-        auto f = xt::adapt(&elemvec(e, 0, 0), xt::xshape<m_nne, m_ndim>());
+        auto f = xt::adapt(&elemvec(e, 0, 0), xt::xshape<s_nne, s_ndim>());
 
         for (size_t q = 0; q < m_nip; ++q) {
 
-            auto B = xt::adapt(&m_B(e, q, 0, 0, 0, 0), xt::xshape<m_nne, m_tdim, m_tdim, m_tdim>());
-            auto sig = xt::adapt(&qtensor(e, q, 0, 0), xt::xshape<m_tdim, m_tdim>());
+            auto B = xt::adapt(&m_B(e, q, 0, 0, 0, 0), xt::xshape<s_nne, s_tdim, s_tdim, s_tdim>());
+            auto sig = xt::adapt(&qtensor(e, q, 0, 0), xt::xshape<s_tdim, s_tdim>());
             auto& vol = m_vol(e, q);
 
             // f(m,i) += B(m,i,j,perm(k)) * sig(i,j) * dV
             // (where perm(0) = 1, perm(2) = 0)
-            for (size_t m = 0; m < m_nne; ++m) {
+            for (size_t m = 0; m < s_nne; ++m) {
                 f(m, 0) += vol * (B(m, 2, 2, 2) * sig(2, 2) + B(m, 0, 2, 2) * sig(0, 2));
                 f(m, 1) += vol * (B(m, 0, 0, 0) * sig(0, 0) + B(m, 1, 1, 0) * sig(1, 1) +
                                   B(m, 2, 0, 0) * sig(2, 0));
@@ -295,82 +289,83 @@ inline void QuadratureAxisymmetric::int_gradN_dot_tensor2_dV(
     }
 }
 
-inline void QuadratureAxisymmetric::int_gradN_dot_tensor4_dot_gradNT_dV(
-    const xt::xtensor<double, 6>& qtensor, xt::xtensor<double, 3>& elemmat) const
+template <class T, class R>
+inline void QuadratureAxisymmetric::int_gradN_dot_tensor4_dot_gradNT_dV_impl(
+    const T& qtensor, R& elemmat) const
 {
-    GOOSEFEM_ASSERT(xt::has_shape(qtensor, {m_nelem, m_nip, m_tdim, m_tdim, m_tdim, m_tdim}));
-    GOOSEFEM_ASSERT(xt::has_shape(elemmat, {m_nelem, m_nne * m_ndim, m_nne * m_ndim}));
+    GOOSEFEM_ASSERT(xt::has_shape(qtensor, {m_nelem, m_nip, s_tdim, s_tdim, s_tdim, s_tdim}));
+    GOOSEFEM_ASSERT(xt::has_shape(elemmat, {m_nelem, s_nne * s_ndim, s_nne * s_ndim}));
 
     elemmat.fill(0.0);
 
     #pragma omp parallel for
     for (size_t e = 0; e < m_nelem; ++e) {
 
-        auto K = xt::adapt(&elemmat(e, 0, 0), xt::xshape<m_nne * m_ndim, m_nne * m_ndim>());
+        auto K = xt::adapt(&elemmat(e, 0, 0), xt::xshape<s_nne * s_ndim, s_nne * s_ndim>());
 
         for (size_t q = 0; q < m_nip; ++q) {
 
-            auto B = xt::adapt(&m_B(e, q, 0, 0, 0, 0), xt::xshape<m_nne, m_tdim, m_tdim, m_tdim>());
-            auto C = xt::adapt(&qtensor(e, q, 0, 0, 0, 0), xt::xshape<m_tdim, m_tdim, m_tdim, m_tdim>());
+            auto B = xt::adapt(&m_B(e, q, 0, 0, 0, 0), xt::xshape<s_nne, s_tdim, s_tdim, s_tdim>());
+            auto C = xt::adapt(&qtensor(e, q, 0, 0, 0, 0), xt::xshape<s_tdim, s_tdim, s_tdim, s_tdim>());
             auto& vol = m_vol(e, q);
 
-            // K(m*m_ndim+perm(c), n*m_ndim+perm(f)) = B(m,a,b,c) * C(a,b,d,e) * B(n,e,d,f) * vol;
+            // K(m*s_ndim+perm(c), n*s_ndim+perm(f)) = B(m,a,b,c) * C(a,b,d,e) * B(n,e,d,f) * vol;
             // (where perm(0) = 1, perm(2) = 0)
-            for (size_t m = 0; m < m_nne; ++m) {
-                for (size_t n = 0; n < m_nne; ++n) {
-                    K(m * m_ndim + 1, n * m_ndim + 1) +=
+            for (size_t m = 0; m < s_nne; ++m) {
+                for (size_t n = 0; n < s_nne; ++n) {
+                    K(m * s_ndim + 1, n * s_ndim + 1) +=
                         B(m, 0, 0, 0) * C(0, 0, 0, 0) * B(n, 0, 0, 0) * vol;
-                    K(m * m_ndim + 1, n * m_ndim + 1) +=
+                    K(m * s_ndim + 1, n * s_ndim + 1) +=
                         B(m, 0, 0, 0) * C(0, 0, 1, 1) * B(n, 1, 1, 0) * vol;
-                    K(m * m_ndim + 1, n * m_ndim + 0) +=
+                    K(m * s_ndim + 1, n * s_ndim + 0) +=
                         B(m, 0, 0, 0) * C(0, 0, 2, 2) * B(n, 2, 2, 2) * vol;
-                    K(m * m_ndim + 1, n * m_ndim + 0) +=
+                    K(m * s_ndim + 1, n * s_ndim + 0) +=
                         B(m, 0, 0, 0) * C(0, 0, 2, 0) * B(n, 0, 2, 2) * vol;
-                    K(m * m_ndim + 1, n * m_ndim + 1) +=
+                    K(m * s_ndim + 1, n * s_ndim + 1) +=
                         B(m, 0, 0, 0) * C(0, 0, 0, 2) * B(n, 2, 0, 0) * vol;
 
-                    K(m * m_ndim + 1, n * m_ndim + 1) +=
+                    K(m * s_ndim + 1, n * s_ndim + 1) +=
                         B(m, 1, 1, 0) * C(1, 1, 0, 0) * B(n, 0, 0, 0) * vol;
-                    K(m * m_ndim + 1, n * m_ndim + 1) +=
+                    K(m * s_ndim + 1, n * s_ndim + 1) +=
                         B(m, 1, 1, 0) * C(1, 1, 1, 1) * B(n, 1, 1, 0) * vol;
-                    K(m * m_ndim + 1, n * m_ndim + 0) +=
+                    K(m * s_ndim + 1, n * s_ndim + 0) +=
                         B(m, 1, 1, 0) * C(1, 1, 2, 2) * B(n, 2, 2, 2) * vol;
-                    K(m * m_ndim + 1, n * m_ndim + 0) +=
+                    K(m * s_ndim + 1, n * s_ndim + 0) +=
                         B(m, 1, 1, 0) * C(1, 1, 2, 0) * B(n, 0, 2, 2) * vol;
-                    K(m * m_ndim + 1, n * m_ndim + 1) +=
+                    K(m * s_ndim + 1, n * s_ndim + 1) +=
                         B(m, 1, 1, 0) * C(1, 1, 0, 2) * B(n, 2, 0, 0) * vol;
 
-                    K(m * m_ndim + 0, n * m_ndim + 1) +=
+                    K(m * s_ndim + 0, n * s_ndim + 1) +=
                         B(m, 2, 2, 2) * C(2, 2, 0, 0) * B(n, 0, 0, 0) * vol;
-                    K(m * m_ndim + 0, n * m_ndim + 1) +=
+                    K(m * s_ndim + 0, n * s_ndim + 1) +=
                         B(m, 2, 2, 2) * C(2, 2, 1, 1) * B(n, 1, 1, 0) * vol;
-                    K(m * m_ndim + 0, n * m_ndim + 0) +=
+                    K(m * s_ndim + 0, n * s_ndim + 0) +=
                         B(m, 2, 2, 2) * C(2, 2, 2, 2) * B(n, 2, 2, 2) * vol;
-                    K(m * m_ndim + 0, n * m_ndim + 0) +=
+                    K(m * s_ndim + 0, n * s_ndim + 0) +=
                         B(m, 2, 2, 2) * C(2, 2, 2, 0) * B(n, 0, 2, 2) * vol;
-                    K(m * m_ndim + 0, n * m_ndim + 1) +=
+                    K(m * s_ndim + 0, n * s_ndim + 1) +=
                         B(m, 2, 2, 2) * C(2, 2, 0, 2) * B(n, 2, 0, 0) * vol;
 
-                    K(m * m_ndim + 0, n * m_ndim + 1) +=
+                    K(m * s_ndim + 0, n * s_ndim + 1) +=
                         B(m, 0, 2, 2) * C(0, 2, 0, 0) * B(n, 0, 0, 0) * vol;
-                    K(m * m_ndim + 0, n * m_ndim + 1) +=
+                    K(m * s_ndim + 0, n * s_ndim + 1) +=
                         B(m, 0, 2, 2) * C(0, 2, 1, 1) * B(n, 1, 1, 0) * vol;
-                    K(m * m_ndim + 0, n * m_ndim + 0) +=
+                    K(m * s_ndim + 0, n * s_ndim + 0) +=
                         B(m, 0, 2, 2) * C(0, 2, 2, 2) * B(n, 2, 2, 2) * vol;
-                    K(m * m_ndim + 0, n * m_ndim + 0) +=
+                    K(m * s_ndim + 0, n * s_ndim + 0) +=
                         B(m, 0, 2, 2) * C(0, 2, 2, 0) * B(n, 0, 2, 2) * vol;
-                    K(m * m_ndim + 0, n * m_ndim + 1) +=
+                    K(m * s_ndim + 0, n * s_ndim + 1) +=
                         B(m, 0, 2, 2) * C(0, 2, 0, 2) * B(n, 2, 0, 0) * vol;
 
-                    K(m * m_ndim + 1, n * m_ndim + 1) +=
+                    K(m * s_ndim + 1, n * s_ndim + 1) +=
                         B(m, 2, 0, 0) * C(2, 0, 0, 0) * B(n, 0, 0, 0) * vol;
-                    K(m * m_ndim + 1, n * m_ndim + 1) +=
+                    K(m * s_ndim + 1, n * s_ndim + 1) +=
                         B(m, 2, 0, 0) * C(2, 0, 1, 1) * B(n, 1, 1, 0) * vol;
-                    K(m * m_ndim + 1, n * m_ndim + 0) +=
+                    K(m * s_ndim + 1, n * s_ndim + 0) +=
                         B(m, 2, 0, 0) * C(2, 0, 2, 2) * B(n, 2, 2, 2) * vol;
-                    K(m * m_ndim + 1, n * m_ndim + 0) +=
+                    K(m * s_ndim + 1, n * s_ndim + 0) +=
                         B(m, 2, 0, 0) * C(2, 0, 2, 0) * B(n, 0, 2, 2) * vol;
-                    K(m * m_ndim + 1, n * m_ndim + 1) +=
+                    K(m * s_ndim + 1, n * s_ndim + 1) +=
                         B(m, 2, 0, 0) * C(2, 0, 0, 2) * B(n, 2, 0, 0) * vol;
                 }
             }

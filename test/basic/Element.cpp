@@ -13,7 +13,10 @@ TEST_CASE("GooseFEM::Element", "Element.h")
     {
         size_t nelem = 3;
         size_t nip = 4;
-        GooseFEM::Element::QuadratureBase<4, 2, 2> quad(nelem, nip);
+        size_t nne = 4;
+        size_t ndim = 2;
+        xt::xtensor<double, 3> elemvec = xt::empty<double>({nelem, nne, ndim});
+        GooseFEM::Element::Quad4::Quadrature quad(elemvec);
 
         xt::xtensor<double, 2> qscalar = xt::random::rand<double>({nelem, nip});
         auto qtensor = quad.AsTensor<2>(qscalar);
@@ -32,11 +35,14 @@ TEST_CASE("GooseFEM::Element", "Element.h")
         }
     }
 
-    SECTION("QuadratureBase - AsTensor - e.g. Hex8")
+    SECTION("QuadratureBase - AsTensor - e.g. Quad4")
     {
-        size_t nelem = 6;
-        size_t nip = 8;
-        GooseFEM::Element::QuadratureBase<8, 3, 3> quad(nelem, nip);
+        size_t nelem = 3;
+        size_t nip = 4;
+        size_t nne = 4;
+        size_t ndim = 2;
+        xt::xtensor<double, 3> elemvec = xt::empty<double>({nelem, nne, ndim});
+        GooseFEM::Element::Quad4::Quadrature quad(elemvec);
 
         xt::xtensor<double, 2> qscalar = xt::random::rand<double>({nelem, nip});
         auto qtensor = quad.AsTensor<2>(qscalar);

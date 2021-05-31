@@ -37,14 +37,14 @@ namespace Gauss {
     /**
     Integration point coordinates (local coordinates).
 
-    \return Coordinates [nip(), ``ndim``], with ``ndim = 3``.
+    \return Coordinates [#nip, ndim], with `ndim = 3`.
     */
     inline xt::xtensor<double, 2> xi();
 
     /**
     Integration point weights.
 
-    \return Coordinates [nip()].
+    \return Coordinates [#nip].
     */
     inline xt::xtensor<double, 1> w();
 
@@ -68,19 +68,18 @@ namespace Nodal {
     /**
     Integration point coordinates (local coordinates).
 
-    \return Coordinates [nip(), ``ndim``], with ``ndim = 3``.
+    \return Coordinates [#nip, `ndim`], with ``ndim = 3``.
     */
     inline xt::xtensor<double, 2> xi();
 
     /**
     Integration point weights.
 
-    \return Coordinates [nip()].
+    \return Coordinates [#nip].
     */
     inline xt::xtensor<double, 1> w();
 
 } // namespace Nodal
-
 
 /**
 Interpolation and quadrature.
@@ -90,12 +89,12 @@ Fixed dimensions:
 -   ``nne = 8``: number of nodes per element.
 
 Naming convention:
--    ``elemmat``:  matrices stored per element, [nelem(), nne() * ndim(), nne() * ndim()]
--    ``elemvec``:  nodal vectors stored per element, [nelem(), nne(), ndim()]
--    ``qtensor``:  integration point tensor, [nelem(), nip(), ndim(), ndim()]
--    ``qscalar``:  integration point scalar, [nelem(), nip()]
+-    ``elemmat``:  matrices stored per element, [#nelem, #nne * #ndim, #nne * #ndim]
+-    ``elemvec``:  nodal vectors stored per element, [#nelem, #nne, #ndim]
+-    ``qtensor``:  integration point tensor, [#nelem, #nip, #ndim, #ndim]
+-    ``qscalar``:  integration point scalar, [#nelem, #nip]
 */
-class Quadrature : public GooseFEM::Element::QuadratureBaseCartesian<8, 3, 3> {
+class Quadrature : public QuadratureBaseCartesian<Quadrature> {
 public:
 
     Quadrature() = default;
@@ -114,7 +113,8 @@ public:
 
     \param x nodal coordinates (``elemvec``).
     */
-    Quadrature(const xt::xtensor<double, 3>& x);
+    template <class T>
+    Quadrature(const T& x);
 
     /**
     Constructor with custom integration.
@@ -129,19 +129,36 @@ public:
     to recompute the above listed quantities.
 
     \param x nodal coordinates (``elemvec``).
-    \param xi Integration point coordinates (local coordinates) [nip()].
-    \param w Integration point weights [nip()].
+    \param xi Integration point coordinates (local coordinates) [#nip].
+    \param w Integration point weights [#nip].
     */
-    Quadrature(
-        const xt::xtensor<double, 3>& x,
-        const xt::xtensor<double, 2>& xi,
-        const xt::xtensor<double, 1>& w);
+    template <class T, class X, class W>
+    Quadrature(const T& x, const X& xi, const W& w);
 
-    void int_N_scalar_NT_dV(
-        const xt::xtensor<double, 2>& qscalar, xt::xtensor<double, 3>& elemmat) const override;
+private:
 
-    void int_gradN_dot_tensor2_dV(
-        const xt::xtensor<double, 4>& qtensor, xt::xtensor<double, 3>& elemvec) const override;
+    friend QuadratureBase<Quadrature>;
+    friend QuadratureBaseCartesian<Quadrature>;
+
+    template <class T, class R>
+    void int_N_scalar_NT_dV_impl(const T& qscalar, R& elemmat) const;
+
+    template <class T, class R>
+    void int_gradN_dot_tensor2_dV_impl(const T& qtensor, R& elemvec) const;
+
+    constexpr static size_t s_nne = 8; ///< Number of nodes per element.
+    constexpr static size_t s_ndim = 3; ///< Number of dimensions for nodal vectors.
+    constexpr static size_t s_tdim = 3; ///< Number of dimensions for tensors.
+    size_t m_tdim = 3; ///< Dynamic alias of s_tdim (remove in C++17)
+    size_t m_nelem; ///< Number of elements.
+    size_t m_nip;   ///< Number of integration points per element.
+    xt::xtensor<double, 3> m_x;    ///< nodal positions stored per element [#nelem, #nne, #ndim]
+    xt::xtensor<double, 1> m_w;    ///< weight of each integration point [nip]
+    xt::xtensor<double, 2> m_xi;   ///< local coordinate of each integration point [#nip, #ndim]
+    xt::xtensor<double, 2> m_N;    ///< shape functions [#nip, #nne]
+    xt::xtensor<double, 3> m_dNxi; ///< shape function grad. wrt local  coor. [#nip, #nne, #ndim]
+    xt::xtensor<double, 4> m_dNx;  ///< shape function grad. wrt global coor. [#nelem, #nip, #nne, #ndim]
+    xt::xtensor<double, 2> m_vol;  ///< integration point volume [#nelem, #nip]
 };
 
 } // namespace Hex8

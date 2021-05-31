@@ -35,7 +35,7 @@ Gauss quadrature: quadrature points such that integration is exact for this bi-l
 namespace Gauss {
 
     /**
-    Number of integration points::
+    Number of integration points:
 
         nip = nne = 4
 
@@ -46,7 +46,7 @@ namespace Gauss {
     /**
     Integration point coordinates (local coordinates).
 
-    \return Coordinates [#nip, ``ndim``], with ``ndim = 2``.
+    \return Coordinates [#nip, `ndim`], with `ndim = 2`.
     */
     inline xt::xtensor<double, 2> xi();
 
@@ -61,7 +61,7 @@ namespace Gauss {
 
 /**
 nodal quadrature: quadrature points coincide with the nodes.
-The order is the same as in the connectivity::
+The order is the same as in the connectivity:
 
     3 -- 2
     |    |
@@ -81,7 +81,7 @@ namespace Nodal {
     /**
     Integration point coordinates (local coordinates).
 
-    \return Coordinates [#nip, ``ndim``], with ``ndim = 2``.
+    \return Coordinates [#nip, `ndim`], with ``ndim = 2``.
     */
     inline xt::xtensor<double, 2> xi();
 
@@ -143,7 +143,7 @@ Naming convention:
 -    ``qtensor``:  integration point tensor, [#nelem, #nip, #ndim, #ndim]
 -    ``qscalar``:  integration point scalar, [#nelem, #nip]
 */
-class Quadrature : public GooseFEM::Element::QuadratureBaseCartesian<4, 2, 2> {
+class Quadrature : public QuadratureBaseCartesian<Quadrature> {
 public:
 
     Quadrature() = default;
@@ -162,7 +162,8 @@ public:
 
     \param x nodal coordinates (``elemvec``).
     */
-    Quadrature(const xt::xtensor<double, 3>& x);
+    template <class T>
+    Quadrature(const T& x);
 
     /**
     Constructor with custom integration.
@@ -180,31 +181,47 @@ public:
     \param xi Integration point coordinates (local coordinates) [#nip].
     \param w Integration point weights [#nip].
     */
-    Quadrature(
-        const xt::xtensor<double, 3>& x,
-        const xt::xtensor<double, 2>& xi,
-        const xt::xtensor<double, 1>& w);
+    template <class T, class X, class W>
+    Quadrature(const T& x, const X& xi, const W& w);
 
-    void interpQuad_vector(
-        const xt::xtensor<double, 3>& elemvec, xt::xtensor<double, 3>& qvector) const override;
+private:
 
-    void gradN_vector(
-        const xt::xtensor<double, 3>& elemvec, xt::xtensor<double, 4>& qtensor) const override;
+    friend QuadratureBase<Quadrature>;
+    friend QuadratureBaseCartesian<Quadrature>;
 
-    void gradN_vector_T(
-        const xt::xtensor<double, 3>& elemvec, xt::xtensor<double, 4>& qtensor) const override;
+    template <class T, class R>
+    void interpQuad_vector_impl(const T&, R& qvector) const;
 
-    void symGradN_vector(
-        const xt::xtensor<double, 3>& elemvec, xt::xtensor<double, 4>& qtensor) const override;
+    template <class T, class R>
+    void gradN_vector_impl(const T&, R& qtensor) const;
 
-    void int_N_scalar_NT_dV(
-        const xt::xtensor<double, 2>& qscalar, xt::xtensor<double, 3>& elemmat) const override;
+    template <class T, class R>
+    void gradN_vector_T_impl(const T&, R& qtensor) const;
 
-    void int_gradN_dot_tensor2_dV(
-        const xt::xtensor<double, 4>& qtensor, xt::xtensor<double, 3>& elemvec) const override;
+    template <class T, class R>
+    void symGradN_vector_impl(const T&, R& qtensor) const;
 
-protected:
-    void compute_dN() override;
+    template <class T, class R>
+    void int_N_scalar_NT_dV_impl(const T& qscalar, R& elemmat) const;
+
+    template <class T, class R>
+    void int_gradN_dot_tensor2_dV_impl(const T& qtensor, R&) const;
+
+    void compute_dN_impl();
+
+    constexpr static size_t s_nne = 4;  ///< Number of nodes per element.
+    constexpr static size_t s_ndim = 2; ///< Number of dimensions for nodal vectors.
+    constexpr static size_t s_tdim = 2; ///< Number of dimensions for tensors.
+    size_t m_tdim = 2; ///< Dynamic alias of s_tdim (remove in C++17)
+    size_t m_nelem; ///< Number of elements.
+    size_t m_nip;   ///< Number of integration points per element.
+    xt::xtensor<double, 3> m_x;    ///< nodal positions stored per element [#nelem, #nne, #ndim]
+    xt::xtensor<double, 1> m_w;    ///< weight of each integration point [nip]
+    xt::xtensor<double, 2> m_xi;   ///< local coordinate of each integration point [#nip, #ndim]
+    xt::xtensor<double, 2> m_N;    ///< shape functions [#nip, #nne]
+    xt::xtensor<double, 3> m_dNxi; ///< shape function grad. wrt local  coor. [#nip, #nne, #ndim]
+    xt::xtensor<double, 4> m_dNx;  ///< shape function grad. wrt global coor. [#nelem, #nip, #nne, #ndim]
+    xt::xtensor<double, 2> m_vol;  ///< integration point volume [#nelem, #nip]
 };
 
 } // namespace Quad4

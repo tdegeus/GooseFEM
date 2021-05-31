@@ -30,7 +30,7 @@ Naming convention:
 -    ``qtensor``:  integration point tensor, [#nelem, #nip, #tdim, #tdim]
 -    ``qscalar``:  integration point scalar, [#nelem, #nip]
 */
-class QuadratureAxisymmetric : public GooseFEM::Element::QuadratureBaseCartesian<4, 2, 3> {
+class QuadratureAxisymmetric : public QuadratureBaseCartesian<QuadratureAxisymmetric> {
 public:
 
     QuadratureAxisymmetric() = default;
@@ -49,7 +49,8 @@ public:
 
     \param x nodal coordinates (``elemvec``).
     */
-    QuadratureAxisymmetric(const xt::xtensor<double, 3>& x);
+    template <class T>
+    QuadratureAxisymmetric(const T& x);
 
     /**
     Constructor with custom integration.
@@ -67,10 +68,8 @@ public:
     \param xi Integration point coordinates (local coordinates) [#nip].
     \param w Integration point weights [#nip].
     */
-    QuadratureAxisymmetric(
-        const xt::xtensor<double, 3>& x,
-        const xt::xtensor<double, 2>& xi,
-        const xt::xtensor<double, 1>& w);
+    template <class T, class X, class W>
+    QuadratureAxisymmetric(const T& x, const X& xi, const W& w);
 
     /**
     Get the B-matrix (shape function gradients) (in global coordinates).
@@ -81,36 +80,51 @@ public:
     */
     xt::xtensor<double, 6> B() const;
 
+private:
+
+    friend QuadratureBase<QuadratureAxisymmetric>;
+    friend QuadratureBaseCartesian<QuadratureAxisymmetric>;
+
     // qtensor(e, q, i, j) += B(e, q, m, i, j, k) * elemvec(e, q, m, k)
-    void gradN_vector(
-        const xt::xtensor<double, 3>& elemvec, xt::xtensor<double, 4>& qtensor) const override;
+    template <class T, class R>
+    void gradN_vector_impl(const T& elemvec, R& qtensor) const;
 
-    void gradN_vector_T(
-        const xt::xtensor<double, 3>& elemvec, xt::xtensor<double, 4>& qtensor) const override;
+    template <class T, class R>
+    void gradN_vector_T_impl(const T& elemvec, R& qtensor) const;
 
-    void symGradN_vector(
-        const xt::xtensor<double, 3>& elemvec, xt::xtensor<double, 4>& qtensor) const override;
+    template <class T, class R>
+    void symGradN_vector_impl(const T& elemvec, R& qtensor) const;
+
+    template <class T, class R>
+    void int_N_vector_dV_impl(const T& qvector, R& elemvec) const;
 
     // elemmat(e, q, m * ndim + i, n * ndim + i) +=
     //     N(e, q, m) * qscalar(e, q) * N(e, q, n) * dV(e, q)
-    void int_N_scalar_NT_dV(
-        const xt::xtensor<double, 2>& qscalar, xt::xtensor<double, 3>& elemmat) const override;
+    template <class T, class R>
+    void int_N_scalar_NT_dV_impl(const T& qscalar, R& elemmat) const;
 
     // fm = ( Bm^T : qtensor ) dV
-    void int_gradN_dot_tensor2_dV(
-        const xt::xtensor<double, 4>& qtensor, xt::xtensor<double, 3>& elemvec) const override;
+    template <class T, class R>
+    void int_gradN_dot_tensor2_dV_impl(const T& qtensor, R& elemvec) const;
 
     // Kmn = ( Bm^T : qtensor : Bn ) dV
-    void int_gradN_dot_tensor4_dot_gradNT_dV(
-        const xt::xtensor<double, 6>& qtensor, xt::xtensor<double, 3>& elemmat) const override;
+    template <class T, class R>
+    void int_gradN_dot_tensor4_dot_gradNT_dV_impl(const T& qtensor, R& elemmat) const;
 
-protected:
-    void compute_dN() override;
+    void compute_dN_impl();
 
-private:
-    xt::xtensor<double, 4> GradN() const override;
-
-private:
+    constexpr static size_t s_nne = 4;  ///< Number of nodes per element.
+    constexpr static size_t s_ndim = 2; ///< Number of dimensions for nodal vectors.
+    constexpr static size_t s_tdim = 3; ///< Number of dimensions for tensors.
+    size_t m_tdim = 3; ///< Dynamic alias of s_tdim (remove in C++17)
+    size_t m_nelem; ///< Number of elements.
+    size_t m_nip;   ///< Number of integration points per element.
+    xt::xtensor<double, 3> m_x;    ///< nodal positions stored per element [#nelem, #nne, #ndim]
+    xt::xtensor<double, 1> m_w;    ///< weight of each integration point [nip]
+    xt::xtensor<double, 2> m_xi;   ///< local coordinate of each integration point [#nip, #ndim]
+    xt::xtensor<double, 2> m_N;    ///< shape functions [#nip, #nne]
+    xt::xtensor<double, 3> m_dNxi; ///< shape function grad. wrt local  coor. [#nip, #nne, #ndim]
+    xt::xtensor<double, 2> m_vol;  ///< integration point volume [#nelem, #nip]
     xt::xtensor<double, 6> m_B; ///< B-matrix [#nelem, #nne, #tdim, #tdim, #tdim]
 };
 
