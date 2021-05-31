@@ -205,8 +205,8 @@ int main()
         xt::xtensor<double, 3> Sigelem = xt::average(Sig, dV, {1});
         xt::xtensor<double, 3> Epselem = xt::average(Eps, dV, {1});
         // - macroscopic strain and stress
-        auto Sigbar = xt::average(Sig, dV, {0, 1});
-        auto Epsbar = xt::average(Eps, dV, {0, 1});
+        xt::xtensor<double, 2> Sigbar = xt::average(Sig, dV, {0, 1});
+        xt::xtensor<double, 2> Epsbar = xt::average(Eps, dV, {0, 1});
         // - write to output-file: increment numbers
         H5::dump(file, "/stored", inc, {inc});
         // - write to output-file: macroscopic response
