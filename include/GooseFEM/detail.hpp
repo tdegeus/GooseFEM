@@ -74,8 +74,8 @@ namespace detail {
             return det;
         }
     };
-};
 
 } // namespace detail
+} // namespace GooseFEM
 
 #endif
