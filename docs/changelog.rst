@@ -3,6 +3,25 @@
 Changelog
 *********
 
+v0.12.2
+=======
+
+*   Element: using shape definitions
+*   Fixing warnings
+*   Removing xtensor-fixed from examples
+*   Templating constructor Mesh::Quad4::FineLayer
+*   Using CRTP for Element
+*   Using CRTP for Mesh
+*   Vector: static & dynamic distribution (#213)
+*   Templating Mesh (#211)
+*   Templating vector (#209)
+*   Removing deprecated methods (#210)
+*   Allocate: convert to full-template (#208)
+*   [Python] Simplifying implementation Mesh
+*   [Python] Element registration of base classes
+*   [Python] Starting switch pyxtensor -> xtensor-python (#212, #214)
+*   [CI] Switching to micromamba (#207)
+
 v0.12.1
 =======
 
