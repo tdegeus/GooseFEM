@@ -609,7 +609,6 @@ private:
     auto derived_cast() const -> const derived_type&;
 
     friend class QuadratureBase<D>;
-    friend class QuadratureBaseCartesian<D>;
 
     template <class T, class R>
     void interpQuad_vector_impl(const T& elemvec, R& qvector) const;
