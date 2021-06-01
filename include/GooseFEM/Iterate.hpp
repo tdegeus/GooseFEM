@@ -31,14 +31,14 @@ inline void StopList::reset(size_t n)
     reset();
 }
 
-inline bool StopList::stop(double res, double tol)
+inline bool StopList::stop_simple(double res, double tol)
 {
     std::rotate(m_res.begin(), m_res.begin() + 1, m_res.end());
     m_res.back() = res;
     return !std::any_of(m_res.cbegin(), m_res.cend(), [=](const auto& i) { return i >= tol; });
 }
 
-inline bool StopList::stop_sorted(double res, double tol)
+inline bool StopList::stop(double res, double tol)
 {
     std::rotate(m_res.begin(), m_res.begin() + 1, m_res.end());
     m_res.back() = res;

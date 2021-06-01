@@ -52,7 +52,7 @@ public:
     \param res Current residual.
     \param tol Tolerance below which all last "n" iterations must lie.
     */
-    bool stop(double res, double tol);
+    bool stop_simple(double res, double tol);
 
     /**
     Update list of residuals, return `true` if all residuals are below the tolerance,
@@ -61,7 +61,7 @@ public:
     \param res Current residual.
     \param tol Tolerance below which all last "n" iterations must lie.
     */
-    bool stop_sorted(double res, double tol);
+    bool stop(double res, double tol);
 
     /**
     Get the historic residuals.

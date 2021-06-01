@@ -27,15 +27,15 @@ void init_Iterate(py::module& mod)
             "Reset."
             "See :cpp:func:`GooseFEM::Iterate::StopList::reset`.");
 
-    cls.def("stop",
-            &GooseFEM::Iterate::StopList::stop,
+    cls.def("stop_simple",
+            &GooseFEM::Iterate::StopList::stop_simple,
             "Update list of residuals, return `true` if all residuals are below the tolerance."
-            "See :cpp:func:`GooseFEM::Iterate::StopList::stop`.",
+            "See :cpp:func:`GooseFEM::Iterate::StopList::stop_simple`.",
             py::arg("res"),
             py::arg("tol"));
 
-    cls.def("stop_sorted",
-            &GooseFEM::Iterate::StopList::stop_sorted,
+    cls.def("stop",
+            &GooseFEM::Iterate::StopList::stop,
             "Update list of residuals, return `true` if all residuals are sorted and below the tolerance."
             "See :cpp:func:`GooseFEM::Iterate::StopList::stop`.",
             py::arg("res"),
