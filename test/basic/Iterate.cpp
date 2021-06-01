@@ -10,19 +10,29 @@
 TEST_CASE("GooseFEM::Iterate", "Iterate.h")
 {
 
-    SECTION("StopList")
+    SECTION("StopList - sorted input")
     {
         GooseFEM::Iterate::StopList stop(5);
 
-        REQUIRE(stop.stop(5.e+0, 1.e-3) == false);
-        REQUIRE(stop.stop(5.e+1, 1.e-3) == false);
-        REQUIRE(stop.stop(5.e-1, 1.e-3) == false);
-        REQUIRE(stop.stop(5.e-2, 1.e-3) == false);
-        REQUIRE(stop.stop(5.e-3, 1.e-3) == false);
-        REQUIRE(stop.stop(5.e-4, 1.e-3) == false);
-        REQUIRE(stop.stop(5.e-4, 1.e-3) == false);
-        REQUIRE(stop.stop(5.e-4, 1.e-3) == false);
-        REQUIRE(stop.stop(5.e-4, 1.e-3) == false);
-        REQUIRE(stop.stop(5.e-4, 1.e-3) == true);
+        //                         x      x      x      x      x      v      v      v      v      v
+        std::vector<double> res = {5e+0,  5e+1,  5e-1,  5e-2,  5e-3,  5e-4,  4e-4,  3e-4,  2e-4,  1e-4};
+        std::vector<bool> conv =  {false, false, false, false, false, false, false, false, false, true};
+
+        for (size_t i = 0; i < res.size(); ++i) {
+            REQUIRE(stop.stop(res[i], 1e-3) == conv[i]);
+        }
+    }
+
+    SECTION("StopList - unsorted input")
+    {
+        GooseFEM::Iterate::StopList stop(5);
+
+        //                         x      x      x      x      x      v      v      v      v      x      v      v      v      v
+        std::vector<double> res = {5e+0,  5e+1,  5e-1,  5e-2,  5e-3,  5e-4,  4e-4,  3e-4,  2e-4,  3e-4,  2e-4,  1e-4,  9e-5,  8e-5};
+        std::vector<bool> conv =  {false, false, false, false, false, false, false, false, false, false, false, false, false, true};
+
+        for (size_t i = 0; i < res.size(); ++i) {
+            REQUIRE(stop.stop(res[i], 1e-3) == conv[i]);
+        }
     }
 }

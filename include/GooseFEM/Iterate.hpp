@@ -22,9 +22,7 @@ inline StopList::StopList(size_t n)
 
 inline void StopList::reset()
 {
-    for (auto& i : m_res) {
-        i = std::numeric_limits<double>::infinity();
-    }
+    std::fill(m_res.begin(), m_res.end(), std::numeric_limits<double>::infinity());
 }
 
 inline void StopList::reset(size_t n)
@@ -35,30 +33,12 @@ inline void StopList::reset(size_t n)
 
 inline bool StopList::stop(double res, double tol)
 {
-    // move residual one place back (forgetting the first)
-    for (size_t i = 1; i < m_res.size(); ++i) {
-        m_res[i - 1] = m_res[i];
+    std::rotate(m_res.begin(), m_res.begin() + 1, m_res.end());
+    m_res.back() = res;
+    if (res > tol) {
+        return false;
     }
-
-    // add new residual to the end
-    m_res[m_res.size() - 1] = res;
-
-    // check for convergence: all residuals should be below the tolerance
-    for (size_t i = 0; i < m_res.size(); ++i) {
-        if (m_res[i] > tol) {
-            return false;
-        }
-    }
-
-    // check for convergence: all residuals should be decreasing
-    for (size_t i = 1; i < m_res.size(); ++i) {
-        if (m_res[i] > m_res[i - 1]) {
-            return false;
-        }
-    }
-
-    // all checks passed: signal convergence
-    return true;
+    return std::is_sorted(m_res.begin(), m_res.end(), std::greater_equal<double>()) && m_res.front() <= tol;
 }
 
 } // namespace Iterate
