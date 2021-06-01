@@ -35,10 +35,22 @@ inline bool StopList::stop(double res, double tol)
 {
     std::rotate(m_res.begin(), m_res.begin() + 1, m_res.end());
     m_res.back() = res;
+    return !std::any_of(m_res.cbegin(), m_res.cend(), [=](const auto& i) { return i >= tol; });
+}
+
+inline bool StopList::stop_sorted(double res, double tol)
+{
+    std::rotate(m_res.begin(), m_res.begin() + 1, m_res.end());
+    m_res.back() = res;
     if (res > tol) {
         return false;
     }
-    return std::is_sorted(m_res.begin(), m_res.end(), std::greater_equal<double>()) && m_res.front() <= tol;
+    return std::is_sorted(m_res.cbegin(), m_res.cend(), std::greater_equal<double>()) && m_res.front() <= tol;
+}
+
+inline auto StopList::get() const
+{
+    return m_res;
 }
 
 } // namespace Iterate

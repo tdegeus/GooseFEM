@@ -9,6 +9,7 @@
 
 #include <GooseFEM/Iterate.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/stl.h>
 
 namespace py = pybind11;
 
@@ -32,6 +33,18 @@ void init_Iterate(py::module& mod)
             "See :cpp:func:`GooseFEM::Iterate::StopList::stop`.",
             py::arg("res"),
             py::arg("tol"));
+
+    cls.def("stop_sorted",
+            &GooseFEM::Iterate::StopList::stop_sorted,
+            "Update list of residuals, return `true` if all residuals are sorted and below the tolerance."
+            "See :cpp:func:`GooseFEM::Iterate::StopList::stop`.",
+            py::arg("res"),
+            py::arg("tol"));
+
+    cls.def("get",
+            &GooseFEM::Iterate::StopList::get,
+            "Get the list of residuals."
+            "See :cpp:func:`GooseFEM::Iterate::StopList::get`.");
 
     cls.def("__repr__", [](const GooseFEM::Iterate::StopList&) { return "<GooseFEM.Iterate.StopList>"; });
 }
