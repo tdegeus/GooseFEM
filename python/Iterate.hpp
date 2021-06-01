@@ -1,0 +1,39 @@
+/**
+\file
+\copyright Copyright 2017. Tom de Geus. All rights reserved.
+\license This project is released under the GNU Public License (GPLv3).
+*/
+
+#ifndef PYGOOSEFEM_ITERATE_H
+#define PYGOOSEFEM_ITERATE_H
+
+#include <GooseFEM/Iterate.h>
+#include <pybind11/pybind11.h>
+
+namespace py = pybind11;
+
+void init_Iterate(py::module& mod)
+{
+    py::class_<GooseFEM::Iterate::StopList> cls(mod, "Iterate");
+
+    cls.def(py::init<size_t>(),
+            "Class to perform a residual check based on the last 'n' iterations."
+            "See :cpp:class:`GooseFEM::Iterate::StopList`.",
+            py::arg("n") = 1);
+
+    cls.def("reset",
+            py::overload_cast<>(&GooseFEM::Iterate::StopList::reset),
+            "Reset."
+            "See :cpp:func:`GooseFEM::Iterate::StopList::reset`.");
+
+    cls.def("stop",
+            &GooseFEM::Iterate::StopList::stop,
+            "Update list of residuals, return `true` if all residuals are below the tolerance."
+            "See :cpp:func:`GooseFEM::Iterate::StopList::stop`.",
+            py::arg("res"),
+            py::arg("tol"));
+
+    cls.def("__repr__", [](const GooseFEM::Iterate::StopList&) { return "<GooseFEM.Iterate.StopList>"; });
+}
+
+#endif

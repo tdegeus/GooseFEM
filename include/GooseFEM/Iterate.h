@@ -47,7 +47,7 @@ public:
     void reset(size_t n);
 
     /**
-    Update list of residuals, return true if all residuals are below the tolerance.
+    Update list of residuals, return `true` if all residuals are below the tolerance.
 
     \param res Current residual.
     \param tol Tolerance below which all last "n" iterations must lie.
