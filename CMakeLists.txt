@@ -7,6 +7,7 @@ project(GooseFEM)
 
 option(BUILD_ALL "${PROJECT_NAME}: Build tests, Python API & docs" OFF)
 option(BUILD_TESTS "${PROJECT_NAME}: Build tests" OFF)
+option(BUILD_EXAMPLES "${PROJECT_NAME}: Build examples" OFF)
 option(BUILD_PYTHON "${PROJECT_NAME}: Build Python API" OFF)
 option(BUILD_DOCS "${PROJECT_NAME}: Build docs" OFF)
 
@@ -96,7 +97,7 @@ endif()
 
 # Examples
 
-if(BUILD_EXAMPLES)
+if(BUILD_EXAMPLES OR BUILD_ALL)
     enable_testing()
     add_subdirectory(docs/examples)
 endif()
