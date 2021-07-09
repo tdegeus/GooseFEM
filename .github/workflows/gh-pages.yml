@@ -1,9 +1,13 @@
 name: gh-pages
 
 on:
+
   push:
     branches:
       - master
+
+  release:
+    types: [released]
 
 jobs:
 
