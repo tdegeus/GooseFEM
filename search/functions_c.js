@@ -1,0 +1,5 @@
+var searchData=
+[
+  ['periodic_798',['Periodic',['../classGooseFEM_1_1Tyings_1_1Periodic.html#a3ff36b8b4d544b83344eb6e494a733cc',1,'GooseFEM::Tyings::Periodic::Periodic(const xt::xtensor&lt; double, 2 &gt; &amp;coor, const xt::xtensor&lt; size_t, 2 &gt; &amp;dofs, const xt::xtensor&lt; size_t, 2 &gt; &amp;control_dofs, const xt::xtensor&lt; size_t, 2 &gt; &amp;nodal_tyings)'],['../classGooseFEM_1_1Tyings_1_1Periodic.html#ab6982330405578e83fa4d6e350142c7c',1,'GooseFEM::Tyings::Periodic::Periodic(const xt::xtensor&lt; double, 2 &gt; &amp;coor, const xt::xtensor&lt; size_t, 2 &gt; &amp;dofs, const xt::xtensor&lt; size_t, 2 &gt; &amp;control_dofs, const xt::xtensor&lt; size_t, 2 &gt; &amp;nodal_tyings, const xt::xtensor&lt; size_t, 1 &gt; &amp;iip)']]],
+  ['push_5fback_799',['push_back',['../classGooseFEM_1_1Mesh_1_1Stitch.html#aca34f8b4535fab0e1e97a82ba6e38ce0',1,'GooseFEM::Mesh::Stitch::push_back()'],['../classGooseFEM_1_1Mesh_1_1Vstack.html#a2a83abcb030632868e627e570924b1d5',1,'GooseFEM::Mesh::Vstack::push_back()']]]
+];
