@@ -10,6 +10,7 @@ option(BUILD_TESTS "${PROJECT_NAME}: Build tests" OFF)
 option(BUILD_EXAMPLES "${PROJECT_NAME}: Build examples" OFF)
 option(BUILD_PYTHON "${PROJECT_NAME}: Build Python API" OFF)
 option(BUILD_DOCS "${PROJECT_NAME}: Build docs" OFF)
+option(USE_SIMD "${PROJECT_NAME} - Python: Use xsimd and -march=native if available" OFF)
 
 execute_process(
     COMMAND python -c "from setuptools_scm import get_version; print(get_version())"
@@ -108,14 +109,16 @@ if(BUILD_PYTHON OR BUILD_ALL)
     find_package(Python REQUIRED COMPONENTS Interpreter Development NumPy)
     find_package(pybind11 REQUIRED CONFIG)
     find_package(xtensor-python REQUIRED)
-    find_package(pyxtensor REQUIRED)
-
     pybind11_add_module(mypymod python/main.cpp)
     set_target_properties(mypymod PROPERTIES OUTPUT_NAME ${PROJECT_NAME})
-    target_link_libraries(mypymod PUBLIC ${PROJECT_NAME}
-        pybind11::module xtensor-python Python::NumPy pyxtensor)
-
+    target_link_libraries(mypymod PUBLIC ${PROJECT_NAME} pybind11::module Python::NumPy xtensor-python)
     target_compile_definitions(mypymod PRIVATE VERSION_INFO=${PROJECT_VERSION})
+    if (USE_SIMD)
+        find_package(xtensor REQUIRED)
+        find_package(xsimd REQUIRED)
+        target_link_libraries(mypymod PUBLIC xtensor::optimize xtensor::use_xsimd)
+        message(STATUS "Compiling ${PROJECT_NAME} with hardware optimization")
+    endif()
 endif()
 
 # Documentation

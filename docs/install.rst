@@ -106,34 +106,22 @@ From source
 
 Start by installing the dependencies, for example using *conda*::
 
-    conda install -c conda-forge pyxtensor eigen xsimd
+    conda install -c conda-forge xtensor-python eigen xsimd
 
 Note that *xsimd* is optional, but recommended.
-
-.. note::
-
-    You can also use::
-
-        python -m pip install pyxtensor pybind11
-
-    for use without *conda*. Note that you install *Eigen* and *xsimd* yourself
-    in such a way that Python can find it in order to use it.
 
 Then, download the package::
 
     git checkout https://github.com/tdegeus/GooseFEM.git
     cd GooseFEM
 
+And, optionally, choose to use hardware optimisation (using *xsimd*)::
+
+    export CMAKE_ARGS="-DUSE_SIMD=1"
+
 Install the package using::
 
-    python -m pip install .
-
-.. note::
-
-    The following will give more readable output::
-
-        python setup.py build
-        python setup.py install
+    python -m pip install . -vv
 
 .. _install_docs:
 
