@@ -3,7 +3,7 @@
 Changelog
 *********
 
-v0.12.3
+v0.12.5
 =======
 
 *   [Python] Allow CMake customization using ``CMAKE_ARGS``
