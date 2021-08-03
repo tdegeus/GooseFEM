@@ -3,6 +3,13 @@
 Changelog
 *********
 
+v0.12.3
+=======
+
+*   [Python] Allow CMake customization using ``CMAKE_ARGS``
+*   [CMake] Adding option to build examples
+*   [docs] Update style. Adding GH build after release
+
 v0.12.2
 =======
 
