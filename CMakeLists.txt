@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.18..3.20)
+cmake_minimum_required(VERSION 3.18..3.21)
 
 # Basic settings
 # ==============
@@ -12,13 +12,18 @@ option(BUILD_PYTHON "${PROJECT_NAME}: Build Python API" OFF)
 option(BUILD_DOCS "${PROJECT_NAME}: Build docs" OFF)
 option(USE_SIMD "${PROJECT_NAME} - Python: Use xsimd and -march=native if available" OFF)
 
-execute_process(
-    COMMAND python -c "from setuptools_scm import get_version; print(get_version())"
-    WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
-    OUTPUT_VARIABLE PROJECT_VERSION
-    OUTPUT_STRIP_TRAILING_WHITESPACE)
+if (DEFINED ENV{SETUPTOOLS_SCM_PRETEND_VERSION})
+    set(PROJECT_VERSION $ENV{SETUPTOOLS_SCM_PRETEND_VERSION})
+    message(STATUS "Building ${PROJECT_NAME} ${PROJECT_VERSION} (read from SETUPTOOLS_SCM_PRETEND_VERSION)")
+else()
+    execute_process(
+        COMMAND python -c "from setuptools_scm import get_version; print(get_version())"
+        WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+        OUTPUT_VARIABLE PROJECT_VERSION
+        OUTPUT_STRIP_TRAILING_WHITESPACE)
 
-message(STATUS "Building ${PROJECT_NAME} ${PROJECT_VERSION}")
+    message(STATUS "Building ${PROJECT_NAME} ${PROJECT_VERSION}")
+endif()
 
 string(TOUPPER "${PROJECT_NAME}" PROJECT_NAME_UPPER)
 
