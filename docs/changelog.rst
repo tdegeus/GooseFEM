@@ -3,6 +3,11 @@
 Changelog
 *********
 
+v0.12.7
+=======
+
+*   Removing unused *pyxtensor* dependency
+
 v0.12.6
 =======
 
