@@ -3,6 +3,11 @@
 Changelog
 *********
 
+v0.12.6
+=======
+
+*   [CMake] Avoiding setuptools_scm dependency if SETUPTOOLS_SCM_PRETEND_VERSION is defined
+
 v0.12.5
 =======
 
