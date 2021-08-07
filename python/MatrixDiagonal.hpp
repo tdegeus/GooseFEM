@@ -8,7 +8,6 @@
 #include <pybind11/pybind11.h>
 #include <xtensor-python/pyarray.hpp>
 #include <xtensor-python/pytensor.hpp>
-#include <pyxtensor/pyxtensor.hpp>
 
 namespace py = pybind11;
 
