@@ -9,6 +9,7 @@ Implementation of Mesh.h
 #ifndef GOOSEFEM_MESH_HPP
 #define GOOSEFEM_MESH_HPP
 
+#include "assertions.h"
 #include "Mesh.h"
 
 namespace GooseFEM {
@@ -1571,9 +1572,7 @@ inline Reorder::Reorder(const std::initializer_list<T> args)
 
     #ifdef GOOSEFEM_ENABLE_ASSERT
     for (auto& arg : args) {
-        // todo: remove tmp when https://github.com/xtensor-stack/xtensor-python/issues/262
-        xt::xtensor<size_t, 1> tmp = xt::ravel(arg);
-        GOOSEFEM_ASSERT(xt::unique(tmp) == xt::sort(tmp));
+        GOOSEFEM_ASSERT(is_unique(arg));
     }
     #endif
 

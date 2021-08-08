@@ -27,9 +27,10 @@ inline MatrixDiagonalPartitioned::MatrixDiagonalPartitioned(
     m_ndim = m_dofs.shape(1);
     m_ndof = xt::amax(m_dofs)() + 1;
 
-    GOOSEFEM_ASSERT(xt::amax(m_conn)() + 1 <= m_nnode);
+    GOOSEFEM_ASSERT(is_unique(iip));
+    GOOSEFEM_ASSERT(xt::amax(conn)() + 1 <= m_nnode);
     GOOSEFEM_ASSERT(m_ndof <= m_nnode * m_ndim);
-    GOOSEFEM_ASSERT(xt::amax(iip)() <= xt::amax(m_dofs)());
+    GOOSEFEM_ASSERT(xt::amax(iip)() <= xt::amax(dofs)());
 
     m_iip = iip;
     m_iiu = xt::setdiff1d(dofs, iip);

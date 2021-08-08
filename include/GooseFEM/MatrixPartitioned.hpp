@@ -26,10 +26,17 @@ inline MatrixPartitioned::MatrixPartitioned(
     m_nne = m_conn.shape(1);
     m_nnode = m_dofs.shape(0);
     m_ndim = m_dofs.shape(1);
-    m_iiu = xt::setdiff1d(dofs, iip);
     m_ndof = xt::amax(m_dofs)() + 1;
+
+    GOOSEFEM_ASSERT(is_unique(iip));
+    GOOSEFEM_ASSERT(xt::amax(conn)() + 1 <= m_nnode);
+    GOOSEFEM_ASSERT(xt::amax(iip)() <= xt::amax(dofs)());
+    GOOSEFEM_ASSERT(m_ndof <= m_nnode * m_ndim);
+
+    m_iiu = xt::setdiff1d(dofs, iip);
     m_nnp = m_iip.size();
     m_nnu = m_iiu.size();
+
     m_part = Mesh::Reorder({m_iiu, m_iip}).apply(m_dofs);
     m_Tuu.reserve(m_nelem * m_nne * m_ndim * m_nne * m_ndim);
     m_Tup.reserve(m_nelem * m_nne * m_ndim * m_nne * m_ndim);
@@ -39,10 +46,6 @@ inline MatrixPartitioned::MatrixPartitioned(
     m_Aup.resize(m_nnu, m_nnp);
     m_Apu.resize(m_nnp, m_nnu);
     m_App.resize(m_nnp, m_nnp);
-
-    GOOSEFEM_ASSERT(xt::amax(m_conn)() + 1 <= m_nnode);
-    GOOSEFEM_ASSERT(xt::amax(m_iip)() <= xt::amax(m_dofs)());
-    GOOSEFEM_ASSERT(m_ndof <= m_nnode * m_ndim);
 }
 
 inline size_t MatrixPartitioned::nnu() const
