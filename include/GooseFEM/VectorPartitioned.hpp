@@ -20,6 +20,8 @@ inline VectorPartitioned::VectorPartitioned(
     const xt::xtensor<size_t, 1>& iip)
     : Vector(conn, dofs), m_iip(iip)
 {
+    GOOSEFEM_ASSERT(is_unique(iip));
+
     m_iiu = xt::setdiff1d(m_dofs, m_iip);
     m_nnp = m_iip.size();
     m_nnu = m_iiu.size();

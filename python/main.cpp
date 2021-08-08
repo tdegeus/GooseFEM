@@ -20,6 +20,7 @@
 namespace py = pybind11;
 
 #include "version.hpp"
+#include "assertions.hpp"
 #include "Allocate.hpp"
 #include "Vector.hpp"
 #include "VectorPartitioned.hpp"
@@ -51,6 +52,7 @@ xt::import_numpy();
 m.doc() = "Some simple finite element meshes and operations";
 
 init_version(m);
+init_assertions(m);
 init_Allocate(m);
 init_Vector(m);
 init_VectorPartitioned(m);

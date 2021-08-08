@@ -14,6 +14,7 @@ Basic include of common methods.
 #endif
 
 #include "version.h"
+#include "assertions.h"
 
 #include "Allocate.h"
 #include "Element.h"
