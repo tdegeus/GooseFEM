@@ -9,6 +9,7 @@ Implementation of VectorPartitioned.h
 #ifndef GOOSEFEM_VECTORPARTITIONED_HPP
 #define GOOSEFEM_VECTORPARTITIONED_HPP
 
+#include "assertions.h"
 #include "Mesh.h"
 #include "VectorPartitioned.h"
 

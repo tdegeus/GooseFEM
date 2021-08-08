@@ -9,6 +9,7 @@ Implementation of Mesh.h
 #ifndef GOOSEFEM_MESH_HPP
 #define GOOSEFEM_MESH_HPP
 
+#include "assertions.h"
 #include "Mesh.h"
 
 namespace GooseFEM {
