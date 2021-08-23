@@ -27,6 +27,23 @@ void init_Iterate(py::module& mod)
             "Reset."
             "See :cpp:func:`GooseFEM::Iterate::StopList::reset`.");
 
+    cls.def("roll_insert",
+            &GooseFEM::Iterate::StopList::roll_insert,
+            "Roll the list with the residuals, and add a new residual to the end."
+            "See :cpp:func:`GooseFEM::Iterate::StopList::roll_insert`.",
+            py::arg("res"));
+
+    cls.def("descending",
+            &GooseFEM::Iterate::StopList::descending,
+            "Check of the sequence of `n` residuals is in descending order."
+            "See :cpp:func:`GooseFEM::Iterate::StopList::descending`.");
+
+    cls.def("all_less",
+            &GooseFEM::Iterate::StopList::all_less,
+            "Check of the sequence of `n` residuals are all below a tolerance."
+            "See :cpp:func:`GooseFEM::Iterate::StopList::all_less`.",
+            py::arg("tol"));
+
     cls.def("stop_simple",
             &GooseFEM::Iterate::StopList::stop_simple,
             "Update list of residuals, return `true` if all residuals are below the tolerance."

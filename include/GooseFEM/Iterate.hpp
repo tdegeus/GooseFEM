@@ -31,8 +31,26 @@ inline void StopList::reset(size_t n)
     reset();
 }
 
+inline void StopList::roll_insert(double res)
+{
+    std::rotate(m_res.begin(), m_res.begin() + 1, m_res.end());
+    m_res.back() = res;
+}
+
+inline bool StopList::descending() const
+{
+    return std::is_sorted(m_res.cbegin(), m_res.cend(), std::greater<double>());
+}
+
+inline bool StopList::all_less(double tol) const
+{
+    return !std::any_of(m_res.cbegin(), m_res.cend(), [=](const auto& i) { return i >= tol; });
+}
+
 inline bool StopList::stop_simple(double res, double tol)
 {
+    GOOSEFEM_WARNING_PYTHON("StopList::stop is deprecated. Use StopList::roll_insert and StopList::all_less");
+
     std::rotate(m_res.begin(), m_res.begin() + 1, m_res.end());
     m_res.back() = res;
     return !std::any_of(m_res.cbegin(), m_res.cend(), [=](const auto& i) { return i >= tol; });
@@ -40,6 +58,8 @@ inline bool StopList::stop_simple(double res, double tol)
 
 inline bool StopList::stop(double res, double tol)
 {
+    GOOSEFEM_WARNING_PYTHON("StopList::stop is deprecated. Use StopList::roll_insert and StopList::descending + StopList::all_less");
+
     // move residual one place back and add new residual to the end
     std::rotate(m_res.begin(), m_res.begin() + 1, m_res.end());
     m_res.back() = res;
