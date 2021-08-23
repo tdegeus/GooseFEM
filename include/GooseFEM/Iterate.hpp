@@ -40,12 +40,26 @@ inline bool StopList::stop_simple(double res, double tol)
 
 inline bool StopList::stop(double res, double tol)
 {
+    // move residual one place back and add new residual to the end
     std::rotate(m_res.begin(), m_res.begin() + 1, m_res.end());
     m_res.back() = res;
-    if (res > tol) {
-        return false;
+
+    // check for convergence: all residuals should be below the tolerance
+    for (size_t i = 0; i < m_res.size(); ++i) {
+        if (m_res[i] > tol) {
+            return false;
+        }
     }
-    return std::is_sorted(m_res.cbegin(), m_res.cend(), std::greater_equal<double>()) && m_res.front() <= tol;
+
+    // check for convergence: all residuals should be decreasing
+    for (size_t i = 1; i < m_res.size(); ++i) {
+        if (m_res[i] > m_res[i - 1]) {
+            return false;
+        }
+    }
+
+    // all checks passed: signal convergence
+    return true;
 }
 
 inline auto StopList::get() const
