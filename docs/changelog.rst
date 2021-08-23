@@ -3,6 +3,13 @@
 Changelog
 *********
 
+v0.12.9
+=======
+
+*   Deprecating ``Iterate::StopList::stop*`` in favour of ``Iterate::StopList::insert_roll``, ``Iterate::StopList::descending``, ``Iterate::StopList::all_less``
+*   Fixing rare bug in ``Iterate::StopList::stop``
+*   Improving assertion messages (#231)
+
 v0.12.8
 =======
 
