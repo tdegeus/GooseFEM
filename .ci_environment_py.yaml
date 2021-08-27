@@ -1,14 +1,14 @@
 channels:
   - conda-forge
 dependencies:
-  - xtensor
-  - eigen
   - cmake
+  - eigen
   - ninja
-  - setuptools_scm
-  - python
-  - pybind11
-  - xtensor-python
-  - pyxtensor
-  - numpy
   - nomkl
+  - numpy
+  - pybind11
+  - python
+  - pyxtensor
+  - setuptools_scm
+  - xtensor
+  - xtensor-python

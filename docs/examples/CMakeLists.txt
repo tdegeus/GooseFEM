@@ -1,15 +1,18 @@
-
-cmake_minimum_required(VERSION 3.16)
+cmake_minimum_required(VERSION 3.1..3.21)
 
 if(CMAKE_CURRENT_SOURCE_DIR STREQUAL CMAKE_SOURCE_DIR)
-    project(GooseFEM-examples)
-    find_package(GooseFEM REQUIRED CONFIG)
+    project(QPot)
+    find_package(QPot REQUIRED CONFIG)
+    option(USE_ASSERT "${PROJECT_NAME}: Build with assertions" ON)
+    option(USE_DEBUG "${PROJECT_NAME}: Build in debug mode" OFF)
+    option(USE_SIMD "${PROJECT_NAME}: Build with hardware optimization" OFF)
 endif()
 
-set(ASSERT OFF)
-set(DEBUG OFF)
-option(SIMD "Enable xsimd" ON)
-option(WARNINGS "Enable warnings" ON)
+set(MYPROJECT "${PROJECT_NAME}-examples")
+
+if(NOT CMAKE_BUILD_TYPE)
+    set(CMAKE_BUILD_TYPE Release)
+endif()
 
 set(HIGHFIVE_USE_BOOST 0)
 set(HIGHFIVE_USE_XTENSOR 1)
@@ -20,10 +23,11 @@ find_package(GMatElastoPlastic REQUIRED)
 find_package(GMatElastoPlasticFiniteStrainSimo REQUIRED)
 find_package(GMatNonLinearElastic REQUIRED)
 
-add_library(libraries INTERFACE IMPORTED)
+add_library(mytarget INTERFACE IMPORTED)
 
-target_link_libraries(libraries INTERFACE
-    GooseFEM
+target_link_libraries(mytarget INTERFACE
+    ${PROJECT_NAME}
+    ${PROJECT_NAME}::compiler_warnings
     HighFive
     XDMFWrite_HighFive
     GMatElastic
@@ -31,74 +35,74 @@ target_link_libraries(libraries INTERFACE
     GMatElastoPlasticFiniteStrainSimo
     GMatNonLinearElastic)
 
-if(SIMD)
-    target_link_libraries(libraries INTERFACE xtensor::optimize xtensor::use_xsimd)
+if(USE_ASSERT)
+    target_link_libraries(mytarget INTERFACE ${PROJECT_NAME}::assert)
+    message(STATUS "Compiling ${MYPROJECT} with assertions")
 endif()
 
-if(WARNINGS)
-    target_link_libraries(libraries INTERFACE GooseFEM::compiler_warnings)
+if(USE_DEBUG)
+    target_link_libraries(mytarget INTERFACE ${PROJECT_NAME}::debug)
+    message(STATUS "Compiling ${MYPROJECT} in debug mode")
 endif()
 
-if(ASSERT)
-    target_link_libraries(libraries INTERFACE GooseFEM::assert)
+if(USE_SIMD)
+    find_package(xtensor REQUIRED)
+    find_package(xsimd REQUIRED)
+    target_link_libraries(mytarget INTERFACE xtensor::use_xsimd xtensor::optimize)
+    message(STATUS "Compiling ${MYPROJECT} with hardware optimization")
 endif()
 
-if(DEBUG)
-    target_link_libraries(libraries INTERFACE GooseFEM::debug)
-endif()
+set(myexec "statics_FixedDisplacements_LinearElastic_example")
+set(mysource "statics/FixedDisplacements_LinearElastic/example.cpp")
+add_executable(${myexec} ${mysource})
+target_link_libraries(${myexec} PRIVATE libraries)
+add_test(NAME ${myexec} COMMAND ${myexec})
 
 
-set(exec "statics_FixedDisplacements_LinearElastic_example")
-set(source "statics/FixedDisplacements_LinearElastic/example.cpp")
-add_executable(${exec} ${source})
-target_link_libraries(${exec} PRIVATE libraries)
-add_test(NAME ${exec} COMMAND ${exec})
+set(myexec "statics_FixedDisplacements_LinearElastic_manual_partition")
+set(mysource "statics/FixedDisplacements_LinearElastic/manual_partition.cpp")
+add_executable(${myexec} ${mysource})
+target_link_libraries(${myexec} PRIVATE libraries)
+add_test(NAME ${myexec} COMMAND ${myexec})
 
 
-set(exec "statics_FixedDisplacements_LinearElastic_manual_partition")
-set(source "statics/FixedDisplacements_LinearElastic/manual_partition.cpp")
-add_executable(${exec} ${source})
-target_link_libraries(${exec} PRIVATE libraries)
-add_test(NAME ${exec} COMMAND ${exec})
+set(myexec "statics_MixedPeriodic_LinearElastic_example")
+set(mysource "statics/MixedPeriodic_LinearElastic/example.cpp")
+add_executable(${myexec} ${mysource})
+target_link_libraries(${myexec} PRIVATE libraries)
+add_test(NAME ${myexec} COMMAND ${myexec})
 
 
-set(exec "statics_MixedPeriodic_LinearElastic_example")
-set(source "statics/MixedPeriodic_LinearElastic/example.cpp")
-add_executable(${exec} ${source})
-target_link_libraries(${exec} PRIVATE libraries)
-add_test(NAME ${exec} COMMAND ${exec})
+set(myexec "statics_Periodic_ElastoPlastic_main")
+set(mysource "statics/Periodic_ElastoPlastic/main.cpp")
+add_executable(${myexec} ${mysource})
+target_link_libraries(${myexec} PRIVATE libraries)
+add_test(NAME ${myexec} COMMAND ${myexec})
 
 
-set(exec "statics_Periodic_ElastoPlastic_main")
-set(source "statics/Periodic_ElastoPlastic/main.cpp")
-add_executable(${exec} ${source})
-target_link_libraries(${exec} PRIVATE libraries)
-add_test(NAME ${exec} COMMAND ${exec})
+set(myexec "statics_Periodic_ElastoPlasticFiniteStrainSimo_main")
+set(mysource "statics/Periodic_ElastoPlasticFiniteStrainSimo/main.cpp")
+add_executable(${myexec} ${mysource})
+target_link_libraries(${myexec} PRIVATE libraries)
+add_test(NAME ${myexec} COMMAND ${myexec})
 
 
-set(exec "statics_Periodic_ElastoPlasticFiniteStrainSimo_main")
-set(source "statics/Periodic_ElastoPlasticFiniteStrainSimo/main.cpp")
-add_executable(${exec} ${source})
-target_link_libraries(${exec} PRIVATE libraries)
-add_test(NAME ${exec} COMMAND ${exec})
+set(myexec "statics_Periodic_LinearElastic_main")
+set(mysource "statics/Periodic_LinearElastic/main.cpp")
+add_executable(${myexec} ${mysource})
+target_link_libraries(${myexec} PRIVATE libraries)
+add_test(NAME ${myexec} COMMAND ${myexec})
 
 
-set(exec "statics_Periodic_LinearElastic_main")
-set(source "statics/Periodic_LinearElastic/main.cpp")
-add_executable(${exec} ${source})
-target_link_libraries(${exec} PRIVATE libraries)
-add_test(NAME ${exec} COMMAND ${exec})
+set(myexec "statics_Periodic_NonLinearElastic_main")
+set(mysource "statics/Periodic_NonLinearElastic/main.cpp")
+add_executable(${myexec} ${mysource})
+target_link_libraries(${myexec} PRIVATE libraries)
+add_test(NAME ${myexec} COMMAND ${myexec})
 
 
-set(exec "statics_Periodic_NonLinearElastic_main")
-set(source "statics/Periodic_NonLinearElastic/main.cpp")
-add_executable(${exec} ${source})
-target_link_libraries(${exec} PRIVATE libraries)
-add_test(NAME ${exec} COMMAND ${exec})
-
-
-set(exec "dynamics_Elastic-Verlet_main")
-set(source "dynamics/Elastic-Verlet/main.cpp")
-add_executable(${exec} ${source})
-target_link_libraries(${exec} PRIVATE libraries)
-# add_test(NAME ${exec} COMMAND ${exec}) # takes too long for testing
+set(myexec "dynamics_Elastic-Verlet_main")
+set(mysource "dynamics/Elastic-Verlet/main.cpp")
+add_executable(${myexec} ${mysource})
+target_link_libraries(${myexec} PRIVATE libraries)
+# add_test(NAME ${myexec} COMMAND ${myexec}) # takes too long for testing

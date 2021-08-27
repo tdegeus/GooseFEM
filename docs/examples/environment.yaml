@@ -1,39 +1,28 @@
 channels:
   - conda-forge
 dependencies:
-  # dependencies
-  - xtensor
-  - eigen
-
-  # optional dependencies
-  - xsimd
-
-  # build tools
-  - cmake
-  - ninja
-  - setuptools_scm
-
-  # Python API
-  - python
-  - numpy
-  - pybind11
-  - xtensor-python
-  - pyxtensor
-
-  # to run tests
   - catch2
+  - cmake
+  - eigen
   - gmatelastic
-  - gmatelastoplasticqpot
-
-  # to run examples
-  - h5py
-  - highfive
-  - xdmfwrite_highfive
-  - xdmfwrite_h5py
   - gmatelastic
-  - gmatnonlinearelastic
   - gmatelastoplastic
   - gmatelastoplasticfinitestrainsimo
   - gmatelastoplasticqpot
+  - gmatelastoplasticqpot
+  - gmatnonlinearelastic
+  - h5py
+  - highfive
+  - ninja
+  - numpy
+  - pybind11
+  - python
   - python-gmatelastic
+  - scikit-build
+  - setuptools_scm
+  - xdmfwrite_h5py
+  - xdmfwrite_highfive
+  - xsimd
+  - xtensor
+  - xtensor-python
 
