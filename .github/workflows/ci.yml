@@ -17,15 +17,15 @@ jobs:
         runs-on: [ubuntu-latest, macos-latest, windows-latest]
         include:
           - runs-on: ubuntu-latest
-            config: -DBUILD_TESTS=1 -DBUILD_EXAMPLES=1
+            config: -DCMAKE_BUILD_TYPE=Release -DBUILD_TESTS=1 -DBUILD_EXAMPLES=1
             conda: docs/examples/environment.yaml
             prop: tests & examples
           - runs-on: macos-latest
-            config: -DBUILD_TESTS=1 -DBUILD_EXAMPLES=0 -DBUILD_DOCS=1
+            config: -DCMAKE_BUILD_TYPE=Release -DBUILD_TESTS=1 -DBUILD_EXAMPLES=0 -DBUILD_DOCS=1
             conda: environment.yaml
             prop: tests
           - runs-on: windows-latest
-            config: -DBUILD_TESTS=1 -DBUILD_EXAMPLES=0
+            config: -DCMAKE_BUILD_TYPE=Release -DBUILD_TESTS=1 -DBUILD_EXAMPLES=0
             conda: environment.yaml
             prop: tests
 
