@@ -1,5 +1,5 @@
+_skbuild
 .DS_Store
-tmp*
 docs/_doxygen
 
 # Byte-compiled / optimized / DLL files

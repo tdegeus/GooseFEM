@@ -9,6 +9,7 @@ dependencies:
   - pybind11
   - python
   - pyxtensor
+  - scikit-build
   - setuptools_scm
   - xtensor
   - xtensor-python

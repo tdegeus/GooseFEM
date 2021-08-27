@@ -1,7 +1,7 @@
 from skbuild import setup
 from setuptools_scm import get_version
 
-project_name = "GooseFEM",
+project_name = "GooseFEM"
 
 setup(
     name = project_name,
