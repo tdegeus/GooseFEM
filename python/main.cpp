@@ -14,11 +14,6 @@
 
 #include <Eigen/Eigen>
 
-#define GOOSEFEM_ENABLE_ASSERT
-#define GOOSEFEM_ENABLE_WARNING_PYTHON
-
-namespace py = pybind11;
-
 #include "version.hpp"
 #include "assertions.hpp"
 #include "Allocate.hpp"
@@ -41,7 +36,9 @@ namespace py = pybind11;
 #include "MeshHex8.hpp"
 #include "Iterate.hpp"
 
-PYBIND11_MODULE(GooseFEM, m) {
+namespace py = pybind11;
+
+PYBIND11_MODULE(_GooseFEM, m) {
 
 xt::import_numpy();
 
