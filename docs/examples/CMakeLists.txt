@@ -55,54 +55,54 @@ endif()
 set(myexec "statics_FixedDisplacements_LinearElastic_example")
 set(mysource "statics/FixedDisplacements_LinearElastic/example.cpp")
 add_executable(${myexec} ${mysource})
-target_link_libraries(${myexec} PRIVATE libraries)
+target_link_libraries(${myexec} PRIVATE mytarget)
 add_test(NAME ${myexec} COMMAND ${myexec})
 
 
 set(myexec "statics_FixedDisplacements_LinearElastic_manual_partition")
 set(mysource "statics/FixedDisplacements_LinearElastic/manual_partition.cpp")
 add_executable(${myexec} ${mysource})
-target_link_libraries(${myexec} PRIVATE libraries)
+target_link_libraries(${myexec} PRIVATE mytarget)
 add_test(NAME ${myexec} COMMAND ${myexec})
 
 
 set(myexec "statics_MixedPeriodic_LinearElastic_example")
 set(mysource "statics/MixedPeriodic_LinearElastic/example.cpp")
 add_executable(${myexec} ${mysource})
-target_link_libraries(${myexec} PRIVATE libraries)
+target_link_libraries(${myexec} PRIVATE mytarget)
 add_test(NAME ${myexec} COMMAND ${myexec})
 
 
 set(myexec "statics_Periodic_ElastoPlastic_main")
 set(mysource "statics/Periodic_ElastoPlastic/main.cpp")
 add_executable(${myexec} ${mysource})
-target_link_libraries(${myexec} PRIVATE libraries)
+target_link_libraries(${myexec} PRIVATE mytarget)
 add_test(NAME ${myexec} COMMAND ${myexec})
 
 
 set(myexec "statics_Periodic_ElastoPlasticFiniteStrainSimo_main")
 set(mysource "statics/Periodic_ElastoPlasticFiniteStrainSimo/main.cpp")
 add_executable(${myexec} ${mysource})
-target_link_libraries(${myexec} PRIVATE libraries)
+target_link_libraries(${myexec} PRIVATE mytarget)
 add_test(NAME ${myexec} COMMAND ${myexec})
 
 
 set(myexec "statics_Periodic_LinearElastic_main")
 set(mysource "statics/Periodic_LinearElastic/main.cpp")
 add_executable(${myexec} ${mysource})
-target_link_libraries(${myexec} PRIVATE libraries)
+target_link_libraries(${myexec} PRIVATE mytarget)
 add_test(NAME ${myexec} COMMAND ${myexec})
 
 
 set(myexec "statics_Periodic_NonLinearElastic_main")
 set(mysource "statics/Periodic_NonLinearElastic/main.cpp")
 add_executable(${myexec} ${mysource})
-target_link_libraries(${myexec} PRIVATE libraries)
+target_link_libraries(${myexec} PRIVATE mytarget)
 add_test(NAME ${myexec} COMMAND ${myexec})
 
 
 set(myexec "dynamics_Elastic-Verlet_main")
 set(mysource "dynamics/Elastic-Verlet/main.cpp")
 add_executable(${myexec} ${mysource})
-target_link_libraries(${myexec} PRIVATE libraries)
+target_link_libraries(${myexec} PRIVATE mytarget)
 # add_test(NAME ${myexec} COMMAND ${myexec}) # takes too long for testing
