@@ -52,6 +52,16 @@ if(NOT TARGET GooseFEM::compiler_warnings)
     endif()
 endif()
 
+# Define support target "GooseFEM::warnings"
+
+if(NOT TARGET GooseFEM::warnings)
+    add_library(GooseFEM::warnings INTERFACE IMPORTED)
+    set_property(
+        TARGET GooseFEM::warnings
+        PROPERTY INTERFACE_COMPILE_DEFINITIONS
+        GOOSEFEM_ENABLE_WARNING_PYTHON)
+endif()
+
 # Define support target "GooseFEM::assert"
 
 if(NOT TARGET GooseFEM::assert)
