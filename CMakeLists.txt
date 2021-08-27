@@ -95,10 +95,10 @@ include(CTest)
 
 if(BUILD_TESTS OR BUILD_ALL)
     enable_testing()
-    add_subdirectory(test/basic)
+    add_subdirectory(tests/basic)
 
     enable_testing()
-    add_subdirectory(test/gmat)
+    add_subdirectory(tests/gmat)
 endif()
 
 # Examples
