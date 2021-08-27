@@ -38,6 +38,7 @@ inline MatrixPartitioned::MatrixPartitioned(
     m_nnu = m_iiu.size();
 
     m_part = Mesh::Reorder({m_iiu, m_iip}).apply(m_dofs);
+    m_part1d = Mesh::Reorder({m_iiu, m_iip}).apply(xt::eval(xt::arange<size_t>(m_ndof)));
     m_Tuu.reserve(m_nelem * m_nne * m_ndim * m_nne * m_ndim);
     m_Tup.reserve(m_nelem * m_nne * m_ndim * m_nne * m_ndim);
     m_Tpu.reserve(m_nelem * m_nne * m_ndim * m_nne * m_ndim);
@@ -136,8 +137,8 @@ inline void MatrixPartitioned::set(
 
     for (size_t i = 0; i < rows.size(); ++i) {
         for (size_t j = 0; j < cols.size(); ++j) {
-            size_t di = rows(i);
-            size_t dj = cols(j);
+            size_t di = m_part1d(rows(i));
+            size_t dj = m_part1d(cols(j));
             double v = matrix(i, j);
 
             if (di < m_nnu && dj < m_nnu) {
@@ -184,8 +185,8 @@ inline void MatrixPartitioned::add(
 
     for (size_t i = 0; i < rows.size(); ++i) {
         for (size_t j = 0; j < cols.size(); ++j) {
-            size_t di = rows(i);
-            size_t dj = cols(j);
+            size_t di = m_part1d(rows(i));
+            size_t dj = m_part1d(cols(j));
             double v = matrix(i, j);
 
             if (di < m_nnu && dj < m_nnu) {
@@ -222,25 +223,25 @@ inline void MatrixPartitioned::todense(xt::xtensor<double, 2>& ret) const
 
     for (int k = 0; k < m_Auu.outerSize(); ++k) {
         for (Eigen::SparseMatrix<double>::InnerIterator it(m_Auu, k); it; ++it) {
-            ret(it.row(), it.col()) = it.value();
+            ret(m_iiu(it.row()), m_iiu(it.col())) = it.value();
         }
     }
 
     for (int k = 0; k < m_Aup.outerSize(); ++k) {
         for (Eigen::SparseMatrix<double>::InnerIterator it(m_Aup, k); it; ++it) {
-            ret(it.row(), it.col() + m_nnu) = it.value();
+            ret(m_iiu(it.row()), m_iip(it.col())) = it.value();
         }
     }
 
     for (int k = 0; k < m_Apu.outerSize(); ++k) {
         for (Eigen::SparseMatrix<double>::InnerIterator it(m_Apu, k); it; ++it) {
-            ret(it.row() + m_nnu, it.col()) = it.value();
+            ret(m_iip(it.row()), m_iiu(it.col())) = it.value();
         }
     }
 
     for (int k = 0; k < m_App.outerSize(); ++k) {
         for (Eigen::SparseMatrix<double>::InnerIterator it(m_App, k); it; ++it) {
-            ret(it.row() + m_nnu, it.col() + m_nnu) = it.value();
+            ret(m_iip(it.row()), m_iip(it.col())) = it.value();
         }
     }
 }
@@ -276,8 +277,18 @@ inline void MatrixPartitioned::dot(const xt::xtensor<double, 1>& x, xt::xtensor<
     Eigen::VectorXd X_u = this->AsDofs_u(x);
     Eigen::VectorXd X_p = this->AsDofs_p(x);
 
-    Eigen::Map<Eigen::VectorXd>(b.data(), m_nnu).noalias() = m_Auu * X_u + m_Aup * X_p;
-    Eigen::Map<Eigen::VectorXd>(b.data() + m_nnu, m_ndof).noalias() = m_Auu * X_u + m_Aup * X_p;
+    Eigen::VectorXd B_u = m_Auu * X_u + m_Aup * X_p;
+    Eigen::VectorXd B_p = m_Apu * X_u + m_App * X_p;
+
+    #pragma omp parallel for
+    for (size_t d = 0; d < m_nnu; ++d) {
+        b(m_iiu(d)) = B_u(d);
+    }
+
+    #pragma omp parallel for
+    for (size_t d = 0; d < m_nnp; ++d) {
+        b(m_iip(d)) = B_p(d);
+    }
 }
 
 inline void

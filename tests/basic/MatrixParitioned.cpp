@@ -18,12 +18,10 @@ TEST_CASE("GooseFEM::MatrixPartitioned", "MatrixPartitioned.h")
         size_t nelem = mesh.nelem();
         size_t nnode = mesh.nnode();
         auto dofs = mesh.dofs();
-        size_t nnp = xt::amax(dofs)();
-        nnp = (nnp - nnp % 2) / 2;
-        xt::xtensor<size_t, 1> iip = xt::arange<size_t<(nnp);
+        xt::xtensor<size_t, 1> iip = {0, 5, 7, 13};
 
         xt::xtensor<double, 3> a = xt::empty<double>({nelem, nne * ndim, nne * ndim});
-        xt::xtensor<double, 1> b = xt::random::rand<double>({nnode * ndim});
+        xt::xtensor<double, 1> x = xt::random::rand<double>({nnode * ndim});
 
         for (size_t e = 0; e < nelem; ++e) {
             xt::xtensor<double, 2> ae = xt::random::rand<double>({nne * ndim, nne * ndim});
@@ -34,18 +32,18 @@ TEST_CASE("GooseFEM::MatrixPartitioned", "MatrixPartitioned.h")
         GooseFEM::MatrixPartitioned A(mesh.conn(), dofs, iip);
         GooseFEM::MatrixPartitionedSolver<> Solver;
         A.assemble(a);
-        xt::xtensor<double, 1> C = A.Dot(b);
-        xt::xtensor<double, 1> B = Solver.Solve(A, C);
+        xt::xtensor<double, 1> b = A.Dot(x);
+        xt::xtensor<double, 1> xc = Solver.Solve(A, b, x);
 
-        REQUIRE(B.size() == b.size());
-        REQUIRE(xt::allclose(B, b));
+        REQUIRE(x.size() == xc.size());
+        REQUIRE(xt::allclose(x, xc));
 
         // check that allocating a different Solver instance still works
         GooseFEM::MatrixPartitionedSolver<> NewSolver;
-        xt::xtensor<double, 1> NB = NewSolver.Solve(A, C);
+        xc = NewSolver.Solve(A, b, x);
 
-        REQUIRE(NB.size() == b.size());
-        REQUIRE(xt::allclose(NB, b));
+        REQUIRE(x.size() == xc.size());
+        REQUIRE(xt::allclose(x, xc));
     }
 
     SECTION("set/add/dot/solve - dofval")
@@ -62,7 +60,7 @@ TEST_CASE("GooseFEM::MatrixPartitioned", "MatrixPartitioned.h")
             }
         }
 
-        xt::xtensor<size_t, 2> conn = xt::zeros<size_t>({1, 5});
+        xt::xtensor<size_t, 2> conn = xt::zeros<size_t>({1, 5}); // irrelevant here
         xt::xtensor<size_t, 2> dofs = xt::arange<size_t>(10).reshape({5, 2});
         xt::xtensor<size_t, 1> iip = {0, 2, 4};
 
@@ -73,7 +71,7 @@ TEST_CASE("GooseFEM::MatrixPartitioned", "MatrixPartitioned.h")
 
         REQUIRE(xt::allclose(A, K.Todense()));
         REQUIRE(xt::allclose(b, K.Dot(x)));
-        REQUIRE(xt::allclose(x, Solver.Solve(K, b)));
+        REQUIRE(xt::allclose(x, Solver.Solve(K, b, x)));
     }
 
     SECTION("set/add/dot/solve - nodevec")
@@ -94,7 +92,7 @@ TEST_CASE("GooseFEM::MatrixPartitioned", "MatrixPartitioned.h")
             }
         }
 
-        xt::xtensor<size_t, 2> conn = xt::zeros<size_t>({1, 5});
+        xt::xtensor<size_t, 2> conn = xt::zeros<size_t>({1, 5}); // irrelevant here
         xt::xtensor<size_t, 2> dofs = xt::arange<size_t>(10).reshape({5, 2});
         xt::xtensor<size_t, 1> iip = {0, 2, 4};
 
@@ -105,6 +103,6 @@ TEST_CASE("GooseFEM::MatrixPartitioned", "MatrixPartitioned.h")
 
         REQUIRE(xt::allclose(A, K.Todense()));
         REQUIRE(xt::allclose(b, K.Dot(x)));
-        REQUIRE(xt::allclose(x, Solver.Solve(K, b)));
+        REQUIRE(xt::allclose(x, Solver.Solve(K, b, x)));
     }
 }
