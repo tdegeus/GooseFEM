@@ -47,18 +47,15 @@ jobs:
         environment-file: ${{ matrix.conda }}
         environment-name: myenv
 
-    - name: Set dummy version
-      run: echo "SETUPTOOLS_SCM_PRETEND_VERSION=ci" >> $GITHUB_ENV
-
-    - name: Configure using CMake (!Windows)
-      if: runner.os != 'Windows'
-      run: cmake -Bbuild ${{ matrix.config }}
-
-    - name: Configure using CMake (Windows)
+    - name: Install clang
       if: runner.os == 'Windows'
-      run: |
-        micromamba install -c conda-forge clang_win-64 ninja
-        cmake -Bbuild -G Ninja ${{ matrix.config }} -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++
+      run: micromamba install -c conda-forge clang_win-64 ninja
+
+    - name: Set dummy version
+      run: echo "SETUPTOOLS_SCM_PRETEND_VERSION=0.0" >> $GITHUB_ENV
+
+    - name: Configure using CMake
+      run: cmake -Bbuild ${{ matrix.config }}
 
     - name: Build C++ ${{ matrix.prop }}
       working-directory: build
@@ -69,7 +66,7 @@ jobs:
       run: ctest --output-on-failure
 
     - name: Build and install Python module
-      run: python -m pip install . -vvv
+      run: python setup.py install --build-type Release -vv
 
     - name: Run Python tests
       working-directory: tests/basic-python

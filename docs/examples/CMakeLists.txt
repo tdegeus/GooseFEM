@@ -1,8 +1,8 @@
 cmake_minimum_required(VERSION 3.1..3.21)
 
 if(CMAKE_CURRENT_SOURCE_DIR STREQUAL CMAKE_SOURCE_DIR)
-    project(QPot)
-    find_package(QPot REQUIRED CONFIG)
+    project(GooseFEM)
+    find_package(GooseFEM REQUIRED CONFIG)
     option(USE_ASSERT "${PROJECT_NAME}: Build with assertions" ON)
     option(USE_DEBUG "${PROJECT_NAME}: Build in debug mode" OFF)
     option(USE_SIMD "${PROJECT_NAME}: Build with hardware optimization" OFF)

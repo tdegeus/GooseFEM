@@ -3,6 +3,16 @@
 Changelog
 *********
 
+v0.12.10
+========
+
+8a46954 Fixing small typos (#232)
+f925f7d Bugfix MatrixPartioned: fixed reordering mistakes "dot", "set", and "add" (tests were not run by mistake) (#232)
+ee2ef79 [Python] Switching to scikit-build (#232)
+ea6d2e5 [CMake] Clean-up (#232)
+f762324 Renaming "test" -> "tests" (#232)
+901037e [CI] Running tests in release mode
+
 v0.12.9
 =======
 
