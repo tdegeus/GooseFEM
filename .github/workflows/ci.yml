@@ -21,11 +21,11 @@ jobs:
             conda: docs/examples/environment.yaml
             prop: tests & examples
           - runs-on: macos-latest
-            config: -DCMAKE_BUILD_TYPE=Release -DBUILD_TESTS=1 -DBUILD_EXAMPLES=0 -DBUILD_DOCS=1
+            config: -DCMAKE_BUILD_TYPE=Release -DBUILD_TESTS=1 -DBUILD_DOCS=1
             conda: environment.yaml
             prop: tests
           - runs-on: windows-latest
-            config: -DCMAKE_BUILD_TYPE=Release -DBUILD_TESTS=1 -DBUILD_EXAMPLES=0
+            config: -DCMAKE_BUILD_TYPE=Release -DBUILD_TESTS=1 -G Ninja -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++
             conda: environment.yaml
             prop: tests
 
