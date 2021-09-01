@@ -1,6 +1,6 @@
 repos:
 - repo: https://github.com/psf/black
-  rev: 21.7b0
+  rev: 21.8b0
   hooks:
   - id: black
     args: [--safe, --quiet]
@@ -17,7 +17,7 @@ repos:
   - id: flake8
     args: [--max-line-length=100]
 - repo: https://github.com/asottile/pyupgrade
-  rev: v2.23.1
+  rev: v2.25.0
   hooks:
   - id: pyupgrade
     args: [--py36-plus]
@@ -26,7 +26,7 @@ repos:
   hooks:
   - id: setup-cfg-fmt
 - repo: https://github.com/pocc/pre-commit-hooks
-  rev: python
+  rev: v1.1.3
   hooks:
   - id: clang-format
     args: [-i]
