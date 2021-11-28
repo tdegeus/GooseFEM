@@ -11,8 +11,8 @@ Sparse matrix that is partitioned in:
 #ifndef GOOSEFEM_MATRIXPARTITIONED_H
 #define GOOSEFEM_MATRIXPARTITIONED_H
 
-#include "config.h"
 #include "Matrix.h"
+#include "config.h"
 
 #include <Eigen/Eigen>
 #include <Eigen/Sparse>
@@ -21,7 +21,8 @@ Sparse matrix that is partitioned in:
 namespace GooseFEM {
 
 // forward declaration
-template <class> class MatrixPartitionedSolver;
+template <class>
+class MatrixPartitionedSolver;
 
 /**
  *  Sparse matrix partitioned in an unknown and a prescribed part.
@@ -32,7 +33,6 @@ template <class> class MatrixPartitionedSolver;
  */
 class MatrixPartitioned : public Matrix {
 public:
-
     MatrixPartitioned() = default;
 
     /**
@@ -69,13 +69,13 @@ public:
 
     void assemble(const xt::xtensor<double, 3>& elemmat) override;
 
-    void set(
-        const xt::xtensor<size_t, 1>& rows,
+    void
+    set(const xt::xtensor<size_t, 1>& rows,
         const xt::xtensor<size_t, 1>& cols,
         const xt::xtensor<double, 2>& matrix) override;
 
-    void add(
-        const xt::xtensor<size_t, 1>& rows,
+    void
+    add(const xt::xtensor<size_t, 1>& rows,
         const xt::xtensor<size_t, 1>& cols,
         const xt::xtensor<double, 2>& matrix) override;
 
@@ -94,9 +94,8 @@ public:
     \param b "nodevec" [#nnode, #ndim].
     \return Copy of `b` with \f$ b_p \f$ overwritten.
     */
-    xt::xtensor<double, 2> Reaction(
-        const xt::xtensor<double, 2>& x,
-        const xt::xtensor<double, 2>& b) const;
+    xt::xtensor<double, 2>
+    Reaction(const xt::xtensor<double, 2>& x, const xt::xtensor<double, 2>& b) const;
 
     /**
     Same as Reaction(const xt::xtensor<double, 2>&, const xt::xtensor<double, 2>&),
@@ -105,9 +104,7 @@ public:
     \param x "nodevec" [#nnode, #ndim].
     \param b "nodevec" [#nnode, #ndim], \f$ b_p \f$ overwritten.
     */
-    void reaction(
-        const xt::xtensor<double, 2>& x,
-              xt::xtensor<double, 2>& b) const;
+    void reaction(const xt::xtensor<double, 2>& x, xt::xtensor<double, 2>& b) const;
 
     /**
     Same as Reaction(const xt::xtensor<double, 2>&, const xt::xtensor<double, 2>&),
@@ -117,9 +114,8 @@ public:
     \param b "dofval" [#ndof].
     \return Copy of `b` with \f$ b_p \f$ overwritten.
     */
-    xt::xtensor<double, 1> Reaction(
-        const xt::xtensor<double, 1>& x,
-        const xt::xtensor<double, 1>& b) const;
+    xt::xtensor<double, 1>
+    Reaction(const xt::xtensor<double, 1>& x, const xt::xtensor<double, 1>& b) const;
 
     /**
     Same as Reaction(const xt::xtensor<double, 1>&, const xt::xtensor<double, 1>&),
@@ -128,9 +124,7 @@ public:
     \param x "dofval" [#ndof].
     \param b "dofval" [#ndof], \f$ b_p \f$ overwritten.
     */
-    void reaction(
-        const xt::xtensor<double, 1>& x,
-              xt::xtensor<double, 1>& b) const;
+    void reaction(const xt::xtensor<double, 1>& x, xt::xtensor<double, 1>& b) const;
 
     /**
     Same as Reaction(const xt::xtensor<double, 1>&, const xt::xtensor<double, 1>&),
@@ -140,9 +134,8 @@ public:
     \param x_p prescribed "dofval" [#nnp].
     \return b_p prescribed "dofval" [#nnp].
     */
-    xt::xtensor<double, 1> Reaction_p(
-        const xt::xtensor<double, 1>& x_u,
-        const xt::xtensor<double, 1>& x_p) const;
+    xt::xtensor<double, 1>
+    Reaction_p(const xt::xtensor<double, 1>& x_u, const xt::xtensor<double, 1>& x_p) const;
 
     /**
     Same as Reaction_p(const xt::xtensor<double, 1>&, const xt::xtensor<double, 1>&),
@@ -155,10 +148,9 @@ public:
     void reaction_p(
         const xt::xtensor<double, 1>& x_u,
         const xt::xtensor<double, 1>& x_p,
-              xt::xtensor<double, 1>& b_p) const;
+        xt::xtensor<double, 1>& b_p) const;
 
 private:
-
     Eigen::SparseMatrix<double> m_Auu; ///< The matrix.
     Eigen::SparseMatrix<double> m_Aup; ///< The matrix.
     Eigen::SparseMatrix<double> m_Apu; ///< The matrix.
@@ -194,10 +186,10 @@ private:
     xt::xtensor<size_t, 1> m_part1d;
 
     // grant access to solver class
-    template <class> friend class MatrixPartitionedSolver;
+    template <class>
+    friend class MatrixPartitionedSolver;
 
 private:
-
     // Convert arrays (Eigen version of VectorPartitioned, which contains public functions)
     Eigen::VectorXd AsDofs_u(const xt::xtensor<double, 1>& dofval) const;
     Eigen::VectorXd AsDofs_u(const xt::xtensor<double, 2>& nodevec) const;
@@ -213,7 +205,6 @@ using one factorisation.
 template <class Solver = Eigen::SimplicialLDLT<Eigen::SparseMatrix<double>>>
 class MatrixPartitionedSolver {
 public:
-
     MatrixPartitionedSolver() = default;
 
     /**
@@ -224,10 +215,8 @@ public:
     \param x nodevec [nelem, ndim], used to read \f$ x_p \f$.
     \return x nodevec [nelem, ndim], \f$ x_u \f$ filled, \f$ x_p \f$ copied.
     */
-    xt::xtensor<double, 2> Solve(
-        MatrixPartitioned& A,
-        const xt::xtensor<double, 2>& b,
-        const xt::xtensor<double, 2>& x);
+    xt::xtensor<double, 2>
+    Solve(MatrixPartitioned& A, const xt::xtensor<double, 2>& b, const xt::xtensor<double, 2>& x);
 
     /**
     Same as Solve(MatrixPartitioned&, const xt::xtensor<double, 2>&, const xt::xtensor<double, 2>&),
@@ -248,10 +237,8 @@ public:
     \param x dofval [ndof], used to read \f$ x_p \f$.
     \return x dofval [ndof], \f$ x_u \f$ filled, \f$ x_p \f$ copied.
     */
-    xt::xtensor<double, 1> Solve(
-        MatrixPartitioned& A,
-        const xt::xtensor<double, 1>& b,
-        const xt::xtensor<double, 1>& x);
+    xt::xtensor<double, 1>
+    Solve(MatrixPartitioned& A, const xt::xtensor<double, 1>& b, const xt::xtensor<double, 1>& x);
 
     /**
     Same as Solve(MatrixPartitioned&, const xt::xtensor<double, 1>&, const xt::xtensor<double, 1>&),

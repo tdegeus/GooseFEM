@@ -22,7 +22,6 @@ Class to switch between storage types. In particular:
 */
 class Vector {
 public:
-
     Vector() = default;
 
     /**
@@ -267,7 +266,6 @@ public:
     xt::xtensor<double, 3> allocate_elemmat(double val) const;
 
 private:
-
     /** Distribution to relevant implementation of \copydoc asDofs(const T&, R&) const */
     template <class T, class R, typename std::enable_if_t<!xt::has_fixed_rank_t<T>::value, int> = 0>
     void asDofs_impl(const T& arg, R& dofval) const;
@@ -364,10 +362,10 @@ protected:
     xt::xtensor<size_t, 2> m_conn; ///< See conn()
     xt::xtensor<size_t, 2> m_dofs; ///< See dofs()
     size_t m_nelem; ///< See #nelem
-    size_t m_nne;   ///< See #nne
+    size_t m_nne; ///< See #nne
     size_t m_nnode; ///< See #nnode
-    size_t m_ndim;  ///< See #ndim
-    size_t m_ndof;  ///< See #ndof
+    size_t m_ndim; ///< See #ndim
+    size_t m_ndof; ///< See #ndof
 };
 
 } // namespace GooseFEM

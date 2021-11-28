@@ -11,8 +11,8 @@ Methods to switch between storage types based on a mesh and DOFs that are partit
 #ifndef GOOSEFEM_VECTORPARTITIONED_H
 #define GOOSEFEM_VECTORPARTITIONED_H
 
-#include "config.h"
 #include "Vector.h"
+#include "config.h"
 
 namespace GooseFEM {
 
@@ -43,7 +43,6 @@ namespace GooseFEM {
  */
 class VectorPartitioned : public Vector {
 public:
-
     VectorPartitioned() = default;
 
     /**
@@ -121,8 +120,8 @@ public:
     \param nodevec_src input [#nnode, #ndim]
     \param nodevec_dest input/output [#nnode, #ndim]
     */
-    void copy_u(
-        const xt::xtensor<double, 2>& nodevec_src, xt::xtensor<double, 2>& nodevec_dest) const;
+    void
+    copy_u(const xt::xtensor<double, 2>& nodevec_src, xt::xtensor<double, 2>& nodevec_dest) const;
 
     /**
     Copy prescribed DOFs from "nodevec" to another "nodvec":
@@ -153,8 +152,8 @@ public:
     \param nodevec_src input [#nnode, #ndim]
     \param nodevec_dest input/output [#nnode, #ndim]
     */
-    void copy_p(
-        const xt::xtensor<double, 2>& nodevec_src, xt::xtensor<double, 2>& nodevec_dest) const;
+    void
+    copy_p(const xt::xtensor<double, 2>& nodevec_src, xt::xtensor<double, 2>& nodevec_dest) const;
 
     /**
     Combine unknown and prescribed "dofval" into a single "dofval" list.

@@ -1,23 +1,19 @@
 #define CATCH_CONFIG_MAIN // tells Catch to provide a main() - only do this in one cpp file
-#include <catch2/catch.hpp>
-#include <xtensor/xrandom.hpp>
-#include <xtensor/xmath.hpp>
 #include <GooseFEM/GooseFEM.h>
+#include <catch2/catch.hpp>
+#include <xtensor/xmath.hpp>
+#include <xtensor/xrandom.hpp>
 
-#define ISCLOSE(a,b) REQUIRE_THAT((a), Catch::WithinAbs((b), 1.e-12));
+#define ISCLOSE(a, b) REQUIRE_THAT((a), Catch::WithinAbs((b), 1.e-12));
 
 TEST_CASE("GooseFEM::Allocate", "Allocate.h")
 {
 
     SECTION("asTensor - pre-allocated output")
     {
-        xt::xtensor<int, 2> a0 = {
-            {1, 2},
-            {3, 4}};
+        xt::xtensor<int, 2> a0 = {{1, 2}, {3, 4}};
 
-        xt::xtensor<int, 3> a1 = {
-            {{1, 1, 1}, {2, 2, 2}},
-            {{3, 3, 3}, {4, 4, 4}}};
+        xt::xtensor<int, 3> a1 = {{{1, 1, 1}, {2, 2, 2}}, {{3, 3, 3}, {4, 4, 4}}};
 
         xt::xtensor<int, 4> a2 = {
             {{{1, 1}, {1, 1}, {1, 1}}, {{2, 2}, {2, 2}, {2, 2}}},
@@ -35,13 +31,9 @@ TEST_CASE("GooseFEM::Allocate", "Allocate.h")
 
     SECTION("asTensor - return")
     {
-        xt::xtensor<int, 2> a0 = {
-            {1, 2},
-            {3, 4}};
+        xt::xtensor<int, 2> a0 = {{1, 2}, {3, 4}};
 
-        xt::xtensor<int, 3> a1 = {
-            {{1, 1, 1}, {2, 2, 2}},
-            {{3, 3, 3}, {4, 4, 4}}};
+        xt::xtensor<int, 3> a1 = {{{1, 1, 1}, {2, 2, 2}}, {{3, 3, 3}, {4, 4, 4}}};
 
         xt::xtensor<int, 4> a2 = {
             {{{1, 1}, {1, 1}, {1, 1}}, {{2, 2}, {2, 2}, {2, 2}}},
@@ -62,29 +54,17 @@ TEST_CASE("GooseFEM::Allocate", "Allocate.h")
 
     SECTION("as3d")
     {
-        xt::xtensor<int, 2> a1 = {
-            {1},
-            {3}};
+        xt::xtensor<int, 2> a1 = {{1}, {3}};
 
-        xt::xtensor<int, 2> b1 = {
-            {1, 0, 0},
-            {3, 0, 0}};
+        xt::xtensor<int, 2> b1 = {{1, 0, 0}, {3, 0, 0}};
 
-        xt::xtensor<int, 2> a2 = {
-            {1, 2},
-            {3, 4}};
+        xt::xtensor<int, 2> a2 = {{1, 2}, {3, 4}};
 
-        xt::xtensor<int, 2> b2 = {
-            {1, 2, 0},
-            {3, 4, 0}};
+        xt::xtensor<int, 2> b2 = {{1, 2, 0}, {3, 4, 0}};
 
-        xt::xtensor<int, 2> a3 = {
-            {1, 2, 5},
-            {3, 4, 6}};
+        xt::xtensor<int, 2> a3 = {{1, 2, 5}, {3, 4, 6}};
 
-        xt::xtensor<int, 2> b3 = {
-            {1, 2, 5},
-            {3, 4, 6}};
+        xt::xtensor<int, 2> b3 = {{1, 2, 5}, {3, 4, 6}};
 
         REQUIRE(xt::all(xt::equal(GooseFEM::as3d(a1), b1)));
         REQUIRE(xt::all(xt::equal(GooseFEM::as3d(a2), b2)));

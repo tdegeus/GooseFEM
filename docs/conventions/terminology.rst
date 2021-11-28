@@ -76,4 +76,3 @@ Connectivity
 * Node numbers per element: each element has one row
 * Shape [*nelem*, *nne*]
 * Denoted: *conn*
-

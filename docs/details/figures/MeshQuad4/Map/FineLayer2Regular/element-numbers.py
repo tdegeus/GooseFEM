@@ -1,14 +1,13 @@
-
 import GooseFEM as gf
-import matplotlib.pyplot as plt
 import GooseMPL as gplt
+import matplotlib.pyplot as plt
 import numpy as np
 
-plt.style.use(['goose'])
+plt.style.use(["goose"])
 
 # --------------------------------------------------------------------------------------------------
 
-fig, axes = plt.subplots(figsize=(10,10), ncols=2)
+fig, axes = plt.subplots(figsize=(10, 10), ncols=2)
 
 # ---
 
@@ -20,14 +19,14 @@ conn = mesh.conn()
 
 cindex = np.arange(mesh.nelem())
 
-im = gplt.patch(coor=coor, conn=conn, cindex=cindex, cmap='jet', axis=ax)
+im = gplt.patch(coor=coor, conn=conn, cindex=cindex, cmap="jet", axis=ax)
 
 for e in range(mesh.nelem()):
-  x = np.mean(coor[conn[e,:], 0])
-  y = np.mean(coor[conn[e,:], 1])
-  ax.text(x, y, str(e), ha='center', va='center')
+    x = np.mean(coor[conn[e, :], 0])
+    y = np.mean(coor[conn[e, :], 1])
+    ax.text(x, y, str(e), ha="center", va="center")
 
-ax.set_aspect('equal')
+ax.set_aspect("equal")
 ax.get_xaxis().set_visible(False)
 ax.get_yaxis().set_visible(False)
 
@@ -42,18 +41,18 @@ conn = new_mesh.conn()
 
 cindex = np.arange(new_mesh.nelem())
 
-im = gplt.patch(coor=coor, conn=conn, cindex=cindex, cmap='jet', axis=ax)
+im = gplt.patch(coor=coor, conn=conn, cindex=cindex, cmap="jet", axis=ax)
 
 for e in range(new_mesh.nelem()):
-  x = np.mean(coor[conn[e,:], 0])
-  y = np.mean(coor[conn[e,:], 1])
-  ax.text(x, y, str(e), ha='center', va='center')
+    x = np.mean(coor[conn[e, :], 0])
+    y = np.mean(coor[conn[e, :], 1])
+    ax.text(x, y, str(e), ha="center", va="center")
 
-ax.set_aspect('equal')
+ax.set_aspect("equal")
 ax.get_xaxis().set_visible(False)
 ax.get_yaxis().set_visible(False)
 
 # ---
 
-plt.savefig('element-numbers.svg')
+plt.savefig("element-numbers.svg")
 plt.show()

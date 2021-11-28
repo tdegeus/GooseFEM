@@ -228,7 +228,9 @@ getOrientation(const xt::xtensor<double, 2>& coor, const xt::xtensor<size_t, 2>&
 }
 
 inline xt::xtensor<size_t, 2> setOrientation(
-    const xt::xtensor<double, 2>& coor, const xt::xtensor<size_t, 2>& conn, int orientation)
+    const xt::xtensor<double, 2>& coor,
+    const xt::xtensor<size_t, 2>& conn,
+    int orientation)
 {
     GOOSEFEM_ASSERT(conn.shape(1) == 3ul);
     GOOSEFEM_ASSERT(coor.shape(1) == 2ul);

@@ -39,10 +39,11 @@ void init_VectorPartitionedTyings(py::module& m)
         .def("iii", &GooseFEM::VectorPartitionedTyings::iii, "Independent DOFs")
         .def("iid", &GooseFEM::VectorPartitionedTyings::iid, "Dependent DOFs")
 
-        .def("AsDofs_i",
-             &GooseFEM::VectorPartitionedTyings::AsDofs_i<xt::xtensor<double, 2>>,
-             "Set 'dofval",
-             py::arg("nodevec"))
+        .def(
+            "AsDofs_i",
+            &GooseFEM::VectorPartitionedTyings::AsDofs_i<xt::xtensor<double, 2>>,
+            "Set 'dofval",
+            py::arg("nodevec"))
 
         .def("__repr__", [](const GooseFEM::VectorPartitionedTyings&) {
             return "<GooseFEM.VectorPartitionedTyings>";

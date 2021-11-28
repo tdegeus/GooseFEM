@@ -58,7 +58,7 @@ int main()
 
     // nodal quantities
     xt::xtensor<double, 2> disp = xt::zeros<double>(coor.shape()); // nodal displacement
-    xt::xtensor<double, 2> du = xt::zeros<double>(coor.shape());   // iterative displacement update
+    xt::xtensor<double, 2> du = xt::zeros<double>(coor.shape()); // iterative displacement update
     xt::xtensor<double, 2> fint = xt::zeros<double>(coor.shape()); // internal force
     xt::xtensor<double, 2> fext = xt::zeros<double>(coor.shape()); // external force
     xt::xtensor<double, 2> fres = xt::zeros<double>(coor.shape()); // residual force
@@ -225,12 +225,15 @@ int main()
         H5::dump(file, "/epseq/" + std::to_string(inc), GM::Epseq(Epselem));
         H5::dump(file, "/disp/" + std::to_string(inc), GF::as3d(disp));
         // - update ParaView meta-data
-        xdmf.push_back({
-            PV::Topology(file, "/conn", mesh.getElementType()),
-            PV::Geometry(file, "/coor"),
-            PV::Attribute(file, "/disp/" + std::to_string(inc), PV::AttributeCenter::Node, "Displacement"),
-            PV::Attribute(file, "/sigeq/" + std::to_string(inc), PV::AttributeCenter::Cell, "Eq. stress"),
-            PV::Attribute(file, "/epseq/" + std::to_string(inc), PV::AttributeCenter::Cell, "Eq. strain")});
+        xdmf.push_back(
+            {PV::Topology(file, "/conn", mesh.getElementType()),
+             PV::Geometry(file, "/coor"),
+             PV::Attribute(
+                 file, "/disp/" + std::to_string(inc), PV::AttributeCenter::Node, "Displacement"),
+             PV::Attribute(
+                 file, "/sigeq/" + std::to_string(inc), PV::AttributeCenter::Cell, "Eq. stress"),
+             PV::Attribute(
+                 file, "/epseq/" + std::to_string(inc), PV::AttributeCenter::Cell, "Eq. strain")});
     }
 
     // write ParaView meta-data

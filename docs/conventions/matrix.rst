@@ -43,4 +43,3 @@ For example for a two-dimensional quadrilateral element
         f_x^{(3)},
         f_y^{(3)}
     \big]^T
-

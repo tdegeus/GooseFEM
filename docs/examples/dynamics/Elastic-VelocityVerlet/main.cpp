@@ -22,9 +22,9 @@ int main()
 {
     // simulation parameters
 
-    double T = 60.0;     // total time
-    double dt = 1.0e-2;  // time increment
-    size_t nx = 60;      // number of elements in both directions
+    double T = 60.0; // total time
+    double dt = 1.0e-2; // time increment
+    size_t nx = 60; // number of elements in both directions
     double gamma = 0.05; // displacement step
 
     // get mesh & quadrature

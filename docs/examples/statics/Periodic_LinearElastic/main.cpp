@@ -80,7 +80,8 @@ int main()
     size_t tdim = 3;
 
     // some artificial material definition
-    xt::xtensor<size_t, 1> ehard = xt::ravel(xt::view(elmat, xt::range(0, 2 * 10), xt::range(0, 2 * 10)));
+    xt::xtensor<size_t, 1> ehard =
+        xt::ravel(xt::view(elmat, xt::range(0, 2 * 10), xt::range(0, 2 * 10)));
     xt::xtensor<size_t, 2> Ihard = xt::zeros<size_t>({nelem, nip});
     xt::view(Ihard, xt::keep(ehard), xt::all()) = 1ul;
     xt::xtensor<size_t, 2> Isoft = xt::ones<size_t>({nelem, nip}) - Ihard;
@@ -155,12 +156,12 @@ int main()
     H5::dump(file, "/epseq", GM::Epseq(Epselem));
     H5::dump(file, "/disp", GF::as3d(disp));
     // - update ParaView meta-data
-    xdmf.push_back({
-        PV::Topology(file, "/conn", mesh.getElementType()),
-        PV::Geometry(file, "/coor"),
-        PV::Attribute(file, "/disp", PV::AttributeCenter::Node, "Displacement"),
-        PV::Attribute(file, "/sigeq", PV::AttributeCenter::Cell, "Eq. stress"),
-        PV::Attribute(file, "/epseq", PV::AttributeCenter::Cell, "Eq. strain")});
+    xdmf.push_back(
+        {PV::Topology(file, "/conn", mesh.getElementType()),
+         PV::Geometry(file, "/coor"),
+         PV::Attribute(file, "/disp", PV::AttributeCenter::Node, "Displacement"),
+         PV::Attribute(file, "/sigeq", PV::AttributeCenter::Cell, "Eq. stress"),
+         PV::Attribute(file, "/epseq", PV::AttributeCenter::Cell, "Eq. strain")});
 
     // write ParaView meta-data
     PV::write("main.xdmf", xdmf.get());

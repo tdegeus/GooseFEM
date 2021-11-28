@@ -1,12 +1,12 @@
 #define CATCH_CONFIG_MAIN // tells Catch to provide a main() - only do this in one cpp file
-#include <catch2/catch.hpp>
-#include <xtensor/xrandom.hpp>
-#include <xtensor/xmath.hpp>
 #include <Eigen/Eigen>
-#include <GooseFEM/GooseFEM.h>
 #include <GMatElastoPlasticQPot/Cartesian2d.h>
+#include <GooseFEM/GooseFEM.h>
+#include <catch2/catch.hpp>
+#include <xtensor/xmath.hpp>
+#include <xtensor/xrandom.hpp>
 
-#define ISCLOSE(a,b) REQUIRE_THAT((a), Catch::WithinAbs((b), 1.0e-12));
+#define ISCLOSE(a, b) REQUIRE_THAT((a), Catch::WithinAbs((b), 1.0e-12));
 
 TEST_CASE("hybrid-elastoplasticqpot", "GooseFEM.h")
 {
@@ -17,9 +17,8 @@ TEST_CASE("hybrid-elastoplasticqpot", "GooseFEM.h")
         GooseFEM::Mesh::Quad4::Regular mesh(N, N);
         size_t nelem = mesh.nelem();
         xt::xtensor<size_t, 1> elem_a = xt::arange<size_t>(N, 2 * N);
-        xt::xtensor<size_t, 1> elem_b = xt::concatenate(xt::xtuple(
-            xt::arange<size_t>(N),
-            xt::arange<size_t>(2 * N, nelem)));
+        xt::xtensor<size_t, 1> elem_b =
+            xt::concatenate(xt::xtuple(xt::arange<size_t>(N), xt::arange<size_t>(2 * N, nelem)));
         size_t nelem_a = elem_a.size();
         size_t nelem_b = elem_b.size();
 
@@ -45,15 +44,22 @@ TEST_CASE("hybrid-elastoplasticqpot", "GooseFEM.h")
         GMatElastoPlasticQPot::Cartesian2d::Array<2> mat_a({nelem_a, nip});
         GMatElastoPlasticQPot::Cartesian2d::Array<2> mat_b({nelem_b, nip});
 
-        xt::xtensor<double, 2> epsy_a = 0.2 * xt::random::rand<double>(std::array<size_t, 2>{nelem_a, 100});
+        xt::xtensor<double, 2> epsy_a =
+            0.2 * xt::random::rand<double>(std::array<size_t, 2>{nelem_a, 100});
         epsy_a = xt::cumsum(epsy_a, 1);
 
         {
             xt::xtensor<size_t, 2> I = xt::zeros<size_t>({nelem, nip});
             xt::xtensor<size_t, 2> idx = xt::zeros<size_t>({nelem, nip});
             xt::view(I, xt::keep(elem_a), xt::all()) = 1;
-            xt::view(idx, xt::keep(elem_a), xt::all()) = xt::arange<size_t>(nelem_a).reshape({-1, 1});
-            mat.setCusp(I, idx, 3.0 * xt::ones<double>({nelem_a}), 4.0 * xt::ones<double>({nelem_a}), epsy_a);
+            xt::view(idx, xt::keep(elem_a), xt::all()) =
+                xt::arange<size_t>(nelem_a).reshape({-1, 1});
+            mat.setCusp(
+                I,
+                idx,
+                3.0 * xt::ones<double>({nelem_a}),
+                4.0 * xt::ones<double>({nelem_a}),
+                epsy_a);
         }
 
         {
@@ -65,8 +71,14 @@ TEST_CASE("hybrid-elastoplasticqpot", "GooseFEM.h")
         {
             xt::xtensor<size_t, 2> I = xt::ones<size_t>({nelem_a, nip});
             xt::xtensor<size_t, 2> idx = xt::zeros<size_t>({nelem_a, nip});
-            xt::view(idx, xt::range(0, nelem_a), xt::all()) = xt::arange<size_t>(nelem_a).reshape({-1, 1});
-            mat_a.setCusp(I, idx, 3.0 * xt::ones<double>({nelem_a}), 4.0 * xt::ones<double>({nelem_a}), epsy_a);
+            xt::view(idx, xt::range(0, nelem_a), xt::all()) =
+                xt::arange<size_t>(nelem_a).reshape({-1, 1});
+            mat_a.setCusp(
+                I,
+                idx,
+                3.0 * xt::ones<double>({nelem_a}),
+                4.0 * xt::ones<double>({nelem_a}),
+                epsy_a);
         }
 
         {
@@ -124,9 +136,8 @@ TEST_CASE("hybrid-elastoplasticqpot", "GooseFEM.h")
         GooseFEM::Mesh::Quad4::Regular mesh(N, N);
         size_t nelem = mesh.nelem();
         xt::xtensor<size_t, 1> elem_a = xt::arange<size_t>(N, 2 * N);
-        xt::xtensor<size_t, 1> elem_b = xt::concatenate(xt::xtuple(
-            xt::arange<size_t>(N),
-            xt::arange<size_t>(2 * N, nelem)));
+        xt::xtensor<size_t, 1> elem_b =
+            xt::concatenate(xt::xtuple(xt::arange<size_t>(N), xt::arange<size_t>(2 * N, nelem)));
         size_t nelem_a = elem_a.size();
         size_t nelem_b = elem_b.size();
 
@@ -152,15 +163,22 @@ TEST_CASE("hybrid-elastoplasticqpot", "GooseFEM.h")
         GMatElastoPlasticQPot::Cartesian2d::Array<2> mat_a({nelem_a, nip});
         GMatElastoPlasticQPot::Cartesian2d::Array<2> mat_b({nelem_b, nip});
 
-        xt::xtensor<double, 2> epsy_a = 0.2 * xt::random::rand<double>(std::array<size_t, 2>{nelem_a, 100});
+        xt::xtensor<double, 2> epsy_a =
+            0.2 * xt::random::rand<double>(std::array<size_t, 2>{nelem_a, 100});
         epsy_a = xt::cumsum(epsy_a, 1);
 
         {
             xt::xtensor<size_t, 2> I = xt::zeros<size_t>({nelem, nip});
             xt::xtensor<size_t, 2> idx = xt::zeros<size_t>({nelem, nip});
             xt::view(I, xt::keep(elem_a), xt::all()) = 1;
-            xt::view(idx, xt::keep(elem_a), xt::all()) = xt::arange<size_t>(nelem_a).reshape({-1, 1});
-            mat.setCusp(I, idx, 3.0 * xt::ones<double>({nelem_a}), 4.0 * xt::ones<double>({nelem_a}), epsy_a);
+            xt::view(idx, xt::keep(elem_a), xt::all()) =
+                xt::arange<size_t>(nelem_a).reshape({-1, 1});
+            mat.setCusp(
+                I,
+                idx,
+                3.0 * xt::ones<double>({nelem_a}),
+                4.0 * xt::ones<double>({nelem_a}),
+                epsy_a);
         }
 
         {
@@ -172,8 +190,14 @@ TEST_CASE("hybrid-elastoplasticqpot", "GooseFEM.h")
         {
             xt::xtensor<size_t, 2> I = xt::ones<size_t>({nelem_a, nip});
             xt::xtensor<size_t, 2> idx = xt::zeros<size_t>({nelem_a, nip});
-            xt::view(idx, xt::range(0, nelem_a), xt::all()) = xt::arange<size_t>(nelem_a).reshape({-1, 1});
-            mat_a.setCusp(I, idx, 3.0 * xt::ones<double>({nelem_a}), 4.0 * xt::ones<double>({nelem_a}), epsy_a);
+            xt::view(idx, xt::range(0, nelem_a), xt::all()) =
+                xt::arange<size_t>(nelem_a).reshape({-1, 1});
+            mat_a.setCusp(
+                I,
+                idx,
+                3.0 * xt::ones<double>({nelem_a}),
+                4.0 * xt::ones<double>({nelem_a}),
+                epsy_a);
         }
 
         {
@@ -233,9 +257,8 @@ TEST_CASE("hybrid-elastoplasticqpot", "GooseFEM.h")
         size_t nelem = mesh.nelem();
         size_t ndim = mesh.ndim();
         xt::xtensor<size_t, 1> elem_a = xt::arange<size_t>(N, 2 * N);
-        xt::xtensor<size_t, 1> elem_b = xt::concatenate(xt::xtuple(
-            xt::arange<size_t>(N),
-            xt::arange<size_t>(2 * N, nelem)));
+        xt::xtensor<size_t, 1> elem_b =
+            xt::concatenate(xt::xtuple(xt::arange<size_t>(N), xt::arange<size_t>(2 * N, nelem)));
         size_t nelem_a = elem_a.size();
         size_t nelem_b = elem_b.size();
 
@@ -275,15 +298,22 @@ TEST_CASE("hybrid-elastoplasticqpot", "GooseFEM.h")
         GMatElastoPlasticQPot::Cartesian2d::Array<2> mat_a({nelem_a, nip});
         GMatElastoPlasticQPot::Cartesian2d::Array<2> mat_b({nelem_b, nip});
 
-        xt::xtensor<double, 2> epsy_a = 0.2 * xt::random::rand<double>(std::array<size_t, 2>{nelem_a, 100});
+        xt::xtensor<double, 2> epsy_a =
+            0.2 * xt::random::rand<double>(std::array<size_t, 2>{nelem_a, 100});
         epsy_a = xt::cumsum(epsy_a, 1);
 
         {
             xt::xtensor<size_t, 2> I = xt::zeros<size_t>({nelem, nip});
             xt::xtensor<size_t, 2> idx = xt::zeros<size_t>({nelem, nip});
             xt::view(I, xt::keep(elem_a), xt::all()) = 1;
-            xt::view(idx, xt::keep(elem_a), xt::all()) = xt::arange<size_t>(nelem_a).reshape({-1, 1});
-            mat.setCusp(I, idx, 3.0 * xt::ones<double>({nelem_a}), 4.0 * xt::ones<double>({nelem_a}), epsy_a);
+            xt::view(idx, xt::keep(elem_a), xt::all()) =
+                xt::arange<size_t>(nelem_a).reshape({-1, 1});
+            mat.setCusp(
+                I,
+                idx,
+                3.0 * xt::ones<double>({nelem_a}),
+                4.0 * xt::ones<double>({nelem_a}),
+                epsy_a);
         }
 
         {
@@ -295,8 +325,14 @@ TEST_CASE("hybrid-elastoplasticqpot", "GooseFEM.h")
         {
             xt::xtensor<size_t, 2> I = xt::ones<size_t>({nelem_a, nip});
             xt::xtensor<size_t, 2> idx = xt::zeros<size_t>({nelem_a, nip});
-            xt::view(idx, xt::range(0, nelem_a), xt::all()) = xt::arange<size_t>(nelem_a).reshape({-1, 1});
-            mat_a.setCusp(I, idx, 3.0 * xt::ones<double>({nelem_a}), 4.0 * xt::ones<double>({nelem_a}), epsy_a);
+            xt::view(idx, xt::range(0, nelem_a), xt::all()) =
+                xt::arange<size_t>(nelem_a).reshape({-1, 1});
+            mat_a.setCusp(
+                I,
+                idx,
+                3.0 * xt::ones<double>({nelem_a}),
+                4.0 * xt::ones<double>({nelem_a}),
+                epsy_a);
         }
 
         {
@@ -348,5 +384,4 @@ TEST_CASE("hybrid-elastoplasticqpot", "GooseFEM.h")
             REQUIRE(xt::allclose(Sig, Sig_c));
         }
     }
-
 }

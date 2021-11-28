@@ -1,10 +1,10 @@
 #define CATCH_CONFIG_MAIN // tells Catch to provide a main() - only do this in one cpp file
-#include <catch2/catch.hpp>
-#include <xtensor/xrandom.hpp>
-#include <xtensor/xmath.hpp>
 #include <GooseFEM/GooseFEM.h>
+#include <catch2/catch.hpp>
+#include <xtensor/xmath.hpp>
+#include <xtensor/xrandom.hpp>
 
-#define ISCLOSE(a,b) REQUIRE_THAT((a), Catch::WithinAbs((b), 1.e-12));
+#define ISCLOSE(a, b) REQUIRE_THAT((a), Catch::WithinAbs((b), 1.e-12));
 
 TEST_CASE("GooseFEM::Mesh", "Mesh.h")
 {
@@ -52,10 +52,16 @@ TEST_CASE("GooseFEM::Mesh", "Mesh.h")
         REQUIRE(xt::all(xt::equal(stitch.elemmap(0), xt::arange<size_t>(5 * 5))));
         REQUIRE(xt::all(xt::equal(stitch.elemmap(1), xt::arange<size_t>(5 * 5) + 5 * 5)));
 
-        REQUIRE(xt::all(xt::equal(stitch.nodeset(xt::eval(xt::arange<size_t>(6 * 6)), 0), xt::arange<size_t>(6 * 6))));
-        REQUIRE(xt::all(xt::equal(stitch.nodeset(xt::eval(xt::arange<size_t>(6 * 6)), 1), xt::arange<size_t>(6 * 6) + 5 * 6)));
-        REQUIRE(xt::all(xt::equal(stitch.elemset(xt::eval(xt::arange<size_t>(5 * 5)), 0), xt::arange<size_t>(5 * 5))));
-        REQUIRE(xt::all(xt::equal(stitch.elemset(xt::eval(xt::arange<size_t>(5 * 5)), 1), xt::arange<size_t>(5 * 5) + 5 * 5)));
+        REQUIRE(xt::all(xt::equal(
+            stitch.nodeset(xt::eval(xt::arange<size_t>(6 * 6)), 0), xt::arange<size_t>(6 * 6))));
+        REQUIRE(xt::all(xt::equal(
+            stitch.nodeset(xt::eval(xt::arange<size_t>(6 * 6)), 1),
+            xt::arange<size_t>(6 * 6) + 5 * 6)));
+        REQUIRE(xt::all(xt::equal(
+            stitch.elemset(xt::eval(xt::arange<size_t>(5 * 5)), 0), xt::arange<size_t>(5 * 5))));
+        REQUIRE(xt::all(xt::equal(
+            stitch.elemset(xt::eval(xt::arange<size_t>(5 * 5)), 1),
+            xt::arange<size_t>(5 * 5) + 5 * 5)));
 
         REQUIRE(xt::all(xt::equal(stitch.nodeset(overlap_a, 0), stitch.nodeset(overlap_b, 1))));
     }
@@ -91,14 +97,21 @@ TEST_CASE("GooseFEM::Mesh", "Mesh.h")
         REQUIRE(xt::all(xt::equal(stitch.elemmap(0), xt::arange<size_t>(5 * 5))));
         REQUIRE(xt::all(xt::equal(stitch.elemmap(1), xt::arange<size_t>(5 * 5) + 5 * 5)));
 
-        REQUIRE(xt::all(xt::equal(stitch.nodeset(xt::eval(xt::arange<size_t>(6 * 6)), 0), xt::arange<size_t>(6 * 6))));
-        REQUIRE(xt::all(xt::equal(stitch.nodeset(xt::eval(xt::arange<size_t>(6 * 6)), 1), xt::arange<size_t>(6 * 6) + 5 * 6)));
-        REQUIRE(xt::all(xt::equal(stitch.elemset(xt::eval(xt::arange<size_t>(5 * 5)), 0), xt::arange<size_t>(5 * 5))));
-        REQUIRE(xt::all(xt::equal(stitch.elemset(xt::eval(xt::arange<size_t>(5 * 5)), 1), xt::arange<size_t>(5 * 5) + 5 * 5)));
+        REQUIRE(xt::all(xt::equal(
+            stitch.nodeset(xt::eval(xt::arange<size_t>(6 * 6)), 0), xt::arange<size_t>(6 * 6))));
+        REQUIRE(xt::all(xt::equal(
+            stitch.nodeset(xt::eval(xt::arange<size_t>(6 * 6)), 1),
+            xt::arange<size_t>(6 * 6) + 5 * 6)));
+        REQUIRE(xt::all(xt::equal(
+            stitch.elemset(xt::eval(xt::arange<size_t>(5 * 5)), 0), xt::arange<size_t>(5 * 5))));
+        REQUIRE(xt::all(xt::equal(
+            stitch.elemset(xt::eval(xt::arange<size_t>(5 * 5)), 1),
+            xt::arange<size_t>(5 * 5) + 5 * 5)));
 
         REQUIRE(xt::all(xt::equal(stitch.nodeset(overlap_a, 0), stitch.nodeset(overlap_b, 1))));
 
-        REQUIRE(xt::all(xt::equal(stitch.nodeset({nset, nset}), xt::arange<size_t>(0, 6 * 6 + 5 * 6, 6))));
+        REQUIRE(xt::all(
+            xt::equal(stitch.nodeset({nset, nset}), xt::arange<size_t>(0, 6 * 6 + 5 * 6, 6))));
         REQUIRE(xt::all(xt::equal(stitch.elemset({eset, eset}), xt::arange<size_t>(2 * 5 * 5))));
     }
 
@@ -125,12 +138,19 @@ TEST_CASE("GooseFEM::Mesh", "Mesh.h")
         REQUIRE(xt::all(xt::equal(stitch.elemmap(0), xt::arange<size_t>(5 * 5))));
         REQUIRE(xt::all(xt::equal(stitch.elemmap(1), xt::arange<size_t>(5 * 5) + 5 * 5)));
 
-        REQUIRE(xt::all(xt::equal(stitch.nodeset(xt::eval(xt::arange<size_t>(6 * 6)), 0), xt::arange<size_t>(6 * 6))));
-        REQUIRE(xt::all(xt::equal(stitch.nodeset(xt::eval(xt::arange<size_t>(6 * 6)), 1), xt::arange<size_t>(6 * 6) + 5 * 6)));
-        REQUIRE(xt::all(xt::equal(stitch.elemset(xt::eval(xt::arange<size_t>(5 * 5)), 0), xt::arange<size_t>(5 * 5))));
-        REQUIRE(xt::all(xt::equal(stitch.elemset(xt::eval(xt::arange<size_t>(5 * 5)), 1), xt::arange<size_t>(5 * 5) + 5 * 5)));
+        REQUIRE(xt::all(xt::equal(
+            stitch.nodeset(xt::eval(xt::arange<size_t>(6 * 6)), 0), xt::arange<size_t>(6 * 6))));
+        REQUIRE(xt::all(xt::equal(
+            stitch.nodeset(xt::eval(xt::arange<size_t>(6 * 6)), 1),
+            xt::arange<size_t>(6 * 6) + 5 * 6)));
+        REQUIRE(xt::all(xt::equal(
+            stitch.elemset(xt::eval(xt::arange<size_t>(5 * 5)), 0), xt::arange<size_t>(5 * 5))));
+        REQUIRE(xt::all(xt::equal(
+            stitch.elemset(xt::eval(xt::arange<size_t>(5 * 5)), 1),
+            xt::arange<size_t>(5 * 5) + 5 * 5)));
 
-        REQUIRE(xt::all(xt::equal(stitch.nodeset({nset, nset}), xt::arange<size_t>(0, 6 * 6 + 5 * 6, 6))));
+        REQUIRE(xt::all(
+            xt::equal(stitch.nodeset({nset, nset}), xt::arange<size_t>(0, 6 * 6 + 5 * 6, 6))));
         REQUIRE(xt::all(xt::equal(stitch.elemset({eset, eset}), xt::arange<size_t>(2 * 5 * 5))));
     }
 
@@ -174,11 +194,7 @@ TEST_CASE("GooseFEM::Mesh", "Mesh.h")
     SECTION("centers")
     {
         GooseFEM::Mesh::Quad4::Regular mesh(2, 2, 2.0);
-        xt::xtensor<double, 2> c = {
-            {1.0, 1.0},
-            {3.0, 1.0},
-            {1.0, 3.0},
-            {3.0, 3.0}};
+        xt::xtensor<double, 2> c = {{1.0, 1.0}, {3.0, 1.0}, {1.0, 3.0}, {3.0, 3.0}};
 
         REQUIRE(xt::allclose(GooseFEM::Mesh::centers(mesh.coor(), mesh.conn()), c));
     }
@@ -210,88 +226,37 @@ TEST_CASE("GooseFEM::Mesh", "Mesh.h")
     {
         GooseFEM::Mesh::Quad4::Regular mesh(3, 3);
 
-        xt::xtensor<size_t, 1> elmap0 = {
-            0, 1, 2,
-            3, 4, 5,
-            6, 7, 8
-        };
-        xt::xtensor<size_t, 1> elmap1 = {
-            2, 0, 1,
-            5, 3, 4,
-            8, 6, 7
-        };
-        xt::xtensor<size_t, 1> elmap2 = {
-            1, 2, 0,
-            4, 5, 3,
-            7, 8, 6
-        };
+        xt::xtensor<size_t, 1> elmap0 = {0, 1, 2, 3, 4, 5, 6, 7, 8};
+        xt::xtensor<size_t, 1> elmap1 = {2, 0, 1, 5, 3, 4, 8, 6, 7};
+        xt::xtensor<size_t, 1> elmap2 = {1, 2, 0, 4, 5, 3, 7, 8, 6};
 
-        xt::xtensor<size_t, 1> nodemap0 = {
-             0,  1,  2,  3,
-             4,  5,  6,  7,
-             8,  9, 10, 11,
-            12, 13, 14, 15
-        };
-        xt::xtensor<size_t, 1> nodemap1 = {
-              2,  0,  1,  2,
-              6,  4,  5,  6,
-             10,  8,  9, 10,
-             14, 15, 13, 14
-        };
-        xt::xtensor<size_t, 1> nodemap2 = {
-             1,  2,  0,  1,
-             5,  6,  4,  5,
-             9, 10,  8,  9,
-            13, 14, 15, 13
-        };
+        xt::xtensor<size_t, 1> nodemap0 = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15};
+        xt::xtensor<size_t, 1> nodemap1 = {2, 0, 1, 2, 6, 4, 5, 6, 10, 8, 9, 10, 14, 15, 13, 14};
+        xt::xtensor<size_t, 1> nodemap2 = {1, 2, 0, 1, 5, 6, 4, 5, 9, 10, 8, 9, 13, 14, 15, 13};
 
-        REQUIRE(xt::all(xt::equal(GooseFEM::Mesh::elemmap2nodemap(elmap0, mesh.coor(), mesh.conn()), nodemap0)));
-        REQUIRE(xt::all(xt::equal(GooseFEM::Mesh::elemmap2nodemap(elmap1, mesh.coor(), mesh.conn()), nodemap1)));
-        REQUIRE(xt::all(xt::equal(GooseFEM::Mesh::elemmap2nodemap(elmap2, mesh.coor(), mesh.conn()), nodemap2)));
+        REQUIRE(xt::all(xt::equal(
+            GooseFEM::Mesh::elemmap2nodemap(elmap0, mesh.coor(), mesh.conn()), nodemap0)));
+        REQUIRE(xt::all(xt::equal(
+            GooseFEM::Mesh::elemmap2nodemap(elmap1, mesh.coor(), mesh.conn()), nodemap1)));
+        REQUIRE(xt::all(xt::equal(
+            GooseFEM::Mesh::elemmap2nodemap(elmap2, mesh.coor(), mesh.conn()), nodemap2)));
     }
 
     SECTION("elemmap2nodemap - example 1")
     {
         GooseFEM::Mesh::Quad4::FineLayer mesh(3, 3);
 
-        xt::xtensor<int, 1> elemval = {
-            1, 0, 0,
-            1, 0, 0,
-            1, 0, 0
-        };
+        xt::xtensor<int, 1> elemval = {1, 0, 0, 1, 0, 0, 1, 0, 0};
 
-        xt::xtensor<int, 1> elemval_r1 = {
-            0, 1, 0,
-            0, 1, 0,
-            0, 1, 0
-        };
+        xt::xtensor<int, 1> elemval_r1 = {0, 1, 0, 0, 1, 0, 0, 1, 0};
 
-        xt::xtensor<int, 1> elemval_r2 = {
-            0, 0, 1,
-            0, 0, 1,
-            0, 0, 1
-        };
+        xt::xtensor<int, 1> elemval_r2 = {0, 0, 1, 0, 0, 1, 0, 0, 1};
 
-        xt::xtensor<int, 1> nodeval = {
-            1, 0, 0, 1,
-            1, 0, 0, 1,
-            1, 0, 0, 1,
-            1, 0, 0, 1
-        };
+        xt::xtensor<int, 1> nodeval = {1, 0, 0, 1, 1, 0, 0, 1, 1, 0, 0, 1, 1, 0, 0, 1};
 
-        xt::xtensor<int, 1> nodeval_r1 = {
-            0, 1, 0, 0,
-            0, 1, 0, 0,
-            0, 1, 0, 0,
-            0, 1, 0, 0
-        };
+        xt::xtensor<int, 1> nodeval_r1 = {0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0};
 
-        xt::xtensor<int, 1> nodeval_r2 = {
-            0, 0, 1, 0,
-            0, 0, 1, 0,
-            0, 0, 1, 0,
-            0, 0, 1, 0
-        };
+        xt::xtensor<int, 1> nodeval_r2 = {0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0};
 
         {
             auto elemmap = mesh.roll(0);
@@ -340,44 +305,17 @@ TEST_CASE("GooseFEM::Mesh", "Mesh.h")
     {
         GooseFEM::Mesh::Quad4::FineLayer mesh(3, 3);
 
-        xt::xtensor<int, 1> elemval = {
-            1, 0, 0,
-            0, 1, 0,
-            0, 0, 1
-        };
+        xt::xtensor<int, 1> elemval = {1, 0, 0, 0, 1, 0, 0, 0, 1};
 
-        xt::xtensor<int, 1> elemval_r1 = {
-            0, 1, 0,
-            0, 0, 1,
-            1, 0, 0
-        };
+        xt::xtensor<int, 1> elemval_r1 = {0, 1, 0, 0, 0, 1, 1, 0, 0};
 
-        xt::xtensor<int, 1> elemval_r2 = {
-            0, 0, 1,
-            1, 0, 0,
-            0, 1, 0
-        };
+        xt::xtensor<int, 1> elemval_r2 = {0, 0, 1, 1, 0, 0, 0, 1, 0};
 
-        xt::xtensor<int, 1> nodeval = {
-            1, 0, 0, 1,
-            0, 1, 0, 0,
-            0, 0, 1, 0,
-            1, 0, 0, 1
-        };
+        xt::xtensor<int, 1> nodeval = {1, 0, 0, 1, 0, 1, 0, 0, 0, 0, 1, 0, 1, 0, 0, 1};
 
-        xt::xtensor<int, 1> nodeval_r1 = {
-            0, 1, 0, 0,
-            0, 0, 1, 0,
-            1, 0, 0, 1,
-            0, 1, 0, 0
-        };
+        xt::xtensor<int, 1> nodeval_r1 = {0, 1, 0, 0, 0, 0, 1, 0, 1, 0, 0, 1, 0, 1, 0, 0};
 
-        xt::xtensor<int, 1> nodeval_r2 = {
-            0, 0, 1, 0,
-            1, 0, 0, 1,
-            0, 1, 0, 0,
-            0, 0, 1, 0
-        };
+        xt::xtensor<int, 1> nodeval_r2 = {0, 0, 1, 0, 1, 0, 0, 1, 0, 1, 0, 0, 0, 0, 1, 0};
 
         {
             auto elemmap = mesh.roll(0);

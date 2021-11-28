@@ -12,8 +12,8 @@ Sparse matrix that is partitioned in:
 #ifndef GOOSEFEM_MATRIXPARTITIONEDTYINGS_H
 #define GOOSEFEM_MATRIXPARTITIONEDTYINGS_H
 
-#include "config.h"
 #include "Matrix.h"
+#include "config.h"
 
 #include <Eigen/Eigen>
 #include <Eigen/Sparse>
@@ -22,7 +22,8 @@ Sparse matrix that is partitioned in:
 namespace GooseFEM {
 
 // forward declaration
-template <class> class MatrixPartitionedTyingsSolver;
+template <class>
+class MatrixPartitionedTyingsSolver;
 
 /**
 Sparse matrix from with dependent DOFs are eliminated,
@@ -35,7 +36,6 @@ See VectorPartitionedTyings() for bookkeeping definitions.
 */
 class MatrixPartitionedTyings : public Matrix {
 public:
-
     MatrixPartitionedTyings() = default;
 
     /**
@@ -103,16 +103,14 @@ public:
     void assemble(const xt::xtensor<double, 3>& elemmat) override;
 
 private:
-
-    using Matrix::set;
     using Matrix::add;
-    using Matrix::Todense;
-    using Matrix::todense;
     using Matrix::Dot;
     using Matrix::dot;
+    using Matrix::set;
+    using Matrix::Todense;
+    using Matrix::todense;
 
 private:
-
     Eigen::SparseMatrix<double> m_Auu; ///< The matrix.
     Eigen::SparseMatrix<double> m_Aup; ///< The matrix.
     Eigen::SparseMatrix<double> m_Apu; ///< The matrix.
@@ -148,10 +146,10 @@ private:
     Eigen::SparseMatrix<double> m_Cpd; ///< Transpose of "m_Cdp".
 
     // grant access to solver class
-    template <class> friend class MatrixPartitionedTyingsSolver;
+    template <class>
+    friend class MatrixPartitionedTyingsSolver;
 
 private:
-
     // Convert arrays (Eigen version of VectorPartitioned, which contains public functions)
     Eigen::VectorXd AsDofs_u(const xt::xtensor<double, 1>& dofval) const;
     Eigen::VectorXd AsDofs_u(const xt::xtensor<double, 2>& nodevec) const;
@@ -169,7 +167,6 @@ using one factorisation.
 template <class Solver = Eigen::SimplicialLDLT<Eigen::SparseMatrix<double>>>
 class MatrixPartitionedTyingsSolver {
 public:
-
     MatrixPartitionedTyingsSolver() = default;
 
     /**
@@ -204,10 +201,8 @@ public:
     \param b nodevec [nelem, ndim].
     \param x nodevec [nelem, ndim], \f$ x_p \f$ read, \f$ x_u \f$ and \f$ x_d \f$ filled.
     */
-    void solve(
-        MatrixPartitionedTyings& A,
-        const xt::xtensor<double, 2>& b,
-        xt::xtensor<double, 2>& x);
+    void
+    solve(MatrixPartitionedTyings& A, const xt::xtensor<double, 2>& b, xt::xtensor<double, 2>& x);
 
     /**
     Same as
@@ -233,10 +228,8 @@ public:
     \param b dofval [ndof].
     \param x dofval [ndof], \f$ x_p \f$ read, \f$ x_u \f$ and \f$ x_d \f$ filled.
     */
-    void solve(
-        MatrixPartitionedTyings& A,
-        const xt::xtensor<double, 1>& b,
-        xt::xtensor<double, 1>& x);
+    void
+    solve(MatrixPartitionedTyings& A, const xt::xtensor<double, 1>& b, xt::xtensor<double, 1>& x);
 
     /**
     Same as
@@ -257,8 +250,8 @@ public:
 
     /**
     Same as
-    Solve_u(MatrixPartitionedTyings&, const xt::xtensor<double, 1>&, const xt::xtensor<double, 1>&, const xt::xtensor<double, 1>&),
-    but writing to pre-allocated output.
+    Solve_u(MatrixPartitionedTyings&, const xt::xtensor<double, 1>&, const xt::xtensor<double, 1>&,
+    const xt::xtensor<double, 1>&), but writing to pre-allocated output.
 
     \param A sparse matrix, see MatrixPartitionedTyings().
     \param b_u unknown dofval [nnu].

@@ -92,4 +92,3 @@ qtensor (4th order)
 
 *   Shape [nelem, nip, tdim, tdim, tdim, tdim]
 *   :code:`xt::xtensor<double,4>`
-

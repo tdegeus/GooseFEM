@@ -1,10 +1,10 @@
 #define CATCH_CONFIG_MAIN // tells Catch to provide a main() - only do this in one cpp file
-#include <catch2/catch.hpp>
-#include <xtensor/xrandom.hpp>
-#include <xtensor/xmath.hpp>
 #include <GooseFEM/GooseFEM.h>
+#include <catch2/catch.hpp>
+#include <xtensor/xmath.hpp>
+#include <xtensor/xrandom.hpp>
 
-#define ISCLOSE(a,b) REQUIRE_THAT((a), Catch::WithinAbs((b), 1.e-12));
+#define ISCLOSE(a, b) REQUIRE_THAT((a), Catch::WithinAbs((b), 1.e-12));
 
 TEST_CASE("GooseFEM::VectorPartitioned", "VectorPartitioned.h")
 {

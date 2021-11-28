@@ -187,7 +187,7 @@ inline Eigen::VectorXd Matrix::AsDofs(const xt::xtensor<double, 2>& nodevec) con
 
     Eigen::VectorXd dofval = Eigen::VectorXd::Zero(m_ndof, 1);
 
-    #pragma omp parallel for
+#pragma omp parallel for
     for (size_t m = 0; m < m_nnode; ++m) {
         for (size_t i = 0; i < m_ndim; ++i) {
             dofval(m_dofs(m, i)) = nodevec(m, i);
@@ -202,7 +202,7 @@ inline void Matrix::asNode(const Eigen::VectorXd& dofval, xt::xtensor<double, 2>
     GOOSEFEM_ASSERT(static_cast<size_t>(dofval.size()) == m_ndof);
     GOOSEFEM_ASSERT(xt::has_shape(nodevec, {m_nnode, m_ndim}));
 
-    #pragma omp parallel for
+#pragma omp parallel for
     for (size_t m = 0; m < m_nnode; ++m) {
         for (size_t i = 0; i < m_ndim; ++i) {
             nodevec(m, i) = dofval(m_dofs(m, i));
@@ -223,7 +223,9 @@ inline void MatrixSolver<Solver>::factorize(Matrix& matrix)
 
 template <class Solver>
 inline void MatrixSolver<Solver>::solve(
-    Matrix& matrix, const xt::xtensor<double, 2>& b, xt::xtensor<double, 2>& x)
+    Matrix& matrix,
+    const xt::xtensor<double, 2>& b,
+    xt::xtensor<double, 2>& x)
 {
     GOOSEFEM_ASSERT(xt::has_shape(b, {matrix.m_nnode, matrix.m_ndim}));
     GOOSEFEM_ASSERT(xt::has_shape(x, {matrix.m_nnode, matrix.m_ndim}));
@@ -234,13 +236,15 @@ inline void MatrixSolver<Solver>::solve(
 
 template <class Solver>
 inline void MatrixSolver<Solver>::solve(
-    Matrix& matrix, const xt::xtensor<double, 1>& b, xt::xtensor<double, 1>& x)
+    Matrix& matrix,
+    const xt::xtensor<double, 1>& b,
+    xt::xtensor<double, 1>& x)
 {
     GOOSEFEM_ASSERT(b.size() == matrix.m_ndof);
     GOOSEFEM_ASSERT(x.size() == matrix.m_ndof);
     this->factorize(matrix);
-    Eigen::Map<Eigen::VectorXd>(x.data(), x.size()).noalias() = m_solver.solve(
-        Eigen::Map<const Eigen::VectorXd>(b.data(), matrix.m_ndof));
+    Eigen::Map<Eigen::VectorXd>(x.data(), x.size()).noalias() =
+        m_solver.solve(Eigen::Map<const Eigen::VectorXd>(b.data(), matrix.m_ndof));
 }
 
 template <class Solver>

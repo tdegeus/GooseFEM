@@ -1,10 +1,9 @@
-
 import GooseFEM as gf
-import matplotlib.pyplot as plt
 import GooseMPL as gplt
+import matplotlib.pyplot as plt
 import numpy as np
 
-plt.style.use(['goose'])
+plt.style.use(["goose"])
 
 # --------------------------------------------------------------------------------------------------
 
@@ -16,18 +15,18 @@ cindex = np.arange(mesh.nelem())
 
 # --------------------------------------------------------------------------------------------------
 
-fig, ax = plt.subplots(figsize=(10,10))
+fig, ax = plt.subplots(figsize=(10, 10))
 
-im = gplt.patch(coor=coor, conn=conn, cindex=cindex, cmap='jet')
+im = gplt.patch(coor=coor, conn=conn, cindex=cindex, cmap="jet")
 
 for e in range(conn.shape[0]):
-  x = np.mean(coor[conn[e,:], 0])
-  y = np.mean(coor[conn[e,:], 1])
-  ax.text(x, y, str(e), ha='center', va='center')
+    x = np.mean(coor[conn[e, :], 0])
+    y = np.mean(coor[conn[e, :], 1])
+    ax.text(x, y, str(e), ha="center", va="center")
 
-ax.set_aspect('equal')
+ax.set_aspect("equal")
 ax.get_xaxis().set_visible(False)
 ax.get_yaxis().set_visible(False)
 
-plt.savefig('element-numbers.svg')
+plt.savefig("element-numbers.svg")
 plt.close()

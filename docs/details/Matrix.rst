@@ -503,4 +503,3 @@ The default solver can, however, be quite slow. Therefore Eigen has quite some `
     .. code-block:: bash
 
         clang++ -I/path/to/include/eigen3 -I/path/to/lapack/include -L/path/to/lapack/lib -I/path/to/openblas/include -L/path/to/openblas/lib -lopenblas -I/path/to/SuiteSparse/include -L/path/to/SuiteSparse/lib -lumfpack -lamd -lcholmod -lsuitesparseconfig -lm -std=c++14 -Wall -Wextra -pedantic -march=native -O3  -o example example.cpp
-

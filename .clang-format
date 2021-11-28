@@ -14,8 +14,6 @@ AllowShortFunctionsOnASingleLine: false
 AllowShortIfStatementsOnASingleLine: false
 AllowShortLoopsOnASingleLine: false
 AlwaysBreakTemplateDeclarations: Yes
-BinPackArguments: false
-BinPackParameters: false
 PenaltyBreakBeforeFirstCallParameter: 1
 PenaltyReturnTypeOnItsOwnLine: 100
 PointerBindsToType: true
@@ -33,7 +31,7 @@ AllowAllParametersOfDeclarationOnNextLine: false
 # AlwaysBreakAfterDefinitionReturnType: All
 
 BraceWrapping:
-    AfterFunction: true
-    AfterClass: false
-    BeforeCatch: true
-    BeforeElse: true
+  AfterFunction: true
+  AfterClass: false
+  BeforeCatch: true
+  BeforeElse: true

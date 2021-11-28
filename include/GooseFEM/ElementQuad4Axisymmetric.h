@@ -32,7 +32,6 @@ Naming convention:
 */
 class QuadratureAxisymmetric : public QuadratureBaseCartesian<QuadratureAxisymmetric> {
 public:
-
     QuadratureAxisymmetric() = default;
 
     /**
@@ -76,12 +75,12 @@ public:
     Note that the functions and their gradients are precomputed upon construction,
     or updated when calling update_x().
 
-    \return ``B`` matrix stored per element, per integration point [#nelem, #nne, #tdim, #tdim, #tdim]
+    \return ``B`` matrix stored per element, per integration point [#nelem, #nne, #tdim, #tdim,
+    #tdim]
     */
     xt::xtensor<double, 6> B() const;
 
 private:
-
     friend QuadratureBase<QuadratureAxisymmetric>;
     friend QuadratureBaseCartesian<QuadratureAxisymmetric>;
 
@@ -110,18 +109,18 @@ private:
 
     void compute_dN_impl();
 
-    constexpr static size_t s_nne = 4;  ///< Number of nodes per element.
+    constexpr static size_t s_nne = 4; ///< Number of nodes per element.
     constexpr static size_t s_ndim = 2; ///< Number of dimensions for nodal vectors.
     constexpr static size_t s_tdim = 3; ///< Number of dimensions for tensors.
     size_t m_tdim = 3; ///< Dynamic alias of s_tdim (remove in C++17)
     size_t m_nelem; ///< Number of elements.
-    size_t m_nip;   ///< Number of integration points per element.
-    xt::xtensor<double, 3> m_x;    ///< nodal positions stored per element [#nelem, #nne, #ndim]
-    xt::xtensor<double, 1> m_w;    ///< weight of each integration point [nip]
-    xt::xtensor<double, 2> m_xi;   ///< local coordinate of each integration point [#nip, #ndim]
-    xt::xtensor<double, 2> m_N;    ///< shape functions [#nip, #nne]
+    size_t m_nip; ///< Number of integration points per element.
+    xt::xtensor<double, 3> m_x; ///< nodal positions stored per element [#nelem, #nne, #ndim]
+    xt::xtensor<double, 1> m_w; ///< weight of each integration point [nip]
+    xt::xtensor<double, 2> m_xi; ///< local coordinate of each integration point [#nip, #ndim]
+    xt::xtensor<double, 2> m_N; ///< shape functions [#nip, #nne]
     xt::xtensor<double, 3> m_dNxi; ///< shape function grad. wrt local  coor. [#nip, #nne, #ndim]
-    xt::xtensor<double, 2> m_vol;  ///< integration point volume [#nelem, #nip]
+    xt::xtensor<double, 2> m_vol; ///< integration point volume [#nelem, #nip]
     xt::xtensor<double, 6> m_B; ///< B-matrix [#nelem, #nne, #tdim, #tdim, #tdim]
 };
 

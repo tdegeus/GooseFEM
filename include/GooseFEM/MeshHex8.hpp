@@ -91,11 +91,15 @@ inline xt::xtensor<size_t, 2> Regular::conn_impl() const
                 ret(ielem, 0) = iy * (m_nelx + 1) + ix + iz * (m_nely + 1) * (m_nelx + 1);
                 ret(ielem, 1) = iy * (m_nelx + 1) + (ix + 1) + iz * (m_nely + 1) * (m_nelx + 1);
                 ret(ielem, 3) = (iy + 1) * (m_nelx + 1) + ix + iz * (m_nely + 1) * (m_nelx + 1);
-                ret(ielem, 2) = (iy + 1) * (m_nelx + 1) + (ix + 1) + iz * (m_nely + 1) * (m_nelx + 1);
+                ret(ielem, 2) =
+                    (iy + 1) * (m_nelx + 1) + (ix + 1) + iz * (m_nely + 1) * (m_nelx + 1);
                 ret(ielem, 4) = iy * (m_nelx + 1) + ix + (iz + 1) * (m_nely + 1) * (m_nelx + 1);
-                ret(ielem, 5) = (iy) * (m_nelx + 1) + (ix + 1) + (iz + 1) * (m_nely + 1) * (m_nelx + 1);
-                ret(ielem, 7) = (iy + 1) * (m_nelx + 1) + ix + (iz + 1) * (m_nely + 1) * (m_nelx + 1);
-                ret(ielem, 6) = (iy + 1) * (m_nelx + 1) + (ix + 1) + (iz + 1) * (m_nely + 1) * (m_nelx + 1);
+                ret(ielem, 5) =
+                    (iy) * (m_nelx + 1) + (ix + 1) + (iz + 1) * (m_nely + 1) * (m_nelx + 1);
+                ret(ielem, 7) =
+                    (iy + 1) * (m_nelx + 1) + ix + (iz + 1) * (m_nely + 1) * (m_nelx + 1);
+                ret(ielem, 6) =
+                    (iy + 1) * (m_nelx + 1) + (ix + 1) + (iz + 1) * (m_nely + 1) * (m_nelx + 1);
                 ++ielem;
             }
         }
@@ -1438,7 +1442,8 @@ inline xt::xtensor<size_t, 1> FineLayer::nodesRight_impl() const
         // -- refinement layer
         if (m_refine(iy) == 2) {
             for (size_t iz = 0; iz < 2 * m_layer_nelz(iy); ++iz) {
-                ret(j) = m_startNode(iy) + m_nnd(iy) + iz * (m_layer_nelx(iy) + 1) + m_layer_nelx(iy);
+                ret(j) =
+                    m_startNode(iy) + m_nnd(iy) + iz * (m_layer_nelx(iy) + 1) + m_layer_nelx(iy);
                 ++j;
             }
         }
@@ -1449,7 +1454,8 @@ inline xt::xtensor<size_t, 1> FineLayer::nodesRight_impl() const
         // -- refinement layer
         if (m_refine(iy) == 2) {
             for (size_t iz = 0; iz < 2 * m_layer_nelz(iy); ++iz) {
-                ret(j) = m_startNode(iy) + m_nnd(iy) + iz * (m_layer_nelx(iy) + 1) + m_layer_nelx(iy);
+                ret(j) =
+                    m_startNode(iy) + m_nnd(iy) + iz * (m_layer_nelx(iy) + 1) + m_layer_nelx(iy);
                 ++j;
             }
         }
@@ -1754,7 +1760,8 @@ inline xt::xtensor<size_t, 1> FineLayer::nodesRightFace_impl() const
         // -- refinement layer
         if (m_refine(iy) == 2) {
             for (size_t iz = 0; iz < 2 * m_layer_nelz(iy); ++iz) {
-                ret(j) = m_startNode(iy) + m_nnd(iy) + iz * (m_layer_nelx(iy) + 1) + m_layer_nelx(iy);
+                ret(j) =
+                    m_startNode(iy) + m_nnd(iy) + iz * (m_layer_nelx(iy) + 1) + m_layer_nelx(iy);
                 ++j;
             }
         }
@@ -1765,7 +1772,8 @@ inline xt::xtensor<size_t, 1> FineLayer::nodesRightFace_impl() const
         // -- refinement layer
         if (m_refine(iy) == 2) {
             for (size_t iz = 0; iz < 2 * m_layer_nelz(iy); ++iz) {
-                ret(j) = m_startNode(iy) + m_nnd(iy) + iz * (m_layer_nelx(iy) + 1) + m_layer_nelx(iy);
+                ret(j) =
+                    m_startNode(iy) + m_nnd(iy) + iz * (m_layer_nelx(iy) + 1) + m_layer_nelx(iy);
                 ++j;
             }
         }
@@ -1931,7 +1939,8 @@ inline xt::xtensor<size_t, 1> FineLayer::nodesBackRightEdge_impl() const
     }
 
     for (size_t iy = (nely - 1) / 2; iy < nely; ++iy) {
-        ret(iy + 1) = m_startNode(iy + 1) + m_layer_nelx(iy) + (m_layer_nelx(iy) + 1) * (m_layer_nelz(iy));
+        ret(iy + 1) =
+            m_startNode(iy + 1) + m_layer_nelx(iy) + (m_layer_nelx(iy) + 1) * (m_layer_nelz(iy));
     }
 
     return ret;
@@ -2061,7 +2070,8 @@ inline xt::xtensor<size_t, 1> FineLayer::nodesBackTopOpenEdge_impl() const
     xt::xtensor<size_t, 1> ret = xt::empty<size_t>({m_layer_nelx(nely - 1) - 1});
 
     for (size_t ix = 1; ix < m_layer_nelx(nely - 1); ++ix) {
-        ret(ix - 1) = m_startNode(nely) + ix + (m_layer_nelx(nely - 1) + 1) * (m_layer_nelz(nely - 1));
+        ret(ix - 1) =
+            m_startNode(nely) + ix + (m_layer_nelx(nely - 1) + 1) * (m_layer_nelz(nely - 1));
     }
 
     return ret;
@@ -2091,11 +2101,13 @@ inline xt::xtensor<size_t, 1> FineLayer::nodesBackRightOpenEdge_impl() const
     xt::xtensor<size_t, 1> ret = xt::empty<size_t>({nely - 1});
 
     for (size_t iy = 1; iy < (nely + 1) / 2; ++iy) {
-        ret(iy - 1) = m_startNode(iy) + m_layer_nelx(iy) + (m_layer_nelx(iy) + 1) * (m_layer_nelz(iy));
+        ret(iy - 1) =
+            m_startNode(iy) + m_layer_nelx(iy) + (m_layer_nelx(iy) + 1) * (m_layer_nelz(iy));
     }
 
     for (size_t iy = (nely - 1) / 2; iy < nely - 1; ++iy) {
-        ret(iy) = m_startNode(iy + 1) + m_layer_nelx(iy) + (m_layer_nelx(iy) + 1) * (m_layer_nelz(iy));
+        ret(iy) =
+            m_startNode(iy + 1) + m_layer_nelx(iy) + (m_layer_nelx(iy) + 1) * (m_layer_nelz(iy));
     }
 
     return ret;
@@ -2143,7 +2155,8 @@ inline xt::xtensor<size_t, 1> FineLayer::nodesTopRightOpenEdge_impl() const
     xt::xtensor<size_t, 1> ret = xt::empty<size_t>({m_layer_nelz(nely - 1) - 1});
 
     for (size_t iz = 1; iz < m_layer_nelz(nely - 1); ++iz) {
-        ret(iz - 1) = m_startNode(nely) + m_layer_nelx(nely - 1) + iz * (m_layer_nelx(nely - 1) + 1);
+        ret(iz - 1) =
+            m_startNode(nely) + m_layer_nelx(nely - 1) + iz * (m_layer_nelx(nely - 1) + 1);
     }
 
     return ret;
@@ -2190,7 +2203,8 @@ inline size_t FineLayer::nodesBackTopLeftCorner_impl() const
 inline size_t FineLayer::nodesBackTopRightCorner_impl() const
 {
     size_t nely = static_cast<size_t>(m_nhy.size());
-    return m_startNode(nely) + m_layer_nelx(nely - 1) + (m_layer_nelx(nely - 1) + 1) * (m_layer_nelz(nely - 1));
+    return m_startNode(nely) + m_layer_nelx(nely - 1) +
+           (m_layer_nelx(nely - 1) + 1) * (m_layer_nelz(nely - 1));
 }
 
 } // namespace Hex8

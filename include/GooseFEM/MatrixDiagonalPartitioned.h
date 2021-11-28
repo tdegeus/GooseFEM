@@ -11,8 +11,8 @@ Diagonal matrix that is partitioned in:
 #ifndef GOOSEFEM_MATRIXDIAGONALPARTITIONED_H
 #define GOOSEFEM_MATRIXDIAGONALPARTITIONED_H
 
-#include "config.h"
 #include "MatrixDiagonal.h"
+#include "config.h"
 
 namespace GooseFEM {
 
@@ -23,7 +23,6 @@ See Vector() for bookkeeping definitions.
 */
 class MatrixDiagonalPartitioned : public MatrixDiagonal {
 public:
-
     MatrixDiagonalPartitioned() = default;
 
     /**
@@ -72,9 +71,8 @@ public:
     \param x_p dofval [#nnp].
     \return b_u dofval [#nnu].
     */
-    xt::xtensor<double, 1> Dot_u(
-        const xt::xtensor<double, 1>& x_u,
-        const xt::xtensor<double, 1>& x_p) const;
+    xt::xtensor<double, 1>
+    Dot_u(const xt::xtensor<double, 1>& x_u, const xt::xtensor<double, 1>& x_p) const;
 
     /**
     \param x_u dofval [#nnu].
@@ -84,16 +82,15 @@ public:
     void dot_u(
         const xt::xtensor<double, 1>& x_u,
         const xt::xtensor<double, 1>& x_p,
-              xt::xtensor<double, 1>& b_u) const;
+        xt::xtensor<double, 1>& b_u) const;
 
     /**
     \param x_u dofval [#nnu].
     \param x_p dofval [#nnp].
     \return b_p dofval [#nnp].
     */
-    xt::xtensor<double, 1> Dot_p(
-        const xt::xtensor<double, 1>& x_u,
-        const xt::xtensor<double, 1>& x_p) const;
+    xt::xtensor<double, 1>
+    Dot_p(const xt::xtensor<double, 1>& x_u, const xt::xtensor<double, 1>& x_p) const;
 
     /**
     \param x_u dofval [#nnu].
@@ -103,7 +100,7 @@ public:
     void dot_p(
         const xt::xtensor<double, 1>& x_u,
         const xt::xtensor<double, 1>& x_p,
-              xt::xtensor<double, 1>& b_p) const;
+        xt::xtensor<double, 1>& b_p) const;
 
     /**
     Solve \f$ x_u = A_{uu}^{-1} (b_u - A_{up} * x_p) \equiv A_{uu}^{-1} b_u \f$.
@@ -126,9 +123,8 @@ public:
     \param x_p dofval [#nnp].
     \return x_u dofval [#nnu].
     */
-    xt::xtensor<double, 1> Solve_u(
-        const xt::xtensor<double, 1>& b_u,
-        const xt::xtensor<double, 1>& x_p);
+    xt::xtensor<double, 1>
+    Solve_u(const xt::xtensor<double, 1>& b_u, const xt::xtensor<double, 1>& x_p);
 
     /**
     \param b_u dofval [#nnu].
@@ -138,7 +134,7 @@ public:
     void solve_u(
         const xt::xtensor<double, 1>& b_u,
         const xt::xtensor<double, 1>& x_p,
-              xt::xtensor<double, 1>& x_u);
+        xt::xtensor<double, 1>& x_u);
 
     /**
     Get right-hand-size for corresponding to the prescribed DOFs.
@@ -151,9 +147,8 @@ public:
     \param b "nodevec" [#nnode, #ndim].
     \return Copy of `b` with \f$ b_p \f$ overwritten.
     */
-    xt::xtensor<double, 2> Reaction(
-        const xt::xtensor<double, 2>& x,
-        const xt::xtensor<double, 2>& b) const;
+    xt::xtensor<double, 2>
+    Reaction(const xt::xtensor<double, 2>& x, const xt::xtensor<double, 2>& b) const;
 
     /**
     Same as Reaction(const xt::xtensor<double, 2>&, const xt::xtensor<double, 2>&),
@@ -162,9 +157,7 @@ public:
     \param x "nodevec" [#nnode, #ndim].
     \param b "nodevec" [#nnode, #ndim], \f$ b_p \f$ overwritten.
     */
-    void reaction(
-        const xt::xtensor<double, 2>& x,
-              xt::xtensor<double, 2>& b) const;
+    void reaction(const xt::xtensor<double, 2>& x, xt::xtensor<double, 2>& b) const;
 
     /**
     Same as Reaction(const xt::xtensor<double, 2>&, const xt::xtensor<double, 2>&),
@@ -174,9 +167,8 @@ public:
     \param b "dofval" [#ndof].
     \return Copy of `b` with \f$ b_p \f$ overwritten.
     */
-    xt::xtensor<double, 1> Reaction(
-        const xt::xtensor<double, 1>& x,
-        const xt::xtensor<double, 1>& b) const;
+    xt::xtensor<double, 1>
+    Reaction(const xt::xtensor<double, 1>& x, const xt::xtensor<double, 1>& b) const;
 
     /**
     Same as Reaction(const xt::xtensor<double, 1>&, const xt::xtensor<double, 1>&),
@@ -185,9 +177,8 @@ public:
     \param x "dofval" [#ndof].
     \param b "dofval" [#ndof], \f$ b_p \f$ overwritten.
     */
-    void reaction(
-        const xt::xtensor<double, 1>& x,
-              xt::xtensor<double, 1>& b) const; // modified with "b_p"
+    void reaction(const xt::xtensor<double, 1>& x, xt::xtensor<double, 1>& b)
+        const; // modified with "b_p"
 
     /**
     Same as Reaction(const xt::xtensor<double, 1>&, const xt::xtensor<double, 1>&),
@@ -197,9 +188,8 @@ public:
     \param x_p prescribed "dofval" [#nnp].
     \return b_p prescribed "dofval" [#nnp].
     */
-    xt::xtensor<double, 1> Reaction_p(
-        const xt::xtensor<double, 1>& x_u,
-        const xt::xtensor<double, 1>& x_p) const;
+    xt::xtensor<double, 1>
+    Reaction_p(const xt::xtensor<double, 1>& x_u, const xt::xtensor<double, 1>& x_p) const;
 
     /**
     Same as Reaction_p(const xt::xtensor<double, 1>&, const xt::xtensor<double, 1>&),
@@ -212,7 +202,7 @@ public:
     void reaction_p(
         const xt::xtensor<double, 1>& x_u,
         const xt::xtensor<double, 1>& x_p,
-              xt::xtensor<double, 1>& b_p) const;
+        xt::xtensor<double, 1>& b_p) const;
 
 private:
     // The diagonal matrix, and its inverse (re-used to solve different RHS)
@@ -220,15 +210,14 @@ private:
     xt::xtensor<double, 1> m_App;
     xt::xtensor<double, 1> m_inv_uu;
 
-
     // Bookkeeping
     xt::xtensor<size_t, 2> m_part; // DOF-numbers per node, renumbered  [nnode, ndim]
-    xt::xtensor<size_t, 1> m_iiu;  // DOF-numbers that are unknown      [nnu]
-    xt::xtensor<size_t, 1> m_iip;  // DOF-numbers that are prescribed   [nnp]
+    xt::xtensor<size_t, 1> m_iiu; // DOF-numbers that are unknown      [nnu]
+    xt::xtensor<size_t, 1> m_iip; // DOF-numbers that are prescribed   [nnp]
 
     // Dimensions
-    size_t m_nnu;   // number of unknown DOFs
-    size_t m_nnp;   // number of prescribed DOFs
+    size_t m_nnu; // number of unknown DOFs
+    size_t m_nnp; // number of prescribed DOFs
 
     // Compute inverse (automatically evaluated by "solve")
     void factorize();

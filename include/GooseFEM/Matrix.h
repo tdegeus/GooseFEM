@@ -18,7 +18,8 @@ Sparse matrix.
 namespace GooseFEM {
 
 // forward declaration
-template <class> class MatrixSolver;
+template <class>
+class MatrixSolver;
 
 /**
 Sparse matrix.
@@ -27,7 +28,6 @@ See Vector() for bookkeeping definitions.
 */
 class Matrix {
 public:
-
     Matrix() = default;
 
     virtual ~Matrix() = default;
@@ -84,8 +84,8 @@ public:
     \param cols Column numbers in the matrix [n].
     \param matrix Data entries on (rows, cols) [n].
     */
-    virtual void set(
-        const xt::xtensor<size_t, 1>& rows,
+    virtual void
+    set(const xt::xtensor<size_t, 1>& rows,
         const xt::xtensor<size_t, 1>& cols,
         const xt::xtensor<double, 2>& matrix);
 
@@ -96,8 +96,8 @@ public:
     \param cols Column numbers in the matrix [n].
     \param matrix Data entries on (rows, cols) [n].
     */
-    virtual void add(
-        const xt::xtensor<size_t, 1>& rows,
+    virtual void
+    add(const xt::xtensor<size_t, 1>& rows,
         const xt::xtensor<size_t, 1>& cols,
         const xt::xtensor<double, 2>& matrix);
 
@@ -148,7 +148,6 @@ public:
     virtual void dot(const xt::xtensor<double, 1>& x, xt::xtensor<double, 1>& b) const;
 
 protected:
-
     xt::xtensor<size_t, 2> m_conn; ///< Connectivity [#nelem, #nne].
     xt::xtensor<size_t, 2> m_dofs; ///< DOF-numbers per node [#nnode, #ndim].
     size_t m_nelem; ///< See nelem().
@@ -159,10 +158,10 @@ protected:
     bool m_changed = true; ///< Signal changes to data.
 
 private:
-
     Eigen::SparseMatrix<double> m_A; ///< The matrix.
     std::vector<Eigen::Triplet<double>> m_T; ///< Matrix entries.
-    template <class> friend class MatrixSolver; ///< Grant access to solver class
+    template <class>
+    friend class MatrixSolver; ///< Grant access to solver class
 
     /**
     Convert "nodevec" to "dofval" (overwrite entries that occur more than once).
@@ -189,7 +188,6 @@ using one factorisation.
 template <class Solver = Eigen::SimplicialLDLT<Eigen::SparseMatrix<double>>>
 class MatrixSolver {
 public:
-
     MatrixSolver() = default;
 
     /**

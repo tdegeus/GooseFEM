@@ -12,8 +12,8 @@ Methods to switch between storage types based on a mesh and DOFs that are partit
 #ifndef GOOSEFEM_VECTORPARTITIONEDTYINGS_H
 #define GOOSEFEM_VECTORPARTITIONEDTYINGS_H
 
-#include "config.h"
 #include "Vector.h"
+#include "config.h"
 
 #include <Eigen/Eigen>
 #include <Eigen/Sparse>
@@ -31,7 +31,6 @@ Class to switch between storage types. In particular:
 */
 class VectorPartitionedTyings : public Vector {
 public:
-
     VectorPartitionedTyings() = default;
 
     /**

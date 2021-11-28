@@ -15,8 +15,8 @@ Implementation of Element.h
 namespace GooseFEM {
 namespace Element {
 
-inline xt::xtensor<double, 3> asElementVector(
-    const xt::xtensor<size_t, 2>& conn, const xt::xtensor<double, 2>& nodevec)
+inline xt::xtensor<double, 3>
+asElementVector(const xt::xtensor<size_t, 2>& conn, const xt::xtensor<double, 2>& nodevec)
 {
     size_t nelem = conn.shape(0);
     size_t nne = conn.shape(1);
@@ -24,7 +24,7 @@ inline xt::xtensor<double, 3> asElementVector(
 
     xt::xtensor<double, 3> elemvec = xt::empty<double>({nelem, nne, ndim});
 
-    #pragma omp parallel for
+#pragma omp parallel for
     for (size_t e = 0; e < nelem; ++e) {
         for (size_t m = 0; m < nne; ++m) {
             for (size_t i = 0; i < ndim; ++i) {
@@ -36,8 +36,8 @@ inline xt::xtensor<double, 3> asElementVector(
     return elemvec;
 }
 
-inline xt::xtensor<double, 2> assembleNodeVector(
-    const xt::xtensor<size_t, 2>& conn, const xt::xtensor<double, 3>& elemvec)
+inline xt::xtensor<double, 2>
+assembleNodeVector(const xt::xtensor<size_t, 2>& conn, const xt::xtensor<double, 3>& elemvec)
 {
     size_t nelem = conn.shape(0);
     size_t nne = conn.shape(1);
@@ -89,7 +89,7 @@ inline bool isDiagonal(const xt::xtensor<double, 3>& elemmat)
 
     double eps = std::numeric_limits<double>::epsilon();
 
-    #pragma omp parallel for
+#pragma omp parallel for
     for (size_t e = 0; e < nelem; ++e) {
         for (size_t i = 0; i < N; ++i) {
             for (size_t j = 0; j < N; ++j) {
@@ -172,7 +172,8 @@ inline auto QuadratureBase<D>::shape_elemvec(size_t arg) const -> std::array<siz
 template <class D>
 inline auto QuadratureBase<D>::shape_elemmat() const -> std::array<size_t, 3>
 {
-    return std::array<size_t, 3>{derived_cast().m_nelem, D::s_nne * D::s_ndim, D::s_nne * D::s_ndim};
+    return std::array<size_t, 3>{
+        derived_cast().m_nelem, D::s_nne * D::s_ndim, D::s_nne * D::s_ndim};
 }
 
 template <class D>
@@ -198,7 +199,8 @@ inline auto QuadratureBase<D>::shape_qtensor(size_t rank) const -> std::vector<s
 
 template <class D>
 template <size_t trank>
-inline auto QuadratureBase<D>::shape_qtensor(size_t rank, size_t arg) const -> std::array<size_t, 2 + trank>
+inline auto QuadratureBase<D>::shape_qtensor(size_t rank, size_t arg) const
+    -> std::array<size_t, 2 + trank>
 {
     GOOSEFEM_ASSERT(trank == rank);
     std::array<size_t, 2 + trank> shape;
@@ -345,12 +347,12 @@ inline void QuadratureBaseCartesian<D>::compute_dN_impl()
 
     dNx.fill(0.0);
 
-    #pragma omp parallel
+#pragma omp parallel
     {
         auto J = xt::xtensor<double, 2>::from_shape({D::s_ndim, D::s_ndim});
         auto Jinv = xt::xtensor<double, 2>::from_shape({D::s_ndim, D::s_ndim});
 
-        #pragma omp for
+#pragma omp for
         for (size_t e = 0; e < nelem; ++e) {
 
             auto xe = xt::adapt(&x(e, 0, 0), xt::xshape<D::s_nne, D::s_ndim>());
@@ -409,7 +411,8 @@ inline void QuadratureBaseCartesian<D>::update_x(const T& x)
 
 template <class D>
 template <class T>
-inline auto QuadratureBaseCartesian<D>::InterpQuad_vector(const T& elemvec) const -> xt::xtensor<double, 3>
+inline auto QuadratureBaseCartesian<D>::InterpQuad_vector(const T& elemvec) const
+    -> xt::xtensor<double, 3>
 {
     size_t n = elemvec.shape(2);
     auto qvector = xt::xtensor<double, 3>::from_shape(this->shape_qvector(n));
@@ -438,7 +441,7 @@ inline void QuadratureBaseCartesian<D>::interpQuad_vector_impl(const T& elemvec,
 
     qvector.fill(0.0);
 
-    #pragma omp parallel for
+#pragma omp parallel for
     for (size_t e = 0; e < nelem; ++e) {
 
         auto fq = &elemvec(e, 0, 0);
@@ -459,7 +462,8 @@ inline void QuadratureBaseCartesian<D>::interpQuad_vector_impl(const T& elemvec,
 
 template <class D>
 template <class T>
-inline auto QuadratureBaseCartesian<D>::GradN_vector(const T& elemvec) const -> xt::xtensor<double, 4>
+inline auto QuadratureBaseCartesian<D>::GradN_vector(const T& elemvec) const
+    -> xt::xtensor<double, 4>
 {
     auto qtensor = xt::xtensor<double, 4>::from_shape(this->template shape_qtensor<2>());
     derived_cast().gradN_vector_impl(elemvec, qtensor);
@@ -486,7 +490,7 @@ inline void QuadratureBaseCartesian<D>::gradN_vector_impl(const T& elemvec, R& q
 
     qtensor.fill(0.0);
 
-    #pragma omp parallel for
+#pragma omp parallel for
     for (size_t e = 0; e < nelem; ++e) {
 
         auto ue = xt::adapt(&elemvec(e, 0, 0), xt::xshape<D::s_nne, D::s_ndim>());
@@ -509,7 +513,8 @@ inline void QuadratureBaseCartesian<D>::gradN_vector_impl(const T& elemvec, R& q
 
 template <class D>
 template <class T>
-inline auto QuadratureBaseCartesian<D>::GradN_vector_T(const T& elemvec) const -> xt::xtensor<double, 4>
+inline auto QuadratureBaseCartesian<D>::GradN_vector_T(const T& elemvec) const
+    -> xt::xtensor<double, 4>
 {
     auto qtensor = xt::xtensor<double, 4>::from_shape(this->template shape_qtensor<2>());
     derived_cast().gradN_vector_T_impl(elemvec, qtensor);
@@ -536,7 +541,7 @@ inline void QuadratureBaseCartesian<D>::gradN_vector_T_impl(const T& elemvec, R&
 
     qtensor.fill(0.0);
 
-    #pragma omp parallel for
+#pragma omp parallel for
     for (size_t e = 0; e < nelem; ++e) {
 
         auto ue = xt::adapt(&elemvec(e, 0, 0), xt::xshape<D::s_nne, D::s_ndim>());
@@ -559,7 +564,8 @@ inline void QuadratureBaseCartesian<D>::gradN_vector_T_impl(const T& elemvec, R&
 
 template <class D>
 template <class T>
-inline auto QuadratureBaseCartesian<D>::SymGradN_vector(const T& elemvec) const -> xt::xtensor<double, 4>
+inline auto QuadratureBaseCartesian<D>::SymGradN_vector(const T& elemvec) const
+    -> xt::xtensor<double, 4>
 {
     auto qtensor = xt::xtensor<double, 4>::from_shape(this->template shape_qtensor<2>());
     derived_cast().symGradN_vector_impl(elemvec, qtensor);
@@ -586,7 +592,7 @@ inline void QuadratureBaseCartesian<D>::symGradN_vector_impl(const T& elemvec, R
 
     qtensor.fill(0.0);
 
-    #pragma omp parallel for
+#pragma omp parallel for
     for (size_t e = 0; e < nelem; ++e) {
 
         auto ue = xt::adapt(&elemvec(e, 0, 0), xt::xshape<D::s_nne, D::s_ndim>());
@@ -610,7 +616,8 @@ inline void QuadratureBaseCartesian<D>::symGradN_vector_impl(const T& elemvec, R
 
 template <class D>
 template <class T>
-inline auto QuadratureBaseCartesian<D>::Int_N_vector_dV(const T& qvector) const -> xt::xtensor<double, 3>
+inline auto QuadratureBaseCartesian<D>::Int_N_vector_dV(const T& qvector) const
+    -> xt::xtensor<double, 3>
 {
     size_t n = qvector.shape(2);
     auto elemvec = xt::xtensor<double, 3>::from_shape(this->shape_elemvec(n));
@@ -640,7 +647,7 @@ inline void QuadratureBaseCartesian<D>::int_N_vector_dV_impl(const T& qvector, R
 
     elemvec.fill(0.0);
 
-    #pragma omp parallel for
+#pragma omp parallel for
     for (size_t e = 0; e < nelem; ++e) {
 
         auto f = &elemvec(e, 0, 0);
@@ -662,7 +669,8 @@ inline void QuadratureBaseCartesian<D>::int_N_vector_dV_impl(const T& qvector, R
 
 template <class D>
 template <class T>
-inline auto QuadratureBaseCartesian<D>::Int_N_scalar_NT_dV(const T& qscalar) const -> xt::xtensor<double, 3>
+inline auto QuadratureBaseCartesian<D>::Int_N_scalar_NT_dV(const T& qscalar) const
+    -> xt::xtensor<double, 3>
 {
     auto elemmat = xt::xtensor<double, 3>::from_shape(this->shape_elemmat());
     derived_cast().int_N_scalar_NT_dV_impl(qscalar, elemmat);
@@ -690,10 +698,11 @@ inline void QuadratureBaseCartesian<D>::int_N_scalar_NT_dV_impl(const T& qscalar
 
     elemmat.fill(0.0);
 
-    #pragma omp parallel for
+#pragma omp parallel for
     for (size_t e = 0; e < nelem; ++e) {
 
-        auto Me = xt::adapt(&elemmat(e, 0, 0), xt::xshape<D::s_nne * D::s_ndim, D::s_nne * D::s_ndim>());
+        auto Me =
+            xt::adapt(&elemmat(e, 0, 0), xt::xshape<D::s_nne * D::s_ndim, D::s_nne * D::s_ndim>());
 
         for (size_t q = 0; q < nip; ++q) {
 
@@ -715,7 +724,8 @@ inline void QuadratureBaseCartesian<D>::int_N_scalar_NT_dV_impl(const T& qscalar
 
 template <class D>
 template <class T>
-inline auto QuadratureBaseCartesian<D>::Int_gradN_dot_tensor2_dV(const T& qtensor) const -> xt::xtensor<double, 3>
+inline auto QuadratureBaseCartesian<D>::Int_gradN_dot_tensor2_dV(const T& qtensor) const
+    -> xt::xtensor<double, 3>
 {
     auto elemvec = xt::xtensor<double, 3>::from_shape(this->shape_elemvec());
     derived_cast().int_gradN_dot_tensor2_dV_impl(qtensor, elemvec);
@@ -731,7 +741,8 @@ inline void QuadratureBaseCartesian<D>::int_gradN_dot_tensor2_dV(const T& qtenso
 
 template <class D>
 template <class T, class R>
-inline void QuadratureBaseCartesian<D>::int_gradN_dot_tensor2_dV_impl(const T& qtensor, R& elemvec) const
+inline void
+QuadratureBaseCartesian<D>::int_gradN_dot_tensor2_dV_impl(const T& qtensor, R& elemvec) const
 {
     GOOSEFEM_ASSERT(xt::has_shape(qtensor, this->template shape_qtensor<2>()));
     GOOSEFEM_ASSERT(xt::has_shape(elemvec, this->shape_elemvec()));
@@ -743,7 +754,7 @@ inline void QuadratureBaseCartesian<D>::int_gradN_dot_tensor2_dV_impl(const T& q
 
     elemvec.fill(0.0);
 
-    #pragma omp parallel for
+#pragma omp parallel for
     for (size_t e = 0; e < nelem; ++e) {
 
         auto fe = xt::adapt(&elemvec(e, 0, 0), xt::xshape<D::s_nne, D::s_ndim>());
@@ -767,7 +778,8 @@ inline void QuadratureBaseCartesian<D>::int_gradN_dot_tensor2_dV_impl(const T& q
 
 template <class D>
 template <class T>
-inline auto QuadratureBaseCartesian<D>::Int_gradN_dot_tensor4_dot_gradNT_dV(const T& qtensor) const -> xt::xtensor<double, 3>
+inline auto QuadratureBaseCartesian<D>::Int_gradN_dot_tensor4_dot_gradNT_dV(const T& qtensor) const
+    -> xt::xtensor<double, 3>
 {
     auto elemmat = xt::xtensor<double, 3>::from_shape(this->shape_elemmat());
     derived_cast().int_gradN_dot_tensor4_dot_gradNT_dV_impl(qtensor, elemmat);
@@ -776,8 +788,8 @@ inline auto QuadratureBaseCartesian<D>::Int_gradN_dot_tensor4_dot_gradNT_dV(cons
 
 template <class D>
 template <class T, class R>
-inline void QuadratureBaseCartesian<D>::int_gradN_dot_tensor4_dot_gradNT_dV(
-    const T& qtensor, R& elemmat) const
+inline void
+QuadratureBaseCartesian<D>::int_gradN_dot_tensor4_dot_gradNT_dV(const T& qtensor, R& elemmat) const
 {
     derived_cast().int_gradN_dot_tensor4_dot_gradNT_dV_impl(qtensor, elemmat);
 }
@@ -785,7 +797,8 @@ inline void QuadratureBaseCartesian<D>::int_gradN_dot_tensor4_dot_gradNT_dV(
 template <class D>
 template <class T, class R>
 inline void QuadratureBaseCartesian<D>::int_gradN_dot_tensor4_dot_gradNT_dV_impl(
-    const T& qtensor, R& elemmat) const
+    const T& qtensor,
+    R& elemmat) const
 {
     GOOSEFEM_ASSERT(xt::has_shape(qtensor, this->template shape_qtensor<4>()));
     GOOSEFEM_ASSERT(xt::has_shape(elemmat, this->shape_elemmat()));
@@ -797,15 +810,18 @@ inline void QuadratureBaseCartesian<D>::int_gradN_dot_tensor4_dot_gradNT_dV_impl
 
     elemmat.fill(0.0);
 
-    #pragma omp parallel for
+#pragma omp parallel for
     for (size_t e = 0; e < nelem; ++e) {
 
-        auto K = xt::adapt(&elemmat(e, 0, 0), xt::xshape<D::s_nne * D::s_ndim, D::s_nne * D::s_ndim>());
+        auto K =
+            xt::adapt(&elemmat(e, 0, 0), xt::xshape<D::s_nne * D::s_ndim, D::s_nne * D::s_ndim>());
 
         for (size_t q = 0; q < nip; ++q) {
 
             auto dNxq = xt::adapt(&dNx(e, q, 0, 0), xt::xshape<D::s_nne, D::s_ndim>());
-            auto Cq = xt::adapt(&qtensor(e, q, 0, 0, 0, 0), xt::xshape<D::s_tdim, D::s_tdim, D::s_tdim, D::s_tdim>());
+            auto Cq = xt::adapt(
+                &qtensor(e, q, 0, 0, 0, 0),
+                xt::xshape<D::s_tdim, D::s_tdim, D::s_tdim, D::s_tdim>());
             auto& volq = vol(e, q);
 
             for (size_t m = 0; m < D::s_nne; ++m) {

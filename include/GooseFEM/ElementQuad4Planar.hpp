@@ -17,8 +17,8 @@ namespace Element {
 namespace Quad4 {
 
 template <class T>
-inline QuadraturePlanar::QuadraturePlanar(const T& x, double thick) :
-    QuadraturePlanar(x, Gauss::xi(), Gauss::w(), thick)
+inline QuadraturePlanar::QuadraturePlanar(const T& x, double thick)
+    : QuadraturePlanar(x, Gauss::xi(), Gauss::w(), thick)
 {
 }
 
@@ -69,12 +69,12 @@ inline QuadraturePlanar::QuadraturePlanar(const T& x, const X& xi, const W& w, d
 
 inline void QuadraturePlanar::compute_dN_impl()
 {
-    #pragma omp parallel
+#pragma omp parallel
     {
         xt::xtensor<double, 2> J = xt::empty<double>({2, 2});
         xt::xtensor<double, 2> Jinv = xt::empty<double>({2, 2});
 
-        #pragma omp for
+#pragma omp for
         for (size_t e = 0; e < m_nelem; ++e) {
 
             auto x = xt::adapt(&m_x(e, 0, 0), xt::xshape<s_nne, s_ndim>());
@@ -116,7 +116,7 @@ inline void QuadraturePlanar::gradN_vector_impl(const T& elemvec, R& qtensor) co
 
     qtensor.fill(0.0);
 
-    #pragma omp parallel for
+#pragma omp parallel for
     for (size_t e = 0; e < m_nelem; ++e) {
 
         auto u = xt::adapt(&elemvec(e, 0, 0), xt::xshape<s_nne, s_ndim>());
@@ -147,7 +147,7 @@ inline void QuadraturePlanar::gradN_vector_T_impl(const T& elemvec, R& qtensor) 
 
     qtensor.fill(0.0);
 
-    #pragma omp parallel for
+#pragma omp parallel for
     for (size_t e = 0; e < m_nelem; ++e) {
 
         auto u = xt::adapt(&elemvec(e, 0, 0), xt::xshape<s_nne, s_ndim>());
@@ -178,7 +178,7 @@ inline void QuadraturePlanar::symGradN_vector_impl(const T& elemvec, R& qtensor)
 
     qtensor.fill(0.0);
 
-    #pragma omp parallel for
+#pragma omp parallel for
     for (size_t e = 0; e < m_nelem; ++e) {
 
         auto u = xt::adapt(&elemvec(e, 0, 0), xt::xshape<s_nne, s_ndim>());
@@ -210,7 +210,7 @@ inline void QuadraturePlanar::int_N_scalar_NT_dV_impl(const T& qscalar, R& elemm
 
     elemmat.fill(0.0);
 
-    #pragma omp parallel for
+#pragma omp parallel for
     for (size_t e = 0; e < m_nelem; ++e) {
 
         auto M = xt::adapt(&elemmat(e, 0, 0), xt::xshape<s_nne * s_ndim, s_nne * s_ndim>());
@@ -240,7 +240,7 @@ inline void QuadraturePlanar::int_gradN_dot_tensor2_dV_impl(const T& qtensor, R&
 
     elemvec.fill(0.0);
 
-    #pragma omp parallel for
+#pragma omp parallel for
     for (size_t e = 0; e < m_nelem; ++e) {
 
         auto f = xt::adapt(&elemvec(e, 0, 0), xt::xshape<s_nne, s_ndim>());

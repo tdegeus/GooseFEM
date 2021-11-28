@@ -44,7 +44,6 @@ such that
 */
 class Periodic {
 public:
-
     Periodic() = default;
 
     /**
@@ -192,7 +191,6 @@ Add control nodes to an existing system.
 */
 class Control {
 public:
-
     Control() = default;
 
     /**
@@ -234,7 +232,7 @@ public:
 private:
     xt::xtensor<double, 2> m_coor; ///< See coor().
     xt::xtensor<size_t, 2> m_dofs; ///< See dofs().
-    xt::xtensor<size_t, 2> m_control_dofs;  ///< See controlDofs().
+    xt::xtensor<size_t, 2> m_control_dofs; ///< See controlDofs().
     xt::xtensor<size_t, 1> m_control_nodes; ///< See controlNodes().
 };
 

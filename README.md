@@ -21,5 +21,3 @@ Tom de Geus was financially supported by:
 *   [Eindhoven University of Technology (TU/e), Eindhoven, The Netherlands](http://www.tue.nl)
 *   [The Netherlands Research Council (NWO), The Netherlands](http://www.nwo.nl)
 *   [Materials Innovation Institute (M2i), The Netherlands](http://www.m2i.nl)
-
-

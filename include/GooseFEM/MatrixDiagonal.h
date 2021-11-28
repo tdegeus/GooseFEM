@@ -9,8 +9,8 @@ Diagonal matrix.
 #ifndef GOOSEFEM_MATRIXDIAGONAL_H
 #define GOOSEFEM_MATRIXDIAGONAL_H
 
-#include "config.h"
 #include "Element.h"
+#include "config.h"
 
 namespace GooseFEM {
 
@@ -21,7 +21,6 @@ See Vector() for bookkeeping definitions.
 */
 class MatrixDiagonal {
 public:
-
     MatrixDiagonal() = default;
 
     virtual ~MatrixDiagonal() = default;
@@ -156,7 +155,6 @@ public:
     virtual void solve(const xt::xtensor<double, 1>& b, xt::xtensor<double, 1>& x);
 
 protected:
-
     xt::xtensor<size_t, 2> m_conn; ///< Connectivity [#nelem, #nne].
     xt::xtensor<size_t, 2> m_dofs; ///< DOF-numbers per node [#nnode, #ndim].
     size_t m_nelem; ///< See nelem().

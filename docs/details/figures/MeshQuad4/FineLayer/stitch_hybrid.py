@@ -1,10 +1,9 @@
-
 import GooseFEM
-import matplotlib.pyplot as plt
 import GooseMPL as gplt
+import matplotlib.pyplot as plt
 import numpy as np
 
-plt.style.use(['goose'])
+plt.style.use(["goose"])
 
 fig, ax = plt.subplots()
 
@@ -50,9 +49,9 @@ cindex[stitch.elemset(np.arange(finelayer.nelem()), 2)] = 3
 cindex[stitch.elemset(np.arange(finelayer.nelem()), 3)] = 4
 cindex[stitch.elemset(np.arange(regular.nelem()), 4)] = 5
 
-im = gplt.patch(coor=coor, conn=conn, cindex=cindex, cmap='jet', axis=ax)
+im = gplt.patch(coor=coor, conn=conn, cindex=cindex, cmap="jet", axis=ax)
 
-ax.set_aspect('equal')
+ax.set_aspect("equal")
 ax.get_xaxis().set_visible(False)
 ax.get_yaxis().set_visible(False)
 
