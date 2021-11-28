@@ -571,8 +571,7 @@ public:
                 for m in range(nne):
                     for n in range(nne):
                         elemmat(e, m * ndim + j, n * ndim + k) +=
-                            dNdx(e, q, m, i) * qtensor(e, q, i, j, k, l) * dNdx(e, q, n, l) * dV(e,
-    q)
+                            dNdx(e,q,m,i) * qtensor(e,q,i,j,k,l) * dNdx(e,q,n,l) * dV(e,q)
 
     with ``i``, ``j``, ``k``, and ``l`` tensor dimensions.
     Note that the functions and their gradients are precomputed upon construction,
