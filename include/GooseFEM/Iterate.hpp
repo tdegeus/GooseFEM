@@ -49,7 +49,8 @@ inline bool StopList::all_less(double tol) const
 
 inline bool StopList::stop_simple(double res, double tol)
 {
-    GOOSEFEM_WARNING_PYTHON("StopList::stop is deprecated. Use StopList::roll_insert and StopList::all_less");
+    GOOSEFEM_WARNING_PYTHON(
+        "StopList::stop is deprecated. Use StopList::roll_insert and StopList::all_less");
 
     std::rotate(m_res.begin(), m_res.begin() + 1, m_res.end());
     m_res.back() = res;
@@ -58,7 +59,8 @@ inline bool StopList::stop_simple(double res, double tol)
 
 inline bool StopList::stop(double res, double tol)
 {
-    GOOSEFEM_WARNING_PYTHON("StopList::stop is deprecated. Use StopList::roll_insert and StopList::descending + StopList::all_less");
+    GOOSEFEM_WARNING_PYTHON("StopList::stop is deprecated. Use StopList::roll_insert and "
+                            "StopList::descending + StopList::all_less");
 
     // move residual one place back and add new residual to the end
     std::rotate(m_res.begin(), m_res.begin() + 1, m_res.end());

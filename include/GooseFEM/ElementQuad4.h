@@ -10,8 +10,8 @@ in a Cartesian coordinate system.
 #ifndef GOOSEFEM_ELEMENTQUAD4_H
 #define GOOSEFEM_ELEMENTQUAD4_H
 
-#include "config.h"
 #include "Element.h"
+#include "config.h"
 
 namespace GooseFEM {
 namespace Element {
@@ -34,28 +34,28 @@ Gauss quadrature: quadrature points such that integration is exact for this bi-l
 */
 namespace Gauss {
 
-    /**
-    Number of integration points:
+/**
+Number of integration points:
 
-        nip = nne = 4
+    nip = nne = 4
 
-    \return unsigned int
-    */
-    inline size_t nip();
+\return unsigned int
+*/
+inline size_t nip();
 
-    /**
-    Integration point coordinates (local coordinates).
+/**
+Integration point coordinates (local coordinates).
 
-    \return Coordinates [#nip, `ndim`], with `ndim = 2`.
-    */
-    inline xt::xtensor<double, 2> xi();
+\return Coordinates [#nip, `ndim`], with `ndim = 2`.
+*/
+inline xt::xtensor<double, 2> xi();
 
-    /**
-    Integration point weights.
+/**
+Integration point weights.
 
-    \return Coordinates [#nip].
-    */
-    inline xt::xtensor<double, 1> w();
+\return Coordinates [#nip].
+*/
+inline xt::xtensor<double, 1> w();
 
 } // namespace Gauss
 
@@ -69,28 +69,28 @@ The order is the same as in the connectivity:
 */
 namespace Nodal {
 
-    /**
-    Number of integration points::
+/**
+Number of integration points::
 
-        nip = nne = 4
+    nip = nne = 4
 
-    \return unsigned int
-    */
-    inline size_t nip();
+\return unsigned int
+*/
+inline size_t nip();
 
-    /**
-    Integration point coordinates (local coordinates).
+/**
+Integration point coordinates (local coordinates).
 
-    \return Coordinates [#nip, `ndim`], with ``ndim = 2``.
-    */
-    inline xt::xtensor<double, 2> xi();
+\return Coordinates [#nip, `ndim`], with ``ndim = 2``.
+*/
+inline xt::xtensor<double, 2> xi();
 
-    /**
-    Integration point weights.
+/**
+Integration point weights.
 
-    \return Coordinates [#nip].
-    */
-    inline xt::xtensor<double, 1> w();
+\return Coordinates [#nip].
+*/
+inline xt::xtensor<double, 1> w();
 
 } // namespace Nodal
 
@@ -105,28 +105,28 @@ midpoint quadrature: quadrature points in the middle of the element::
 */
 namespace MidPoint {
 
-    /**
-    Number of integration points::
+/**
+Number of integration points::
 
-        nip = 1
+    nip = 1
 
-    \return unsigned int
-    */
-    inline size_t nip();
+\return unsigned int
+*/
+inline size_t nip();
 
-    /**
-    Integration point coordinates (local coordinates).
+/**
+Integration point coordinates (local coordinates).
 
-    \return Coordinates [#nip, ``ndim``], with ``ndim = 2``.
-    */
-    inline xt::xtensor<double, 2> xi();
+\return Coordinates [#nip, ``ndim``], with ``ndim = 2``.
+*/
+inline xt::xtensor<double, 2> xi();
 
-    /**
-    Integration point weights.
+/**
+Integration point weights.
 
-    \return Coordinates [#nip].
-    */
-    inline xt::xtensor<double, 1> w();
+\return Coordinates [#nip].
+*/
+inline xt::xtensor<double, 1> w();
 
 } // namespace MidPoint
 
@@ -145,7 +145,6 @@ Naming convention:
 */
 class Quadrature : public QuadratureBaseCartesian<Quadrature> {
 public:
-
     Quadrature() = default;
 
     /**
@@ -185,7 +184,6 @@ public:
     Quadrature(const T& x, const X& xi, const W& w);
 
 private:
-
     friend QuadratureBase<Quadrature>;
     friend QuadratureBaseCartesian<Quadrature>;
 
@@ -209,19 +207,20 @@ private:
 
     void compute_dN_impl();
 
-    constexpr static size_t s_nne = 4;  ///< Number of nodes per element.
+    constexpr static size_t s_nne = 4; ///< Number of nodes per element.
     constexpr static size_t s_ndim = 2; ///< Number of dimensions for nodal vectors.
     constexpr static size_t s_tdim = 2; ///< Number of dimensions for tensors.
     size_t m_tdim = 2; ///< Dynamic alias of s_tdim (remove in C++17)
     size_t m_nelem; ///< Number of elements.
-    size_t m_nip;   ///< Number of integration points per element.
-    xt::xtensor<double, 3> m_x;    ///< nodal positions stored per element [#nelem, #nne, #ndim]
-    xt::xtensor<double, 1> m_w;    ///< weight of each integration point [nip]
-    xt::xtensor<double, 2> m_xi;   ///< local coordinate of each integration point [#nip, #ndim]
-    xt::xtensor<double, 2> m_N;    ///< shape functions [#nip, #nne]
+    size_t m_nip; ///< Number of integration points per element.
+    xt::xtensor<double, 3> m_x; ///< nodal positions stored per element [#nelem, #nne, #ndim]
+    xt::xtensor<double, 1> m_w; ///< weight of each integration point [nip]
+    xt::xtensor<double, 2> m_xi; ///< local coordinate of each integration point [#nip, #ndim]
+    xt::xtensor<double, 2> m_N; ///< shape functions [#nip, #nne]
     xt::xtensor<double, 3> m_dNxi; ///< shape function grad. wrt local  coor. [#nip, #nne, #ndim]
-    xt::xtensor<double, 4> m_dNx;  ///< shape function grad. wrt global coor. [#nelem, #nip, #nne, #ndim]
-    xt::xtensor<double, 2> m_vol;  ///< integration point volume [#nelem, #nip]
+    xt::xtensor<double, 4>
+        m_dNx; ///< shape function grad. wrt global coor. [#nelem, #nip, #nne, #ndim]
+    xt::xtensor<double, 2> m_vol; ///< integration point volume [#nelem, #nip]
 };
 
 } // namespace Quad4

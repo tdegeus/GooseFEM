@@ -22,12 +22,13 @@ void init_MeshHex8(py::module& mod)
     {
         py::class_<GooseFEM::Mesh::Hex8::Regular> cls(mod, "Regular");
 
-        cls.def(py::init<size_t, size_t, size_t, double>(),
-                "Mesh with nx*ny*nz 'pixels' and edge size h",
-                py::arg("nx"),
-                py::arg("ny"),
-                py::arg("nz"),
-                py::arg("h") = 1.);
+        cls.def(
+            py::init<size_t, size_t, size_t, double>(),
+            "Mesh with nx*ny*nz 'pixels' and edge size h",
+            py::arg("nx"),
+            py::arg("ny"),
+            py::arg("nz"),
+            py::arg("h") = 1.);
 
         register_Element_RegularBase<GooseFEM::Mesh::Hex8::Regular>(cls);
         register_Element_RegularBase3d<GooseFEM::Mesh::Hex8::Regular>(cls);
@@ -40,13 +41,14 @@ void init_MeshHex8(py::module& mod)
     {
         py::class_<GooseFEM::Mesh::Hex8::FineLayer> cls(mod, "FineLayer");
 
-        cls.def(py::init<size_t, size_t, size_t, double, size_t>(),
-                "Mesh with nx*ny*nz 'pixels' and edge size h",
-                py::arg("nx"),
-                py::arg("ny"),
-                py::arg("nz"),
-                py::arg("h") = 1.0,
-                py::arg("nfine") = 1);
+        cls.def(
+            py::init<size_t, size_t, size_t, double, size_t>(),
+            "Mesh with nx*ny*nz 'pixels' and edge size h",
+            py::arg("nx"),
+            py::arg("ny"),
+            py::arg("nz"),
+            py::arg("h") = 1.0,
+            py::arg("nfine") = 1);
 
         cls.def("elementsMiddleLayer", &GooseFEM::Mesh::Hex8::FineLayer::elementsMiddleLayer);
 

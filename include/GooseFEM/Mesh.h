@@ -44,7 +44,6 @@ CRTP base class for regular meshes.
 template <class D>
 class RegularBase {
 public:
-
     /**
     Underlying type.
     */
@@ -135,7 +134,6 @@ public:
     auto nodesOrigin() const;
 
 private:
-
     auto derived_cast() -> derived_type&;
     auto derived_cast() const -> const derived_type&;
 };
@@ -146,7 +144,6 @@ CRTP base class for regular meshes in 2d.
 template <class D>
 class RegularBase2d : public RegularBase<D> {
 public:
-
     /**
     Underlying type.
     */
@@ -257,7 +254,6 @@ public:
     auto nodesRightTopCorner() const;
 
 private:
-
     auto derived_cast() -> derived_type&;
     auto derived_cast() const -> const derived_type&;
 
@@ -273,7 +269,6 @@ CRTP base class for regular meshes in 3d.
 template <class D>
 class RegularBase3d : public RegularBase<D> {
 public:
-
     /**
     Underlying type.
     */
@@ -958,7 +953,6 @@ public:
     auto nodesRightTopBackCorner() const;
 
 private:
-
     auto derived_cast() -> derived_type&;
     auto derived_cast() const -> const derived_type&;
 
@@ -981,11 +975,8 @@ Find overlapping nodes. The output has the following structure:
 \return Overlapping nodes.
 */
 template <class S, class T>
-inline xt::xtensor<size_t, 2> overlapping(
-    const S& coor_a,
-    const T& coor_b,
-    double rtol = 1e-5,
-    double atol = 1e-8);
+inline xt::xtensor<size_t, 2>
+overlapping(const S& coor_a, const T& coor_b, double rtol = 1e-5, double atol = 1e-8);
 
 /**
 Stitch two mesh objects, specifying overlapping nodes by hand.
@@ -1123,7 +1114,6 @@ Stitch mesh objects, automatically searching for overlapping nodes.
 */
 class Stitch {
 public:
-
     /**
     \param rtol Relative tolerance for position match.
     \param atol Absolute tolerance for position match.
@@ -1276,7 +1266,6 @@ Vertically stack meshes.
 */
 class Vstack : public Stitch {
 public:
-
     /**
     \param check_overlap Check if nodes are overlapping when adding a mesh.
     \param rtol Relative tolerance for position match.
@@ -1297,7 +1286,6 @@ public:
     void push_back(const C& coor, const E& conn, const N& nodes_bottom, const N& nodes_top);
 
 private:
-
     std::vector<xt::xtensor<size_t, 1>> m_nodes_bot; ///< Bottom nodes of each mesh (renumbered).
     std::vector<xt::xtensor<size_t, 1>> m_nodes_top; ///< Top nodes of each mesh (renumbered).
     bool m_check_overlap; ///< Check if nodes are overlapping when adding a mesh.
@@ -1430,7 +1418,7 @@ Elements connected to each node.
 \return Elements per node.
 */
 template <class E>
-inline std::vector<std::vector<size_t>> elem2node(const E& conn,  bool sorted = true);
+inline std::vector<std::vector<size_t>> elem2node(const E& conn, bool sorted = true);
 
 /**
 Return size of each element edge.
@@ -1486,11 +1474,8 @@ Convert an element-map to a node-map.
 \return Node-map such that ``new_nodevar = nodevar[node_map]``
 */
 template <class T, class C, class E>
-inline xt::xtensor<size_t, 1> elemmap2nodemap(
-    const T& elem_map,
-    const C& coor,
-    const E& conn,
-    ElementType type);
+inline xt::xtensor<size_t, 1>
+elemmap2nodemap(const T& elem_map, const C& coor, const E& conn, ElementType type);
 
 /**
 Convert an element-map to a node-map.
@@ -1502,7 +1487,7 @@ The element-type is automatically determined, see defaultElementType().
 \return Node-map such that ``new_nodevar = nodevar[node_map]``
 */
 template <class T, class C, class E>
-inline xt::xtensor<size_t, 1> elemmap2nodemap(const T& elem_map,const C& coor, const E& conn);
+inline xt::xtensor<size_t, 1> elemmap2nodemap(const T& elem_map, const C& coor, const E& conn);
 
 } // namespace Mesh
 } // namespace GooseFEM

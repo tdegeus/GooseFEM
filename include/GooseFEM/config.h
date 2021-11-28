@@ -21,6 +21,7 @@ Basic configuration:
 */
 
 #include <algorithm>
+#include <array>
 #include <assert.h>
 #include <cstdlib>
 #include <iomanip>
@@ -30,7 +31,6 @@ Basic configuration:
 #include <memory>
 #include <numeric>
 #include <string>
-#include <array>
 #include <vector>
 
 #include <xtensor/xadapt.hpp>
@@ -41,8 +41,8 @@ Basic configuration:
 #include <xtensor/xlayout.hpp>
 #include <xtensor/xmath.hpp>
 #include <xtensor/xnoalias.hpp>
-#include <xtensor/xsort.hpp>
 #include <xtensor/xshape.hpp>
+#include <xtensor/xsort.hpp>
 #include <xtensor/xstrided_view.hpp>
 #include <xtensor/xtensor.hpp>
 #include <xtensor/xutils.hpp>
@@ -59,16 +59,13 @@ using namespace xt::placeholders;
 #define UNUSED(p) ((void)(p))
 
 #define GOOSEFEM_WARNING_IMPL(message, file, line, function) \
-    std::cout << \
-        std::string(file) + ":" + std::to_string(line) + \
-        " (" + std::string(function) + ")" + \
-        ": " message ") \n\t"; \
+    std::cout << std::string(file) + ":" + std::to_string(line) + " (" + std::string(function) + \
+                     ")" + ": " message ") \n\t";
 
 #define GOOSEFEM_ASSERT_IMPL(expr, file, line, function) \
     if (!(expr)) { \
         throw std::runtime_error( \
-            std::string(file) + ":" + std::to_string(line) + \
-            " (" + std::string(function) + ")" + \
+            std::string(file) + ":" + std::to_string(line) + " (" + std::string(function) + ")" + \
             ": assertion failed (" #expr ") \n\t"); \
     }
 
@@ -143,7 +140,8 @@ using namespace xt::placeholders;
  *      #define GOOSEFEM_ENABLE_WARNING_PYTHON
  */
 #ifdef GOOSEFEM_ENABLE_WARNING_PYTHON
-#define GOOSEFEM_WARNING_PYTHON(message) GOOSEFEM_WARNING_IMPL(message, __FILE__, __LINE__, __FUNCTION__)
+#define GOOSEFEM_WARNING_PYTHON(message) \
+    GOOSEFEM_WARNING_IMPL(message, __FILE__, __LINE__, __FUNCTION__)
 #else
 #define GOOSEFEM_WARNING_PYTHON(message)
 #endif
@@ -151,6 +149,7 @@ using namespace xt::placeholders;
 /**
  *  Toolbox to perform finite element computations.
  */
-namespace GooseFEM {}
+namespace GooseFEM {
+}
 
 #endif

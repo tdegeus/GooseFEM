@@ -1,35 +1,34 @@
 #define CATCH_CONFIG_MAIN // tells Catch to provide a main() - only do this in one cpp file
-#include <catch2/catch.hpp>
-#include <xtensor/xrandom.hpp>
-#include <xtensor/xmath.hpp>
 #include <GooseFEM/MeshQuad4.h>
+#include <catch2/catch.hpp>
+#include <xtensor/xmath.hpp>
+#include <xtensor/xrandom.hpp>
 
 TEST_CASE("GooseFEM::MeshQuad4", "MeshQuad4.h")
 {
     SECTION("Regular")
     {
-        xt::xtensor<double, 2> coor_ =
-            {{0., 0.}, {1., 0.}, {2., 0.}, {3., 0.}, {4., 0.}, {5., 0.},
-             {0., 1.}, {1., 1.}, {2., 1.}, {3., 1.}, {4., 1.}, {5., 1.},
-             {0., 2.}, {1., 2.}, {2., 2.}, {3., 2.}, {4., 2.}, {5., 2.},
-             {0., 3.}, {1., 3.}, {2., 3.}, {3., 3.}, {4., 3.}, {5., 3.}};
+        xt::xtensor<double, 2> coor_ = {{0., 0.}, {1., 0.}, {2., 0.}, {3., 0.}, {4., 0.}, {5., 0.},
+                                        {0., 1.}, {1., 1.}, {2., 1.}, {3., 1.}, {4., 1.}, {5., 1.},
+                                        {0., 2.}, {1., 2.}, {2., 2.}, {3., 2.}, {4., 2.}, {5., 2.},
+                                        {0., 3.}, {1., 3.}, {2., 3.}, {3., 3.}, {4., 3.}, {5., 3.}};
 
-        xt::xtensor<double, 2> conn_ =
-            {{0, 1, 7, 6},
-             {1, 2, 8, 7},
-             {2, 3, 9, 8},
-             {3, 4, 10, 9},
-             {4, 5, 11, 10},
-             {6, 7, 13, 12},
-             {7, 8, 14, 13},
-             {8, 9, 15, 14},
-             {9, 10, 16, 15},
-             {10, 11, 17, 16},
-             {12, 13, 19, 18},
-             {13, 14, 20, 19},
-             {14, 15, 21, 20},
-             {15, 16, 22, 21},
-             {16, 17, 23, 22}};
+        xt::xtensor<double, 2> conn_ = {
+            {0, 1, 7, 6},
+            {1, 2, 8, 7},
+            {2, 3, 9, 8},
+            {3, 4, 10, 9},
+            {4, 5, 11, 10},
+            {6, 7, 13, 12},
+            {7, 8, 14, 13},
+            {8, 9, 15, 14},
+            {9, 10, 16, 15},
+            {10, 11, 17, 16},
+            {12, 13, 19, 18},
+            {13, 14, 20, 19},
+            {14, 15, 21, 20},
+            {15, 16, 22, 21},
+            {16, 17, 23, 22}};
 
         size_t nelem_ = 15;
         size_t nnode_ = 24;
@@ -54,11 +53,10 @@ TEST_CASE("GooseFEM::MeshQuad4", "MeshQuad4.h")
         size_t nodesRightBottomCorner_ = 5;
         size_t nodesRightTopCorner_ = 23;
 
-        xt::xtensor<size_t, 2> dofs_ =
-            {{ 0,  1}, { 2,  3}, { 4,  5}, { 6,  7}, { 8,  9}, {10, 11},
-             {12, 13}, {14, 15}, {16, 17}, {18, 19}, {20, 21}, {22, 23},
-             {24, 25}, {26, 27}, {28, 29}, {30, 31}, {32, 33}, {34, 35},
-             {36, 37}, {38, 39}, {40, 41}, {42, 43}, {44, 45}, {46, 47}};
+        xt::xtensor<size_t, 2> dofs_ = {{0, 1},   {2, 3},   {4, 5},   {6, 7},   {8, 9},   {10, 11},
+                                        {12, 13}, {14, 15}, {16, 17}, {18, 19}, {20, 21}, {22, 23},
+                                        {24, 25}, {26, 27}, {28, 29}, {30, 31}, {32, 33}, {34, 35},
+                                        {36, 37}, {38, 39}, {40, 41}, {42, 43}, {44, 45}, {46, 47}};
 
         xt::xtensor<size_t, 2> nodesPeriodic_ = {
             {0, 5}, {0, 23}, {0, 18}, {1, 19}, {2, 20}, {3, 21}, {4, 22}, {6, 11}, {12, 17}};
@@ -182,22 +180,22 @@ TEST_CASE("GooseFEM::MeshQuad4", "MeshQuad4.h")
             {168, 169}, {170, 171}, {172, 173}, {174, 175}, {176, 177}, {178, 179}, {180, 181},
             {182, 183}, {184, 185}, {186, 187}, {188, 189}, {190, 191}};
 
-        xt::xtensor<size_t, 2> nodesPeriodic_ =
-            {{0, 3},
-             {0, 95},
-             {0, 92},
-             {1, 93},
-             {2, 94},
-             {4, 7},
-             {8, 11},
-             {18, 27},
-             {28, 37},
-             {38, 47},
-             {48, 57},
-             {58, 67},
-             {68, 77},
-             {84, 87},
-             {88, 91}};
+        xt::xtensor<size_t, 2> nodesPeriodic_ = {
+            {0, 3},
+            {0, 95},
+            {0, 92},
+            {1, 93},
+            {2, 94},
+            {4, 7},
+            {8, 11},
+            {18, 27},
+            {28, 37},
+            {38, 47},
+            {48, 57},
+            {58, 67},
+            {68, 77},
+            {84, 87},
+            {88, 91}};
 
         size_t nodesOrigin_ = 0;
 
@@ -253,63 +251,41 @@ TEST_CASE("GooseFEM::MeshQuad4", "MeshQuad4.h")
     SECTION("FineLayer::elementgrid_ravel - uniform")
     {
         GooseFEM::Mesh::Quad4::FineLayer mesh(5, 5);
-        xt::xtensor<size_t, 1> a = {
-             0,  1,  2,  3,  4,
-             5,  6,  7,  8,  9,
-            10, 11, 12, 13, 14,
-            15, 16, 17, 18, 19,
-            20, 21, 22, 23, 24};
+        xt::xtensor<size_t, 1> a = {0,  1,  2,  3,  4,  5,  6,  7,  8,  9,  10, 11, 12,
+                                    13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24};
         REQUIRE(xt::all(xt::equal(a, mesh.elementgrid_ravel({0, 5}, {0, 5}))));
         REQUIRE(xt::all(xt::equal(a, mesh.elementgrid_ravel({0, 5}, {}))));
         REQUIRE(xt::all(xt::equal(a, mesh.elementgrid_ravel({}, {0, 5}))));
         REQUIRE(xt::all(xt::equal(a, mesh.elementgrid_ravel({}, {}))));
 
-        xt::xtensor<size_t, 1> b = {
-             5,  6,  7,  8,  9,
-            10, 11, 12, 13, 14,
-            15, 16, 17, 18, 19};
+        xt::xtensor<size_t, 1> b = {5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19};
         REQUIRE(xt::all(xt::equal(b, mesh.elementgrid_ravel({1, 4}, {0, 5}))));
 
-        xt::xtensor<size_t, 1> c = {
-             6,  7,  8,
-            11, 12, 13,
-            16, 17, 18};
+        xt::xtensor<size_t, 1> c = {6, 7, 8, 11, 12, 13, 16, 17, 18};
         REQUIRE(xt::all(xt::equal(c, mesh.elementgrid_ravel({1, 4}, {1, 4}))));
     }
 
     SECTION("FineLayer::elementgrid_ravel - refined")
     {
         GooseFEM::Mesh::Quad4::FineLayer mesh(6, 18);
-        xt::xtensor<size_t, 1> a = {
-            19, 20, 21, 22,
-            25, 26, 27, 28,
-            31, 32, 33, 34};
+        xt::xtensor<size_t, 1> a = {19, 20, 21, 22, 25, 26, 27, 28, 31, 32, 33, 34};
         REQUIRE(xt::all(xt::equal(a, mesh.elementgrid_ravel({9, 12}, {1, 5}))));
 
-        xt::xtensor<size_t, 1> b = {
-            0, 1,
-            2, 3};
+        xt::xtensor<size_t, 1> b = {0, 1, 2, 3};
         REQUIRE(xt::all(xt::equal(b, mesh.elementgrid_ravel({0, 6}, {0, 6}))));
 
-        xt::xtensor<size_t, 1> c = {
-            50, 51,
-            52, 53};
+        xt::xtensor<size_t, 1> c = {50, 51, 52, 53};
         REQUIRE(xt::all(xt::equal(c, mesh.elementgrid_ravel({15, 21}, {0, 6}))));
 
-        xt::xtensor<size_t, 1> d = {
-            4, 5, 6, 7, 8, 9, 10, 11};
+        xt::xtensor<size_t, 1> d = {4, 5, 6, 7, 8, 9, 10, 11};
         REQUIRE(xt::all(xt::equal(d, mesh.elementgrid_ravel({6, 8}, {0, 6}))));
     }
 
     SECTION("FineLayer::elementgrid_ravel - uniform")
     {
         GooseFEM::Mesh::Quad4::FineLayer mesh(5, 5);
-        xt::xtensor<size_t, 1> a = {
-             0,  1,  2,  3,  4,
-             5,  6,  7,  8,  9,
-            10, 11, 12, 13, 14,
-            15, 16, 17, 18, 19,
-            20, 21, 22, 23, 24};
+        xt::xtensor<size_t, 1> a = {0,  1,  2,  3,  4,  5,  6,  7,  8,  9,  10, 11, 12,
+                                    13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24};
 
         REQUIRE(xt::all(xt::equal(a, xt::sort(mesh.elementgrid_around_ravel(10, 2)))));
         REQUIRE(xt::all(xt::equal(a, xt::sort(mesh.elementgrid_around_ravel(11, 2)))));
@@ -317,30 +293,15 @@ TEST_CASE("GooseFEM::MeshQuad4", "MeshQuad4.h")
         REQUIRE(xt::all(xt::equal(a, xt::sort(mesh.elementgrid_around_ravel(13, 2)))));
         REQUIRE(xt::all(xt::equal(a, xt::sort(mesh.elementgrid_around_ravel(14, 2)))));
 
-        xt::xtensor<size_t, 1> b10 = {
-             5,  6,  9,
-            10, 11, 14,
-            15, 16, 19};
+        xt::xtensor<size_t, 1> b10 = {5, 6, 9, 10, 11, 14, 15, 16, 19};
 
-        xt::xtensor<size_t, 1> b11 = {
-             5,  6,  7,
-            10, 11, 12,
-            15, 16, 17};
+        xt::xtensor<size_t, 1> b11 = {5, 6, 7, 10, 11, 12, 15, 16, 17};
 
-        xt::xtensor<size_t, 1> b12 = {
-             6,  7,  8,
-            11, 12, 13,
-            16, 17, 18};
+        xt::xtensor<size_t, 1> b12 = {6, 7, 8, 11, 12, 13, 16, 17, 18};
 
-        xt::xtensor<size_t, 1> b13 = {
-             7,  8,  9,
-            12, 13, 14,
-            17, 18, 19};
+        xt::xtensor<size_t, 1> b13 = {7, 8, 9, 12, 13, 14, 17, 18, 19};
 
-        xt::xtensor<size_t, 1> b14 = {
-             5,  8,  9,
-            10, 13, 14,
-            15, 18, 19};
+        xt::xtensor<size_t, 1> b14 = {5, 8, 9, 10, 13, 14, 15, 18, 19};
 
         REQUIRE(xt::all(xt::equal(xt::sort(b10), xt::sort(mesh.elementgrid_around_ravel(10, 1)))));
         REQUIRE(xt::all(xt::equal(xt::sort(b11), xt::sort(mesh.elementgrid_around_ravel(11, 1)))));
@@ -359,24 +320,43 @@ TEST_CASE("GooseFEM::MeshQuad4", "MeshQuad4.h")
     {
         GooseFEM::Mesh::Quad4::FineLayer mesh(12, 18);
         xt::xtensor<size_t, 1> r0 = {
-            36, 37, 71,
-            48, 49, 59,
-            60, 61, 47,
+            36,
+            37,
+            71,
+            48,
+            49,
+            59,
+            60,
+            61,
+            47,
         };
         xt::xtensor<size_t, 1> r1 = {
-            36, 37, 38,
-            48, 49, 50,
-            60, 61, 62,
+            36,
+            37,
+            38,
+            48,
+            49,
+            50,
+            60,
+            61,
+            62,
         };
         xt::xtensor<size_t, 1> r12 = {
-            46, 47, 36,
-            58, 59, 48,
-            70, 71, 60,
+            46,
+            47,
+            36,
+            58,
+            59,
+            48,
+            70,
+            71,
+            60,
         };
 
         REQUIRE(xt::all(xt::equal(xt::sort(r0), xt::sort(mesh.elementgrid_around_ravel(48, 1)))));
         for (size_t n = 0; n < 10; ++n) {
-            REQUIRE(xt::all(xt::equal(xt::sort(r1) + n, xt::sort(mesh.elementgrid_around_ravel(49 + n, 1)))));
+            REQUIRE(xt::all(
+                xt::equal(xt::sort(r1) + n, xt::sort(mesh.elementgrid_around_ravel(49 + n, 1)))));
         }
         REQUIRE(xt::all(xt::equal(xt::sort(r12), xt::sort(mesh.elementgrid_around_ravel(59, 1)))));
     }
@@ -385,18 +365,25 @@ TEST_CASE("GooseFEM::MeshQuad4", "MeshQuad4.h")
     {
         GooseFEM::Mesh::Quad4::FineLayer mesh(12, 18);
         xt::xtensor<size_t, 1> r0 = {
-            48, 49, 59,
+            48,
+            49,
+            59,
         };
         xt::xtensor<size_t, 1> r1 = {
-            48, 49, 50,
+            48,
+            49,
+            50,
         };
         xt::xtensor<size_t, 1> r12 = {
-            58, 59, 48,
+            58,
+            59,
+            48,
         };
 
         REQUIRE(xt::all(xt::equal(xt::sort(r0), xt::sort(mesh.elementgrid_leftright(48, 1, 1)))));
         for (size_t n = 0; n < 10; ++n) {
-            REQUIRE(xt::all(xt::equal(xt::sort(r1) + n, xt::sort(mesh.elementgrid_leftright(49 + n, 1, 1)))));
+            REQUIRE(xt::all(
+                xt::equal(xt::sort(r1) + n, xt::sort(mesh.elementgrid_leftright(49 + n, 1, 1)))));
         }
         REQUIRE(xt::all(xt::equal(xt::sort(r12), xt::sort(mesh.elementgrid_leftright(59, 1, 1)))));
     }
@@ -447,20 +434,18 @@ TEST_CASE("GooseFEM::MeshQuad4", "MeshQuad4.h")
     SECTION("FineLayer - roll - trivial")
     {
         GooseFEM::Mesh::Quad4::FineLayer mesh(3, 3);
-        xt::xtensor<size_t, 1> m0 = {
-            0, 1, 2,
-            3, 4, 5,
-            6, 7, 8
-        };
-        xt::xtensor<size_t, 1> m1 = {
-            2, 0, 1,
-            5, 3, 4,
-            8, 6, 7
-        };
+        xt::xtensor<size_t, 1> m0 = {0, 1, 2, 3, 4, 5, 6, 7, 8};
+        xt::xtensor<size_t, 1> m1 = {2, 0, 1, 5, 3, 4, 8, 6, 7};
         xt::xtensor<size_t, 1> m2 = {
-            1, 2, 0,
-            4, 5, 3,
-            7, 8, 6,
+            1,
+            2,
+            0,
+            4,
+            5,
+            3,
+            7,
+            8,
+            6,
         };
         REQUIRE(xt::all(xt::equal(mesh.roll(0), m0)));
         REQUIRE(xt::all(xt::equal(mesh.roll(1), m1)));
@@ -473,32 +458,14 @@ TEST_CASE("GooseFEM::MeshQuad4", "MeshQuad4.h")
     SECTION("FineLayer - roll - a")
     {
         GooseFEM::Mesh::Quad4::FineLayer mesh(6, 18);
-        xt::xtensor<size_t, 1> m0 = {
-            0, 1,
-            2, 3,
-            4, 5, 6, 7, 8, 9, 10, 11,
-            12, 13, 14, 15, 16, 17,
-            18, 19, 20, 21, 22, 23,
-            24, 25, 26, 27, 28, 29,
-            30, 31, 32, 33, 34, 35,
-            36, 37, 38, 39, 40, 41,
-            42, 43, 44, 45, 46, 47, 48, 49,
-            50, 51,
-            52, 53
-        };
-        xt::xtensor<size_t, 1> m1 = {
-            1, 0,
-            3, 2,
-            8, 9, 10, 11, 4, 5, 6, 7,
-            15, 16, 17, 12, 13, 14,
-            21, 22, 23, 18, 19, 20,
-            27, 28, 29, 24, 25, 26,
-            33, 34, 35, 30, 31, 32,
-            39, 40, 41, 36, 37, 38,
-            46, 47, 48, 49, 42, 43, 44, 45,
-            51, 50,
-            53, 52
-        };
+        xt::xtensor<size_t, 1> m0 = {0,  1,  2,  3,  4,  5,  6,  7,  8,  9,  10, 11, 12, 13,
+                                     14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27,
+                                     28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41,
+                                     42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53};
+        xt::xtensor<size_t, 1> m1 = {1,  0,  3,  2,  8,  9,  10, 11, 4,  5,  6,  7,  15, 16,
+                                     17, 12, 13, 14, 21, 22, 23, 18, 19, 20, 27, 28, 29, 24,
+                                     25, 26, 33, 34, 35, 30, 31, 32, 39, 40, 41, 36, 37, 38,
+                                     46, 47, 48, 49, 42, 43, 44, 45, 51, 50, 53, 52};
         REQUIRE(xt::all(xt::equal(mesh.roll(0), m0)));
         REQUIRE(xt::all(xt::equal(mesh.roll(1), m1)));
         REQUIRE(xt::all(xt::equal(mesh.roll(2), m0)));
@@ -509,44 +476,20 @@ TEST_CASE("GooseFEM::MeshQuad4", "MeshQuad4.h")
     {
         GooseFEM::Mesh::Quad4::FineLayer mesh(9, 18);
         xt::xtensor<size_t, 1> m0 = {
-            0, 1, 2,
-            3, 4, 5,
-            6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17,
-            18, 19, 20, 21, 22, 23, 24, 25, 26,
-            27, 28, 29, 30, 31, 32, 33, 34, 35,
-            36, 37, 38, 39, 40, 41, 42, 43, 44,
-            45, 46, 47, 48, 49, 50, 51, 52, 53,
-            54, 55, 56, 57, 58, 59, 60, 61, 62,
-            63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74,
-            75, 76, 77,
-            78, 79, 80
-        };
+            0,  1,  2,  3,  4,  5,  6,  7,  8,  9,  10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20,
+            21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41,
+            42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62,
+            63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80};
         xt::xtensor<size_t, 1> m1 = {
-            2, 0, 1,
-            5, 3, 4,
-            14, 15, 16, 17, 6, 7, 8, 9, 10, 11, 12, 13,
-            24, 25, 26, 18, 19, 20, 21, 22, 23,
-            33, 34, 35, 27, 28, 29, 30, 31, 32,
-            42, 43, 44, 36, 37, 38, 39, 40, 41,
-            51, 52, 53, 45, 46, 47, 48, 49, 50,
-            60, 61, 62, 54, 55, 56, 57, 58, 59,
-            71, 72, 73, 74, 63, 64, 65, 66, 67, 68, 69, 70,
-            77, 75, 76,
-            80, 78, 79
-        };
+            2,  0,  1,  5,  3,  4,  14, 15, 16, 17, 6,  7,  8,  9,  10, 11, 12, 13, 24, 25, 26,
+            18, 19, 20, 21, 22, 23, 33, 34, 35, 27, 28, 29, 30, 31, 32, 42, 43, 44, 36, 37, 38,
+            39, 40, 41, 51, 52, 53, 45, 46, 47, 48, 49, 50, 60, 61, 62, 54, 55, 56, 57, 58, 59,
+            71, 72, 73, 74, 63, 64, 65, 66, 67, 68, 69, 70, 77, 75, 76, 80, 78, 79};
         xt::xtensor<size_t, 1> m2 = {
-            1, 2, 0,
-            4, 5, 3,
-            10, 11, 12, 13, 14, 15, 16, 17, 6, 7, 8, 9,
-            21, 22, 23, 24, 25, 26, 18, 19, 20,
-            30, 31, 32, 33, 34, 35, 27, 28, 29,
-            39, 40, 41, 42, 43, 44, 36, 37, 38,
-            48, 49, 50, 51, 52, 53, 45, 46, 47,
-            57, 58, 59, 60, 61, 62, 54, 55, 56,
-            67, 68, 69, 70, 71, 72, 73, 74, 63, 64, 65, 66,
-            76, 77, 75,
-            79, 80, 78
-        };
+            1,  2,  0,  4,  5,  3,  10, 11, 12, 13, 14, 15, 16, 17, 6,  7,  8,  9,  21, 22, 23,
+            24, 25, 26, 18, 19, 20, 30, 31, 32, 33, 34, 35, 27, 28, 29, 39, 40, 41, 42, 43, 44,
+            36, 37, 38, 48, 49, 50, 51, 52, 53, 45, 46, 47, 57, 58, 59, 60, 61, 62, 54, 55, 56,
+            67, 68, 69, 70, 71, 72, 73, 74, 63, 64, 65, 66, 76, 77, 75, 79, 80, 78};
         REQUIRE(xt::all(xt::equal(mesh.roll(0), m0)));
         REQUIRE(xt::all(xt::equal(mesh.roll(1), m1)));
         REQUIRE(xt::all(xt::equal(mesh.roll(2), m2)));

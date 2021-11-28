@@ -9,8 +9,8 @@ Convenience methods for integration point data.
 #ifndef GOOSEFEM_ELEMENT_H
 #define GOOSEFEM_ELEMENT_H
 
-#include "config.h"
 #include "Allocate.h"
+#include "config.h"
 
 namespace GooseFEM {
 
@@ -27,8 +27,8 @@ Convert nodal vector with ("nodevec", shape:``[nnode, ndim]``) to nodal vector s
 \param nodevec "nodevec".
 \return "elemvec".
 */
-inline xt::xtensor<double, 3> asElementVector(
-    const xt::xtensor<size_t, 2>& conn, const xt::xtensor<double, 2>& nodevec);
+inline xt::xtensor<double, 3>
+asElementVector(const xt::xtensor<size_t, 2>& conn, const xt::xtensor<double, 2>& nodevec);
 
 /**
 Assemble nodal vector stored per element ("elemvec", shape ``[nelem, nne, ndim]``) to nodal vector
@@ -38,8 +38,8 @@ Assemble nodal vector stored per element ("elemvec", shape ``[nelem, nne, ndim]`
 \param elemvec "elemvec".
 \return "nodevec".
 */
-inline xt::xtensor<double, 2> assembleNodeVector(
-    const xt::xtensor<size_t, 2>& conn, const xt::xtensor<double, 3>& elemvec);
+inline xt::xtensor<double, 2>
+assembleNodeVector(const xt::xtensor<size_t, 2>& conn, const xt::xtensor<double, 3>& elemvec);
 
 /**
 Check that DOFs leave no holes.
@@ -49,7 +49,6 @@ Check that DOFs leave no holes.
 */
 template <class E>
 inline bool isSequential(const E& dofs);
-
 
 /**
 Check that all of the matrices stored per elemmat (shape: ``[nelem, nne * ndim, nne * ndim]``)
@@ -66,7 +65,6 @@ CRTP base class for quadrature.
 template <class D>
 class QuadratureBase {
 public:
-
     /**
     Underlying type.
     */
@@ -332,7 +330,6 @@ public:
     auto allocate_qscalar(R val) const;
 
 private:
-
     auto derived_cast() -> derived_type&;
     auto derived_cast() const -> const derived_type&;
 };
@@ -349,7 +346,6 @@ Naming convention:
 template <class D>
 class QuadratureBaseCartesian : public QuadratureBase<D> {
 public:
-
     /**
     Underlying type.
     */
@@ -575,7 +571,7 @@ public:
                 for m in range(nne):
                     for n in range(nne):
                         elemmat(e, m * ndim + j, n * ndim + k) +=
-                            dNdx(e, q, m, i) * qtensor(e, q, i, j, k, l) * dNdx(e, q, n, l) * dV(e, q)
+                            dNdx(e,q,m,i) * qtensor(e,q,i,j,k,l) * dNdx(e,q,n,l) * dV(e,q)
 
     with ``i``, ``j``, ``k``, and ``l`` tensor dimensions.
     Note that the functions and their gradients are precomputed upon construction,
@@ -597,14 +593,12 @@ public:
     void int_gradN_dot_tensor4_dot_gradNT_dV(const T& qtensor, R& elemmat) const;
 
 protected:
-
     /**
     Update the shape function gradients (called when the nodal positions are updated).
     */
     void compute_dN();
 
 private:
-
     auto derived_cast() -> derived_type&;
     auto derived_cast() const -> const derived_type&;
 

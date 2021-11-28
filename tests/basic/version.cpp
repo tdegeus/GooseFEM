@@ -1,6 +1,6 @@
 #define CATCH_CONFIG_MAIN // tells Catch to provide a main() - only do this in one cpp file
-#include <catch2/catch.hpp>
 #include <GooseFEM/GooseFEM.h>
+#include <catch2/catch.hpp>
 #include <iostream>
 
 TEST_CASE("GooseFEM::version", "version.h")
@@ -16,5 +16,4 @@ TEST_CASE("GooseFEM::version", "version.h")
             std::cout << i << std::endl;
         }
     }
-
 }

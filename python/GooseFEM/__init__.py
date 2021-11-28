@@ -1,1 +1,1 @@
-from ._GooseFEM import *
+from ._GooseFEM import *  # noqa: F401, F403

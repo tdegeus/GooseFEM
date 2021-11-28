@@ -14,14 +14,24 @@ AllowShortFunctionsOnASingleLine: false
 AllowShortIfStatementsOnASingleLine: false
 AllowShortLoopsOnASingleLine: false
 AlwaysBreakTemplateDeclarations: Yes
-BinPackArguments: false
-BinPackParameters: false
 PenaltyBreakBeforeFirstCallParameter: 1
 PenaltyReturnTypeOnItsOwnLine: 100
 PointerBindsToType: true
 BreakBeforeBraces: Stroustrup
+
+# Do not align consecutive comments that follow a line of code
+AlignTrailingComments: false
+
+# force argument on one line each
+BinPackArguments: false
+BinPackParameters: false
+ExperimentalAutoDetectBinPacking: false
+AllowAllParametersOfDeclarationOnNextLine: false
+
+# AlwaysBreakAfterDefinitionReturnType: All
+
 BraceWrapping:
-    AfterFunction: true
-    AfterClass: false
-    BeforeCatch: true
-    BeforeElse: true
+  AfterFunction: true
+  AfterClass: false
+  BeforeCatch: true
+  BeforeElse: true

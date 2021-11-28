@@ -1,12 +1,12 @@
 channels:
-  - conda-forge
+- conda-forge
 dependencies:
-  - doxygen
-  - breathe
-  - sphinx
-  - sphinx_rtd_theme
-  - cmake
-  - setuptools_scm
-  - python-goosefem
-  - pyxtensor
-  - eigen
+- breathe
+- cmake
+- doxygen
+- eigen
+- python-goosefem
+- pyxtensor
+- setuptools_scm
+- sphinx
+- sphinx_rtd_theme

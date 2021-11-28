@@ -195,7 +195,7 @@ inline Eigen::VectorXd MatrixPartitionedTyings::AsDofs_u(const xt::xtensor<doubl
 
     Eigen::VectorXd dofval_u(m_nnu, 1);
 
-    #pragma omp parallel for
+#pragma omp parallel for
     for (size_t d = 0; d < m_nnu; ++d) {
         dofval_u(d) = dofval(m_iiu(d));
     }
@@ -210,7 +210,7 @@ MatrixPartitionedTyings::AsDofs_u(const xt::xtensor<double, 2>& nodevec) const
 
     Eigen::VectorXd dofval_u = Eigen::VectorXd::Zero(m_nnu, 1);
 
-    #pragma omp parallel for
+#pragma omp parallel for
     for (size_t m = 0; m < m_nnode; ++m) {
         for (size_t i = 0; i < m_ndim; ++i) {
             if (m_dofs(m, i) < m_nnu) {
@@ -228,7 +228,7 @@ inline Eigen::VectorXd MatrixPartitionedTyings::AsDofs_p(const xt::xtensor<doubl
 
     Eigen::VectorXd dofval_p(m_nnp, 1);
 
-    #pragma omp parallel for
+#pragma omp parallel for
     for (size_t d = 0; d < m_nnp; ++d) {
         dofval_p(d) = dofval(m_iip(d));
     }
@@ -243,7 +243,7 @@ MatrixPartitionedTyings::AsDofs_p(const xt::xtensor<double, 2>& nodevec) const
 
     Eigen::VectorXd dofval_p = Eigen::VectorXd::Zero(m_nnp, 1);
 
-    #pragma omp parallel for
+#pragma omp parallel for
     for (size_t m = 0; m < m_nnode; ++m) {
         for (size_t i = 0; i < m_ndim; ++i) {
             if (m_dofs(m, i) >= m_nnu && m_dofs(m, i) < m_nni) {
@@ -261,7 +261,7 @@ inline Eigen::VectorXd MatrixPartitionedTyings::AsDofs_d(const xt::xtensor<doubl
 
     Eigen::VectorXd dofval_d(m_nnd, 1);
 
-    #pragma omp parallel for
+#pragma omp parallel for
     for (size_t d = 0; d < m_nnd; ++d) {
         dofval_d(d) = dofval(m_iip(d));
     }
@@ -276,7 +276,7 @@ MatrixPartitionedTyings::AsDofs_d(const xt::xtensor<double, 2>& nodevec) const
 
     Eigen::VectorXd dofval_d = Eigen::VectorXd::Zero(m_nnd, 1);
 
-    #pragma omp parallel for
+#pragma omp parallel for
     for (size_t m = 0; m < m_nnode; ++m) {
         for (size_t i = 0; i < m_ndim; ++i) {
             if (m_dofs(m, i) >= m_nni) {
@@ -314,7 +314,9 @@ inline void MatrixPartitionedTyingsSolver<Solver>::factorize(MatrixPartitionedTy
 
 template <class Solver>
 inline void MatrixPartitionedTyingsSolver<Solver>::solve(
-    MatrixPartitionedTyings& matrix, const xt::xtensor<double, 2>& b, xt::xtensor<double, 2>& x)
+    MatrixPartitionedTyings& matrix,
+    const xt::xtensor<double, 2>& b,
+    xt::xtensor<double, 2>& x)
 {
     GOOSEFEM_ASSERT(xt::has_shape(b, {matrix.m_nnode, matrix.m_ndim}));
     GOOSEFEM_ASSERT(xt::has_shape(x, {matrix.m_nnode, matrix.m_ndim}));
@@ -330,7 +332,7 @@ inline void MatrixPartitionedTyingsSolver<Solver>::solve(
     Eigen::VectorXd X_u = m_solver.solve(Eigen::VectorXd(B_u - matrix.m_ACup * X_p));
     Eigen::VectorXd X_d = matrix.m_Cdu * X_u + matrix.m_Cdp * X_p;
 
-    #pragma omp parallel for
+#pragma omp parallel for
     for (size_t m = 0; m < matrix.m_nnode; ++m) {
         for (size_t i = 0; i < matrix.m_ndim; ++i) {
             if (matrix.m_dofs(m, i) < matrix.m_nnu) {
@@ -345,7 +347,9 @@ inline void MatrixPartitionedTyingsSolver<Solver>::solve(
 
 template <class Solver>
 inline void MatrixPartitionedTyingsSolver<Solver>::solve(
-    MatrixPartitionedTyings& matrix, const xt::xtensor<double, 1>& b, xt::xtensor<double, 1>& x)
+    MatrixPartitionedTyings& matrix,
+    const xt::xtensor<double, 1>& b,
+    xt::xtensor<double, 1>& x)
 {
     GOOSEFEM_ASSERT(b.size() == matrix.m_ndof);
     GOOSEFEM_ASSERT(x.size() == matrix.m_ndof);
@@ -359,12 +363,12 @@ inline void MatrixPartitionedTyingsSolver<Solver>::solve(
     Eigen::VectorXd X_u = m_solver.solve(Eigen::VectorXd(B_u - matrix.m_ACup * X_p));
     Eigen::VectorXd X_d = matrix.m_Cdu * X_u + matrix.m_Cdp * X_p;
 
-    #pragma omp parallel for
+#pragma omp parallel for
     for (size_t d = 0; d < matrix.m_nnu; ++d) {
         x(matrix.m_iiu(d)) = X_u(d);
     }
 
-    #pragma omp parallel for
+#pragma omp parallel for
     for (size_t d = 0; d < matrix.m_nnd; ++d) {
         x(matrix.m_iid(d)) = X_d(d);
     }

@@ -88,21 +88,22 @@ inline void VectorPartitionedTyings::copy_p(const T& dofval_src, T& dofval_dest)
     GOOSEFEM_ASSERT(dofval_src.size() == m_ndof || dofval_src.size() == m_nni);
     GOOSEFEM_ASSERT(dofval_dest.size() == m_ndof || dofval_dest.size() == m_nni);
 
-    #pragma omp parallel for
+#pragma omp parallel for
     for (size_t i = m_nnu; i < m_nni; ++i) {
         dofval_dest(i) = dofval_src(i);
     }
 }
 
 template <class T, class R>
-inline void VectorPartitionedTyings::asDofs_i(const T& nodevec, R& dofval_i, bool apply_tyings) const
+inline void
+VectorPartitionedTyings::asDofs_i(const T& nodevec, R& dofval_i, bool apply_tyings) const
 {
     GOOSEFEM_ASSERT(xt::has_shape(nodevec, {m_nnode, m_ndim}));
     GOOSEFEM_ASSERT(dofval_i.size() == m_nni);
 
     dofval_i.fill(0.0);
 
-    #pragma omp parallel for
+#pragma omp parallel for
     for (size_t m = 0; m < m_nnode; ++m) {
         for (size_t i = 0; i < m_ndim; ++i) {
             if (m_dofs(m, i) < m_nni) {
@@ -118,7 +119,7 @@ inline void VectorPartitionedTyings::asDofs_i(const T& nodevec, R& dofval_i, boo
     Eigen::VectorXd Dofval_d = this->Eigen_asDofs_d(nodevec);
     Eigen::VectorXd Dofval_i = m_Cid * Dofval_d;
 
-    #pragma omp parallel for
+#pragma omp parallel for
     for (size_t i = 0; i < m_nni; ++i) {
         dofval_i(i) += Dofval_i(i);
     }
@@ -139,7 +140,7 @@ inline Eigen::VectorXd VectorPartitionedTyings::Eigen_asDofs_d(const T& nodevec)
 
     Eigen::VectorXd dofval_d(m_nnd, 1);
 
-    #pragma omp parallel for
+#pragma omp parallel for
     for (size_t m = 0; m < m_nnode; ++m) {
         for (size_t i = 0; i < m_ndim; ++i) {
             if (m_dofs(m, i) >= m_nni) {

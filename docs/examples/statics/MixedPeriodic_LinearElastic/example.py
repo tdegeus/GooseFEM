@@ -1,7 +1,12 @@
 import sys
-import GooseFEM
+
 import GMatElastic
+import GooseFEM
+import GooseMPL as gplt
+import matplotlib.pyplot as plt
 import numpy as np
+
+plt.style.use(["goose", "goose-latex"])
 
 # mesh
 # ----
@@ -33,12 +38,7 @@ for j in range(coor.shape[1]):
 
 dofs = GooseFEM.Mesh.renumber(dofs)
 
-iip = np.concatenate((
-    dofs[nodesBot, 0],
-    dofs[nodesBot, 1],
-    dofs[nodesTop, 0],
-    dofs[nodesTop, 1]
-))
+iip = np.concatenate((dofs[nodesBot, 0], dofs[nodesBot, 1], dofs[nodesTop, 0], dofs[nodesTop, 1]))
 
 # simulation variables
 # --------------------
@@ -70,9 +70,9 @@ nip = elem.nip()
 
 # material definition
 mat = GMatElastic.Cartesian3d.Array2d([nelem, nip])
-Ihard = np.zeros((nelem, nip), dtype='int')
+Ihard = np.zeros((nelem, nip), dtype="int")
 Ihard[[0, 1, 5, 6], :] = 1
-Isoft = np.ones((nelem, nip), dtype='int') - Ihard
+Isoft = np.ones((nelem, nip), dtype="int") - Ihard
 mat.setElastic(Isoft, 10.0, 1.0)
 mat.setElastic(Ihard, 10.0, 10.0)
 
@@ -146,34 +146,33 @@ if len(sys.argv) == 2:
 # plot
 # ----
 
-import matplotlib.pyplot as plt
-import GooseMPL as gplt
-
-plt.style.use(['goose', 'goose-latex'])
-
 # extract dimension
 
 nelem = conn.shape[0]
 
 # tensor products
 
+
 def ddot22(A2, B2):
-    return np.einsum('eij, eji -> e', A2, B2)
+    return np.einsum("eij, eji -> e", A2, B2)
+
 
 def ddot42(A4, B2):
-    return np.einsum('eijkl, elk -> eij', A4, B2)
+    return np.einsum("eijkl, elk -> eij", A4, B2)
+
 
 def dyad22(A2, B2):
-    return np.einsum('eij, ekl -> eijkl', A2, B2)
+    return np.einsum("eij, ekl -> eijkl", A2, B2)
+
 
 # identity tensors
 
 i = np.eye(3)
-I = np.einsum('ij, e', i, np.ones([nelem]))
-I4 = np.einsum('ijkl, e -> eijkl', np.einsum('il, jk', i, i), np.ones([nelem]))
-I4rt = np.einsum('ijkl, e -> eijkl', np.einsum('ik,jl', i, i), np.ones([nelem]))
+I2 = np.einsum("ij, e", i, np.ones([nelem]))
+I4 = np.einsum("ijkl, e -> eijkl", np.einsum("il, jk", i, i), np.ones([nelem]))
+I4rt = np.einsum("ijkl, e -> eijkl", np.einsum("ik,jl", i, i), np.ones([nelem]))
 I4s = 0.5 * (I4 + I4rt)
-II = dyad22(I, I)
+II = dyad22(I2, I2)
 I4d = I4s - II / 3.0
 
 # compute equivalent stress
@@ -184,7 +183,7 @@ sigeq = np.sqrt(3.0 / 2.0 * ddot22(Sigd, Sigd))
 # plot
 
 fig, ax = plt.subplots()
-gplt.patch(coor=coor + disp, conn=conn, cindex=sigeq, cmap='jet', axis=ax, clim=(0, 0.1))
-gplt.patch(coor=coor, conn=conn, linestyle='--', axis=ax)
-plt.savefig('plot.pdf')
+gplt.patch(coor=coor + disp, conn=conn, cindex=sigeq, cmap="jet", axis=ax, clim=(0, 0.1))
+gplt.patch(coor=coor, conn=conn, linestyle="--", axis=ax)
+plt.savefig("plot.pdf")
 plt.close()

@@ -58,4 +58,3 @@ include_directories(SYSTEM ${EIGEN3_INCLUDE_DIRS})
 add_executable(${PROJECT_NAME} main.cpp)
 
 target_link_libraries(${PROJECT_NAME} ${PROJECT_LIBS})
-

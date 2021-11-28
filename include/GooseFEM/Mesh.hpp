@@ -9,8 +9,8 @@ Implementation of Mesh.h
 #ifndef GOOSEFEM_MESH_HPP
 #define GOOSEFEM_MESH_HPP
 
-#include "assertions.h"
 #include "Mesh.h"
+#include "assertions.h"
 
 namespace GooseFEM {
 namespace Mesh {
@@ -1076,28 +1076,25 @@ inline auto RegularBase3d<D>::derived_cast() const -> const derived_type&
 
 namespace detail {
 
-    template <class T, class R>
-    inline T renum(const T& arg, const R& mapping)
-    {
-        T ret = T::from_shape(arg.shape());
+template <class T, class R>
+inline T renum(const T& arg, const R& mapping)
+{
+    T ret = T::from_shape(arg.shape());
 
-        auto jt = ret.begin();
+    auto jt = ret.begin();
 
-        for (auto it = arg.begin(); it != arg.end(); ++it, ++jt) {
-            *jt = mapping(*it);
-        }
-
-        return ret;
+    for (auto it = arg.begin(); it != arg.end(); ++it, ++jt) {
+        *jt = mapping(*it);
     }
+
+    return ret;
+}
 
 } // namespace detail
 
 template <class S, class T>
-inline xt::xtensor<size_t, 2> overlapping(
-    const S& coor_a,
-    const T& coor_b,
-    double rtol,
-    double atol)
+inline xt::xtensor<size_t, 2>
+overlapping(const S& coor_a, const T& coor_b, double rtol, double atol)
 {
     GOOSEFEM_ASSERT(coor_a.dimension() == 2);
     GOOSEFEM_ASSERT(coor_b.dimension() == 2);
@@ -1108,8 +1105,8 @@ inline xt::xtensor<size_t, 2> overlapping(
 
     for (size_t i = 0; i < coor_a.shape(0); ++i) {
 
-        auto idx = xt::flatten_indices(xt::argwhere(xt::prod(xt::isclose(
-            coor_b, xt::view(coor_a, i, xt::all()), rtol, atol), 1)));
+        auto idx = xt::flatten_indices(xt::argwhere(
+            xt::prod(xt::isclose(coor_b, xt::view(coor_a, i, xt::all()), rtol, atol), 1)));
 
         for (auto& j : idx) {
             ret_a.push_back(i);
@@ -1323,8 +1320,12 @@ inline void Stitch::push_back(const C& coor, const E& conn)
     size_t index = m_map.size();
 
     ManualStitch stitch(
-        m_coor, m_conn, xt::eval(xt::view(overlap, 0, xt::all())),
-        coor, conn, xt::eval(xt::view(overlap, 1, xt::all())),
+        m_coor,
+        m_conn,
+        xt::eval(xt::view(overlap, 0, xt::all())),
+        coor,
+        conn,
+        xt::eval(xt::view(overlap, 1, xt::all())),
         false);
 
     m_coor = stitch.coor();
@@ -1510,9 +1511,7 @@ inline void Vstack::push_back(const C& coor, const E& conn, const N& nodes_bot, 
     xt::view(x, xt::all(), 1) += shift;
 
     ManualStitch stitch(
-        m_coor, m_conn, m_nodes_top.back(),
-        x, conn, nodes_bot,
-        m_check_overlap, m_rtol, m_atol);
+        m_coor, m_conn, m_nodes_top.back(), x, conn, nodes_bot, m_check_overlap, m_rtol, m_atol);
 
     m_nodes_bot.push_back(stitch.nodeset(nodes_bot, 1));
     m_nodes_top.push_back(stitch.nodeset(nodes_top, 1));
@@ -1570,11 +1569,11 @@ inline Reorder::Reorder(const std::initializer_list<T> args)
         n = std::max(n, xt::amax(arg)() + 1);
     }
 
-    #ifdef GOOSEFEM_ENABLE_ASSERT
+#ifdef GOOSEFEM_ENABLE_ASSERT
     for (auto& arg : args) {
         GOOSEFEM_ASSERT(is_unique(arg));
     }
-    #endif
+#endif
 
     m_renum = xt::empty<size_t>({n});
 
@@ -1720,11 +1719,8 @@ inline xt::xtensor<double, 2> centers(const C& coor, const E& conn)
 }
 
 template <class T, class C, class E>
-inline xt::xtensor<size_t, 1> elemmap2nodemap(
-    const T& elem_map,
-    const C& coor,
-    const E& conn,
-    ElementType type)
+inline xt::xtensor<size_t, 1>
+elemmap2nodemap(const T& elem_map, const C& coor, const E& conn, ElementType type)
 {
     GOOSEFEM_ASSERT(elem_map.dimension() == 1);
     GOOSEFEM_ASSERT(coor.dimension() == 2);
@@ -1754,7 +1750,7 @@ inline xt::xtensor<size_t, 1> elemmap2nodemap(
 }
 
 template <class T, class C, class E>
-inline xt::xtensor<size_t, 1> elemmap2nodemap(const T& elem_map,const C& coor, const E& conn)
+inline xt::xtensor<size_t, 1> elemmap2nodemap(const T& elem_map, const C& coor, const E& conn)
 {
     return elemmap2nodemap(elem_map, coor, conn, defaultElementType(coor, conn));
 }

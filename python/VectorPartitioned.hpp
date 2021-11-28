@@ -34,15 +34,17 @@ void init_VectorPartitioned(py::module& m)
 
         .def("iip", &GooseFEM::VectorPartitioned::iip, "Return prescribed degrees-of-freedom")
 
-        .def("dofs_is_u",
-             &GooseFEM::VectorPartitioned::dofs_is_u,
-             "Per DOF list if unknown."
-             "See :cpp:class:`GooseFEM::VectorPartitioned::dofs_is_u`.")
+        .def(
+            "dofs_is_u",
+            &GooseFEM::VectorPartitioned::dofs_is_u,
+            "Per DOF list if unknown."
+            "See :cpp:class:`GooseFEM::VectorPartitioned::dofs_is_u`.")
 
-        .def("dofs_is_p",
-             &GooseFEM::VectorPartitioned::dofs_is_p,
-             "Per DOF list if unknown."
-             "See :cpp:class:`GooseFEM::VectorPartitioned::dofs_is_p`.")
+        .def(
+            "dofs_is_p",
+            &GooseFEM::VectorPartitioned::dofs_is_p,
+            "Per DOF list if unknown."
+            "See :cpp:class:`GooseFEM::VectorPartitioned::dofs_is_p`.")
 
         .def(
             "DofsFromParitioned",

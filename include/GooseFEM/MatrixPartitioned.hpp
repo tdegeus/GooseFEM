@@ -256,13 +256,13 @@ inline void MatrixPartitioned::dot(const xt::xtensor<double, 2>& x, xt::xtensor<
     Eigen::VectorXd B_u = m_Auu * X_u + m_Aup * X_p;
     Eigen::VectorXd B_p = m_Apu * X_u + m_App * X_p;
 
-    #pragma omp parallel for
+#pragma omp parallel for
     for (size_t m = 0; m < m_nnode; ++m) {
         for (size_t i = 0; i < m_ndim; ++i) {
             if (m_part(m, i) < m_nnu) {
                 b(m, i) = B_u(m_part(m, i));
             }
-            else{
+            else {
                 b(m, i) = B_p(m_part(m, i) - m_nnu);
             }
         }
@@ -280,12 +280,12 @@ inline void MatrixPartitioned::dot(const xt::xtensor<double, 1>& x, xt::xtensor<
     Eigen::VectorXd B_u = m_Auu * X_u + m_Aup * X_p;
     Eigen::VectorXd B_p = m_Apu * X_u + m_App * X_p;
 
-    #pragma omp parallel for
+#pragma omp parallel for
     for (size_t d = 0; d < m_nnu; ++d) {
         b(m_iiu(d)) = B_u(d);
     }
 
-    #pragma omp parallel for
+#pragma omp parallel for
     for (size_t d = 0; d < m_nnp; ++d) {
         b(m_iip(d)) = B_p(d);
     }
@@ -301,7 +301,7 @@ MatrixPartitioned::reaction(const xt::xtensor<double, 2>& x, xt::xtensor<double,
     Eigen::VectorXd X_p = this->AsDofs_p(x);
     Eigen::VectorXd B_p = m_Apu * X_u + m_App * X_p;
 
-    #pragma omp parallel for
+#pragma omp parallel for
     for (size_t m = 0; m < m_nnode; ++m) {
         for (size_t i = 0; i < m_ndim; ++i) {
             if (m_part(m, i) >= m_nnu) {
@@ -321,7 +321,7 @@ MatrixPartitioned::reaction(const xt::xtensor<double, 1>& x, xt::xtensor<double,
     Eigen::VectorXd X_p = this->AsDofs_p(x);
     Eigen::VectorXd B_p = m_Apu * X_u + m_App * X_p;
 
-    #pragma omp parallel for
+#pragma omp parallel for
     for (size_t d = 0; d < m_nnp; ++d) {
         b(m_iip(d)) = B_p(d);
     }
@@ -358,7 +358,8 @@ MatrixPartitioned::Reaction(const xt::xtensor<double, 1>& x, const xt::xtensor<d
 }
 
 inline xt::xtensor<double, 1> MatrixPartitioned::Reaction_p(
-    const xt::xtensor<double, 1>& x_u, const xt::xtensor<double, 1>& x_p) const
+    const xt::xtensor<double, 1>& x_u,
+    const xt::xtensor<double, 1>& x_p) const
 {
     xt::xtensor<double, 1> b_p = xt::empty<double>({m_nnp});
     this->reaction_p(x_u, x_p, b_p);
@@ -371,7 +372,7 @@ inline Eigen::VectorXd MatrixPartitioned::AsDofs_u(const xt::xtensor<double, 1>&
 
     Eigen::VectorXd dofval_u(m_nnu, 1);
 
-    #pragma omp parallel for
+#pragma omp parallel for
     for (size_t d = 0; d < m_nnu; ++d) {
         dofval_u(d) = dofval(m_iiu(d));
     }
@@ -385,7 +386,7 @@ inline Eigen::VectorXd MatrixPartitioned::AsDofs_u(const xt::xtensor<double, 2>&
 
     Eigen::VectorXd dofval_u = Eigen::VectorXd::Zero(m_nnu, 1);
 
-    #pragma omp parallel for
+#pragma omp parallel for
     for (size_t m = 0; m < m_nnode; ++m) {
         for (size_t i = 0; i < m_ndim; ++i) {
             if (m_part(m, i) < m_nnu) {
@@ -403,7 +404,7 @@ inline Eigen::VectorXd MatrixPartitioned::AsDofs_p(const xt::xtensor<double, 1>&
 
     Eigen::VectorXd dofval_p(m_nnp, 1);
 
-    #pragma omp parallel for
+#pragma omp parallel for
     for (size_t d = 0; d < m_nnp; ++d) {
         dofval_p(d) = dofval(m_iip(d));
     }
@@ -417,7 +418,7 @@ inline Eigen::VectorXd MatrixPartitioned::AsDofs_p(const xt::xtensor<double, 2>&
 
     Eigen::VectorXd dofval_p = Eigen::VectorXd::Zero(m_nnp, 1);
 
-    #pragma omp parallel for
+#pragma omp parallel for
     for (size_t m = 0; m < m_nnode; ++m) {
         for (size_t i = 0; i < m_ndim; ++i) {
             if (m_part(m, i) >= m_nnu) {
@@ -442,7 +443,9 @@ inline void MatrixPartitionedSolver<Solver>::factorize(MatrixPartitioned& matrix
 
 template <class Solver>
 inline void MatrixPartitionedSolver<Solver>::solve(
-    MatrixPartitioned& matrix, const xt::xtensor<double, 2>& b, xt::xtensor<double, 2>& x)
+    MatrixPartitioned& matrix,
+    const xt::xtensor<double, 2>& b,
+    xt::xtensor<double, 2>& x)
 {
     GOOSEFEM_ASSERT(xt::has_shape(b, {matrix.m_nnode, matrix.m_ndim}));
     GOOSEFEM_ASSERT(xt::has_shape(x, {matrix.m_nnode, matrix.m_ndim}));
@@ -452,7 +455,7 @@ inline void MatrixPartitionedSolver<Solver>::solve(
     Eigen::VectorXd X_p = matrix.AsDofs_p(x);
     Eigen::VectorXd X_u = m_solver.solve(Eigen::VectorXd(B_u - matrix.m_Aup * X_p));
 
-    #pragma omp parallel for
+#pragma omp parallel for
     for (size_t m = 0; m < matrix.m_nnode; ++m) {
         for (size_t i = 0; i < matrix.m_ndim; ++i) {
             if (matrix.m_part(m, i) < matrix.m_nnu) {
@@ -464,7 +467,9 @@ inline void MatrixPartitionedSolver<Solver>::solve(
 
 template <class Solver>
 inline void MatrixPartitionedSolver<Solver>::solve(
-    MatrixPartitioned& matrix, const xt::xtensor<double, 1>& b, xt::xtensor<double, 1>& x)
+    MatrixPartitioned& matrix,
+    const xt::xtensor<double, 1>& b,
+    xt::xtensor<double, 1>& x)
 {
     GOOSEFEM_ASSERT(b.size() == matrix.m_ndof);
     GOOSEFEM_ASSERT(x.size() == matrix.m_ndof);
@@ -474,7 +479,7 @@ inline void MatrixPartitionedSolver<Solver>::solve(
     Eigen::VectorXd X_p = matrix.AsDofs_p(x);
     Eigen::VectorXd X_u = m_solver.solve(Eigen::VectorXd(B_u - matrix.m_Aup * X_p));
 
-    #pragma omp parallel for
+#pragma omp parallel for
     for (size_t d = 0; d < matrix.m_nnu; ++d) {
         x(matrix.m_iiu(d)) = X_u(d);
     }
@@ -500,7 +505,9 @@ inline void MatrixPartitionedSolver<Solver>::solve_u(
 
 template <class Solver>
 inline xt::xtensor<double, 2> MatrixPartitionedSolver<Solver>::Solve(
-    MatrixPartitioned& matrix, const xt::xtensor<double, 2>& b, const xt::xtensor<double, 2>& x)
+    MatrixPartitioned& matrix,
+    const xt::xtensor<double, 2>& b,
+    const xt::xtensor<double, 2>& x)
 {
     xt::xtensor<double, 2> ret = x;
     this->solve(matrix, b, ret);
@@ -509,7 +516,9 @@ inline xt::xtensor<double, 2> MatrixPartitionedSolver<Solver>::Solve(
 
 template <class Solver>
 inline xt::xtensor<double, 1> MatrixPartitionedSolver<Solver>::Solve(
-    MatrixPartitioned& matrix, const xt::xtensor<double, 1>& b, const xt::xtensor<double, 1>& x)
+    MatrixPartitioned& matrix,
+    const xt::xtensor<double, 1>& b,
+    const xt::xtensor<double, 1>& x)
 {
     xt::xtensor<double, 1> ret = x;
     this->solve(matrix, b, ret);
@@ -518,7 +527,9 @@ inline xt::xtensor<double, 1> MatrixPartitionedSolver<Solver>::Solve(
 
 template <class Solver>
 inline xt::xtensor<double, 1> MatrixPartitionedSolver<Solver>::Solve_u(
-    MatrixPartitioned& matrix, const xt::xtensor<double, 1>& b_u, const xt::xtensor<double, 1>& x_p)
+    MatrixPartitioned& matrix,
+    const xt::xtensor<double, 1>& b_u,
+    const xt::xtensor<double, 1>& x_p)
 {
     xt::xtensor<double, 1> x_u = xt::empty<double>({matrix.m_nnu});
     this->solve_u(matrix, b_u, x_p, x_u);

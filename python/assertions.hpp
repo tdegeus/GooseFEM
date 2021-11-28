@@ -14,8 +14,9 @@ namespace py = pybind11;
 
 void init_assertions(py::module& mod)
 {
-    mod.def("is_unique",
-            &GooseFEM::is_unique<xt::pyarray<long>>,
-            "See :cpp:func:`GooseFEM::is_unique`.",
-            py::arg("a"));
+    mod.def(
+        "is_unique",
+        &GooseFEM::is_unique<xt::pyarray<long>>,
+        "See :cpp:func:`GooseFEM::is_unique`.",
+        py::arg("a"));
 }

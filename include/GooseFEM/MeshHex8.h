@@ -9,8 +9,8 @@ Generate simple meshes of 8-noded hexahedral elements in 3d (GooseFEM::Mesh::Ele
 #ifndef GOOSEFEM_MESHHEX8_H
 #define GOOSEFEM_MESHHEX8_H
 
-#include "config.h"
 #include "Mesh.h"
+#include "config.h"
 
 namespace GooseFEM {
 namespace Mesh {
@@ -25,7 +25,6 @@ Regular mesh: equi-sized elements.
 */
 class Regular : public RegularBase3d<Regular> {
 public:
-
     /**
     Constructor.
 
@@ -91,14 +90,14 @@ private:
     size_t nodesBackTopLeftCorner_impl() const;
     size_t nodesBackTopRightCorner_impl() const;
 
-    double m_h;     ///< See h()
-    size_t m_nelx;  ///< See nelx()
-    size_t m_nely;  ///< See nely()
-    size_t m_nelz;  ///< See nely()
+    double m_h; ///< See h()
+    size_t m_nelx; ///< See nelx()
+    size_t m_nely; ///< See nely()
+    size_t m_nelz; ///< See nely()
     size_t m_nelem; ///< See nelem()
     size_t m_nnode; ///< See nnode()
-    size_t m_nne;   ///< See nne()
-    size_t m_ndim;  ///< See ndim()
+    size_t m_nne; ///< See nne()
+    size_t m_ndim; ///< See ndim()
 };
 
 /**
@@ -106,7 +105,6 @@ Mesh with fine middle layer, and coarser elements towards the top and bottom.
 */
 class FineLayer : public RegularBase3d<FineLayer> {
 public:
-
     /**
     Constructor.
 
@@ -183,25 +181,26 @@ private:
     size_t nodesBackTopLeftCorner_impl() const;
     size_t nodesBackTopRightCorner_impl() const;
 
-    double m_h;                          ///< See h()
-    size_t m_nelx;                       ///< See nelx()
-    size_t m_nely;                       ///< See nely()
-    size_t m_nelz;                       ///< See nely()
-    size_t m_nelem;                      ///< See nelem()
-    size_t m_nnode;                      ///< See nnode()
-    size_t m_nne;                        ///< See nne()
-    size_t m_ndim;                       ///< See ndim()
-    double m_Lx;                         ///< mesh size in "x"
-    double m_Lz;                         ///< mesh size in "z"
+    double m_h; ///< See h()
+    size_t m_nelx; ///< See nelx()
+    size_t m_nely; ///< See nely()
+    size_t m_nelz; ///< See nely()
+    size_t m_nelem; ///< See nelem()
+    size_t m_nnode; ///< See nnode()
+    size_t m_nne; ///< See nne()
+    size_t m_ndim; ///< See ndim()
+    double m_Lx; ///< mesh size in "x"
+    double m_Lz; ///< mesh size in "z"
     xt::xtensor<size_t, 1> m_layer_nelx; ///< number of elements in "x" per element layer in "y"
     xt::xtensor<size_t, 1> m_layer_nelz; ///< number of elements in "z" per element layer in "y"
-    xt::xtensor<size_t, 1> m_nnd;        ///< number of nodes in the main node layer per node layer in "y"
-    xt::xtensor<size_t, 1> m_nhx;        ///< element size in x-direction per element layer in "y"
-    xt::xtensor<size_t, 1> m_nhy;        ///< element size in y-direction per element layer in "y"
-    xt::xtensor<size_t, 1> m_nhz;        ///< element size in z-direction per element layer in "y"
-    xt::xtensor<int, 1> m_refine;        ///< refine direction (-1:no refine, 0:"x", 2:"z") per element layer in "y"
-    xt::xtensor<size_t, 1> m_startElem;  ///< start element per element layer in "y"
-    xt::xtensor<size_t, 1> m_startNode;  ///< start node per node layer in "y"
+    xt::xtensor<size_t, 1> m_nnd; ///< number of nodes in the main node layer per node layer in "y"
+    xt::xtensor<size_t, 1> m_nhx; ///< element size in x-direction per element layer in "y"
+    xt::xtensor<size_t, 1> m_nhy; ///< element size in y-direction per element layer in "y"
+    xt::xtensor<size_t, 1> m_nhz; ///< element size in z-direction per element layer in "y"
+    xt::xtensor<int, 1>
+        m_refine; ///< refine direction (-1:no refine, 0:"x", 2:"z") per element layer in "y"
+    xt::xtensor<size_t, 1> m_startElem; ///< start element per element layer in "y"
+    xt::xtensor<size_t, 1> m_startNode; ///< start node per node layer in "y"
 };
 
 } // namespace Hex8

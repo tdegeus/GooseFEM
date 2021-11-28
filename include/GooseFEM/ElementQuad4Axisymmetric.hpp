@@ -69,12 +69,12 @@ inline void QuadratureAxisymmetric::compute_dN_impl()
     // most components remain zero, and are not written
     m_B.fill(0.0);
 
-    #pragma omp parallel
+#pragma omp parallel
     {
         xt::xtensor<double, 2> J = xt::empty<double>({2, 2});
         xt::xtensor<double, 2> Jinv = xt::empty<double>({2, 2});
 
-        #pragma omp for
+#pragma omp for
         for (size_t e = 0; e < m_nelem; ++e) {
 
             auto x = xt::adapt(&m_x(e, 0, 0), xt::xshape<s_nne, s_ndim>());
@@ -82,7 +82,8 @@ inline void QuadratureAxisymmetric::compute_dN_impl()
             for (size_t q = 0; q < m_nip; ++q) {
 
                 auto dNxi = xt::adapt(&m_dNxi(q, 0, 0), xt::xshape<s_nne, s_ndim>());
-                auto B = xt::adapt(&m_B(e, q, 0, 0, 0, 0), xt::xshape<s_nne, s_tdim, s_tdim, s_tdim>());
+                auto B =
+                    xt::adapt(&m_B(e, q, 0, 0, 0, 0), xt::xshape<s_nne, s_tdim, s_tdim, s_tdim>());
                 auto N = xt::adapt(&m_N(q, 0), xt::xshape<s_nne>());
 
                 // J(i,j) += dNxi(m,i) * x(m,j);
@@ -133,7 +134,7 @@ inline void QuadratureAxisymmetric::gradN_vector_impl(const T& elemvec, R& qtens
 
     qtensor.fill(0.0);
 
-    #pragma omp parallel for
+#pragma omp parallel for
     for (size_t e = 0; e < m_nelem; ++e) {
 
         auto u = xt::adapt(&elemvec(e, 0, 0), xt::xshape<s_nne, s_ndim>());
@@ -167,7 +168,7 @@ inline void QuadratureAxisymmetric::gradN_vector_T_impl(const T& elemvec, R& qte
 
     qtensor.fill(0.0);
 
-    #pragma omp parallel for
+#pragma omp parallel for
     for (size_t e = 0; e < m_nelem; ++e) {
 
         auto u = xt::adapt(&elemvec(e, 0, 0), xt::xshape<s_nne, s_ndim>());
@@ -201,7 +202,7 @@ inline void QuadratureAxisymmetric::symGradN_vector_impl(const T& elemvec, R& qt
 
     qtensor.fill(0.0);
 
-    #pragma omp parallel for
+#pragma omp parallel for
     for (size_t e = 0; e < m_nelem; ++e) {
 
         auto u = xt::adapt(&elemvec(e, 0, 0), xt::xshape<s_nne, s_ndim>());
@@ -237,7 +238,7 @@ inline void QuadratureAxisymmetric::int_N_scalar_NT_dV_impl(const T& qscalar, R&
 
     elemmat.fill(0.0);
 
-    #pragma omp parallel for
+#pragma omp parallel for
     for (size_t e = 0; e < m_nelem; ++e) {
 
         auto M = xt::adapt(&elemmat(e, 0, 0), xt::xshape<s_nne * s_ndim, s_nne * s_ndim>());
@@ -260,14 +261,15 @@ inline void QuadratureAxisymmetric::int_N_scalar_NT_dV_impl(const T& qscalar, R&
 }
 
 template <class T, class R>
-inline void QuadratureAxisymmetric::int_gradN_dot_tensor2_dV_impl(const T& qtensor, R& elemvec) const
+inline void
+QuadratureAxisymmetric::int_gradN_dot_tensor2_dV_impl(const T& qtensor, R& elemvec) const
 {
     GOOSEFEM_ASSERT(xt::has_shape(qtensor, this->shape_qtensor<2>()));
     GOOSEFEM_ASSERT(xt::has_shape(elemvec, this->shape_elemvec()));
 
     elemvec.fill(0.0);
 
-    #pragma omp parallel for
+#pragma omp parallel for
     for (size_t e = 0; e < m_nelem; ++e) {
 
         auto f = xt::adapt(&elemvec(e, 0, 0), xt::xshape<s_nne, s_ndim>());
@@ -290,15 +292,15 @@ inline void QuadratureAxisymmetric::int_gradN_dot_tensor2_dV_impl(const T& qtens
 }
 
 template <class T, class R>
-inline void QuadratureAxisymmetric::int_gradN_dot_tensor4_dot_gradNT_dV_impl(
-    const T& qtensor, R& elemmat) const
+inline void
+QuadratureAxisymmetric::int_gradN_dot_tensor4_dot_gradNT_dV_impl(const T& qtensor, R& elemmat) const
 {
     GOOSEFEM_ASSERT(xt::has_shape(qtensor, this->shape_qtensor<4>()));
     GOOSEFEM_ASSERT(xt::has_shape(elemmat, this->shape_elemmat()));
 
     elemmat.fill(0.0);
 
-    #pragma omp parallel for
+#pragma omp parallel for
     for (size_t e = 0; e < m_nelem; ++e) {
 
         auto K = xt::adapt(&elemmat(e, 0, 0), xt::xshape<s_nne * s_ndim, s_nne * s_ndim>());
@@ -306,7 +308,8 @@ inline void QuadratureAxisymmetric::int_gradN_dot_tensor4_dot_gradNT_dV_impl(
         for (size_t q = 0; q < m_nip; ++q) {
 
             auto B = xt::adapt(&m_B(e, q, 0, 0, 0, 0), xt::xshape<s_nne, s_tdim, s_tdim, s_tdim>());
-            auto C = xt::adapt(&qtensor(e, q, 0, 0, 0, 0), xt::xshape<s_tdim, s_tdim, s_tdim, s_tdim>());
+            auto C =
+                xt::adapt(&qtensor(e, q, 0, 0, 0, 0), xt::xshape<s_tdim, s_tdim, s_tdim, s_tdim>());
             auto& vol = m_vol(e, q);
 
             // K(m*s_ndim+perm(c), n*s_ndim+perm(f)) = B(m,a,b,c) * C(a,b,d,e) * B(n,e,d,f) * vol;

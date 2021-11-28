@@ -1,12 +1,12 @@
 #define CATCH_CONFIG_MAIN // tells Catch to provide a main() - only do this in one cpp file
-#include <catch2/catch.hpp>
-#include <xtensor/xrandom.hpp>
-#include <xtensor/xmath.hpp>
 #include <Eigen/Eigen>
-#include <GooseFEM/GooseFEM.h>
 #include <GMatElastic/Cartesian3d.h>
+#include <GooseFEM/GooseFEM.h>
+#include <catch2/catch.hpp>
+#include <xtensor/xmath.hpp>
+#include <xtensor/xrandom.hpp>
 
-#define ISCLOSE(a,b) REQUIRE_THAT((a), Catch::WithinAbs((b), 1.0e-12));
+#define ISCLOSE(a, b) REQUIRE_THAT((a), Catch::WithinAbs((b), 1.0e-12));
 
 TEST_CASE("hybrid-elastic", "GooseFEM.h")
 {
@@ -17,9 +17,8 @@ TEST_CASE("hybrid-elastic", "GooseFEM.h")
         GooseFEM::Mesh::Quad4::Regular mesh(N, N);
         size_t nelem = mesh.nelem();
         xt::xtensor<size_t, 1> elem_a = xt::arange<size_t>(N, 2 * N);
-        xt::xtensor<size_t, 1> elem_b = xt::concatenate(xt::xtuple(
-            xt::arange<size_t>(N),
-            xt::arange<size_t>(2 * N, nelem)));
+        xt::xtensor<size_t, 1> elem_b =
+            xt::concatenate(xt::xtuple(xt::arange<size_t>(N), xt::arange<size_t>(2 * N, nelem)));
         size_t nelem_a = elem_a.size();
         size_t nelem_b = elem_b.size();
 
@@ -119,9 +118,8 @@ TEST_CASE("hybrid-elastic", "GooseFEM.h")
         GooseFEM::Mesh::Quad4::Regular mesh(N, N);
         size_t nelem = mesh.nelem();
         xt::xtensor<size_t, 1> elem_a = xt::arange<size_t>(N, 2 * N);
-        xt::xtensor<size_t, 1> elem_b = xt::concatenate(xt::xtuple(
-            xt::arange<size_t>(N),
-            xt::arange<size_t>(2 * N, nelem)));
+        xt::xtensor<size_t, 1> elem_b =
+            xt::concatenate(xt::xtuple(xt::arange<size_t>(N), xt::arange<size_t>(2 * N, nelem)));
         size_t nelem_a = elem_a.size();
         size_t nelem_b = elem_b.size();
 
@@ -223,9 +221,8 @@ TEST_CASE("hybrid-elastic", "GooseFEM.h")
         size_t nelem = mesh.nelem();
         size_t ndim = mesh.ndim();
         xt::xtensor<size_t, 1> elem_a = xt::arange<size_t>(N, 2 * N);
-        xt::xtensor<size_t, 1> elem_b = xt::concatenate(xt::xtuple(
-            xt::arange<size_t>(N),
-            xt::arange<size_t>(2 * N, nelem)));
+        xt::xtensor<size_t, 1> elem_b =
+            xt::concatenate(xt::xtuple(xt::arange<size_t>(N), xt::arange<size_t>(2 * N, nelem)));
         size_t nelem_a = elem_a.size();
         size_t nelem_b = elem_b.size();
 
@@ -333,5 +330,4 @@ TEST_CASE("hybrid-elastic", "GooseFEM.h")
             REQUIRE(xt::allclose(Sig, Sig_c));
         }
     }
-
 }

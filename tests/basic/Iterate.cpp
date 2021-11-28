@@ -1,11 +1,11 @@
 #define CATCH_CONFIG_MAIN // tells Catch to provide a main() - only do this in one cpp file
-#include <catch2/catch.hpp>
-#include <xtensor/xrandom.hpp>
-#include <xtensor/xmath.hpp>
 #include <Eigen/Eigen>
 #include <GooseFEM/GooseFEM.h>
+#include <catch2/catch.hpp>
+#include <xtensor/xmath.hpp>
+#include <xtensor/xrandom.hpp>
 
-#define ISCLOSE(a,b) REQUIRE_THAT((a), Catch::WithinAbs((b), 1.e-12));
+#define ISCLOSE(a, b) REQUIRE_THAT((a), Catch::WithinAbs((b), 1.e-12));
 
 TEST_CASE("GooseFEM::Iterate", "Iterate.h")
 {
@@ -13,8 +13,9 @@ TEST_CASE("GooseFEM::Iterate", "Iterate.h")
     {
         GooseFEM::Iterate::StopList residuals(5);
 
-        std::vector<double> res = {5e+0,  5e+1,  5e-1,  5e-2,  5e-3,  5e-4,  4e-4,  3e-4,  2e-4,  1e-4};
-        std::vector<bool> conv =  {false, false, false, false, false, false, false, false, false, true};
+        std::vector<double> res = {5e+0, 5e+1, 5e-1, 5e-2, 5e-3, 5e-4, 4e-4, 3e-4, 2e-4, 1e-4};
+        std::vector<bool> conv = {
+            false, false, false, false, false, false, false, false, false, true};
 
         for (size_t i = 0; i < res.size(); ++i) {
             residuals.roll_insert(res[i]);
@@ -26,8 +27,9 @@ TEST_CASE("GooseFEM::Iterate", "Iterate.h")
     {
         GooseFEM::Iterate::StopList residuals(5);
 
-        std::vector<double> res = {5e+0,  5e+1,  5e-1,  5e-2,  5e-3,  5e-4,  4e-4,  5e-4,  4e-4,  4e-4};
-        std::vector<bool> conv =  {false, false, false, false, false, false, false, false, false, true};
+        std::vector<double> res = {5e+0, 5e+1, 5e-1, 5e-2, 5e-3, 5e-4, 4e-4, 5e-4, 4e-4, 4e-4};
+        std::vector<bool> conv = {
+            false, false, false, false, false, false, false, false, false, true};
 
         for (size_t i = 0; i < res.size(); ++i) {
             residuals.roll_insert(res[i]);
@@ -39,8 +41,9 @@ TEST_CASE("GooseFEM::Iterate", "Iterate.h")
     {
         GooseFEM::Iterate::StopList residuals(5);
 
-        std::vector<double> res = {5e+0,  5e+1,  5e-1,  5e-2,  5e-3,  5e-4,  4e-4,  3e-4,  2e-4,  1e-4};
-        std::vector<bool> conv =  {false, false, false, false, false, false, false, false, false, true};
+        std::vector<double> res = {5e+0, 5e+1, 5e-1, 5e-2, 5e-3, 5e-4, 4e-4, 3e-4, 2e-4, 1e-4};
+        std::vector<bool> conv = {
+            false, false, false, false, false, false, false, false, false, true};
 
         for (size_t i = 0; i < res.size(); ++i) {
             residuals.roll_insert(res[i]);
@@ -52,8 +55,23 @@ TEST_CASE("GooseFEM::Iterate", "Iterate.h")
     {
         GooseFEM::Iterate::StopList residuals(5);
 
-        std::vector<double> res = {5e+0,  5e+1,  5e-1,  5e-2,  5e-3,  5e-4,  4e-4,  3e-4,  2e-4,  3e-4,  2e-4,  1e-4,  9e-5,  8e-5};
-        std::vector<bool> conv =  {false, false, false, false, false, false, false, false, false, false, false, false, false, true};
+        std::vector<double> res = {
+            5e+0, 5e+1, 5e-1, 5e-2, 5e-3, 5e-4, 4e-4, 3e-4, 2e-4, 3e-4, 2e-4, 1e-4, 9e-5, 8e-5};
+        std::vector<bool> conv = {
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            true};
 
         for (size_t i = 0; i < res.size(); ++i) {
             residuals.roll_insert(res[i]);

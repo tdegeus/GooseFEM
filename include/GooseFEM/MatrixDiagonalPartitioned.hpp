@@ -68,7 +68,7 @@ inline void MatrixDiagonalPartitioned::factorize()
         return;
     }
 
-    #pragma omp parallel for
+#pragma omp parallel for
     for (size_t d = 0; d < m_nnu; ++d) {
         m_inv_uu(d) = 1.0 / m_Auu(d);
     }
@@ -107,12 +107,12 @@ inline void MatrixDiagonalPartitioned::set(const xt::xtensor<double, 1>& A)
 {
     GOOSEFEM_ASSERT(A.size() == m_ndof);
 
-    #pragma omp parallel for
+#pragma omp parallel for
     for (size_t d = 0; d < m_nnu; ++d) {
         m_Auu(d) = A(m_iiu(d));
     }
 
-    #pragma omp parallel for
+#pragma omp parallel for
     for (size_t d = 0; d < m_nnp; ++d) {
         m_App(d) = A(m_iip(d));
     }
@@ -126,7 +126,7 @@ MatrixDiagonalPartitioned::dot(const xt::xtensor<double, 2>& x, xt::xtensor<doub
     GOOSEFEM_ASSERT(xt::has_shape(x, {m_nnode, m_ndim}));
     GOOSEFEM_ASSERT(xt::has_shape(b, {m_nnode, m_ndim}));
 
-    #pragma omp parallel for
+#pragma omp parallel for
     for (size_t m = 0; m < m_nnode; ++m) {
         for (size_t i = 0; i < m_ndim; ++i) {
 
@@ -148,12 +148,12 @@ MatrixDiagonalPartitioned::dot(const xt::xtensor<double, 1>& x, xt::xtensor<doub
     GOOSEFEM_ASSERT(x.size() == m_ndof);
     GOOSEFEM_ASSERT(b.size() == m_ndof);
 
-    #pragma omp parallel for
+#pragma omp parallel for
     for (size_t d = 0; d < m_nnu; ++d) {
         b(m_iiu(d)) = m_Auu(d) * x(m_iiu(d));
     }
 
-    #pragma omp parallel for
+#pragma omp parallel for
     for (size_t d = 0; d < m_nnp; ++d) {
         b(m_iip(d)) = m_App(d) * x(m_iip(d));
     }
@@ -170,7 +170,7 @@ inline void MatrixDiagonalPartitioned::dot_u(
     GOOSEFEM_ASSERT(x_p.size() == m_nnp);
     GOOSEFEM_ASSERT(b_u.size() == m_nnu);
 
-    #pragma omp parallel for
+#pragma omp parallel for
     for (size_t d = 0; d < m_nnu; ++d) {
         b_u(d) = m_Auu(d) * x_u(d);
     }
@@ -187,7 +187,7 @@ inline void MatrixDiagonalPartitioned::dot_p(
     GOOSEFEM_ASSERT(x_p.size() == m_nnp);
     GOOSEFEM_ASSERT(b_p.size() == m_nnp);
 
-    #pragma omp parallel for
+#pragma omp parallel for
     for (size_t d = 0; d < m_nnp; ++d) {
         b_p(d) = m_App(d) * x_p(d);
     }
@@ -201,7 +201,7 @@ MatrixDiagonalPartitioned::solve(const xt::xtensor<double, 2>& b, xt::xtensor<do
 
     this->factorize();
 
-    #pragma omp parallel for
+#pragma omp parallel for
     for (size_t m = 0; m < m_nnode; ++m) {
         for (size_t i = 0; i < m_ndim; ++i) {
             if (m_part(m, i) < m_nnu) {
@@ -219,7 +219,7 @@ MatrixDiagonalPartitioned::solve(const xt::xtensor<double, 1>& b, xt::xtensor<do
 
     this->factorize();
 
-    #pragma omp parallel for
+#pragma omp parallel for
     for (size_t d = 0; d < m_nnu; ++d) {
         x(m_iiu(d)) = m_inv_uu(d) * b(m_iiu(d));
     }
@@ -238,19 +238,20 @@ inline void MatrixDiagonalPartitioned::solve_u(
 
     this->factorize();
 
-    #pragma omp parallel for
+#pragma omp parallel for
     for (size_t d = 0; d < m_nnu; ++d) {
         x_u(d) = m_inv_uu(d) * b_u(d);
     }
 }
 
 inline void MatrixDiagonalPartitioned::reaction(
-    const xt::xtensor<double, 2>& x, xt::xtensor<double, 2>& b) const
+    const xt::xtensor<double, 2>& x,
+    xt::xtensor<double, 2>& b) const
 {
     GOOSEFEM_ASSERT(xt::has_shape(x, {m_nnode, m_ndim}));
     GOOSEFEM_ASSERT(xt::has_shape(b, {m_nnode, m_ndim}));
 
-    #pragma omp parallel for
+#pragma omp parallel for
     for (size_t m = 0; m < m_nnode; ++m) {
         for (size_t i = 0; i < m_ndim; ++i) {
             if (m_part(m, i) >= m_nnu) {
@@ -261,12 +262,13 @@ inline void MatrixDiagonalPartitioned::reaction(
 }
 
 inline void MatrixDiagonalPartitioned::reaction(
-    const xt::xtensor<double, 1>& x, xt::xtensor<double, 1>& b) const
+    const xt::xtensor<double, 1>& x,
+    xt::xtensor<double, 1>& b) const
 {
     GOOSEFEM_ASSERT(x.size() == m_ndof);
     GOOSEFEM_ASSERT(b.size() == m_ndof);
 
-    #pragma omp parallel for
+#pragma omp parallel for
     for (size_t d = 0; d < m_nnp; ++d) {
         b(m_iip(d)) = m_App(d) * x(m_iip(d));
     }
@@ -283,7 +285,7 @@ inline void MatrixDiagonalPartitioned::reaction_p(
     GOOSEFEM_ASSERT(x_p.size() == m_nnp);
     GOOSEFEM_ASSERT(b_p.size() == m_nnp);
 
-    #pragma omp parallel for
+#pragma omp parallel for
     for (size_t d = 0; d < m_nnp; ++d) {
         b_p(d) = m_App(d) * x_p(d);
     }
@@ -293,12 +295,12 @@ inline xt::xtensor<double, 1> MatrixDiagonalPartitioned::Todiagonal() const
 {
     xt::xtensor<double, 1> ret = xt::zeros<double>({m_ndof});
 
-    #pragma omp parallel for
+#pragma omp parallel for
     for (size_t d = 0; d < m_nnu; ++d) {
         ret(m_iiu(d)) = m_Auu(d);
     }
 
-    #pragma omp parallel for
+#pragma omp parallel for
     for (size_t d = 0; d < m_nnp; ++d) {
         ret(m_iip(d)) = m_App(d);
     }
@@ -307,7 +309,8 @@ inline xt::xtensor<double, 1> MatrixDiagonalPartitioned::Todiagonal() const
 }
 
 inline xt::xtensor<double, 1> MatrixDiagonalPartitioned::Dot_u(
-    const xt::xtensor<double, 1>& x_u, const xt::xtensor<double, 1>& x_p) const
+    const xt::xtensor<double, 1>& x_u,
+    const xt::xtensor<double, 1>& x_p) const
 {
     xt::xtensor<double, 1> b_u = xt::empty<double>({m_nnu});
     this->dot_u(x_u, x_p, b_u);
@@ -315,7 +318,8 @@ inline xt::xtensor<double, 1> MatrixDiagonalPartitioned::Dot_u(
 }
 
 inline xt::xtensor<double, 1> MatrixDiagonalPartitioned::Dot_p(
-    const xt::xtensor<double, 1>& x_u, const xt::xtensor<double, 1>& x_p) const
+    const xt::xtensor<double, 1>& x_u,
+    const xt::xtensor<double, 1>& x_p) const
 {
     xt::xtensor<double, 1> b_p = xt::empty<double>({m_nnp});
     this->dot_p(x_u, x_p, b_p);
@@ -323,7 +327,8 @@ inline xt::xtensor<double, 1> MatrixDiagonalPartitioned::Dot_p(
 }
 
 inline xt::xtensor<double, 1> MatrixDiagonalPartitioned::Solve_u(
-    const xt::xtensor<double, 1>& b_u, const xt::xtensor<double, 1>& x_p)
+    const xt::xtensor<double, 1>& b_u,
+    const xt::xtensor<double, 1>& x_p)
 {
     xt::xtensor<double, 1> x_u = xt::empty<double>({m_nnu});
     this->solve_u(b_u, x_p, x_u);
@@ -331,7 +336,8 @@ inline xt::xtensor<double, 1> MatrixDiagonalPartitioned::Solve_u(
 }
 
 inline xt::xtensor<double, 2> MatrixDiagonalPartitioned::Reaction(
-    const xt::xtensor<double, 2>& x, const xt::xtensor<double, 2>& b) const
+    const xt::xtensor<double, 2>& x,
+    const xt::xtensor<double, 2>& b) const
 {
     xt::xtensor<double, 2> ret = b;
     this->reaction(x, ret);
@@ -339,7 +345,8 @@ inline xt::xtensor<double, 2> MatrixDiagonalPartitioned::Reaction(
 }
 
 inline xt::xtensor<double, 1> MatrixDiagonalPartitioned::Reaction(
-    const xt::xtensor<double, 1>& x, const xt::xtensor<double, 1>& b) const
+    const xt::xtensor<double, 1>& x,
+    const xt::xtensor<double, 1>& b) const
 {
     xt::xtensor<double, 1> ret = b;
     this->reaction(x, ret);
@@ -347,7 +354,8 @@ inline xt::xtensor<double, 1> MatrixDiagonalPartitioned::Reaction(
 }
 
 inline xt::xtensor<double, 1> MatrixDiagonalPartitioned::Reaction_p(
-    const xt::xtensor<double, 1>& x_u, const xt::xtensor<double, 1>& x_p) const
+    const xt::xtensor<double, 1>& x_u,
+    const xt::xtensor<double, 1>& x_p) const
 {
     xt::xtensor<double, 1> b_p = xt::empty<double>({m_nnp});
     this->reaction_p(x_u, x_p, b_p);

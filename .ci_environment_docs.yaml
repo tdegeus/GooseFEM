@@ -1,8 +1,8 @@
 channels:
-  - conda-forge
+- conda-forge
 dependencies:
-  - cmake
-  - doxygen
-  - eigen
-  - setuptools_scm
-  - xtensor
+- cmake
+- doxygen
+- eigen
+- setuptools_scm
+- xtensor

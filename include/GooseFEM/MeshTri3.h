@@ -9,8 +9,8 @@ Generate simple meshes of 3-noded triangular elements in 2d (GooseFEM::Mesh::Ele
 #ifndef GOOSEFEM_MESHTRI3_H
 #define GOOSEFEM_MESHTRI3_H
 
-#include "config.h"
 #include "Mesh.h"
+#include "config.h"
 
 namespace GooseFEM {
 namespace Mesh {
@@ -25,7 +25,6 @@ Regular grid of squares, with each square cut into two triangular elements.
 */
 class Regular : public RegularBase2d<Regular> {
 public:
-
     /**
     Constructor.
 
@@ -57,13 +56,13 @@ private:
     size_t nodesTopLeftCorner_impl() const;
     size_t nodesTopRightCorner_impl() const;
 
-    double m_h;     ///< See h()
-    size_t m_nelx;  ///< See nelx()
-    size_t m_nely;  ///< See nely()
+    double m_h; ///< See h()
+    size_t m_nelx; ///< See nelx()
+    size_t m_nely; ///< See nely()
     size_t m_nelem; ///< See nelem()
     size_t m_nnode; ///< See nnode()
-    size_t m_nne;   ///< See nne()
-    size_t m_ndim;  ///< See ndim()
+    size_t m_nne; ///< See nne()
+    size_t m_ndim; ///< See ndim()
 };
 
 // read / set the orientation (-1/+1) of all triangles
@@ -75,8 +74,8 @@ Read the orientation of a mesh of triangular elements of type ElementType::Tri3.
 \param conn Connectivity [nelem, nne].
 \return Orientation (-1 or +1) per element [nelem].
 */
-inline xt::xtensor<int, 1> getOrientation(
-    const xt::xtensor<double, 2>& coor, const xt::xtensor<size_t, 2>& conn);
+inline xt::xtensor<int, 1>
+getOrientation(const xt::xtensor<double, 2>& coor, const xt::xtensor<size_t, 2>& conn);
 
 /**
 Set the orientation of a mesh of triangular elements of type ElementType::Tri3.
@@ -87,7 +86,9 @@ Set the orientation of a mesh of triangular elements of type ElementType::Tri3.
 \return Connectivity (order of nodes-per-element may have changed) [nelem, nne].
 */
 inline xt::xtensor<size_t, 2> setOrientation(
-    const xt::xtensor<double, 2>& coor, const xt::xtensor<size_t, 2>& conn, int orientation = -1);
+    const xt::xtensor<double, 2>& coor,
+    const xt::xtensor<size_t, 2>& conn,
+    int orientation = -1);
 
 /**
 Set the orientation of a mesh of triangular elements of type ElementType::Tri3.

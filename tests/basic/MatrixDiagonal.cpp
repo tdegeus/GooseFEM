@@ -1,12 +1,12 @@
 #define CATCH_CONFIG_MAIN // tells Catch to provide a main() - only do this in one cpp file
-#include <catch2/catch.hpp>
-#include <xtensor/xrandom.hpp>
+#include <GooseFEM/ElementQuad4.h>
 #include <GooseFEM/MatrixDiagonal.h>
 #include <GooseFEM/MeshQuad4.h>
-#include <GooseFEM/ElementQuad4.h>
 #include <GooseFEM/Vector.h>
+#include <catch2/catch.hpp>
+#include <xtensor/xrandom.hpp>
 
-#define ISCLOSE(a,b) REQUIRE_THAT((a), Catch::WithinAbs((b), 1.e-12));
+#define ISCLOSE(a, b) REQUIRE_THAT((a), Catch::WithinAbs((b), 1.e-12));
 
 TEST_CASE("GooseFEM::MatrixDiagonal", "MatrixDiagonal.h")
 {
@@ -28,15 +28,25 @@ TEST_CASE("GooseFEM::MatrixDiagonal", "MatrixDiagonal.h")
 
         A.assemble(quad.Int_N_scalar_NT_dV(val_quad));
 
-        xt::xtensor<double, 1> a = {0.25, 0.25,
-                                    0.5 , 0.5 ,
-                                    0.25, 0.25,
-                                    0.5 , 0.5 ,
-                                    1.0 , 1.0 ,
-                                    0.5 , 0.5 ,
-                                    0.25, 0.25,
-                                    0.5 , 0.5 ,
-                                    0.25, 0.25};
+        xt::xtensor<double, 1> a = {
+            0.25,
+            0.25,
+            0.5,
+            0.5,
+            0.25,
+            0.25,
+            0.5,
+            0.5,
+            1.0,
+            1.0,
+            0.5,
+            0.5,
+            0.25,
+            0.25,
+            0.5,
+            0.5,
+            0.25,
+            0.25};
 
         REQUIRE(xt::allclose(A.Todiagonal(), a));
     }

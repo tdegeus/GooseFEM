@@ -232,7 +232,7 @@ inline void Quadrature::int_N_scalar_NT_dV_impl(const T& qscalar, R& elemmat) co
 
     elemmat.fill(0.0);
 
-    #pragma omp parallel for
+#pragma omp parallel for
     for (size_t e = 0; e < m_nelem; ++e) {
 
         auto M = xt::adapt(&elemmat(e, 0, 0), xt::xshape<s_nne * s_ndim, s_nne * s_ndim>());
@@ -263,7 +263,7 @@ inline void Quadrature::int_gradN_dot_tensor2_dV_impl(const T& qtensor, R& elemv
 
     elemvec.fill(0.0);
 
-    #pragma omp parallel for
+#pragma omp parallel for
     for (size_t e = 0; e < m_nelem; ++e) {
 
         auto f = xt::adapt(&elemvec(e, 0, 0), xt::xshape<s_nne, s_ndim>());

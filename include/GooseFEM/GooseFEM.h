@@ -13,8 +13,8 @@ Basic include of common methods.
 #define GOOSEFEM_EIGEN
 #endif
 
-#include "version.h"
 #include "assertions.h"
+#include "version.h"
 
 #include "Allocate.h"
 #include "Element.h"

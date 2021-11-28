@@ -62,4 +62,3 @@ Example
 | :download:`main.cpp <dynamics/Elastic-Verlet/main.cpp>`
 | :download:`CMakeLists.txt <dynamics/Elastic-Verlet/CMakeLists.txt>`
 | :download:`plot.py <dynamics/Elastic-Verlet/plot.py>`
-

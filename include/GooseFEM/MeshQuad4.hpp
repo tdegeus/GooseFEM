@@ -643,10 +643,8 @@ inline xt::xtensor<size_t, 1> FineLayer::elementgrid_ravel(
     return ret;
 }
 
-inline xt::xtensor<size_t, 1> FineLayer::elementgrid_around_ravel(
-    size_t e,
-    size_t size,
-    bool periodic)
+inline xt::xtensor<size_t, 1>
+FineLayer::elementgrid_around_ravel(size_t e, size_t size, bool periodic)
 {
     GOOSEFEM_WIP_ASSERT(periodic == true);
 
@@ -707,11 +705,8 @@ inline xt::xtensor<size_t, 1> FineLayer::elementgrid_around_ravel(
     return xt::view(map, xt::keep(ret));
 }
 
-inline xt::xtensor<size_t, 1> FineLayer::elementgrid_leftright(
-    size_t e,
-    size_t left,
-    size_t right,
-    bool periodic)
+inline xt::xtensor<size_t, 1>
+FineLayer::elementgrid_leftright(size_t e, size_t left, size_t right, bool periodic)
 {
     GOOSEFEM_WIP_ASSERT(periodic == true);
 
@@ -965,13 +960,16 @@ inline void FineLayer::map(const C& coor, const E& conn)
     this->init(nelx, nely, hx);
     GOOSEFEM_CHECK(xt::all(xt::equal(this->conn(), conn)));
     GOOSEFEM_CHECK(xt::allclose(this->coor(), coor));
-    GOOSEFEM_CHECK(xt::all(xt::equal(this->elementsMiddleLayer(), eleft + xt::arange<size_t>(nelx))));
+    GOOSEFEM_CHECK(
+        xt::all(xt::equal(this->elementsMiddleLayer(), eleft + xt::arange<size_t>(nelx))));
 }
 
 namespace Map {
 
 inline RefineRegular::RefineRegular(
-    const GooseFEM::Mesh::Quad4::Regular& mesh, size_t nx, size_t ny)
+    const GooseFEM::Mesh::Quad4::Regular& mesh,
+    size_t nx,
+    size_t ny)
     : m_coarse(mesh), m_nx(nx), m_ny(ny)
 {
     m_fine = Regular(nx * m_coarse.nelx(), ny * m_coarse.nely(), m_coarse.h());

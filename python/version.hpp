@@ -4,22 +4,23 @@
 
 ================================================================================================= */
 
-#include <pybind11/pybind11.h>
 #include <GooseFEM/version.h>
+#include <pybind11/pybind11.h>
 
 namespace py = pybind11;
 
 void init_version(py::module& m)
 {
 
-    m.def("version",
-          &GooseFEM::version,
-          "Return version string."
-          "See :cpp:class:`GooseFEM::version`.");
+    m.def(
+        "version",
+        &GooseFEM::version,
+        "Return version string."
+        "See :cpp:class:`GooseFEM::version`.");
 
-    m.def("version_dependencies",
-          &GooseFEM::version_dependencies,
-          "Return version information of library and its dependencies."
-          "See :cpp:class:`GooseFEM::version_dependencies`.");
-
+    m.def(
+        "version_dependencies",
+        &GooseFEM::version_dependencies,
+        "Return version information of library and its dependencies."
+        "See :cpp:class:`GooseFEM::version_dependencies`.");
 }

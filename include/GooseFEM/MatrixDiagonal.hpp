@@ -14,7 +14,8 @@ Implementation of MatrixDiagonal.h
 namespace GooseFEM {
 
 inline MatrixDiagonal::MatrixDiagonal(
-    const xt::xtensor<size_t, 2>& conn, const xt::xtensor<size_t, 2>& dofs)
+    const xt::xtensor<size_t, 2>& conn,
+    const xt::xtensor<size_t, 2>& dofs)
     : m_conn(conn), m_dofs(dofs)
 {
     m_nelem = m_conn.shape(0);
@@ -65,7 +66,7 @@ inline void MatrixDiagonal::factorize()
         return;
     }
 
-    #pragma omp parallel for
+#pragma omp parallel for
     for (size_t d = 0; d < m_ndof; ++d) {
         m_inv(d) = 1.0 / m_A(d);
     }
@@ -103,7 +104,7 @@ inline void MatrixDiagonal::dot(const xt::xtensor<double, 2>& x, xt::xtensor<dou
     GOOSEFEM_ASSERT(xt::has_shape(x, {m_nnode, m_ndim}));
     GOOSEFEM_ASSERT(xt::has_shape(b, {m_nnode, m_ndim}));
 
-    #pragma omp parallel for
+#pragma omp parallel for
     for (size_t m = 0; m < m_nnode; ++m) {
         for (size_t i = 0; i < m_ndim; ++i) {
             b(m, i) = m_A(m_dofs(m, i)) * x(m, i);
@@ -126,7 +127,7 @@ inline void MatrixDiagonal::solve(const xt::xtensor<double, 2>& b, xt::xtensor<d
 
     this->factorize();
 
-    #pragma omp parallel for
+#pragma omp parallel for
     for (size_t m = 0; m < m_nnode; ++m) {
         for (size_t i = 0; i < m_ndim; ++i) {
             x(m, i) = m_inv(m_dofs(m, i)) * b(m, i);

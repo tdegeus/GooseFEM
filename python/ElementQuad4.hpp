@@ -21,13 +21,15 @@ void init_ElementQuad4(py::module& m)
 
     cls.def(py::init<const xt::pytensor<double, 3>&>(), "Quadrature", py::arg("x"));
 
-    cls.def(py::init<const xt::pytensor<double, 3>&,
-                     const xt::pytensor<double, 2>&,
-                     const xt::pytensor<double, 1>&>(),
-            "Quadrature",
-            py::arg("x"),
-            py::arg("xi"),
-            py::arg("w"));
+    cls.def(
+        py::init<
+            const xt::pytensor<double, 3>&,
+            const xt::pytensor<double, 2>&,
+            const xt::pytensor<double, 1>&>(),
+        "Quadrature",
+        py::arg("x"),
+        py::arg("xi"),
+        py::arg("w"));
 
     register_Element_QuadratureBase<GooseFEM::Element::Quad4::Quadrature>(cls);
     register_Element_QuadratureBaseCartesian<GooseFEM::Element::Quad4::Quadrature>(cls);
