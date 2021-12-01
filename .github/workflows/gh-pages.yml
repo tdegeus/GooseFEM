@@ -37,7 +37,7 @@ jobs:
 
     - name: Build the docs
       working-directory: build
-      run: make docs
+      run: make html
 
     - name: Deploy to GitHub Pages
       if: success()

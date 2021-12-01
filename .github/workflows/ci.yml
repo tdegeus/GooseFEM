@@ -77,7 +77,12 @@ jobs:
     - name: Build doxygen-docs (error on warning)
       if: runner.os == 'macOS'
       working-directory: build
-      run: make docs
+      run: make html
+
+    - name: Build sphinx-docs
+      if: runner.os == 'macOS'
+      working-directory: docs
+      run: make html
 
   py:
 

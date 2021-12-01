@@ -222,6 +222,6 @@ if(BUILD_DOCS OR BUILD_ALL)
 
     set(DOXYGEN_STRIP_FROM_INC_PATH "${CMAKE_CURRENT_SOURCE_DIR}/include")
     set(DOXYGEN_STRIP_FROM_PATH "${CMAKE_CURRENT_SOURCE_DIR}/include")
-    doxygen_add_docs(docs "${CMAKE_CURRENT_SOURCE_DIR}/include" "README.md")
+    doxygen_add_docs(html "${CMAKE_CURRENT_SOURCE_DIR}/include" "README.md")
 
 endif()
