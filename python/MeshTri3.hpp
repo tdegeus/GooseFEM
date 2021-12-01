@@ -23,8 +23,7 @@ void init_MeshTri3(py::module& mod)
 
     cls.def(
         py::init<size_t, size_t, double>(),
-        "Regular mesh: 'nx' pixels in horizontal direction, 'ny' in vertical direction, edge size "
-        "'h'",
+        "See :cpp:class:`GooseFEM::Mesh::Tri3::Regular`.",
         py::arg("nx"),
         py::arg("ny"),
         py::arg("h") = 1.);
@@ -39,7 +38,7 @@ void init_MeshTri3(py::module& mod)
     mod.def(
         "getOrientation",
         &GooseFEM::Mesh::Tri3::getOrientation,
-        "Get the orientation of each element",
+        "See :cpp:func:`GooseFEM::Mesh::Tri3::getOrientation`.",
         py::arg("coor"),
         py::arg("conn"));
 
@@ -47,7 +46,7 @@ void init_MeshTri3(py::module& mod)
         "setOrientation",
         py::overload_cast<const xt::xtensor<double, 2>&, const xt::xtensor<size_t, 2>&, int>(
             &GooseFEM::Mesh::Tri3::setOrientation),
-        "Set the orientation of each element",
+        "See :cpp:func:`GooseFEM::Mesh::Tri3::setOrientation`.",
         py::arg("coor"),
         py::arg("conn"),
         py::arg("orientation"));
@@ -59,7 +58,7 @@ void init_MeshTri3(py::module& mod)
             const xt::xtensor<size_t, 2>&,
             const xt::xtensor<int, 1>&,
             int>(&GooseFEM::Mesh::Tri3::setOrientation),
-        "Set the orientation of each element",
+        "See :cpp:func:`GooseFEM::Mesh::Tri3::setOrientation`.",
         py::arg("coor"),
         py::arg("conn"),
         py::arg("val"),

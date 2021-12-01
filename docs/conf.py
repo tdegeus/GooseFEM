@@ -21,7 +21,7 @@ if not os.path.isdir(doxydir):
 
 subprocess.call(f"cmake .. -B{doxydir:s} -DBUILD_DOCS=1", shell=True)
 subprocess.call(f"cd {doxydir:s}; make html", shell=True)
-subprocess.call(f"python -m breathe.apidoc -f -p GooseFEM -o api {doxydir:s}/xml", shell=True)
+subprocess.call(f"python -m breathe.apidoc -m -f -p GooseFEM -o api {doxydir:s}/xml", shell=True)
 
 # -- Project information -----------------------------------------------------
 

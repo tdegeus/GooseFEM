@@ -24,8 +24,7 @@ void init_MeshQuad4(py::module& m)
 
         cls.def(
             py::init<size_t, size_t, double>(),
-            "Regular mesh: 'nx' pixels in horizontal direction, 'ny' in vertical direction, edge "
-            "size 'h'",
+            "See :cpp:class:`GooseFEM::Mesh::Quad4::Regular`.",
             py::arg("nx"),
             py::arg("ny"),
             py::arg("h") = 1.0);
@@ -45,8 +44,7 @@ void init_MeshQuad4(py::module& m)
 
         cls.def(
             py::init<size_t, size_t, double, size_t>(),
-            "FineLayer mesh: 'nx' pixels in horizontal direction (length 'Lx'), idem in vertical "
-            "direction",
+            "See :cpp:class:`GooseFEM::Mesh::Quad4::FineLayer`.",
             py::arg("nx"),
             py::arg("ny"),
             py::arg("h") = 1.,
@@ -54,7 +52,7 @@ void init_MeshQuad4(py::module& m)
 
         cls.def(
             py::init<const xt::pytensor<double, 2>&, const xt::pytensor<size_t, 2>&>(),
-            "Map connectivity to generating FineLayer-object.",
+            "See :cpp:class:`GooseFEM::Mesh::Quad4::FineLayer`.",
             py::arg("coor"),
             py::arg("conn"));
 
@@ -103,15 +101,13 @@ void init_MeshQuad4Map(py::module& m)
 
         .def(
             py::init<const GooseFEM::Mesh::Quad4::Regular&, size_t, size_t>(),
-            "Refine a regular mesh",
+            "See :cpp:class:`GooseFEM::Mesh::Quad4::Map::RefineRegular`.",
             py::arg("mesh"),
             py::arg("nx"),
             py::arg("ny"))
 
         .def("getCoarseMesh", &GooseFEM::Mesh::Quad4::Map::RefineRegular::getCoarseMesh)
-
         .def("getFineMesh", &GooseFEM::Mesh::Quad4::Map::RefineRegular::getFineMesh)
-
         .def("getMap", &GooseFEM::Mesh::Quad4::Map::RefineRegular::getMap)
 
         .def(
@@ -186,15 +182,12 @@ void init_MeshQuad4Map(py::module& m)
 
         .def(
             py::init<const GooseFEM::Mesh::Quad4::FineLayer&>(),
-            "Map a FineLayer mesh to a Regular mesh",
+            "See :cpp:class:`GooseFEM::Mesh::Quad4::Map::FineLayer2Regular`.",
             py::arg("mesh"))
 
         .def("getRegularMesh", &GooseFEM::Mesh::Quad4::Map::FineLayer2Regular::getRegularMesh)
-
         .def("getFineLayerMesh", &GooseFEM::Mesh::Quad4::Map::FineLayer2Regular::getFineLayerMesh)
-
         .def("getMap", &GooseFEM::Mesh::Quad4::Map::FineLayer2Regular::getMap)
-
         .def("getMapFraction", &GooseFEM::Mesh::Quad4::Map::FineLayer2Regular::getMapFraction)
 
         .def(

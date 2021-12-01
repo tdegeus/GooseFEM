@@ -1,8 +1,8 @@
-/* =================================================================================================
-
-(c - GPLv3) T.W.J. de Geus (Tom) | tom@geus.me | www.geus.me | github.com/tdegeus/GooseFEM
-
-================================================================================================= */
+/**
+\file
+\copyright Copyright 2017. Tom de Geus. All rights reserved.
+\license This project is released under the GNU Public License (GPLv3).
+*/
 
 #include <Eigen/Eigen>
 #include <GooseFEM/MatrixPartitioned.h>
@@ -23,36 +23,20 @@ void init_MatrixPartitioned(py::module& m)
                 const xt::xtensor<size_t, 2>&,
                 const xt::xtensor<size_t, 2>&,
                 const xt::xtensor<size_t, 1>&>(),
-            "Sparse, partitioned, matrix",
+            "See :cpp:class:`GooseFEM::MatrixPartitioned`.",
             py::arg("conn"),
             py::arg("dofs"),
             py::arg("iip"))
 
-        .def(
-            "nnu",
-            &GooseFEM::MatrixPartitioned::nnu,
-            "See :cpp:func:`GooseFEM::MatrixPartitioned::nnu`.")
-
-        .def(
-            "nnp",
-            &GooseFEM::MatrixPartitioned::nnp,
-            "See :cpp:func:`GooseFEM::MatrixPartitioned::nnp`.")
-
-        .def(
-            "iiu",
-            &GooseFEM::MatrixPartitioned::iiu,
-            "See :cpp:func:`GooseFEM::MatrixPartitioned::iiu`.")
-
-        .def(
-            "iip",
-            &GooseFEM::MatrixPartitioned::iip,
-            "See :cpp:func:`GooseFEM::MatrixPartitioned::iip`.")
+        .def("nnu", &GooseFEM::MatrixPartitioned::nnu)
+        .def("nnp", &GooseFEM::MatrixPartitioned::nnp)
+        .def("iiu", &GooseFEM::MatrixPartitioned::iiu)
+        .def("iip", &GooseFEM::MatrixPartitioned::iip)
 
         .def(
             "Reaction",
             py::overload_cast<const xt::xtensor<double, 1>&, const xt::xtensor<double, 1>&>(
                 &GooseFEM::MatrixPartitioned::Reaction, py::const_),
-            "See :cpp:func:`GooseFEM::MatrixPartitioned::Reaction`.",
             py::arg("x"),
             py::arg("b"))
 
@@ -60,7 +44,6 @@ void init_MatrixPartitioned(py::module& m)
             "Reaction",
             py::overload_cast<const xt::xtensor<double, 2>&, const xt::xtensor<double, 2>&>(
                 &GooseFEM::MatrixPartitioned::Reaction, py::const_),
-            "See :cpp:func:`GooseFEM::MatrixPartitioned::Reaction`.",
             py::arg("x"),
             py::arg("b"))
 
@@ -68,7 +51,6 @@ void init_MatrixPartitioned(py::module& m)
             "Reaction_p",
             py::overload_cast<const xt::xtensor<double, 1>&, const xt::xtensor<double, 1>&>(
                 &GooseFEM::MatrixPartitioned::Reaction_p, py::const_),
-            "See :cpp:func:`GooseFEM::MatrixPartitioned::Reaction_p`.",
             py::arg("x_u"),
             py::arg("x_p"))
 
@@ -78,7 +60,7 @@ void init_MatrixPartitioned(py::module& m)
 
     py::class_<GooseFEM::MatrixPartitionedSolver<>>(m, "MatrixPartitionedSolver")
 
-        .def(py::init<>(), "Sparse, partitioned, matrix solver")
+        .def(py::init<>(), "See :cpp:class:`GooseFEM::MatrixPartitionedSolver`.")
 
         .def(
             "Solve",
@@ -86,7 +68,6 @@ void init_MatrixPartitioned(py::module& m)
                 GooseFEM::MatrixPartitioned&,
                 const xt::xtensor<double, 1>&,
                 const xt::xtensor<double, 1>&>(&GooseFEM::MatrixPartitionedSolver<>::Solve),
-            "See :cpp:func:`GooseFEM::MatrixPartitionedSolver::Solve`.",
             py::arg("matrix"),
             py::arg("b"),
             py::arg("x"))
@@ -97,7 +78,6 @@ void init_MatrixPartitioned(py::module& m)
                 GooseFEM::MatrixPartitioned&,
                 const xt::xtensor<double, 2>&,
                 const xt::xtensor<double, 2>&>(&GooseFEM::MatrixPartitionedSolver<>::Solve),
-            "See :cpp:func:`GooseFEM::MatrixPartitionedSolver::Solve`.",
             py::arg("matrix"),
             py::arg("b"),
             py::arg("x"))
@@ -108,7 +88,6 @@ void init_MatrixPartitioned(py::module& m)
                 GooseFEM::MatrixPartitioned&,
                 const xt::xtensor<double, 1>&,
                 const xt::xtensor<double, 1>&>(&GooseFEM::MatrixPartitionedSolver<>::Solve_u),
-            "See :cpp:func:`GooseFEM::MatrixPartitionedSolver::Solve_u`.",
             py::arg("matrix"),
             py::arg("b_u"),
             py::arg("x_p"))

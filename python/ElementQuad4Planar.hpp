@@ -21,7 +21,7 @@ void init_ElementQuad4Planar(py::module& m)
 
     cls.def(
         py::init<const xt::pytensor<double, 3>&, double>(),
-        "QuadraturePlanar",
+        "See :cpp:class:`GooseFEM::Element::Quad4::QuadraturePlanar`.",
         py::arg("x"),
         py::arg("thick") = 1.0);
 
@@ -31,7 +31,7 @@ void init_ElementQuad4Planar(py::module& m)
             const xt::pytensor<double, 2>&,
             const xt::pytensor<double, 1>&,
             double>(),
-        "QuadraturePlanar",
+        "See :cpp:class:`GooseFEM::Element::Quad4::QuadraturePlanar`.",
         py::arg("x"),
         py::arg("xi"),
         py::arg("w"),
@@ -40,8 +40,7 @@ void init_ElementQuad4Planar(py::module& m)
     register_Element_QuadratureBase<GooseFEM::Element::Quad4::QuadraturePlanar>(cls);
     register_Element_QuadratureBaseCartesian<GooseFEM::Element::Quad4::QuadraturePlanar>(cls);
 
-    cls.def(
-        "GradN", &GooseFEM::Element::Quad4::QuadraturePlanar::GradN, "Shape function gradients");
+    cls.def("GradN", &GooseFEM::Element::Quad4::QuadraturePlanar::GradN);
 
     cls.def("__repr__", [](const GooseFEM::Element::Quad4::QuadraturePlanar&) {
         return "<GooseFEM.Element.Quad4.QuadraturePlanar>";

@@ -19,14 +19,17 @@ void init_ElementQuad4Axisymmetric(py::module& m)
 {
     py::class_<GooseFEM::Element::Quad4::QuadratureAxisymmetric> cls(m, "QuadratureAxisymmetric");
 
-    cls.def(py::init<const xt::pytensor<double, 3>&>(), "QuadratureAxisymmetric", py::arg("x"));
+    cls.def(
+        py::init<const xt::pytensor<double, 3>&>(),
+        "See :cpp:class:`GooseFEM::Element::Quad4::QuadratureAxisymmetric`.",
+        py::arg("x"));
 
     cls.def(
         py::init<
             const xt::pytensor<double, 3>&,
             const xt::pytensor<double, 2>&,
             const xt::pytensor<double, 1>&>(),
-        "QuadratureAxisymmetric",
+        "See :cpp:class:`GooseFEM::Element::Quad4::QuadratureAxisymmetric`.",
         py::arg("x"),
         py::arg("xi"),
         py::arg("w"));
@@ -34,7 +37,7 @@ void init_ElementQuad4Axisymmetric(py::module& m)
     register_Element_QuadratureBase<GooseFEM::Element::Quad4::QuadratureAxisymmetric>(cls);
     register_Element_QuadratureBaseCartesian<GooseFEM::Element::Quad4::QuadratureAxisymmetric>(cls);
 
-    cls.def("B", &GooseFEM::Element::Quad4::QuadratureAxisymmetric::B, "B-matrix");
+    cls.def("B", &GooseFEM::Element::Quad4::QuadratureAxisymmetric::B);
 
     cls.def("__repr__", [](const GooseFEM::Element::Quad4::QuadratureAxisymmetric&) {
         return "<GooseFEM.Element.Quad4.QuadratureAxisymmetric>";

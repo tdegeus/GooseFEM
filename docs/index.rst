@@ -48,7 +48,7 @@ GooseFEM
    :caption: PYTHON API
    :maxdepth: 1
 
-   api_python/Mesh.rst
+   api_python.rst
 
 .. toctree::
    :caption: DETAILS

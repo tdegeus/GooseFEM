@@ -24,7 +24,7 @@ void init_MeshHex8(py::module& mod)
 
         cls.def(
             py::init<size_t, size_t, size_t, double>(),
-            "Mesh with nx*ny*nz 'pixels' and edge size h",
+            "See :cpp:class:`GooseFEM::Mesh::Hex8::Regular`.",
             py::arg("nx"),
             py::arg("ny"),
             py::arg("nz"),
@@ -43,7 +43,7 @@ void init_MeshHex8(py::module& mod)
 
         cls.def(
             py::init<size_t, size_t, size_t, double, size_t>(),
-            "Mesh with nx*ny*nz 'pixels' and edge size h",
+            "See :cpp:class:`GooseFEM::Mesh::Hex8::FineLayer`.",
             py::arg("nx"),
             py::arg("ny"),
             py::arg("nz"),
