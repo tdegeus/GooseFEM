@@ -14,13 +14,10 @@ Implementation of Vector.h
 namespace GooseFEM {
 
 template <class S, class T>
-inline Vector::Vector(const S& conn, const T& dofs)
+inline Vector::Vector(const S& conn, const T& dofs) : m_conn(conn), m_dofs(dofs)
 {
     GOOSEFEM_ASSERT(conn.dimension() == 2);
     GOOSEFEM_ASSERT(dofs.dimension() == 2);
-
-    m_conn = conn;
-    m_dofs = dofs;
 
     m_nelem = m_conn.shape(0);
     m_nne = m_conn.shape(1);

@@ -10,6 +10,8 @@ Generic mesh operations.
 #define GOOSEFEM_MESH_H
 
 #include "config.h"
+#include "Vector.h"
+#include "MatrixDiagonal.h"
 
 namespace GooseFEM {
 
@@ -1488,6 +1490,31 @@ The element-type is automatically determined, see defaultElementType().
 */
 template <class T, class C, class E>
 inline xt::xtensor<size_t, 1> elemmap2nodemap(const T& elem_map, const C& coor, const E& conn);
+
+/**
+Compute the center of gravity of a mesh.
+
+\tparam C e.g. `xt::xtensor<double, 2>`
+\tparam E e.g. `xt::xtensor<size_t, 2>`
+\param coor Nodal coordinates `[nnode, ndim]`.
+\param conn Connectivity `[nelem, nne]`.
+\param type ElementType.
+\return Center of gravity `[ndim]`.
+*/
+template <class C, class E>
+inline xt::xtensor<double, 1> center_of_gravity(const C& coor, const E& conn, ElementType type);
+
+/**
+Compute the center of gravity of a mesh.
+
+\tparam C e.g. `xt::xtensor<double, 2>`
+\tparam E e.g. `xt::xtensor<size_t, 2>`
+\param coor Nodal coordinates `[nnode, ndim]`.
+\param conn Connectivity `[nelem, nne]`.
+\return Center of gravity `[ndim]`.
+*/
+template <class C, class E>
+inline xt::xtensor<double, 1> center_of_gravity(const C& coor, const E& conn);
 
 } // namespace Mesh
 } // namespace GooseFEM
