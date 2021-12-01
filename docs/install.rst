@@ -15,9 +15,7 @@ This will install all the necessary runtime dependencies as well.
 
     The runtime dependencies (for both the C++ and the Python APIs)
     are also listed in ``environment.yaml``.
-    One could install those dependencies in an activated environment by:
-
-    .. code-block:: cpp
+    One could install those dependencies in an activated environment by::
 
         conda env update --file environment.yaml
 
@@ -115,18 +113,21 @@ Then, download the package::
     git checkout https://github.com/tdegeus/GooseFEM.git
     cd GooseFEM
 
-And, optionally, choose to use hardware optimisation (using *xsimd*)::
-
-    export CMAKE_ARGS="-DUSE_SIMD=1"
-
 Install the package using::
 
-    python -m pip install . -vv
+    python setup.py install --build-type Release -vv
+
+To use hardware optimisation (using *xsimd*) use instead::
+
+    python setup.py install --build-type Release -vv -DUSE_SIMD=1
 
 .. _install_docs:
 
 Docs
 ====
+
+C++ (Doxygen)
+^^^^^^^^^^^^^
 
 .. tip::
 
@@ -150,3 +151,21 @@ To build the docs there are two steps to be made:
 
         cd docs
         make html
+
+General / Python (Sphinx)
+^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. tip::
+
+    The dependencies
+    are also listed in ``environment.yaml``.
+    One could install those dependencies in an activated environment by::
+
+        conda env update --file environment.yaml
+
+Build the docs as follows::
+
+    cd docs
+    make html
+
+

@@ -88,29 +88,29 @@ elem2node
 edgesize
 --------
 
-.. doxygenfunction:: GooseFEM::Mesh::edgesize(const xt::xtensor<double, 2>&, const xt::xtensor<size_t, 2>&, ElementType)
+.. doxygenfunction:: GooseFEM::Mesh::edgesize(const C&, const E&, ElementType)
     :project: GooseFEM
 
 edgesize
 --------
 
-.. doxygenfunction:: GooseFEM::Mesh::edgesize(const xt::xtensor<double, 2>&, const xt::xtensor<size_t, 2>&)
+.. doxygenfunction:: GooseFEM::Mesh::edgesize(const C&, const E&)
     :project: GooseFEM
 
 centers
 -------
 
-.. doxygenfunction:: GooseFEM::Mesh::centers(const xt::xtensor<double, 2>&, const xt::xtensor<size_t, 2>&, ElementType)
+.. doxygenfunction:: GooseFEM::Mesh::centers(const C&, const E&, ElementType)
     :project: GooseFEM
 
-.. doxygenfunction:: GooseFEM::Mesh::centers(const xt::xtensor<double, 2>&, const xt::xtensor<size_t, 2>&)
+.. doxygenfunction:: GooseFEM::Mesh::centers(const C&, const E&)
     :project: GooseFEM
 
 elemmap2nodemap
 ---------------
 
-.. doxygenfunction:: GooseFEM::Mesh::elemmap2nodemap(const xt::xtensor<size_t, 1>&, const xt::xtensor<double, 2>&, const xt::xtensor<size_t, 2>&, ElementType)
+.. doxygenfunction:: GooseFEM::Mesh::elemmap2nodemap(const T&, const C&, const E&, ElementType)
     :project: GooseFEM
 
-.. doxygenfunction:: GooseFEM::Mesh::elemmap2nodemap(const xt::xtensor<size_t, 1>&, const xt::xtensor<double, 2>&, const xt::xtensor<size_t, 2>&)
+.. doxygenfunction:: GooseFEM::Mesh::elemmap2nodemap(const T&, const C&, const E&)
     :project: GooseFEM

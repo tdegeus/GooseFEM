@@ -1,6 +1,7 @@
 channels:
 - conda-forge
 dependencies:
+- breathe
 - catch2
 - cmake
 - doxygen
@@ -14,6 +15,8 @@ dependencies:
 - python
 - scikit-build
 - setuptools_scm
+- sphinx
+- sphinx_rtd_theme
 - xsimd
 - xtensor
 - xtensor-python

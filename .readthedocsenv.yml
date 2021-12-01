@@ -6,7 +6,6 @@ dependencies:
 - doxygen
 - eigen
 - python-goosefem
-- pyxtensor
 - setuptools_scm
 - sphinx
 - sphinx_rtd_theme
