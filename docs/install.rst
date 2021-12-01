@@ -167,5 +167,3 @@ Build the docs as follows::
 
     cd docs
     make html
-
-

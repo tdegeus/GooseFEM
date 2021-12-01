@@ -9,9 +9,9 @@ Generic mesh operations.
 #ifndef GOOSEFEM_MESH_H
 #define GOOSEFEM_MESH_H
 
-#include "config.h"
-#include "Vector.h"
 #include "MatrixDiagonal.h"
+#include "Vector.h"
+#include "config.h"
 
 namespace GooseFEM {
 

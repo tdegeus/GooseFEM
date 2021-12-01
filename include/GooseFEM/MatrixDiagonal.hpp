@@ -14,10 +14,7 @@ Implementation of MatrixDiagonal.h
 namespace GooseFEM {
 
 template <class C, class D>
-inline MatrixDiagonal::MatrixDiagonal(
-    const C& conn,
-    const D& dofs)
-    : m_conn(conn), m_dofs(dofs)
+inline MatrixDiagonal::MatrixDiagonal(const C& conn, const D& dofs) : m_conn(conn), m_dofs(dofs)
 {
     m_nelem = m_conn.shape(0);
     m_nne = m_conn.shape(1);
