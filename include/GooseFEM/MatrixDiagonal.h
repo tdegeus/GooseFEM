@@ -28,10 +28,13 @@ public:
     /**
     Constructor.
 
+    \tparam C e.g. `xt::xtensor<size_t, 2>`
+    \tparam D e.g. `xt::xtensor<size_t, 2>`
     \param conn connectivity [#nelem, #nne].
     \param dofs DOFs per node [#nnode, #ndim].
     */
-    MatrixDiagonal(const xt::xtensor<size_t, 2>& conn, const xt::xtensor<size_t, 2>& dofs);
+    template <class C, class D>
+    MatrixDiagonal(const C& conn, const D& dofs);
 
     /**
     \return Number of elements.

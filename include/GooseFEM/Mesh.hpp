@@ -1755,6 +1755,34 @@ inline xt::xtensor<size_t, 1> elemmap2nodemap(const T& elem_map, const C& coor, 
     return elemmap2nodemap(elem_map, coor, conn, defaultElementType(coor, conn));
 }
 
+template <class C, class E>
+inline xt::xtensor<double, 1> center_of_gravity(const C& coor, const E& conn, ElementType type)
+{
+    auto dof = dofs(coor.shape(0), coor.shape(1));
+
+    GooseFEM::MatrixDiagonal M(conn, dof);
+
+    GooseFEM::Vector vector(conn, dof);
+
+    GooseFEM::Element::Quad4::Quadrature quad(
+        vector.AsElement(coor),
+        GooseFEM::Element::Quad4::Nodal::xi(),
+        GooseFEM::Element::Quad4::Nodal::w());
+
+    xt::xtensor<double, 2> rho = xt::ones<double>({conn.shape(0), quad.nip()});
+
+    M.assemble(quad.Int_N_scalar_NT_dV(rho));
+
+    auto m = vector.AsNode(M.Todiagonal());
+    return xt::average(coor, m, 0);
+}
+
+template <class C, class E>
+inline xt::xtensor<double, 1> center_of_gravity(const C& coor, const E& conn)
+{
+    return center_of_gravity(coor, conn, defaultElementType(coor, conn));
+}
+
 } // namespace Mesh
 } // namespace GooseFEM
 
