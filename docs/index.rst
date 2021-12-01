@@ -40,8 +40,9 @@ GooseFEM
 .. toctree::
    :caption: API
    :maxdepth: 1
+   :glob:
 
-   api/Mesh.rst
+   api/*
 
 .. toctree::
    :caption: PYTHON API
