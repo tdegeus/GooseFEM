@@ -3,15 +3,29 @@
 Changelog
 *********
 
+v0.13.0
+=======
+
+*   [docs] Updating Python API links (#234)
+*   [docs] Switching to breath-apidoc (#234)
+*   Adding missing include (#234)
+*   Running pre-commit (#234)
+*   [docs] Adding center_of_gravity (#234)
+*   [docs] Minor updates (#234)
+*   Adding: Mesh::center_of_gravity (#234)
+*   Adding pre-commit (#233)
+*   Fixing CI
+*   Fixing various small typos
+
 v0.12.10
 ========
 
-8a46954 Fixing small typos (#232)
-f925f7d Bugfix MatrixPartioned: fixed reordering mistakes "dot", "set", and "add" (tests were not run by mistake) (#232)
-ee2ef79 [Python] Switching to scikit-build (#232)
-ea6d2e5 [CMake] Clean-up (#232)
-f762324 Renaming "test" -> "tests" (#232)
-901037e [CI] Running tests in release mode
+*   Fixing small typos (#232)
+*   Bugfix MatrixPartioned: fixed reordering mistakes "dot", "set", and "add" (tests were not run by mistake) (#232)
+*   [Python] Switching to scikit-build (#232)
+*   [CMake] Clean-up (#232)
+*   Renaming "test" -> "tests" (#232)
+*   [CI] Running tests in release mode
 
 v0.12.9
 =======

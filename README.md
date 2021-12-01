@@ -10,6 +10,10 @@ Library to perform static or dynamic finite elements computations. The core of t
 
 https://goosefem.readthedocs.io
 
+and for C++ documentation
+
+https://tdegeus.github,io/GooseFEM
+
 ## Credit / copyright
 
 (c) T.W.J. de Geus | [www.geus.me](http://www.geus.me) | [tom@geus.me](mailto:tom@geus.me)
