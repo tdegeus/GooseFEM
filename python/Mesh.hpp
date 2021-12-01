@@ -655,11 +655,8 @@ void init_Mesh(py::module& mod)
 
     mod.def(
         "center_of_gravity",
-        py::overload_cast<
-            const xt::pytensor<double, 2>&,
-            const xt::pytensor<size_t, 2>&>(&GooseFEM::Mesh::center_of_gravity<
-                                            xt::pytensor<double, 2>,
-                                            xt::pytensor<size_t, 2>>),
+        py::overload_cast<const xt::pytensor<double, 2>&, const xt::pytensor<size_t, 2>&>(
+            &GooseFEM::Mesh::center_of_gravity<xt::pytensor<double, 2>, xt::pytensor<size_t, 2>>),
         "Compute center of gravity of a mesh."
         "See :cpp:func:`GooseFEM::Mesh::center_of_gravity`.",
         py::arg("coor"),
@@ -670,9 +667,8 @@ void init_Mesh(py::module& mod)
         py::overload_cast<
             const xt::pytensor<double, 2>&,
             const xt::pytensor<size_t, 2>&,
-            GooseFEM::Mesh::ElementType>(&GooseFEM::Mesh::center_of_gravity<
-                                         xt::pytensor<double, 2>,
-                                         xt::pytensor<size_t, 2>>),
+            GooseFEM::Mesh::ElementType>(
+            &GooseFEM::Mesh::center_of_gravity<xt::pytensor<double, 2>, xt::pytensor<size_t, 2>>),
         "Compute center of gravity of a mesh."
         "See :cpp:func:`GooseFEM::Mesh::center_of_gravity`.",
         py::arg("coor"),
