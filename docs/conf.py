@@ -20,7 +20,8 @@ if not os.path.isdir(doxydir):
     os.mkdir(doxydir)
 
 subprocess.call(f"cmake .. -B{doxydir:s} -DBUILD_DOCS=1", shell=True)
-subprocess.call(f"cd {doxydir:s}; make docs", shell=True)
+subprocess.call(f"cd {doxydir:s}; make html", shell=True)
+subprocess.call(f"python -m breathe.apidoc -f -p GooseFEM -o api {doxydir:s}/xml", shell=True)
 
 # -- Project information -----------------------------------------------------
 
@@ -61,7 +62,7 @@ html_theme = "sphinx_rtd_theme"
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
-html_static_path = ["_static"]
+# html_static_path = ["_static"]
 
 
 # -- Breathe configuration ---------------------------------------------------

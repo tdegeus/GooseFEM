@@ -1,6 +1,7 @@
 _skbuild
 .DS_Store
 docs/_doxygen
+docs/api
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
