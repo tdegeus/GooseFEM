@@ -19,14 +19,17 @@ void init_ElementHex8(py::module& m)
 {
     py::class_<GooseFEM::Element::Hex8::Quadrature> cls(m, "Quadrature");
 
-    cls.def(py::init<const xt::pytensor<double, 3>&>(), "Quadrature", py::arg("x"));
+    cls.def(
+        py::init<const xt::pytensor<double, 3>&>(),
+        "See :cpp:class:`GooseFEM::Element::Hex8::Quadrature`.",
+        py::arg("x"));
 
     cls.def(
         py::init<
             const xt::pytensor<double, 3>&,
             const xt::pytensor<double, 2>&,
             const xt::pytensor<double, 1>&>(),
-        "Quadrature",
+        "See :cpp:class:`GooseFEM::Element::Hex8::Quadrature`.",
         py::arg("x"),
         py::arg("xi"),
         py::arg("w"));
@@ -34,7 +37,7 @@ void init_ElementHex8(py::module& m)
     register_Element_QuadratureBase<GooseFEM::Element::Hex8::Quadrature>(cls);
     register_Element_QuadratureBaseCartesian<GooseFEM::Element::Hex8::Quadrature>(cls);
 
-    cls.def("GradN", &GooseFEM::Element::Hex8::Quadrature::GradN, "Shape function gradients");
+    cls.def("GradN", &GooseFEM::Element::Hex8::Quadrature::GradN);
 
     cls.def("__repr__", [](const GooseFEM::Element::Hex8::Quadrature&) {
         return "<GooseFEM.Element.Hex8.Quadrature>";
@@ -43,16 +46,16 @@ void init_ElementHex8(py::module& m)
 
 void init_ElementHex8Gauss(py::module& m)
 {
-    m.def("nip", &GooseFEM::Element::Hex8::Gauss::nip, "Return number of integration point");
-    m.def("xi", &GooseFEM::Element::Hex8::Gauss::xi, "Return integration point coordinates");
-    m.def("w", &GooseFEM::Element::Hex8::Gauss::w, "Return integration point weights");
+    m.def("nip", &GooseFEM::Element::Hex8::Gauss::nip);
+    m.def("xi", &GooseFEM::Element::Hex8::Gauss::xi);
+    m.def("w", &GooseFEM::Element::Hex8::Gauss::w);
 }
 
 void init_ElementHex8Nodal(py::module& m)
 {
-    m.def("nip", &GooseFEM::Element::Hex8::Nodal::nip, "Return number of integration point");
-    m.def("xi", &GooseFEM::Element::Hex8::Nodal::xi, "Return integration point coordinates");
-    m.def("w", &GooseFEM::Element::Hex8::Nodal::w, "Return integration point weights");
+    m.def("nip", &GooseFEM::Element::Hex8::Nodal::nip);
+    m.def("xi", &GooseFEM::Element::Hex8::Nodal::xi);
+    m.def("w", &GooseFEM::Element::Hex8::Nodal::w);
 }
 
 #endif
