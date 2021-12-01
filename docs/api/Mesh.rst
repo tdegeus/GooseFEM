@@ -114,3 +114,12 @@ elemmap2nodemap
 
 .. doxygenfunction:: GooseFEM::Mesh::elemmap2nodemap(const T&, const C&, const E&)
     :project: GooseFEM
+
+center_of_gravity
+-----------------
+
+.. doxygenfunction:: GooseFEM::Mesh::center_of_gravity(const C&, const E&, ElementType)
+    :project: GooseFEM
+
+.. doxygenfunction:: GooseFEM::Mesh::center_of_gravity(const C&, const E&)
+    :project: GooseFEM
