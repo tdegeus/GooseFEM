@@ -9,6 +9,7 @@ Generic mesh operations.
 #ifndef GOOSEFEM_MESH_H
 #define GOOSEFEM_MESH_H
 
+#include "ElementQuad4.h"
 #include "MatrixDiagonal.h"
 #include "Vector.h"
 #include "config.h"
