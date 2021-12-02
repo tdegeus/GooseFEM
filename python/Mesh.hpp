@@ -481,6 +481,26 @@ void init_Mesh(py::module& mod)
         py::arg("type"));
 
     mod.def(
+        "nodal_mass",
+        py::overload_cast<const xt::pytensor<double, 2>&, const xt::pytensor<size_t, 2>&>(
+            &GooseFEM::Mesh::nodal_mass<xt::pytensor<double, 2>, xt::pytensor<size_t, 2>>),
+        "See :cpp:func:`GooseFEM::Mesh::nodal_mass`.",
+        py::arg("coor"),
+        py::arg("conn"));
+
+    mod.def(
+        "nodal_mass",
+        py::overload_cast<
+            const xt::pytensor<double, 2>&,
+            const xt::pytensor<size_t, 2>&,
+            GooseFEM::Mesh::ElementType>(
+            &GooseFEM::Mesh::nodal_mass<xt::pytensor<double, 2>, xt::pytensor<size_t, 2>>),
+        "See :cpp:func:`GooseFEM::Mesh::nodal_mass`.",
+        py::arg("coor"),
+        py::arg("conn"),
+        py::arg("type"));
+
+    mod.def(
         "center_of_gravity",
         py::overload_cast<const xt::pytensor<double, 2>&, const xt::pytensor<size_t, 2>&>(
             &GooseFEM::Mesh::center_of_gravity<xt::pytensor<double, 2>, xt::pytensor<size_t, 2>>),
