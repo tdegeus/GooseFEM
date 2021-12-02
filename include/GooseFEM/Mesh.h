@@ -1493,6 +1493,39 @@ template <class T, class C, class E>
 inline xt::xtensor<size_t, 1> elemmap2nodemap(const T& elem_map, const C& coor, const E& conn);
 
 /**
+Compute the mass of each node in the mesh.
+If nodes are not part of the connectivity the mass is set to zero,
+such that the center of gravity is simply::
+
+    average(coor, GooseFEM.Mesh.nodal_mass(coor, conn, type), axis=0);
+
+\tparam C e.g. `xt::xtensor<double, 2>`
+\tparam E e.g. `xt::xtensor<size_t, 2>`
+\param coor Nodal coordinates `[nnode, ndim]`.
+\param conn Connectivity `[nelem, nne]`.
+\param type ElementType.
+\return Center of gravity `[ndim]`.
+*/
+template <class C, class E>
+inline xt::xtensor<double, 2> nodal_mass(const C& coor, const E& conn, ElementType type);
+
+/**
+Compute the mass of each node in the mesh.
+If nodes are not part of the connectivity the mass is set to zero,
+such that the center of gravity is simply::
+
+    average(coor, GooseFEM.Mesh.nodal_mass(coor, conn), axis=0);
+
+\tparam C e.g. `xt::xtensor<double, 2>`
+\tparam E e.g. `xt::xtensor<size_t, 2>`
+\param coor Nodal coordinates `[nnode, ndim]`.
+\param conn Connectivity `[nelem, nne]`.
+\return Center of gravity `[ndim]`.
+*/
+template <class C, class E>
+inline xt::xtensor<double, 2> nodal_mass(const C& coor, const E& conn);
+
+/**
 Compute the center of gravity of a mesh.
 
 \tparam C e.g. `xt::xtensor<double, 2>`
