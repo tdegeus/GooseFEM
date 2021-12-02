@@ -12,7 +12,7 @@ https://goosefem.readthedocs.io
 
 and for C++ documentation
 
-https://tdegeus.github,io/GooseFEM
+https://tdegeus.github.io/GooseFEM
 
 ## Credit / copyright
 
