@@ -22,8 +22,8 @@ Either:
 
 -   Define externally using::
 
-        -DGOOSEFEM_VERSION="`python -c "from setuptools_scm import get_version;
-print(get_version())"`"
+        MYVERSION=`python -c "from setuptools_scm import get_version; print(get_version())"`
+        -DGOOSEFEM_VERSION="$MYVERSION"
 
     From the root of this project. This is what ``setup.py`` does.
 
@@ -38,12 +38,8 @@ overwrite the automatic version.
 namespace GooseFEM {
 
 /**
-Return version string, e.g.::
-
-
-    "0.8.0"
-
-\return std::string
+Return version string, e.g. `"0.8.0"`
+\return String.
 */
 inline std::string version();
 

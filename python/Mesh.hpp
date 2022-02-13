@@ -392,6 +392,12 @@ void init_Mesh(py::module& mod)
         py::arg("ndim"));
 
     mod.def(
+        "nodaltyings",
+        &GooseFEM::Mesh::nodaltyings<xt::pytensor<size_t, 2>>,
+        "See :cpp:func:`GooseFEM::Mesh::nodaltyings`.",
+        py::arg("dofs"));
+
+    mod.def(
         "renumber",
         &GooseFEM::Mesh::renumber<xt::pytensor<size_t, 2>>,
         "See :cpp:func:`GooseFEM::Mesh::renumber`.",
@@ -404,10 +410,27 @@ void init_Mesh(py::module& mod)
         py::arg("conn"));
 
     mod.def(
+        "node2dof",
+        &GooseFEM::Mesh::node2dof<xt::pytensor<size_t, 2>>,
+        "See :cpp:func:`GooseFEM::Mesh::node2dof`.",
+        py::arg("dofs"),
+        py::arg("sorted") = true);
+
+    mod.def(
         "elem2node",
-        &GooseFEM::Mesh::elem2node<xt::pytensor<size_t, 2>>,
+        py::overload_cast<const xt::pytensor<size_t, 2>&, bool>(
+            &GooseFEM::Mesh::elem2node<xt::pytensor<size_t, 2>>),
         "See :cpp:func:`GooseFEM::Mesh::elem2node`.",
         py::arg("conn"),
+        py::arg("sorted") = true);
+
+    mod.def(
+        "elem2node",
+        py::overload_cast<const xt::pytensor<size_t, 2>&, const xt::pytensor<size_t, 2>&, bool>(
+            &GooseFEM::Mesh::elem2node<xt::pytensor<size_t, 2>, xt::pytensor<size_t, 2>>),
+        "See :cpp:func:`GooseFEM::Mesh::elem2node`.",
+        py::arg("conn"),
+        py::arg("dofs"),
         py::arg("sorted") = true);
 
     mod.def(

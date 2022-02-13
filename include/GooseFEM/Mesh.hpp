@@ -1609,6 +1609,30 @@ inline xt::xtensor<size_t, 2> dofs(size_t nnode, size_t ndim)
     return xt::reshape_view(xt::arange<size_t>(nnode * ndim), {nnode, ndim});
 }
 
+template <class D>
+inline std::vector<std::vector<size_t>> nodaltyings(const D& dofs)
+{
+    size_t nnode = dofs.shape(0);
+    size_t ndim = dofs.shape(1);
+    auto nodemap = node2dof(dofs);
+    std::vector<std::vector<size_t>> ret(nnode);
+
+    for (size_t m = 0; m < nnode; ++m) {
+        auto r = nodemap[dofs(m, 0)];
+        std::sort(r.begin(), r.end());
+        ret[m] = r;
+#ifdef GOOSEFEM_ENABLE_ASSERT
+        for (size_t i = 1; i < ndim; ++i) {
+            auto t = nodemap[dofs(m, i)];
+            std::sort(t.begin(), t.end());
+            GOOSEFEM_ASSERT(std::equal(r.begin(), r.end(), t.begin()));
+        }
+#endif
+    }
+
+    return ret;
+}
+
 template <class E>
 inline xt::xtensor<size_t, 1> coordination(const E& conn)
 {
@@ -1623,6 +1647,12 @@ inline xt::xtensor<size_t, 1> coordination(const E& conn)
     }
 
     return N;
+}
+
+template <class D>
+inline std::vector<std::vector<size_t>> node2dof(const D& dofs, bool sorted)
+{
+    return elem2node(dofs, sorted);
 }
 
 template <class E>
@@ -1645,6 +1675,39 @@ inline std::vector<std::vector<size_t>> elem2node(const E& conn, bool sorted)
     if (sorted) {
         for (auto& row : ret) {
             std::sort(row.begin(), row.end());
+        }
+    }
+
+    return ret;
+}
+
+template <class E, class D>
+inline std::vector<std::vector<size_t>> elem2node(const E& conn, const D& dofs, bool sorted)
+{
+    size_t nnode = dofs.shape(0);
+    auto ret = elem2node(conn, sorted);
+    auto nties = nodaltyings(dofs);
+
+    for (size_t m = 0; m < nnode; ++m) {
+        if (nties[m].size() <= 1) {
+            continue;
+        }
+        if (m > nties[m][0]) {
+            continue;
+        }
+        size_t n = ret[m].size();
+        for (size_t j = 1; j < nties[m].size(); ++j) {
+            n += ret[nties[m][j]].size();
+        }
+        ret[m].reserve(n);
+        for (size_t j = 1; j < nties[m].size(); ++j) {
+            ret[m].insert(ret[m].end(), ret[nties[m][j]].begin(), ret[nties[m][j]].end());
+        }
+        if (sorted) {
+            std::sort(ret[m].begin(), ret[m].end());
+        }
+        for (size_t j = 1; j < nties[m].size(); ++j) {
+            ret[nties[m][j]] = ret[m];
         }
     }
 
