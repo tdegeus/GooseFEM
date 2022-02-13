@@ -1405,6 +1405,15 @@ For example for 3 nodes in 2 dimensions the output is
 inline xt::xtensor<size_t, 2> dofs(size_t nnode, size_t ndim);
 
 /**
+List nodal tyings based on DOF-numbers per node.
+
+\param dofs DOFs per node [nnode, ndim].
+\return Nodes to which the nodes is connected (sorted) [nnode, ...]
+*/
+template <class D>
+inline std::vector<std::vector<size_t>> nodaltyings(const D& dofs);
+
+/**
 Number of elements connected to each node.
 
 \param conn Connectivity [nelem, nne].
@@ -1414,14 +1423,32 @@ template <class E>
 inline xt::xtensor<size_t, 1> coordination(const E& conn);
 
 /**
+Nodes connected to each DOF.
+
+\param dofs DOFs per node [nnode, ndim].
+\param sorted If ``true`` the list of nodes for each DOF is sorted.
+\return Nodes per DOF [ndof, ...].
+*/
+template <class D>
+inline std::vector<std::vector<size_t>> node2dof(const D& dofs, bool sorted = true);
+
+/**
 Elements connected to each node.
 
-\param conn Connectivity.
-\param sorted If ``true`` the output is sorted.
-\return Elements per node.
+\param conn Connectivity [nelem, nne].
+\param sorted If ``true`` the list of elements for each node is sorted.
+\return Elements per node [nnode, ...].
 */
 template <class E>
 inline std::vector<std::vector<size_t>> elem2node(const E& conn, bool sorted = true);
+
+/**
+\copydoc elem2node(const E&, bool)
+
+\param dofs DOFs per node, allowing accounting for periodicity [nnode, ndim].
+*/
+template <class E, class D>
+inline std::vector<std::vector<size_t>> elem2node(const E& conn, const D& dofs, bool sorted = true);
 
 /**
 Return size of each element edge.
