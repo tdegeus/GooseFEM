@@ -3,6 +3,11 @@
 Changelog
 *********
 
+v0.13.2
+=======
+
+*   Adding to Mesh: nodaltyings, node2dof, and periodic overload of elem2node (#237)
+
 v0.13.1
 =======
 
