@@ -130,6 +130,15 @@ public:
     xt::xtensor<size_t, 1> elemrow_nhy() const;
 
     /**
+    Per row of blocks:
+    *   `-1`: normal layer
+    *   `0`: transition layer to match coarse and finer element on the previous/next row.
+
+    \return List of size equal to the number of rows of blocks.
+    */
+    xt::xtensor<int, 1> elemrow_type() const;
+
+    /**
     Number of elements per row of blocks.
     Note that a block is equal to an element except in refinement layers
     where it contains three elements.
@@ -226,10 +235,8 @@ private:
     xt::xtensor<size_t, 1> m_layer_nelx; ///< See elemrow_nelem().
     xt::xtensor<size_t, 1> m_nhx; ///< See elemrow_nhx().
     xt::xtensor<size_t, 1> m_nhy; ///< See elemrow_nhy().
-    xt::xtensor<size_t, 1>
-        m_nnd; ///< total number of nodes in the main node layer per node layer in "y"
-    xt::xtensor<int, 1>
-        m_refine; ///< refine direction (-1:no refine, 0:"x" per element layer in "y"
+    xt::xtensor<size_t, 1> m_nnd; ///< total #nodes in the main node layer per node layer in "y"
+    xt::xtensor<int, 1> m_refine; ///< See elemrow_type().
     xt::xtensor<size_t, 1> m_startElem; ///< start element per element layer in "y"
     xt::xtensor<size_t, 1> m_startNode; ///< start node per node layer in "y"
 
