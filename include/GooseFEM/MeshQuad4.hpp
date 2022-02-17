@@ -355,6 +355,11 @@ inline xt::xtensor<size_t, 1> FineLayer::elemrow_nhy() const
     return m_nhy;
 }
 
+inline xt::xtensor<int, 1> FineLayer::elemrow_type() const
+{
+    return m_refine;
+}
+
 inline xt::xtensor<size_t, 1> FineLayer::elemrow_nelem() const
 {
     return m_layer_nelx;

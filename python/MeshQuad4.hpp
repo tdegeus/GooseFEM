@@ -61,6 +61,7 @@ void init_MeshQuad4(py::module& m)
 
         cls.def("elemrow_nhx", &GooseFEM::Mesh::Quad4::FineLayer::elemrow_nhx);
         cls.def("elemrow_nhy", &GooseFEM::Mesh::Quad4::FineLayer::elemrow_nhy);
+        cls.def("elemrow_type", &GooseFEM::Mesh::Quad4::FineLayer::elemrow_type);
         cls.def("elemrow_nelem", &GooseFEM::Mesh::Quad4::FineLayer::elemrow_nelem);
         cls.def("elementsMiddleLayer", &GooseFEM::Mesh::Quad4::FineLayer::elementsMiddleLayer);
         cls.def("elementsLayer", &GooseFEM::Mesh::Quad4::FineLayer::elementsLayer);
