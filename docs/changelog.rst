@@ -3,6 +3,16 @@
 Changelog
 *********
 
+v1.1.0
+======
+
+*   Adding `Mesh::Quad4::FineLayer::elemrow_type` (#238)
+
+v1.0.0
+======
+
+Marking that the code is stable enough to be v1.
+
 v0.13.2
 =======
 
