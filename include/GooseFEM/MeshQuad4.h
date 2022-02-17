@@ -235,10 +235,10 @@ private:
     xt::xtensor<size_t, 1> m_layer_nelx; ///< See elemrow_nelem().
     xt::xtensor<size_t, 1> m_nhx; ///< See elemrow_nhx().
     xt::xtensor<size_t, 1> m_nhy; ///< See elemrow_nhy().
-    xt::xtensor<size_t, 1> m_nnd; ///< total #nodes in the main node layer per node layer in "y"
+    xt::xtensor<size_t, 1> m_nnd; ///< total num. nodes in main node layer (per node layer in "y")
     xt::xtensor<int, 1> m_refine; ///< See elemrow_type().
-    xt::xtensor<size_t, 1> m_startElem; ///< start element per element layer in "y"
-    xt::xtensor<size_t, 1> m_startNode; ///< start node per node layer in "y"
+    xt::xtensor<size_t, 1> m_startElem; ///< start element (per element layer in "y")
+    xt::xtensor<size_t, 1> m_startNode; ///< start node (per node layer in "y")
 
     /**
     \copydoc FineLayer::FineLayer(size_t, size_t, double, size_t)
