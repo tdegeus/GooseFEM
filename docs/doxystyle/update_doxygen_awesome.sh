@@ -32,7 +32,6 @@ then
 fi
 
 for STYLESHEET in "doxygen-awesome.css" "doxygen-awesome-sidebar-only.css" "doxygen-awesome-darkmode-toggle.js" "doxygen-awesome-sidebar-only-darkmode-toggle.css"
-STYLESHEET=
 curl "${CONTENT_URL}/${VERSION}/${STYLESHEET}" \
      --output "${DOXYGEN_AWESOME_DIR}/${STYLESHEET}" \
      1>&2
