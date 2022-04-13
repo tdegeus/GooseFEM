@@ -15,7 +15,7 @@ namespace py = pybind11;
 
 void init_Iterate(py::module& mod)
 {
-    py::class_<GooseFEM::Iterate::StopList> cls(mod, "Iterate");
+    py::class_<GooseFEM::Iterate::StopList> cls(mod, "StopList");
 
     cls.def(py::init<size_t>(), "See :cpp:class:`GooseFEM::Iterate::StopList`.", py::arg("n") = 1);
 
