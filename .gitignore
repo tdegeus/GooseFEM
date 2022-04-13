@@ -1,4 +1,5 @@
 _skbuild
+_cmake_test_compile
 .DS_Store
 docs/_doxygen
 docs/api
