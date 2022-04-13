@@ -1,5 +1,3 @@
-.. _conventions_storage:
-
 Data storage
 ============
 

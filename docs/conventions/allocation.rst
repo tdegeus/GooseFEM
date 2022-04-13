@@ -1,5 +1,3 @@
-.. _conventions_allocation:
-
 Data allocation
 ===============
 

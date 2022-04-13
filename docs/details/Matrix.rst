@@ -1,8 +1,6 @@
-.. _Matrix:
-
-******
-Matrix
-******
+********
+Matrices
+********
 
 | :download:`GooseFEM/Matrix.h <../../include/GooseFEM/Matrix.h>`
 | :download:`GooseFEM/Matrix.hpp <../../include/GooseFEM/Matrix.hpp>`
@@ -444,8 +442,6 @@ MatrixDiagonalPartitioned::Todiagonal(...)
 ------------------------------------------
 
 Return matrix as diagonal matrix (column)
-
-.. _linear_solver:
 
 Linear solver
 =============

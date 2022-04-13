@@ -48,3 +48,8 @@ repos:
   - id: clang-format
     args: [-i]
     exclude: ^docs/doxystyle
+- repo: https://github.com/myint/rstcheck
+  rev: v3.4.0
+  hooks:
+  - id: rstcheck
+    args: [--ignore-language=cpp, --ignore-directives=automodule]
