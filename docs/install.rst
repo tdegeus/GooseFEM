@@ -9,13 +9,13 @@ The easiest is to use *conda* to install *GooseFEM*:
 
 .. tabs::
 
-    .. tab:: C++
+    .. group-tab:: C++
 
         .. code-block:: bash
 
             conda install -c conda-forge goosefem
 
-    .. tab:: Python
+    .. group-tab:: Python
 
         .. code-block:: bash
 
@@ -55,7 +55,7 @@ Download the package::
 
 .. tabs::
 
-    .. tab:: C++
+    .. group-tab:: C++
 
         Install headers, *CMake* and *pkg-config* support:
 
@@ -95,7 +95,7 @@ Download the package::
                 cd build
                 cmake --install .
 
-    .. tab:: Python
+    .. group-tab:: Python
 
         Start by installing the dependencies, for example using *conda*::
 
@@ -141,5 +141,3 @@ There are two kinds of docs:
         cmake -Bbuild -DBUILD_DOCS=1
         cd build
         make html
-
-

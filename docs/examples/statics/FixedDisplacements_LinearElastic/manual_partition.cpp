@@ -13,8 +13,6 @@ int main()
 
     // mesh dimensions
     size_t nelem = mesh.nelem();
-    size_t nne = mesh.nne();
-    size_t ndim = mesh.ndim();
 
     // mesh definition, displacement, external forces
     xt::xtensor<double, 2> coor = mesh.coor();
@@ -83,10 +81,10 @@ int main()
         xt::zeros<double>({nodesBot.size()})));
 
     // residual
-    auto fres = fext - fint;
+    xt::xtensor<double, 2> fres = fext - fint;
 
     // partition
-    vector.asDofs_u(fres, fres_u);
+    auto fres_u = vector.AsDofs_u(fres);
 
     // solve
     auto u_u = Solver.Solve_u(K, fres_u, u_p);
@@ -112,7 +110,7 @@ int main()
     xt::noalias(fres) = fext - fint;
 
     // partition
-    auto fres_u = vector.AsDofs_u(fres);
+    fres_u = vector.AsDofs_u(fres);
 
     // print residual
     std::cout << xt::sum(xt::abs(fres_u))[0] / xt::sum(xt::abs(fext_p))[0] << std::endl;

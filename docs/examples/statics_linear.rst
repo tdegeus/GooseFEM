@@ -23,7 +23,7 @@ The full example can be downloaded run as follows:
 
 .. tabs::
 
-    .. tab:: C++
+    .. group-tab:: C++
 
         :download:`CMakeLists.txt <statics/FixedDisplacements_LinearElastic/CMakeLists.txt>`
         :download:`example.cpp <statics/FixedDisplacements_LinearElastic/example.cpp>`
@@ -58,7 +58,7 @@ The full example can be downloaded run as follows:
 
                 python ../plot.py
 
-    .. tab:: Python
+    .. group-tab:: Python
 
         | :download:`example.py <statics/FixedDisplacements_LinearElastic/example.py>`
 
@@ -79,14 +79,14 @@ Include library
 
 .. tabs::
 
-    .. tab:: C++
+    .. group-tab:: C++
 
         .. literalinclude:: statics/FixedDisplacements_LinearElastic/example.cpp
             :language: cpp
             :lines: 1-4
             :emphasize-lines: 2-3
 
-    .. tab:: Python
+    .. group-tab:: Python
 
         .. literalinclude:: statics/FixedDisplacements_LinearElastic/example.py
             :language: python
@@ -101,14 +101,15 @@ Define mesh
 
 .. tabs::
 
-    .. tab:: C++
+    .. group-tab:: C++
 
         .. literalinclude:: statics/FixedDisplacements_LinearElastic/example.cpp
             :language: cpp
+            :dedent: 4
             :lines: 11-30
             :emphasize-lines: 2
 
-    .. tab:: Python
+    .. group-tab:: Python
 
         .. literalinclude:: statics/FixedDisplacements_LinearElastic/example.py
             :language: python
@@ -141,17 +142,18 @@ Define partitioning
 
 .. tabs::
 
-    .. tab:: C++
+    .. group-tab:: C++
 
         .. literalinclude:: statics/FixedDisplacements_LinearElastic/example.cpp
             :language: cpp
+            :dedent: 4
             :lines: 35-40
 
-    .. tab:: Python
+    .. group-tab:: Python
 
         .. literalinclude:: statics/FixedDisplacements_LinearElastic/example.py
             :language: python
-            :lines: 38-43
+            :lines: 38-45
 
 We will reorder such that degrees-of-freedom are ordered such that
 
@@ -173,18 +175,19 @@ To achieve this we start by collecting all prescribed degrees-of-freedom in *iip
 
 .. tabs::
 
-    .. tab:: C++
+    .. group-tab:: C++
 
         .. literalinclude:: statics/FixedDisplacements_LinearElastic/example.cpp
             :language: cpp
+            :dedent: 4
             :lines: 45
             :emphasize-lines: 1
 
-    .. tab:: Python
+    .. group-tab:: Python
 
         .. literalinclude:: statics/FixedDisplacements_LinearElastic/example.py
             :language: python
-            :lines: 49
+            :lines: 51
             :emphasize-lines: 1
 
 To switch between the three of *GooseFEM*'s data-representations,
@@ -218,18 +221,19 @@ System matrix
 
 .. tabs::
 
-    .. tab:: C++
+    .. group-tab:: C++
 
         .. literalinclude:: statics/FixedDisplacements_LinearElastic/example.cpp
             :language: cpp
+            :dedent: 4
             :lines: 48-49
             :emphasize-lines: 1
 
-    .. tab:: Python
+    .. group-tab:: Python
 
         .. literalinclude:: statics/FixedDisplacements_LinearElastic/example.py
             :language: python
-            :lines: 52-53
+            :lines: 54-55
             :emphasize-lines: 1
 
 We now also allocate the system/stiffness system (stored as sparse matrix).
@@ -243,7 +247,7 @@ Note that the solver-class takes care of factorising only when needed
 
 .. tabs::
 
-    .. tab:: C++
+    .. group-tab:: C++
 
         .. note::
 
@@ -274,17 +278,18 @@ and allow a generic API:
 
 .. tabs::
 
-    .. tab:: C++
+    .. group-tab:: C++
 
         .. literalinclude:: statics/FixedDisplacements_LinearElastic/example.cpp
             :language: cpp
+            :dedent: 4
             :lines: 51-58
 
-    .. tab:: Python
+    .. group-tab:: Python
 
         .. literalinclude:: statics/FixedDisplacements_LinearElastic/example.py
             :language: python
-            :lines: 55-62
+            :lines: 57-64
 
 .. tip::
 
@@ -292,7 +297,7 @@ and allow a generic API:
 
     .. tabs::
 
-        .. tab:: C++
+        .. group-tab:: C++
 
             .. code-block:: cpp
 
@@ -311,7 +316,7 @@ and allow a generic API:
                 auto variable = vector.allocate_elemmat(); // allocate
                 auto variable = vector.allocate_elemmat(0.0); // allocate & (zero-)initialise
 
-        .. tab:: Python
+        .. group-tab:: Python
 
             .. code-block:: python
 
@@ -337,17 +342,18 @@ Element definition
 
 .. tabs::
 
-    .. tab:: C++
+    .. group-tab:: C++
 
         .. literalinclude:: statics/FixedDisplacements_LinearElastic/example.cpp
             :language: cpp
+            :dedent: 4
             :lines: 64-65
 
-    .. tab:: Python
+    .. group-tab:: Python
 
         .. literalinclude:: statics/FixedDisplacements_LinearElastic/example.py
             :language: python
-            :lines: 68-69
+            :lines: 70-71
 
 At this moment the interpolation and quadrature is allocated.
 The shape functions and integration points (that can be customised) are stored in this class.
@@ -377,17 +383,18 @@ Material definition
 
 .. tabs::
 
-    .. tab:: C++
+    .. group-tab:: C++
 
         .. literalinclude:: statics/FixedDisplacements_LinearElastic/example.cpp
             :language: cpp
+            :dedent: 4
             :lines: 68
 
-    .. tab:: Python
+    .. group-tab:: Python
 
         .. literalinclude:: statics/FixedDisplacements_LinearElastic/example.py
             :language: python
-            :lines: 72
+            :lines: 74
 
 We now define a uniform linear elastic material,
 using an external library that is tuned to *GooseFEM*.
@@ -412,17 +419,18 @@ Allocate integration point tensors
 
 .. tabs::
 
-    .. tab:: C++
+    .. group-tab:: C++
 
         .. literalinclude:: statics/FixedDisplacements_LinearElastic/example.cpp
             :language: cpp
+            :dedent: 4
             :lines: 71-74
 
-    .. tab:: Python
+    .. group-tab:: Python
 
         .. literalinclude:: statics/FixedDisplacements_LinearElastic/example.py
             :language: python
-            :lines: 75-77
+            :lines: 77-79
 
 We will need a few tensors per integration.
 Like before, we can choose to allocate them to avoid repeated memory allocation.
@@ -437,7 +445,7 @@ and the element definition that ignores all third-dimension components.
 
     .. tabs::
 
-        .. tab:: C++
+        .. group-tab:: C++
 
             .. code-block:: cpp
 
@@ -445,7 +453,7 @@ and the element definition that ignores all third-dimension components.
                 auto variable = quad.allocate_qtensor<rank>(); // allocate
                 auto variable = quad.allocate_qtensor<rank>(0.0); // allocate & (zero-)initialise
 
-        .. tab:: Python
+        .. group-tab:: Python
 
             .. code-block:: python
 
@@ -456,31 +464,33 @@ Compute strain
 
 .. tabs::
 
-    .. tab:: C++
+    .. group-tab:: C++
 
         .. literalinclude:: statics/FixedDisplacements_LinearElastic/example.cpp
             :language: cpp
+            :dedent: 4
             :lines: 79-81
             :emphasize-lines: 2
 
-    .. tab:: C++ (realloc)
+    .. group-tab:: C++(auto)
 
         .. literalinclude:: statics/FixedDisplacements_LinearElastic/example_realloc.cpp
+            :dedent: 4
             :language: cpp
             :lines: 65
 
-    .. tab:: Python
+    .. group-tab:: Python
 
         .. literalinclude:: statics/FixedDisplacements_LinearElastic/example.py
             :language: python
-            :lines: 83-84
+            :lines: 85-86
             :emphasize-lines: 2
 
-    .. tab:: Python (realloc)
+    .. group-tab:: Python(auto)
 
         .. literalinclude:: statics/FixedDisplacements_LinearElastic/example_realloc.py
             :language: python
-            :lines: 69
+            :lines: 71
 
 The strain per integration point is now computed using the current nodal displacements
 (stored as 'elemvec' in *ue*) and the gradient of the shape functions.
@@ -497,29 +507,31 @@ Compute stress and tangent
 
 .. tabs::
 
-    .. tab:: C++
+    .. group-tab:: C++
 
         .. literalinclude:: statics/FixedDisplacements_LinearElastic/example.cpp
             :language: cpp
+            :dedent: 4
             :lines: 83-85
 
-    .. tab:: C++ (realloc)
+    .. group-tab:: C++(auto)
 
         .. literalinclude:: statics/FixedDisplacements_LinearElastic/example_realloc.cpp
+            :dedent: 4
             :language: cpp
             :lines: 68-70
 
-    .. tab:: Python
+    .. group-tab:: Python
 
         .. literalinclude:: statics/FixedDisplacements_LinearElastic/example.py
             :language: python
-            :lines: 87-89
+            :lines: 89-91
 
-    .. tab:: Python (realloc)
+    .. group-tab:: Python(auto)
 
         .. literalinclude:: statics/FixedDisplacements_LinearElastic/example_realloc.py
             :language: python
-            :lines: 72-74
+            :lines: 74-76
 
 The stress and stiffness tensors are now computed for each integration point
 (completely independently) using the external material model.
@@ -529,29 +541,31 @@ Assemble system
 
 .. tabs::
 
-    .. tab:: C++
+    .. group-tab:: C++
 
         .. literalinclude:: statics/FixedDisplacements_LinearElastic/example.cpp
             :language: cpp
+            :dedent: 4
             :lines: 87-94
 
-    .. tab:: C++ (realloc)
+    .. group-tab:: C++(auto)
 
         .. literalinclude:: statics/FixedDisplacements_LinearElastic/example_realloc.cpp
+            :dedent: 4
             :language: cpp
             :lines: 72-76
 
-    .. tab:: Python
+    .. group-tab:: Python
 
         .. literalinclude:: statics/FixedDisplacements_LinearElastic/example.py
             :language: python
-            :lines: 91-97
+            :lines: 93-99
 
-    .. tab:: Python (realloc)
+    .. group-tab:: Python(auto)
 
         .. literalinclude:: statics/FixedDisplacements_LinearElastic/example_realloc.py
             :language: python
-            :lines: 76-80
+            :lines: 78-82
 
 The stress stored per integration point (*Sig*) is now converted to
 nodal internal force vectors stored per element (*fe*).
@@ -574,41 +588,44 @@ Solve
 
 .. tabs::
 
-    .. tab:: C++
+    .. group-tab:: C++
 
         .. literalinclude:: statics/FixedDisplacements_LinearElastic/example.cpp
             :language: cpp
+            :dedent: 4
             :lines: 95-106
 
-    .. tab:: C++ (realloc)
+    .. group-tab:: C++(auto)
 
         .. literalinclude:: statics/FixedDisplacements_LinearElastic/example_realloc.cpp
+            :dedent: 4
             :language: cpp
             :lines: 78-88
 
-    .. tab:: C++ (manual)
+    .. group-tab:: C++(man)
 
         .. literalinclude:: statics/FixedDisplacements_LinearElastic/manual_partition.cpp
+            :dedent: 4
             :language: cpp
-            :lines: 78-95
+            :lines: 77-93
 
-    .. tab:: Python
+    .. group-tab:: Python
 
         .. literalinclude:: statics/FixedDisplacements_LinearElastic/example.py
             :language: python
-            :lines: 99-109
+            :lines: 101-111
 
-    .. tab:: Python (realloc)
+    .. group-tab:: Python(auto)
 
         .. literalinclude:: statics/FixedDisplacements_LinearElastic/example_realloc.py
             :language: python
-            :lines: 82-92
+            :lines: 84-94
 
-    .. tab:: Python (manual)
+    .. group-tab:: Python(man)
 
         .. literalinclude:: statics/FixedDisplacements_LinearElastic/manual_partition.py
             :language: python
-            :lines: 82-102
+            :lines: 84-104
 
 We now prescribe the displacement of the Prescribed degrees-of-freedom directly
 in the nodal displacements *disp* and compute the residual force.
@@ -623,29 +640,31 @@ Strain and stress
 
 .. tabs::
 
-    .. tab:: C++
+    .. group-tab:: C++
 
         .. literalinclude:: statics/FixedDisplacements_LinearElastic/example.cpp
             :language: cpp
+            :dedent: 4
             :lines: 111-114
 
-    .. tab:: C++ (realloc)
+    .. group-tab:: C++(auto)
 
         .. literalinclude:: statics/FixedDisplacements_LinearElastic/example_realloc.cpp
+            :dedent: 4
             :language: cpp
             :lines: 94-96
 
-    .. tab:: Python
+    .. group-tab:: Python
 
         .. literalinclude:: statics/FixedDisplacements_LinearElastic/example.py
             :language: python
-            :lines: 115-118
+            :lines: 118-120
 
-    .. tab:: Python (realloc)
+    .. group-tab:: Python(auto)
 
         .. literalinclude:: statics/FixedDisplacements_LinearElastic/example_realloc.py
             :language: python
-            :lines: 98-100
+            :lines: 100-102
 
 The strain and stress per integration point are recomputed for post-processing.
 
@@ -654,41 +673,44 @@ Residual force
 
 .. tabs::
 
-    .. tab:: C++
+    .. group-tab:: C++
 
         .. literalinclude:: statics/FixedDisplacements_LinearElastic/example.cpp
             :language: cpp
+            :dedent: 4
             :lines: 115-127
 
-    .. tab:: C++ (realloc)
+    .. group-tab:: C++(auto)
 
         .. literalinclude:: statics/FixedDisplacements_LinearElastic/example_realloc.cpp
+            :dedent: 4
             :language: cpp
             :lines: 98-108
 
-    .. tab:: C++ (manual)
+    .. group-tab:: C++(man)
 
         .. literalinclude:: statics/FixedDisplacements_LinearElastic/manual_partition.cpp
+            :dedent: 4
             :language: cpp
-            :lines: 105-118
+            :lines: 103-116
 
-    .. tab:: Python
+    .. group-tab:: Python
 
         .. literalinclude:: statics/FixedDisplacements_LinearElastic/example.py
             :language: python
-            :lines: 120-131
+            :lines: 122-133
 
-    .. tab:: Python (realloc)
+    .. group-tab:: Python(auto)
 
         .. literalinclude:: statics/FixedDisplacements_LinearElastic/example_realloc.py
             :language: python
-            :lines: 102-112
+            :lines: 104-114
 
-    .. tab:: Python (manual_partition)
+    .. group-tab:: Python(man)
 
         .. literalinclude:: statics/FixedDisplacements_LinearElastic/manual_partition.py
             :language: python
-            :lines: 112-125
+            :lines: 114-127
 
 We convince ourselves that the solution is indeed in mechanical equilibrium.
 
@@ -697,25 +719,26 @@ Plot
 
 .. tabs::
 
-    .. tab:: C++
+    .. group-tab:: C++
 
         .. literalinclude:: statics/FixedDisplacements_LinearElastic/example.cpp
             :language: cpp
+            :dedent: 4
             :lines: 128-138
 
         Finally we store some fields for plotting using
         :download:`plot.py <statics/FixedDisplacements_LinearElastic/plot.py>`.
 
-    .. tab:: Python
+    .. group-tab:: Python
 
         Let's extract the average stress per element:
 
         .. literalinclude:: statics/FixedDisplacements_LinearElastic/example.py
             :language: python
-            :lines: 133-135
+            :lines: 135-137
 
-        And plot it on a deformed mesh:
+        And plot an equivalent stress on a deformed mesh:
 
         .. literalinclude:: statics/FixedDisplacements_LinearElastic/example.py
             :language: python
-            :lines: 147-186
+            :lines: 149-189

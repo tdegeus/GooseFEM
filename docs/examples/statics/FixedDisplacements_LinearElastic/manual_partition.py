@@ -35,12 +35,14 @@ nodesBot = mesh.nodesBottomEdge()
 # fixed displacements DOFs
 # ------------------------
 
-iip = np.concatenate((
-    dofs[nodesRgt, 0],
-    dofs[nodesTop, 1],
-    dofs[nodesLft, 0],
-    dofs[nodesBot, 1],
-))
+iip = np.concatenate(
+    (
+        dofs[nodesRgt, 0],
+        dofs[nodesTop, 1],
+        dofs[nodesLft, 0],
+        dofs[nodesBot, 1],
+    )
+)
 
 # simulation variables
 # --------------------
@@ -143,6 +145,7 @@ if len(sys.argv) == 2:
 nelem = conn.shape[0]
 
 # tensor products
+
 
 def ddot22(A2, B2):
     return np.einsum("eij, eji -> e", A2, B2)
