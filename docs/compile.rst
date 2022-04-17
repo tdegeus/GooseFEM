@@ -1,9 +1,9 @@
 
 .. _compile:
 
-*********
-Compiling
-*********
+***************
+Compiling (C++)
+***************
 
 Introduction
 ============

@@ -9,3 +9,4 @@ dependencies:
 - setuptools_scm
 - sphinx
 - sphinx_rtd_theme
+- sphinx-tabs

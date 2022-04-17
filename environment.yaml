@@ -16,6 +16,7 @@ dependencies:
 - scikit-build
 - setuptools_scm
 - sphinx
+- sphinx-tabs
 - sphinx_rtd_theme
 - xsimd
 - xtensor

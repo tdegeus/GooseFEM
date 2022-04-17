@@ -11,3 +11,13 @@ find_package(GMatElastic REQUIRED)
 add_executable(example example.cpp)
 target_link_libraries(example PRIVATE GMatElastic GooseFEM HighFive)
 target_link_libraries(example INTERFACE xtensor::optimize xtensor::use_xsimd)
+
+# Add more executables used as illustration
+
+add_executable(example_realloc example_realloc.cpp)
+target_link_libraries(example_realloc PRIVATE GMatElastic GooseFEM HighFive)
+target_link_libraries(example_realloc INTERFACE xtensor::optimize xtensor::use_xsimd)
+
+add_executable(manual_partition manual_partition.cpp)
+target_link_libraries(manual_partition PRIVATE GMatElastic GooseFEM HighFive)
+target_link_libraries(manual_partition INTERFACE xtensor::optimize xtensor::use_xsimd)

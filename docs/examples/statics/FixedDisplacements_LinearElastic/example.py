@@ -19,10 +19,12 @@ nelem = mesh.nelem()
 nne = mesh.nne()
 ndim = mesh.ndim()
 
-# mesh definitions
+# mesh definition, displacement, external forces
 coor = mesh.coor()
 conn = mesh.conn()
 dofs = mesh.dofs()
+disp = np.zeros_like(coor)
+fext = np.zeros_like(coor)
 
 # node sets
 nodesLft = mesh.nodesLeftEdge()
@@ -33,7 +35,12 @@ nodesBot = mesh.nodesBottomEdge()
 # fixed displacements DOFs
 # ------------------------
 
-iip = np.concatenate((dofs[nodesRgt, 0], dofs[nodesTop, 1], dofs[nodesLft, 0], dofs[nodesBot, 1]))
+iip = np.concatenate((
+    dofs[nodesRgt, 0],
+    dofs[nodesTop, 1],
+    dofs[nodesLft, 0],
+    dofs[nodesBot, 1],
+))
 
 # simulation variables
 # --------------------
@@ -45,11 +52,9 @@ vector = GooseFEM.VectorPartitioned(conn, dofs, iip)
 K = GooseFEM.MatrixPartitioned(conn, dofs, iip)
 Solver = GooseFEM.MatrixPartitionedSolver()
 
-# nodal quantities
-disp = np.zeros(coor.shape)
-fint = np.zeros(coor.shape)
-fext = np.zeros(coor.shape)
-fres = np.zeros(coor.shape)
+# nodal vectors
+fint = np.zeros_like(coor)
+fres = np.zeros_like(coor)
 
 # element vectors
 ue = np.empty((nelem, nne, ndim))
@@ -75,8 +80,8 @@ C = np.empty((nelem, nip, 3, 3, 3, 3))
 # -----
 
 # strain
-ue = vector.AsElement(disp)
-Eps = elem.SymGradN_vector(ue)
+vector.asElement(disp, ue)
+elem.symGradN_vector(ue, Eps)
 
 # stress & tangent
 mat.setStrain(Eps)
@@ -125,7 +130,7 @@ fres = fext - fint
 # print residual
 print(np.sum(np.abs(fres)) / np.sum(np.abs(fext)))
 
-# average stress per node
+# average stress per element
 dV = elem.AsTensor(2, elem.dV())
 Sig = np.average(Sig, weights=dV, axis=1)
 
@@ -144,7 +149,6 @@ if len(sys.argv) == 2:
 nelem = conn.shape[0]
 
 # tensor products
-
 
 def ddot22(A2, B2):
     return np.einsum("eij, eji -> e", A2, B2)

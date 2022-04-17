@@ -80,26 +80,16 @@ fint = vector.AssembleNode(elem.Int_gradN_dot_tensor2_dV(Sig))
 K.assemble(elem.Int_gradN_dot_tensor4_dot_gradNT_dV(C))
 
 # set fixed displacements
-u_p = np.concatenate(
-    (
-        +0.1 * np.ones(nodesRgt.size),
-        -0.1 * np.ones(nodesTop.size),
-        np.zeros(nodesLft.size),
-        np.zeros(nodesBot.size),
-    )
-)
+disp[nodesRgt, 0] = +0.1
+disp[nodesTop, 1] = -0.1
+disp[nodesLft, 0] = 0.0
+disp[nodesBot, 1] = 0.0
 
 # residual
 fres = fext - fint
 
-# partition
-fres_u = vector.AsDofs_u(fres)
-
 # solve
-u_u = Solver.Solve_u(K, fres_u, u_p)
-
-# assemble to nodal vector
-disp = vector.AsNode(u_u, u_p)
+disp = Solver.Solve(K, fres, disp)
 
 # post-process
 # ------------
@@ -113,16 +103,13 @@ Sig = mat.Stress()
 fint = vector.AssembleNode(elem.Int_gradN_dot_tensor2_dV(Sig))
 
 # apply reaction force
-fext_p = vector.AsDofs_p(fint)
+fext = vector.Copy_p(fint, fext)
 
 # residual
 fres = fext - fint
 
-# partition
-fres_u = vector.AsDofs_u(fres)
-
 # print residual
-print(np.sum(np.abs(fres_u)) / np.sum(np.abs(fext_p)))
+print(np.sum(np.abs(fres)) / np.sum(np.abs(fext)))
 
 # average stress per element
 dV = elem.AsTensor(2, elem.dV())

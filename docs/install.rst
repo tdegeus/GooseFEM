@@ -5,9 +5,28 @@ Getting GooseFEM
 Using conda
 ===========
 
-The easiest is to use *conda* to install *GooseFEM*::
+The easiest is to use *conda* to install *GooseFEM*:
 
-    conda install -c conda-forge goosefem
+.. tabs::
+
+    .. tab:: C++
+
+        .. code-block:: bash
+
+            conda install -c conda-forge goosefem
+
+    .. tab:: Python
+
+        .. code-block:: bash
+
+            conda install -c conda-forge python-goosefem
+
+        .. warning::
+
+            This package does not benefit from *xsimd* optimisation,
+            as it is not compiled on your hardware.
+            You'll have to compile by hand to benefit from *xsimd* optimisation.
+
 
 This will install all the necessary runtime dependencies as well.
 
@@ -20,7 +39,6 @@ This will install all the necessary runtime dependencies as well.
         conda env update --file environment.yaml
 
     This will install the dependencies to run tests and examples.
-
 
 From source
 ===========
@@ -35,99 +53,71 @@ Download the package::
     git checkout https://github.com/tdegeus/GooseFEM.git
     cd GooseFEM
 
-Install headers, *CMake* and *pkg-config* support:
+.. tabs::
 
-.. code-block:: none
+    .. tab:: C++
 
-    cmake -Bbuild
-    cd build
-    cmake --install .
+        Install headers, *CMake* and *pkg-config* support:
 
-.. note::
+        .. code-block:: none
 
-    The version is determined from the latest git tag, and possible commits since that tag.
-    Internally Python's ``setuptools_scm`` is used to this end.
-    In case that you are not working from a clone of the repository you have to set
-    the version manually, **before** configuring with CMake:
+            cmake -Bbuild
+            cd build
+            cmake --install .
 
-    .. code-block:: none
+        .. note::
 
-        export SETUPTOOLS_SCM_PRETEND_VERSION="1.2.3"
-        cmake -Bbuild
-        cd build
-        cmake --install .
+            The version is determined from the latest git tag, and possible commits since that tag.
+            Internally Python's ``setuptools_scm`` is used to this end.
+            In case that you are not working from a clone of the repository you have to set
+            the version manually, **before** configuring with CMake:
 
-    In Windows replace the first line with
+            .. code-block:: none
 
-    .. code-block:: none
+                export SETUPTOOLS_SCM_PRETEND_VERSION="1.2.3"
+                cmake -Bbuild
+                cd build
+                cmake --install .
 
-        set SETUPTOOLS_SCM_PRETEND_VERSION="1.2.3"
+            In Windows replace the first line with
 
-.. tip::
+            .. code-block:: none
 
-    To install in a loaded conda environment use
+                set SETUPTOOLS_SCM_PRETEND_VERSION="1.2.3"
 
-    .. code-block:: none
+        .. tip::
 
-        cmake -Bbuild -DCMAKE_INSTALL_PREFIX:PATH="${CONDA_PREFIX}"
-        cd build
-        cmake --install .
+            To install in a loaded conda environment use
 
+            .. code-block:: none
 
-.. _install_python:
+                cmake -Bbuild -DCMAKE_INSTALL_PREFIX:PATH="${CONDA_PREFIX}"
+                cd build
+                cmake --install .
 
-Python interface
-================
+    .. tab:: Python
 
-.. tip::
+        Start by installing the dependencies, for example using *conda*::
 
-    It could be instructive to see how configuration / compilation is done in the
-    continuous integration: :download:`.github/workflows/ci.yml <../.github/workflows/ci.yml>`
+            conda install -c conda-forge xtensor-python eigen xsimd
 
-Using conda
-^^^^^^^^^^^
+        Note that *xsimd* is optional, but recommended.
 
-The quickest (but not the most efficient!) is to use *conda* to install *GooseFEM*::
+        Then, download the package::
 
-    conda install -c conda-forge python-goosefem
+            git checkout https://github.com/tdegeus/GooseFEM.git
+            cd GooseFEM
 
-.. warning::
+        Install the package using::
 
-    This package does not benefit from *xsimd* optimisation,
-    as it is not compiled on your hardware.
-    You'll have to compile by hand to benefit from *xsimd* optimisation.
+            python -m pip install . -v
 
-.. _install_python_source:
+        To use hardware optimisation (using *xsimd*) use instead::
 
-From source
-^^^^^^^^^^^
-
-Start by installing the dependencies, for example using *conda*::
-
-    conda install -c conda-forge xtensor-python eigen xsimd
-
-Note that *xsimd* is optional, but recommended.
-
-Then, download the package::
-
-    git checkout https://github.com/tdegeus/GooseFEM.git
-    cd GooseFEM
-
-Install the package using::
-
-    python setup.py install --build-type Release -vv
-
-To use hardware optimisation (using *xsimd*) use instead::
-
-    python setup.py install --build-type Release -vv -DUSE_SIMD=1
-
-.. _install_docs:
+            SKBUILD_CONFIGURE_OPTIONS="-DUSE_SIMD=1" python -m pip install . -v
 
 Docs
 ====
-
-C++ (Doxygen)
-^^^^^^^^^^^^^
 
 .. tip::
 
@@ -135,35 +125,21 @@ C++ (Doxygen)
     continuous integration:
     :download:`.github/workflows/gh-pages.yml <../.github/workflows/gh-pages.yml>`
 
-To build the docs there are two steps to be made:
+There are two kinds of docs:
 
-1.  Extract the code documentation using doxygen:
-
-    .. code-block:: none
-
-        cmake -Bbuild -DBUILD_DOCS=1
-        cd build
-        make docs
-
-2.  Build the docs using sphinx:
+1.  The current docs, generated using sphinx:
 
     .. code-block:: none
 
         cd docs
         make html
 
-General / Python (Sphinx)
-^^^^^^^^^^^^^^^^^^^^^^^^^
+2.  The doxygen docs of the C++ API:
 
-.. tip::
+    .. code-block:: none
 
-    The dependencies
-    are also listed in ``environment.yaml``.
-    One could install those dependencies in an activated environment by::
+        cmake -Bbuild -DBUILD_DOCS=1
+        cd build
+        make html
 
-        conda env update --file environment.yaml
 
-Build the docs as follows::
-
-    cd docs
-    make html

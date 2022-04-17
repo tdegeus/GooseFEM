@@ -16,10 +16,12 @@ int main()
     size_t nne = mesh.nne();
     size_t ndim = mesh.ndim();
 
-    // mesh definitions
+    // mesh definition, displacement, external forces
     xt::xtensor<double, 2> coor = mesh.coor();
     xt::xtensor<size_t, 2> conn = mesh.conn();
     xt::xtensor<size_t, 2> dofs = mesh.dofs();
+    auto disp = xt::zeros_like(coor);
+    auto fext = xt::zeros_like(coor);
 
     // node sets
     xt::xtensor<size_t, 1> nodesLft = mesh.nodesLeftEdge();
@@ -46,22 +48,6 @@ int main()
     GooseFEM::MatrixPartitioned K(conn, dofs, iip);
     GooseFEM::MatrixPartitionedSolver<> Solver;
 
-    // nodal quantities
-    xt::xtensor<double, 2> disp = xt::zeros<double>(coor.shape());
-    xt::xtensor<double, 2> fint = xt::zeros<double>(coor.shape());
-    xt::xtensor<double, 2> fext = xt::zeros<double>(coor.shape());
-    xt::xtensor<double, 2> fres = xt::zeros<double>(coor.shape());
-
-    // DOF values
-    xt::xtensor<double, 1> u_u = xt::zeros<double>({vector.nnu()});
-    xt::xtensor<double, 1> fres_u = xt::zeros<double>({vector.nnu()});
-    xt::xtensor<double, 1> fext_p = xt::zeros<double>({vector.nnp()});
-
-    // element vectors
-    xt::xtensor<double, 3> ue = xt::empty<double>({nelem, nne, ndim});
-    xt::xtensor<double, 3> fe = xt::empty<double>({nelem, nne, ndim});
-    xt::xtensor<double, 3> Ke = xt::empty<double>({nelem, nne * ndim, nne * ndim});
-
     // element/material definition
     // ---------------------------
 
@@ -72,30 +58,22 @@ int main()
     // material definition
     GMatElastic::Cartesian3d::Array<2> mat({nelem, nip}, 1.0, 1.0);
 
-    // integration point tensors
-    xt::xtensor<double, 4> Eps = xt::empty<double>({nelem, nip, 3ul, 3ul});
-    xt::xtensor<double, 4> Sig = xt::empty<double>({nelem, nip, 3ul, 3ul});
-    xt::xtensor<double, 6> C = xt::empty<double>({nelem, nip, 3ul, 3ul, 3ul, 3ul});
-
     // solve
     // -----
 
     // strain
-    vector.asElement(disp, ue);
-    elem.symGradN_vector(ue, Eps);
+    auto Eps = elem.SymGradN_vector(vector.AsElement(disp));
 
     // stress & tangent
     mat.setStrain(Eps);
-    mat.stress(Sig);
-    mat.tangent(C);
+    auto Sig = mat.Stress();
+    auto C = mat.Tangent();
 
     // internal force
-    elem.int_gradN_dot_tensor2_dV(Sig, fe);
-    vector.assembleNode(fe, fint);
+    auto fint = vector.AssembleNode(elem.Int_gradN_dot_tensor2_dV(Sig));
 
     // stiffness matrix
-    elem.int_gradN_dot_tensor4_dot_gradNT_dV(C, Ke);
-    K.assemble(Ke);
+    K.assemble(elem.Int_gradN_dot_tensor4_dot_gradNT_dV(C));
 
     // set fixed displacements
     xt::xtensor<double, 1> u_p = xt::concatenate(xt::xtuple(
@@ -105,43 +83,41 @@ int main()
         xt::zeros<double>({nodesBot.size()})));
 
     // residual
-    xt::noalias(fres) = fext - fint;
+    auto fres = fext - fint;
 
     // partition
     vector.asDofs_u(fres, fres_u);
 
     // solve
-    Solver.solve_u(K, fres_u, u_p, u_u);
+    auto u_u = Solver.Solve_u(K, fres_u, u_p);
 
     // assemble to nodal vector
-    vector.nodeFromPartitioned(u_u, u_p, disp);
+    disp = vector.NodeFromPartitioned(u_u, u_p);
 
     // post-process
     // ------------
 
     // compute strain and stress
-    vector.asElement(disp, ue);
-    elem.symGradN_vector(ue, Eps);
+    Eps = elem.SymGradN_vector(vector.AsElement(disp));
     mat.setStrain(Eps);
-    mat.stress(Sig);
+    Sig = mat.Stress();
 
     // internal force
-    elem.int_gradN_dot_tensor2_dV(Sig, fe);
-    vector.assembleNode(fe, fint);
+    fint = vector.AssembleNode(elem.Int_gradN_dot_tensor2_dV(Sig));
 
     // apply reaction force
-    vector.asDofs_p(fint, fext_p);
+    auto fext_p = vector.AsDofs_p(fint);
 
     // residual
     xt::noalias(fres) = fext - fint;
 
     // partition
-    vector.asDofs_u(fres, fres_u);
+    auto fres_u = vector.AsDofs_u(fres);
 
     // print residual
     std::cout << xt::sum(xt::abs(fres_u))[0] / xt::sum(xt::abs(fext_p))[0] << std::endl;
 
-    // average stress per node
+    // average stress per element
     xt::xtensor<double, 4> dV = elem.AsTensor<2>(elem.dV());
     xt::xtensor<double, 3> SigAv = xt::average(Sig, dV, {1});
 

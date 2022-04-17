@@ -15,53 +15,112 @@ in the out-of-plane direction to be modelled using two-dimensional plane strain.
 
 |
 
-Below an example is described line-by-line.
-The full example can be downloaded:
+Below, an example is described line-by-line.
+For simplicity the material model is taken from
+`GMatElastic <https://www.github.com/tdegeus/GMatElastic>`_, as this example is about FEM,
+not about constitutive modelling.
+The full example can be downloaded run as follows:
 
-| :download:`CMakeLists.txt <statics/FixedDisplacements_LinearElastic/CMakeLists.txt>`
-| :download:`example.cpp <statics/FixedDisplacements_LinearElastic/example.cpp>`
-| :download:`plot.py <statics/FixedDisplacements_LinearElastic/plot.py>`
+.. tabs::
 
-.. todo::
+    .. tab:: C++
 
-    Compile and run instructions.
+        :download:`CMakeLists.txt <statics/FixedDisplacements_LinearElastic/CMakeLists.txt>`
+        :download:`example.cpp <statics/FixedDisplacements_LinearElastic/example.cpp>`
+        :download:`plot.py <statics/FixedDisplacements_LinearElastic/plot.py>`
 
-.. note::
+        To compile we can use for example *CMake*:
 
-    This example is also available using the Python interface
-    (:download:`example.py <statics/FixedDisplacements_LinearElastic/example.py>`).
-    Compared to the C++ API, the Python API requires more data-allocation,
-    in particular for the functions *AsElement* and *AssembleNode*.
-    See: :ref:`conventions_allocation`.
+        .. literalinclude:: statics/FixedDisplacements_LinearElastic/CMakeLists.txt
+            :language: cmake
+            :lines: 1-13
+
+        Whereby we notice the use of *GMatElastic* as described,
+        but also *HighFive* illustrate a way of storing data and then plotting it with Python.
+
+        Proceed for example as follows:
+
+        1.  Get the prerequisites::
+
+                conda install -c conda-forge goosefem gmatelastic highfive python goosempl
+
+        2.  Compile::
+
+                cmake -Bbuild
+                cd build
+                cmake --build .
+
+        3.  Run::
+
+                ./example
+
+        4.  Plot::
+
+                python ../plot.py
+
+    .. tab:: Python
+
+        | :download:`example.py <statics/FixedDisplacements_LinearElastic/example.py>`
+
+        In this example we illustrate some basic plotting.
+
+        Proceed for example as follows:
+
+        1.  Get the prerequisites::
+
+                conda install -c conda-forge python-goosefem python-gmatelastic goosempl
+
+        2.  Run (and plot)::
+
+                python example.py
 
 Include library
 ===============
 
-.. literalinclude:: statics/FixedDisplacements_LinearElastic/example.cpp
-    :language: cpp
-    :lines: 1-4
-    :emphasize-lines: 2-3
+.. tabs::
+
+    .. tab:: C++
+
+        .. literalinclude:: statics/FixedDisplacements_LinearElastic/example.cpp
+            :language: cpp
+            :lines: 1-4
+            :emphasize-lines: 2-3
+
+    .. tab:: Python
+
+        .. literalinclude:: statics/FixedDisplacements_LinearElastic/example.py
+            :language: python
+            :lines: 1-9
+            :emphasize-lines: 4
 
 The first step is to include the header-only library.
-Note that for this example we also make use of a material model
-(`GMatElastic <https://www.github.com/tdegeus/GMatElastic>`_)
-and a library to write (and read) HDF5 files
-(`HighFive <https://www.github.com/BlueBrain/HighFive>`_).
+Some dependencies are included for convenience.
 
 Define mesh
 ===========
 
-.. literalinclude:: statics/FixedDisplacements_LinearElastic/example.cpp
-    :language: cpp
-    :lines: 11-28
-    :emphasize-lines: 2
+.. tabs::
 
-A mesh is defined using GooseFEM.
+    .. tab:: C++
+
+        .. literalinclude:: statics/FixedDisplacements_LinearElastic/example.cpp
+            :language: cpp
+            :lines: 11-30
+            :emphasize-lines: 2
+
+    .. tab:: Python
+
+        .. literalinclude:: statics/FixedDisplacements_LinearElastic/example.py
+            :language: python
+            :lines: 14-33
+            :emphasize-lines: 2
+
+A mesh is defined using *GooseFEM*.
 As observed the *mesh* is a class that has methods to extract the relevant information
 such as the nodal coordinates (*coor*), the connectivity (*conn*),
 the degrees-of-freedom per node (*dofs*) and several node-sets that
 will be used to impose the sketched boundary conditions
-(*nodesLeft*, *nodesRight*, *nodesTop*, *nodesBottom*).
+(*nodesLft*, *nodesRgt*, *nodesTop*, *nodesBot*).
 
 Note that:
 
@@ -80,9 +139,19 @@ Note that:
 Define partitioning
 ===================
 
-.. literalinclude:: statics/FixedDisplacements_LinearElastic/example.cpp
-    :language: cpp
-    :lines: 33-38
+.. tabs::
+
+    .. tab:: C++
+
+        .. literalinclude:: statics/FixedDisplacements_LinearElastic/example.cpp
+            :language: cpp
+            :lines: 35-40
+
+    .. tab:: Python
+
+        .. literalinclude:: statics/FixedDisplacements_LinearElastic/example.py
+            :language: python
+            :lines: 38-43
 
 We will reorder such that degrees-of-freedom are ordered such that
 
@@ -102,12 +171,23 @@ To achieve this we start by collecting all prescribed degrees-of-freedom in *iip
 (Avoid) Book-keeping
 ====================
 
-.. literalinclude:: statics/FixedDisplacements_LinearElastic/example.cpp
-    :language: cpp
-    :lines: 43
-    :emphasize-lines: 1
+.. tabs::
 
-To switch between the three of GooseFEM's data-representations,
+    .. tab:: C++
+
+        .. literalinclude:: statics/FixedDisplacements_LinearElastic/example.cpp
+            :language: cpp
+            :lines: 45
+            :emphasize-lines: 1
+
+    .. tab:: Python
+
+        .. literalinclude:: statics/FixedDisplacements_LinearElastic/example.py
+            :language: python
+            :lines: 49
+            :emphasize-lines: 1
+
+To switch between the three of *GooseFEM*'s data-representations,
 an instance of the *Vector* class is used.
 This instance, *vector*, will enable us to switch between a vector field (e.g. the displacement)
 
@@ -123,7 +203,7 @@ This instance, *vector*, will enable us to switch between a vector field (e.g. t
     *   'nodevec' :math:`\leftrightarrow` 'dofval' using *dofs* and *iip*,
     *   'nodevec' :math:`\leftrightarrow` 'elemvec' using *conn*.
 
-    By contrast, most of GooseFEM's other methods receive the relevant representation,
+    By contrast, most of *GooseFEM*'s other methods receive the relevant representation,
     and consequently require no problem specific knowledge.
     They thus do not have to supplied with *conn*, *dofs*, or *iip*.
 
@@ -136,10 +216,21 @@ This instance, *vector*, will enable us to switch between a vector field (e.g. t
 System matrix
 =============
 
-.. literalinclude:: statics/FixedDisplacements_LinearElastic/example.cpp
-    :language: cpp
-    :lines: 46-47
-    :emphasize-lines: 1
+.. tabs::
+
+    .. tab:: C++
+
+        .. literalinclude:: statics/FixedDisplacements_LinearElastic/example.cpp
+            :language: cpp
+            :lines: 48-49
+            :emphasize-lines: 1
+
+    .. tab:: Python
+
+        .. literalinclude:: statics/FixedDisplacements_LinearElastic/example.py
+            :language: python
+            :lines: 52-53
+            :emphasize-lines: 1
 
 We now also allocate the system/stiffness system (stored as sparse matrix).
 Like vector, it can accept and return different vector representations,
@@ -150,53 +241,88 @@ that we will use to solve a linear system of equations.
 Note that the solver-class takes care of factorising only when needed
 (when the matrix has been changed).
 
-.. note::
+.. tabs::
 
-    Here, the default solver is used (which is the default template, hence the "<>").
-    To use other solvers see: :ref:`linear_solver`.
+    .. tab:: C++
+
+        .. note::
+
+            Here, the default solver is used (which is the default template, hence the "<>").
+            To use other solvers see: :ref:`linear_solver`.
 
 .. seealso::
 
     *   :ref:`conventions_matrix`
     *   Details: :ref:`Matrix`
 
-Allocate nodal vectors
-======================
+Allocate nodal & element vectors
+================================
 
-.. literalinclude:: statics/FixedDisplacements_LinearElastic/example.cpp
-    :language: cpp
-    :lines: 50-53
+To avoid repeated memory allocation,
+it is advised to pre-allocate some data array and reuse them.
+We allocate:
 
-*   *disp*: nodal displacements
 *   *fint*: nodal internal forces
-*   *fext*: nodal external forces
 *   *fres*: nodal residual forces
 
-.. note::
+and the following arrays (tensors per element), that eliminate the connectivity from the equation,
+and allow a generic API:
 
-    To allocate nodal vectors the convenience function:
+*   *ue*: displacement per element
+*   *fe*: force per element (strictly speaking *ue* could be reused)
+*   *Ke*: tangent matrix per element.
 
-    .. code-block:: cpp
+.. tabs::
 
-        vector.AllocateNodevec(); // allocate
-        vector.AllocateElemvec(0.0); // allocate & (zero-)initialise
+    .. tab:: C++
 
-    is available, which takes care of getting the right shape. E.g.
+        .. literalinclude:: statics/FixedDisplacements_LinearElastic/example.cpp
+            :language: cpp
+            :lines: 51-58
 
-    .. code-block:: cpp
+    .. tab:: Python
 
-        auto disp = vector.AllocateNodevec(0.0);
+        .. literalinclude:: statics/FixedDisplacements_LinearElastic/example.py
+            :language: python
+            :lines: 55-62
 
-Allocate element vectors
-========================
+.. tip::
 
-.. literalinclude:: statics/FixedDisplacements_LinearElastic/example.cpp
-    :language: cpp
-    :lines: 56-58
+    To allocate nodal vectors or tensors per element, use the convenience functions:
 
-*   *ue*: displacement
-*   *fe*: force
-*   *Ke*: tangent matrix
+    .. tabs::
+
+        .. tab:: C++
+
+            .. code-block:: cpp
+
+                // nodal vectors ("fint", "fext", "fext", "disp", or "coor")
+                auto shape = vector.shape_nodevec(); // get shape
+                auto variable = vector.allocate_nodevec(); // allocate
+                auto variable = vector.allocate_elemvec(0.0); // allocate & (zero-)initialise
+
+                // vector per element ("ue" or "fe")
+                auto shape = vector.shape_elemvec(); // shape
+                auto variable = vector.allocate_elemvec(); // allocate
+                auto variable = vector.allocate_elemvec(0.0); // allocate & (zero-)initialise
+
+                // matrix per element ("Ke")
+                auto shape = vector.shape_elemmat(); // shape
+                auto variable = vector.allocate_elemmat(); // allocate
+                auto variable = vector.allocate_elemmat(0.0); // allocate & (zero-)initialise
+
+        .. tab:: Python
+
+            .. code-block:: python
+
+                # nodal vectors ("fint", "fext", "fext", "disp", or "coor")
+                variable = np.zeros(vector.shape_nodevec())
+
+                # vector per element ("ue" or "fe")
+                variable = np.zeros(vector.shape_elemvec())
+
+                # matrix per element ("Ke")
+                variable = np.zeros(vector.shape_elemmat())
 
 .. warning::
 
@@ -205,42 +331,23 @@ Allocate element vectors
     see :ref:`conventions_vector_conversion`.
     We will get back to this point below.
 
-.. note::
-
-    To allocate element vectors the convenience function:
-
-    .. code-block:: cpp
-
-        vector.AllocateElemvec(); // allocate
-        vector.AllocateElemvec(0.0); // allocate & (zero-)initialise
-
-    is available, which takes care of getting the right shape. E.g.
-
-    .. code-block:: cpp
-
-        auto ue = vector.AllocateElemvec(0.0);
-
-.. note::
-
-    To allocate element matrices the convenience function:
-
-    .. code-block:: cpp
-
-        vector.AllocateElemmat(); // allocate
-        vector.AllocateElemmat(0.0); // allocate & (zero-)initialise
-
-    is available, which takes care of getting the right shape. E.g.
-
-    .. code-block:: cpp
-
-        auto Ke = vector.AllocateElemmat(0.0);
 
 Element definition
 ==================
 
-.. literalinclude:: statics/FixedDisplacements_LinearElastic/example.cpp
-    :language: cpp
-    :lines: 64-65
+.. tabs::
+
+    .. tab:: C++
+
+        .. literalinclude:: statics/FixedDisplacements_LinearElastic/example.cpp
+            :language: cpp
+            :lines: 64-65
+
+    .. tab:: Python
+
+        .. literalinclude:: statics/FixedDisplacements_LinearElastic/example.py
+            :language: python
+            :lines: 68-69
 
 At this moment the interpolation and quadrature is allocated.
 The shape functions and integration points (that can be customised) are stored in this class.
@@ -268,18 +375,28 @@ using *Vector* as tool.
 Material definition
 ===================
 
-.. literalinclude:: statics/FixedDisplacements_LinearElastic/example.cpp
-    :language: cpp
-    :lines: 68
+.. tabs::
+
+    .. tab:: C++
+
+        .. literalinclude:: statics/FixedDisplacements_LinearElastic/example.cpp
+            :language: cpp
+            :lines: 68
+
+    .. tab:: Python
+
+        .. literalinclude:: statics/FixedDisplacements_LinearElastic/example.py
+            :language: python
+            :lines: 72
 
 We now define a uniform linear elastic material,
-using an external library that is tuned to GooseFEM.
+using an external library that is tuned to *GooseFEM*.
 This material library will translate a strain tensor per integration point to a stress tensor
 per integration point and a stiffness tensor per integration point.
 
 .. seealso::
 
-    Material libraries tuned to GooseFEM include:
+    Material libraries tuned to *GooseFEM* include:
 
     *   `GMatElastic <https:://www.github.com/tdegeus/GMatElastic>`__
     *   `GMatElastoPlastic <https:://www.github.com/tdegeus/GMatElastoPlastic>`__
@@ -290,45 +407,80 @@ per integration point and a stiffness tensor per integration point.
 
     But other libraries can also be easily used with (simple) wrappers.
 
-Integration point tensors
-=========================
+Allocate integration point tensors
+==================================
 
-.. literalinclude:: statics/FixedDisplacements_LinearElastic/example.cpp
-    :language: cpp
-    :lines: 71-74
+.. tabs::
 
-These strain, stress, and stiffness tensors per integration point are now allocated.
+    .. tab:: C++
+
+        .. literalinclude:: statics/FixedDisplacements_LinearElastic/example.cpp
+            :language: cpp
+            :lines: 71-74
+
+    .. tab:: Python
+
+        .. literalinclude:: statics/FixedDisplacements_LinearElastic/example.py
+            :language: python
+            :lines: 75-77
+
+We will need a few tensors per integration.
+Like before, we can choose to allocate them to avoid repeated memory allocation.
+In particular, we allocate the strain, stress, and stiffness tensors per integration point.
 Note that these tensors are 3-d while our problem was 2-d.
 This is thanks to the plane strain assumption,
 and the element definition that ignores all third-dimension components.
 
 .. note::
 
-    To allocate integration point the convenience function:
+    To allocate integration point tensors, use the convenience functions:
 
-    .. code-block:: cpp
+    .. tabs::
 
-        quad.AllocateQtensor<rank>(); // allocate
-        quad.AllocateQtensor<rank>(0.0); // allocate & (zero-)initialise
+        .. tab:: C++
 
-    is available, which takes care of getting the right shape. E.g.
+            .. code-block:: cpp
 
-    .. code-block:: cpp
+                auto shape = quad.shape_qtensor<rank>(); // shape
+                auto variable = quad.allocate_qtensor<rank>(); // allocate
+                auto variable = quad.allocate_qtensor<rank>(0.0); // allocate & (zero-)initialise
 
-        auto Eps = quad.AllocateQtensor<2>();
-        auto C = quad.AllocateQtensor<4>();
+        .. tab:: Python
 
-    From Python simply use ``rank`` as the first function argument.
-    Furthermore, for scalar you could use ``AllocateQscalar()``
-    which is equivalent to ``AllocateQtensor<0>()``.
+            .. code-block:: python
+
+                variable = np.zeros(quad.shape_qtensor(rank))
 
 Compute strain
 ==============
 
-.. literalinclude:: statics/FixedDisplacements_LinearElastic/example.cpp
-    :language: cpp
-    :lines: 79-81
-    :emphasize-lines: 2
+.. tabs::
+
+    .. tab:: C++
+
+        .. literalinclude:: statics/FixedDisplacements_LinearElastic/example.cpp
+            :language: cpp
+            :lines: 79-81
+            :emphasize-lines: 2
+
+    .. tab:: C++ (realloc)
+
+        .. literalinclude:: statics/FixedDisplacements_LinearElastic/example_realloc.cpp
+            :language: cpp
+            :lines: 65
+
+    .. tab:: Python
+
+        .. literalinclude:: statics/FixedDisplacements_LinearElastic/example.py
+            :language: python
+            :lines: 83-84
+            :emphasize-lines: 2
+
+    .. tab:: Python (realloc)
+
+        .. literalinclude:: statics/FixedDisplacements_LinearElastic/example_realloc.py
+            :language: python
+            :lines: 69
 
 The strain per integration point is now computed using the current nodal displacements
 (stored as 'elemvec' in *ue*) and the gradient of the shape functions.
@@ -337,39 +489,69 @@ The strain per integration point is now computed using the current nodal displac
 
     *ue* is the output of ``vector.asElement(disp, ue)``.
     Using this syntax re-allocation of *ue* is avoided.
-    If this optimisation is irrelevant for you problem (or if you are using the Python interface),
-    please use the same function, but starting with a capital:
-
-    .. code-block:: cpp
-
-        ue = vector.AsElement(disp);
-
-    Note that this allows the one-liner
-
-    .. code-block:: cpp
-
-        Eps = elem.SymGradN_vector(vector.AElement(disp));
+    If this optimisation is irrelevant for you problem,
+    please use the same function, but starting with a **capital letter**.
 
 Compute stress and tangent
 ==========================
 
-.. literalinclude:: statics/FixedDisplacements_LinearElastic/example.cpp
-    :language: cpp
-    :lines: 83
+.. tabs::
+
+    .. tab:: C++
+
+        .. literalinclude:: statics/FixedDisplacements_LinearElastic/example.cpp
+            :language: cpp
+            :lines: 83-85
+
+    .. tab:: C++ (realloc)
+
+        .. literalinclude:: statics/FixedDisplacements_LinearElastic/example_realloc.cpp
+            :language: cpp
+            :lines: 68-70
+
+    .. tab:: Python
+
+        .. literalinclude:: statics/FixedDisplacements_LinearElastic/example.py
+            :language: python
+            :lines: 87-89
+
+    .. tab:: Python (realloc)
+
+        .. literalinclude:: statics/FixedDisplacements_LinearElastic/example_realloc.py
+            :language: python
+            :lines: 72-74
 
 The stress and stiffness tensors are now computed for each integration point
 (completely independently) using the external material model.
 
-.. note::
-
-    *Sig* and *C* are the output variables that were preallocated in the main.
-
 Assemble system
 ===============
 
-.. literalinclude:: statics/FixedDisplacements_LinearElastic/example.cpp
-    :language: cpp
-    :lines: 85-92
+.. tabs::
+
+    .. tab:: C++
+
+        .. literalinclude:: statics/FixedDisplacements_LinearElastic/example.cpp
+            :language: cpp
+            :lines: 87-94
+
+    .. tab:: C++ (realloc)
+
+        .. literalinclude:: statics/FixedDisplacements_LinearElastic/example_realloc.cpp
+            :language: cpp
+            :lines: 72-76
+
+    .. tab:: Python
+
+        .. literalinclude:: statics/FixedDisplacements_LinearElastic/example.py
+            :language: python
+            :lines: 91-97
+
+    .. tab:: Python (realloc)
+
+        .. literalinclude:: statics/FixedDisplacements_LinearElastic/example_realloc.py
+            :language: python
+            :lines: 76-80
 
 The stress stored per integration point (*Sig*) is now converted to
 nodal internal force vectors stored per element (*fe*).
@@ -387,28 +569,51 @@ the global stiffness matrix.
     more than once.
     In contrast "as..." would not result in what we want here.
 
-.. note::
-
-    Once more, *fe*, *fint*, and *Ke* are output variables. Less efficient, but shorter, is:
-
-    .. code-block:: cpp
-
-        // internal force
-        fint = vector.AssembleNode(elem.Int_gradN_dot_tensor2_dV(Sig));
-
-        // stiffness matrix
-        K.assemble(elem.Int_gradN_dot_tensor4_dot_gradNT_dV(C));
-
 Solve
 =====
 
-.. literalinclude:: statics/FixedDisplacements_LinearElastic/example.cpp
-    :language: cpp
-    :lines: 93-104
+.. tabs::
+
+    .. tab:: C++
+
+        .. literalinclude:: statics/FixedDisplacements_LinearElastic/example.cpp
+            :language: cpp
+            :lines: 95-106
+
+    .. tab:: C++ (realloc)
+
+        .. literalinclude:: statics/FixedDisplacements_LinearElastic/example_realloc.cpp
+            :language: cpp
+            :lines: 78-88
+
+    .. tab:: C++ (manual)
+
+        .. literalinclude:: statics/FixedDisplacements_LinearElastic/manual_partition.cpp
+            :language: cpp
+            :lines: 78-95
+
+    .. tab:: Python
+
+        .. literalinclude:: statics/FixedDisplacements_LinearElastic/example.py
+            :language: python
+            :lines: 99-109
+
+    .. tab:: Python (realloc)
+
+        .. literalinclude:: statics/FixedDisplacements_LinearElastic/example_realloc.py
+            :language: python
+            :lines: 82-92
+
+    .. tab:: Python (manual)
+
+        .. literalinclude:: statics/FixedDisplacements_LinearElastic/manual_partition.py
+            :language: python
+            :lines: 82-102
 
 We now prescribe the displacement of the Prescribed degrees-of-freedom directly
 in the nodal displacements *disp* and compute the residual force.
 This is follows by partitioning and solving, all done internally in the *MatrixPartitioned* class.
+As an example, the same operation with manual book-keeping is included.
 
 Post-process
 ============
@@ -416,35 +621,101 @@ Post-process
 Strain and stress
 -----------------
 
-.. literalinclude:: statics/FixedDisplacements_LinearElastic/example.cpp
-    :language: cpp
-    :lines: 109-112
+.. tabs::
+
+    .. tab:: C++
+
+        .. literalinclude:: statics/FixedDisplacements_LinearElastic/example.cpp
+            :language: cpp
+            :lines: 111-114
+
+    .. tab:: C++ (realloc)
+
+        .. literalinclude:: statics/FixedDisplacements_LinearElastic/example_realloc.cpp
+            :language: cpp
+            :lines: 94-96
+
+    .. tab:: Python
+
+        .. literalinclude:: statics/FixedDisplacements_LinearElastic/example.py
+            :language: python
+            :lines: 115-118
+
+    .. tab:: Python (realloc)
+
+        .. literalinclude:: statics/FixedDisplacements_LinearElastic/example_realloc.py
+            :language: python
+            :lines: 98-100
 
 The strain and stress per integration point are recomputed for post-processing.
 
 Residual force
 --------------
 
-.. literalinclude:: statics/FixedDisplacements_LinearElastic/example.cpp
-    :language: cpp
-    :lines: 113-125
+.. tabs::
+
+    .. tab:: C++
+
+        .. literalinclude:: statics/FixedDisplacements_LinearElastic/example.cpp
+            :language: cpp
+            :lines: 115-127
+
+    .. tab:: C++ (realloc)
+
+        .. literalinclude:: statics/FixedDisplacements_LinearElastic/example_realloc.cpp
+            :language: cpp
+            :lines: 98-108
+
+    .. tab:: C++ (manual)
+
+        .. literalinclude:: statics/FixedDisplacements_LinearElastic/manual_partition.cpp
+            :language: cpp
+            :lines: 105-118
+
+    .. tab:: Python
+
+        .. literalinclude:: statics/FixedDisplacements_LinearElastic/example.py
+            :language: python
+            :lines: 120-131
+
+    .. tab:: Python (realloc)
+
+        .. literalinclude:: statics/FixedDisplacements_LinearElastic/example_realloc.py
+            :language: python
+            :lines: 102-112
+
+    .. tab:: Python (manual_partition)
+
+        .. literalinclude:: statics/FixedDisplacements_LinearElastic/manual_partition.py
+            :language: python
+            :lines: 112-125
 
 We convince ourselves that the solution is indeed in mechanical equilibrium.
 
-Store & plot
-------------
+Plot
+----
 
-.. literalinclude:: statics/FixedDisplacements_LinearElastic/example.cpp
-    :language: cpp
-    :lines: 126-136
+.. tabs::
 
-Finally we store some fields for plotting using
-:download:`plot.py <statics/FixedDisplacements_LinearElastic/plot.py>`.
+    .. tab:: C++
 
-Manual partitioning
-===================
+        .. literalinclude:: statics/FixedDisplacements_LinearElastic/example.cpp
+            :language: cpp
+            :lines: 128-138
 
-To verify how partitioning and solving is done internally using the *MatrixPartitioned* class,
-the same example is provided where partitioning is done manually:
+        Finally we store some fields for plotting using
+        :download:`plot.py <statics/FixedDisplacements_LinearElastic/plot.py>`.
 
-| :download:`manual_partition.cpp <statics/FixedDisplacements_LinearElastic/manual_partition.cpp>`
+    .. tab:: Python
+
+        Let's extract the average stress per element:
+
+        .. literalinclude:: statics/FixedDisplacements_LinearElastic/example.py
+            :language: python
+            :lines: 133-135
+
+        And plot it on a deformed mesh:
+
+        .. literalinclude:: statics/FixedDisplacements_LinearElastic/example.py
+            :language: python
+            :lines: 147-186
