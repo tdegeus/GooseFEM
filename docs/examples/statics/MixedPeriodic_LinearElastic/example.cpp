@@ -16,10 +16,12 @@ int main()
     size_t nne = mesh.nne();
     size_t ndim = mesh.ndim();
 
-    // mesh definitions
+    // mesh definition, displacement, external forces
     xt::xtensor<double, 2> coor = mesh.coor();
     xt::xtensor<size_t, 2> conn = mesh.conn();
     xt::xtensor<size_t, 2> dofs = mesh.dofs();
+    auto disp = xt::zeros_like(coor);
+    auto fext = xt::zeros_like(coor);
 
     // node sets
     xt::xtensor<size_t, 1> nodesLft = mesh.nodesLeftOpenEdge();
@@ -31,7 +33,6 @@ int main()
     // ----------------------------------------
 
     xt::view(dofs, xt::keep(nodesRgt)) = xt::view(dofs, xt::keep(nodesLft));
-
     dofs = GooseFEM::Mesh::renumber(dofs);
 
     xt::xtensor<size_t, 1> iip = xt::concatenate(xt::xtuple(
@@ -50,11 +51,9 @@ int main()
     GooseFEM::MatrixPartitioned K(conn, dofs, iip);
     GooseFEM::MatrixPartitionedSolver<> Solver;
 
-    // nodal quantities
-    xt::xtensor<double, 2> disp = xt::zeros<double>(coor.shape());
-    xt::xtensor<double, 2> fint = xt::zeros<double>(coor.shape());
-    xt::xtensor<double, 2> fext = xt::zeros<double>(coor.shape());
-    xt::xtensor<double, 2> fres = xt::zeros<double>(coor.shape());
+    // nodal vectors
+    auto fint = xt::zeros_like(coor);
+    auto fres = xt::zeros_like(coor);
 
     // element vectors
     xt::xtensor<double, 3> ue = xt::empty<double>({nelem, nne, ndim});
@@ -132,7 +131,7 @@ int main()
     // print residual
     std::cout << xt::sum(xt::abs(fres))[0] / xt::sum(xt::abs(fext))[0] << std::endl;
 
-    // average stress per node
+    // average stress per element
     xt::xtensor<double, 4> dV = elem.AsTensor<2>(elem.dV());
     xt::xtensor<double, 3> SigAv = xt::average(Sig, dV, {1});
 

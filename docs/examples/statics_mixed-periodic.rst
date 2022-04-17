@@ -18,26 +18,37 @@ For simplicity two-dimensional plane strain is considered.
 Below the important difference with respect to the previous example are discussed.
 The full example can be downloaded:
 
-| :download:`CMakeLists.txt <statics/MixedPeriodic_LinearElastic/CMakeLists.txt>`
-| :download:`example.cpp <statics/MixedPeriodic_LinearElastic/example.cpp>`
-| :download:`plot.py <statics/MixedPeriodic_LinearElastic/plot.py>`
+.. tabs::
 
-.. todo::
+    .. group-tab:: C++
 
-    Compile and run instructions.
+        :download:`CMakeLists.txt <statics/MixedPeriodic_LinearElastic/CMakeLists.txt>`
+        :download:`example.cpp <statics/MixedPeriodic_LinearElastic/example.cpp>`
+        :download:`plot.py <statics/MixedPeriodic_LinearElastic/plot.py>`
 
-.. note::
+    .. group-tab:: Python
 
-    The same example is available using the Python interface:
-    :download:`example.py <statics/MixedPeriodic_LinearElastic/example.py>`
+        :download:`example.py <statics/MixedPeriodic_LinearElastic/example.py>`
 
 Node sets
 =========
 
-.. literalinclude:: statics/MixedPeriodic_LinearElastic/example.cpp
-    :language: cpp
-    :lines: 25-28
-    :emphasize-lines: 1-2
+.. tabs::
+
+    .. group-tab:: C++
+
+        .. literalinclude:: statics/MixedPeriodic_LinearElastic/example.cpp
+            :language: cpp
+            :dedent: 4
+            :lines: 27-30
+            :emphasize-lines: 1-2
+
+    .. group-tab:: Python
+
+        .. literalinclude:: statics/MixedPeriodic_LinearElastic/example.py
+            :language: py
+            :lines: 30-33
+            :emphasize-lines: 1-2
 
 We will apply periodicity to all the nodes along the left and right boundary of the geometry.
 The corner nodes are thereby assigned the fixed displacement (that is itself taken periodic).
@@ -45,9 +56,22 @@ The corner nodes are thereby assigned the fixed displacement (that is itself tak
 Apply periodicity
 =================
 
-.. literalinclude:: statics/MixedPeriodic_LinearElastic/example.cpp
-    :language: cpp
-    :lines: 33
+.. tabs::
+
+    .. group-tab:: C++
+
+        .. literalinclude:: statics/MixedPeriodic_LinearElastic/example.cpp
+            :language: cpp
+            :dedent: 4
+            :lines: 35-36
+            :emphasize-lines: 1
+
+    .. group-tab:: Python
+
+        .. literalinclude:: statics/MixedPeriodic_LinearElastic/example.py
+            :language: py
+            :lines: 38-39
+            :emphasize-lines: 1
 
 Applying periodicity in this case is rather straightforward.
 In particular the degrees-of-freedom along the right edge are eliminated,
@@ -58,9 +82,20 @@ simply assembled to both sides of the geometry.
 Fixed displacement
 ==================
 
-.. literalinclude:: statics/MixedPeriodic_LinearElastic/example.cpp
-    :language: cpp
-    :lines: 36-41
+.. tabs::
+
+    .. group-tab:: C++
+
+        .. literalinclude:: statics/MixedPeriodic_LinearElastic/example.cpp
+            :language: cpp
+            :dedent: 4
+            :lines: 38-42
+
+    .. group-tab:: Python
+
+        .. literalinclude:: statics/MixedPeriodic_LinearElastic/example.py
+            :language: py
+            :lines: 41-48
 
 The degrees-of-freedom of which the displacement is controlled are finally extracted
 from the renumbered list of degrees-of-freedom.
