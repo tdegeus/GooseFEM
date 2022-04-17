@@ -95,8 +95,8 @@ elem.symGradN_vector(ue, Eps)
 
 # stress & tangent
 mat.setStrain(Eps)
-Sig = mat.Stress()
-C = mat.Tangent()
+mat.stress(Sig)
+mat.tangent(C)
 
 # internal force
 fe = elem.Int_gradN_dot_tensor2_dV(Sig)
@@ -122,7 +122,7 @@ disp = Solver.Solve(K, fres, disp)
 ue = vector.AsElement(disp)
 Eps = elem.SymGradN_vector(ue)
 mat.setStrain(Eps)
-Sig = mat.Stress()
+mat.stress(Sig)
 
 # internal force
 fe = elem.Int_gradN_dot_tensor2_dV(Sig)
