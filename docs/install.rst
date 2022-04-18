@@ -23,7 +23,7 @@ The easiest is to use *conda* to install *GooseFEM*:
 
         .. warning::
 
-            This package does not benefit from *xsimd* optimisation,
+            This package does not benefit from (optional!) *xsimd* optimisation,
             as it is not compiled on your hardware.
             You'll have to compile by hand to benefit from *xsimd* optimisation.
 
@@ -38,7 +38,7 @@ This will install all the necessary runtime dependencies as well.
 
         conda env update --file environment.yaml
 
-    This will install the dependencies to run tests and examples.
+    This will install the dependencies to compile and run the code, tests, and examples.
 
 From source
 ===========
@@ -48,14 +48,18 @@ From source
     It could be instructive to see how configuration / compilation is done in the
     continuous integration: :download:`.github/workflows/ci.yml <../.github/workflows/ci.yml>`
 
-Download the package::
-
-    git checkout https://github.com/tdegeus/GooseFEM.git
-    cd GooseFEM
-
 .. tabs::
 
     .. group-tab:: C++
+
+        Start by installing the dependencies, for example using *conda*::
+
+            conda install -c conda-forge cmake xtensor
+
+        Then, download the package::
+
+            git checkout https://github.com/tdegeus/GooseFEM.git
+            cd GooseFEM
 
         Install headers, *CMake* and *pkg-config* support:
 
@@ -64,26 +68,6 @@ Download the package::
             cmake -Bbuild
             cd build
             cmake --install .
-
-        .. note::
-
-            The version is determined from the latest git tag, and possible commits since that tag.
-            Internally Python's ``setuptools_scm`` is used to this end.
-            In case that you are not working from a clone of the repository you have to set
-            the version manually, **before** configuring with CMake:
-
-            .. code-block:: none
-
-                export SETUPTOOLS_SCM_PRETEND_VERSION="1.2.3"
-                cmake -Bbuild
-                cd build
-                cmake --install .
-
-            In Windows replace the first line with
-
-            .. code-block:: none
-
-                set SETUPTOOLS_SCM_PRETEND_VERSION="1.2.3"
 
         .. tip::
 
@@ -116,6 +100,23 @@ Download the package::
 
             SKBUILD_CONFIGURE_OPTIONS="-DUSE_SIMD=1" python -m pip install . -v
 
+.. note::
+
+    The version is determined from the latest git tag, and possible commits since that tag.
+    Python's ``setuptools_scm`` is used to this end.
+    In case that you are not working from a clone of the repository you have to set
+    the version manually, **before** configuring with CMake:
+
+    .. tabs::
+
+        .. group-tab:: Unix
+
+            export SETUPTOOLS_SCM_PRETEND_VERSION="1.2.3"
+
+        .. group-tab:: Windows
+
+            set SETUPTOOLS_SCM_PRETEND_VERSION="1.2.3"
+
 Docs
 ====
 
@@ -134,6 +135,8 @@ There are two kinds of docs:
         cd docs
         make html
 
+    Then open ``_build/html/index.html`` in your browser.
+
 2.  The doxygen docs of the C++ API:
 
     .. code-block:: none
@@ -141,3 +144,5 @@ There are two kinds of docs:
         cmake -Bbuild -DBUILD_DOCS=1
         cd build
         make html
+
+    Then open ``html/index.html`` in your browser.

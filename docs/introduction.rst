@@ -29,8 +29,8 @@ Consequently one is entirely free to mix and match routines,
 from *GooseFEM* or even from somewhere else.
 Consequently the readability of the end-user's code and of the library remains high:
 Only the end-user's "main" combines different ingredients,
-there is no interdependence between *GooseFEM*'s classes and data can be inspected and changed at
-any time.
+there is no interdependence between *GooseFEM*'s classes,
+ and data can be inspected and changed at any time.
 
 Documentation
 -------------
@@ -43,5 +43,5 @@ One is highly encouraged to answer more advanced questions that arise from this 
 directly using the code.
 Download buttons to the relevant files are included throughout this reader.
 
-A compact reader covering the basic finite element theory is available at
+A compact reader covering the basic finite element theory is available as
 :download:`PDF <theory/readme.pdf>`.
