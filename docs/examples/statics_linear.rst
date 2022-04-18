@@ -466,31 +466,39 @@ Compute strain
 
     .. group-tab:: C++
 
-        .. literalinclude:: statics/FixedDisplacements_LinearElastic/example.cpp
-            :language: cpp
-            :dedent: 4
-            :lines: 79-81
-            :emphasize-lines: 2
+        .. tabs::
 
-    .. group-tab:: C++(auto)
+            .. tab:: pre-allocate
 
-        .. literalinclude:: statics/FixedDisplacements_LinearElastic/example_realloc.cpp
-            :dedent: 4
-            :language: cpp
-            :lines: 65
+                .. literalinclude:: statics/FixedDisplacements_LinearElastic/example.cpp
+                    :language: cpp
+                    :dedent: 4
+                    :lines: 79-81
+                    :emphasize-lines: 2
+
+            .. tab:: auto-allocate
+
+                .. literalinclude:: statics/FixedDisplacements_LinearElastic/example_realloc.cpp
+                    :dedent: 4
+                    :language: cpp
+                    :lines: 65
 
     .. group-tab:: Python
 
-        .. literalinclude:: statics/FixedDisplacements_LinearElastic/example.py
-            :language: python
-            :lines: 85-86
-            :emphasize-lines: 2
+        .. tabs::
 
-    .. group-tab:: Python(auto)
+            .. tab:: pre-allocate
 
-        .. literalinclude:: statics/FixedDisplacements_LinearElastic/example_realloc.py
-            :language: python
-            :lines: 71
+                .. literalinclude:: statics/FixedDisplacements_LinearElastic/example.py
+                    :language: python
+                    :lines: 85-86
+                    :emphasize-lines: 2
+
+            .. tab:: auto-allocate
+
+                .. literalinclude:: statics/FixedDisplacements_LinearElastic/example_realloc.py
+                    :language: python
+                    :lines: 71
 
 The strain per integration point is now computed using the current nodal displacements
 (stored as 'elemvec' in *ue*) and the gradient of the shape functions.
@@ -509,29 +517,37 @@ Compute stress and tangent
 
     .. group-tab:: C++
 
-        .. literalinclude:: statics/FixedDisplacements_LinearElastic/example.cpp
-            :language: cpp
-            :dedent: 4
-            :lines: 83-85
+        .. tabs::
 
-    .. group-tab:: C++(auto)
+            .. tab:: pre-allocate
 
-        .. literalinclude:: statics/FixedDisplacements_LinearElastic/example_realloc.cpp
-            :dedent: 4
-            :language: cpp
-            :lines: 68-70
+                .. literalinclude:: statics/FixedDisplacements_LinearElastic/example.cpp
+                    :language: cpp
+                    :dedent: 4
+                    :lines: 83-85
+
+            .. tab:: auto-allocate
+
+                .. literalinclude:: statics/FixedDisplacements_LinearElastic/example_realloc.cpp
+                    :dedent: 4
+                    :language: cpp
+                    :lines: 68-70
 
     .. group-tab:: Python
 
-        .. literalinclude:: statics/FixedDisplacements_LinearElastic/example.py
-            :language: python
-            :lines: 89-91
+        .. tabs::
 
-    .. group-tab:: Python(auto)
+            .. tab:: pre-allocate
 
-        .. literalinclude:: statics/FixedDisplacements_LinearElastic/example_realloc.py
-            :language: python
-            :lines: 74-76
+                .. literalinclude:: statics/FixedDisplacements_LinearElastic/example.py
+                    :language: python
+                    :lines: 89-91
+
+            .. tab:: auto-allocate
+
+                .. literalinclude:: statics/FixedDisplacements_LinearElastic/example_realloc.py
+                    :language: python
+                    :lines: 74-76
 
 The stress and stiffness tensors are now computed for each integration point
 (completely independently) using the external material model.
@@ -543,29 +559,37 @@ Assemble system
 
     .. group-tab:: C++
 
-        .. literalinclude:: statics/FixedDisplacements_LinearElastic/example.cpp
-            :language: cpp
-            :dedent: 4
-            :lines: 87-94
+        .. tabs::
 
-    .. group-tab:: C++(auto)
+            .. tab:: pre-allocate
 
-        .. literalinclude:: statics/FixedDisplacements_LinearElastic/example_realloc.cpp
-            :dedent: 4
-            :language: cpp
-            :lines: 72-76
+                .. literalinclude:: statics/FixedDisplacements_LinearElastic/example.cpp
+                    :language: cpp
+                    :dedent: 4
+                    :lines: 87-94
+
+            .. tab:: auto-allocate
+
+                .. literalinclude:: statics/FixedDisplacements_LinearElastic/example_realloc.cpp
+                    :dedent: 4
+                    :language: cpp
+                    :lines: 72-76
 
     .. group-tab:: Python
 
-        .. literalinclude:: statics/FixedDisplacements_LinearElastic/example.py
-            :language: python
-            :lines: 93-99
+        .. tabs::
 
-    .. group-tab:: Python(auto)
+            .. tab:: pre-allocate
 
-        .. literalinclude:: statics/FixedDisplacements_LinearElastic/example_realloc.py
-            :language: python
-            :lines: 78-82
+                .. literalinclude:: statics/FixedDisplacements_LinearElastic/example.py
+                    :language: python
+                    :lines: 93-99
+
+            .. tab:: auto-allocate
+
+                .. literalinclude:: statics/FixedDisplacements_LinearElastic/example_realloc.py
+                    :language: python
+                    :lines: 78-82
 
 The stress stored per integration point (*Sig*) is now converted to
 nodal internal force vectors stored per element (*fe*).
@@ -590,42 +614,50 @@ Solve
 
     .. group-tab:: C++
 
-        .. literalinclude:: statics/FixedDisplacements_LinearElastic/example.cpp
-            :language: cpp
-            :dedent: 4
-            :lines: 95-106
+        .. tabs::
 
-    .. group-tab:: C++(auto)
+            .. tab:: pre-allocate
 
-        .. literalinclude:: statics/FixedDisplacements_LinearElastic/example_realloc.cpp
-            :dedent: 4
-            :language: cpp
-            :lines: 78-88
+                .. literalinclude:: statics/FixedDisplacements_LinearElastic/example.cpp
+                    :language: cpp
+                    :dedent: 4
+                    :lines: 95-106
 
-    .. group-tab:: C++(man)
+            .. tab:: auto-allocate
 
-        .. literalinclude:: statics/FixedDisplacements_LinearElastic/manual_partition.cpp
-            :dedent: 4
-            :language: cpp
-            :lines: 77-93
+                .. literalinclude:: statics/FixedDisplacements_LinearElastic/example_realloc.cpp
+                    :dedent: 4
+                    :language: cpp
+                    :lines: 78-88
+
+            .. tab:: manual partition
+
+                .. literalinclude:: statics/FixedDisplacements_LinearElastic/manual_partition.cpp
+                    :dedent: 4
+                    :language: cpp
+                    :lines: 77-93
 
     .. group-tab:: Python
 
-        .. literalinclude:: statics/FixedDisplacements_LinearElastic/example.py
-            :language: python
-            :lines: 101-111
+        .. tabs::
 
-    .. group-tab:: Python(auto)
+            .. tab:: pre-allocate
 
-        .. literalinclude:: statics/FixedDisplacements_LinearElastic/example_realloc.py
-            :language: python
-            :lines: 84-94
+                .. literalinclude:: statics/FixedDisplacements_LinearElastic/example.py
+                    :language: python
+                    :lines: 101-111
 
-    .. group-tab:: Python(man)
+            .. tab:: auto-allocate
 
-        .. literalinclude:: statics/FixedDisplacements_LinearElastic/manual_partition.py
-            :language: python
-            :lines: 84-104
+                .. literalinclude:: statics/FixedDisplacements_LinearElastic/example_realloc.py
+                    :language: python
+                    :lines: 84-94
+
+            .. tab:: manual partition
+
+                .. literalinclude:: statics/FixedDisplacements_LinearElastic/manual_partition.py
+                    :language: python
+                    :lines: 84-104
 
 We now prescribe the displacement of the Prescribed degrees-of-freedom directly
 in the nodal displacements *disp* and compute the residual force.
@@ -642,29 +674,37 @@ Strain and stress
 
     .. group-tab:: C++
 
-        .. literalinclude:: statics/FixedDisplacements_LinearElastic/example.cpp
-            :language: cpp
-            :dedent: 4
-            :lines: 111-114
+        .. tabs::
 
-    .. group-tab:: C++(auto)
+            .. tab:: pre-allocate
 
-        .. literalinclude:: statics/FixedDisplacements_LinearElastic/example_realloc.cpp
-            :dedent: 4
-            :language: cpp
-            :lines: 94-96
+                .. literalinclude:: statics/FixedDisplacements_LinearElastic/example.cpp
+                    :language: cpp
+                    :dedent: 4
+                    :lines: 111-114
+
+            .. tab:: auto-allocate
+
+                .. literalinclude:: statics/FixedDisplacements_LinearElastic/example_realloc.cpp
+                    :dedent: 4
+                    :language: cpp
+                    :lines: 94-96
 
     .. group-tab:: Python
 
-        .. literalinclude:: statics/FixedDisplacements_LinearElastic/example.py
-            :language: python
-            :lines: 118-120
+        .. tabs::
 
-    .. group-tab:: Python(auto)
+            .. tab:: pre-allocate
 
-        .. literalinclude:: statics/FixedDisplacements_LinearElastic/example_realloc.py
-            :language: python
-            :lines: 100-102
+                .. literalinclude:: statics/FixedDisplacements_LinearElastic/example.py
+                    :language: python
+                    :lines: 118-120
+
+            .. tab:: auto-allocate
+
+                .. literalinclude:: statics/FixedDisplacements_LinearElastic/example_realloc.py
+                    :language: python
+                    :lines: 100-102
 
 The strain and stress per integration point are recomputed for post-processing.
 
@@ -675,42 +715,50 @@ Residual force
 
     .. group-tab:: C++
 
-        .. literalinclude:: statics/FixedDisplacements_LinearElastic/example.cpp
-            :language: cpp
-            :dedent: 4
-            :lines: 115-127
+        .. tabs::
 
-    .. group-tab:: C++(auto)
+            .. tab:: pre-allocate
 
-        .. literalinclude:: statics/FixedDisplacements_LinearElastic/example_realloc.cpp
-            :dedent: 4
-            :language: cpp
-            :lines: 98-108
+                .. literalinclude:: statics/FixedDisplacements_LinearElastic/example.cpp
+                    :language: cpp
+                    :dedent: 4
+                    :lines: 115-127
 
-    .. group-tab:: C++(man)
+            .. tab:: auto-allocate
 
-        .. literalinclude:: statics/FixedDisplacements_LinearElastic/manual_partition.cpp
-            :dedent: 4
-            :language: cpp
-            :lines: 103-116
+                .. literalinclude:: statics/FixedDisplacements_LinearElastic/example_realloc.cpp
+                    :dedent: 4
+                    :language: cpp
+                    :lines: 98-108
+
+            .. tab:: manual partition
+
+                .. literalinclude:: statics/FixedDisplacements_LinearElastic/manual_partition.cpp
+                    :dedent: 4
+                    :language: cpp
+                    :lines: 103-116
 
     .. group-tab:: Python
 
-        .. literalinclude:: statics/FixedDisplacements_LinearElastic/example.py
-            :language: python
-            :lines: 122-133
+        .. tabs::
 
-    .. group-tab:: Python(auto)
+            .. tab:: pre-allocate
 
-        .. literalinclude:: statics/FixedDisplacements_LinearElastic/example_realloc.py
-            :language: python
-            :lines: 104-114
+                .. literalinclude:: statics/FixedDisplacements_LinearElastic/example.py
+                    :language: python
+                    :lines: 122-133
 
-    .. group-tab:: Python(man)
+            .. tab:: auto-allocate
 
-        .. literalinclude:: statics/FixedDisplacements_LinearElastic/manual_partition.py
-            :language: python
-            :lines: 114-127
+                .. literalinclude:: statics/FixedDisplacements_LinearElastic/example_realloc.py
+                    :language: python
+                    :lines: 104-114
+
+            .. tab:: manual partition
+
+                .. literalinclude:: statics/FixedDisplacements_LinearElastic/manual_partition.py
+                    :language: python
+                    :lines: 114-127
 
 We convince ourselves that the solution is indeed in mechanical equilibrium.
 
