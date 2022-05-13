@@ -18,23 +18,22 @@ Implementation of TyingsPeriodic.h
 namespace GooseFEM {
 namespace Tyings {
 
-inline Periodic::Periodic(
-    const xt::xtensor<double, 2>& coor,
-    const xt::xtensor<size_t, 2>& dofs,
-    const xt::xtensor<size_t, 2>& control,
-    const xt::xtensor<size_t, 2>& nodal_tyings)
-    : Periodic(coor, dofs, control, nodal_tyings, xt::empty<size_t>({0}))
+template <class C, class D, class S, class T>
+inline Periodic::Periodic(const C& coor, const D& dofs, const S& control, const T& nodal_tyings)
+    : Periodic(coor, dofs, control, nodal_tyings, xt::eval(xt::empty<size_t>({0})))
 {
 }
 
+template <class C, class D, class S, class T, class U>
 inline Periodic::Periodic(
-    const xt::xtensor<double, 2>& coor,
-    const xt::xtensor<size_t, 2>& dofs,
-    const xt::xtensor<size_t, 2>& control,
-    const xt::xtensor<size_t, 2>& nodal_tyings,
-    const xt::xtensor<size_t, 1>& iip)
-    : m_tyings(nodal_tyings), m_coor(coor)
+    const C& coor,
+    const D& dofs,
+    const S& control,
+    const T& nodal_tyings,
+    const U& iip)
 {
+    m_tyings = nodal_tyings;
+    m_coor = coor;
     m_ndim = m_coor.shape(1);
     m_nties = m_tyings.shape(0);
 
@@ -49,9 +48,9 @@ inline Periodic::Periodic(
 
     xt::xtensor<size_t, 1> dependent = xt::view(m_tyings, xt::all(), 1);
     xt::xtensor<size_t, 2> dependent_dofs = xt::view(dofs, xt::keep(dependent), xt::all());
-    xt::xtensor<size_t, 1> iid = xt::flatten(dependent_dofs);
-    xt::xtensor<size_t, 1> iii = xt::setdiff1d(dofs, iid);
-    xt::xtensor<size_t, 1> iiu = xt::setdiff1d(iii, iip);
+    U iid = xt::flatten(dependent_dofs);
+    U iii = xt::setdiff1d(dofs, iid);
+    U iiu = xt::setdiff1d(iii, iip);
 
     m_nnu = iiu.size();
     m_nnp = iip.size();
@@ -211,11 +210,14 @@ inline Eigen::SparseMatrix<double> Periodic::Cdp() const
     return Cdp;
 }
 
-inline Control::Control(const xt::xtensor<double, 2>& coor, const xt::xtensor<size_t, 2>& dofs)
-    : m_coor(coor), m_dofs(dofs)
+template <class C, class N>
+inline Control::Control(const C& coor, const N& dofs)
 {
     GOOSEFEM_ASSERT(coor.shape().size() == 2);
     GOOSEFEM_ASSERT(coor.shape() == dofs.shape());
+
+    m_coor = coor;
+    m_dofs = dofs;
 
     size_t nnode = coor.shape(0);
     size_t ndim = coor.shape(1);

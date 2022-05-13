@@ -49,32 +49,39 @@ public:
     /**
     Constructor.
 
+    \tparam C xt::xtensor<double, 2>
+    \tparam D xt::xtensor<size_t, 2>
+    \tparam S xt::xtensor<size_t, 2>
+    \tparam T xt::xtensor<size_t, 2>
     \param coor Nodal coordinates [nnode, ndim].
     \param dofs DOF-numbers per node [nnode, ndim].
     \param control_dofs DOF-numbers per control node [ndim, ndim].
     \param nodal_tyings List of nodal tyings, see nodal_tyings(). [ntyings, 2].
     */
-    Periodic(
-        const xt::xtensor<double, 2>& coor,
-        const xt::xtensor<size_t, 2>& dofs,
-        const xt::xtensor<size_t, 2>& control_dofs,
-        const xt::xtensor<size_t, 2>& nodal_tyings);
+    template <class C, class D, class S, class T>
+    Periodic(const C& coor, const D& dofs, const S& control_dofs, const T& nodal_tyings);
 
     /**
     Constructor.
 
+    \tparam C xt::xtensor<double, 2>
+    \tparam D xt::xtensor<size_t, 2>
+    \tparam S xt::xtensor<size_t, 2>
+    \tparam T xt::xtensor<size_t, 2>
+    \tparam U xt::xtensor<size_t, 1>
     \param coor Nodal coordinates [nnode, ndim].
     \param dofs DOF-numbers per node [nnode, ndim].
     \param control_dofs DOF-numbers per control node [ndim, ndim].
     \param nodal_tyings List of nodal tyings, see nodal_tyings(). [ntyings, 2].
     \param iip List of prescribed DOF-numbers.
     */
+    template <class C, class D, class S, class T, class U>
     Periodic(
-        const xt::xtensor<double, 2>& coor,
-        const xt::xtensor<size_t, 2>& dofs,
-        const xt::xtensor<size_t, 2>& control_dofs,
-        const xt::xtensor<size_t, 2>& nodal_tyings,
-        const xt::xtensor<size_t, 1>& iip);
+        const C& coor,
+        const D& dofs,
+        const S& control_dofs,
+        const T& nodal_tyings,
+        const U& iip);
 
     /**
     \return Number of dependent DOFs.
@@ -196,10 +203,13 @@ public:
     /**
     Constructor.
 
+    \tparam C xt::xtensor<double, 2>
+    \tparam N xt::xtensor<size_t, 2>
     \param coor Nodal coordinates [nnode, ndim].
     \param dofs DOF-numbers per node [nnode, ndim].
     */
-    Control(const xt::xtensor<double, 2>& coor, const xt::xtensor<size_t, 2>& dofs);
+    template <class C, class N>
+    Control(const C& coor, const N& dofs);
 
     /**
     Nodal coordinates, for the system with control nodes added to it.
