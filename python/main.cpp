@@ -30,6 +30,7 @@
 #include "MeshHex8.hpp"
 #include "MeshQuad4.hpp"
 #include "MeshTri3.hpp"
+#include "TyingsPeriodic.hpp"
 #include "Vector.hpp"
 #include "VectorPartitioned.hpp"
 #include "VectorPartitionedTyings.hpp"
@@ -167,4 +168,12 @@ PYBIND11_MODULE(_GooseFEM, m)
     py::module mMeshHex8 = mMesh.def_submodule("Hex8", "Linear hexahedron (brick) elements (3D)");
 
     init_MeshHex8(mMeshHex8);
+
+    // ---------------
+    // GooseFEM.Tyings
+    // ---------------
+
+    py::module mTyings = m.def_submodule("Tyings", "Linear tying relations");
+
+    init_TyingsPeriodic(mTyings);
 }
