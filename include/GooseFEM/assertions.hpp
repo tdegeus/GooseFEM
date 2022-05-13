@@ -17,7 +17,7 @@ template <class T>
 inline bool is_unique(const T& arg)
 {
     xt::xtensor<typename T::value_type, 1> tmp = xt::ravel(arg);
-    return xt::unique(tmp) == xt::sort(tmp);
+    return xt::all(xt::equal(xt::unique(tmp), xt::sort(tmp)));
 }
 
 } // namespace GooseFEM
