@@ -40,8 +40,22 @@ void init_VectorPartitionedTyings(py::module& m)
         .def("iid", &GooseFEM::VectorPartitionedTyings::iid)
 
         .def(
+            "copy_p",
+            &GooseFEM::VectorPartitionedTyings::copy_p<xt::pytensor<double, 1>>,
+            py::arg("dofval_src"),
+            py::arg("dofval_dest"))
+
+        .def(
+            "asDofs_i",
+            &GooseFEM::VectorPartitionedTyings::
+                asDofs_i<xt::pytensor<double, 2>, xt::pytensor<double, 1>>,
+            py::arg("nodevec"),
+            py::arg("dofval_i"),
+            py::arg("apply_tyings") = true)
+
+        .def(
             "AsDofs_i",
-            &GooseFEM::VectorPartitionedTyings::AsDofs_i<xt::xtensor<double, 2>>,
+            &GooseFEM::VectorPartitionedTyings::AsDofs_i<xt::pytensor<double, 2>>,
             py::arg("nodevec"))
 
         .def("__repr__", [](const GooseFEM::VectorPartitionedTyings&) {
