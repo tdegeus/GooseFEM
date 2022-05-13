@@ -47,43 +47,6 @@ inline bool StopList::all_less(double tol) const
     return !std::any_of(m_res.cbegin(), m_res.cend(), [=](const auto& i) { return i >= tol; });
 }
 
-inline bool StopList::stop_simple(double res, double tol)
-{
-    GOOSEFEM_WARNING_PYTHON(
-        "StopList::stop is deprecated. Use StopList::roll_insert and StopList::all_less");
-
-    std::rotate(m_res.begin(), m_res.begin() + 1, m_res.end());
-    m_res.back() = res;
-    return !std::any_of(m_res.cbegin(), m_res.cend(), [=](const auto& i) { return i >= tol; });
-}
-
-inline bool StopList::stop(double res, double tol)
-{
-    GOOSEFEM_WARNING_PYTHON("StopList::stop is deprecated. Use StopList::roll_insert and "
-                            "StopList::descending + StopList::all_less");
-
-    // move residual one place back and add new residual to the end
-    std::rotate(m_res.begin(), m_res.begin() + 1, m_res.end());
-    m_res.back() = res;
-
-    // check for convergence: all residuals should be below the tolerance
-    for (size_t i = 0; i < m_res.size(); ++i) {
-        if (m_res[i] > tol) {
-            return false;
-        }
-    }
-
-    // check for convergence: all residuals should be decreasing
-    for (size_t i = 1; i < m_res.size(); ++i) {
-        if (m_res[i] > m_res[i - 1]) {
-            return false;
-        }
-    }
-
-    // all checks passed: signal convergence
-    return true;
-}
-
 inline auto StopList::get() const
 {
     return m_res;

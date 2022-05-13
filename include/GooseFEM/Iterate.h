@@ -73,23 +73,6 @@ public:
     bool all_less(double tol) const;
 
     /**
-    Update list of residuals, return `true` if all residuals are below the tolerance.
-
-    \param res Current residual.
-    \param tol Tolerance below which all last "n" iterations must lie.
-    */
-    [[deprecated]] bool stop_simple(double res, double tol);
-
-    /**
-    Update list of residuals, return `true` if all residuals are below the tolerance,
-    and all residuals are in a descending order.
-
-    \param res Current residual.
-    \param tol Tolerance below which all last "n" iterations must lie.
-    */
-    [[deprecated]] bool stop(double res, double tol);
-
-    /**
     Get the historic residuals.
     */
     auto get() const;

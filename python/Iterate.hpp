@@ -23,11 +23,6 @@ void init_Iterate(py::module& mod)
     cls.def("roll_insert", &GooseFEM::Iterate::StopList::roll_insert, py::arg("res"));
     cls.def("descending", &GooseFEM::Iterate::StopList::descending);
     cls.def("all_less", &GooseFEM::Iterate::StopList::all_less, py::arg("tol"));
-
-    cls.def(
-        "stop_simple", &GooseFEM::Iterate::StopList::stop_simple, py::arg("res"), py::arg("tol"));
-
-    cls.def("stop", &GooseFEM::Iterate::StopList::stop, py::arg("res"), py::arg("tol"));
     cls.def("get", &GooseFEM::Iterate::StopList::get);
 
     cls.def("__repr__", [](const GooseFEM::Iterate::StopList&) {
