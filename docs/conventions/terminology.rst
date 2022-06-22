@@ -1,5 +1,3 @@
-.. _conventions_terminology:
-
 Terminology
 ===========
 
