@@ -8,6 +8,7 @@ dependencies:
 - eigen
 - gmatelastic
 - gmatelastoplasticqpot
+- qpot <0.12.0 # remove when "gmatelastoplasticqpot" is updated
 - mathjax
 - ninja
 - numpy
