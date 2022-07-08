@@ -1,6 +1,5 @@
-#define CATCH_CONFIG_MAIN // tells Catch to provide a main() - only do this in one cpp file
 #include <GooseFEM/MeshHex8.h>
-#include <catch2/catch.hpp>
+#include <catch2/catch_all.hpp>
 
 TEST_CASE("GooseFEM::MeshHex8", "MeshHex8.h")
 {
