@@ -20,8 +20,8 @@ void init_MatrixPartitionedTyings(py::module& m)
 
         .def(
             py::init<
-                const xt::xtensor<size_t, 2>&,
-                const xt::xtensor<size_t, 2>&,
+                const xt::pytensor<size_t, 2>&,
+                const xt::pytensor<size_t, 2>&,
                 const Eigen::SparseMatrix<double>&,
                 const Eigen::SparseMatrix<double>&>(),
             "See :cpp:class:`GooseFEM::MatrixPartitionedTyings`.",
@@ -58,8 +58,8 @@ void init_MatrixPartitionedTyings(py::module& m)
             "Solve",
             py::overload_cast<
                 GooseFEM::MatrixPartitionedTyings&,
-                const xt::xtensor<double, 1>&,
-                const xt::xtensor<double, 1>&>(&GooseFEM::MatrixPartitionedTyingsSolver<>::Solve),
+                const xt::pytensor<double, 1>&,
+                const xt::pytensor<double, 1>&>(&GooseFEM::MatrixPartitionedTyingsSolver<>::Solve),
             py::arg("matrix"),
             py::arg("b"),
             py::arg("x"))
@@ -68,8 +68,8 @@ void init_MatrixPartitionedTyings(py::module& m)
             "Solve",
             py::overload_cast<
                 GooseFEM::MatrixPartitionedTyings&,
-                const xt::xtensor<double, 2>&,
-                const xt::xtensor<double, 2>&>(&GooseFEM::MatrixPartitionedTyingsSolver<>::Solve),
+                const xt::pytensor<double, 2>&,
+                const xt::pytensor<double, 2>&>(&GooseFEM::MatrixPartitionedTyingsSolver<>::Solve),
             py::arg("matrix"),
             py::arg("b"),
             py::arg("x"))
@@ -78,9 +78,10 @@ void init_MatrixPartitionedTyings(py::module& m)
             "Solve_u",
             py::overload_cast<
                 GooseFEM::MatrixPartitionedTyings&,
-                const xt::xtensor<double, 1>&,
-                const xt::xtensor<double, 1>&,
-                const xt::xtensor<double, 1>&>(&GooseFEM::MatrixPartitionedTyingsSolver<>::Solve_u),
+                const xt::pytensor<double, 1>&,
+                const xt::pytensor<double, 1>&,
+                const xt::pytensor<double, 1>&>(
+                &GooseFEM::MatrixPartitionedTyingsSolver<>::Solve_u),
             py::arg("matrix"),
             py::arg("b_u"),
             py::arg("b_d"),

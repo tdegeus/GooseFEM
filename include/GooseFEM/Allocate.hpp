@@ -61,7 +61,7 @@ std::array<I, L> to_std_array(const I (&shape)[L])
 }
 
 /**
-asTensor for xt::array.
+asTensor for array_type::array.
 */
 template <class T, class R, typename = void>
 struct asTensor_write {
@@ -100,7 +100,7 @@ struct asTensor_write<
 };
 
 /**
-AsTensor for xt::array.
+AsTensor for array_type::array.
 */
 template <class T, class S, typename = void>
 struct asTensor_allocate {
@@ -131,7 +131,7 @@ struct asTensor_allocate<T, S, typename std::enable_if_t<detail::is_std_array<S>
         std::array<size_t, dim + rank> ret_shape;
         std::copy(arg.shape().begin(), arg.shape().end(), ret_shape.begin());
         std::copy(shape.begin(), shape.end(), ret_shape.begin() + dim);
-        xt::xtensor<value_type, dim + rank> ret(ret_shape);
+        array_type::tensor<value_type, dim + rank> ret = xt::empty<value_type>(ret_shape);
         detail::asTensor_write<std::decay_t<T>, decltype(ret)>::impl(arg, ret);
         return ret;
     }

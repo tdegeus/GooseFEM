@@ -78,7 +78,7 @@ public:
     \return ``B`` matrix stored per element, per integration point [#nelem, #nne, #tdim, #tdim,
     #tdim]
     */
-    xt::xtensor<double, 6> B() const;
+    array_type::tensor<double, 6> B() const;
 
 private:
     friend QuadratureBase<QuadratureAxisymmetric>;
@@ -115,13 +115,13 @@ private:
     size_t m_tdim = 3; ///< Dynamic alias of s_tdim (remove in C++17)
     size_t m_nelem; ///< Number of elements.
     size_t m_nip; ///< Number of integration points per element.
-    xt::xtensor<double, 3> m_x; ///< nodal positions stored per element [#nelem, #nne, #ndim]
-    xt::xtensor<double, 1> m_w; ///< weight of each integration point [nip]
-    xt::xtensor<double, 2> m_xi; ///< local coordinate of each integration point [#nip, #ndim]
-    xt::xtensor<double, 2> m_N; ///< shape functions [#nip, #nne]
-    xt::xtensor<double, 3> m_dNxi; ///< shape function grad. wrt local  coor. [#nip, #nne, #ndim]
-    xt::xtensor<double, 2> m_vol; ///< integration point volume [#nelem, #nip]
-    xt::xtensor<double, 6> m_B; ///< B-matrix [#nelem, #nne, #tdim, #tdim, #tdim]
+    array_type::tensor<double, 3> m_x; ///< nodal positions stored per element [#nelem, #nne, #ndim]
+    array_type::tensor<double, 1> m_w; ///< weight per integration point [nip]
+    array_type::tensor<double, 2> m_xi; ///< local coordinate per integration point [#nip, #ndim]
+    array_type::tensor<double, 2> m_N; ///< shape functions [#nip, #nne]
+    array_type::tensor<double, 3> m_dNxi; ///< local shape func grad [#nip, #nne, #ndim]
+    array_type::tensor<double, 2> m_vol; ///< integration point volume [#nelem, #nip]
+    array_type::tensor<double, 6> m_B; ///< B-matrix [#nelem, #nne, #tdim, #tdim, #tdim]
 };
 
 } // namespace Quad4

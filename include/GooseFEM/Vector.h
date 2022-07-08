@@ -61,12 +61,12 @@ public:
     /**
     \return Connectivity (nodes per element) [#nelem, #nne].
     */
-    xt::xtensor<size_t, 2> conn() const;
+    array_type::tensor<size_t, 2> conn() const;
 
     /**
     \return DOFs per node [#nnode, #ndim]
     */
-    xt::xtensor<size_t, 2> dofs() const;
+    array_type::tensor<size_t, 2> dofs() const;
 
     /**
     Copy "nodevec" to another "nodevec".
@@ -94,7 +94,7 @@ public:
     \return dofval [#ndof]
     */
     template <class T>
-    xt::xtensor<double, 1> AsDofs(const T& arg) const;
+    array_type::tensor<double, 1> AsDofs(const T& arg) const;
 
     /**
     Convert "nodevec" or "elemvec" to "dofval" (overwrite entries that occur more than once).
@@ -112,7 +112,7 @@ public:
     \return nodevec output [#nnode, #ndim]
     */
     template <class T>
-    xt::xtensor<double, 2> AsNode(const T& arg) const;
+    array_type::tensor<double, 2> AsNode(const T& arg) const;
 
     /**
     Convert "dofval" or "elemvec" to "nodevec" (overwrite entries that occur more than once).
@@ -130,7 +130,7 @@ public:
     \return elemvec output [#nelem, #nne, #ndim].
     */
     template <class T>
-    xt::xtensor<double, 3> AsElement(const T& arg) const;
+    array_type::tensor<double, 3> AsElement(const T& arg) const;
 
     /**
     Convert "dofval" or "nodevec" to "elemvec" (overwrite entries that occur more than once).
@@ -148,7 +148,7 @@ public:
     \return dofval output [#ndof]
     */
     template <class T>
-    xt::xtensor<double, 1> AssembleDofs(const T& arg) const;
+    array_type::tensor<double, 1> AssembleDofs(const T& arg) const;
 
     /**
     Assemble "nodevec" or "elemvec" to "dofval" (adds entries that occur more that once).
@@ -166,7 +166,7 @@ public:
     \return nodevec output [#nnode, #ndim]
     */
     template <class T>
-    xt::xtensor<double, 2> AssembleNode(const T& arg) const;
+    array_type::tensor<double, 2> AssembleNode(const T& arg) const;
 
     /**
     Assemble "elemvec" to "nodevec" (adds entries that occur more that once.
@@ -210,7 +210,7 @@ public:
 
     \return [#ndof]
     */
-    xt::xtensor<double, 1> allocate_dofval() const;
+    array_type::tensor<double, 1> allocate_dofval() const;
 
     /**
     Allocated and initialised "dofval".
@@ -218,14 +218,14 @@ public:
     \param val value to which to initialise.
     \return [#ndof]
     */
-    xt::xtensor<double, 1> allocate_dofval(double val) const;
+    array_type::tensor<double, 1> allocate_dofval(double val) const;
 
     /**
     Allocated "nodevec".
 
     \return [#nnode, #ndim]
     */
-    xt::xtensor<double, 2> allocate_nodevec() const;
+    array_type::tensor<double, 2> allocate_nodevec() const;
 
     /**
     Allocated and initialised "nodevec".
@@ -233,14 +233,14 @@ public:
     \param val value to which to initialise.
     \return [#nnode, #ndim]
     */
-    xt::xtensor<double, 2> allocate_nodevec(double val) const;
+    array_type::tensor<double, 2> allocate_nodevec(double val) const;
 
     /**
     Allocated "elemvec".
 
     \return [#nelem, #nne, #ndim]
     */
-    xt::xtensor<double, 3> allocate_elemvec() const;
+    array_type::tensor<double, 3> allocate_elemvec() const;
 
     /**
     Allocated and initialised "elemvec".
@@ -248,14 +248,14 @@ public:
     \param val value to which to initialise.
     \return [#nelem, #nne, #ndim]
     */
-    xt::xtensor<double, 3> allocate_elemvec(double val) const;
+    array_type::tensor<double, 3> allocate_elemvec(double val) const;
 
     /**
     Allocated "elemmat".
 
     \return [#nelem, #nne * #ndim, #nne * #ndim]
     */
-    xt::xtensor<double, 3> allocate_elemmat() const;
+    array_type::tensor<double, 3> allocate_elemmat() const;
 
     /**
     Allocated and initialised "elemmat".
@@ -263,7 +263,7 @@ public:
     \param val value to which to initialise.
     \return [#nelem, #nne * #ndim, #nne * #ndim]
     */
-    xt::xtensor<double, 3> allocate_elemmat(double val) const;
+    array_type::tensor<double, 3> allocate_elemmat(double val) const;
 
 private:
     /** Distribution to relevant implementation of \copydoc asDofs(const T&, R&) const */
@@ -359,8 +359,8 @@ private:
     void assembleNode_impl_elemvec(const T& arg, R& nodevec) const;
 
 protected:
-    xt::xtensor<size_t, 2> m_conn; ///< See conn()
-    xt::xtensor<size_t, 2> m_dofs; ///< See dofs()
+    array_type::tensor<size_t, 2> m_conn; ///< See conn()
+    array_type::tensor<size_t, 2> m_dofs; ///< See dofs()
     size_t m_nelem; ///< See #nelem
     size_t m_nne; ///< See #nne
     size_t m_nnode; ///< See #nnode

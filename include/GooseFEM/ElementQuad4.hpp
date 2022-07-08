@@ -23,12 +23,12 @@ inline size_t nip()
     return 4;
 }
 
-inline xt::xtensor<double, 2> xi()
+inline array_type::tensor<double, 2> xi()
 {
     size_t nip = 4;
     size_t ndim = 2;
 
-    xt::xtensor<double, 2> xi = xt::empty<double>({nip, ndim});
+    array_type::tensor<double, 2> xi = xt::empty<double>({nip, ndim});
 
     xi(0, 0) = -1.0 / std::sqrt(3.0);
     xi(0, 1) = -1.0 / std::sqrt(3.0);
@@ -42,11 +42,11 @@ inline xt::xtensor<double, 2> xi()
     return xi;
 }
 
-inline xt::xtensor<double, 1> w()
+inline array_type::tensor<double, 1> w()
 {
     size_t nip = 4;
 
-    xt::xtensor<double, 1> w = xt::empty<double>({nip});
+    array_type::tensor<double, 1> w = xt::empty<double>({nip});
 
     w(0) = 1.0;
     w(1) = 1.0;
@@ -65,12 +65,12 @@ inline size_t nip()
     return 4;
 }
 
-inline xt::xtensor<double, 2> xi()
+inline array_type::tensor<double, 2> xi()
 {
     size_t nip = 4;
     size_t ndim = 2;
 
-    xt::xtensor<double, 2> xi = xt::empty<double>({nip, ndim});
+    array_type::tensor<double, 2> xi = xt::empty<double>({nip, ndim});
 
     xi(0, 0) = -1.0;
     xi(0, 1) = -1.0;
@@ -87,11 +87,11 @@ inline xt::xtensor<double, 2> xi()
     return xi;
 }
 
-inline xt::xtensor<double, 1> w()
+inline array_type::tensor<double, 1> w()
 {
     size_t nip = 4;
 
-    xt::xtensor<double, 1> w = xt::empty<double>({nip});
+    array_type::tensor<double, 1> w = xt::empty<double>({nip});
 
     w(0) = 1.0;
     w(1) = 1.0;
@@ -110,12 +110,12 @@ inline size_t nip()
     return 1;
 }
 
-inline xt::xtensor<double, 2> xi()
+inline array_type::tensor<double, 2> xi()
 {
     size_t nip = 1;
     size_t ndim = 2;
 
-    xt::xtensor<double, 2> xi = xt::empty<double>({nip, ndim});
+    array_type::tensor<double, 2> xi = xt::empty<double>({nip, ndim});
 
     xi(0, 0) = 0.0;
     xi(0, 1) = 0.0;
@@ -123,11 +123,11 @@ inline xt::xtensor<double, 2> xi()
     return xi;
 }
 
-inline xt::xtensor<double, 1> w()
+inline array_type::tensor<double, 1> w()
 {
     size_t nip = 1;
 
-    xt::xtensor<double, 1> w = xt::empty<double>({nip});
+    array_type::tensor<double, 1> w = xt::empty<double>({nip});
 
     w(0) = 1.0;
 
@@ -189,8 +189,8 @@ inline void Quadrature::compute_dN_impl()
 {
 #pragma omp parallel
     {
-        xt::xtensor<double, 2> J = xt::empty<double>({2, 2});
-        xt::xtensor<double, 2> Jinv = xt::empty<double>({2, 2});
+        array_type::tensor<double, 2> J = xt::empty<double>({2, 2});
+        array_type::tensor<double, 2> Jinv = xt::empty<double>({2, 2});
 
 #pragma omp for
         for (size_t e = 0; e < m_nelem; ++e) {

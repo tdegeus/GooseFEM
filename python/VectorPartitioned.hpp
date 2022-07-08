@@ -18,9 +18,9 @@ void init_VectorPartitioned(py::module& m)
 
         .def(
             py::init<
-                const xt::xtensor<size_t, 2>&,
-                const xt::xtensor<size_t, 2>&,
-                const xt::xtensor<size_t, 1>&>(),
+                const xt::pytensor<size_t, 2>&,
+                const xt::pytensor<size_t, 2>&,
+                const xt::pytensor<size_t, 1>&>(),
             "See :cpp:class:`GooseFEM::VectorPartitioned`.",
             py::arg("conn"),
             py::arg("dofs"),
@@ -35,45 +35,45 @@ void init_VectorPartitioned(py::module& m)
 
         .def(
             "DofsFromParitioned",
-            py::overload_cast<const xt::xtensor<double, 1>&, const xt::xtensor<double, 1>&>(
+            py::overload_cast<const xt::pytensor<double, 1>&, const xt::pytensor<double, 1>&>(
                 &GooseFEM::VectorPartitioned::DofsFromParitioned, py::const_),
             py::arg("dofval_u"),
             py::arg("dofval_p"))
 
         .def(
             "AsDofs_u",
-            py::overload_cast<const xt::xtensor<double, 2>&>(
+            py::overload_cast<const xt::pytensor<double, 2>&>(
                 &GooseFEM::VectorPartitioned::AsDofs_u, py::const_),
             py::arg("nodevec"))
 
         .def(
             "AsDofs_u",
-            py::overload_cast<const xt::xtensor<double, 3>&>(
+            py::overload_cast<const xt::pytensor<double, 3>&>(
                 &GooseFEM::VectorPartitioned::AsDofs_u, py::const_),
             py::arg("elemvec"))
 
         .def(
             "AsDofs_p",
-            py::overload_cast<const xt::xtensor<double, 2>&>(
+            py::overload_cast<const xt::pytensor<double, 2>&>(
                 &GooseFEM::VectorPartitioned::AsDofs_p, py::const_),
             py::arg("nodevec"))
 
         .def(
             "AsDofs_p",
-            py::overload_cast<const xt::xtensor<double, 3>&>(
+            py::overload_cast<const xt::pytensor<double, 3>&>(
                 &GooseFEM::VectorPartitioned::AsDofs_p, py::const_),
             py::arg("elemvec"))
 
         .def(
             "NodeFromPartitioned",
-            py::overload_cast<const xt::xtensor<double, 1>&, const xt::xtensor<double, 1>&>(
+            py::overload_cast<const xt::pytensor<double, 1>&, const xt::pytensor<double, 1>&>(
                 &GooseFEM::VectorPartitioned::NodeFromPartitioned, py::const_),
             py::arg("dofval_u"),
             py::arg("dofval_p"))
 
         .def(
             "ElementFromPartitioned",
-            py::overload_cast<const xt::xtensor<double, 1>&, const xt::xtensor<double, 1>&>(
+            py::overload_cast<const xt::pytensor<double, 1>&, const xt::pytensor<double, 1>&>(
                 &GooseFEM::VectorPartitioned::ElementFromPartitioned, py::const_),
             py::arg("dofval_u"),
             py::arg("dofval_p"))

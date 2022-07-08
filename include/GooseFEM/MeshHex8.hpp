@@ -52,15 +52,15 @@ inline size_t Regular::nelz_impl() const
     return m_nelz;
 }
 
-inline xt::xtensor<double, 2> Regular::coor_impl() const
+inline array_type::tensor<double, 2> Regular::coor_impl() const
 {
-    xt::xtensor<double, 2> ret = xt::empty<double>({m_nnode, m_ndim});
+    array_type::tensor<double, 2> ret = xt::empty<double>({m_nnode, m_ndim});
 
-    xt::xtensor<double, 1> x =
+    array_type::tensor<double, 1> x =
         xt::linspace<double>(0.0, m_h * static_cast<double>(m_nelx), m_nelx + 1);
-    xt::xtensor<double, 1> y =
+    array_type::tensor<double, 1> y =
         xt::linspace<double>(0.0, m_h * static_cast<double>(m_nely), m_nely + 1);
-    xt::xtensor<double, 1> z =
+    array_type::tensor<double, 1> z =
         xt::linspace<double>(0.0, m_h * static_cast<double>(m_nelz), m_nelz + 1);
 
     size_t inode = 0;
@@ -79,9 +79,9 @@ inline xt::xtensor<double, 2> Regular::coor_impl() const
     return ret;
 }
 
-inline xt::xtensor<size_t, 2> Regular::conn_impl() const
+inline array_type::tensor<size_t, 2> Regular::conn_impl() const
 {
-    xt::xtensor<size_t, 2> ret = xt::empty<size_t>({m_nelem, m_nne});
+    array_type::tensor<size_t, 2> ret = xt::empty<size_t>({m_nelem, m_nne});
 
     size_t ielem = 0;
 
@@ -108,9 +108,9 @@ inline xt::xtensor<size_t, 2> Regular::conn_impl() const
     return ret;
 }
 
-inline xt::xtensor<size_t, 1> Regular::nodesFront_impl() const
+inline array_type::tensor<size_t, 1> Regular::nodesFront_impl() const
 {
-    xt::xtensor<size_t, 1> ret = xt::empty<size_t>({(m_nelx + 1) * (m_nely + 1)});
+    array_type::tensor<size_t, 1> ret = xt::empty<size_t>({(m_nelx + 1) * (m_nely + 1)});
 
     for (size_t iy = 0; iy < m_nely + 1; ++iy) {
         for (size_t ix = 0; ix < m_nelx + 1; ++ix) {
@@ -121,9 +121,9 @@ inline xt::xtensor<size_t, 1> Regular::nodesFront_impl() const
     return ret;
 }
 
-inline xt::xtensor<size_t, 1> Regular::nodesBack_impl() const
+inline array_type::tensor<size_t, 1> Regular::nodesBack_impl() const
 {
-    xt::xtensor<size_t, 1> ret = xt::empty<size_t>({(m_nelx + 1) * (m_nely + 1)});
+    array_type::tensor<size_t, 1> ret = xt::empty<size_t>({(m_nelx + 1) * (m_nely + 1)});
 
     for (size_t iy = 0; iy < m_nely + 1; ++iy) {
         for (size_t ix = 0; ix < m_nelx + 1; ++ix) {
@@ -135,9 +135,9 @@ inline xt::xtensor<size_t, 1> Regular::nodesBack_impl() const
     return ret;
 }
 
-inline xt::xtensor<size_t, 1> Regular::nodesLeft_impl() const
+inline array_type::tensor<size_t, 1> Regular::nodesLeft_impl() const
 {
-    xt::xtensor<size_t, 1> ret = xt::empty<size_t>({(m_nely + 1) * (m_nelz + 1)});
+    array_type::tensor<size_t, 1> ret = xt::empty<size_t>({(m_nely + 1) * (m_nelz + 1)});
 
     for (size_t iz = 0; iz < m_nelz + 1; ++iz) {
         for (size_t iy = 0; iy < m_nely + 1; ++iy) {
@@ -148,9 +148,9 @@ inline xt::xtensor<size_t, 1> Regular::nodesLeft_impl() const
     return ret;
 }
 
-inline xt::xtensor<size_t, 1> Regular::nodesRight_impl() const
+inline array_type::tensor<size_t, 1> Regular::nodesRight_impl() const
 {
-    xt::xtensor<size_t, 1> ret = xt::empty<size_t>({(m_nely + 1) * (m_nelz + 1)});
+    array_type::tensor<size_t, 1> ret = xt::empty<size_t>({(m_nely + 1) * (m_nelz + 1)});
 
     for (size_t iz = 0; iz < m_nelz + 1; ++iz) {
         for (size_t iy = 0; iy < m_nely + 1; ++iy) {
@@ -162,9 +162,9 @@ inline xt::xtensor<size_t, 1> Regular::nodesRight_impl() const
     return ret;
 }
 
-inline xt::xtensor<size_t, 1> Regular::nodesBottom_impl() const
+inline array_type::tensor<size_t, 1> Regular::nodesBottom_impl() const
 {
-    xt::xtensor<size_t, 1> ret = xt::empty<size_t>({(m_nelx + 1) * (m_nelz + 1)});
+    array_type::tensor<size_t, 1> ret = xt::empty<size_t>({(m_nelx + 1) * (m_nelz + 1)});
 
     for (size_t iz = 0; iz < m_nelz + 1; ++iz) {
         for (size_t ix = 0; ix < m_nelx + 1; ++ix) {
@@ -175,9 +175,9 @@ inline xt::xtensor<size_t, 1> Regular::nodesBottom_impl() const
     return ret;
 }
 
-inline xt::xtensor<size_t, 1> Regular::nodesTop_impl() const
+inline array_type::tensor<size_t, 1> Regular::nodesTop_impl() const
 {
-    xt::xtensor<size_t, 1> ret = xt::empty<size_t>({(m_nelx + 1) * (m_nelz + 1)});
+    array_type::tensor<size_t, 1> ret = xt::empty<size_t>({(m_nelx + 1) * (m_nelz + 1)});
 
     for (size_t iz = 0; iz < m_nelz + 1; ++iz) {
         for (size_t ix = 0; ix < m_nelx + 1; ++ix) {
@@ -189,9 +189,9 @@ inline xt::xtensor<size_t, 1> Regular::nodesTop_impl() const
     return ret;
 }
 
-inline xt::xtensor<size_t, 1> Regular::nodesFrontFace_impl() const
+inline array_type::tensor<size_t, 1> Regular::nodesFrontFace_impl() const
 {
-    xt::xtensor<size_t, 1> ret = xt::empty<size_t>({(m_nelx - 1) * (m_nely - 1)});
+    array_type::tensor<size_t, 1> ret = xt::empty<size_t>({(m_nelx - 1) * (m_nely - 1)});
 
     for (size_t iy = 1; iy < m_nely; ++iy) {
         for (size_t ix = 1; ix < m_nelx; ++ix) {
@@ -202,9 +202,9 @@ inline xt::xtensor<size_t, 1> Regular::nodesFrontFace_impl() const
     return ret;
 }
 
-inline xt::xtensor<size_t, 1> Regular::nodesBackFace_impl() const
+inline array_type::tensor<size_t, 1> Regular::nodesBackFace_impl() const
 {
-    xt::xtensor<size_t, 1> ret = xt::empty<size_t>({(m_nelx - 1) * (m_nely - 1)});
+    array_type::tensor<size_t, 1> ret = xt::empty<size_t>({(m_nelx - 1) * (m_nely - 1)});
 
     for (size_t iy = 1; iy < m_nely; ++iy) {
         for (size_t ix = 1; ix < m_nelx; ++ix) {
@@ -216,9 +216,9 @@ inline xt::xtensor<size_t, 1> Regular::nodesBackFace_impl() const
     return ret;
 }
 
-inline xt::xtensor<size_t, 1> Regular::nodesLeftFace_impl() const
+inline array_type::tensor<size_t, 1> Regular::nodesLeftFace_impl() const
 {
-    xt::xtensor<size_t, 1> ret = xt::empty<size_t>({(m_nely - 1) * (m_nelz - 1)});
+    array_type::tensor<size_t, 1> ret = xt::empty<size_t>({(m_nely - 1) * (m_nelz - 1)});
 
     for (size_t iz = 1; iz < m_nelz; ++iz) {
         for (size_t iy = 1; iy < m_nely; ++iy) {
@@ -230,9 +230,9 @@ inline xt::xtensor<size_t, 1> Regular::nodesLeftFace_impl() const
     return ret;
 }
 
-inline xt::xtensor<size_t, 1> Regular::nodesRightFace_impl() const
+inline array_type::tensor<size_t, 1> Regular::nodesRightFace_impl() const
 {
-    xt::xtensor<size_t, 1> ret = xt::empty<size_t>({(m_nely - 1) * (m_nelz - 1)});
+    array_type::tensor<size_t, 1> ret = xt::empty<size_t>({(m_nely - 1) * (m_nelz - 1)});
 
     for (size_t iz = 1; iz < m_nelz; ++iz) {
         for (size_t iy = 1; iy < m_nely; ++iy) {
@@ -244,9 +244,9 @@ inline xt::xtensor<size_t, 1> Regular::nodesRightFace_impl() const
     return ret;
 }
 
-inline xt::xtensor<size_t, 1> Regular::nodesBottomFace_impl() const
+inline array_type::tensor<size_t, 1> Regular::nodesBottomFace_impl() const
 {
-    xt::xtensor<size_t, 1> ret = xt::empty<size_t>({(m_nelx - 1) * (m_nelz - 1)});
+    array_type::tensor<size_t, 1> ret = xt::empty<size_t>({(m_nelx - 1) * (m_nelz - 1)});
 
     for (size_t iz = 1; iz < m_nelz; ++iz) {
         for (size_t ix = 1; ix < m_nelx; ++ix) {
@@ -257,9 +257,9 @@ inline xt::xtensor<size_t, 1> Regular::nodesBottomFace_impl() const
     return ret;
 }
 
-inline xt::xtensor<size_t, 1> Regular::nodesTopFace_impl() const
+inline array_type::tensor<size_t, 1> Regular::nodesTopFace_impl() const
 {
-    xt::xtensor<size_t, 1> ret = xt::empty<size_t>({(m_nelx - 1) * (m_nelz - 1)});
+    array_type::tensor<size_t, 1> ret = xt::empty<size_t>({(m_nelx - 1) * (m_nelz - 1)});
 
     for (size_t iz = 1; iz < m_nelz; ++iz) {
         for (size_t ix = 1; ix < m_nelx; ++ix) {
@@ -271,9 +271,9 @@ inline xt::xtensor<size_t, 1> Regular::nodesTopFace_impl() const
     return ret;
 }
 
-inline xt::xtensor<size_t, 1> Regular::nodesFrontBottomEdge_impl() const
+inline array_type::tensor<size_t, 1> Regular::nodesFrontBottomEdge_impl() const
 {
-    xt::xtensor<size_t, 1> ret = xt::empty<size_t>({m_nelx + 1});
+    array_type::tensor<size_t, 1> ret = xt::empty<size_t>({m_nelx + 1});
 
     for (size_t ix = 0; ix < m_nelx + 1; ++ix) {
         ret(ix) = ix;
@@ -282,9 +282,9 @@ inline xt::xtensor<size_t, 1> Regular::nodesFrontBottomEdge_impl() const
     return ret;
 }
 
-inline xt::xtensor<size_t, 1> Regular::nodesFrontTopEdge_impl() const
+inline array_type::tensor<size_t, 1> Regular::nodesFrontTopEdge_impl() const
 {
-    xt::xtensor<size_t, 1> ret = xt::empty<size_t>({m_nelx + 1});
+    array_type::tensor<size_t, 1> ret = xt::empty<size_t>({m_nelx + 1});
 
     for (size_t ix = 0; ix < m_nelx + 1; ++ix) {
         ret(ix) = ix + m_nely * (m_nelx + 1);
@@ -293,9 +293,9 @@ inline xt::xtensor<size_t, 1> Regular::nodesFrontTopEdge_impl() const
     return ret;
 }
 
-inline xt::xtensor<size_t, 1> Regular::nodesFrontLeftEdge_impl() const
+inline array_type::tensor<size_t, 1> Regular::nodesFrontLeftEdge_impl() const
 {
-    xt::xtensor<size_t, 1> ret = xt::empty<size_t>({m_nely + 1});
+    array_type::tensor<size_t, 1> ret = xt::empty<size_t>({m_nely + 1});
 
     for (size_t iy = 0; iy < m_nely + 1; ++iy) {
         ret(iy) = iy * (m_nelx + 1);
@@ -304,9 +304,9 @@ inline xt::xtensor<size_t, 1> Regular::nodesFrontLeftEdge_impl() const
     return ret;
 }
 
-inline xt::xtensor<size_t, 1> Regular::nodesFrontRightEdge_impl() const
+inline array_type::tensor<size_t, 1> Regular::nodesFrontRightEdge_impl() const
 {
-    xt::xtensor<size_t, 1> ret = xt::empty<size_t>({m_nely + 1});
+    array_type::tensor<size_t, 1> ret = xt::empty<size_t>({m_nely + 1});
 
     for (size_t iy = 0; iy < m_nely + 1; ++iy) {
         ret(iy) = iy * (m_nelx + 1) + m_nelx;
@@ -315,9 +315,9 @@ inline xt::xtensor<size_t, 1> Regular::nodesFrontRightEdge_impl() const
     return ret;
 }
 
-inline xt::xtensor<size_t, 1> Regular::nodesBackBottomEdge_impl() const
+inline array_type::tensor<size_t, 1> Regular::nodesBackBottomEdge_impl() const
 {
-    xt::xtensor<size_t, 1> ret = xt::empty<size_t>({m_nelx + 1});
+    array_type::tensor<size_t, 1> ret = xt::empty<size_t>({m_nelx + 1});
 
     for (size_t ix = 0; ix < m_nelx + 1; ++ix) {
         ret(ix) = ix + m_nelz * (m_nely + 1) * (m_nelx + 1);
@@ -326,9 +326,9 @@ inline xt::xtensor<size_t, 1> Regular::nodesBackBottomEdge_impl() const
     return ret;
 }
 
-inline xt::xtensor<size_t, 1> Regular::nodesBackTopEdge_impl() const
+inline array_type::tensor<size_t, 1> Regular::nodesBackTopEdge_impl() const
 {
-    xt::xtensor<size_t, 1> ret = xt::empty<size_t>({m_nelx + 1});
+    array_type::tensor<size_t, 1> ret = xt::empty<size_t>({m_nelx + 1});
 
     for (size_t ix = 0; ix < m_nelx + 1; ++ix) {
         ret(ix) = m_nely * (m_nelx + 1) + ix + m_nelz * (m_nely + 1) * (m_nelx + 1);
@@ -337,9 +337,9 @@ inline xt::xtensor<size_t, 1> Regular::nodesBackTopEdge_impl() const
     return ret;
 }
 
-inline xt::xtensor<size_t, 1> Regular::nodesBackLeftEdge_impl() const
+inline array_type::tensor<size_t, 1> Regular::nodesBackLeftEdge_impl() const
 {
-    xt::xtensor<size_t, 1> ret = xt::empty<size_t>({m_nely + 1});
+    array_type::tensor<size_t, 1> ret = xt::empty<size_t>({m_nely + 1});
 
     for (size_t iy = 0; iy < m_nely + 1; ++iy) {
         ret(iy) = iy * (m_nelx + 1) + m_nelz * (m_nelx + 1) * (m_nely + 1);
@@ -348,9 +348,9 @@ inline xt::xtensor<size_t, 1> Regular::nodesBackLeftEdge_impl() const
     return ret;
 }
 
-inline xt::xtensor<size_t, 1> Regular::nodesBackRightEdge_impl() const
+inline array_type::tensor<size_t, 1> Regular::nodesBackRightEdge_impl() const
 {
-    xt::xtensor<size_t, 1> ret = xt::empty<size_t>({m_nely + 1});
+    array_type::tensor<size_t, 1> ret = xt::empty<size_t>({m_nely + 1});
 
     for (size_t iy = 0; iy < m_nely + 1; ++iy) {
         ret(iy) = iy * (m_nelx + 1) + m_nelz * (m_nelx + 1) * (m_nely + 1) + m_nelx;
@@ -359,9 +359,9 @@ inline xt::xtensor<size_t, 1> Regular::nodesBackRightEdge_impl() const
     return ret;
 }
 
-inline xt::xtensor<size_t, 1> Regular::nodesBottomLeftEdge_impl() const
+inline array_type::tensor<size_t, 1> Regular::nodesBottomLeftEdge_impl() const
 {
-    xt::xtensor<size_t, 1> ret = xt::empty<size_t>({m_nelz + 1});
+    array_type::tensor<size_t, 1> ret = xt::empty<size_t>({m_nelz + 1});
 
     for (size_t iz = 0; iz < m_nelz + 1; ++iz) {
         ret(iz) = iz * (m_nelx + 1) * (m_nely + 1);
@@ -370,9 +370,9 @@ inline xt::xtensor<size_t, 1> Regular::nodesBottomLeftEdge_impl() const
     return ret;
 }
 
-inline xt::xtensor<size_t, 1> Regular::nodesBottomRightEdge_impl() const
+inline array_type::tensor<size_t, 1> Regular::nodesBottomRightEdge_impl() const
 {
-    xt::xtensor<size_t, 1> ret = xt::empty<size_t>({m_nelz + 1});
+    array_type::tensor<size_t, 1> ret = xt::empty<size_t>({m_nelz + 1});
 
     for (size_t iz = 0; iz < m_nelz + 1; ++iz) {
         ret(iz) = iz * (m_nelx + 1) * (m_nely + 1) + m_nelx;
@@ -381,9 +381,9 @@ inline xt::xtensor<size_t, 1> Regular::nodesBottomRightEdge_impl() const
     return ret;
 }
 
-inline xt::xtensor<size_t, 1> Regular::nodesTopLeftEdge_impl() const
+inline array_type::tensor<size_t, 1> Regular::nodesTopLeftEdge_impl() const
 {
-    xt::xtensor<size_t, 1> ret = xt::empty<size_t>({m_nelz + 1});
+    array_type::tensor<size_t, 1> ret = xt::empty<size_t>({m_nelz + 1});
 
     for (size_t iz = 0; iz < m_nelz + 1; ++iz) {
         ret(iz) = m_nely * (m_nelx + 1) + iz * (m_nelx + 1) * (m_nely + 1);
@@ -392,9 +392,9 @@ inline xt::xtensor<size_t, 1> Regular::nodesTopLeftEdge_impl() const
     return ret;
 }
 
-inline xt::xtensor<size_t, 1> Regular::nodesTopRightEdge_impl() const
+inline array_type::tensor<size_t, 1> Regular::nodesTopRightEdge_impl() const
 {
-    xt::xtensor<size_t, 1> ret = xt::empty<size_t>({m_nelz + 1});
+    array_type::tensor<size_t, 1> ret = xt::empty<size_t>({m_nelz + 1});
 
     for (size_t iz = 0; iz < m_nelz + 1; ++iz) {
         ret(iz) = m_nely * (m_nelx + 1) + iz * (m_nelx + 1) * (m_nely + 1) + m_nelx;
@@ -403,9 +403,9 @@ inline xt::xtensor<size_t, 1> Regular::nodesTopRightEdge_impl() const
     return ret;
 }
 
-inline xt::xtensor<size_t, 1> Regular::nodesFrontBottomOpenEdge_impl() const
+inline array_type::tensor<size_t, 1> Regular::nodesFrontBottomOpenEdge_impl() const
 {
-    xt::xtensor<size_t, 1> ret = xt::empty<size_t>({m_nelx - 1});
+    array_type::tensor<size_t, 1> ret = xt::empty<size_t>({m_nelx - 1});
 
     for (size_t ix = 1; ix < m_nelx; ++ix) {
         ret(ix - 1) = ix;
@@ -414,9 +414,9 @@ inline xt::xtensor<size_t, 1> Regular::nodesFrontBottomOpenEdge_impl() const
     return ret;
 }
 
-inline xt::xtensor<size_t, 1> Regular::nodesFrontTopOpenEdge_impl() const
+inline array_type::tensor<size_t, 1> Regular::nodesFrontTopOpenEdge_impl() const
 {
-    xt::xtensor<size_t, 1> ret = xt::empty<size_t>({m_nelx - 1});
+    array_type::tensor<size_t, 1> ret = xt::empty<size_t>({m_nelx - 1});
 
     for (size_t ix = 1; ix < m_nelx; ++ix) {
         ret(ix - 1) = ix + m_nely * (m_nelx + 1);
@@ -425,9 +425,9 @@ inline xt::xtensor<size_t, 1> Regular::nodesFrontTopOpenEdge_impl() const
     return ret;
 }
 
-inline xt::xtensor<size_t, 1> Regular::nodesFrontLeftOpenEdge_impl() const
+inline array_type::tensor<size_t, 1> Regular::nodesFrontLeftOpenEdge_impl() const
 {
-    xt::xtensor<size_t, 1> ret = xt::empty<size_t>({m_nely - 1});
+    array_type::tensor<size_t, 1> ret = xt::empty<size_t>({m_nely - 1});
 
     for (size_t iy = 1; iy < m_nely; ++iy) {
         ret(iy - 1) = iy * (m_nelx + 1);
@@ -436,9 +436,9 @@ inline xt::xtensor<size_t, 1> Regular::nodesFrontLeftOpenEdge_impl() const
     return ret;
 }
 
-inline xt::xtensor<size_t, 1> Regular::nodesFrontRightOpenEdge_impl() const
+inline array_type::tensor<size_t, 1> Regular::nodesFrontRightOpenEdge_impl() const
 {
-    xt::xtensor<size_t, 1> ret = xt::empty<size_t>({m_nely - 1});
+    array_type::tensor<size_t, 1> ret = xt::empty<size_t>({m_nely - 1});
 
     for (size_t iy = 1; iy < m_nely; ++iy) {
         ret(iy - 1) = iy * (m_nelx + 1) + m_nelx;
@@ -447,9 +447,9 @@ inline xt::xtensor<size_t, 1> Regular::nodesFrontRightOpenEdge_impl() const
     return ret;
 }
 
-inline xt::xtensor<size_t, 1> Regular::nodesBackBottomOpenEdge_impl() const
+inline array_type::tensor<size_t, 1> Regular::nodesBackBottomOpenEdge_impl() const
 {
-    xt::xtensor<size_t, 1> ret = xt::empty<size_t>({m_nelx - 1});
+    array_type::tensor<size_t, 1> ret = xt::empty<size_t>({m_nelx - 1});
 
     for (size_t ix = 1; ix < m_nelx; ++ix) {
         ret(ix - 1) = ix + m_nelz * (m_nely + 1) * (m_nelx + 1);
@@ -458,9 +458,9 @@ inline xt::xtensor<size_t, 1> Regular::nodesBackBottomOpenEdge_impl() const
     return ret;
 }
 
-inline xt::xtensor<size_t, 1> Regular::nodesBackTopOpenEdge_impl() const
+inline array_type::tensor<size_t, 1> Regular::nodesBackTopOpenEdge_impl() const
 {
-    xt::xtensor<size_t, 1> ret = xt::empty<size_t>({m_nelx - 1});
+    array_type::tensor<size_t, 1> ret = xt::empty<size_t>({m_nelx - 1});
 
     for (size_t ix = 1; ix < m_nelx; ++ix) {
         ret(ix - 1) = m_nely * (m_nelx + 1) + ix + m_nelz * (m_nely + 1) * (m_nelx + 1);
@@ -469,9 +469,9 @@ inline xt::xtensor<size_t, 1> Regular::nodesBackTopOpenEdge_impl() const
     return ret;
 }
 
-inline xt::xtensor<size_t, 1> Regular::nodesBackLeftOpenEdge_impl() const
+inline array_type::tensor<size_t, 1> Regular::nodesBackLeftOpenEdge_impl() const
 {
-    xt::xtensor<size_t, 1> ret = xt::empty<size_t>({m_nely - 1});
+    array_type::tensor<size_t, 1> ret = xt::empty<size_t>({m_nely - 1});
 
     for (size_t iy = 1; iy < m_nely; ++iy) {
         ret(iy - 1) = iy * (m_nelx + 1) + m_nelz * (m_nelx + 1) * (m_nely + 1);
@@ -480,9 +480,9 @@ inline xt::xtensor<size_t, 1> Regular::nodesBackLeftOpenEdge_impl() const
     return ret;
 }
 
-inline xt::xtensor<size_t, 1> Regular::nodesBackRightOpenEdge_impl() const
+inline array_type::tensor<size_t, 1> Regular::nodesBackRightOpenEdge_impl() const
 {
-    xt::xtensor<size_t, 1> ret = xt::empty<size_t>({m_nely - 1});
+    array_type::tensor<size_t, 1> ret = xt::empty<size_t>({m_nely - 1});
 
     for (size_t iy = 1; iy < m_nely; ++iy) {
         ret(iy - 1) = iy * (m_nelx + 1) + m_nelz * (m_nelx + 1) * (m_nely + 1) + m_nelx;
@@ -491,9 +491,9 @@ inline xt::xtensor<size_t, 1> Regular::nodesBackRightOpenEdge_impl() const
     return ret;
 }
 
-inline xt::xtensor<size_t, 1> Regular::nodesBottomLeftOpenEdge_impl() const
+inline array_type::tensor<size_t, 1> Regular::nodesBottomLeftOpenEdge_impl() const
 {
-    xt::xtensor<size_t, 1> ret = xt::empty<size_t>({m_nelz - 1});
+    array_type::tensor<size_t, 1> ret = xt::empty<size_t>({m_nelz - 1});
 
     for (size_t iz = 1; iz < m_nelz; ++iz) {
         ret(iz - 1) = iz * (m_nelx + 1) * (m_nely + 1);
@@ -502,9 +502,9 @@ inline xt::xtensor<size_t, 1> Regular::nodesBottomLeftOpenEdge_impl() const
     return ret;
 }
 
-inline xt::xtensor<size_t, 1> Regular::nodesBottomRightOpenEdge_impl() const
+inline array_type::tensor<size_t, 1> Regular::nodesBottomRightOpenEdge_impl() const
 {
-    xt::xtensor<size_t, 1> ret = xt::empty<size_t>({m_nelz - 1});
+    array_type::tensor<size_t, 1> ret = xt::empty<size_t>({m_nelz - 1});
 
     for (size_t iz = 1; iz < m_nelz; ++iz) {
         ret(iz - 1) = iz * (m_nelx + 1) * (m_nely + 1) + m_nelx;
@@ -513,9 +513,9 @@ inline xt::xtensor<size_t, 1> Regular::nodesBottomRightOpenEdge_impl() const
     return ret;
 }
 
-inline xt::xtensor<size_t, 1> Regular::nodesTopLeftOpenEdge_impl() const
+inline array_type::tensor<size_t, 1> Regular::nodesTopLeftOpenEdge_impl() const
 {
-    xt::xtensor<size_t, 1> ret = xt::empty<size_t>({m_nelz - 1});
+    array_type::tensor<size_t, 1> ret = xt::empty<size_t>({m_nelz - 1});
 
     for (size_t iz = 1; iz < m_nelz; ++iz) {
         ret(iz - 1) = m_nely * (m_nelx + 1) + iz * (m_nelx + 1) * (m_nely + 1);
@@ -524,9 +524,9 @@ inline xt::xtensor<size_t, 1> Regular::nodesTopLeftOpenEdge_impl() const
     return ret;
 }
 
-inline xt::xtensor<size_t, 1> Regular::nodesTopRightOpenEdge_impl() const
+inline array_type::tensor<size_t, 1> Regular::nodesTopRightOpenEdge_impl() const
 {
-    xt::xtensor<size_t, 1> ret = xt::empty<size_t>({m_nelz - 1});
+    array_type::tensor<size_t, 1> ret = xt::empty<size_t>({m_nelz - 1});
 
     for (size_t iz = 1; iz < m_nelz; ++iz) {
         ret(iz - 1) = m_nely * (m_nelx + 1) + iz * (m_nelx + 1) * (m_nely + 1) + m_nelx;
@@ -594,10 +594,10 @@ inline FineLayer::FineLayer(size_t nelx, size_t nely, size_t nelz, double h, siz
 
     // temporary variables
     size_t nmin, ntot;
-    xt::xtensor<size_t, 1> nhx = xt::ones<size_t>({nely});
-    xt::xtensor<size_t, 1> nhy = xt::ones<size_t>({nely});
-    xt::xtensor<size_t, 1> nhz = xt::ones<size_t>({nely});
-    xt::xtensor<int, 1> refine = -1 * xt::ones<int>({nely});
+    array_type::tensor<size_t, 1> nhx = xt::ones<size_t>({nely});
+    array_type::tensor<size_t, 1> nhy = xt::ones<size_t>({nely});
+    array_type::tensor<size_t, 1> nhz = xt::ones<size_t>({nely});
+    array_type::tensor<int, 1> refine = -1 * xt::ones<int>({nely});
 
     // minimum height in y-direction (half of the height because of symmetry)
     if (nely % 2 == 0) {
@@ -818,10 +818,10 @@ inline ElementType FineLayer::getElementType_impl() const
     return ElementType::Hex8;
 }
 
-inline xt::xtensor<double, 2> FineLayer::coor_impl() const
+inline array_type::tensor<double, 2> FineLayer::coor_impl() const
 {
     // allocate output
-    xt::xtensor<double, 2> ret = xt::empty<double>({m_nnode, m_ndim});
+    array_type::tensor<double, 2> ret = xt::empty<double>({m_nnode, m_ndim});
 
     // current node, number of element layers
     size_t inode = 0;
@@ -829,7 +829,7 @@ inline xt::xtensor<double, 2> FineLayer::coor_impl() const
 
     // y-position of each main node layer (i.e. excluding node layers for refinement/coarsening)
     // - allocate
-    xt::xtensor<double, 1> y = xt::empty<double>({nely + 1});
+    array_type::tensor<double, 1> y = xt::empty<double>({nely + 1});
     // - initialize
     y(0) = 0.0;
     // - compute
@@ -841,8 +841,8 @@ inline xt::xtensor<double, 2> FineLayer::coor_impl() const
 
     for (size_t iy = 0;; ++iy) {
         // get positions along the x- and z-axis
-        xt::xtensor<double, 1> x = xt::linspace<double>(0.0, m_Lx, m_layer_nelx(iy) + 1);
-        xt::xtensor<double, 1> z = xt::linspace<double>(0.0, m_Lz, m_layer_nelz(iy) + 1);
+        array_type::tensor<double, 1> x = xt::linspace<double>(0.0, m_Lx, m_layer_nelx(iy) + 1);
+        array_type::tensor<double, 1> z = xt::linspace<double>(0.0, m_Lz, m_layer_nelz(iy) + 1);
 
         // add nodes of the bottom layer of this element
         for (size_t iz = 0; iz < m_layer_nelz(iy) + 1; ++iz) {
@@ -900,8 +900,8 @@ inline xt::xtensor<double, 2> FineLayer::coor_impl() const
 
     for (size_t iy = (nely - 1) / 2; iy < nely; ++iy) {
         // get positions along the x- and z-axis
-        xt::xtensor<double, 1> x = xt::linspace<double>(0.0, m_Lx, m_layer_nelx(iy) + 1);
-        xt::xtensor<double, 1> z = xt::linspace<double>(0.0, m_Lz, m_layer_nelz(iy) + 1);
+        array_type::tensor<double, 1> x = xt::linspace<double>(0.0, m_Lx, m_layer_nelx(iy) + 1);
+        array_type::tensor<double, 1> z = xt::linspace<double>(0.0, m_Lz, m_layer_nelz(iy) + 1);
 
         // add extra nodes of the intermediate layer, for refinement in x-direction
         if (m_refine(iy) == 0) {
@@ -953,10 +953,10 @@ inline xt::xtensor<double, 2> FineLayer::coor_impl() const
     return ret;
 }
 
-inline xt::xtensor<size_t, 2> FineLayer::conn_impl() const
+inline array_type::tensor<size_t, 2> FineLayer::conn_impl() const
 {
     // allocate output
-    xt::xtensor<size_t, 2> ret = xt::empty<size_t>({m_nelem, m_nne});
+    array_type::tensor<size_t, 2> ret = xt::empty<size_t>({m_nelem, m_nne});
 
     // current element, number of element layers, starting nodes of each node layer
     size_t ielem = 0;
@@ -1183,12 +1183,12 @@ inline xt::xtensor<size_t, 2> FineLayer::conn_impl() const
     return ret;
 }
 
-inline xt::xtensor<size_t, 1> FineLayer::elementsMiddleLayer() const
+inline array_type::tensor<size_t, 1> FineLayer::elementsMiddleLayer() const
 {
     size_t nely = static_cast<size_t>(m_nhy.size());
     size_t iy = (nely - 1) / 2;
 
-    xt::xtensor<size_t, 1> ret = xt::empty<size_t>({m_layer_nelx(iy) * m_layer_nelz(iy)});
+    array_type::tensor<size_t, 1> ret = xt::empty<size_t>({m_layer_nelx(iy) * m_layer_nelz(iy)});
 
     for (size_t ix = 0; ix < m_layer_nelx(iy); ++ix) {
         for (size_t iz = 0; iz < m_layer_nelz(iy); ++iz) {
@@ -1199,7 +1199,7 @@ inline xt::xtensor<size_t, 1> FineLayer::elementsMiddleLayer() const
     return ret;
 }
 
-inline xt::xtensor<size_t, 1> FineLayer::nodesFront_impl() const
+inline array_type::tensor<size_t, 1> FineLayer::nodesFront_impl() const
 {
     // number of element layers in y-direction
     size_t nely = static_cast<size_t>(m_nhy.size());
@@ -1227,7 +1227,7 @@ inline xt::xtensor<size_t, 1> FineLayer::nodesFront_impl() const
     }
 
     // allocate node-list
-    xt::xtensor<size_t, 1> ret = xt::empty<size_t>({n});
+    array_type::tensor<size_t, 1> ret = xt::empty<size_t>({n});
 
     // initialize counter: current index in the node-list "ret"
     size_t j = 0;
@@ -1267,7 +1267,7 @@ inline xt::xtensor<size_t, 1> FineLayer::nodesFront_impl() const
     return ret;
 }
 
-inline xt::xtensor<size_t, 1> FineLayer::nodesBack_impl() const
+inline array_type::tensor<size_t, 1> FineLayer::nodesBack_impl() const
 {
     // number of element layers in y-direction
     size_t nely = static_cast<size_t>(m_nhy.size());
@@ -1295,7 +1295,7 @@ inline xt::xtensor<size_t, 1> FineLayer::nodesBack_impl() const
     }
 
     // allocate node-list
-    xt::xtensor<size_t, 1> ret = xt::empty<size_t>({n});
+    array_type::tensor<size_t, 1> ret = xt::empty<size_t>({n});
 
     // initialize counter: current index in the node-list "ret"
     size_t j = 0;
@@ -1335,7 +1335,7 @@ inline xt::xtensor<size_t, 1> FineLayer::nodesBack_impl() const
     return ret;
 }
 
-inline xt::xtensor<size_t, 1> FineLayer::nodesLeft_impl() const
+inline array_type::tensor<size_t, 1> FineLayer::nodesLeft_impl() const
 {
     // number of element layers in y-direction
     size_t nely = static_cast<size_t>(m_nhy.size());
@@ -1363,7 +1363,7 @@ inline xt::xtensor<size_t, 1> FineLayer::nodesLeft_impl() const
     }
 
     // allocate node-list
-    xt::xtensor<size_t, 1> ret = xt::empty<size_t>({n});
+    array_type::tensor<size_t, 1> ret = xt::empty<size_t>({n});
 
     // initialize counter: current index in the node-list "ret"
     size_t j = 0;
@@ -1403,7 +1403,7 @@ inline xt::xtensor<size_t, 1> FineLayer::nodesLeft_impl() const
     return ret;
 }
 
-inline xt::xtensor<size_t, 1> FineLayer::nodesRight_impl() const
+inline array_type::tensor<size_t, 1> FineLayer::nodesRight_impl() const
 {
     // number of element layers in y-direction
     size_t nely = static_cast<size_t>(m_nhy.size());
@@ -1427,7 +1427,7 @@ inline xt::xtensor<size_t, 1> FineLayer::nodesRight_impl() const
     }
 
     // allocate node-list
-    xt::xtensor<size_t, 1> ret = xt::empty<size_t>({n});
+    array_type::tensor<size_t, 1> ret = xt::empty<size_t>({n});
 
     // initialize counter: current index in the node-list "ret"
     size_t j = 0;
@@ -1469,13 +1469,13 @@ inline xt::xtensor<size_t, 1> FineLayer::nodesRight_impl() const
     return ret;
 }
 
-inline xt::xtensor<size_t, 1> FineLayer::nodesBottom_impl() const
+inline array_type::tensor<size_t, 1> FineLayer::nodesBottom_impl() const
 {
     // number of element layers in y-direction
     size_t nely = static_cast<size_t>(m_nhy.size());
 
     // allocate node list
-    xt::xtensor<size_t, 1> ret = xt::empty<size_t>({m_nnd(nely)});
+    array_type::tensor<size_t, 1> ret = xt::empty<size_t>({m_nnd(nely)});
 
     // counter
     size_t j = 0;
@@ -1491,13 +1491,13 @@ inline xt::xtensor<size_t, 1> FineLayer::nodesBottom_impl() const
     return ret;
 }
 
-inline xt::xtensor<size_t, 1> FineLayer::nodesTop_impl() const
+inline array_type::tensor<size_t, 1> FineLayer::nodesTop_impl() const
 {
     // number of element layers in y-direction
     size_t nely = static_cast<size_t>(m_nhy.size());
 
     // allocate node list
-    xt::xtensor<size_t, 1> ret = xt::empty<size_t>({m_nnd(nely)});
+    array_type::tensor<size_t, 1> ret = xt::empty<size_t>({m_nnd(nely)});
 
     // counter
     size_t j = 0;
@@ -1513,7 +1513,7 @@ inline xt::xtensor<size_t, 1> FineLayer::nodesTop_impl() const
     return ret;
 }
 
-inline xt::xtensor<size_t, 1> FineLayer::nodesFrontFace_impl() const
+inline array_type::tensor<size_t, 1> FineLayer::nodesFrontFace_impl() const
 {
     // number of element layers in y-direction
     size_t nely = static_cast<size_t>(m_nhy.size());
@@ -1541,7 +1541,7 @@ inline xt::xtensor<size_t, 1> FineLayer::nodesFrontFace_impl() const
     }
 
     // allocate node-list
-    xt::xtensor<size_t, 1> ret = xt::empty<size_t>({n});
+    array_type::tensor<size_t, 1> ret = xt::empty<size_t>({n});
 
     // initialize counter: current index in the node-list "ret"
     size_t j = 0;
@@ -1581,7 +1581,7 @@ inline xt::xtensor<size_t, 1> FineLayer::nodesFrontFace_impl() const
     return ret;
 }
 
-inline xt::xtensor<size_t, 1> FineLayer::nodesBackFace_impl() const
+inline array_type::tensor<size_t, 1> FineLayer::nodesBackFace_impl() const
 {
     // number of element layers in y-direction
     size_t nely = static_cast<size_t>(m_nhy.size());
@@ -1609,7 +1609,7 @@ inline xt::xtensor<size_t, 1> FineLayer::nodesBackFace_impl() const
     }
 
     // allocate node-list
-    xt::xtensor<size_t, 1> ret = xt::empty<size_t>({n});
+    array_type::tensor<size_t, 1> ret = xt::empty<size_t>({n});
 
     // initialize counter: current index in the node-list "ret"
     size_t j = 0;
@@ -1649,7 +1649,7 @@ inline xt::xtensor<size_t, 1> FineLayer::nodesBackFace_impl() const
     return ret;
 }
 
-inline xt::xtensor<size_t, 1> FineLayer::nodesLeftFace_impl() const
+inline array_type::tensor<size_t, 1> FineLayer::nodesLeftFace_impl() const
 {
     // number of element layers in y-direction
     size_t nely = static_cast<size_t>(m_nhy.size());
@@ -1677,7 +1677,7 @@ inline xt::xtensor<size_t, 1> FineLayer::nodesLeftFace_impl() const
     }
 
     // allocate node-list
-    xt::xtensor<size_t, 1> ret = xt::empty<size_t>({n});
+    array_type::tensor<size_t, 1> ret = xt::empty<size_t>({n});
 
     // initialize counter: current index in the node-list "ret"
     size_t j = 0;
@@ -1717,7 +1717,7 @@ inline xt::xtensor<size_t, 1> FineLayer::nodesLeftFace_impl() const
     return ret;
 }
 
-inline xt::xtensor<size_t, 1> FineLayer::nodesRightFace_impl() const
+inline array_type::tensor<size_t, 1> FineLayer::nodesRightFace_impl() const
 {
     // number of element layers in y-direction
     size_t nely = static_cast<size_t>(m_nhy.size());
@@ -1745,7 +1745,7 @@ inline xt::xtensor<size_t, 1> FineLayer::nodesRightFace_impl() const
     }
 
     // allocate node-list
-    xt::xtensor<size_t, 1> ret = xt::empty<size_t>({n});
+    array_type::tensor<size_t, 1> ret = xt::empty<size_t>({n});
 
     // initialize counter: current index in the node-list "ret"
     size_t j = 0;
@@ -1787,10 +1787,11 @@ inline xt::xtensor<size_t, 1> FineLayer::nodesRightFace_impl() const
     return ret;
 }
 
-inline xt::xtensor<size_t, 1> FineLayer::nodesBottomFace_impl() const
+inline array_type::tensor<size_t, 1> FineLayer::nodesBottomFace_impl() const
 {
     // allocate node list
-    xt::xtensor<size_t, 1> ret = xt::empty<size_t>({(m_layer_nelx(0) - 1) * (m_layer_nelz(0) - 1)});
+    array_type::tensor<size_t, 1> ret =
+        xt::empty<size_t>({(m_layer_nelx(0) - 1) * (m_layer_nelz(0) - 1)});
 
     // counter
     size_t j = 0;
@@ -1806,13 +1807,13 @@ inline xt::xtensor<size_t, 1> FineLayer::nodesBottomFace_impl() const
     return ret;
 }
 
-inline xt::xtensor<size_t, 1> FineLayer::nodesTopFace_impl() const
+inline array_type::tensor<size_t, 1> FineLayer::nodesTopFace_impl() const
 {
     // number of element layers in y-direction
     size_t nely = static_cast<size_t>(m_nhy.size());
 
     // allocate node list
-    xt::xtensor<size_t, 1> ret =
+    array_type::tensor<size_t, 1> ret =
         xt::empty<size_t>({(m_layer_nelx(nely - 1) - 1) * (m_layer_nelz(nely - 1) - 1)});
 
     // counter
@@ -1829,9 +1830,9 @@ inline xt::xtensor<size_t, 1> FineLayer::nodesTopFace_impl() const
     return ret;
 }
 
-inline xt::xtensor<size_t, 1> FineLayer::nodesFrontBottomEdge_impl() const
+inline array_type::tensor<size_t, 1> FineLayer::nodesFrontBottomEdge_impl() const
 {
-    xt::xtensor<size_t, 1> ret = xt::empty<size_t>({m_layer_nelx(0) + 1});
+    array_type::tensor<size_t, 1> ret = xt::empty<size_t>({m_layer_nelx(0) + 1});
 
     for (size_t ix = 0; ix < m_layer_nelx(0) + 1; ++ix) {
         ret(ix) = m_startNode(0) + ix;
@@ -1840,11 +1841,11 @@ inline xt::xtensor<size_t, 1> FineLayer::nodesFrontBottomEdge_impl() const
     return ret;
 }
 
-inline xt::xtensor<size_t, 1> FineLayer::nodesFrontTopEdge_impl() const
+inline array_type::tensor<size_t, 1> FineLayer::nodesFrontTopEdge_impl() const
 {
     size_t nely = static_cast<size_t>(m_nhy.size());
 
-    xt::xtensor<size_t, 1> ret = xt::empty<size_t>({m_layer_nelx(nely - 1) + 1});
+    array_type::tensor<size_t, 1> ret = xt::empty<size_t>({m_layer_nelx(nely - 1) + 1});
 
     for (size_t ix = 0; ix < m_layer_nelx(nely - 1) + 1; ++ix) {
         ret(ix) = m_startNode(nely) + ix;
@@ -1853,11 +1854,11 @@ inline xt::xtensor<size_t, 1> FineLayer::nodesFrontTopEdge_impl() const
     return ret;
 }
 
-inline xt::xtensor<size_t, 1> FineLayer::nodesFrontLeftEdge_impl() const
+inline array_type::tensor<size_t, 1> FineLayer::nodesFrontLeftEdge_impl() const
 {
     size_t nely = static_cast<size_t>(m_nhy.size());
 
-    xt::xtensor<size_t, 1> ret = xt::empty<size_t>({nely + 1});
+    array_type::tensor<size_t, 1> ret = xt::empty<size_t>({nely + 1});
 
     for (size_t iy = 0; iy < (nely + 1) / 2; ++iy) {
         ret(iy) = m_startNode(iy);
@@ -1870,11 +1871,11 @@ inline xt::xtensor<size_t, 1> FineLayer::nodesFrontLeftEdge_impl() const
     return ret;
 }
 
-inline xt::xtensor<size_t, 1> FineLayer::nodesFrontRightEdge_impl() const
+inline array_type::tensor<size_t, 1> FineLayer::nodesFrontRightEdge_impl() const
 {
     size_t nely = static_cast<size_t>(m_nhy.size());
 
-    xt::xtensor<size_t, 1> ret = xt::empty<size_t>({nely + 1});
+    array_type::tensor<size_t, 1> ret = xt::empty<size_t>({nely + 1});
 
     for (size_t iy = 0; iy < (nely + 1) / 2; ++iy) {
         ret(iy) = m_startNode(iy) + m_layer_nelx(iy);
@@ -1887,9 +1888,9 @@ inline xt::xtensor<size_t, 1> FineLayer::nodesFrontRightEdge_impl() const
     return ret;
 }
 
-inline xt::xtensor<size_t, 1> FineLayer::nodesBackBottomEdge_impl() const
+inline array_type::tensor<size_t, 1> FineLayer::nodesBackBottomEdge_impl() const
 {
-    xt::xtensor<size_t, 1> ret = xt::empty<size_t>({m_layer_nelx(0) + 1});
+    array_type::tensor<size_t, 1> ret = xt::empty<size_t>({m_layer_nelx(0) + 1});
 
     for (size_t ix = 0; ix < m_layer_nelx(0) + 1; ++ix) {
         ret(ix) = m_startNode(0) + ix + (m_layer_nelx(0) + 1) * (m_layer_nelz(0));
@@ -1898,11 +1899,11 @@ inline xt::xtensor<size_t, 1> FineLayer::nodesBackBottomEdge_impl() const
     return ret;
 }
 
-inline xt::xtensor<size_t, 1> FineLayer::nodesBackTopEdge_impl() const
+inline array_type::tensor<size_t, 1> FineLayer::nodesBackTopEdge_impl() const
 {
     size_t nely = static_cast<size_t>(m_nhy.size());
 
-    xt::xtensor<size_t, 1> ret = xt::empty<size_t>({m_layer_nelx(nely - 1) + 1});
+    array_type::tensor<size_t, 1> ret = xt::empty<size_t>({m_layer_nelx(nely - 1) + 1});
 
     for (size_t ix = 0; ix < m_layer_nelx(nely - 1) + 1; ++ix) {
         ret(ix) = m_startNode(nely) + ix + (m_layer_nelx(nely - 1) + 1) * (m_layer_nelz(nely - 1));
@@ -1911,11 +1912,11 @@ inline xt::xtensor<size_t, 1> FineLayer::nodesBackTopEdge_impl() const
     return ret;
 }
 
-inline xt::xtensor<size_t, 1> FineLayer::nodesBackLeftEdge_impl() const
+inline array_type::tensor<size_t, 1> FineLayer::nodesBackLeftEdge_impl() const
 {
     size_t nely = static_cast<size_t>(m_nhy.size());
 
-    xt::xtensor<size_t, 1> ret = xt::empty<size_t>({nely + 1});
+    array_type::tensor<size_t, 1> ret = xt::empty<size_t>({nely + 1});
 
     for (size_t iy = 0; iy < (nely + 1) / 2; ++iy) {
         ret(iy) = m_startNode(iy) + (m_layer_nelx(iy) + 1) * (m_layer_nelz(iy));
@@ -1928,11 +1929,11 @@ inline xt::xtensor<size_t, 1> FineLayer::nodesBackLeftEdge_impl() const
     return ret;
 }
 
-inline xt::xtensor<size_t, 1> FineLayer::nodesBackRightEdge_impl() const
+inline array_type::tensor<size_t, 1> FineLayer::nodesBackRightEdge_impl() const
 {
     size_t nely = static_cast<size_t>(m_nhy.size());
 
-    xt::xtensor<size_t, 1> ret = xt::empty<size_t>({nely + 1});
+    array_type::tensor<size_t, 1> ret = xt::empty<size_t>({nely + 1});
 
     for (size_t iy = 0; iy < (nely + 1) / 2; ++iy) {
         ret(iy) = m_startNode(iy) + m_layer_nelx(iy) + (m_layer_nelx(iy) + 1) * (m_layer_nelz(iy));
@@ -1946,9 +1947,9 @@ inline xt::xtensor<size_t, 1> FineLayer::nodesBackRightEdge_impl() const
     return ret;
 }
 
-inline xt::xtensor<size_t, 1> FineLayer::nodesBottomLeftEdge_impl() const
+inline array_type::tensor<size_t, 1> FineLayer::nodesBottomLeftEdge_impl() const
 {
-    xt::xtensor<size_t, 1> ret = xt::empty<size_t>({m_layer_nelz(0) + 1});
+    array_type::tensor<size_t, 1> ret = xt::empty<size_t>({m_layer_nelz(0) + 1});
 
     for (size_t iz = 0; iz < m_layer_nelz(0) + 1; ++iz) {
         ret(iz) = m_startNode(0) + iz * (m_layer_nelx(0) + 1);
@@ -1957,9 +1958,9 @@ inline xt::xtensor<size_t, 1> FineLayer::nodesBottomLeftEdge_impl() const
     return ret;
 }
 
-inline xt::xtensor<size_t, 1> FineLayer::nodesBottomRightEdge_impl() const
+inline array_type::tensor<size_t, 1> FineLayer::nodesBottomRightEdge_impl() const
 {
-    xt::xtensor<size_t, 1> ret = xt::empty<size_t>({m_layer_nelz(0) + 1});
+    array_type::tensor<size_t, 1> ret = xt::empty<size_t>({m_layer_nelz(0) + 1});
 
     for (size_t iz = 0; iz < m_layer_nelz(0) + 1; ++iz) {
         ret(iz) = m_startNode(0) + m_layer_nelx(0) + iz * (m_layer_nelx(0) + 1);
@@ -1968,11 +1969,11 @@ inline xt::xtensor<size_t, 1> FineLayer::nodesBottomRightEdge_impl() const
     return ret;
 }
 
-inline xt::xtensor<size_t, 1> FineLayer::nodesTopLeftEdge_impl() const
+inline array_type::tensor<size_t, 1> FineLayer::nodesTopLeftEdge_impl() const
 {
     size_t nely = static_cast<size_t>(m_nhy.size());
 
-    xt::xtensor<size_t, 1> ret = xt::empty<size_t>({m_layer_nelz(nely - 1) + 1});
+    array_type::tensor<size_t, 1> ret = xt::empty<size_t>({m_layer_nelz(nely - 1) + 1});
 
     for (size_t iz = 0; iz < m_layer_nelz(nely - 1) + 1; ++iz) {
         ret(iz) = m_startNode(nely) + iz * (m_layer_nelx(nely - 1) + 1);
@@ -1981,11 +1982,11 @@ inline xt::xtensor<size_t, 1> FineLayer::nodesTopLeftEdge_impl() const
     return ret;
 }
 
-inline xt::xtensor<size_t, 1> FineLayer::nodesTopRightEdge_impl() const
+inline array_type::tensor<size_t, 1> FineLayer::nodesTopRightEdge_impl() const
 {
     size_t nely = static_cast<size_t>(m_nhy.size());
 
-    xt::xtensor<size_t, 1> ret = xt::empty<size_t>({m_layer_nelz(nely - 1) + 1});
+    array_type::tensor<size_t, 1> ret = xt::empty<size_t>({m_layer_nelz(nely - 1) + 1});
 
     for (size_t iz = 0; iz < m_layer_nelz(nely - 1) + 1; ++iz) {
         ret(iz) = m_startNode(nely) + m_layer_nelx(nely - 1) + iz * (m_layer_nelx(nely - 1) + 1);
@@ -1994,9 +1995,9 @@ inline xt::xtensor<size_t, 1> FineLayer::nodesTopRightEdge_impl() const
     return ret;
 }
 
-inline xt::xtensor<size_t, 1> FineLayer::nodesFrontBottomOpenEdge_impl() const
+inline array_type::tensor<size_t, 1> FineLayer::nodesFrontBottomOpenEdge_impl() const
 {
-    xt::xtensor<size_t, 1> ret = xt::empty<size_t>({m_layer_nelx(0) - 1});
+    array_type::tensor<size_t, 1> ret = xt::empty<size_t>({m_layer_nelx(0) - 1});
 
     for (size_t ix = 1; ix < m_layer_nelx(0); ++ix) {
         ret(ix - 1) = m_startNode(0) + ix;
@@ -2005,11 +2006,11 @@ inline xt::xtensor<size_t, 1> FineLayer::nodesFrontBottomOpenEdge_impl() const
     return ret;
 }
 
-inline xt::xtensor<size_t, 1> FineLayer::nodesFrontTopOpenEdge_impl() const
+inline array_type::tensor<size_t, 1> FineLayer::nodesFrontTopOpenEdge_impl() const
 {
     size_t nely = static_cast<size_t>(m_nhy.size());
 
-    xt::xtensor<size_t, 1> ret = xt::empty<size_t>({m_layer_nelx(nely - 1) - 1});
+    array_type::tensor<size_t, 1> ret = xt::empty<size_t>({m_layer_nelx(nely - 1) - 1});
 
     for (size_t ix = 1; ix < m_layer_nelx(nely - 1); ++ix) {
         ret(ix - 1) = m_startNode(nely) + ix;
@@ -2018,11 +2019,11 @@ inline xt::xtensor<size_t, 1> FineLayer::nodesFrontTopOpenEdge_impl() const
     return ret;
 }
 
-inline xt::xtensor<size_t, 1> FineLayer::nodesFrontLeftOpenEdge_impl() const
+inline array_type::tensor<size_t, 1> FineLayer::nodesFrontLeftOpenEdge_impl() const
 {
     size_t nely = static_cast<size_t>(m_nhy.size());
 
-    xt::xtensor<size_t, 1> ret = xt::empty<size_t>({nely - 1});
+    array_type::tensor<size_t, 1> ret = xt::empty<size_t>({nely - 1});
 
     for (size_t iy = 1; iy < (nely + 1) / 2; ++iy) {
         ret(iy - 1) = m_startNode(iy);
@@ -2035,11 +2036,11 @@ inline xt::xtensor<size_t, 1> FineLayer::nodesFrontLeftOpenEdge_impl() const
     return ret;
 }
 
-inline xt::xtensor<size_t, 1> FineLayer::nodesFrontRightOpenEdge_impl() const
+inline array_type::tensor<size_t, 1> FineLayer::nodesFrontRightOpenEdge_impl() const
 {
     size_t nely = static_cast<size_t>(m_nhy.size());
 
-    xt::xtensor<size_t, 1> ret = xt::empty<size_t>({nely - 1});
+    array_type::tensor<size_t, 1> ret = xt::empty<size_t>({nely - 1});
 
     for (size_t iy = 1; iy < (nely + 1) / 2; ++iy) {
         ret(iy - 1) = m_startNode(iy) + m_layer_nelx(iy);
@@ -2052,9 +2053,9 @@ inline xt::xtensor<size_t, 1> FineLayer::nodesFrontRightOpenEdge_impl() const
     return ret;
 }
 
-inline xt::xtensor<size_t, 1> FineLayer::nodesBackBottomOpenEdge_impl() const
+inline array_type::tensor<size_t, 1> FineLayer::nodesBackBottomOpenEdge_impl() const
 {
-    xt::xtensor<size_t, 1> ret = xt::empty<size_t>({m_layer_nelx(0) - 1});
+    array_type::tensor<size_t, 1> ret = xt::empty<size_t>({m_layer_nelx(0) - 1});
 
     for (size_t ix = 1; ix < m_layer_nelx(0); ++ix) {
         ret(ix - 1) = m_startNode(0) + ix + (m_layer_nelx(0) + 1) * (m_layer_nelz(0));
@@ -2063,11 +2064,11 @@ inline xt::xtensor<size_t, 1> FineLayer::nodesBackBottomOpenEdge_impl() const
     return ret;
 }
 
-inline xt::xtensor<size_t, 1> FineLayer::nodesBackTopOpenEdge_impl() const
+inline array_type::tensor<size_t, 1> FineLayer::nodesBackTopOpenEdge_impl() const
 {
     size_t nely = static_cast<size_t>(m_nhy.size());
 
-    xt::xtensor<size_t, 1> ret = xt::empty<size_t>({m_layer_nelx(nely - 1) - 1});
+    array_type::tensor<size_t, 1> ret = xt::empty<size_t>({m_layer_nelx(nely - 1) - 1});
 
     for (size_t ix = 1; ix < m_layer_nelx(nely - 1); ++ix) {
         ret(ix - 1) =
@@ -2077,11 +2078,11 @@ inline xt::xtensor<size_t, 1> FineLayer::nodesBackTopOpenEdge_impl() const
     return ret;
 }
 
-inline xt::xtensor<size_t, 1> FineLayer::nodesBackLeftOpenEdge_impl() const
+inline array_type::tensor<size_t, 1> FineLayer::nodesBackLeftOpenEdge_impl() const
 {
     size_t nely = static_cast<size_t>(m_nhy.size());
 
-    xt::xtensor<size_t, 1> ret = xt::empty<size_t>({nely - 1});
+    array_type::tensor<size_t, 1> ret = xt::empty<size_t>({nely - 1});
 
     for (size_t iy = 1; iy < (nely + 1) / 2; ++iy) {
         ret(iy - 1) = m_startNode(iy) + (m_layer_nelx(iy) + 1) * (m_layer_nelz(iy));
@@ -2094,11 +2095,11 @@ inline xt::xtensor<size_t, 1> FineLayer::nodesBackLeftOpenEdge_impl() const
     return ret;
 }
 
-inline xt::xtensor<size_t, 1> FineLayer::nodesBackRightOpenEdge_impl() const
+inline array_type::tensor<size_t, 1> FineLayer::nodesBackRightOpenEdge_impl() const
 {
     size_t nely = static_cast<size_t>(m_nhy.size());
 
-    xt::xtensor<size_t, 1> ret = xt::empty<size_t>({nely - 1});
+    array_type::tensor<size_t, 1> ret = xt::empty<size_t>({nely - 1});
 
     for (size_t iy = 1; iy < (nely + 1) / 2; ++iy) {
         ret(iy - 1) =
@@ -2113,9 +2114,9 @@ inline xt::xtensor<size_t, 1> FineLayer::nodesBackRightOpenEdge_impl() const
     return ret;
 }
 
-inline xt::xtensor<size_t, 1> FineLayer::nodesBottomLeftOpenEdge_impl() const
+inline array_type::tensor<size_t, 1> FineLayer::nodesBottomLeftOpenEdge_impl() const
 {
-    xt::xtensor<size_t, 1> ret = xt::empty<size_t>({m_layer_nelz(0) - 1});
+    array_type::tensor<size_t, 1> ret = xt::empty<size_t>({m_layer_nelz(0) - 1});
 
     for (size_t iz = 1; iz < m_layer_nelz(0); ++iz) {
         ret(iz - 1) = m_startNode(0) + iz * (m_layer_nelx(0) + 1);
@@ -2124,9 +2125,9 @@ inline xt::xtensor<size_t, 1> FineLayer::nodesBottomLeftOpenEdge_impl() const
     return ret;
 }
 
-inline xt::xtensor<size_t, 1> FineLayer::nodesBottomRightOpenEdge_impl() const
+inline array_type::tensor<size_t, 1> FineLayer::nodesBottomRightOpenEdge_impl() const
 {
-    xt::xtensor<size_t, 1> ret = xt::empty<size_t>({m_layer_nelz(0) - 1});
+    array_type::tensor<size_t, 1> ret = xt::empty<size_t>({m_layer_nelz(0) - 1});
 
     for (size_t iz = 1; iz < m_layer_nelz(0); ++iz) {
         ret(iz - 1) = m_startNode(0) + m_layer_nelx(0) + iz * (m_layer_nelx(0) + 1);
@@ -2135,11 +2136,11 @@ inline xt::xtensor<size_t, 1> FineLayer::nodesBottomRightOpenEdge_impl() const
     return ret;
 }
 
-inline xt::xtensor<size_t, 1> FineLayer::nodesTopLeftOpenEdge_impl() const
+inline array_type::tensor<size_t, 1> FineLayer::nodesTopLeftOpenEdge_impl() const
 {
     size_t nely = static_cast<size_t>(m_nhy.size());
 
-    xt::xtensor<size_t, 1> ret = xt::empty<size_t>({m_layer_nelz(nely - 1) - 1});
+    array_type::tensor<size_t, 1> ret = xt::empty<size_t>({m_layer_nelz(nely - 1) - 1});
 
     for (size_t iz = 1; iz < m_layer_nelz(nely - 1); ++iz) {
         ret(iz - 1) = m_startNode(nely) + iz * (m_layer_nelx(nely - 1) + 1);
@@ -2148,11 +2149,11 @@ inline xt::xtensor<size_t, 1> FineLayer::nodesTopLeftOpenEdge_impl() const
     return ret;
 }
 
-inline xt::xtensor<size_t, 1> FineLayer::nodesTopRightOpenEdge_impl() const
+inline array_type::tensor<size_t, 1> FineLayer::nodesTopRightOpenEdge_impl() const
 {
     size_t nely = static_cast<size_t>(m_nhy.size());
 
-    xt::xtensor<size_t, 1> ret = xt::empty<size_t>({m_layer_nelz(nely - 1) - 1});
+    array_type::tensor<size_t, 1> ret = xt::empty<size_t>({m_layer_nelz(nely - 1) - 1});
 
     for (size_t iz = 1; iz < m_layer_nelz(nely - 1); ++iz) {
         ret(iz - 1) =

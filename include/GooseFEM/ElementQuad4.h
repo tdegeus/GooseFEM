@@ -48,14 +48,14 @@ Integration point coordinates (local coordinates).
 
 \return Coordinates [#nip, `ndim`], with `ndim = 2`.
 */
-inline xt::xtensor<double, 2> xi();
+inline array_type::tensor<double, 2> xi();
 
 /**
 Integration point weights.
 
 \return Coordinates [#nip].
 */
-inline xt::xtensor<double, 1> w();
+inline array_type::tensor<double, 1> w();
 
 } // namespace Gauss
 
@@ -83,14 +83,14 @@ Integration point coordinates (local coordinates).
 
 \return Coordinates [#nip, `ndim`], with ``ndim = 2``.
 */
-inline xt::xtensor<double, 2> xi();
+inline array_type::tensor<double, 2> xi();
 
 /**
 Integration point weights.
 
 \return Coordinates [#nip].
 */
-inline xt::xtensor<double, 1> w();
+inline array_type::tensor<double, 1> w();
 
 } // namespace Nodal
 
@@ -119,14 +119,14 @@ Integration point coordinates (local coordinates).
 
 \return Coordinates [#nip, ``ndim``], with ``ndim = 2``.
 */
-inline xt::xtensor<double, 2> xi();
+inline array_type::tensor<double, 2> xi();
 
 /**
 Integration point weights.
 
 \return Coordinates [#nip].
 */
-inline xt::xtensor<double, 1> w();
+inline array_type::tensor<double, 1> w();
 
 } // namespace MidPoint
 
@@ -213,14 +213,13 @@ private:
     size_t m_tdim = 2; ///< Dynamic alias of s_tdim (remove in C++17)
     size_t m_nelem; ///< Number of elements.
     size_t m_nip; ///< Number of integration points per element.
-    xt::xtensor<double, 3> m_x; ///< nodal positions stored per element [#nelem, #nne, #ndim]
-    xt::xtensor<double, 1> m_w; ///< weight of each integration point [nip]
-    xt::xtensor<double, 2> m_xi; ///< local coordinate of each integration point [#nip, #ndim]
-    xt::xtensor<double, 2> m_N; ///< shape functions [#nip, #nne]
-    xt::xtensor<double, 3> m_dNxi; ///< shape function grad. wrt local  coor. [#nip, #nne, #ndim]
-    xt::xtensor<double, 4>
-        m_dNx; ///< shape function grad. wrt global coor. [#nelem, #nip, #nne, #ndim]
-    xt::xtensor<double, 2> m_vol; ///< integration point volume [#nelem, #nip]
+    array_type::tensor<double, 3> m_x; ///< nodal positions stored per element [#nelem, #nne, #ndim]
+    array_type::tensor<double, 1> m_w; ///< weight of each integration point [nip]
+    array_type::tensor<double, 2> m_xi; ///< local coordinate per integration point [#nip, #ndim]
+    array_type::tensor<double, 2> m_N; ///< shape functions [#nip, #nne]
+    array_type::tensor<double, 3> m_dNxi; ///< local shape func grad [#nip, #nne, #ndim]
+    array_type::tensor<double, 4> m_dNx; ///< global shape func grad [#nelem, #nip, #nne, #ndim]
+    array_type::tensor<double, 2> m_vol; ///< integration point volume [#nelem, #nip]
 };
 
 } // namespace Quad4

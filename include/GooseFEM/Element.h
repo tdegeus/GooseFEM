@@ -27,8 +27,9 @@ Convert nodal vector with ("nodevec", shape:``[nnode, ndim]``) to nodal vector s
 \param nodevec "nodevec".
 \return "elemvec".
 */
-inline xt::xtensor<double, 3>
-asElementVector(const xt::xtensor<size_t, 2>& conn, const xt::xtensor<double, 2>& nodevec);
+inline array_type::tensor<double, 3> asElementVector(
+    const array_type::tensor<size_t, 2>& conn,
+    const array_type::tensor<double, 2>& nodevec);
 
 /**
 Assemble nodal vector stored per element ("elemvec", shape ``[nelem, nne, ndim]``) to nodal vector
@@ -38,8 +39,9 @@ Assemble nodal vector stored per element ("elemvec", shape ``[nelem, nne, ndim]`
 \param elemvec "elemvec".
 \return "nodevec".
 */
-inline xt::xtensor<double, 2>
-assembleNodeVector(const xt::xtensor<size_t, 2>& conn, const xt::xtensor<double, 3>& elemvec);
+inline array_type::tensor<double, 2> assembleNodeVector(
+    const array_type::tensor<size_t, 2>& conn,
+    const array_type::tensor<double, 3>& elemvec);
 
 /**
 Check that DOFs leave no holes.
@@ -57,7 +59,7 @@ are diagonal.
 \param elemmat Element-vectors ("elemmat")
 \return ``true`` if all element matrices are diagonal.
 */
-bool isDiagonal(const xt::xtensor<double, 3>& elemmat);
+bool isDiagonal(const array_type::tensor<double, 3>& elemmat);
 
 /**
 CRTP base class for quadrature.
@@ -222,7 +224,7 @@ public:
     auto shape_qvector(size_t tdim) const -> std::array<size_t, 3>;
 
     /**
-    Get an allocated `xt::xtensor` to store a "elemvec".
+    Get an allocated `array_type::tensor` to store a "elemvec".
     Note: the container is not (zero-)initialised.
 
     \tparam R value-type of the array, e.g. `double`.
@@ -236,13 +238,13 @@ public:
 
     \tparam R value-type of the array, e.g. `double`.
     \param val The value to which to initialise all items.
-    \returns `xt::xtensor` container of the correct shape.
+    \returns `array_type::tensor` container of the correct shape.
     */
     template <class R>
     auto allocate_elemvec(R val) const;
 
     /**
-    Get an allocated `xt::xtensor` to store a "elemmat".
+    Get an allocated `array_type::tensor` to store a "elemmat".
     Note: the container is not (zero-)initialised.
 
     \tparam R value-type of the array, e.g. `double`.
@@ -256,13 +258,13 @@ public:
 
     \tparam R value-type of the array, e.g. `double`.
     \param val The value to which to initialise all items.
-    \returns `xt::xtensor` container of the correct shape.
+    \returns `array_type::tensor` container of the correct shape.
     */
     template <class R>
     auto allocate_elemmat(R val) const;
 
     /**
-    Get an allocated `xt::xtensor` to store a "qtensor" of a certain rank
+    Get an allocated `array_type::tensor` to store a "qtensor" of a certain rank
     (0 = scalar, 1, vector, 2 = 2nd-order tensor, etc.).
     Default: rank = 0, a.k.a. scalar.
     Note: the container is not (zero-)initialised.
@@ -274,13 +276,13 @@ public:
     auto allocate_qtensor() const;
 
     /**
-    Get an allocated and initialised `xt::xtensor` to store a "qtensor" of a certain rank
+    Get an allocated and initialised `array_type::tensor` to store a "qtensor" of a certain rank
     (0 = scalar, 1, vector, 2 = 2nd-order tensor, etc.).
     Default: rank = 0, a.k.a. scalar.
 
     \tparam R value-type of the array, e.g. `double`.
     \param val The value to which to initialise all items.
-    \returns `xt::xtensor` container of the correct shape (and rank).
+    \returns `array_type::tensor` container of the correct shape (and rank).
     */
     template <size_t rank = 0, class R>
     auto allocate_qtensor(R val) const;
@@ -304,13 +306,13 @@ public:
     \tparam R value-type of the array, e.g. `double`.
     \param rank The tensor rank.
     \param val The value to which to initialise all items.
-    \returns `xt::xtensor` container of the correct shape (and rank).
+    \returns `array_type::tensor` container of the correct shape (and rank).
     */
     template <class R>
     auto allocate_qtensor(size_t rank, R val) const;
 
     /**
-    Get an allocated `xt::xtensor` to store a "qscalar" (a "qtensor" of rank 0).
+    Get an allocated `array_type::tensor` to store a "qscalar" (a "qtensor" of rank 0).
     Note: the container is not (zero-)initialised.
 
     \tparam R value-type of the array, e.g. `double`.
@@ -324,7 +326,7 @@ public:
 
     \tparam R value-type of the array, e.g. `double`.
     \param val The value to which to initialise all items.
-    \returns `xt::xtensor` container of the correct shape (and rank).
+    \returns `array_type::tensor` container of the correct shape (and rank).
     */
     template <class R>
     auto allocate_qscalar(R val) const;
@@ -369,14 +371,14 @@ public:
 
     \return ``gradN`` stored per element, per integration point [#nelem, #nip, #nne, #ndim].
     */
-    auto GradN() const -> xt::xtensor<double, 4>;
+    auto GradN() const -> array_type::tensor<double, 4>;
 
     /**
     Get the integration volume.
 
     \return volume stored per element, per integration point [#nelem, #nip].
     */
-    auto dV() const -> xt::xtensor<double, 2>;
+    auto dV() const -> array_type::tensor<double, 2>;
 
     /**
     Interpolate element vector and evaluate at each quadrature point.
@@ -387,7 +389,7 @@ public:
     \return qvector [#nelem, #nip, #ndim].
     */
     template <class T>
-    auto InterpQuad_vector(const T& elemvec) const -> xt::xtensor<double, 3>;
+    auto InterpQuad_vector(const T& elemvec) const -> array_type::tensor<double, 3>;
 
     /**
     Same as InterpQuad_vector(), but writing to preallocated return.
@@ -415,7 +417,7 @@ public:
     \return qtensor [#nelem, #nip, #tdim, #tdim]
     */
     template <class T>
-    auto GradN_vector(const T& elemvec) const -> xt::xtensor<double, 4>;
+    auto GradN_vector(const T& elemvec) const -> array_type::tensor<double, 4>;
 
     /**
     Same as GradN_vector(), but writing to preallocated return.
@@ -439,7 +441,7 @@ public:
     \return qtensor [#nelem, #nip, #tdim, #tdim]
     */
     template <class T>
-    auto GradN_vector_T(const T& elemvec) const -> xt::xtensor<double, 4>;
+    auto GradN_vector_T(const T& elemvec) const -> array_type::tensor<double, 4>;
 
     /**
     Same as GradN_vector_T(), but writing to preallocated return.
@@ -464,7 +466,7 @@ public:
     \return qtensor [#nelem, #nip, #tdim, #tdim]
     */
     template <class T>
-    auto SymGradN_vector(const T& elemvec) const -> xt::xtensor<double, 4>;
+    auto SymGradN_vector(const T& elemvec) const -> array_type::tensor<double, 4>;
 
     /**
     Same as SymGradN_vector(), but writing to preallocated return.
@@ -488,7 +490,7 @@ public:
     \return elemvec [#nelem, #nne. #ndim]
     */
     template <class T>
-    auto Int_N_vector_dV(const T& qvector) const -> xt::xtensor<double, 3>;
+    auto Int_N_vector_dV(const T& qvector) const -> array_type::tensor<double, 3>;
 
     /**
     Same as Int_N_vector_dV(), but writing to preallocated return.
@@ -518,7 +520,7 @@ public:
     \return elemmat [#nelem, #nne * #ndim, #nne * #ndim]
     */
     template <class T>
-    auto Int_N_scalar_NT_dV(const T& qscalar) const -> xt::xtensor<double, 3>;
+    auto Int_N_scalar_NT_dV(const T& qscalar) const -> array_type::tensor<double, 3>;
 
     /**
     Same as Int_N_scalar_NT_dV(), but writing to preallocated return.
@@ -547,7 +549,7 @@ public:
     \return elemvec [#nelem, #nne. #ndim]
     */
     template <class T>
-    auto Int_gradN_dot_tensor2_dV(const T& qtensor) const -> xt::xtensor<double, 3>;
+    auto Int_gradN_dot_tensor2_dV(const T& qtensor) const -> array_type::tensor<double, 3>;
 
     /**
     Same as Int_gradN_dot_tensor2_dV(), but writing to preallocated return.
@@ -581,7 +583,8 @@ public:
     \return elemmat [#nelem, #nne * #ndim, #nne * #ndim]
     */
     template <class T>
-    auto Int_gradN_dot_tensor4_dot_gradNT_dV(const T& qtensor) const -> xt::xtensor<double, 3>;
+    auto Int_gradN_dot_tensor4_dot_gradNT_dV(const T& qtensor) const
+        -> array_type::tensor<double, 3>;
 
     /**
     Same as Int_gradN_dot_tensor4_dot_gradNT_dV(), but writing to preallocated return.

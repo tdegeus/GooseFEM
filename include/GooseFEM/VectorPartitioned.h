@@ -53,9 +53,9 @@ public:
     \param iip prescribed DOFs [#nnp].
     */
     VectorPartitioned(
-        const xt::xtensor<size_t, 2>& conn,
-        const xt::xtensor<size_t, 2>& dofs,
-        const xt::xtensor<size_t, 1>& iip);
+        const array_type::tensor<size_t, 2>& conn,
+        const array_type::tensor<size_t, 2>& dofs,
+        const array_type::tensor<size_t, 1>& iip);
 
     /**
     \return Number of unknown DOFs.
@@ -70,26 +70,26 @@ public:
     /**
     \return Unknown DOFs [#nnu].
     */
-    xt::xtensor<size_t, 1> iiu() const;
+    array_type::tensor<size_t, 1> iiu() const;
 
     /**
     \return Prescribed DOFs [#nnp].
     */
-    xt::xtensor<size_t, 1> iip() const;
+    array_type::tensor<size_t, 1> iip() const;
 
     /**
     Per DOF (see Vector::dofs()) list if unknown ("u").
 
     \return Boolean "nodevec".
     */
-    xt::xtensor<bool, 2> dofs_is_u() const;
+    array_type::tensor<bool, 2> dofs_is_u() const;
 
     /**
     Per DOF (see Vector::dofs()) list if prescribed ("p").
 
     \return Boolean "nodevec".
     */
-    xt::xtensor<bool, 2> dofs_is_p() const;
+    array_type::tensor<bool, 2> dofs_is_p() const;
 
     /**
     Copy unknown DOFs from "nodevec" to another "nodvec":
@@ -104,9 +104,9 @@ public:
     \param nodevec_dest input [#nnode, #ndim]
     \return nodevec output [#nnode, #ndim]
     */
-    xt::xtensor<double, 2> Copy_u(
-        const xt::xtensor<double, 2>& nodevec_src,
-        const xt::xtensor<double, 2>& nodevec_dest) const;
+    array_type::tensor<double, 2> Copy_u(
+        const array_type::tensor<double, 2>& nodevec_src,
+        const array_type::tensor<double, 2>& nodevec_dest) const;
 
     /**
     Copy unknown DOFs from "nodevec" to another "nodvec":
@@ -120,8 +120,9 @@ public:
     \param nodevec_src input [#nnode, #ndim]
     \param nodevec_dest input/output [#nnode, #ndim]
     */
-    void
-    copy_u(const xt::xtensor<double, 2>& nodevec_src, xt::xtensor<double, 2>& nodevec_dest) const;
+    void copy_u(
+        const array_type::tensor<double, 2>& nodevec_src,
+        array_type::tensor<double, 2>& nodevec_dest) const;
 
     /**
     Copy prescribed DOFs from "nodevec" to another "nodvec":
@@ -136,9 +137,9 @@ public:
     \param nodevec_dest input [#nnode, #ndim]
     \return nodevec output [#nnode, #ndim]
     */
-    xt::xtensor<double, 2> Copy_p(
-        const xt::xtensor<double, 2>& nodevec_src,
-        const xt::xtensor<double, 2>& nodevec_dest) const;
+    array_type::tensor<double, 2> Copy_p(
+        const array_type::tensor<double, 2>& nodevec_src,
+        const array_type::tensor<double, 2>& nodevec_dest) const;
 
     /**
     Copy prescribed DOFs from "nodevec" to another "nodvec":
@@ -152,8 +153,9 @@ public:
     \param nodevec_src input [#nnode, #ndim]
     \param nodevec_dest input/output [#nnode, #ndim]
     */
-    void
-    copy_p(const xt::xtensor<double, 2>& nodevec_src, xt::xtensor<double, 2>& nodevec_dest) const;
+    void copy_p(
+        const array_type::tensor<double, 2>& nodevec_src,
+        array_type::tensor<double, 2>& nodevec_dest) const;
 
     /**
     Combine unknown and prescribed "dofval" into a single "dofval" list.
@@ -162,9 +164,9 @@ public:
     \param dofval_p input [#nnp]
     \return dofval output [#ndof]
     */
-    xt::xtensor<double, 1> DofsFromParitioned(
-        const xt::xtensor<double, 1>& dofval_u,
-        const xt::xtensor<double, 1>& dofval_p) const;
+    array_type::tensor<double, 1> DofsFromParitioned(
+        const array_type::tensor<double, 1>& dofval_u,
+        const array_type::tensor<double, 1>& dofval_p) const;
 
     /**
     Combine unknown and prescribed "dofval" into a single "dofval" list.
@@ -174,9 +176,9 @@ public:
     \param dofval output [#ndof]
     */
     void dofsFromParitioned(
-        const xt::xtensor<double, 1>& dofval_u,
-        const xt::xtensor<double, 1>& dofval_p,
-        xt::xtensor<double, 1>& dofval) const;
+        const array_type::tensor<double, 1>& dofval_u,
+        const array_type::tensor<double, 1>& dofval_p,
+        array_type::tensor<double, 1>& dofval) const;
 
     /**
     Combine unknown and prescribed "dofval" into a single "dofval" list
@@ -187,9 +189,9 @@ public:
     \param dofval_p input [#nnp]
     \return nodevec output [#nnode, #ndim]
     */
-    xt::xtensor<double, 2> NodeFromPartitioned(
-        const xt::xtensor<double, 1>& dofval_u,
-        const xt::xtensor<double, 1>& dofval_p) const;
+    array_type::tensor<double, 2> NodeFromPartitioned(
+        const array_type::tensor<double, 1>& dofval_u,
+        const array_type::tensor<double, 1>& dofval_p) const;
 
     /**
     Combine unknown and prescribed "dofval" into a single "dofval" list
@@ -201,9 +203,9 @@ public:
     \param nodevec output [#nnode, #ndim]
     */
     void nodeFromPartitioned(
-        const xt::xtensor<double, 1>& dofval_u,
-        const xt::xtensor<double, 1>& dofval_p,
-        xt::xtensor<double, 2>& nodevec) const;
+        const array_type::tensor<double, 1>& dofval_u,
+        const array_type::tensor<double, 1>& dofval_p,
+        array_type::tensor<double, 2>& nodevec) const;
 
     /**
     Combine unknown and prescribed "dofval" into a single "dofval" list
@@ -214,9 +216,9 @@ public:
     \param dofval_p input [#nnp]
     \return elemvec output [#nelem, #nne, #ndim]
     */
-    xt::xtensor<double, 3> ElementFromPartitioned(
-        const xt::xtensor<double, 1>& dofval_u,
-        const xt::xtensor<double, 1>& dofval_p) const;
+    array_type::tensor<double, 3> ElementFromPartitioned(
+        const array_type::tensor<double, 1>& dofval_u,
+        const array_type::tensor<double, 1>& dofval_p) const;
 
     /**
     Combine unknown and prescribed "dofval" into a single "dofval" list
@@ -228,9 +230,9 @@ public:
     \param elemvec output [#nelem, #nne, #ndim]
     */
     void elementFromPartitioned(
-        const xt::xtensor<double, 1>& dofval_u,
-        const xt::xtensor<double, 1>& dofval_p,
-        xt::xtensor<double, 3>& elemvec) const;
+        const array_type::tensor<double, 1>& dofval_u,
+        const array_type::tensor<double, 1>& dofval_p,
+        array_type::tensor<double, 3>& elemvec) const;
 
     /**
     Extract the unknown "dofval":
@@ -240,7 +242,7 @@ public:
     \param dofval input [#ndof]
     \return dofval_u input [#nnu]
     */
-    xt::xtensor<double, 1> AsDofs_u(const xt::xtensor<double, 1>& dofval) const;
+    array_type::tensor<double, 1> AsDofs_u(const array_type::tensor<double, 1>& dofval) const;
 
     /**
     Extract the unknown "dofval":
@@ -250,7 +252,9 @@ public:
     \param dofval input [#ndof]
     \param dofval_u input [#nnu]
     */
-    void asDofs_u(const xt::xtensor<double, 1>& dofval, xt::xtensor<double, 1>& dofval_u) const;
+    void asDofs_u(
+        const array_type::tensor<double, 1>& dofval,
+        array_type::tensor<double, 1>& dofval_u) const;
 
     /**
     Convert "nodevec" to "dofval" (overwrite entries that occur more than once)
@@ -259,7 +263,7 @@ public:
     \param nodevec input [#nnode, #ndim]
     \return dofval_u input [#nnu]
     */
-    xt::xtensor<double, 1> AsDofs_u(const xt::xtensor<double, 2>& nodevec) const;
+    array_type::tensor<double, 1> AsDofs_u(const array_type::tensor<double, 2>& nodevec) const;
 
     /**
     Convert "nodevec" to "dofval" (overwrite entries that occur more than once)
@@ -268,7 +272,9 @@ public:
     \param nodevec input [#nnode, #ndim]
     \param dofval_u input [#nnu]
     */
-    void asDofs_u(const xt::xtensor<double, 2>& nodevec, xt::xtensor<double, 1>& dofval_u) const;
+    void asDofs_u(
+        const array_type::tensor<double, 2>& nodevec,
+        array_type::tensor<double, 1>& dofval_u) const;
 
     /**
     Convert "elemvec" to "dofval" (overwrite entries that occur more than once)
@@ -277,7 +283,7 @@ public:
     \param elemvec input [#nelem, #nne, #ndim]
     \return dofval_u input [#nnu]
     */
-    xt::xtensor<double, 1> AsDofs_u(const xt::xtensor<double, 3>& elemvec) const;
+    array_type::tensor<double, 1> AsDofs_u(const array_type::tensor<double, 3>& elemvec) const;
 
     /**
     Convert "elemvec" to "dofval" (overwrite entries that occur more than once)
@@ -286,7 +292,9 @@ public:
     \param elemvec input [#nelem, #nne, #ndim]
     \param dofval_u input [#nnu]
     */
-    void asDofs_u(const xt::xtensor<double, 3>& elemvec, xt::xtensor<double, 1>& dofval_u) const;
+    void asDofs_u(
+        const array_type::tensor<double, 3>& elemvec,
+        array_type::tensor<double, 1>& dofval_u) const;
 
     /**
     Extract the prescribed "dofval":
@@ -296,7 +304,7 @@ public:
     \param dofval input [#ndof]
     \return dofval_p input [#nnp]
     */
-    xt::xtensor<double, 1> AsDofs_p(const xt::xtensor<double, 1>& dofval) const;
+    array_type::tensor<double, 1> AsDofs_p(const array_type::tensor<double, 1>& dofval) const;
 
     /**
     Extract the prescribed "dofval":
@@ -306,7 +314,9 @@ public:
     \param dofval input [#ndof]
     \param dofval_p input [#nnp]
     */
-    void asDofs_p(const xt::xtensor<double, 1>& dofval, xt::xtensor<double, 1>& dofval_p) const;
+    void asDofs_p(
+        const array_type::tensor<double, 1>& dofval,
+        array_type::tensor<double, 1>& dofval_p) const;
 
     /**
     Convert "nodevec" to "dofval" (overwrite entries that occur more than once)
@@ -315,7 +325,7 @@ public:
     \param nodevec input [#nnode, #ndim]
     \return dofval_p input [#nnp]
     */
-    xt::xtensor<double, 1> AsDofs_p(const xt::xtensor<double, 2>& nodevec) const;
+    array_type::tensor<double, 1> AsDofs_p(const array_type::tensor<double, 2>& nodevec) const;
 
     /**
     Convert "nodevec" to "dofval" (overwrite entries that occur more than once)
@@ -324,7 +334,9 @@ public:
     \param nodevec input [#nnode, #ndim]
     \param dofval_p input [#nnp]
     */
-    void asDofs_p(const xt::xtensor<double, 2>& nodevec, xt::xtensor<double, 1>& dofval_p) const;
+    void asDofs_p(
+        const array_type::tensor<double, 2>& nodevec,
+        array_type::tensor<double, 1>& dofval_p) const;
 
     /**
     Convert "elemvec" to "dofval" (overwrite entries that occur more than once)
@@ -333,7 +345,7 @@ public:
     \param elemvec input [#nelem, #nne, #ndim]
     \return dofval_p input [#nnp]
     */
-    xt::xtensor<double, 1> AsDofs_p(const xt::xtensor<double, 3>& elemvec) const;
+    array_type::tensor<double, 1> AsDofs_p(const array_type::tensor<double, 3>& elemvec) const;
 
     /**
     Convert "elemvec" to "dofval" (overwrite entries that occur more than once)
@@ -342,11 +354,13 @@ public:
     \param elemvec input [#nelem, #nne, #ndim]
     \param dofval_p input [#nnp]
     */
-    void asDofs_p(const xt::xtensor<double, 3>& elemvec, xt::xtensor<double, 1>& dofval_p) const;
+    void asDofs_p(
+        const array_type::tensor<double, 3>& elemvec,
+        array_type::tensor<double, 1>& dofval_p) const;
 
 protected:
-    xt::xtensor<size_t, 1> m_iiu; ///< See iiu()
-    xt::xtensor<size_t, 1> m_iip; ///< See iip()
+    array_type::tensor<size_t, 1> m_iiu; ///< See iiu()
+    array_type::tensor<size_t, 1> m_iip; ///< See iip()
     size_t m_nnu; ///< See #nnu
     size_t m_nnp; ///< See #nnp
 
@@ -358,7 +372,7 @@ protected:
 
     making is much simpler to slice.
     */
-    xt::xtensor<size_t, 2> m_part;
+    array_type::tensor<size_t, 2> m_part;
 };
 
 } // namespace GooseFEM

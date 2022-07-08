@@ -262,7 +262,7 @@ private:
 
     friend class RegularBase<D>;
 
-    xt::xtensor<size_t, 2> nodesPeriodic_impl() const;
+    array_type::tensor<size_t, 2> nodesPeriodic_impl() const;
     auto nodesOrigin_impl() const;
 };
 
@@ -961,7 +961,7 @@ private:
 
     friend class RegularBase<D>;
 
-    xt::xtensor<size_t, 2> nodesPeriodic_impl() const;
+    array_type::tensor<size_t, 2> nodesPeriodic_impl() const;
     auto nodesOrigin_impl() const;
 };
 
@@ -978,7 +978,7 @@ Find overlapping nodes. The output has the following structure:
 \return Overlapping nodes.
 */
 template <class S, class T>
-inline xt::xtensor<size_t, 2>
+inline array_type::tensor<size_t, 2>
 overlapping(const S& coor_a, const T& coor_b, double rtol = 1e-5, double atol = 1e-8);
 
 /**
@@ -1045,43 +1045,43 @@ public:
     Nodal coordinates [#nnode, #ndim].
     \return coordinates per node
     */
-    xt::xtensor<double, 2> coor() const;
+    array_type::tensor<double, 2> coor() const;
 
     /**
     Connectivity [#nelem, #nne].
     \return nodes per element
     */
-    xt::xtensor<size_t, 2> conn() const;
+    array_type::tensor<size_t, 2> conn() const;
 
     /**
     DOF numbers for each node (numbered sequentially) [#nnode, #ndim].
     \return DOFs per node
     */
-    xt::xtensor<size_t, 2> dofs() const;
+    array_type::tensor<size_t, 2> dofs() const;
 
     /**
     Node-map per sub-mesh.
     \return nodes per mesh
     */
-    std::vector<xt::xtensor<size_t, 1>> nodemap() const;
+    std::vector<array_type::tensor<size_t, 1>> nodemap() const;
 
     /**
     Element-map per sub-mesh.
     \return elements per mesh
     */
-    std::vector<xt::xtensor<size_t, 1>> elemmap() const;
+    std::vector<array_type::tensor<size_t, 1>> elemmap() const;
 
     /**
     \param mesh_index Index of the mesh ("a" = 1, "b" = 1).
     \return Node-map for a given mesh.
     */
-    xt::xtensor<size_t, 1> nodemap(size_t mesh_index) const;
+    array_type::tensor<size_t, 1> nodemap(size_t mesh_index) const;
 
     /**
     \param mesh_index Index of the mesh ("a" = 1, "b" = 1).
     \return Element-map for a given mesh.
     */
-    xt::xtensor<size_t, 1> elemmap(size_t mesh_index) const;
+    array_type::tensor<size_t, 1> elemmap(size_t mesh_index) const;
 
     /**
     Convert set of node numbers for an original mesh to the stitched mesh.
@@ -1104,9 +1104,9 @@ public:
     T elemset(const T& set, size_t mesh_index) const;
 
 private:
-    xt::xtensor<double, 2> m_coor;
-    xt::xtensor<size_t, 2> m_conn;
-    xt::xtensor<size_t, 1> m_map_b;
+    array_type::tensor<double, 2> m_coor;
+    array_type::tensor<size_t, 2> m_conn;
+    array_type::tensor<size_t, 1> m_map_b;
     size_t m_nnd_a;
     size_t m_nel_a;
     size_t m_nel_b;
@@ -1166,31 +1166,31 @@ public:
     Nodal coordinates [#nnode, #ndim].
     \return coordinates per node
     */
-    xt::xtensor<double, 2> coor() const;
+    array_type::tensor<double, 2> coor() const;
 
     /**
     Connectivity [#nelem, #nne].
     \return nodes per element
     */
-    xt::xtensor<size_t, 2> conn() const;
+    array_type::tensor<size_t, 2> conn() const;
 
     /**
     DOF numbers for each node (numbered sequentially) [#nnode, #ndim].
     \return DOFs per node
     */
-    xt::xtensor<size_t, 2> dofs() const;
+    array_type::tensor<size_t, 2> dofs() const;
 
     /**
     Node-map per sub-mesh.
     \return nodes per mesh
     */
-    std::vector<xt::xtensor<size_t, 1>> nodemap() const;
+    std::vector<array_type::tensor<size_t, 1>> nodemap() const;
 
     /**
     Element-map per sub-mesh.
     \return elements per mesh
     */
-    std::vector<xt::xtensor<size_t, 1>> elemmap() const;
+    std::vector<array_type::tensor<size_t, 1>> elemmap() const;
 
     /**
     The node numbers in the stitched mesh that are coming from a specific sub-mesh.
@@ -1198,7 +1198,7 @@ public:
     \param mesh_index Index of the sub-mesh.
     \return List of node numbers.
     */
-    xt::xtensor<size_t, 1> nodemap(size_t mesh_index) const;
+    array_type::tensor<size_t, 1> nodemap(size_t mesh_index) const;
 
     /**
     The element numbers in the stitched mesh that are coming from a specific sub-mesh.
@@ -1206,7 +1206,7 @@ public:
     \param mesh_index Index of the sub-mesh.
     \return List of element numbers.
     */
-    xt::xtensor<size_t, 1> elemmap(size_t mesh_index) const;
+    array_type::tensor<size_t, 1> elemmap(size_t mesh_index) const;
 
     /**
     Convert set of node-numbers for a sub-mesh to the stitched mesh.
@@ -1255,9 +1255,9 @@ public:
     T elemset(std::initializer_list<T> set) const;
 
 protected:
-    xt::xtensor<double, 2> m_coor; ///< Nodal coordinates [#nnode, #ndim]
-    xt::xtensor<size_t, 2> m_conn; ///< Connectivity [#nelem, #nne]
-    std::vector<xt::xtensor<size_t, 1>> m_map; ///< See nodemap(size_t)
+    array_type::tensor<double, 2> m_coor; ///< Nodal coordinates [#nnode, #ndim]
+    array_type::tensor<size_t, 2> m_conn; ///< Connectivity [#nelem, #nne]
+    std::vector<array_type::tensor<size_t, 1>> m_map; ///< See nodemap(size_t)
     std::vector<size_t> m_nel; ///< Number of elements per sub-mesh.
     std::vector<size_t> m_el_offset; ///< First element of every sub-mesh.
     double m_rtol; ///< Relative tolerance to find overlapping nodes.
@@ -1289,8 +1289,10 @@ public:
     void push_back(const C& coor, const E& conn, const N& nodes_bottom, const N& nodes_top);
 
 private:
-    std::vector<xt::xtensor<size_t, 1>> m_nodes_bot; ///< Bottom nodes of each mesh (renumbered).
-    std::vector<xt::xtensor<size_t, 1>> m_nodes_top; ///< Top nodes of each mesh (renumbered).
+    std::vector<array_type::tensor<size_t, 1>>
+        m_nodes_bot; ///< Bottom nodes of each mesh (renumbered).
+    std::vector<array_type::tensor<size_t, 1>>
+        m_nodes_top; ///< Top nodes of each mesh (renumbered).
     bool m_check_overlap; ///< Check if nodes are overlapping when adding a mesh.
 };
 
@@ -1336,10 +1338,10 @@ public:
 
     \return Renumber-index.
     */
-    xt::xtensor<size_t, 1> index() const;
+    array_type::tensor<size_t, 1> index() const;
 
 private:
-    xt::xtensor<size_t, 1> m_renum;
+    array_type::tensor<size_t, 1> m_renum;
 };
 
 /**
@@ -1385,10 +1387,10 @@ public:
 
     \return Reorder-index.
     */
-    xt::xtensor<size_t, 1> index() const;
+    array_type::tensor<size_t, 1> index() const;
 
 private:
-    xt::xtensor<size_t, 1> m_renum;
+    array_type::tensor<size_t, 1> m_renum;
 };
 
 /**
@@ -1402,7 +1404,7 @@ For example for 3 nodes in 2 dimensions the output is
 \param ndim Number of dimensions.
 \return DOF-numbers.
 */
-inline xt::xtensor<size_t, 2> dofs(size_t nnode, size_t ndim);
+inline array_type::tensor<size_t, 2> dofs(size_t nnode, size_t ndim);
 
 /**
 List nodal tyings based on DOF-numbers per node.
@@ -1420,7 +1422,7 @@ Number of elements connected to each node.
 \return Coordination per node.
 */
 template <class E>
-inline xt::xtensor<size_t, 1> coordination(const E& conn);
+inline array_type::tensor<size_t, 1> coordination(const E& conn);
 
 /**
 Nodes connected to each DOF.
@@ -1459,7 +1461,7 @@ Return size of each element edge.
 \return Edge-sizes per element.
 */
 template <class C, class E>
-inline xt::xtensor<double, 2> edgesize(const C& coor, const E& conn, ElementType type);
+inline array_type::tensor<double, 2> edgesize(const C& coor, const E& conn, ElementType type);
 
 /**
 Return size of each element edge.
@@ -1470,7 +1472,7 @@ The element-type is automatically determined, see defaultElementType().
 \return Edge-sizes per element.
 */
 template <class C, class E>
-inline xt::xtensor<double, 2> edgesize(const C& coor, const E& conn);
+inline array_type::tensor<double, 2> edgesize(const C& coor, const E& conn);
 
 /**
 Coordinates of the center of each element.
@@ -1481,7 +1483,7 @@ Coordinates of the center of each element.
 \return Center of each element.
 */
 template <class C, class E>
-inline xt::xtensor<double, 2> centers(const C& coor, const E& conn, ElementType type);
+inline array_type::tensor<double, 2> centers(const C& coor, const E& conn, ElementType type);
 
 /**
 Coordinates of the center of each element.
@@ -1492,7 +1494,7 @@ The element-type is automatically determined, see defaultElementType().
 \return Center of each element.
 */
 template <class C, class E>
-inline xt::xtensor<double, 2> centers(const C& coor, const E& conn);
+inline array_type::tensor<double, 2> centers(const C& coor, const E& conn);
 
 /**
 Convert an element-map to a node-map.
@@ -1504,7 +1506,7 @@ Convert an element-map to a node-map.
 \return Node-map such that ``new_nodevar = nodevar[node_map]``
 */
 template <class T, class C, class E>
-inline xt::xtensor<size_t, 1>
+inline array_type::tensor<size_t, 1>
 elemmap2nodemap(const T& elem_map, const C& coor, const E& conn, ElementType type);
 
 /**
@@ -1517,7 +1519,8 @@ The element-type is automatically determined, see defaultElementType().
 \return Node-map such that ``new_nodevar = nodevar[node_map]``
 */
 template <class T, class C, class E>
-inline xt::xtensor<size_t, 1> elemmap2nodemap(const T& elem_map, const C& coor, const E& conn);
+inline array_type::tensor<size_t, 1>
+elemmap2nodemap(const T& elem_map, const C& coor, const E& conn);
 
 /**
 Compute the mass of each node in the mesh.
@@ -1526,15 +1529,15 @@ such that the center of gravity is simply::
 
     average(coor, GooseFEM.Mesh.nodal_mass(coor, conn, type), axis=0);
 
-\tparam C e.g. `xt::xtensor<double, 2>`
-\tparam E e.g. `xt::xtensor<size_t, 2>`
+\tparam C e.g. `array_type::tensor<double, 2>`
+\tparam E e.g. `array_type::tensor<size_t, 2>`
 \param coor Nodal coordinates `[nnode, ndim]`.
 \param conn Connectivity `[nelem, nne]`.
 \param type ElementType.
 \return Center of gravity `[ndim]`.
 */
 template <class C, class E>
-inline xt::xtensor<double, 2> nodal_mass(const C& coor, const E& conn, ElementType type);
+inline array_type::tensor<double, 2> nodal_mass(const C& coor, const E& conn, ElementType type);
 
 /**
 Compute the mass of each node in the mesh.
@@ -1543,39 +1546,40 @@ such that the center of gravity is simply::
 
     average(coor, GooseFEM.Mesh.nodal_mass(coor, conn), axis=0);
 
-\tparam C e.g. `xt::xtensor<double, 2>`
-\tparam E e.g. `xt::xtensor<size_t, 2>`
+\tparam C e.g. `array_type::tensor<double, 2>`
+\tparam E e.g. `array_type::tensor<size_t, 2>`
 \param coor Nodal coordinates `[nnode, ndim]`.
 \param conn Connectivity `[nelem, nne]`.
 \return Center of gravity `[ndim]`.
 */
 template <class C, class E>
-inline xt::xtensor<double, 2> nodal_mass(const C& coor, const E& conn);
+inline array_type::tensor<double, 2> nodal_mass(const C& coor, const E& conn);
 
 /**
 Compute the center of gravity of a mesh.
 
-\tparam C e.g. `xt::xtensor<double, 2>`
-\tparam E e.g. `xt::xtensor<size_t, 2>`
+\tparam C e.g. `array_type::tensor<double, 2>`
+\tparam E e.g. `array_type::tensor<size_t, 2>`
 \param coor Nodal coordinates `[nnode, ndim]`.
 \param conn Connectivity `[nelem, nne]`.
 \param type ElementType.
 \return Center of gravity `[ndim]`.
 */
 template <class C, class E>
-inline xt::xtensor<double, 1> center_of_gravity(const C& coor, const E& conn, ElementType type);
+inline array_type::tensor<double, 1>
+center_of_gravity(const C& coor, const E& conn, ElementType type);
 
 /**
 Compute the center of gravity of a mesh.
 
-\tparam C e.g. `xt::xtensor<double, 2>`
-\tparam E e.g. `xt::xtensor<size_t, 2>`
+\tparam C e.g. `array_type::tensor<double, 2>`
+\tparam E e.g. `array_type::tensor<size_t, 2>`
 \param coor Nodal coordinates `[nnode, ndim]`.
 \param conn Connectivity `[nelem, nne]`.
 \return Center of gravity `[ndim]`.
 */
 template <class C, class E>
-inline xt::xtensor<double, 1> center_of_gravity(const C& coor, const E& conn);
+inline array_type::tensor<double, 1> center_of_gravity(const C& coor, const E& conn);
 
 } // namespace Mesh
 } // namespace GooseFEM

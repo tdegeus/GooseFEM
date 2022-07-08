@@ -36,7 +36,7 @@ public:
     /**
     Constructor.
 
-    \tparam E e.g. `xt::xtensor<size_t, 2>`
+    \tparam E e.g. `array_type::tensor<size_t, 2>`
     \tparam M e.g. `Eigen::SparseMatrix<double>`
     \param conn connectivity [#nelem, #nne].
     \param dofs DOFs per node [#nnode, #ndim].
@@ -72,28 +72,28 @@ public:
 
     \return List of DOF numbers.
     */
-    xt::xtensor<size_t, 1> iid() const;
+    array_type::tensor<size_t, 1> iid() const;
 
     /**
     Independent DOFs.
 
     \return List of DOF numbers.
     */
-    xt::xtensor<size_t, 1> iii() const;
+    array_type::tensor<size_t, 1> iii() const;
 
     /**
     Independent unknown DOFs.
 
     \return List of DOF numbers.
     */
-    xt::xtensor<size_t, 1> iiu() const;
+    array_type::tensor<size_t, 1> iiu() const;
 
     /**
     Independent prescribed DOFs.
 
     \return List of DOF numbers.
     */
-    xt::xtensor<size_t, 1> iip() const;
+    array_type::tensor<size_t, 1> iip() const;
 
     /**
     Copy (part of) "dofval" to another "dofval": dofval_dest[iip()] = dofval_src[iip()].
@@ -112,7 +112,7 @@ public:
     \return dofval[iii()] [#nni].
     */
     template <class T>
-    xt::xtensor<double, 1> AsDofs_i(const T& nodevec) const;
+    array_type::tensor<double, 1> AsDofs_i(const T& nodevec) const;
 
     /**
     Same as InterpQuad_vector(), but writing to preallocated return.
@@ -125,9 +125,9 @@ public:
     void asDofs_i(const T& nodevec, R& dofval_i, bool apply_tyings = true) const;
 
 private:
-    xt::xtensor<size_t, 1> m_iiu; ///< See iiu().
-    xt::xtensor<size_t, 1> m_iip; ///< See iip().
-    xt::xtensor<size_t, 1> m_iid; ///< See iid().
+    array_type::tensor<size_t, 1> m_iiu; ///< See iiu().
+    array_type::tensor<size_t, 1> m_iip; ///< See iip().
+    array_type::tensor<size_t, 1> m_iid; ///< See iid().
     size_t m_nnu; ///< See nnu().
     size_t m_nnp; ///< See nnp().
     size_t m_nni; ///< See nni().

@@ -54,12 +54,12 @@ inline size_t Vector::ndof() const
     return m_ndof;
 }
 
-inline xt::xtensor<size_t, 2> Vector::conn() const
+inline array_type::tensor<size_t, 2> Vector::conn() const
 {
     return m_conn;
 }
 
-inline xt::xtensor<size_t, 2> Vector::dofs() const
+inline array_type::tensor<size_t, 2> Vector::dofs() const
 {
     return m_dofs;
 }
@@ -84,9 +84,9 @@ inline void Vector::copy(const T& nodevec_src, T& nodevec_dest) const
 // asDofs
 
 template <class T>
-inline xt::xtensor<double, 1> Vector::AsDofs(const T& arg) const
+inline array_type::tensor<double, 1> Vector::AsDofs(const T& arg) const
 {
-    xt::xtensor<double, 1> ret = xt::empty<double>(this->shape_dofval());
+    array_type::tensor<double, 1> ret = xt::empty<double>(this->shape_dofval());
     this->asDofs_impl(arg, ret);
     return ret;
 }
@@ -168,9 +168,9 @@ inline void Vector::asDofs_impl_elemvec(const T& arg, R& dofval) const
 // asNode
 
 template <class T>
-inline xt::xtensor<double, 2> Vector::AsNode(const T& arg) const
+inline array_type::tensor<double, 2> Vector::AsNode(const T& arg) const
 {
-    xt::xtensor<double, 2> ret = xt::empty<double>(this->shape_nodevec());
+    array_type::tensor<double, 2> ret = xt::empty<double>(this->shape_nodevec());
     this->asNode_impl(arg, ret);
     return ret;
 }
@@ -250,9 +250,9 @@ inline void Vector::asNode_impl_elemvec(const T& elemvec, R& nodevec) const
 // asElement
 
 template <class T>
-inline xt::xtensor<double, 3> Vector::AsElement(const T& arg) const
+inline array_type::tensor<double, 3> Vector::AsElement(const T& arg) const
 {
-    xt::xtensor<double, 3> ret = xt::empty<double>(this->shape_elemvec());
+    array_type::tensor<double, 3> ret = xt::empty<double>(this->shape_elemvec());
     this->asElement_impl(arg, ret);
     return ret;
 }
@@ -332,9 +332,9 @@ inline void Vector::asElement_impl_nodevec(const T& nodevec, R& elemvec) const
 // assembleDofs
 
 template <class T>
-inline xt::xtensor<double, 1> Vector::AssembleDofs(const T& arg) const
+inline array_type::tensor<double, 1> Vector::AssembleDofs(const T& arg) const
 {
-    xt::xtensor<double, 1> ret = xt::empty<double>(this->shape_dofval());
+    array_type::tensor<double, 1> ret = xt::empty<double>(this->shape_dofval());
     this->assembleDofs_impl(arg, ret);
     return ret;
 }
@@ -414,9 +414,9 @@ inline void Vector::assembleDofs_impl_elemvec(const T& elemvec, R& dofval) const
 // assembleNode
 
 template <class T>
-inline xt::xtensor<double, 2> Vector::AssembleNode(const T& arg) const
+inline array_type::tensor<double, 2> Vector::AssembleNode(const T& arg) const
 {
-    xt::xtensor<double, 2> ret = xt::empty<double>(this->shape_nodevec());
+    array_type::tensor<double, 2> ret = xt::empty<double>(this->shape_nodevec());
     this->assembleNode_impl(arg, ret);
     return ret;
 }
@@ -456,7 +456,7 @@ inline void Vector::assembleNode_impl_elemvec(const T& elemvec, R& nodevec) cons
     GOOSEFEM_ASSERT(xt::has_shape(elemvec, this->shape_elemvec()));
     GOOSEFEM_ASSERT(xt::has_shape(nodevec, this->shape_nodevec()));
 
-    xt::xtensor<double, 1> dofval = this->AssembleDofs(elemvec);
+    array_type::tensor<double, 1> dofval = this->AssembleDofs(elemvec);
     this->asNode(dofval, nodevec);
 }
 
@@ -493,54 +493,54 @@ inline std::array<size_t, 3> Vector::shape_elemmat() const
     return shape;
 }
 
-inline xt::xtensor<double, 1> Vector::allocate_dofval() const
+inline array_type::tensor<double, 1> Vector::allocate_dofval() const
 {
-    xt::xtensor<double, 1> dofval = xt::empty<double>(this->shape_dofval());
+    array_type::tensor<double, 1> dofval = xt::empty<double>(this->shape_dofval());
     return dofval;
 }
 
-inline xt::xtensor<double, 2> Vector::allocate_nodevec() const
+inline array_type::tensor<double, 2> Vector::allocate_nodevec() const
 {
-    xt::xtensor<double, 2> nodevec = xt::empty<double>(this->shape_nodevec());
+    array_type::tensor<double, 2> nodevec = xt::empty<double>(this->shape_nodevec());
     return nodevec;
 }
 
-inline xt::xtensor<double, 3> Vector::allocate_elemvec() const
+inline array_type::tensor<double, 3> Vector::allocate_elemvec() const
 {
-    xt::xtensor<double, 3> elemvec = xt::empty<double>(this->shape_elemvec());
+    array_type::tensor<double, 3> elemvec = xt::empty<double>(this->shape_elemvec());
     return elemvec;
 }
 
-inline xt::xtensor<double, 3> Vector::allocate_elemmat() const
+inline array_type::tensor<double, 3> Vector::allocate_elemmat() const
 {
-    xt::xtensor<double, 3> elemmat = xt::empty<double>(this->shape_elemmat());
+    array_type::tensor<double, 3> elemmat = xt::empty<double>(this->shape_elemmat());
     return elemmat;
 }
 
-inline xt::xtensor<double, 1> Vector::allocate_dofval(double val) const
+inline array_type::tensor<double, 1> Vector::allocate_dofval(double val) const
 {
-    xt::xtensor<double, 1> dofval = xt::empty<double>(this->shape_dofval());
+    array_type::tensor<double, 1> dofval = xt::empty<double>(this->shape_dofval());
     dofval.fill(val);
     return dofval;
 }
 
-inline xt::xtensor<double, 2> Vector::allocate_nodevec(double val) const
+inline array_type::tensor<double, 2> Vector::allocate_nodevec(double val) const
 {
-    xt::xtensor<double, 2> nodevec = xt::empty<double>(this->shape_nodevec());
+    array_type::tensor<double, 2> nodevec = xt::empty<double>(this->shape_nodevec());
     nodevec.fill(val);
     return nodevec;
 }
 
-inline xt::xtensor<double, 3> Vector::allocate_elemvec(double val) const
+inline array_type::tensor<double, 3> Vector::allocate_elemvec(double val) const
 {
-    xt::xtensor<double, 3> elemvec = xt::empty<double>(this->shape_elemvec());
+    array_type::tensor<double, 3> elemvec = xt::empty<double>(this->shape_elemvec());
     elemvec.fill(val);
     return elemvec;
 }
 
-inline xt::xtensor<double, 3> Vector::allocate_elemmat(double val) const
+inline array_type::tensor<double, 3> Vector::allocate_elemmat(double val) const
 {
-    xt::xtensor<double, 3> elemmat = xt::empty<double>(this->shape_elemmat());
+    array_type::tensor<double, 3> elemmat = xt::empty<double>(this->shape_elemmat());
     elemmat.fill(val);
     return elemmat;
 }

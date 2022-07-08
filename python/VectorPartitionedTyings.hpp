@@ -18,8 +18,8 @@ void init_VectorPartitionedTyings(py::module& m)
 
         .def(
             py::init<
-                const xt::xtensor<size_t, 2>&,
-                const xt::xtensor<size_t, 2>&,
+                const xt::pytensor<size_t, 2>&,
+                const xt::pytensor<size_t, 2>&,
                 const Eigen::SparseMatrix<double>&,
                 const Eigen::SparseMatrix<double>&,
                 const Eigen::SparseMatrix<double>&>(),

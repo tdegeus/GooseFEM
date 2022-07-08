@@ -47,8 +47,8 @@ public:
     \param Cdp See Tyings::Periodic::Cdp().
     */
     MatrixPartitionedTyings(
-        const xt::xtensor<size_t, 2>& conn,
-        const xt::xtensor<size_t, 2>& dofs,
+        const array_type::tensor<size_t, 2>& conn,
+        const array_type::tensor<size_t, 2>& dofs,
         const Eigen::SparseMatrix<double>& Cdu,
         const Eigen::SparseMatrix<double>& Cdp);
 
@@ -77,30 +77,30 @@ public:
 
     \return List of DOF numbers.
     */
-    xt::xtensor<size_t, 1> iid() const;
+    array_type::tensor<size_t, 1> iid() const;
 
     /**
     Independent DOFs.
 
     \return List of DOF numbers.
     */
-    xt::xtensor<size_t, 1> iii() const;
+    array_type::tensor<size_t, 1> iii() const;
 
     /**
     Independent unknown DOFs.
 
     \return List of DOF numbers.
     */
-    xt::xtensor<size_t, 1> iiu() const;
+    array_type::tensor<size_t, 1> iiu() const;
 
     /**
     Independent prescribed DOFs.
 
     \return List of DOF numbers.
     */
-    xt::xtensor<size_t, 1> iip() const;
+    array_type::tensor<size_t, 1> iip() const;
 
-    void assemble(const xt::xtensor<double, 3>& elemmat) override;
+    void assemble(const array_type::tensor<double, 3>& elemmat) override;
 
 private:
     using Matrix::add;
@@ -133,9 +133,9 @@ private:
     std::vector<Eigen::Triplet<double>> m_Tdu; ///< Matrix entries.
     std::vector<Eigen::Triplet<double>> m_Tdp; ///< Matrix entries.
     std::vector<Eigen::Triplet<double>> m_Tdd; ///< Matrix entries.
-    xt::xtensor<size_t, 1> m_iiu; ///< See iiu()
-    xt::xtensor<size_t, 1> m_iip; ///< See iip()
-    xt::xtensor<size_t, 1> m_iid; ///< See iid()
+    array_type::tensor<size_t, 1> m_iiu; ///< See iiu()
+    array_type::tensor<size_t, 1> m_iip; ///< See iip()
+    array_type::tensor<size_t, 1> m_iid; ///< See iid()
     size_t m_nnu; ///< See #nnu
     size_t m_nnp; ///< See #nnp
     size_t m_nni; ///< See #nni
@@ -151,12 +151,12 @@ private:
 
 private:
     // Convert arrays (Eigen version of VectorPartitioned, which contains public functions)
-    Eigen::VectorXd AsDofs_u(const xt::xtensor<double, 1>& dofval) const;
-    Eigen::VectorXd AsDofs_u(const xt::xtensor<double, 2>& nodevec) const;
-    Eigen::VectorXd AsDofs_p(const xt::xtensor<double, 1>& dofval) const;
-    Eigen::VectorXd AsDofs_p(const xt::xtensor<double, 2>& nodevec) const;
-    Eigen::VectorXd AsDofs_d(const xt::xtensor<double, 1>& dofval) const;
-    Eigen::VectorXd AsDofs_d(const xt::xtensor<double, 2>& nodevec) const;
+    Eigen::VectorXd AsDofs_u(const array_type::tensor<double, 1>& dofval) const;
+    Eigen::VectorXd AsDofs_u(const array_type::tensor<double, 2>& nodevec) const;
+    Eigen::VectorXd AsDofs_p(const array_type::tensor<double, 1>& dofval) const;
+    Eigen::VectorXd AsDofs_p(const array_type::tensor<double, 2>& nodevec) const;
+    Eigen::VectorXd AsDofs_d(const array_type::tensor<double, 1>& dofval) const;
+    Eigen::VectorXd AsDofs_d(const array_type::tensor<double, 2>& nodevec) const;
 };
 
 /**
@@ -187,54 +187,58 @@ public:
     \param x nodevec [nelem, ndim], used to read \f$ x_p \f$.
     \return x nodevec [nelem, ndim], \f$ x_u \f$ filled, \f$ x_p \f$ copied.
     */
-    xt::xtensor<double, 2> Solve(
+    array_type::tensor<double, 2> Solve(
         MatrixPartitionedTyings& A,
-        const xt::xtensor<double, 2>& b,
-        const xt::xtensor<double, 2>& x);
+        const array_type::tensor<double, 2>& b,
+        const array_type::tensor<double, 2>& x);
 
     /**
     Same as
-    Solve(MatrixPartitionedTyings&, const xt::xtensor<double, 2>&, const xt::xtensor<double, 2>&),
-    but filling \f$ x_u \f$ and \f$ x_d \f$ in place.
+    Solve(MatrixPartitionedTyings&, const array_type::tensor<double, 2>&, const
+    array_type::tensor<double, 2>&), but filling \f$ x_u \f$ and \f$ x_d \f$ in place.
 
     \param A sparse matrix, see MatrixPartitionedTyings().
     \param b nodevec [nelem, ndim].
     \param x nodevec [nelem, ndim], \f$ x_p \f$ read, \f$ x_u \f$ and \f$ x_d \f$ filled.
     */
-    void
-    solve(MatrixPartitionedTyings& A, const xt::xtensor<double, 2>& b, xt::xtensor<double, 2>& x);
+    void solve(
+        MatrixPartitionedTyings& A,
+        const array_type::tensor<double, 2>& b,
+        array_type::tensor<double, 2>& x);
 
     /**
     Same as
-    Solve(MatrixPartitionedTyings&, const xt::xtensor<double, 2>&, const xt::xtensor<double, 2>&),
-    but for "dofval" input and output.
+    Solve(MatrixPartitionedTyings&, const array_type::tensor<double, 2>&, const
+    array_type::tensor<double, 2>&), but for "dofval" input and output.
 
     \param A sparse matrix, see MatrixPartitionedTyings().
     \param b dofval [ndof].
     \param x dofval [ndof], used to read \f$ x_p \f$.
     \return x dofval [ndof], \f$ x_u \f$ and \f$ x_d \f$ filled, \f$ x_p \f$ copied.
     */
-    xt::xtensor<double, 1> Solve(
+    array_type::tensor<double, 1> Solve(
         MatrixPartitionedTyings& A,
-        const xt::xtensor<double, 1>& b,
-        const xt::xtensor<double, 1>& x);
+        const array_type::tensor<double, 1>& b,
+        const array_type::tensor<double, 1>& x);
 
     /**
     Same as
-    Solve(MatrixPartitionedTyings&, const xt::xtensor<double, 1>&, const xt::xtensor<double, 1>&),
-    but filling \f$ x_u \f$ and \f$ x_d \f$ in place.
+    Solve(MatrixPartitionedTyings&, const array_type::tensor<double, 1>&, const
+    array_type::tensor<double, 1>&), but filling \f$ x_u \f$ and \f$ x_d \f$ in place.
 
     \param A sparse matrix, see MatrixPartitionedTyings().
     \param b dofval [ndof].
     \param x dofval [ndof], \f$ x_p \f$ read, \f$ x_u \f$ and \f$ x_d \f$ filled.
     */
-    void
-    solve(MatrixPartitionedTyings& A, const xt::xtensor<double, 1>& b, xt::xtensor<double, 1>& x);
+    void solve(
+        MatrixPartitionedTyings& A,
+        const array_type::tensor<double, 1>& b,
+        array_type::tensor<double, 1>& x);
 
     /**
     Same as
-    Solve(MatrixPartitionedTyings&, const xt::xtensor<double, 2>&, const xt::xtensor<double, 2>&),
-    but with partitioned input and output.
+    Solve(MatrixPartitionedTyings&, const array_type::tensor<double, 2>&, const
+    array_type::tensor<double, 2>&), but with partitioned input and output.
 
     \param A sparse matrix, see MatrixPartitionedTyings().
     \param b_u unknown dofval [nnu].
@@ -242,16 +246,17 @@ public:
     \param x_p prescribed dofval [nnp]
     \return x_u unknown dofval [nnu].
     */
-    xt::xtensor<double, 1> Solve_u(
+    array_type::tensor<double, 1> Solve_u(
         MatrixPartitionedTyings& A,
-        const xt::xtensor<double, 1>& b_u,
-        const xt::xtensor<double, 1>& b_d,
-        const xt::xtensor<double, 1>& x_p);
+        const array_type::tensor<double, 1>& b_u,
+        const array_type::tensor<double, 1>& b_d,
+        const array_type::tensor<double, 1>& x_p);
 
     /**
     Same as
-    Solve_u(MatrixPartitionedTyings&, const xt::xtensor<double, 1>&, const xt::xtensor<double, 1>&,
-    const xt::xtensor<double, 1>&), but writing to pre-allocated output.
+    Solve_u(MatrixPartitionedTyings&, const array_type::tensor<double, 1>&, const
+    array_type::tensor<double, 1>&, const array_type::tensor<double, 1>&), but writing to
+    pre-allocated output.
 
     \param A sparse matrix, see MatrixPartitionedTyings().
     \param b_u unknown dofval [nnu].
@@ -261,10 +266,10 @@ public:
     */
     void solve_u(
         MatrixPartitionedTyings& A,
-        const xt::xtensor<double, 1>& b_u,
-        const xt::xtensor<double, 1>& b_d,
-        const xt::xtensor<double, 1>& x_p,
-        xt::xtensor<double, 1>& x_u);
+        const array_type::tensor<double, 1>& b_u,
+        const array_type::tensor<double, 1>& b_d,
+        const array_type::tensor<double, 1>& x_p,
+        array_type::tensor<double, 1>& x_u);
 
 private:
     Solver m_solver; ///< solver

@@ -44,7 +44,7 @@ void init_MeshTri3(py::module& mod)
 
     mod.def(
         "setOrientation",
-        py::overload_cast<const xt::xtensor<double, 2>&, const xt::xtensor<size_t, 2>&, int>(
+        py::overload_cast<const xt::pytensor<double, 2>&, const xt::pytensor<size_t, 2>&, int>(
             &GooseFEM::Mesh::Tri3::setOrientation),
         "See :cpp:func:`GooseFEM::Mesh::Tri3::setOrientation`.",
         py::arg("coor"),
@@ -54,9 +54,9 @@ void init_MeshTri3(py::module& mod)
     mod.def(
         "setOrientation",
         py::overload_cast<
-            const xt::xtensor<double, 2>&,
-            const xt::xtensor<size_t, 2>&,
-            const xt::xtensor<int, 1>&,
+            const xt::pytensor<double, 2>&,
+            const xt::pytensor<size_t, 2>&,
+            const xt::pytensor<int, 1>&,
             int>(&GooseFEM::Mesh::Tri3::setOrientation),
         "See :cpp:func:`GooseFEM::Mesh::Tri3::setOrientation`.",
         py::arg("coor"),

@@ -46,8 +46,8 @@ inline Periodic::Periodic(
     GOOSEFEM_ASSERT(xt::amin(iip)() >= xt::amin(dofs)());
     GOOSEFEM_ASSERT(xt::amax(nodal_tyings)() < m_coor.shape(0));
 
-    xt::xtensor<size_t, 1> dependent = xt::view(m_tyings, xt::all(), 1);
-    xt::xtensor<size_t, 2> dependent_dofs = xt::view(dofs, xt::keep(dependent), xt::all());
+    array_type::tensor<size_t, 1> dependent = xt::view(m_tyings, xt::all(), 1);
+    array_type::tensor<size_t, 2> dependent_dofs = xt::view(dofs, xt::keep(dependent), xt::all());
     U iid = xt::flatten(dependent_dofs);
     U iii = xt::setdiff1d(dofs, iid);
     U iiu = xt::setdiff1d(iii, iip);
@@ -63,17 +63,17 @@ inline Periodic::Periodic(
     m_control = reorder.apply(control);
 }
 
-inline xt::xtensor<size_t, 2> Periodic::dofs() const
+inline array_type::tensor<size_t, 2> Periodic::dofs() const
 {
     return m_dofs;
 }
 
-inline xt::xtensor<size_t, 2> Periodic::control() const
+inline array_type::tensor<size_t, 2> Periodic::control() const
 {
     return m_control;
 }
 
-inline xt::xtensor<size_t, 2> Periodic::nodal_tyings() const
+inline array_type::tensor<size_t, 2> Periodic::nodal_tyings() const
 {
     return m_tyings;
 }
@@ -98,22 +98,22 @@ inline size_t Periodic::nnd() const
     return m_nnd;
 }
 
-inline xt::xtensor<size_t, 1> Periodic::iiu() const
+inline array_type::tensor<size_t, 1> Periodic::iiu() const
 {
     return xt::arange<size_t>(m_nnu);
 }
 
-inline xt::xtensor<size_t, 1> Periodic::iip() const
+inline array_type::tensor<size_t, 1> Periodic::iip() const
 {
     return xt::arange<size_t>(m_nnp) + m_nnu;
 }
 
-inline xt::xtensor<size_t, 1> Periodic::iii() const
+inline array_type::tensor<size_t, 1> Periodic::iii() const
 {
     return xt::arange<size_t>(m_nni);
 }
 
-inline xt::xtensor<size_t, 1> Periodic::iid() const
+inline array_type::tensor<size_t, 1> Periodic::iid() const
 {
     return xt::arange<size_t>(m_nni, m_nni + m_nnd);
 }
@@ -231,22 +231,22 @@ inline Control::Control(const C& coor, const N& dofs)
     m_dofs = xt::concatenate(xt::xtuple(dofs, m_control_dofs));
 }
 
-inline xt::xtensor<double, 2> Control::coor() const
+inline array_type::tensor<double, 2> Control::coor() const
 {
     return m_coor;
 }
 
-inline xt::xtensor<size_t, 2> Control::dofs() const
+inline array_type::tensor<size_t, 2> Control::dofs() const
 {
     return m_dofs;
 }
 
-inline xt::xtensor<size_t, 2> Control::controlDofs() const
+inline array_type::tensor<size_t, 2> Control::controlDofs() const
 {
     return m_control_dofs;
 }
 
-inline xt::xtensor<size_t, 1> Control::controlNodes() const
+inline array_type::tensor<size_t, 1> Control::controlNodes() const
 {
     return m_control_nodes;
 }

@@ -19,7 +19,7 @@ void init_Matrix(py::module& m)
     py::class_<GooseFEM::Matrix>(m, "Matrix")
 
         .def(
-            py::init<const xt::xtensor<size_t, 2>&, const xt::xtensor<size_t, 2>&>(),
+            py::init<const xt::pytensor<size_t, 2>&, const xt::pytensor<size_t, 2>&>(),
             "See :cpp:class:`GooseFEM::Matrix`.",
             py::arg("conn"),
             py::arg("dofs"))
@@ -37,12 +37,12 @@ void init_Matrix(py::module& m)
 
         .def(
             "Dot",
-            py::overload_cast<const xt::xtensor<double, 1>&>(&GooseFEM::Matrix::Dot, py::const_),
+            py::overload_cast<const xt::pytensor<double, 1>&>(&GooseFEM::Matrix::Dot, py::const_),
             py::arg("x"))
 
         .def(
             "Dot",
-            py::overload_cast<const xt::xtensor<double, 2>&>(&GooseFEM::Matrix::Dot, py::const_),
+            py::overload_cast<const xt::pytensor<double, 2>&>(&GooseFEM::Matrix::Dot, py::const_),
             py::arg("x"))
 
         .def("__repr__", [](const GooseFEM::Matrix&) { return "<GooseFEM.Matrix>"; });
@@ -53,14 +53,14 @@ void init_Matrix(py::module& m)
 
         .def(
             "Solve",
-            py::overload_cast<GooseFEM::Matrix&, const xt::xtensor<double, 1>&>(
+            py::overload_cast<GooseFEM::Matrix&, const xt::pytensor<double, 1>&>(
                 &GooseFEM::MatrixSolver<>::Solve),
             py::arg("A"),
             py::arg("b"))
 
         .def(
             "Solve",
-            py::overload_cast<GooseFEM::Matrix&, const xt::xtensor<double, 2>&>(
+            py::overload_cast<GooseFEM::Matrix&, const xt::pytensor<double, 2>&>(
                 &GooseFEM::MatrixSolver<>::Solve),
             py::arg("A"),
             py::arg("b"))

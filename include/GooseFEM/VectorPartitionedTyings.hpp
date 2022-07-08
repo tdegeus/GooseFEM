@@ -60,22 +60,22 @@ inline size_t VectorPartitionedTyings::nnd() const
     return m_nnd;
 }
 
-inline xt::xtensor<size_t, 1> VectorPartitionedTyings::iiu() const
+inline array_type::tensor<size_t, 1> VectorPartitionedTyings::iiu() const
 {
     return m_iiu;
 }
 
-inline xt::xtensor<size_t, 1> VectorPartitionedTyings::iip() const
+inline array_type::tensor<size_t, 1> VectorPartitionedTyings::iip() const
 {
     return m_iip;
 }
 
-inline xt::xtensor<size_t, 1> VectorPartitionedTyings::iii() const
+inline array_type::tensor<size_t, 1> VectorPartitionedTyings::iii() const
 {
     return xt::arange<size_t>(m_nni);
 }
 
-inline xt::xtensor<size_t, 1> VectorPartitionedTyings::iid() const
+inline array_type::tensor<size_t, 1> VectorPartitionedTyings::iid() const
 {
     return m_iid;
 }
@@ -126,9 +126,9 @@ VectorPartitionedTyings::asDofs_i(const T& nodevec, R& dofval_i, bool apply_tyin
 }
 
 template <class T>
-inline xt::xtensor<double, 1> VectorPartitionedTyings::AsDofs_i(const T& nodevec) const
+inline array_type::tensor<double, 1> VectorPartitionedTyings::AsDofs_i(const T& nodevec) const
 {
-    xt::xtensor<double, 1> dofval = xt::empty<double>({m_nni});
+    array_type::tensor<double, 1> dofval = xt::empty<double>({m_nni});
     this->asDofs_i(nodevec, dofval);
     return dofval;
 }

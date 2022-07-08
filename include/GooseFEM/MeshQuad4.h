@@ -46,7 +46,7 @@ public:
 
     \return [#nely, #nelx].
     */
-    xt::xtensor<size_t, 2> elementgrid() const;
+    array_type::tensor<size_t, 2> elementgrid() const;
 
 private:
     friend class RegularBase<Regular>;
@@ -55,16 +55,16 @@ private:
     size_t nelx_impl() const;
     size_t nely_impl() const;
     ElementType getElementType_impl() const;
-    xt::xtensor<double, 2> coor_impl() const;
-    xt::xtensor<size_t, 2> conn_impl() const;
-    xt::xtensor<size_t, 1> nodesBottomEdge_impl() const;
-    xt::xtensor<size_t, 1> nodesTopEdge_impl() const;
-    xt::xtensor<size_t, 1> nodesLeftEdge_impl() const;
-    xt::xtensor<size_t, 1> nodesRightEdge_impl() const;
-    xt::xtensor<size_t, 1> nodesBottomOpenEdge_impl() const;
-    xt::xtensor<size_t, 1> nodesTopOpenEdge_impl() const;
-    xt::xtensor<size_t, 1> nodesLeftOpenEdge_impl() const;
-    xt::xtensor<size_t, 1> nodesRightOpenEdge_impl() const;
+    array_type::tensor<double, 2> coor_impl() const;
+    array_type::tensor<size_t, 2> conn_impl() const;
+    array_type::tensor<size_t, 1> nodesBottomEdge_impl() const;
+    array_type::tensor<size_t, 1> nodesTopEdge_impl() const;
+    array_type::tensor<size_t, 1> nodesLeftEdge_impl() const;
+    array_type::tensor<size_t, 1> nodesRightEdge_impl() const;
+    array_type::tensor<size_t, 1> nodesBottomOpenEdge_impl() const;
+    array_type::tensor<size_t, 1> nodesTopOpenEdge_impl() const;
+    array_type::tensor<size_t, 1> nodesLeftOpenEdge_impl() const;
+    array_type::tensor<size_t, 1> nodesRightOpenEdge_impl() const;
     size_t nodesBottomLeftCorner_impl() const;
     size_t nodesBottomRightCorner_impl() const;
     size_t nodesTopLeftCorner_impl() const;
@@ -102,8 +102,8 @@ public:
     /**
     Reconstruct class for given coordinates / connectivity.
 
-    \tparam C e.g. `xt::xtensor<double, 2>`
-    \tparam E e.g. `xt::xtensor<size_t, 2>`
+    \tparam C e.g. `array_type::tensor<double, 2>`
+    \tparam E e.g. `array_type::tensor<size_t, 2>`
     \param coor Nodal coordinates ``[nnode, ndim]`` with ``ndim == 2``.
     \param conn Connectivity ``[nne, nne]`` with ``nne == 4``.
     \throw GOOSEFEM_CHECK()
@@ -118,7 +118,7 @@ public:
 
     \return List of size equal to the number of rows of blocks.
     */
-    xt::xtensor<size_t, 1> elemrow_nhx() const;
+    array_type::tensor<size_t, 1> elemrow_nhx() const;
 
     /**
     Edge size in y-direction of a block, in units of #h, per row of blocks.
@@ -127,7 +127,7 @@ public:
 
     \return List of size equal to the number of rows of blocks.
     */
-    xt::xtensor<size_t, 1> elemrow_nhy() const;
+    array_type::tensor<size_t, 1> elemrow_nhy() const;
 
     /**
     Per row of blocks:
@@ -136,7 +136,7 @@ public:
 
     \return List of size equal to the number of rows of blocks.
     */
-    xt::xtensor<int, 1> elemrow_type() const;
+    array_type::tensor<int, 1> elemrow_type() const;
 
     /**
     Number of elements per row of blocks.
@@ -145,28 +145,28 @@ public:
 
     \return List of size equal to the number of rows of blocks.
     */
-    xt::xtensor<size_t, 1> elemrow_nelem() const;
+    array_type::tensor<size_t, 1> elemrow_nelem() const;
 
     /**
     Elements in the middle (fine) layer.
 
     \return List of element numbers.
     */
-    xt::xtensor<size_t, 1> elementsMiddleLayer() const;
+    array_type::tensor<size_t, 1> elementsMiddleLayer() const;
 
     /**
     Elements along a layer.
 
     \return List of element numbers.
     */
-    xt::xtensor<size_t, 1> elementsLayer(size_t layer) const;
+    array_type::tensor<size_t, 1> elementsLayer(size_t layer) const;
 
     /**
     Select region of elements from 'matrix' of element numbers.
 
     \return List of element numbers.
     */
-    xt::xtensor<size_t, 1> elementgrid_ravel(
+    array_type::tensor<size_t, 1> elementgrid_ravel(
         std::vector<size_t> rows_start_stop,
         std::vector<size_t> cols_start_stop) const;
 
@@ -179,7 +179,7 @@ public:
     \param periodic Assume the mesh periodic.
     \return List of elements.
     */
-    xt::xtensor<size_t, 1>
+    array_type::tensor<size_t, 1>
     elementgrid_around_ravel(size_t element, size_t size, bool periodic = true);
 
     /**
@@ -193,7 +193,7 @@ public:
     \return List of elements.
     */
     // -
-    xt::xtensor<size_t, 1>
+    array_type::tensor<size_t, 1>
     elementgrid_leftright(size_t element, size_t left, size_t right, bool periodic = true);
 
     /**
@@ -201,7 +201,7 @@ public:
 
     \return element mapping, such that: new_elemvar = elemvar[elem_map]
     */
-    xt::xtensor<size_t, 1> roll(size_t n);
+    array_type::tensor<size_t, 1> roll(size_t n);
 
 private:
     friend class RegularBase<FineLayer>;
@@ -211,16 +211,16 @@ private:
     size_t nelx_impl() const;
     size_t nely_impl() const;
     ElementType getElementType_impl() const;
-    xt::xtensor<double, 2> coor_impl() const;
-    xt::xtensor<size_t, 2> conn_impl() const;
-    xt::xtensor<size_t, 1> nodesBottomEdge_impl() const;
-    xt::xtensor<size_t, 1> nodesTopEdge_impl() const;
-    xt::xtensor<size_t, 1> nodesLeftEdge_impl() const;
-    xt::xtensor<size_t, 1> nodesRightEdge_impl() const;
-    xt::xtensor<size_t, 1> nodesBottomOpenEdge_impl() const;
-    xt::xtensor<size_t, 1> nodesTopOpenEdge_impl() const;
-    xt::xtensor<size_t, 1> nodesLeftOpenEdge_impl() const;
-    xt::xtensor<size_t, 1> nodesRightOpenEdge_impl() const;
+    array_type::tensor<double, 2> coor_impl() const;
+    array_type::tensor<size_t, 2> conn_impl() const;
+    array_type::tensor<size_t, 1> nodesBottomEdge_impl() const;
+    array_type::tensor<size_t, 1> nodesTopEdge_impl() const;
+    array_type::tensor<size_t, 1> nodesLeftEdge_impl() const;
+    array_type::tensor<size_t, 1> nodesRightEdge_impl() const;
+    array_type::tensor<size_t, 1> nodesBottomOpenEdge_impl() const;
+    array_type::tensor<size_t, 1> nodesTopOpenEdge_impl() const;
+    array_type::tensor<size_t, 1> nodesLeftOpenEdge_impl() const;
+    array_type::tensor<size_t, 1> nodesRightOpenEdge_impl() const;
     size_t nodesBottomLeftCorner_impl() const;
     size_t nodesBottomRightCorner_impl() const;
     size_t nodesTopLeftCorner_impl() const;
@@ -232,13 +232,14 @@ private:
     size_t m_nne; ///< See nne()
     size_t m_ndim; ///< See ndim()
     double m_Lx; ///< Mesh size in x-direction.
-    xt::xtensor<size_t, 1> m_layer_nelx; ///< See elemrow_nelem().
-    xt::xtensor<size_t, 1> m_nhx; ///< See elemrow_nhx().
-    xt::xtensor<size_t, 1> m_nhy; ///< See elemrow_nhy().
-    xt::xtensor<size_t, 1> m_nnd; ///< total num. nodes in main node layer (per node layer in "y")
-    xt::xtensor<int, 1> m_refine; ///< See elemrow_type().
-    xt::xtensor<size_t, 1> m_startElem; ///< start element (per element layer in "y")
-    xt::xtensor<size_t, 1> m_startNode; ///< start node (per node layer in "y")
+    array_type::tensor<size_t, 1> m_layer_nelx; ///< See elemrow_nelem().
+    array_type::tensor<size_t, 1> m_nhx; ///< See elemrow_nhx().
+    array_type::tensor<size_t, 1> m_nhy; ///< See elemrow_nhy().
+    array_type::tensor<size_t, 1>
+        m_nnd; ///< total num. nodes in main node layer (per node layer in "y")
+    array_type::tensor<int, 1> m_refine; ///< See elemrow_type().
+    array_type::tensor<size_t, 1> m_startElem; ///< start element (per element layer in "y")
+    array_type::tensor<size_t, 1> m_startNode; ///< start node (per node layer in "y")
 
     /**
     \copydoc FineLayer::FineLayer(size_t, size_t, double, size_t)
@@ -306,7 +307,7 @@ public:
 
     \return [nelem_coarse, nx() * ny()]
     */
-    xt::xtensor<size_t, 2> getMap() const;
+    array_type::tensor<size_t, 2> getMap() const;
 
     /**
     Compute the mean of the quantity define on the fine mesh when mapped on the coarse mesh.
@@ -317,7 +318,7 @@ public:
     \return the average data of the coarse mesh [nelem_coarse, ...]
     */
     template <class T, size_t rank>
-    xt::xtensor<T, rank> meanToCoarse(const xt::xtensor<T, rank>& data) const;
+    array_type::tensor<T, rank> meanToCoarse(const array_type::tensor<T, rank>& data) const;
 
     /**
     Compute the average of the quantity define on the fine mesh when mapped on the coarse mesh.
@@ -330,8 +331,9 @@ public:
     \return the average data of the coarse mesh [nelem_coarse, ...]
     */
     template <class T, size_t rank, class S>
-    xt::xtensor<T, rank>
-    averageToCoarse(const xt::xtensor<T, rank>& data, const xt::xtensor<S, rank>& weights) const;
+    array_type::tensor<T, rank> averageToCoarse(
+        const array_type::tensor<T, rank>& data,
+        const array_type::tensor<S, rank>& weights) const;
 
     /**
     Map element quantities to the fine mesh.
@@ -346,14 +348,14 @@ public:
     \return mapped data.
     */
     template <class T, size_t rank>
-    xt::xtensor<T, rank> mapToFine(const xt::xtensor<T, rank>& data) const;
+    array_type::tensor<T, rank> mapToFine(const array_type::tensor<T, rank>& data) const;
 
 private:
     GooseFEM::Mesh::Quad4::Regular m_coarse; ///< the coarse mesh
     GooseFEM::Mesh::Quad4::Regular m_fine; ///< the fine mesh
     size_t m_nx; ///< see nx()
     size_t m_ny; ///< see ny()
-    xt::xtensor<size_t, 2> m_coarse2fine; ///< see getMap()
+    array_type::tensor<size_t, 2> m_coarse2fine; ///< see getMap()
 };
 
 /**
@@ -418,7 +420,7 @@ public:
     \return mapped data.
     */
     template <class T, size_t rank>
-    xt::xtensor<T, rank> mapToRegular(const xt::xtensor<T, rank>& arg) const;
+    array_type::tensor<T, rank> mapToRegular(const array_type::tensor<T, rank>& arg) const;
 
 private:
     GooseFEM::Mesh::Quad4::FineLayer m_finelayer; ///< the FineLayer mesh to map

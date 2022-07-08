@@ -28,8 +28,8 @@ public:
     /**
     Constructor.
 
-    \tparam C e.g. `xt::xtensor<size_t, 2>`
-    \tparam D e.g. `xt::xtensor<size_t, 2>`
+    \tparam C e.g. `array_type::tensor<size_t, 2>`
+    \tparam D e.g. `array_type::tensor<size_t, 2>`
     \param conn connectivity [#nelem, #nne].
     \param dofs DOFs per node [#nnode, #ndim].
     */
@@ -64,7 +64,7 @@ public:
     /**
     \return DOFs per node [#nnode, #ndim]
     */
-    xt::xtensor<size_t, 2> dofs() const;
+    array_type::tensor<size_t, 2> dofs() const;
 
     /**
     Assemble from matrices stored per element.
@@ -72,21 +72,21 @@ public:
 
     \param elemmat [#nelem, #nne * #ndim, #nne * #ndim].
     */
-    virtual void assemble(const xt::xtensor<double, 3>& elemmat);
+    virtual void assemble(const array_type::tensor<double, 3>& elemmat);
 
     /**
     Set all (diagonal) matrix components.
 
     \param A The matrix [#ndof].
     */
-    virtual void set(const xt::xtensor<double, 1>& A);
+    virtual void set(const array_type::tensor<double, 1>& A);
 
     /**
     Return matrix as diagonal matrix.
 
     \param [#ndof].
     */
-    virtual xt::xtensor<double, 1> Todiagonal() const;
+    virtual array_type::tensor<double, 1> Todiagonal() const;
 
     /**
     Dot-product \f$ b_i = A_{ij} x_j \f$.
@@ -94,16 +94,17 @@ public:
     \param x nodevec [#nelem, #ndim].
     \return b nodevec overwritten [#nelem, #ndim].
     */
-    xt::xtensor<double, 2> Dot(const xt::xtensor<double, 2>& x) const;
+    array_type::tensor<double, 2> Dot(const array_type::tensor<double, 2>& x) const;
 
     /**
-    Same as Dot(const xt::xtensor<double, 2>&, xt::xtensor<double, 2>& b)
+    Same as Dot(const array_type::tensor<double, 2>&, array_type::tensor<double, 2>& b)
     but writing to preallocated data.
 
     \param x nodevec [#nelem, #ndim].
     \param b nodevec overwritten [#nelem, #ndim].
     */
-    virtual void dot(const xt::xtensor<double, 2>& x, xt::xtensor<double, 2>& b) const;
+    virtual void
+    dot(const array_type::tensor<double, 2>& x, array_type::tensor<double, 2>& b) const;
 
     /**
     Dot-product \f$ b_i = A_{ij} x_j \f$.
@@ -111,16 +112,17 @@ public:
     \param x dofval [#ndof].
     \return b dofval overwritten [#ndof].
     */
-    xt::xtensor<double, 1> Dot(const xt::xtensor<double, 1>& x) const;
+    array_type::tensor<double, 1> Dot(const array_type::tensor<double, 1>& x) const;
 
     /**
-    Same as Dot(const xt::xtensor<double, 1>&, xt::xtensor<double, 1>& b)
+    Same as Dot(const array_type::tensor<double, 1>&, array_type::tensor<double, 1>& b)
     but writing to preallocated data.
 
     \param x dofval [#ndof].
     \param b dofval overwritten [#ndof].
     */
-    virtual void dot(const xt::xtensor<double, 1>& x, xt::xtensor<double, 1>& b) const;
+    virtual void
+    dot(const array_type::tensor<double, 1>& x, array_type::tensor<double, 1>& b) const;
 
     /**
     Solve \f$ x = A^{-1} b \f$.
@@ -128,38 +130,38 @@ public:
     \param b nodevec [nelem, ndim].
     \return x nodevec [nelem, ndim].
     */
-    xt::xtensor<double, 2> Solve(const xt::xtensor<double, 2>& b);
+    array_type::tensor<double, 2> Solve(const array_type::tensor<double, 2>& b);
 
     /**
-    Same as Solve(const xt::xtensor<double, 2>&)
+    Same as Solve(const array_type::tensor<double, 2>&)
     but writing to preallocated data.
 
     \param b nodevec [nelem, ndim].
     \param x nodevec overwritten [nelem, ndim].
     */
-    virtual void solve(const xt::xtensor<double, 2>& b, xt::xtensor<double, 2>& x);
+    virtual void solve(const array_type::tensor<double, 2>& b, array_type::tensor<double, 2>& x);
 
     /**
-    Same as Solve(const xt::xtensor<double, 2>&)
+    Same as Solve(const array_type::tensor<double, 2>&)
     but for "dofval" input and output.
 
     \param b dofval [ndof].
     \return x dofval [ndof].
     */
-    xt::xtensor<double, 1> Solve(const xt::xtensor<double, 1>& b);
+    array_type::tensor<double, 1> Solve(const array_type::tensor<double, 1>& b);
 
     /**
-    Same as Solve(const xt::xtensor<double, 1>&)
+    Same as Solve(const array_type::tensor<double, 1>&)
     but writing to preallocated data.
 
     \param b dofval [ndof].
     \param x dofval overwritten [ndof].
     */
-    virtual void solve(const xt::xtensor<double, 1>& b, xt::xtensor<double, 1>& x);
+    virtual void solve(const array_type::tensor<double, 1>& b, array_type::tensor<double, 1>& x);
 
 protected:
-    xt::xtensor<size_t, 2> m_conn; ///< Connectivity [#nelem, #nne].
-    xt::xtensor<size_t, 2> m_dofs; ///< DOF-numbers per node [#nnode, #ndim].
+    array_type::tensor<size_t, 2> m_conn; ///< Connectivity [#nelem, #nne].
+    array_type::tensor<size_t, 2> m_dofs; ///< DOF-numbers per node [#nnode, #ndim].
     size_t m_nelem; ///< See nelem().
     size_t m_nne; ///< See nne().
     size_t m_nnode; ///< See nnode().
@@ -168,8 +170,8 @@ protected:
     bool m_changed = true; ///< Signal changes to data.
 
 private:
-    xt::xtensor<double, 1> m_A; ///< The matrix.
-    xt::xtensor<double, 1> m_inv; /// Inverse of the matrix.
+    array_type::tensor<double, 1> m_A; ///< The matrix.
+    array_type::tensor<double, 1> m_inv; /// Inverse of the matrix.
     void factorize(); ///< Compute inverse (automatically evaluated by "solve").
 };
 

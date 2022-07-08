@@ -43,9 +43,9 @@ public:
     \param iip prescribed DOFs [#nnp].
     */
     MatrixPartitioned(
-        const xt::xtensor<size_t, 2>& conn,
-        const xt::xtensor<size_t, 2>& dofs,
-        const xt::xtensor<size_t, 1>& iip);
+        const array_type::tensor<size_t, 2>& conn,
+        const array_type::tensor<size_t, 2>& dofs,
+        const array_type::tensor<size_t, 1>& iip);
 
     /**
     Number of unknown DOFs.
@@ -60,28 +60,30 @@ public:
     /**
     Unknown DOFs [#nnu].
     */
-    xt::xtensor<size_t, 1> iiu() const;
+    array_type::tensor<size_t, 1> iiu() const;
 
     /**
     Prescribed DOFs [#nnp].
     */
-    xt::xtensor<size_t, 1> iip() const;
+    array_type::tensor<size_t, 1> iip() const;
 
-    void assemble(const xt::xtensor<double, 3>& elemmat) override;
-
-    void
-    set(const xt::xtensor<size_t, 1>& rows,
-        const xt::xtensor<size_t, 1>& cols,
-        const xt::xtensor<double, 2>& matrix) override;
+    void assemble(const array_type::tensor<double, 3>& elemmat) override;
 
     void
-    add(const xt::xtensor<size_t, 1>& rows,
-        const xt::xtensor<size_t, 1>& cols,
-        const xt::xtensor<double, 2>& matrix) override;
+    set(const array_type::tensor<size_t, 1>& rows,
+        const array_type::tensor<size_t, 1>& cols,
+        const array_type::tensor<double, 2>& matrix) override;
 
-    void todense(xt::xtensor<double, 2>& ret) const override;
-    void dot(const xt::xtensor<double, 2>& x, xt::xtensor<double, 2>& b) const override;
-    void dot(const xt::xtensor<double, 1>& x, xt::xtensor<double, 1>& b) const override;
+    void
+    add(const array_type::tensor<size_t, 1>& rows,
+        const array_type::tensor<size_t, 1>& cols,
+        const array_type::tensor<double, 2>& matrix) override;
+
+    void todense(array_type::tensor<double, 2>& ret) const override;
+    void
+    dot(const array_type::tensor<double, 2>& x, array_type::tensor<double, 2>& b) const override;
+    void
+    dot(const array_type::tensor<double, 1>& x, array_type::tensor<double, 1>& b) const override;
 
     /**
     Get right-hand-size for corresponding to the prescribed DOFs.
@@ -94,51 +96,52 @@ public:
     \param b "nodevec" [#nnode, #ndim].
     \return Copy of `b` with \f$ b_p \f$ overwritten.
     */
-    xt::xtensor<double, 2>
-    Reaction(const xt::xtensor<double, 2>& x, const xt::xtensor<double, 2>& b) const;
+    array_type::tensor<double, 2>
+    Reaction(const array_type::tensor<double, 2>& x, const array_type::tensor<double, 2>& b) const;
 
     /**
-    Same as Reaction(const xt::xtensor<double, 2>&, const xt::xtensor<double, 2>&),
+    Same as Reaction(const array_type::tensor<double, 2>&, const array_type::tensor<double, 2>&),
     but inserting in-place.
 
     \param x "nodevec" [#nnode, #ndim].
     \param b "nodevec" [#nnode, #ndim], \f$ b_p \f$ overwritten.
     */
-    void reaction(const xt::xtensor<double, 2>& x, xt::xtensor<double, 2>& b) const;
+    void reaction(const array_type::tensor<double, 2>& x, array_type::tensor<double, 2>& b) const;
 
     /**
-    Same as Reaction(const xt::xtensor<double, 2>&, const xt::xtensor<double, 2>&),
+    Same as Reaction(const array_type::tensor<double, 2>&, const array_type::tensor<double, 2>&),
     but of "dofval" input and output.
 
     \param x "dofval" [#ndof].
     \param b "dofval" [#ndof].
     \return Copy of `b` with \f$ b_p \f$ overwritten.
     */
-    xt::xtensor<double, 1>
-    Reaction(const xt::xtensor<double, 1>& x, const xt::xtensor<double, 1>& b) const;
+    array_type::tensor<double, 1>
+    Reaction(const array_type::tensor<double, 1>& x, const array_type::tensor<double, 1>& b) const;
 
     /**
-    Same as Reaction(const xt::xtensor<double, 1>&, const xt::xtensor<double, 1>&),
+    Same as Reaction(const array_type::tensor<double, 1>&, const array_type::tensor<double, 1>&),
     but inserting in-place.
 
     \param x "dofval" [#ndof].
     \param b "dofval" [#ndof], \f$ b_p \f$ overwritten.
     */
-    void reaction(const xt::xtensor<double, 1>& x, xt::xtensor<double, 1>& b) const;
+    void reaction(const array_type::tensor<double, 1>& x, array_type::tensor<double, 1>& b) const;
 
     /**
-    Same as Reaction(const xt::xtensor<double, 1>&, const xt::xtensor<double, 1>&),
+    Same as Reaction(const array_type::tensor<double, 1>&, const array_type::tensor<double, 1>&),
     but with partitioned input and output.
 
     \param x_u unknown "dofval" [#nnu].
     \param x_p prescribed "dofval" [#nnp].
     \return b_p prescribed "dofval" [#nnp].
     */
-    xt::xtensor<double, 1>
-    Reaction_p(const xt::xtensor<double, 1>& x_u, const xt::xtensor<double, 1>& x_p) const;
+    array_type::tensor<double, 1> Reaction_p(
+        const array_type::tensor<double, 1>& x_u,
+        const array_type::tensor<double, 1>& x_p) const;
 
     /**
-    Same as Reaction_p(const xt::xtensor<double, 1>&, const xt::xtensor<double, 1>&),
+    Same as Reaction_p(const array_type::tensor<double, 1>&, const array_type::tensor<double, 1>&),
     but writing to preallocated output.
 
     \param x_u unknown "dofval" [#nnu].
@@ -146,9 +149,9 @@ public:
     \param b_p (overwritten) prescribed "dofval" [#nnp].
     */
     void reaction_p(
-        const xt::xtensor<double, 1>& x_u,
-        const xt::xtensor<double, 1>& x_p,
-        xt::xtensor<double, 1>& b_p) const;
+        const array_type::tensor<double, 1>& x_u,
+        const array_type::tensor<double, 1>& x_p,
+        array_type::tensor<double, 1>& b_p) const;
 
 private:
     Eigen::SparseMatrix<double> m_Auu; ///< The matrix.
@@ -159,8 +162,8 @@ private:
     std::vector<Eigen::Triplet<double>> m_Tup; ///< Matrix entries.
     std::vector<Eigen::Triplet<double>> m_Tpu; ///< Matrix entries.
     std::vector<Eigen::Triplet<double>> m_Tpp; ///< Matrix entries.
-    xt::xtensor<size_t, 1> m_iiu; ///< See iiu()
-    xt::xtensor<size_t, 1> m_iip; ///< See iip()
+    array_type::tensor<size_t, 1> m_iiu; ///< See iiu()
+    array_type::tensor<size_t, 1> m_iip; ///< See iip()
     size_t m_nnu; ///< See #nnu
     size_t m_nnp; ///< See #nnp
 
@@ -172,7 +175,7 @@ private:
 
     making is much simpler to slice.
     */
-    xt::xtensor<size_t, 2> m_part;
+    array_type::tensor<size_t, 2> m_part;
 
     /**
      *  Map real DOF to DOF in partitioned system.
@@ -183,7 +186,7 @@ private:
      *
      *  Similar to `m_part` but for a 1d sequential list of DOFs.
      */
-    xt::xtensor<size_t, 1> m_part1d;
+    array_type::tensor<size_t, 1> m_part1d;
 
     // grant access to solver class
     template <class>
@@ -191,10 +194,10 @@ private:
 
 private:
     // Convert arrays (Eigen version of VectorPartitioned, which contains public functions)
-    Eigen::VectorXd AsDofs_u(const xt::xtensor<double, 1>& dofval) const;
-    Eigen::VectorXd AsDofs_u(const xt::xtensor<double, 2>& nodevec) const;
-    Eigen::VectorXd AsDofs_p(const xt::xtensor<double, 1>& dofval) const;
-    Eigen::VectorXd AsDofs_p(const xt::xtensor<double, 2>& nodevec) const;
+    Eigen::VectorXd AsDofs_u(const array_type::tensor<double, 1>& dofval) const;
+    Eigen::VectorXd AsDofs_u(const array_type::tensor<double, 2>& nodevec) const;
+    Eigen::VectorXd AsDofs_p(const array_type::tensor<double, 1>& dofval) const;
+    Eigen::VectorXd AsDofs_p(const array_type::tensor<double, 2>& nodevec) const;
 };
 
 /**
@@ -215,59 +218,69 @@ public:
     \param x nodevec [nelem, ndim], used to read \f$ x_p \f$.
     \return x nodevec [nelem, ndim], \f$ x_u \f$ filled, \f$ x_p \f$ copied.
     */
-    xt::xtensor<double, 2>
-    Solve(MatrixPartitioned& A, const xt::xtensor<double, 2>& b, const xt::xtensor<double, 2>& x);
+    array_type::tensor<double, 2> Solve(
+        MatrixPartitioned& A,
+        const array_type::tensor<double, 2>& b,
+        const array_type::tensor<double, 2>& x);
 
     /**
-    Same as Solve(MatrixPartitioned&, const xt::xtensor<double, 2>&, const xt::xtensor<double, 2>&),
-    but filling \f$ x_u \f$ in place.
+    Same as Solve(MatrixPartitioned&, const array_type::tensor<double, 2>&, const
+    array_type::tensor<double, 2>&), but filling \f$ x_u \f$ in place.
 
     \param A sparse matrix, see MatrixPartitioned().
     \param b nodevec [nelem, ndim].
     \param x nodevec [nelem, ndim], \f$ x_p \f$ read, \f$ x_u \f$ filled.
     */
-    void solve(MatrixPartitioned& A, const xt::xtensor<double, 2>& b, xt::xtensor<double, 2>& x);
+    void solve(
+        MatrixPartitioned& A,
+        const array_type::tensor<double, 2>& b,
+        array_type::tensor<double, 2>& x);
 
     /**
-    Same as Solve(MatrixPartitioned&, const xt::xtensor<double, 2>&, const xt::xtensor<double, 2>&),
-    but for "dofval" input and output.
+    Same as Solve(MatrixPartitioned&, const array_type::tensor<double, 2>&, const
+    array_type::tensor<double, 2>&), but for "dofval" input and output.
 
     \param A sparse matrix, see MatrixPartitioned().
     \param b dofval [ndof].
     \param x dofval [ndof], used to read \f$ x_p \f$.
     \return x dofval [ndof], \f$ x_u \f$ filled, \f$ x_p \f$ copied.
     */
-    xt::xtensor<double, 1>
-    Solve(MatrixPartitioned& A, const xt::xtensor<double, 1>& b, const xt::xtensor<double, 1>& x);
+    array_type::tensor<double, 1> Solve(
+        MatrixPartitioned& A,
+        const array_type::tensor<double, 1>& b,
+        const array_type::tensor<double, 1>& x);
 
     /**
-    Same as Solve(MatrixPartitioned&, const xt::xtensor<double, 1>&, const xt::xtensor<double, 1>&),
-    but filling \f$ x_u \f$ in place.
+    Same as Solve(MatrixPartitioned&, const array_type::tensor<double, 1>&, const
+    array_type::tensor<double, 1>&), but filling \f$ x_u \f$ in place.
 
     \param A sparse matrix, see MatrixPartitioned().
     \param b dofval [ndof].
     \param x dofval [ndof], \f$ x_p \f$ read, \f$ x_u \f$ filled.
     */
-    void solve(MatrixPartitioned& A, const xt::xtensor<double, 1>& b, xt::xtensor<double, 1>& x);
+    void solve(
+        MatrixPartitioned& A,
+        const array_type::tensor<double, 1>& b,
+        array_type::tensor<double, 1>& x);
 
     /**
-    Same as Solve(MatrixPartitioned&, const xt::xtensor<double, 2>&, const xt::xtensor<double, 2>&),
-    but with partitioned input and output.
+    Same as Solve(MatrixPartitioned&, const array_type::tensor<double, 2>&, const
+    array_type::tensor<double, 2>&), but with partitioned input and output.
 
     \param A sparse matrix, see MatrixPartitioned().
     \param b_u unknown dofval [nnu].
     \param x_p prescribed dofval [nnp]
     \return x_u unknown dofval [nnu].
     */
-    xt::xtensor<double, 1> Solve_u(
+    array_type::tensor<double, 1> Solve_u(
         MatrixPartitioned& A,
-        const xt::xtensor<double, 1>& b_u,
-        const xt::xtensor<double, 1>& x_p);
+        const array_type::tensor<double, 1>& b_u,
+        const array_type::tensor<double, 1>& x_p);
 
     /**
     Same as
-    Solve_u(MatrixPartitioned&, const xt::xtensor<double, 1>&, const xt::xtensor<double, 1>&),
-    but writing to pre-allocated output.
+    Solve_u(MatrixPartitioned&, const array_type::tensor<double, 1>&, const
+    array_type::tensor<double, 1>&), but writing to pre-allocated output.
 
     \param A sparse matrix, see MatrixPartitioned().
     \param b_u unknown dofval [nnu].
@@ -276,9 +289,9 @@ public:
     */
     void solve_u(
         MatrixPartitioned& A,
-        const xt::xtensor<double, 1>& b_u,
-        const xt::xtensor<double, 1>& x_p,
-        xt::xtensor<double, 1>& x_u);
+        const array_type::tensor<double, 1>& b_u,
+        const array_type::tensor<double, 1>& x_p,
+        array_type::tensor<double, 1>& x_u);
 
 private:
     Solver m_solver; ///< solver
