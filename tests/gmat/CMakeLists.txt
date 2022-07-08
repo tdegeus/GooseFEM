@@ -16,13 +16,15 @@ endif()
 
 find_package(Catch2 REQUIRED)
 find_package(xtensor REQUIRED)
+find_package(GMatElastic REQUIRED)
 
 add_library(mytarget INTERFACE IMPORTED)
 
 target_link_libraries(mytarget INTERFACE
     ${PROJECT_NAME}
     ${PROJECT_NAME}::compiler_warnings
-    Catch2::Catch2)
+    Catch2::Catch2
+    GMatElastic)
 
 if(USE_ASSERT)
     target_link_libraries(mytarget INTERFACE ${PROJECT_NAME}::assert)

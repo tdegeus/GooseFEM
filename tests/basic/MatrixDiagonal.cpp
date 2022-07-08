@@ -1,12 +1,11 @@
-#define CATCH_CONFIG_MAIN // tells Catch to provide a main() - only do this in one cpp file
 #include <GooseFEM/ElementQuad4.h>
 #include <GooseFEM/MatrixDiagonal.h>
 #include <GooseFEM/MeshQuad4.h>
 #include <GooseFEM/Vector.h>
-#include <catch2/catch.hpp>
+#include <catch2/catch_all.hpp>
 #include <xtensor/xrandom.hpp>
 
-#define ISCLOSE(a, b) REQUIRE_THAT((a), Catch::WithinAbs((b), 1.e-12));
+#define ISCLOSE(a, b) REQUIRE_THAT((a), Catch::Matchers::WithinAbs((b), 1.e-12));
 
 TEST_CASE("GooseFEM::MatrixDiagonal", "MatrixDiagonal.h")
 {
