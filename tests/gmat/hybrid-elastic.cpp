@@ -1,8 +1,46 @@
-#define CATCH_CONFIG_MAIN // tells Catch to provide a main() - only do this in one cpp file
+// todo remove
+#include <xtensor/xtensor.hpp>
+
+namespace GMatTensor {
+namespace detail {
+
+template <size_t RANK, class T>
+struct allocate {
+};
+
+template <size_t RANK, class EC, size_t N, xt::layout_type L, class Tag>
+struct allocate<RANK, xt::xtensor<EC, N, L, Tag>> {
+    using type = typename xt::xtensor<EC, RANK, L, Tag>;
+};
+
+#ifdef XTENSOR_FIXED_HPP
+template <size_t RANK, class EC, class S, xt::layout_type L>
+struct allocate<RANK, xt::xtensor_fixed<EC, S, L>> {
+    using type = typename xt::xtensor<EC, RANK, L>;
+};
+#endif
+
+#ifdef XTENSOR_FIXED_HPP
+template <size_t RANK, class EC, class S, xt::layout_type L, bool SH, class Tag>
+struct allocate<RANK, xt::xfixed_container<EC, S, L, SH, Tag>> {
+    using type = typename xt::xtensor<EC, RANK, L, Tag>;
+};
+#endif
+
+#ifdef PY_TENSOR_HPP
+template <size_t RANK, class EC, size_t N, xt::layout_type L>
+struct allocate<RANK, xt::pytensor<EC, N, L>> {
+    using type = typename xt::pytensor<EC, RANK, L>;
+};
+#endif
+
+} // namespace detail
+} // namespace GMatTensor
+
 #include <Eigen/Eigen>
 #include <GMatElastic/Cartesian3d.h>
 #include <GooseFEM/GooseFEM.h>
-#include <catch2/catch.hpp>
+#include <catch2/catch_all.hpp>
 #include <xtensor/xmath.hpp>
 #include <xtensor/xrandom.hpp>
 
