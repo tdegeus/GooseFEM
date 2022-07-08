@@ -71,8 +71,8 @@ inline void QuadratureAxisymmetric::compute_dN_impl()
 
 #pragma omp parallel
     {
-        xt::xtensor<double, 2> J = xt::empty<double>({2, 2});
-        xt::xtensor<double, 2> Jinv = xt::empty<double>({2, 2});
+        array_type::tensor<double, 2> J = xt::empty<double>({2, 2});
+        array_type::tensor<double, 2> Jinv = xt::empty<double>({2, 2});
 
 #pragma omp for
         for (size_t e = 0; e < m_nelem; ++e) {
@@ -121,7 +121,7 @@ inline void QuadratureAxisymmetric::compute_dN_impl()
     }
 }
 
-inline xt::xtensor<double, 6> QuadratureAxisymmetric::B() const
+inline array_type::tensor<double, 6> QuadratureAxisymmetric::B() const
 {
     return m_B;
 }

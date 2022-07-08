@@ -20,9 +20,9 @@ void init_MatrixPartitioned(py::module& m)
 
         .def(
             py::init<
-                const xt::xtensor<size_t, 2>&,
-                const xt::xtensor<size_t, 2>&,
-                const xt::xtensor<size_t, 1>&>(),
+                const xt::pytensor<size_t, 2>&,
+                const xt::pytensor<size_t, 2>&,
+                const xt::pytensor<size_t, 1>&>(),
             "See :cpp:class:`GooseFEM::MatrixPartitioned`.",
             py::arg("conn"),
             py::arg("dofs"),
@@ -35,21 +35,21 @@ void init_MatrixPartitioned(py::module& m)
 
         .def(
             "Reaction",
-            py::overload_cast<const xt::xtensor<double, 1>&, const xt::xtensor<double, 1>&>(
+            py::overload_cast<const xt::pytensor<double, 1>&, const xt::pytensor<double, 1>&>(
                 &GooseFEM::MatrixPartitioned::Reaction, py::const_),
             py::arg("x"),
             py::arg("b"))
 
         .def(
             "Reaction",
-            py::overload_cast<const xt::xtensor<double, 2>&, const xt::xtensor<double, 2>&>(
+            py::overload_cast<const xt::pytensor<double, 2>&, const xt::pytensor<double, 2>&>(
                 &GooseFEM::MatrixPartitioned::Reaction, py::const_),
             py::arg("x"),
             py::arg("b"))
 
         .def(
             "Reaction_p",
-            py::overload_cast<const xt::xtensor<double, 1>&, const xt::xtensor<double, 1>&>(
+            py::overload_cast<const xt::pytensor<double, 1>&, const xt::pytensor<double, 1>&>(
                 &GooseFEM::MatrixPartitioned::Reaction_p, py::const_),
             py::arg("x_u"),
             py::arg("x_p"))
@@ -66,8 +66,8 @@ void init_MatrixPartitioned(py::module& m)
             "Solve",
             py::overload_cast<
                 GooseFEM::MatrixPartitioned&,
-                const xt::xtensor<double, 1>&,
-                const xt::xtensor<double, 1>&>(&GooseFEM::MatrixPartitionedSolver<>::Solve),
+                const xt::pytensor<double, 1>&,
+                const xt::pytensor<double, 1>&>(&GooseFEM::MatrixPartitionedSolver<>::Solve),
             py::arg("matrix"),
             py::arg("b"),
             py::arg("x"))
@@ -76,8 +76,8 @@ void init_MatrixPartitioned(py::module& m)
             "Solve",
             py::overload_cast<
                 GooseFEM::MatrixPartitioned&,
-                const xt::xtensor<double, 2>&,
-                const xt::xtensor<double, 2>&>(&GooseFEM::MatrixPartitionedSolver<>::Solve),
+                const xt::pytensor<double, 2>&,
+                const xt::pytensor<double, 2>&>(&GooseFEM::MatrixPartitionedSolver<>::Solve),
             py::arg("matrix"),
             py::arg("b"),
             py::arg("x"))
@@ -86,8 +86,8 @@ void init_MatrixPartitioned(py::module& m)
             "Solve_u",
             py::overload_cast<
                 GooseFEM::MatrixPartitioned&,
-                const xt::xtensor<double, 1>&,
-                const xt::xtensor<double, 1>&>(&GooseFEM::MatrixPartitionedSolver<>::Solve_u),
+                const xt::pytensor<double, 1>&,
+                const xt::pytensor<double, 1>&>(&GooseFEM::MatrixPartitionedSolver<>::Solve_u),
             py::arg("matrix"),
             py::arg("b_u"),
             py::arg("x_p"))

@@ -49,10 +49,10 @@ public:
     /**
     Constructor.
 
-    \tparam C xt::xtensor<double, 2>
-    \tparam D xt::xtensor<size_t, 2>
-    \tparam S xt::xtensor<size_t, 2>
-    \tparam T xt::xtensor<size_t, 2>
+    \tparam C array_type::tensor<double, 2>
+    \tparam D array_type::tensor<size_t, 2>
+    \tparam S array_type::tensor<size_t, 2>
+    \tparam T array_type::tensor<size_t, 2>
     \param coor Nodal coordinates [nnode, ndim].
     \param dofs DOF-numbers per node [nnode, ndim].
     \param control_dofs DOF-numbers per control node [ndim, ndim].
@@ -64,11 +64,11 @@ public:
     /**
     Constructor.
 
-    \tparam C xt::xtensor<double, 2>
-    \tparam D xt::xtensor<size_t, 2>
-    \tparam S xt::xtensor<size_t, 2>
-    \tparam T xt::xtensor<size_t, 2>
-    \tparam U xt::xtensor<size_t, 1>
+    \tparam C array_type::tensor<double, 2>
+    \tparam D array_type::tensor<size_t, 2>
+    \tparam S array_type::tensor<size_t, 2>
+    \tparam T array_type::tensor<size_t, 2>
+    \tparam U array_type::tensor<size_t, 1>
     \param coor Nodal coordinates [nnode, ndim].
     \param dofs DOF-numbers per node [nnode, ndim].
     \param control_dofs DOF-numbers per control node [ndim, ndim].
@@ -106,12 +106,12 @@ public:
     /**
     \return DOF-numbers per node, as used internally (after renumbering), [nnode, ndim].
     */
-    xt::xtensor<size_t, 2> dofs() const;
+    array_type::tensor<size_t, 2> dofs() const;
 
     /**
     \return DOF-numbers for each control node, as used internally (after renumbering), [ndim, ndim].
     */
-    xt::xtensor<size_t, 2> control() const;
+    array_type::tensor<size_t, 2> control() const;
 
     /**
     Return the applied nodal tyings.
@@ -120,35 +120,35 @@ public:
 
     \return [ntyings, 2].
     */
-    xt::xtensor<size_t, 2> nodal_tyings() const;
+    array_type::tensor<size_t, 2> nodal_tyings() const;
 
     /**
     Dependent DOFs.
 
     \return List of DOF numbers.
     */
-    xt::xtensor<size_t, 1> iid() const;
+    array_type::tensor<size_t, 1> iid() const;
 
     /**
     Independent DOFs.
 
     \return List of DOF numbers.
     */
-    xt::xtensor<size_t, 1> iii() const;
+    array_type::tensor<size_t, 1> iii() const;
 
     /**
     Independent unknown DOFs.
 
     \return List of DOF numbers.
     */
-    xt::xtensor<size_t, 1> iiu() const;
+    array_type::tensor<size_t, 1> iiu() const;
 
     /**
     Independent prescribed DOFs.
 
     \return List of DOF numbers.
     */
-    xt::xtensor<size_t, 1> iip() const;
+    array_type::tensor<size_t, 1> iip() const;
 
     /**
     Return tying matrix such as to get the dependent DOFs \f$ u_d \f$ from
@@ -187,10 +187,10 @@ private:
     size_t m_nnd; ///< See nnd().
     size_t m_ndim; ///< Number of dimensions.
     size_t m_nties; ///< Number of nodal ties.
-    xt::xtensor<size_t, 2> m_dofs; ///< See dofs().
-    xt::xtensor<size_t, 2> m_control; ///< See control().
-    xt::xtensor<size_t, 2> m_tyings; ///< See nodal_tyings().
-    xt::xtensor<double, 2> m_coor; ///< Nodal coordinates [nnode, ndim].
+    array_type::tensor<size_t, 2> m_dofs; ///< See dofs().
+    array_type::tensor<size_t, 2> m_control; ///< See control().
+    array_type::tensor<size_t, 2> m_tyings; ///< See nodal_tyings().
+    array_type::tensor<double, 2> m_coor; ///< Nodal coordinates [nnode, ndim].
 };
 
 /**
@@ -203,8 +203,8 @@ public:
     /**
     Constructor.
 
-    \tparam C xt::xtensor<double, 2>
-    \tparam N xt::xtensor<size_t, 2>
+    \tparam C array_type::tensor<double, 2>
+    \tparam N array_type::tensor<size_t, 2>
     \param coor Nodal coordinates [nnode, ndim].
     \param dofs DOF-numbers per node [nnode, ndim].
     */
@@ -216,34 +216,34 @@ public:
 
     \param [nnode + ndim, ndim], with nnode the number of nodes of the original system.
     */
-    xt::xtensor<double, 2> coor() const;
+    array_type::tensor<double, 2> coor() const;
 
     /**
     DOF-numbers per node, for the system with control nodes added to it.
 
     \param [nnode + ndim, ndim], with nnode the number of nodes of the original system.
     */
-    xt::xtensor<size_t, 2> dofs() const;
+    array_type::tensor<size_t, 2> dofs() const;
 
     /**
     DOF-numbers of each control node.
 
     \param [ndim, ndim].
     */
-    xt::xtensor<size_t, 2> controlDofs() const;
+    array_type::tensor<size_t, 2> controlDofs() const;
 
     /**
     Node-numbers of the control nodes.
 
     \param [ndim].
     */
-    xt::xtensor<size_t, 1> controlNodes() const;
+    array_type::tensor<size_t, 1> controlNodes() const;
 
 private:
-    xt::xtensor<double, 2> m_coor; ///< See coor().
-    xt::xtensor<size_t, 2> m_dofs; ///< See dofs().
-    xt::xtensor<size_t, 2> m_control_dofs; ///< See controlDofs().
-    xt::xtensor<size_t, 1> m_control_nodes; ///< See controlNodes().
+    array_type::tensor<double, 2> m_coor; ///< See coor().
+    array_type::tensor<size_t, 2> m_dofs; ///< See dofs().
+    array_type::tensor<size_t, 2> m_control_dofs; ///< See controlDofs().
+    array_type::tensor<size_t, 1> m_control_nodes; ///< See controlNodes().
 };
 
 } // namespace Tyings

@@ -41,16 +41,16 @@ private:
     size_t nelx_impl() const;
     size_t nely_impl() const;
     ElementType getElementType_impl() const;
-    xt::xtensor<double, 2> coor_impl() const;
-    xt::xtensor<size_t, 2> conn_impl() const;
-    xt::xtensor<size_t, 1> nodesBottomEdge_impl() const;
-    xt::xtensor<size_t, 1> nodesTopEdge_impl() const;
-    xt::xtensor<size_t, 1> nodesLeftEdge_impl() const;
-    xt::xtensor<size_t, 1> nodesRightEdge_impl() const;
-    xt::xtensor<size_t, 1> nodesBottomOpenEdge_impl() const;
-    xt::xtensor<size_t, 1> nodesTopOpenEdge_impl() const;
-    xt::xtensor<size_t, 1> nodesLeftOpenEdge_impl() const;
-    xt::xtensor<size_t, 1> nodesRightOpenEdge_impl() const;
+    array_type::tensor<double, 2> coor_impl() const;
+    array_type::tensor<size_t, 2> conn_impl() const;
+    array_type::tensor<size_t, 1> nodesBottomEdge_impl() const;
+    array_type::tensor<size_t, 1> nodesTopEdge_impl() const;
+    array_type::tensor<size_t, 1> nodesLeftEdge_impl() const;
+    array_type::tensor<size_t, 1> nodesRightEdge_impl() const;
+    array_type::tensor<size_t, 1> nodesBottomOpenEdge_impl() const;
+    array_type::tensor<size_t, 1> nodesTopOpenEdge_impl() const;
+    array_type::tensor<size_t, 1> nodesLeftOpenEdge_impl() const;
+    array_type::tensor<size_t, 1> nodesRightOpenEdge_impl() const;
     size_t nodesBottomLeftCorner_impl() const;
     size_t nodesBottomRightCorner_impl() const;
     size_t nodesTopLeftCorner_impl() const;
@@ -74,8 +74,9 @@ Read the orientation of a mesh of triangular elements of type ElementType::Tri3.
 \param conn Connectivity [nelem, nne].
 \return Orientation (-1 or +1) per element [nelem].
 */
-inline xt::xtensor<int, 1>
-getOrientation(const xt::xtensor<double, 2>& coor, const xt::xtensor<size_t, 2>& conn);
+inline array_type::tensor<int, 1> getOrientation(
+    const array_type::tensor<double, 2>& coor,
+    const array_type::tensor<size_t, 2>& conn);
 
 /**
 Set the orientation of a mesh of triangular elements of type ElementType::Tri3.
@@ -85,9 +86,9 @@ Set the orientation of a mesh of triangular elements of type ElementType::Tri3.
 \param orientation Target orientation (applied to all elements).
 \return Connectivity (order of nodes-per-element may have changed) [nelem, nne].
 */
-inline xt::xtensor<size_t, 2> setOrientation(
-    const xt::xtensor<double, 2>& coor,
-    const xt::xtensor<size_t, 2>& conn,
+inline array_type::tensor<size_t, 2> setOrientation(
+    const array_type::tensor<double, 2>& coor,
+    const array_type::tensor<size_t, 2>& conn,
     int orientation = -1);
 
 /**
@@ -100,10 +101,10 @@ For efficiency this function reuses the output of getOrientation().
 \param orientation Target orientation (applied to all elements).
 \return Connectivity (order of nodes-per-element may have changed) [nelem, nne].
 */
-inline xt::xtensor<size_t, 2> setOrientation(
-    const xt::xtensor<double, 2>& coor,
-    const xt::xtensor<size_t, 2>& conn,
-    const xt::xtensor<int, 1>& current,
+inline array_type::tensor<size_t, 2> setOrientation(
+    const array_type::tensor<double, 2>& coor,
+    const array_type::tensor<size_t, 2>& conn,
+    const array_type::tensor<int, 1>& current,
     int orientation = -1);
 
 } // namespace Tri3

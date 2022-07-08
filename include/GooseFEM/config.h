@@ -147,9 +147,38 @@ using namespace xt::placeholders;
 #endif
 
 /**
- *  Toolbox to perform finite element computations.
- */
+Toolbox to perform finite element computations.
+*/
 namespace GooseFEM {
-}
+
+/**
+Container type.
+By default `array_type::tensor` is used. Otherwise:
+
+-   `#define GOOSEFEM_USE_XTENSOR_PYTHON` to use `xt::pytensor`
+*/
+namespace array_type {
+
+#ifdef GOOSEFEM_USE_XTENSOR_PYTHON
+
+/**
+Fixed (static) rank array.
+*/
+template <typename T, size_t N>
+using tensor = xt::pytensor<T, N>;
+
+#else
+
+/**
+Fixed (static) rank array.
+*/
+template <typename T, size_t N>
+using tensor = xt::xtensor<T, N>;
+
+#endif
+
+} // namespace array_type
+
+} // namespace GooseFEM
 
 #endif

@@ -45,13 +45,13 @@ inline size_t Regular::nely_impl() const
     return m_nely;
 }
 
-inline xt::xtensor<double, 2> Regular::coor_impl() const
+inline array_type::tensor<double, 2> Regular::coor_impl() const
 {
-    xt::xtensor<double, 2> ret = xt::empty<double>({m_nnode, m_ndim});
+    array_type::tensor<double, 2> ret = xt::empty<double>({m_nnode, m_ndim});
 
-    xt::xtensor<double, 1> x =
+    array_type::tensor<double, 1> x =
         xt::linspace<double>(0.0, m_h * static_cast<double>(m_nelx), m_nelx + 1);
-    xt::xtensor<double, 1> y =
+    array_type::tensor<double, 1> y =
         xt::linspace<double>(0.0, m_h * static_cast<double>(m_nely), m_nely + 1);
 
     size_t inode = 0;
@@ -67,9 +67,9 @@ inline xt::xtensor<double, 2> Regular::coor_impl() const
     return ret;
 }
 
-inline xt::xtensor<size_t, 2> Regular::conn_impl() const
+inline array_type::tensor<size_t, 2> Regular::conn_impl() const
 {
-    xt::xtensor<size_t, 2> ret = xt::empty<size_t>({m_nelem, m_nne});
+    array_type::tensor<size_t, 2> ret = xt::empty<size_t>({m_nelem, m_nne});
 
     size_t ielem = 0;
 
@@ -89,9 +89,9 @@ inline xt::xtensor<size_t, 2> Regular::conn_impl() const
     return ret;
 }
 
-inline xt::xtensor<size_t, 1> Regular::nodesBottomEdge_impl() const
+inline array_type::tensor<size_t, 1> Regular::nodesBottomEdge_impl() const
 {
-    xt::xtensor<size_t, 1> ret = xt::empty<size_t>({m_nelx + 1});
+    array_type::tensor<size_t, 1> ret = xt::empty<size_t>({m_nelx + 1});
 
     for (size_t ix = 0; ix < m_nelx + 1; ++ix) {
         ret(ix) = ix;
@@ -100,9 +100,9 @@ inline xt::xtensor<size_t, 1> Regular::nodesBottomEdge_impl() const
     return ret;
 }
 
-inline xt::xtensor<size_t, 1> Regular::nodesTopEdge_impl() const
+inline array_type::tensor<size_t, 1> Regular::nodesTopEdge_impl() const
 {
-    xt::xtensor<size_t, 1> ret = xt::empty<size_t>({m_nelx + 1});
+    array_type::tensor<size_t, 1> ret = xt::empty<size_t>({m_nelx + 1});
 
     for (size_t ix = 0; ix < m_nelx + 1; ++ix) {
         ret(ix) = ix + m_nely * (m_nelx + 1);
@@ -111,9 +111,9 @@ inline xt::xtensor<size_t, 1> Regular::nodesTopEdge_impl() const
     return ret;
 }
 
-inline xt::xtensor<size_t, 1> Regular::nodesLeftEdge_impl() const
+inline array_type::tensor<size_t, 1> Regular::nodesLeftEdge_impl() const
 {
-    xt::xtensor<size_t, 1> ret = xt::empty<size_t>({m_nely + 1});
+    array_type::tensor<size_t, 1> ret = xt::empty<size_t>({m_nely + 1});
 
     for (size_t iy = 0; iy < m_nely + 1; ++iy) {
         ret(iy) = iy * (m_nelx + 1);
@@ -122,9 +122,9 @@ inline xt::xtensor<size_t, 1> Regular::nodesLeftEdge_impl() const
     return ret;
 }
 
-inline xt::xtensor<size_t, 1> Regular::nodesRightEdge_impl() const
+inline array_type::tensor<size_t, 1> Regular::nodesRightEdge_impl() const
 {
-    xt::xtensor<size_t, 1> ret = xt::empty<size_t>({m_nely + 1});
+    array_type::tensor<size_t, 1> ret = xt::empty<size_t>({m_nely + 1});
 
     for (size_t iy = 0; iy < m_nely + 1; ++iy) {
         ret(iy) = iy * (m_nelx + 1) + m_nelx;
@@ -133,9 +133,9 @@ inline xt::xtensor<size_t, 1> Regular::nodesRightEdge_impl() const
     return ret;
 }
 
-inline xt::xtensor<size_t, 1> Regular::nodesBottomOpenEdge_impl() const
+inline array_type::tensor<size_t, 1> Regular::nodesBottomOpenEdge_impl() const
 {
-    xt::xtensor<size_t, 1> ret = xt::empty<size_t>({m_nelx - 1});
+    array_type::tensor<size_t, 1> ret = xt::empty<size_t>({m_nelx - 1});
 
     for (size_t ix = 1; ix < m_nelx; ++ix) {
         ret(ix - 1) = ix;
@@ -144,9 +144,9 @@ inline xt::xtensor<size_t, 1> Regular::nodesBottomOpenEdge_impl() const
     return ret;
 }
 
-inline xt::xtensor<size_t, 1> Regular::nodesTopOpenEdge_impl() const
+inline array_type::tensor<size_t, 1> Regular::nodesTopOpenEdge_impl() const
 {
-    xt::xtensor<size_t, 1> ret = xt::empty<size_t>({m_nelx - 1});
+    array_type::tensor<size_t, 1> ret = xt::empty<size_t>({m_nelx - 1});
 
     for (size_t ix = 1; ix < m_nelx; ++ix) {
         ret(ix - 1) = ix + m_nely * (m_nelx + 1);
@@ -155,9 +155,9 @@ inline xt::xtensor<size_t, 1> Regular::nodesTopOpenEdge_impl() const
     return ret;
 }
 
-inline xt::xtensor<size_t, 1> Regular::nodesLeftOpenEdge_impl() const
+inline array_type::tensor<size_t, 1> Regular::nodesLeftOpenEdge_impl() const
 {
-    xt::xtensor<size_t, 1> ret = xt::empty<size_t>({m_nely - 1});
+    array_type::tensor<size_t, 1> ret = xt::empty<size_t>({m_nely - 1});
 
     for (size_t iy = 1; iy < m_nely; ++iy) {
         ret(iy - 1) = iy * (m_nelx + 1);
@@ -166,9 +166,9 @@ inline xt::xtensor<size_t, 1> Regular::nodesLeftOpenEdge_impl() const
     return ret;
 }
 
-inline xt::xtensor<size_t, 1> Regular::nodesRightOpenEdge_impl() const
+inline array_type::tensor<size_t, 1> Regular::nodesRightOpenEdge_impl() const
 {
-    xt::xtensor<size_t, 1> ret = xt::empty<size_t>({m_nely - 1});
+    array_type::tensor<size_t, 1> ret = xt::empty<size_t>({m_nely - 1});
 
     for (size_t iy = 1; iy < m_nely; ++iy) {
         ret(iy - 1) = iy * (m_nelx + 1) + m_nelx;
@@ -197,8 +197,8 @@ inline size_t Regular::nodesTopRightCorner_impl() const
     return m_nely * (m_nelx + 1) + m_nelx;
 }
 
-inline xt::xtensor<int, 1>
-getOrientation(const xt::xtensor<double, 2>& coor, const xt::xtensor<size_t, 2>& conn)
+inline array_type::tensor<int, 1>
+getOrientation(const array_type::tensor<double, 2>& coor, const array_type::tensor<size_t, 2>& conn)
 {
     GOOSEFEM_ASSERT(conn.shape(1) == 3ul);
     GOOSEFEM_ASSERT(coor.shape(1) == 2ul);
@@ -206,7 +206,7 @@ getOrientation(const xt::xtensor<double, 2>& coor, const xt::xtensor<size_t, 2>&
     double k;
     size_t nelem = conn.shape(0);
 
-    xt::xtensor<int, 1> ret = xt::empty<int>({nelem});
+    array_type::tensor<int, 1> ret = xt::empty<int>({nelem});
 
     for (size_t ielem = 0; ielem < nelem; ++ielem) {
         auto v1 =
@@ -227,24 +227,24 @@ getOrientation(const xt::xtensor<double, 2>& coor, const xt::xtensor<size_t, 2>&
     return ret;
 }
 
-inline xt::xtensor<size_t, 2> setOrientation(
-    const xt::xtensor<double, 2>& coor,
-    const xt::xtensor<size_t, 2>& conn,
+inline array_type::tensor<size_t, 2> setOrientation(
+    const array_type::tensor<double, 2>& coor,
+    const array_type::tensor<size_t, 2>& conn,
     int orientation)
 {
     GOOSEFEM_ASSERT(conn.shape(1) == 3ul);
     GOOSEFEM_ASSERT(coor.shape(1) == 2ul);
     GOOSEFEM_ASSERT(orientation == -1 || orientation == +1);
 
-    xt::xtensor<int, 1> val = getOrientation(coor, conn);
+    array_type::tensor<int, 1> val = getOrientation(coor, conn);
 
     return setOrientation(coor, conn, val, orientation);
 }
 
-inline xt::xtensor<size_t, 2> setOrientation(
-    const xt::xtensor<double, 2>& coor,
-    const xt::xtensor<size_t, 2>& conn,
-    const xt::xtensor<int, 1>& val,
+inline array_type::tensor<size_t, 2> setOrientation(
+    const array_type::tensor<double, 2>& coor,
+    const array_type::tensor<size_t, 2>& conn,
+    const array_type::tensor<int, 1>& val,
     int orientation)
 {
     GOOSEFEM_ASSERT(conn.shape(1) == 3ul);
@@ -255,7 +255,7 @@ inline xt::xtensor<size_t, 2> setOrientation(
     UNUSED(coor);
 
     size_t nelem = conn.shape(0);
-    xt::xtensor<size_t, 2> ret = conn;
+    array_type::tensor<size_t, 2> ret = conn;
 
     for (size_t ielem = 0; ielem < nelem; ++ielem) {
         if ((orientation == -1 && val(ielem) > 0) || (orientation == +1 && val(ielem) < 0)) {

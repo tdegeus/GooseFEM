@@ -43,44 +43,44 @@ private:
     size_t nely_impl() const;
     size_t nelz_impl() const;
     ElementType getElementType_impl() const;
-    xt::xtensor<double, 2> coor_impl() const;
-    xt::xtensor<size_t, 2> conn_impl() const;
-    xt::xtensor<size_t, 1> nodesFront_impl() const;
-    xt::xtensor<size_t, 1> nodesBack_impl() const;
-    xt::xtensor<size_t, 1> nodesLeft_impl() const;
-    xt::xtensor<size_t, 1> nodesRight_impl() const;
-    xt::xtensor<size_t, 1> nodesBottom_impl() const;
-    xt::xtensor<size_t, 1> nodesTop_impl() const;
-    xt::xtensor<size_t, 1> nodesFrontFace_impl() const;
-    xt::xtensor<size_t, 1> nodesBackFace_impl() const;
-    xt::xtensor<size_t, 1> nodesLeftFace_impl() const;
-    xt::xtensor<size_t, 1> nodesRightFace_impl() const;
-    xt::xtensor<size_t, 1> nodesBottomFace_impl() const;
-    xt::xtensor<size_t, 1> nodesTopFace_impl() const;
-    xt::xtensor<size_t, 1> nodesFrontBottomEdge_impl() const;
-    xt::xtensor<size_t, 1> nodesFrontTopEdge_impl() const;
-    xt::xtensor<size_t, 1> nodesFrontLeftEdge_impl() const;
-    xt::xtensor<size_t, 1> nodesFrontRightEdge_impl() const;
-    xt::xtensor<size_t, 1> nodesBackBottomEdge_impl() const;
-    xt::xtensor<size_t, 1> nodesBackTopEdge_impl() const;
-    xt::xtensor<size_t, 1> nodesBackLeftEdge_impl() const;
-    xt::xtensor<size_t, 1> nodesBackRightEdge_impl() const;
-    xt::xtensor<size_t, 1> nodesBottomLeftEdge_impl() const;
-    xt::xtensor<size_t, 1> nodesBottomRightEdge_impl() const;
-    xt::xtensor<size_t, 1> nodesTopLeftEdge_impl() const;
-    xt::xtensor<size_t, 1> nodesTopRightEdge_impl() const;
-    xt::xtensor<size_t, 1> nodesFrontBottomOpenEdge_impl() const;
-    xt::xtensor<size_t, 1> nodesFrontTopOpenEdge_impl() const;
-    xt::xtensor<size_t, 1> nodesFrontLeftOpenEdge_impl() const;
-    xt::xtensor<size_t, 1> nodesFrontRightOpenEdge_impl() const;
-    xt::xtensor<size_t, 1> nodesBackBottomOpenEdge_impl() const;
-    xt::xtensor<size_t, 1> nodesBackTopOpenEdge_impl() const;
-    xt::xtensor<size_t, 1> nodesBackLeftOpenEdge_impl() const;
-    xt::xtensor<size_t, 1> nodesBackRightOpenEdge_impl() const;
-    xt::xtensor<size_t, 1> nodesBottomLeftOpenEdge_impl() const;
-    xt::xtensor<size_t, 1> nodesBottomRightOpenEdge_impl() const;
-    xt::xtensor<size_t, 1> nodesTopLeftOpenEdge_impl() const;
-    xt::xtensor<size_t, 1> nodesTopRightOpenEdge_impl() const;
+    array_type::tensor<double, 2> coor_impl() const;
+    array_type::tensor<size_t, 2> conn_impl() const;
+    array_type::tensor<size_t, 1> nodesFront_impl() const;
+    array_type::tensor<size_t, 1> nodesBack_impl() const;
+    array_type::tensor<size_t, 1> nodesLeft_impl() const;
+    array_type::tensor<size_t, 1> nodesRight_impl() const;
+    array_type::tensor<size_t, 1> nodesBottom_impl() const;
+    array_type::tensor<size_t, 1> nodesTop_impl() const;
+    array_type::tensor<size_t, 1> nodesFrontFace_impl() const;
+    array_type::tensor<size_t, 1> nodesBackFace_impl() const;
+    array_type::tensor<size_t, 1> nodesLeftFace_impl() const;
+    array_type::tensor<size_t, 1> nodesRightFace_impl() const;
+    array_type::tensor<size_t, 1> nodesBottomFace_impl() const;
+    array_type::tensor<size_t, 1> nodesTopFace_impl() const;
+    array_type::tensor<size_t, 1> nodesFrontBottomEdge_impl() const;
+    array_type::tensor<size_t, 1> nodesFrontTopEdge_impl() const;
+    array_type::tensor<size_t, 1> nodesFrontLeftEdge_impl() const;
+    array_type::tensor<size_t, 1> nodesFrontRightEdge_impl() const;
+    array_type::tensor<size_t, 1> nodesBackBottomEdge_impl() const;
+    array_type::tensor<size_t, 1> nodesBackTopEdge_impl() const;
+    array_type::tensor<size_t, 1> nodesBackLeftEdge_impl() const;
+    array_type::tensor<size_t, 1> nodesBackRightEdge_impl() const;
+    array_type::tensor<size_t, 1> nodesBottomLeftEdge_impl() const;
+    array_type::tensor<size_t, 1> nodesBottomRightEdge_impl() const;
+    array_type::tensor<size_t, 1> nodesTopLeftEdge_impl() const;
+    array_type::tensor<size_t, 1> nodesTopRightEdge_impl() const;
+    array_type::tensor<size_t, 1> nodesFrontBottomOpenEdge_impl() const;
+    array_type::tensor<size_t, 1> nodesFrontTopOpenEdge_impl() const;
+    array_type::tensor<size_t, 1> nodesFrontLeftOpenEdge_impl() const;
+    array_type::tensor<size_t, 1> nodesFrontRightOpenEdge_impl() const;
+    array_type::tensor<size_t, 1> nodesBackBottomOpenEdge_impl() const;
+    array_type::tensor<size_t, 1> nodesBackTopOpenEdge_impl() const;
+    array_type::tensor<size_t, 1> nodesBackLeftOpenEdge_impl() const;
+    array_type::tensor<size_t, 1> nodesBackRightOpenEdge_impl() const;
+    array_type::tensor<size_t, 1> nodesBottomLeftOpenEdge_impl() const;
+    array_type::tensor<size_t, 1> nodesBottomRightOpenEdge_impl() const;
+    array_type::tensor<size_t, 1> nodesTopLeftOpenEdge_impl() const;
+    array_type::tensor<size_t, 1> nodesTopRightOpenEdge_impl() const;
     size_t nodesFrontBottomLeftCorner_impl() const;
     size_t nodesFrontBottomRightCorner_impl() const;
     size_t nodesFrontTopLeftCorner_impl() const;
@@ -124,7 +124,7 @@ public:
 
     \return List of element numbers.
     */
-    xt::xtensor<size_t, 1> elementsMiddleLayer() const;
+    array_type::tensor<size_t, 1> elementsMiddleLayer() const;
 
 private:
     friend class RegularBase<FineLayer>;
@@ -134,44 +134,44 @@ private:
     size_t nely_impl() const;
     size_t nelz_impl() const;
     ElementType getElementType_impl() const;
-    xt::xtensor<double, 2> coor_impl() const;
-    xt::xtensor<size_t, 2> conn_impl() const;
-    xt::xtensor<size_t, 1> nodesFront_impl() const;
-    xt::xtensor<size_t, 1> nodesBack_impl() const;
-    xt::xtensor<size_t, 1> nodesLeft_impl() const;
-    xt::xtensor<size_t, 1> nodesRight_impl() const;
-    xt::xtensor<size_t, 1> nodesBottom_impl() const;
-    xt::xtensor<size_t, 1> nodesTop_impl() const;
-    xt::xtensor<size_t, 1> nodesFrontFace_impl() const;
-    xt::xtensor<size_t, 1> nodesBackFace_impl() const;
-    xt::xtensor<size_t, 1> nodesLeftFace_impl() const;
-    xt::xtensor<size_t, 1> nodesRightFace_impl() const;
-    xt::xtensor<size_t, 1> nodesBottomFace_impl() const;
-    xt::xtensor<size_t, 1> nodesTopFace_impl() const;
-    xt::xtensor<size_t, 1> nodesFrontBottomEdge_impl() const;
-    xt::xtensor<size_t, 1> nodesFrontTopEdge_impl() const;
-    xt::xtensor<size_t, 1> nodesFrontLeftEdge_impl() const;
-    xt::xtensor<size_t, 1> nodesFrontRightEdge_impl() const;
-    xt::xtensor<size_t, 1> nodesBackBottomEdge_impl() const;
-    xt::xtensor<size_t, 1> nodesBackTopEdge_impl() const;
-    xt::xtensor<size_t, 1> nodesBackLeftEdge_impl() const;
-    xt::xtensor<size_t, 1> nodesBackRightEdge_impl() const;
-    xt::xtensor<size_t, 1> nodesBottomLeftEdge_impl() const;
-    xt::xtensor<size_t, 1> nodesBottomRightEdge_impl() const;
-    xt::xtensor<size_t, 1> nodesTopLeftEdge_impl() const;
-    xt::xtensor<size_t, 1> nodesTopRightEdge_impl() const;
-    xt::xtensor<size_t, 1> nodesFrontBottomOpenEdge_impl() const;
-    xt::xtensor<size_t, 1> nodesFrontTopOpenEdge_impl() const;
-    xt::xtensor<size_t, 1> nodesFrontLeftOpenEdge_impl() const;
-    xt::xtensor<size_t, 1> nodesFrontRightOpenEdge_impl() const;
-    xt::xtensor<size_t, 1> nodesBackBottomOpenEdge_impl() const;
-    xt::xtensor<size_t, 1> nodesBackTopOpenEdge_impl() const;
-    xt::xtensor<size_t, 1> nodesBackLeftOpenEdge_impl() const;
-    xt::xtensor<size_t, 1> nodesBackRightOpenEdge_impl() const;
-    xt::xtensor<size_t, 1> nodesBottomLeftOpenEdge_impl() const;
-    xt::xtensor<size_t, 1> nodesBottomRightOpenEdge_impl() const;
-    xt::xtensor<size_t, 1> nodesTopLeftOpenEdge_impl() const;
-    xt::xtensor<size_t, 1> nodesTopRightOpenEdge_impl() const;
+    array_type::tensor<double, 2> coor_impl() const;
+    array_type::tensor<size_t, 2> conn_impl() const;
+    array_type::tensor<size_t, 1> nodesFront_impl() const;
+    array_type::tensor<size_t, 1> nodesBack_impl() const;
+    array_type::tensor<size_t, 1> nodesLeft_impl() const;
+    array_type::tensor<size_t, 1> nodesRight_impl() const;
+    array_type::tensor<size_t, 1> nodesBottom_impl() const;
+    array_type::tensor<size_t, 1> nodesTop_impl() const;
+    array_type::tensor<size_t, 1> nodesFrontFace_impl() const;
+    array_type::tensor<size_t, 1> nodesBackFace_impl() const;
+    array_type::tensor<size_t, 1> nodesLeftFace_impl() const;
+    array_type::tensor<size_t, 1> nodesRightFace_impl() const;
+    array_type::tensor<size_t, 1> nodesBottomFace_impl() const;
+    array_type::tensor<size_t, 1> nodesTopFace_impl() const;
+    array_type::tensor<size_t, 1> nodesFrontBottomEdge_impl() const;
+    array_type::tensor<size_t, 1> nodesFrontTopEdge_impl() const;
+    array_type::tensor<size_t, 1> nodesFrontLeftEdge_impl() const;
+    array_type::tensor<size_t, 1> nodesFrontRightEdge_impl() const;
+    array_type::tensor<size_t, 1> nodesBackBottomEdge_impl() const;
+    array_type::tensor<size_t, 1> nodesBackTopEdge_impl() const;
+    array_type::tensor<size_t, 1> nodesBackLeftEdge_impl() const;
+    array_type::tensor<size_t, 1> nodesBackRightEdge_impl() const;
+    array_type::tensor<size_t, 1> nodesBottomLeftEdge_impl() const;
+    array_type::tensor<size_t, 1> nodesBottomRightEdge_impl() const;
+    array_type::tensor<size_t, 1> nodesTopLeftEdge_impl() const;
+    array_type::tensor<size_t, 1> nodesTopRightEdge_impl() const;
+    array_type::tensor<size_t, 1> nodesFrontBottomOpenEdge_impl() const;
+    array_type::tensor<size_t, 1> nodesFrontTopOpenEdge_impl() const;
+    array_type::tensor<size_t, 1> nodesFrontLeftOpenEdge_impl() const;
+    array_type::tensor<size_t, 1> nodesFrontRightOpenEdge_impl() const;
+    array_type::tensor<size_t, 1> nodesBackBottomOpenEdge_impl() const;
+    array_type::tensor<size_t, 1> nodesBackTopOpenEdge_impl() const;
+    array_type::tensor<size_t, 1> nodesBackLeftOpenEdge_impl() const;
+    array_type::tensor<size_t, 1> nodesBackRightOpenEdge_impl() const;
+    array_type::tensor<size_t, 1> nodesBottomLeftOpenEdge_impl() const;
+    array_type::tensor<size_t, 1> nodesBottomRightOpenEdge_impl() const;
+    array_type::tensor<size_t, 1> nodesTopLeftOpenEdge_impl() const;
+    array_type::tensor<size_t, 1> nodesTopRightOpenEdge_impl() const;
     size_t nodesFrontBottomLeftCorner_impl() const;
     size_t nodesFrontBottomRightCorner_impl() const;
     size_t nodesFrontTopLeftCorner_impl() const;
@@ -191,16 +191,16 @@ private:
     size_t m_ndim; ///< See ndim()
     double m_Lx; ///< mesh size in "x"
     double m_Lz; ///< mesh size in "z"
-    xt::xtensor<size_t, 1> m_layer_nelx; ///< number of elements in "x" per element layer in "y"
-    xt::xtensor<size_t, 1> m_layer_nelz; ///< number of elements in "z" per element layer in "y"
-    xt::xtensor<size_t, 1> m_nnd; ///< number of nodes in the main node layer per node layer in "y"
-    xt::xtensor<size_t, 1> m_nhx; ///< element size in x-direction per element layer in "y"
-    xt::xtensor<size_t, 1> m_nhy; ///< element size in y-direction per element layer in "y"
-    xt::xtensor<size_t, 1> m_nhz; ///< element size in z-direction per element layer in "y"
-    xt::xtensor<int, 1>
+    array_type::tensor<size_t, 1> m_layer_nelx; ///< number of elem in "x" per element layer in "y"
+    array_type::tensor<size_t, 1> m_layer_nelz; ///< number of elem in "z" per element layer in "y"
+    array_type::tensor<size_t, 1> m_nnd; ///< num nodes in the main node layer per node layer in "y"
+    array_type::tensor<size_t, 1> m_nhx; ///< element size in x-direction per element layer in "y"
+    array_type::tensor<size_t, 1> m_nhy; ///< element size in y-direction per element layer in "y"
+    array_type::tensor<size_t, 1> m_nhz; ///< element size in z-direction per element layer in "y"
+    array_type::tensor<int, 1>
         m_refine; ///< refine direction (-1:no refine, 0:"x", 2:"z") per element layer in "y"
-    xt::xtensor<size_t, 1> m_startElem; ///< start element per element layer in "y"
-    xt::xtensor<size_t, 1> m_startNode; ///< start node per node layer in "y"
+    array_type::tensor<size_t, 1> m_startElem; ///< start element per element layer in "y"
+    array_type::tensor<size_t, 1> m_startNode; ///< start node per node layer in "y"
 };
 
 } // namespace Hex8

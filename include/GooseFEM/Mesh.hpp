@@ -103,10 +103,10 @@ inline auto RegularBase<D>::dofs() const
 template <class D>
 inline auto RegularBase<D>::dofsPeriodic() const
 {
-    xt::xtensor<size_t, 2> ret = this->dofs();
-    xt::xtensor<size_t, 2> nodePer = this->nodesPeriodic();
-    xt::xtensor<size_t, 1> independent = xt::view(nodePer, xt::all(), 0);
-    xt::xtensor<size_t, 1> dependent = xt::view(nodePer, xt::all(), 1);
+    array_type::tensor<size_t, 2> ret = this->dofs();
+    array_type::tensor<size_t, 2> nodePer = this->nodesPeriodic();
+    array_type::tensor<size_t, 1> independent = xt::view(nodePer, xt::all(), 0);
+    array_type::tensor<size_t, 1> dependent = xt::view(nodePer, xt::all(), 1);
 
     for (size_t j = 0; j < this->ndim(); ++j) {
         xt::view(ret, xt::keep(dependent), j) = xt::view(ret, xt::keep(independent), j);
@@ -236,14 +236,14 @@ inline auto RegularBase2d<D>::nodesRightTopCorner() const
 }
 
 template <class D>
-inline xt::xtensor<size_t, 2> RegularBase2d<D>::nodesPeriodic_impl() const
+inline array_type::tensor<size_t, 2> RegularBase2d<D>::nodesPeriodic_impl() const
 {
-    xt::xtensor<size_t, 1> bot = derived_cast().nodesBottomOpenEdge_impl();
-    xt::xtensor<size_t, 1> top = derived_cast().nodesTopOpenEdge_impl();
-    xt::xtensor<size_t, 1> lft = derived_cast().nodesLeftOpenEdge_impl();
-    xt::xtensor<size_t, 1> rgt = derived_cast().nodesRightOpenEdge_impl();
+    array_type::tensor<size_t, 1> bot = derived_cast().nodesBottomOpenEdge_impl();
+    array_type::tensor<size_t, 1> top = derived_cast().nodesTopOpenEdge_impl();
+    array_type::tensor<size_t, 1> lft = derived_cast().nodesLeftOpenEdge_impl();
+    array_type::tensor<size_t, 1> rgt = derived_cast().nodesRightOpenEdge_impl();
     std::array<size_t, 2> shape = {bot.size() + lft.size() + size_t(3), size_t(2)};
-    auto ret = xt::xtensor<size_t, 2>::from_shape(shape);
+    auto ret = array_type::tensor<size_t, 2>::from_shape(shape);
 
     ret(0, 0) = derived_cast().nodesBottomLeftCorner_impl();
     ret(0, 1) = derived_cast().nodesBottomRightCorner_impl();
@@ -940,32 +940,32 @@ inline auto RegularBase3d<D>::nodesRightTopBackCorner() const
 }
 
 template <class D>
-inline xt::xtensor<size_t, 2> RegularBase3d<D>::nodesPeriodic_impl() const
+inline array_type::tensor<size_t, 2> RegularBase3d<D>::nodesPeriodic_impl() const
 {
-    xt::xtensor<size_t, 1> fro = derived_cast().nodesFrontFace_impl();
-    xt::xtensor<size_t, 1> bck = derived_cast().nodesBackFace_impl();
-    xt::xtensor<size_t, 1> lft = derived_cast().nodesLeftFace_impl();
-    xt::xtensor<size_t, 1> rgt = derived_cast().nodesRightFace_impl();
-    xt::xtensor<size_t, 1> bot = derived_cast().nodesBottomFace_impl();
-    xt::xtensor<size_t, 1> top = derived_cast().nodesTopFace_impl();
+    array_type::tensor<size_t, 1> fro = derived_cast().nodesFrontFace_impl();
+    array_type::tensor<size_t, 1> bck = derived_cast().nodesBackFace_impl();
+    array_type::tensor<size_t, 1> lft = derived_cast().nodesLeftFace_impl();
+    array_type::tensor<size_t, 1> rgt = derived_cast().nodesRightFace_impl();
+    array_type::tensor<size_t, 1> bot = derived_cast().nodesBottomFace_impl();
+    array_type::tensor<size_t, 1> top = derived_cast().nodesTopFace_impl();
 
-    xt::xtensor<size_t, 1> froBot = derived_cast().nodesFrontBottomOpenEdge_impl();
-    xt::xtensor<size_t, 1> froTop = derived_cast().nodesFrontTopOpenEdge_impl();
-    xt::xtensor<size_t, 1> froLft = derived_cast().nodesFrontLeftOpenEdge_impl();
-    xt::xtensor<size_t, 1> froRgt = derived_cast().nodesFrontRightOpenEdge_impl();
-    xt::xtensor<size_t, 1> bckBot = derived_cast().nodesBackBottomOpenEdge_impl();
-    xt::xtensor<size_t, 1> bckTop = derived_cast().nodesBackTopOpenEdge_impl();
-    xt::xtensor<size_t, 1> bckLft = derived_cast().nodesBackLeftOpenEdge_impl();
-    xt::xtensor<size_t, 1> bckRgt = derived_cast().nodesBackRightOpenEdge_impl();
-    xt::xtensor<size_t, 1> botLft = derived_cast().nodesBottomLeftOpenEdge_impl();
-    xt::xtensor<size_t, 1> botRgt = derived_cast().nodesBottomRightOpenEdge_impl();
-    xt::xtensor<size_t, 1> topLft = derived_cast().nodesTopLeftOpenEdge_impl();
-    xt::xtensor<size_t, 1> topRgt = derived_cast().nodesTopRightOpenEdge_impl();
+    array_type::tensor<size_t, 1> froBot = derived_cast().nodesFrontBottomOpenEdge_impl();
+    array_type::tensor<size_t, 1> froTop = derived_cast().nodesFrontTopOpenEdge_impl();
+    array_type::tensor<size_t, 1> froLft = derived_cast().nodesFrontLeftOpenEdge_impl();
+    array_type::tensor<size_t, 1> froRgt = derived_cast().nodesFrontRightOpenEdge_impl();
+    array_type::tensor<size_t, 1> bckBot = derived_cast().nodesBackBottomOpenEdge_impl();
+    array_type::tensor<size_t, 1> bckTop = derived_cast().nodesBackTopOpenEdge_impl();
+    array_type::tensor<size_t, 1> bckLft = derived_cast().nodesBackLeftOpenEdge_impl();
+    array_type::tensor<size_t, 1> bckRgt = derived_cast().nodesBackRightOpenEdge_impl();
+    array_type::tensor<size_t, 1> botLft = derived_cast().nodesBottomLeftOpenEdge_impl();
+    array_type::tensor<size_t, 1> botRgt = derived_cast().nodesBottomRightOpenEdge_impl();
+    array_type::tensor<size_t, 1> topLft = derived_cast().nodesTopLeftOpenEdge_impl();
+    array_type::tensor<size_t, 1> topRgt = derived_cast().nodesTopRightOpenEdge_impl();
 
     size_t tface = fro.size() + lft.size() + bot.size();
     size_t tedge = 3 * froBot.size() + 3 * froLft.size() + 3 * botLft.size();
     size_t tnode = 7;
-    xt::xtensor<size_t, 2> ret = xt::empty<size_t>({tface + tedge + tnode, std::size_t(2)});
+    array_type::tensor<size_t, 2> ret = xt::empty<size_t>({tface + tedge + tnode, std::size_t(2)});
 
     size_t i = 0;
 
@@ -1093,7 +1093,7 @@ inline T renum(const T& arg, const R& mapping)
 } // namespace detail
 
 template <class S, class T>
-inline xt::xtensor<size_t, 2>
+inline array_type::tensor<size_t, 2>
 overlapping(const S& coor_a, const T& coor_b, double rtol, double atol)
 {
     GOOSEFEM_ASSERT(coor_a.dimension() == 2);
@@ -1114,7 +1114,7 @@ overlapping(const S& coor_a, const T& coor_b, double rtol, double atol)
         }
     }
 
-    xt::xtensor<size_t, 2> ret = xt::empty<size_t>({size_t(2), ret_a.size()});
+    array_type::tensor<size_t, 2> ret = xt::empty<size_t>({size_t(2), ret_a.size()});
     for (size_t i = 0; i < ret_a.size(); ++i) {
         ret(0, i) = ret_a[i];
         ret(1, i) = ret_b[i];
@@ -1169,7 +1169,8 @@ inline ManualStitch::ManualStitch(
     m_nel_b = nelb;
     m_nnd_a = nnda;
 
-    xt::xtensor<size_t, 1> keep_b = xt::setdiff1d(xt::arange<size_t>(nndb), overlapping_nodes_b);
+    array_type::tensor<size_t, 1> keep_b =
+        xt::setdiff1d(xt::arange<size_t>(nndb), overlapping_nodes_b);
 
     m_map_b = xt::empty<size_t>({nndb});
     xt::view(m_map_b, xt::keep(overlapping_nodes_b)) = overlapping_nodes_a;
@@ -1185,12 +1186,12 @@ inline ManualStitch::ManualStitch(
         xt::view(coor_b, xt::keep(keep_b), xt::all());
 }
 
-inline xt::xtensor<double, 2> ManualStitch::coor() const
+inline array_type::tensor<double, 2> ManualStitch::coor() const
 {
     return m_coor;
 }
 
-inline xt::xtensor<size_t, 2> ManualStitch::conn() const
+inline array_type::tensor<size_t, 2> ManualStitch::conn() const
 {
     return m_conn;
 }
@@ -1220,32 +1221,32 @@ inline size_t ManualStitch::ndim() const
     return m_coor.shape(1);
 }
 
-inline xt::xtensor<size_t, 2> ManualStitch::dofs() const
+inline array_type::tensor<size_t, 2> ManualStitch::dofs() const
 {
     size_t nnode = this->nnode();
     size_t ndim = this->ndim();
     return xt::reshape_view(xt::arange<size_t>(nnode * ndim), {nnode, ndim});
 }
 
-inline std::vector<xt::xtensor<size_t, 1>> ManualStitch::nodemap() const
+inline std::vector<array_type::tensor<size_t, 1>> ManualStitch::nodemap() const
 {
-    std::vector<xt::xtensor<size_t, 1>> ret(this->nmesh());
+    std::vector<array_type::tensor<size_t, 1>> ret(this->nmesh());
     for (size_t i = 0; i < this->nmesh(); ++i) {
         ret[i] = this->nodemap(i);
     }
     return ret;
 }
 
-inline std::vector<xt::xtensor<size_t, 1>> ManualStitch::elemmap() const
+inline std::vector<array_type::tensor<size_t, 1>> ManualStitch::elemmap() const
 {
-    std::vector<xt::xtensor<size_t, 1>> ret(this->nmesh());
+    std::vector<array_type::tensor<size_t, 1>> ret(this->nmesh());
     for (size_t i = 0; i < this->nmesh(); ++i) {
         ret[i] = this->elemmap(i);
     }
     return ret;
 }
 
-inline xt::xtensor<size_t, 1> ManualStitch::nodemap(size_t mesh_index) const
+inline array_type::tensor<size_t, 1> ManualStitch::nodemap(size_t mesh_index) const
 {
     GOOSEFEM_ASSERT(mesh_index <= 1);
 
@@ -1256,7 +1257,7 @@ inline xt::xtensor<size_t, 1> ManualStitch::nodemap(size_t mesh_index) const
     return m_map_b;
 }
 
-inline xt::xtensor<size_t, 1> ManualStitch::elemmap(size_t mesh_index) const
+inline array_type::tensor<size_t, 1> ManualStitch::elemmap(size_t mesh_index) const
 {
     GOOSEFEM_ASSERT(mesh_index <= 1);
 
@@ -1340,12 +1341,12 @@ inline size_t Stitch::nmesh() const
     return m_map.size();
 }
 
-inline xt::xtensor<double, 2> Stitch::coor() const
+inline array_type::tensor<double, 2> Stitch::coor() const
 {
     return m_coor;
 }
 
-inline xt::xtensor<size_t, 2> Stitch::conn() const
+inline array_type::tensor<size_t, 2> Stitch::conn() const
 {
     return m_conn;
 }
@@ -1370,38 +1371,38 @@ inline size_t Stitch::ndim() const
     return m_coor.shape(1);
 }
 
-inline xt::xtensor<size_t, 2> Stitch::dofs() const
+inline array_type::tensor<size_t, 2> Stitch::dofs() const
 {
     size_t nnode = this->nnode();
     size_t ndim = this->ndim();
     return xt::reshape_view(xt::arange<size_t>(nnode * ndim), {nnode, ndim});
 }
 
-inline std::vector<xt::xtensor<size_t, 1>> Stitch::nodemap() const
+inline std::vector<array_type::tensor<size_t, 1>> Stitch::nodemap() const
 {
-    std::vector<xt::xtensor<size_t, 1>> ret(this->nmesh());
+    std::vector<array_type::tensor<size_t, 1>> ret(this->nmesh());
     for (size_t i = 0; i < this->nmesh(); ++i) {
         ret[i] = this->nodemap(i);
     }
     return ret;
 }
 
-inline std::vector<xt::xtensor<size_t, 1>> Stitch::elemmap() const
+inline std::vector<array_type::tensor<size_t, 1>> Stitch::elemmap() const
 {
-    std::vector<xt::xtensor<size_t, 1>> ret(this->nmesh());
+    std::vector<array_type::tensor<size_t, 1>> ret(this->nmesh());
     for (size_t i = 0; i < this->nmesh(); ++i) {
         ret[i] = this->elemmap(i);
     }
     return ret;
 }
 
-inline xt::xtensor<size_t, 1> Stitch::nodemap(size_t mesh_index) const
+inline array_type::tensor<size_t, 1> Stitch::nodemap(size_t mesh_index) const
 {
     GOOSEFEM_ASSERT(mesh_index < m_map.size());
     return m_map[mesh_index];
 }
 
-inline xt::xtensor<size_t, 1> Stitch::elemmap(size_t mesh_index) const
+inline array_type::tensor<size_t, 1> Stitch::elemmap(size_t mesh_index) const
 {
     GOOSEFEM_ASSERT(mesh_index < m_map.size());
     return xt::arange<size_t>(m_nel[mesh_index]) + m_el_offset[mesh_index];
@@ -1434,7 +1435,7 @@ inline T Stitch::nodeset(const std::vector<T>& set) const
         n += set[i].size();
     }
 
-    xt::xtensor<size_t, 1> ret = xt::empty<size_t>({n});
+    array_type::tensor<size_t, 1> ret = xt::empty<size_t>({n});
 
     n = 0;
 
@@ -1457,7 +1458,7 @@ inline T Stitch::elemset(const std::vector<T>& set) const
         n += set[i].size();
     }
 
-    xt::xtensor<size_t, 1> ret = xt::empty<size_t>({n});
+    array_type::tensor<size_t, 1> ret = xt::empty<size_t>({n});
 
     n = 0;
 
@@ -1529,7 +1530,7 @@ inline Renumber::Renumber(const T& dofs)
     size_t n = xt::amax(dofs)() + 1;
     size_t i = 0;
 
-    xt::xtensor<size_t, 1> unique = xt::unique(dofs);
+    array_type::tensor<size_t, 1> unique = xt::unique(dofs);
 
     m_renum = xt::empty<size_t>({n});
 
@@ -1545,7 +1546,7 @@ inline T Renumber::apply(const T& list) const
     return detail::renum(list, m_renum);
 }
 
-inline xt::xtensor<size_t, 1> Renumber::index() const
+inline array_type::tensor<size_t, 1> Renumber::index() const
 {
     return m_renum;
 }
@@ -1599,12 +1600,12 @@ inline T Reorder::apply(const T& list) const
     return ret;
 }
 
-inline xt::xtensor<size_t, 1> Reorder::index() const
+inline array_type::tensor<size_t, 1> Reorder::index() const
 {
     return m_renum;
 }
 
-inline xt::xtensor<size_t, 2> dofs(size_t nnode, size_t ndim)
+inline array_type::tensor<size_t, 2> dofs(size_t nnode, size_t ndim)
 {
     return xt::reshape_view(xt::arange<size_t>(nnode * ndim), {nnode, ndim});
 }
@@ -1634,13 +1635,13 @@ inline std::vector<std::vector<size_t>> nodaltyings(const D& dofs)
 }
 
 template <class E>
-inline xt::xtensor<size_t, 1> coordination(const E& conn)
+inline array_type::tensor<size_t, 1> coordination(const E& conn)
 {
     GOOSEFEM_ASSERT(conn.dimension() == 2);
 
     size_t nnode = xt::amax(conn)() + 1;
 
-    xt::xtensor<size_t, 1> N = xt::zeros<size_t>({nnode});
+    array_type::tensor<size_t, 1> N = xt::zeros<size_t>({nnode});
 
     for (auto it = conn.begin(); it != conn.end(); ++it) {
         N(*it) += 1;
@@ -1715,7 +1716,7 @@ inline std::vector<std::vector<size_t>> elem2node(const E& conn, const D& dofs, 
 }
 
 template <class C, class E>
-inline xt::xtensor<double, 2> edgesize(const C& coor, const E& conn, ElementType type)
+inline array_type::tensor<double, 2> edgesize(const C& coor, const E& conn, ElementType type)
 {
     GOOSEFEM_ASSERT(coor.dimension() == 2);
     GOOSEFEM_ASSERT(conn.dimension() == 2);
@@ -1724,19 +1725,19 @@ inline xt::xtensor<double, 2> edgesize(const C& coor, const E& conn, ElementType
     if (type == ElementType::Quad4) {
         GOOSEFEM_ASSERT(coor.shape(1) == 2ul);
         GOOSEFEM_ASSERT(conn.shape(1) == 4ul);
-        xt::xtensor<size_t, 1> n0 = xt::view(conn, xt::all(), 0);
-        xt::xtensor<size_t, 1> n1 = xt::view(conn, xt::all(), 1);
-        xt::xtensor<size_t, 1> n2 = xt::view(conn, xt::all(), 2);
-        xt::xtensor<size_t, 1> n3 = xt::view(conn, xt::all(), 3);
-        xt::xtensor<double, 1> x0 = xt::view(coor, xt::keep(n0), 0);
-        xt::xtensor<double, 1> x1 = xt::view(coor, xt::keep(n1), 0);
-        xt::xtensor<double, 1> x2 = xt::view(coor, xt::keep(n2), 0);
-        xt::xtensor<double, 1> x3 = xt::view(coor, xt::keep(n3), 0);
-        xt::xtensor<double, 1> y0 = xt::view(coor, xt::keep(n0), 1);
-        xt::xtensor<double, 1> y1 = xt::view(coor, xt::keep(n1), 1);
-        xt::xtensor<double, 1> y2 = xt::view(coor, xt::keep(n2), 1);
-        xt::xtensor<double, 1> y3 = xt::view(coor, xt::keep(n3), 1);
-        xt::xtensor<double, 2> ret = xt::empty<double>(conn.shape());
+        array_type::tensor<size_t, 1> n0 = xt::view(conn, xt::all(), 0);
+        array_type::tensor<size_t, 1> n1 = xt::view(conn, xt::all(), 1);
+        array_type::tensor<size_t, 1> n2 = xt::view(conn, xt::all(), 2);
+        array_type::tensor<size_t, 1> n3 = xt::view(conn, xt::all(), 3);
+        array_type::tensor<double, 1> x0 = xt::view(coor, xt::keep(n0), 0);
+        array_type::tensor<double, 1> x1 = xt::view(coor, xt::keep(n1), 0);
+        array_type::tensor<double, 1> x2 = xt::view(coor, xt::keep(n2), 0);
+        array_type::tensor<double, 1> x3 = xt::view(coor, xt::keep(n3), 0);
+        array_type::tensor<double, 1> y0 = xt::view(coor, xt::keep(n0), 1);
+        array_type::tensor<double, 1> y1 = xt::view(coor, xt::keep(n1), 1);
+        array_type::tensor<double, 1> y2 = xt::view(coor, xt::keep(n2), 1);
+        array_type::tensor<double, 1> y3 = xt::view(coor, xt::keep(n3), 1);
+        array_type::tensor<double, 2> ret = xt::empty<double>(conn.shape());
         xt::view(ret, xt::all(), 0) = xt::sqrt(xt::pow(x1 - x0, 2.0) + xt::pow(y1 - y0, 2.0));
         xt::view(ret, xt::all(), 1) = xt::sqrt(xt::pow(x2 - x1, 2.0) + xt::pow(y2 - y1, 2.0));
         xt::view(ret, xt::all(), 2) = xt::sqrt(xt::pow(x3 - x2, 2.0) + xt::pow(y3 - y2, 2.0));
@@ -1748,18 +1749,18 @@ inline xt::xtensor<double, 2> edgesize(const C& coor, const E& conn, ElementType
 }
 
 template <class C, class E>
-inline xt::xtensor<double, 2> edgesize(const C& coor, const E& conn)
+inline array_type::tensor<double, 2> edgesize(const C& coor, const E& conn)
 {
     return edgesize(coor, conn, defaultElementType(coor, conn));
 }
 
 template <class C, class E>
-inline xt::xtensor<double, 2> centers(const C& coor, const E& conn, ElementType type)
+inline array_type::tensor<double, 2> centers(const C& coor, const E& conn, ElementType type)
 {
     GOOSEFEM_ASSERT(coor.dimension() == 2);
     GOOSEFEM_ASSERT(conn.dimension() == 2);
     GOOSEFEM_ASSERT(xt::amax(conn)() < coor.shape(0));
-    xt::xtensor<double, 2> ret = xt::zeros<double>({conn.shape(0), coor.shape(1)});
+    array_type::tensor<double, 2> ret = xt::zeros<double>({conn.shape(0), coor.shape(1)});
 
     if (type == ElementType::Quad4) {
         GOOSEFEM_ASSERT(coor.shape(1) == 2);
@@ -1776,13 +1777,13 @@ inline xt::xtensor<double, 2> centers(const C& coor, const E& conn, ElementType 
 }
 
 template <class C, class E>
-inline xt::xtensor<double, 2> centers(const C& coor, const E& conn)
+inline array_type::tensor<double, 2> centers(const C& coor, const E& conn)
 {
     return centers(coor, conn, defaultElementType(coor, conn));
 }
 
 template <class T, class C, class E>
-inline xt::xtensor<size_t, 1>
+inline array_type::tensor<size_t, 1>
 elemmap2nodemap(const T& elem_map, const C& coor, const E& conn, ElementType type)
 {
     GOOSEFEM_ASSERT(elem_map.dimension() == 1);
@@ -1792,14 +1793,14 @@ elemmap2nodemap(const T& elem_map, const C& coor, const E& conn, ElementType typ
     GOOSEFEM_ASSERT(elem_map.size() == conn.shape(0));
     size_t N = coor.shape(0);
 
-    xt::xtensor<size_t, 1> ret = N * xt::ones<size_t>({N});
+    array_type::tensor<size_t, 1> ret = N * xt::ones<size_t>({N});
 
     if (type == ElementType::Quad4) {
         GOOSEFEM_ASSERT(coor.shape(1) == 2);
         GOOSEFEM_ASSERT(conn.shape(1) == 4);
 
         for (size_t i = 0; i < 4; ++i) {
-            xt::xtensor<size_t, 1> t = N * xt::ones<size_t>({N});
+            array_type::tensor<size_t, 1> t = N * xt::ones<size_t>({N});
             auto old_nd = xt::view(conn, xt::all(), i);
             auto new_nd = xt::view(conn, xt::keep(elem_map), i);
             xt::view(t, xt::keep(old_nd)) = new_nd;
@@ -1813,18 +1814,19 @@ elemmap2nodemap(const T& elem_map, const C& coor, const E& conn, ElementType typ
 }
 
 template <class T, class C, class E>
-inline xt::xtensor<size_t, 1> elemmap2nodemap(const T& elem_map, const C& coor, const E& conn)
+inline array_type::tensor<size_t, 1>
+elemmap2nodemap(const T& elem_map, const C& coor, const E& conn)
 {
     return elemmap2nodemap(elem_map, coor, conn, defaultElementType(coor, conn));
 }
 
 template <class C, class E>
-inline xt::xtensor<double, 2> nodal_mass(const C& coor, const E& conn, ElementType type)
+inline array_type::tensor<double, 2> nodal_mass(const C& coor, const E& conn, ElementType type)
 {
     auto dof = dofs(coor.shape(0), coor.shape(1));
     GooseFEM::MatrixDiagonal M(conn, dof);
     GooseFEM::Vector vector(conn, dof);
-    xt::xtensor<double, 2> rho = xt::ones<double>(conn.shape());
+    array_type::tensor<double, 2> rho = xt::ones<double>(conn.shape());
 
     if (type == ElementType::Quad4) {
         GooseFEM::Element::Quad4::Quadrature quad(
@@ -1841,19 +1843,20 @@ inline xt::xtensor<double, 2> nodal_mass(const C& coor, const E& conn, ElementTy
 }
 
 template <class C, class E>
-inline xt::xtensor<double, 2> nodal_mass(const C& coor, const E& conn)
+inline array_type::tensor<double, 2> nodal_mass(const C& coor, const E& conn)
 {
     return nodal_mass(coor, conn, defaultElementType(coor, conn));
 }
 
 template <class C, class E>
-inline xt::xtensor<double, 1> center_of_gravity(const C& coor, const E& conn, ElementType type)
+inline array_type::tensor<double, 1>
+center_of_gravity(const C& coor, const E& conn, ElementType type)
 {
     return xt::average(coor, nodal_mass(coor, conn, type), 0);
 }
 
 template <class C, class E>
-inline xt::xtensor<double, 1> center_of_gravity(const C& coor, const E& conn)
+inline array_type::tensor<double, 1> center_of_gravity(const C& coor, const E& conn)
 {
     return xt::average(coor, nodal_mass(coor, conn, defaultElementType(coor, conn)), 0);
 }

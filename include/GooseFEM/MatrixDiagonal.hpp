@@ -53,7 +53,7 @@ inline size_t MatrixDiagonal::ndof() const
     return m_ndof;
 }
 
-inline xt::xtensor<size_t, 2> MatrixDiagonal::dofs() const
+inline array_type::tensor<size_t, 2> MatrixDiagonal::dofs() const
 {
     return m_dofs;
 }
@@ -72,14 +72,14 @@ inline void MatrixDiagonal::factorize()
     m_changed = false;
 }
 
-inline void MatrixDiagonal::set(const xt::xtensor<double, 1>& A)
+inline void MatrixDiagonal::set(const array_type::tensor<double, 1>& A)
 {
     GOOSEFEM_ASSERT(A.size() == m_ndof);
     std::copy(A.begin(), A.end(), m_A.begin());
     m_changed = true;
 }
 
-inline void MatrixDiagonal::assemble(const xt::xtensor<double, 3>& elemmat)
+inline void MatrixDiagonal::assemble(const array_type::tensor<double, 3>& elemmat)
 {
     GOOSEFEM_ASSERT(xt::has_shape(elemmat, {m_nelem, m_nne * m_ndim, m_nne * m_ndim}));
     GOOSEFEM_ASSERT(Element::isDiagonal(elemmat));
@@ -97,7 +97,8 @@ inline void MatrixDiagonal::assemble(const xt::xtensor<double, 3>& elemmat)
     m_changed = true;
 }
 
-inline void MatrixDiagonal::dot(const xt::xtensor<double, 2>& x, xt::xtensor<double, 2>& b) const
+inline void
+MatrixDiagonal::dot(const array_type::tensor<double, 2>& x, array_type::tensor<double, 2>& b) const
 {
     GOOSEFEM_ASSERT(xt::has_shape(x, {m_nnode, m_ndim}));
     GOOSEFEM_ASSERT(xt::has_shape(b, {m_nnode, m_ndim}));
@@ -110,7 +111,8 @@ inline void MatrixDiagonal::dot(const xt::xtensor<double, 2>& x, xt::xtensor<dou
     }
 }
 
-inline void MatrixDiagonal::dot(const xt::xtensor<double, 1>& x, xt::xtensor<double, 1>& b) const
+inline void
+MatrixDiagonal::dot(const array_type::tensor<double, 1>& x, array_type::tensor<double, 1>& b) const
 {
     GOOSEFEM_ASSERT(x.size() == m_ndof);
     GOOSEFEM_ASSERT(b.size() == m_ndof);
@@ -118,7 +120,8 @@ inline void MatrixDiagonal::dot(const xt::xtensor<double, 1>& x, xt::xtensor<dou
     xt::noalias(b) = m_A * x;
 }
 
-inline void MatrixDiagonal::solve(const xt::xtensor<double, 2>& b, xt::xtensor<double, 2>& x)
+inline void
+MatrixDiagonal::solve(const array_type::tensor<double, 2>& b, array_type::tensor<double, 2>& x)
 {
     GOOSEFEM_ASSERT(xt::has_shape(b, {m_nnode, m_ndim}));
     GOOSEFEM_ASSERT(xt::has_shape(x, {m_nnode, m_ndim}));
@@ -133,7 +136,8 @@ inline void MatrixDiagonal::solve(const xt::xtensor<double, 2>& b, xt::xtensor<d
     }
 }
 
-inline void MatrixDiagonal::solve(const xt::xtensor<double, 1>& b, xt::xtensor<double, 1>& x)
+inline void
+MatrixDiagonal::solve(const array_type::tensor<double, 1>& b, array_type::tensor<double, 1>& x)
 {
     GOOSEFEM_ASSERT(b.size() == m_ndof);
     GOOSEFEM_ASSERT(x.size() == m_ndof);
@@ -141,35 +145,37 @@ inline void MatrixDiagonal::solve(const xt::xtensor<double, 1>& b, xt::xtensor<d
     xt::noalias(x) = m_inv * b;
 }
 
-inline xt::xtensor<double, 1> MatrixDiagonal::Todiagonal() const
+inline array_type::tensor<double, 1> MatrixDiagonal::Todiagonal() const
 {
     return m_A;
 }
 
-inline xt::xtensor<double, 2> MatrixDiagonal::Dot(const xt::xtensor<double, 2>& x) const
+inline array_type::tensor<double, 2>
+MatrixDiagonal::Dot(const array_type::tensor<double, 2>& x) const
 {
-    xt::xtensor<double, 2> b = xt::empty<double>({m_nnode, m_ndim});
+    array_type::tensor<double, 2> b = xt::empty<double>({m_nnode, m_ndim});
     this->dot(x, b);
     return b;
 }
 
-inline xt::xtensor<double, 1> MatrixDiagonal::Dot(const xt::xtensor<double, 1>& x) const
+inline array_type::tensor<double, 1>
+MatrixDiagonal::Dot(const array_type::tensor<double, 1>& x) const
 {
-    xt::xtensor<double, 1> b = xt::empty<double>({m_ndof});
+    array_type::tensor<double, 1> b = xt::empty<double>({m_ndof});
     this->dot(x, b);
     return b;
 }
 
-inline xt::xtensor<double, 2> MatrixDiagonal::Solve(const xt::xtensor<double, 2>& b)
+inline array_type::tensor<double, 2> MatrixDiagonal::Solve(const array_type::tensor<double, 2>& b)
 {
-    xt::xtensor<double, 2> x = xt::empty<double>({m_nnode, m_ndim});
+    array_type::tensor<double, 2> x = xt::empty<double>({m_nnode, m_ndim});
     this->solve(b, x);
     return x;
 }
 
-inline xt::xtensor<double, 1> MatrixDiagonal::Solve(const xt::xtensor<double, 1>& b)
+inline array_type::tensor<double, 1> MatrixDiagonal::Solve(const array_type::tensor<double, 1>& b)
 {
-    xt::xtensor<double, 1> x = xt::empty<double>({m_ndof});
+    array_type::tensor<double, 1> x = xt::empty<double>({m_ndof});
     this->solve(b, x);
     return x;
 }

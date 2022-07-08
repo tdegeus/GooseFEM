@@ -113,66 +113,66 @@ void init_MeshQuad4Map(py::module& m)
 
         .def(
             "meanToCoarse",
-            py::overload_cast<const xt::xtensor<double, 1>&>(
+            py::overload_cast<const xt::pytensor<double, 1>&>(
                 &GooseFEM::Mesh::Quad4::Map::RefineRegular::meanToCoarse<double, 1>, py::const_))
 
         .def(
             "meanToCoarse",
-            py::overload_cast<const xt::xtensor<double, 2>&>(
+            py::overload_cast<const xt::pytensor<double, 2>&>(
                 &GooseFEM::Mesh::Quad4::Map::RefineRegular::meanToCoarse<double, 2>, py::const_))
 
         .def(
             "meanToCoarse",
-            py::overload_cast<const xt::xtensor<double, 3>&>(
+            py::overload_cast<const xt::pytensor<double, 3>&>(
                 &GooseFEM::Mesh::Quad4::Map::RefineRegular::meanToCoarse<double, 3>, py::const_))
 
         .def(
             "meanToCoarse",
-            py::overload_cast<const xt::xtensor<double, 4>&>(
+            py::overload_cast<const xt::pytensor<double, 4>&>(
                 &GooseFEM::Mesh::Quad4::Map::RefineRegular::meanToCoarse<double, 4>, py::const_))
 
         .def(
             "averageToCoarse",
-            py::overload_cast<const xt::xtensor<double, 1>&, const xt::xtensor<double, 1>&>(
+            py::overload_cast<const xt::pytensor<double, 1>&, const xt::pytensor<double, 1>&>(
                 &GooseFEM::Mesh::Quad4::Map::RefineRegular::averageToCoarse<double, 1, double>,
                 py::const_))
 
         .def(
             "averageToCoarse",
-            py::overload_cast<const xt::xtensor<double, 2>&, const xt::xtensor<double, 2>&>(
+            py::overload_cast<const xt::pytensor<double, 2>&, const xt::pytensor<double, 2>&>(
                 &GooseFEM::Mesh::Quad4::Map::RefineRegular::averageToCoarse<double, 2, double>,
                 py::const_))
 
         .def(
             "averageToCoarse",
-            py::overload_cast<const xt::xtensor<double, 3>&, const xt::xtensor<double, 3>&>(
+            py::overload_cast<const xt::pytensor<double, 3>&, const xt::pytensor<double, 3>&>(
                 &GooseFEM::Mesh::Quad4::Map::RefineRegular::averageToCoarse<double, 3, double>,
                 py::const_))
 
         .def(
             "averageToCoarse",
-            py::overload_cast<const xt::xtensor<double, 4>&, const xt::xtensor<double, 4>&>(
+            py::overload_cast<const xt::pytensor<double, 4>&, const xt::pytensor<double, 4>&>(
                 &GooseFEM::Mesh::Quad4::Map::RefineRegular::averageToCoarse<double, 4, double>,
                 py::const_))
 
         .def(
             "mapToFine",
-            py::overload_cast<const xt::xtensor<double, 1>&>(
+            py::overload_cast<const xt::pytensor<double, 1>&>(
                 &GooseFEM::Mesh::Quad4::Map::RefineRegular::mapToFine<double, 1>, py::const_))
 
         .def(
             "mapToFine",
-            py::overload_cast<const xt::xtensor<double, 2>&>(
+            py::overload_cast<const xt::pytensor<double, 2>&>(
                 &GooseFEM::Mesh::Quad4::Map::RefineRegular::mapToFine<double, 2>, py::const_))
 
         .def(
             "mapToFine",
-            py::overload_cast<const xt::xtensor<double, 3>&>(
+            py::overload_cast<const xt::pytensor<double, 3>&>(
                 &GooseFEM::Mesh::Quad4::Map::RefineRegular::mapToFine<double, 3>, py::const_))
 
         .def(
             "mapToFine",
-            py::overload_cast<const xt::xtensor<double, 4>&>(
+            py::overload_cast<const xt::pytensor<double, 4>&>(
                 &GooseFEM::Mesh::Quad4::Map::RefineRegular::mapToFine<double, 4>, py::const_))
 
         .def("__repr__", [](const GooseFEM::Mesh::Quad4::Map::RefineRegular&) {
@@ -193,25 +193,25 @@ void init_MeshQuad4Map(py::module& m)
 
         .def(
             "mapToRegular",
-            py::overload_cast<const xt::xtensor<double, 1>&>(
+            py::overload_cast<const xt::pytensor<double, 1>&>(
                 &GooseFEM::Mesh::Quad4::Map::FineLayer2Regular::mapToRegular<double, 1>,
                 py::const_))
 
         .def(
             "mapToRegular",
-            py::overload_cast<const xt::xtensor<double, 2>&>(
+            py::overload_cast<const xt::pytensor<double, 2>&>(
                 &GooseFEM::Mesh::Quad4::Map::FineLayer2Regular::mapToRegular<double, 2>,
                 py::const_))
 
         .def(
             "mapToRegular",
-            py::overload_cast<const xt::xtensor<double, 3>&>(
+            py::overload_cast<const xt::pytensor<double, 3>&>(
                 &GooseFEM::Mesh::Quad4::Map::FineLayer2Regular::mapToRegular<double, 3>,
                 py::const_))
 
         .def(
             "mapToRegular",
-            py::overload_cast<const xt::xtensor<double, 4>&>(
+            py::overload_cast<const xt::pytensor<double, 4>&>(
                 &GooseFEM::Mesh::Quad4::Map::FineLayer2Regular::mapToRegular<double, 4>,
                 py::const_))
 

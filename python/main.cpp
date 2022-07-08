@@ -14,6 +14,7 @@
 
 #include <Eigen/Eigen>
 
+#define GOOSEFEM_USE_XTENSOR_PYTHON
 #include "Allocate.hpp"
 #include "Element.hpp"
 #include "ElementHex8.hpp"

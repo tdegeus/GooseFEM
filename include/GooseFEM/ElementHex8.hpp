@@ -23,12 +23,12 @@ inline size_t nip()
     return 8;
 }
 
-inline xt::xtensor<double, 2> xi()
+inline array_type::tensor<double, 2> xi()
 {
     size_t nip = 8;
     size_t ndim = 3;
 
-    xt::xtensor<double, 2> xi = xt::empty<double>({nip, ndim});
+    array_type::tensor<double, 2> xi = xt::empty<double>({nip, ndim});
 
     xi(0, 0) = -1.0 / std::sqrt(3.0);
     xi(0, 1) = -1.0 / std::sqrt(3.0);
@@ -65,11 +65,11 @@ inline xt::xtensor<double, 2> xi()
     return xi;
 }
 
-inline xt::xtensor<double, 1> w()
+inline array_type::tensor<double, 1> w()
 {
     size_t nip = 8;
 
-    xt::xtensor<double, 1> w = xt::empty<double>({nip});
+    array_type::tensor<double, 1> w = xt::empty<double>({nip});
 
     w(0) = 1.0;
     w(1) = 1.0;
@@ -92,12 +92,12 @@ inline size_t nip()
     return 8;
 }
 
-inline xt::xtensor<double, 2> xi()
+inline array_type::tensor<double, 2> xi()
 {
     size_t nip = 8;
     size_t ndim = 3;
 
-    xt::xtensor<double, 2> xi = xt::empty<double>({nip, ndim});
+    array_type::tensor<double, 2> xi = xt::empty<double>({nip, ndim});
 
     xi(0, 0) = -1.0;
     xi(0, 1) = -1.0;
@@ -134,11 +134,11 @@ inline xt::xtensor<double, 2> xi()
     return xi;
 }
 
-inline xt::xtensor<double, 1> w()
+inline array_type::tensor<double, 1> w()
 {
     size_t nip = 8;
 
-    xt::xtensor<double, 1> w = xt::empty<double>({nip});
+    array_type::tensor<double, 1> w = xt::empty<double>({nip});
 
     w(0) = 1.0;
     w(1) = 1.0;

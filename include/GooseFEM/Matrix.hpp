@@ -13,7 +13,9 @@ Implementation of Matrix.h
 
 namespace GooseFEM {
 
-inline Matrix::Matrix(const xt::xtensor<size_t, 2>& conn, const xt::xtensor<size_t, 2>& dofs)
+inline Matrix::Matrix(
+    const array_type::tensor<size_t, 2>& conn,
+    const array_type::tensor<size_t, 2>& dofs)
 {
     m_conn = conn;
     m_dofs = dofs;
@@ -54,12 +56,12 @@ inline size_t Matrix::ndof() const
     return m_ndof;
 }
 
-inline xt::xtensor<size_t, 2> Matrix::dofs() const
+inline array_type::tensor<size_t, 2> Matrix::dofs() const
 {
     return m_dofs;
 }
 
-inline void Matrix::assemble(const xt::xtensor<double, 3>& elemmat)
+inline void Matrix::assemble(const array_type::tensor<double, 3>& elemmat)
 {
     GOOSEFEM_ASSERT(xt::has_shape(elemmat, {m_nelem, m_nne * m_ndim, m_nne * m_ndim}));
 
@@ -85,9 +87,9 @@ inline void Matrix::assemble(const xt::xtensor<double, 3>& elemmat)
 }
 
 inline void Matrix::set(
-    const xt::xtensor<size_t, 1>& rows,
-    const xt::xtensor<size_t, 1>& cols,
-    const xt::xtensor<double, 2>& matrix)
+    const array_type::tensor<size_t, 1>& rows,
+    const array_type::tensor<size_t, 1>& cols,
+    const array_type::tensor<double, 2>& matrix)
 {
     GOOSEFEM_ASSERT(rows.size() == matrix.shape(0));
     GOOSEFEM_ASSERT(cols.size() == matrix.shape(1));
@@ -107,9 +109,9 @@ inline void Matrix::set(
 }
 
 inline void Matrix::add(
-    const xt::xtensor<size_t, 1>& rows,
-    const xt::xtensor<size_t, 1>& cols,
-    const xt::xtensor<double, 2>& matrix)
+    const array_type::tensor<size_t, 1>& rows,
+    const array_type::tensor<size_t, 1>& cols,
+    const array_type::tensor<double, 2>& matrix)
 {
     GOOSEFEM_ASSERT(rows.size() == matrix.shape(0));
     GOOSEFEM_ASSERT(cols.size() == matrix.shape(1));
@@ -131,7 +133,7 @@ inline void Matrix::add(
     m_changed = true;
 }
 
-inline void Matrix::todense(xt::xtensor<double, 2>& ret) const
+inline void Matrix::todense(array_type::tensor<double, 2>& ret) const
 {
     GOOSEFEM_ASSERT(xt::has_shape(ret, {m_ndof, m_ndof}));
 
@@ -144,21 +146,23 @@ inline void Matrix::todense(xt::xtensor<double, 2>& ret) const
     }
 }
 
-inline xt::xtensor<double, 2> Matrix::Todense() const
+inline array_type::tensor<double, 2> Matrix::Todense() const
 {
-    xt::xtensor<double, 2> ret = xt::empty<double>({m_ndof, m_ndof});
+    array_type::tensor<double, 2> ret = xt::empty<double>({m_ndof, m_ndof});
     this->todense(ret);
     return ret;
 }
 
-inline void Matrix::dot(const xt::xtensor<double, 2>& x, xt::xtensor<double, 2>& b) const
+inline void
+Matrix::dot(const array_type::tensor<double, 2>& x, array_type::tensor<double, 2>& b) const
 {
     GOOSEFEM_ASSERT(xt::has_shape(b, {m_nnode, m_ndim}));
     GOOSEFEM_ASSERT(xt::has_shape(x, {m_nnode, m_ndim}));
     this->asNode(m_A * this->AsDofs(x), b);
 }
 
-inline void Matrix::dot(const xt::xtensor<double, 1>& x, xt::xtensor<double, 1>& b) const
+inline void
+Matrix::dot(const array_type::tensor<double, 1>& x, array_type::tensor<double, 1>& b) const
 {
     GOOSEFEM_ASSERT(b.size() == m_ndof);
     GOOSEFEM_ASSERT(x.size() == m_ndof);
@@ -167,21 +171,21 @@ inline void Matrix::dot(const xt::xtensor<double, 1>& x, xt::xtensor<double, 1>&
         m_A * Eigen::Map<const Eigen::VectorXd>(x.data(), x.size());
 }
 
-inline xt::xtensor<double, 2> Matrix::Dot(const xt::xtensor<double, 2>& x) const
+inline array_type::tensor<double, 2> Matrix::Dot(const array_type::tensor<double, 2>& x) const
 {
-    xt::xtensor<double, 2> b = xt::empty<double>({m_nnode, m_ndim});
+    array_type::tensor<double, 2> b = xt::empty<double>({m_nnode, m_ndim});
     this->dot(x, b);
     return b;
 }
 
-inline xt::xtensor<double, 1> Matrix::Dot(const xt::xtensor<double, 1>& x) const
+inline array_type::tensor<double, 1> Matrix::Dot(const array_type::tensor<double, 1>& x) const
 {
-    xt::xtensor<double, 1> b = xt::empty<double>({m_ndof});
+    array_type::tensor<double, 1> b = xt::empty<double>({m_ndof});
     this->dot(x, b);
     return b;
 }
 
-inline Eigen::VectorXd Matrix::AsDofs(const xt::xtensor<double, 2>& nodevec) const
+inline Eigen::VectorXd Matrix::AsDofs(const array_type::tensor<double, 2>& nodevec) const
 {
     GOOSEFEM_ASSERT(xt::has_shape(nodevec, {m_nnode, m_ndim}));
 
@@ -197,7 +201,8 @@ inline Eigen::VectorXd Matrix::AsDofs(const xt::xtensor<double, 2>& nodevec) con
     return dofval;
 }
 
-inline void Matrix::asNode(const Eigen::VectorXd& dofval, xt::xtensor<double, 2>& nodevec) const
+inline void
+Matrix::asNode(const Eigen::VectorXd& dofval, array_type::tensor<double, 2>& nodevec) const
 {
     GOOSEFEM_ASSERT(static_cast<size_t>(dofval.size()) == m_ndof);
     GOOSEFEM_ASSERT(xt::has_shape(nodevec, {m_nnode, m_ndim}));
@@ -224,8 +229,8 @@ inline void MatrixSolver<Solver>::factorize(Matrix& matrix)
 template <class Solver>
 inline void MatrixSolver<Solver>::solve(
     Matrix& matrix,
-    const xt::xtensor<double, 2>& b,
-    xt::xtensor<double, 2>& x)
+    const array_type::tensor<double, 2>& b,
+    array_type::tensor<double, 2>& x)
 {
     GOOSEFEM_ASSERT(xt::has_shape(b, {matrix.m_nnode, matrix.m_ndim}));
     GOOSEFEM_ASSERT(xt::has_shape(x, {matrix.m_nnode, matrix.m_ndim}));
@@ -237,8 +242,8 @@ inline void MatrixSolver<Solver>::solve(
 template <class Solver>
 inline void MatrixSolver<Solver>::solve(
     Matrix& matrix,
-    const xt::xtensor<double, 1>& b,
-    xt::xtensor<double, 1>& x)
+    const array_type::tensor<double, 1>& b,
+    array_type::tensor<double, 1>& x)
 {
     GOOSEFEM_ASSERT(b.size() == matrix.m_ndof);
     GOOSEFEM_ASSERT(x.size() == matrix.m_ndof);
@@ -248,19 +253,19 @@ inline void MatrixSolver<Solver>::solve(
 }
 
 template <class Solver>
-inline xt::xtensor<double, 2>
-MatrixSolver<Solver>::Solve(Matrix& matrix, const xt::xtensor<double, 2>& b)
+inline array_type::tensor<double, 2>
+MatrixSolver<Solver>::Solve(Matrix& matrix, const array_type::tensor<double, 2>& b)
 {
-    xt::xtensor<double, 2> x = xt::empty<double>({matrix.m_nnode, matrix.m_ndim});
+    array_type::tensor<double, 2> x = xt::empty<double>({matrix.m_nnode, matrix.m_ndim});
     this->solve(matrix, b, x);
     return x;
 }
 
 template <class Solver>
-inline xt::xtensor<double, 1>
-MatrixSolver<Solver>::Solve(Matrix& matrix, const xt::xtensor<double, 1>& b)
+inline array_type::tensor<double, 1>
+MatrixSolver<Solver>::Solve(Matrix& matrix, const array_type::tensor<double, 1>& b)
 {
-    xt::xtensor<double, 1> x = xt::empty<double>({matrix.m_ndof});
+    array_type::tensor<double, 1> x = xt::empty<double>({matrix.m_ndof});
     this->solve(matrix, b, x);
     return x;
 }
