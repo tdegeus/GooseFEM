@@ -18,11 +18,11 @@ namespace py = pybind11;
 template <class C, class P>
 void register_Element_QuadratureBase(P& cls)
 {
-    cls.def("nelem", &C::nelem);
-    cls.def("nne", &C::nne);
-    cls.def("ndim", &C::ndim);
-    cls.def("tdim", &C::tdim);
-    cls.def("nip", &C::nip);
+    cls.def_property_readonly("nelem", &C::nelem, "Number of elements");
+    cls.def_property_readonly("nne", &C::nne, "Number of nodes per element");
+    cls.def_property_readonly("ndim", &C::ndim, "Number of spatial dimensions");
+    cls.def_property_readonly("tdim", &C::tdim, "Number of spatial dimensions for tensors");
+    cls.def_property_readonly("nip", &C::nip, "Number of integration points per element");
 
     // todo: https://github.com/xtensor-stack/xtensor-python/issues/265
     // cls.def("asTensor",
@@ -73,7 +73,7 @@ void register_Element_QuadratureBaseCartesian(P& cls)
 {
     cls.def("update_x", &C::template update_x<xt::pytensor<double, 3>>, py::arg("x"));
 
-    cls.def("dV", &C::dV, "Integration point volume (qscalar)");
+    cls.def_property_readonly("dV", &C::dV, "Integration point volume (qscalar)");
 
     cls.def(
         "InterpQuad_vector",

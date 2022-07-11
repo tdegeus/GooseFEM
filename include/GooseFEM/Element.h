@@ -584,7 +584,7 @@ public:
 
     \return volume stored per element, per integration point [#nelem, #nip].
     */
-    auto dV() const -> array_type::tensor<double, 2>
+    auto dV() const -> const array_type::tensor<double, 2>&
     {
         return derived_cast().m_vol;
     }
