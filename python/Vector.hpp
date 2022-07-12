@@ -22,13 +22,13 @@ void init_Vector(py::module& m)
             py::arg("conn"),
             py::arg("dofs"))
 
-        .def("nelem", &GooseFEM::Vector::nelem)
-        .def("nne", &GooseFEM::Vector::nne)
-        .def("nnode", &GooseFEM::Vector::nnode)
-        .def("ndim", &GooseFEM::Vector::ndim)
-        .def("ndof", &GooseFEM::Vector::ndof)
-        .def("conn", &GooseFEM::Vector::conn)
-        .def("dofs", &GooseFEM::Vector::dofs)
+        .def_property_readonly("nelem", &GooseFEM::Vector::nelem)
+        .def_property_readonly("nne", &GooseFEM::Vector::nne)
+        .def_property_readonly("nnode", &GooseFEM::Vector::nnode)
+        .def_property_readonly("ndim", &GooseFEM::Vector::ndim)
+        .def_property_readonly("ndof", &GooseFEM::Vector::ndof)
+        .def_property_readonly("conn", &GooseFEM::Vector::conn)
+        .def_property_readonly("dofs", &GooseFEM::Vector::dofs)
 
         .def(
             "copy",

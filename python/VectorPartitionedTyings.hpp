@@ -30,14 +30,14 @@ void init_VectorPartitionedTyings(py::module& m)
             py::arg("Cdp"),
             py::arg("Cdi"))
 
-        .def("nnu", &GooseFEM::VectorPartitionedTyings::nnu)
-        .def("nnp", &GooseFEM::VectorPartitionedTyings::nnp)
-        .def("nni", &GooseFEM::VectorPartitionedTyings::nni)
-        .def("nnd", &GooseFEM::VectorPartitionedTyings::nnd)
-        .def("iiu", &GooseFEM::VectorPartitionedTyings::iiu)
-        .def("iip", &GooseFEM::VectorPartitionedTyings::iip)
-        .def("iii", &GooseFEM::VectorPartitionedTyings::iii)
-        .def("iid", &GooseFEM::VectorPartitionedTyings::iid)
+        .def_property_readonly("nnu", &GooseFEM::VectorPartitionedTyings::nnu)
+        .def_property_readonly("nnp", &GooseFEM::VectorPartitionedTyings::nnp)
+        .def_property_readonly("nni", &GooseFEM::VectorPartitionedTyings::nni)
+        .def_property_readonly("nnd", &GooseFEM::VectorPartitionedTyings::nnd)
+        .def_property_readonly("iiu", &GooseFEM::VectorPartitionedTyings::iiu)
+        .def_property_readonly("iip", &GooseFEM::VectorPartitionedTyings::iip)
+        .def_property_readonly("iii", &GooseFEM::VectorPartitionedTyings::iii)
+        .def_property_readonly("iid", &GooseFEM::VectorPartitionedTyings::iid)
 
         .def(
             "copy_p",

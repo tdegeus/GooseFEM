@@ -50,7 +50,8 @@ void init_MeshHex8(py::module& mod)
             py::arg("h") = 1.0,
             py::arg("nfine") = 1);
 
-        cls.def("elementsMiddleLayer", &GooseFEM::Mesh::Hex8::FineLayer::elementsMiddleLayer);
+        cls.def_property_readonly(
+            "elementsMiddleLayer", &GooseFEM::Mesh::Hex8::FineLayer::elementsMiddleLayer);
 
         cls.def("__repr__", [](const GooseFEM::Mesh::Hex8::FineLayer&) {
             return "<GooseFEM.Mesh.Hex8.FineLayer>";

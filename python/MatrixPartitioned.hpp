@@ -28,10 +28,10 @@ void init_MatrixPartitioned(py::module& m)
             py::arg("dofs"),
             py::arg("iip"))
 
-        .def("nnu", &GooseFEM::MatrixPartitioned::nnu)
-        .def("nnp", &GooseFEM::MatrixPartitioned::nnp)
-        .def("iiu", &GooseFEM::MatrixPartitioned::iiu)
-        .def("iip", &GooseFEM::MatrixPartitioned::iip)
+        .def_property_readonly("nnu", &GooseFEM::MatrixPartitioned::nnu)
+        .def_property_readonly("nnp", &GooseFEM::MatrixPartitioned::nnp)
+        .def_property_readonly("iiu", &GooseFEM::MatrixPartitioned::iiu)
+        .def_property_readonly("iip", &GooseFEM::MatrixPartitioned::iip)
 
         .def(
             "Reaction",
