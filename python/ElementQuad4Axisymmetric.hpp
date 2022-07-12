@@ -37,7 +37,10 @@ void init_ElementQuad4Axisymmetric(py::module& m)
     register_Element_QuadratureBase<GooseFEM::Element::Quad4::QuadratureAxisymmetric>(cls);
     register_Element_QuadratureBaseCartesian<GooseFEM::Element::Quad4::QuadratureAxisymmetric>(cls);
 
-    cls.def("B", &GooseFEM::Element::Quad4::QuadratureAxisymmetric::B);
+    cls.def_property_readonly(
+        "B",
+        &GooseFEM::Element::Quad4::QuadratureAxisymmetric::B,
+        "B-matrix (shape function gradients) [nelem, nne, tdim, tdim, tdim]");
 
     cls.def("__repr__", [](const GooseFEM::Element::Quad4::QuadratureAxisymmetric&) {
         return "<GooseFEM.Element.Quad4.QuadratureAxisymmetric>";

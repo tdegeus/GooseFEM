@@ -570,18 +570,16 @@ public:
     }
 
     /**
-    Get the shape function gradients (in global coordinates).
-
+    Shape function gradients (in global coordinates).
     \return ``gradN`` stored per element, per integration point [#nelem, #nip, #nne, #ndim].
     */
-    auto GradN() const -> array_type::tensor<double, 4>
+    auto GradN() const -> const array_type::tensor<double, 4>&
     {
         return derived_cast().m_dNx;
     }
 
     /**
-    Get the integration volume.
-
+    Integration volume.
     \return volume stored per element, per integration point [#nelem, #nip].
     */
     auto dV() const -> const array_type::tensor<double, 2>&
