@@ -1537,7 +1537,26 @@ such that the center of gravity is simply::
 \return Center of gravity `[ndim]`.
 */
 template <class C, class E>
-inline array_type::tensor<double, 2> nodal_mass(const C& coor, const E& conn, ElementType type);
+inline array_type::tensor<double, 2> nodal_mass(const C& coor, const E& conn, ElementType type)
+{
+    auto dof = dofs(coor.shape(0), coor.shape(1));
+    GooseFEM::MatrixDiagonal M(conn, dof);
+    GooseFEM::Vector vector(conn, dof);
+    array_type::tensor<double, 2> rho = xt::ones<double>(conn.shape());
+
+    if (type == ElementType::Quad4) {
+        GooseFEM::Element::Quad4::Quadrature quad(
+            vector.AsElement(coor),
+            GooseFEM::Element::Quad4::Nodal::xi(),
+            GooseFEM::Element::Quad4::Nodal::w());
+        M.assemble(quad.Int_N_scalar_NT_dV(rho));
+    }
+    else {
+        throw std::runtime_error("Element-type not implemented");
+    }
+
+    return vector.AsNode(M.Todiagonal());
+}
 
 /**
 Compute the mass of each node in the mesh.
@@ -1553,7 +1572,34 @@ such that the center of gravity is simply::
 \return Center of gravity `[ndim]`.
 */
 template <class C, class E>
-inline array_type::tensor<double, 2> nodal_mass(const C& coor, const E& conn);
+inline array_type::tensor<double, 2> nodal_mass(const C& coor, const E& conn)
+{
+    return nodal_mass(coor, conn, defaultElementType(coor, conn));
+}
+
+namespace detail {
+
+// todo: remove after upstream fix
+template <class T>
+array_type::tensor<double, 1> average_axis_0(const T& data, const T& weights)
+{
+    GOOSEFEM_ASSERT(data.dimension() == 2);
+    GOOSEFEM_ASSERT(xt::has_shape(data, weights.shape()));
+
+    array_type::tensor<double, 1> ret = xt::zeros<double>({weights.shape(1)});
+
+    for (size_t j = 0; j < weights.shape(1); ++j) {
+        double norm = 0.0;
+        for (size_t i = 0; i < weights.shape(0); ++i) {
+            ret(j) += data(i, j) * weights(i, j);
+            norm += weights(i, j);
+        }
+        ret(j) /= norm;
+    }
+    return ret;
+}
+
+} // namespace detail
 
 /**
 Compute the center of gravity of a mesh.
@@ -1567,7 +1613,12 @@ Compute the center of gravity of a mesh.
 */
 template <class C, class E>
 inline array_type::tensor<double, 1>
-center_of_gravity(const C& coor, const E& conn, ElementType type);
+center_of_gravity(const C& coor, const E& conn, ElementType type)
+{
+    // todo: remove after upstream fix
+    return detail::average_axis_0(coor, nodal_mass(coor, conn, type));
+    // return xt::average(coor, nodal_mass(coor, conn, type), 0);
+}
 
 /**
 Compute the center of gravity of a mesh.
@@ -1579,7 +1630,12 @@ Compute the center of gravity of a mesh.
 \return Center of gravity `[ndim]`.
 */
 template <class C, class E>
-inline array_type::tensor<double, 1> center_of_gravity(const C& coor, const E& conn);
+inline array_type::tensor<double, 1> center_of_gravity(const C& coor, const E& conn)
+{
+    // todo: remove after upstream fix
+    return detail::average_axis_0(coor, nodal_mass(coor, conn, defaultElementType(coor, conn)));
+    // return xt::average(coor, nodal_mass(coor, conn, defaultElementType(coor, conn)), 0);
+}
 
 } // namespace Mesh
 } // namespace GooseFEM

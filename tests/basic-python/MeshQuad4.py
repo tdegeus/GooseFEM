@@ -15,9 +15,9 @@ class Test_MeshQuad4(unittest.TestCase):
         """
 
         mesh = gf.Mesh.Quad4.FineLayer(27, 27)
-        replica = gf.Mesh.Quad4.FineLayer(mesh.coor(), mesh.conn())
-        self.assertTrue(np.allclose(mesh.coor(), replica.coor()))
-        self.assertTrue(np.all(np.equal(mesh.conn(), replica.conn())))
+        replica = gf.Mesh.Quad4.FineLayer(mesh.coor, mesh.conn)
+        self.assertTrue(np.allclose(mesh.coor, replica.coor))
+        self.assertTrue(np.all(np.equal(mesh.conn, replica.conn)))
 
 
 if __name__ == "__main__":

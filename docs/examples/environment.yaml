@@ -9,7 +9,7 @@ dependencies:
 - gmatelastoplastic
 - gmatelastoplasticfinitestrainsimo
 - gmatelastoplasticqpot
-- gmatelastoplasticqpot
+- qpot <0.12.0 # remove when "gmatelastoplasticqpot" is updated
 - gmatnonlinearelastic
 - h5py
 - highfive
