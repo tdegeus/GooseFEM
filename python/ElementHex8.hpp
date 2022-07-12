@@ -37,7 +37,10 @@ void init_ElementHex8(py::module& m)
     register_Element_QuadratureBase<GooseFEM::Element::Hex8::Quadrature>(cls);
     register_Element_QuadratureBaseCartesian<GooseFEM::Element::Hex8::Quadrature>(cls);
 
-    cls.def("GradN", &GooseFEM::Element::Hex8::Quadrature::GradN);
+    cls.def_property_readonly(
+        "GradN",
+        &GooseFEM::Element::Hex8::Quadrature::GradN,
+        "Shape function gradients  [nelem, nip, nne, ndim]");
 
     cls.def("__repr__", [](const GooseFEM::Element::Hex8::Quadrature&) {
         return "<GooseFEM.Element.Hex8.Quadrature>";

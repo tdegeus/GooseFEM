@@ -37,7 +37,10 @@ void init_ElementQuad4(py::module& m)
     register_Element_QuadratureBase<GooseFEM::Element::Quad4::Quadrature>(cls);
     register_Element_QuadratureBaseCartesian<GooseFEM::Element::Quad4::Quadrature>(cls);
 
-    cls.def("GradN", &GooseFEM::Element::Quad4::Quadrature::GradN);
+    cls.def_property_readonly(
+        "GradN",
+        &GooseFEM::Element::Quad4::Quadrature::GradN,
+        "Shape function gradients [nelem, nip, nne, ndim]");
 
     cls.def("__repr__", [](const GooseFEM::Element::Quad4::Quadrature&) {
         return "<GooseFEM.Element.Quad4.Quadrature>";
