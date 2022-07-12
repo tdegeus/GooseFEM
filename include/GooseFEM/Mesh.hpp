@@ -1820,47 +1820,6 @@ elemmap2nodemap(const T& elem_map, const C& coor, const E& conn)
     return elemmap2nodemap(elem_map, coor, conn, defaultElementType(coor, conn));
 }
 
-template <class C, class E>
-inline array_type::tensor<double, 2> nodal_mass(const C& coor, const E& conn, ElementType type)
-{
-    auto dof = dofs(coor.shape(0), coor.shape(1));
-    GooseFEM::MatrixDiagonal M(conn, dof);
-    GooseFEM::Vector vector(conn, dof);
-    array_type::tensor<double, 2> rho = xt::ones<double>(conn.shape());
-
-    if (type == ElementType::Quad4) {
-        GooseFEM::Element::Quad4::Quadrature quad(
-            vector.AsElement(coor),
-            GooseFEM::Element::Quad4::Nodal::xi(),
-            GooseFEM::Element::Quad4::Nodal::w());
-        M.assemble(quad.Int_N_scalar_NT_dV(rho));
-    }
-    else {
-        throw std::runtime_error("Element-type not implemented");
-    }
-
-    return vector.AsNode(M.Todiagonal());
-}
-
-template <class C, class E>
-inline array_type::tensor<double, 2> nodal_mass(const C& coor, const E& conn)
-{
-    return nodal_mass(coor, conn, defaultElementType(coor, conn));
-}
-
-template <class C, class E>
-inline array_type::tensor<double, 1>
-center_of_gravity(const C& coor, const E& conn, ElementType type)
-{
-    return xt::average(coor, nodal_mass(coor, conn, type), 0);
-}
-
-template <class C, class E>
-inline array_type::tensor<double, 1> center_of_gravity(const C& coor, const E& conn)
-{
-    return xt::average(coor, nodal_mass(coor, conn, defaultElementType(coor, conn)), 0);
-}
-
 } // namespace Mesh
 } // namespace GooseFEM
 
