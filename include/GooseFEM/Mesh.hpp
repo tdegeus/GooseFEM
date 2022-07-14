@@ -76,7 +76,6 @@ inline auto RegularBase<D>::h() const
     return derived_cast().m_h;
 }
 
-
 template <class D>
 inline auto RegularBase<D>::coor() const
 {
