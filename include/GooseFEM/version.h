@@ -37,11 +37,25 @@ overwrite the automatic version.
 
 namespace GooseFEM {
 
+namespace detail {
+
+inline std::string unquote(const std::string& arg)
+{
+    std::string ret = arg;
+    ret.erase(std::remove(ret.begin(), ret.end(), '\"'), ret.end());
+    return ret;
+}
+
+} // namespace detail
+
 /**
 Return version string, e.g. `"0.8.0"`
 \return String.
 */
-inline std::string version();
+inline std::string version()
+{
+    return detail::unquote(std::string(QUOTE(GOOSEFEM_VERSION)));
+}
 
 /**
 Return versions of this library and of all of its dependencies.
@@ -53,10 +67,29 @@ The output is a list of strings, e.g.::
 
 \return List of strings.
 */
-inline std::vector<std::string> version_dependencies();
+inline std::vector<std::string> version_dependencies()
+{
+    std::vector<std::string> ret;
+
+    ret.push_back("goosefem=" + version());
+
+    ret.push_back(
+        "xtensor=" + detail::unquote(std::string(QUOTE(XTENSOR_VERSION_MAJOR))) + "." +
+        detail::unquote(std::string(QUOTE(XTENSOR_VERSION_MINOR))) + "." +
+        detail::unquote(std::string(QUOTE(XTENSOR_VERSION_PATCH))));
+
+#if defined(GOOSEFEM_EIGEN) || defined(EIGEN_WORLD_VERSION)
+
+    ret.push_back(
+        "eigen=" + detail::unquote(std::string(QUOTE(EIGEN_WORLD_VERSION))) + "." +
+        detail::unquote(std::string(QUOTE(EIGEN_MAJOR_VERSION))) + "." +
+        detail::unquote(std::string(QUOTE(EIGEN_MINOR_VERSION))));
+
+#endif
+
+    return ret;
+}
 
 } // namespace GooseFEM
-
-#include "version.hpp"
 
 #endif
