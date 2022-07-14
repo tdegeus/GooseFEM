@@ -76,11 +76,6 @@ inline auto RegularBase<D>::h() const
     return derived_cast().m_h;
 }
 
-template <class D>
-inline auto RegularBase<D>::getElementType() const
-{
-    return derived_cast().getElementType_impl();
-}
 
 template <class D>
 inline auto RegularBase<D>::coor() const

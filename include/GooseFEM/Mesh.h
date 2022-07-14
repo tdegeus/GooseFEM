@@ -98,7 +98,10 @@ public:
     The ElementType().
     \return element type
     */
-    auto getElementType() const;
+    auto getElementType() const
+    {
+        return derived_cast().getElementType_impl();
+    }
 
     /**
     Nodal coordinates [#nnode, #ndim].

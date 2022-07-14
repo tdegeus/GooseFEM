@@ -1183,22 +1183,6 @@ inline array_type::tensor<size_t, 2> FineLayer::conn_impl() const
     return ret;
 }
 
-inline array_type::tensor<size_t, 1> FineLayer::elementsMiddleLayer() const
-{
-    size_t nely = static_cast<size_t>(m_nhy.size());
-    size_t iy = (nely - 1) / 2;
-
-    array_type::tensor<size_t, 1> ret = xt::empty<size_t>({m_layer_nelx(iy) * m_layer_nelz(iy)});
-
-    for (size_t ix = 0; ix < m_layer_nelx(iy); ++ix) {
-        for (size_t iz = 0; iz < m_layer_nelz(iy); ++iz) {
-            ret(ix + iz * m_layer_nelx(iy)) = m_startElem(iy) + ix + iz * m_layer_nelx(iy);
-        }
-    }
-
-    return ret;
-}
-
 inline array_type::tensor<size_t, 1> FineLayer::nodesFront_impl() const
 {
     // number of element layers in y-direction
