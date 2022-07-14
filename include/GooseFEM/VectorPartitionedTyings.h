@@ -141,19 +141,17 @@ public:
     }
 
     /**
-    Dependent DOFs.
-
-    \return List of DOF numbers.
+    Dependent DOFs (list of DOF numbers).
+    \return Pointer.
     */
-    array_type::tensor<size_t, 1> iid() const
+    const array_type::tensor<size_t, 1>& iid() const
     {
         return m_iid;
     }
 
     /**
-    Independent DOFs.
-
-    \return List of DOF numbers.
+    Independent DOFs (list of DOF numbers).
+    \return Copy.
     */
     array_type::tensor<size_t, 1> iii() const
     {
@@ -161,21 +159,19 @@ public:
     }
 
     /**
-    Independent unknown DOFs.
-
-    \return List of DOF numbers.
+    Independent unknown DOFs (list of DOF numbers).
+    \return Pointer.
     */
-    array_type::tensor<size_t, 1> iiu() const
+    const array_type::tensor<size_t, 1>& iiu() const
     {
         return m_iiu;
     }
 
     /**
-    Independent prescribed DOFs.
-
-    \return List of DOF numbers.
+    Independent prescribed DOFs (list of DOF numbers).
+    \return Pointer.
     */
-    array_type::tensor<size_t, 1> iip() const
+    const array_type::tensor<size_t, 1>& iip() const
     {
         return m_iip;
     }
