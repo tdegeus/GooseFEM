@@ -228,7 +228,7 @@ public:
     template <class C, class E, std::enable_if_t<xt::is_xexpression<C>::value, bool> = true>
     FineLayer(const C& coor, const E& conn)
     {
-        this->map(coor, conn);
+        this->init_by_mapping(coor, conn);
     }
 
     /**
@@ -1073,7 +1073,7 @@ private:
     \copydoc FineLayer::FineLayer(const C&, const E&)
     */
     template <class C, class E>
-    void map(const C& coor, const E& conn)
+    void init_by_mapping(const C& coor, const E& conn)
     {
         GOOSEFEM_ASSERT(coor.dimension() == 2);
         GOOSEFEM_ASSERT(conn.dimension() == 2);
@@ -1191,7 +1191,6 @@ public:
 
     /**
     Obtain the coarse mesh (copy of the mesh passed to the constructor).
-
     \return mesh
     */
     GooseFEM::Mesh::Quad4::Regular getCoarseMesh() const
@@ -1201,7 +1200,6 @@ public:
 
     /**
     Obtain the fine mesh.
-
     \return mesh
     */
     GooseFEM::Mesh::Quad4::Regular getFineMesh() const
@@ -1211,7 +1209,6 @@ public:
 
     /**
     Get element-mapping: elements of the fine mesh per element of the coarse mesh.
-
     \return [nelem_coarse, nx() * ny()]
     */
     array_type::tensor<size_t, 2> getMap() const
