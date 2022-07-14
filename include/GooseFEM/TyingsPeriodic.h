@@ -9,6 +9,7 @@ Tools to store and apply nodal/DOF tyings.
 #ifndef GOOSEFEM_TYINGSPERIODIC_H
 #define GOOSEFEM_TYINGSPERIODIC_H
 
+#include "Mesh.h"
 #include "config.h"
 
 #include <Eigen/Eigen>
@@ -59,7 +60,10 @@ public:
     \param nodal_tyings List of nodal tyings, see nodal_tyings(). [ntyings, 2].
     */
     template <class C, class D, class S, class T>
-    Periodic(const C& coor, const D& dofs, const S& control_dofs, const T& nodal_tyings);
+    Periodic(const C& coor, const D& dofs, const S& control_dofs, const T& nodal_tyings)
+        : Periodic(coor, dofs, control_dofs, nodal_tyings, xt::eval(xt::empty<size_t>({0})))
+    {
+    }
 
     /**
     Constructor.
@@ -81,37 +85,87 @@ public:
         const D& dofs,
         const S& control_dofs,
         const T& nodal_tyings,
-        const U& iip);
+        const U& iip)
+    {
+        m_tyings = nodal_tyings;
+        m_coor = coor;
+        m_ndim = m_coor.shape(1);
+        m_nties = m_tyings.shape(0);
+
+        GOOSEFEM_ASSERT(xt::has_shape(m_tyings, {m_nties, size_t(2)}));
+        GOOSEFEM_ASSERT(xt::has_shape(control_dofs, {m_ndim, m_ndim}));
+        GOOSEFEM_ASSERT(xt::has_shape(dofs, m_coor.shape()));
+        GOOSEFEM_ASSERT(xt::amax(control_dofs)() <= xt::amax(dofs)());
+        GOOSEFEM_ASSERT(xt::amin(control_dofs)() >= xt::amin(dofs)());
+        GOOSEFEM_ASSERT(xt::amax(iip)() <= xt::amax(dofs)());
+        GOOSEFEM_ASSERT(xt::amin(iip)() >= xt::amin(dofs)());
+        GOOSEFEM_ASSERT(xt::amax(nodal_tyings)() < m_coor.shape(0));
+
+        array_type::tensor<size_t, 1> dependent = xt::view(m_tyings, xt::all(), 1);
+        array_type::tensor<size_t, 2> dependent_dofs =
+            xt::view(dofs, xt::keep(dependent), xt::all());
+        U iid = xt::flatten(dependent_dofs);
+        U iii = xt::setdiff1d(dofs, iid);
+        U iiu = xt::setdiff1d(iii, iip);
+
+        m_nnu = iiu.size();
+        m_nnp = iip.size();
+        m_nni = iii.size();
+        m_nnd = iid.size();
+
+        GooseFEM::Mesh::Reorder reorder({iiu, iip, iid});
+
+        m_dofs = reorder.apply(dofs);
+        m_control = reorder.apply(control_dofs);
+    }
 
     /**
     \return Number of dependent DOFs.
     */
-    size_t nnd() const;
+    size_t nnd() const
+    {
+        return m_nnd;
+    }
 
     /**
     \return Number of independent DOFs.
     */
-    size_t nni() const;
+    size_t nni() const
+    {
+        return m_nni;
+    }
 
     /**
     \return Number of independent unknown DOFs.
     */
-    size_t nnu() const;
+    size_t nnu() const
+    {
+        return m_nnu;
+    }
 
     /**
     \return Number of independent prescribed DOFs.
     */
-    size_t nnp() const;
+    size_t nnp() const
+    {
+        return m_nnp;
+    }
 
     /**
     \return DOF-numbers per node, as used internally (after renumbering), [nnode, ndim].
     */
-    array_type::tensor<size_t, 2> dofs() const;
+    array_type::tensor<size_t, 2> dofs() const
+    {
+        return m_dofs;
+    }
 
     /**
     \return DOF-numbers for each control node, as used internally (after renumbering), [ndim, ndim].
     */
-    array_type::tensor<size_t, 2> control() const;
+    array_type::tensor<size_t, 2> control() const
+    {
+        return m_control;
+    }
 
     /**
     Return the applied nodal tyings.
@@ -120,35 +174,50 @@ public:
 
     \return [ntyings, 2].
     */
-    array_type::tensor<size_t, 2> nodal_tyings() const;
+    array_type::tensor<size_t, 2> nodal_tyings() const
+    {
+        return m_tyings;
+    }
 
     /**
     Dependent DOFs.
 
     \return List of DOF numbers.
     */
-    array_type::tensor<size_t, 1> iid() const;
+    array_type::tensor<size_t, 1> iid() const
+    {
+        return xt::arange<size_t>(m_nni, m_nni + m_nnd);
+    }
 
     /**
     Independent DOFs.
 
     \return List of DOF numbers.
     */
-    array_type::tensor<size_t, 1> iii() const;
+    array_type::tensor<size_t, 1> iii() const
+    {
+        return xt::arange<size_t>(m_nni);
+    }
 
     /**
     Independent unknown DOFs.
 
     \return List of DOF numbers.
     */
-    array_type::tensor<size_t, 1> iiu() const;
+    array_type::tensor<size_t, 1> iiu() const
+    {
+        return xt::arange<size_t>(m_nnu);
+    }
 
     /**
     Independent prescribed DOFs.
 
     \return List of DOF numbers.
     */
-    array_type::tensor<size_t, 1> iip() const;
+    array_type::tensor<size_t, 1> iip() const
+    {
+        return xt::arange<size_t>(m_nnp) + m_nnu;
+    }
 
     /**
     Return tying matrix such as to get the dependent DOFs \f$ u_d \f$ from
@@ -164,21 +233,110 @@ public:
 
     \return Sparse matrix.
     */
-    Eigen::SparseMatrix<double> Cdi() const;
+    Eigen::SparseMatrix<double> Cdi() const
+    {
+        std::vector<Eigen::Triplet<double>> data;
+
+        data.reserve(m_nties * m_ndim * (m_ndim + 1));
+
+        for (size_t i = 0; i < m_nties; ++i) {
+            for (size_t j = 0; j < m_ndim; ++j) {
+
+                size_t ni = m_tyings(i, 0);
+                size_t nd = m_tyings(i, 1);
+
+                data.push_back(Eigen::Triplet<double>(i * m_ndim + j, m_dofs(ni, j), +1.0));
+
+                for (size_t k = 0; k < m_ndim; ++k) {
+                    data.push_back(Eigen::Triplet<double>(
+                        i * m_ndim + j, m_control(j, k), m_coor(nd, k) - m_coor(ni, k)));
+                }
+            }
+        }
+
+        Eigen::SparseMatrix<double> Cdi;
+        Cdi.resize(m_nnd, m_nni);
+        Cdi.setFromTriplets(data.begin(), data.end());
+
+        return Cdi;
+    }
 
     /**
     Unknown part of the partitioned tying matrix, see Cdi().
 
     \return Sparse matrix.
     */
-    Eigen::SparseMatrix<double> Cdu() const;
+    Eigen::SparseMatrix<double> Cdu() const
+    {
+        std::vector<Eigen::Triplet<double>> data;
+
+        data.reserve(m_nties * m_ndim * (m_ndim + 1));
+
+        for (size_t i = 0; i < m_nties; ++i) {
+            for (size_t j = 0; j < m_ndim; ++j) {
+
+                size_t ni = m_tyings(i, 0);
+                size_t nd = m_tyings(i, 1);
+
+                if (m_dofs(ni, j) < m_nnu) {
+                    data.push_back(Eigen::Triplet<double>(i * m_ndim + j, m_dofs(ni, j), +1.0));
+                }
+
+                for (size_t k = 0; k < m_ndim; ++k) {
+                    if (m_control(j, k) < m_nnu) {
+                        data.push_back(Eigen::Triplet<double>(
+                            i * m_ndim + j, m_control(j, k), m_coor(nd, k) - m_coor(ni, k)));
+                    }
+                }
+            }
+        }
+
+        Eigen::SparseMatrix<double> Cdu;
+        Cdu.resize(m_nnd, m_nnu);
+        Cdu.setFromTriplets(data.begin(), data.end());
+
+        return Cdu;
+    }
 
     /**
     Prescribed part of the partitioned tying matrix, see Cdi().
 
     \return Sparse matrix.
     */
-    Eigen::SparseMatrix<double> Cdp() const;
+    Eigen::SparseMatrix<double> Cdp() const
+    {
+        std::vector<Eigen::Triplet<double>> data;
+
+        data.reserve(m_nties * m_ndim * (m_ndim + 1));
+
+        for (size_t i = 0; i < m_nties; ++i) {
+            for (size_t j = 0; j < m_ndim; ++j) {
+
+                size_t ni = m_tyings(i, 0);
+                size_t nd = m_tyings(i, 1);
+
+                if (m_dofs(ni, j) >= m_nnu) {
+                    data.push_back(
+                        Eigen::Triplet<double>(i * m_ndim + j, m_dofs(ni, j) - m_nnu, +1.0));
+                }
+
+                for (size_t k = 0; k < m_ndim; ++k) {
+                    if (m_control(j, k) >= m_nnu) {
+                        data.push_back(Eigen::Triplet<double>(
+                            i * m_ndim + j,
+                            m_control(j, k) - m_nnu,
+                            m_coor(nd, k) - m_coor(ni, k)));
+                    }
+                }
+            }
+        }
+
+        Eigen::SparseMatrix<double> Cdp;
+        Cdp.resize(m_nnd, m_nnp);
+        Cdp.setFromTriplets(data.begin(), data.end());
+
+        return Cdp;
+    }
 
 private:
     size_t m_nnu; ///< See nnu().
@@ -209,35 +367,65 @@ public:
     \param dofs DOF-numbers per node [nnode, ndim].
     */
     template <class C, class N>
-    Control(const C& coor, const N& dofs);
+    Control(const C& coor, const N& dofs)
+    {
+        GOOSEFEM_ASSERT(coor.shape().size() == 2);
+        GOOSEFEM_ASSERT(coor.shape() == dofs.shape());
+
+        m_coor = coor;
+        m_dofs = dofs;
+
+        size_t nnode = coor.shape(0);
+        size_t ndim = coor.shape(1);
+
+        m_control_dofs = xt::arange<size_t>(ndim * ndim).reshape({ndim, ndim});
+        m_control_dofs += xt::amax(dofs)() + 1;
+
+        m_control_nodes = nnode + xt::arange<size_t>(ndim);
+
+        m_coor = xt::concatenate(xt::xtuple(coor, xt::zeros<double>({ndim, ndim})));
+        m_dofs = xt::concatenate(xt::xtuple(dofs, m_control_dofs));
+    }
 
     /**
     Nodal coordinates, for the system with control nodes added to it.
 
     \param [nnode + ndim, ndim], with nnode the number of nodes of the original system.
     */
-    array_type::tensor<double, 2> coor() const;
+    array_type::tensor<double, 2> coor() const
+    {
+        return m_coor;
+    }
 
     /**
     DOF-numbers per node, for the system with control nodes added to it.
 
     \param [nnode + ndim, ndim], with nnode the number of nodes of the original system.
     */
-    array_type::tensor<size_t, 2> dofs() const;
+    array_type::tensor<size_t, 2> dofs() const
+    {
+        return m_dofs;
+    }
 
     /**
     DOF-numbers of each control node.
 
     \param [ndim, ndim].
     */
-    array_type::tensor<size_t, 2> controlDofs() const;
+    array_type::tensor<size_t, 2> controlDofs() const
+    {
+        return m_control_dofs;
+    }
 
     /**
     Node-numbers of the control nodes.
 
     \param [ndim].
     */
-    array_type::tensor<size_t, 1> controlNodes() const;
+    array_type::tensor<size_t, 1> controlNodes() const
+    {
+        return m_control_nodes;
+    }
 
 private:
     array_type::tensor<double, 2> m_coor; ///< See coor().
@@ -248,7 +436,5 @@ private:
 
 } // namespace Tyings
 } // namespace GooseFEM
-
-#include "TyingsPeriodic.hpp"
 
 #endif
