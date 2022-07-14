@@ -10,7 +10,7 @@ Implementation of ElementQuad4Axisymmetric.h
 #define GOOSEFEM_ELEMENTQUADAXISYMMETRIC_HPP
 
 #include "ElementQuad4Axisymmetric.h"
-#include "detail.hpp"
+#include "detail.h"
 
 namespace GooseFEM {
 namespace Element {

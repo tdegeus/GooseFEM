@@ -10,7 +10,7 @@ Implementation of ElementQuad4.h
 #define GOOSEFEM_ELEMENTQUAD4_HPP
 
 #include "ElementQuad4.h"
-#include "detail.hpp"
+#include "detail.h"
 
 namespace GooseFEM {
 namespace Element {

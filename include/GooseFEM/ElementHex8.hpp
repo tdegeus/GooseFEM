@@ -10,7 +10,7 @@ Implementation of ElementHex8.h
 #define GOOSEFEM_ELEMENTHEX8_HPP
 
 #include "ElementHex8.h"
-#include "detail.hpp"
+#include "detail.h"
 
 namespace GooseFEM {
 namespace Element {

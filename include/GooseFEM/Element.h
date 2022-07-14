@@ -11,7 +11,7 @@ Convenience methods for integration point data.
 
 #include "Allocate.h"
 #include "config.h"
-#include "detail.hpp"
+#include "detail.h"
 
 namespace GooseFEM {
 
