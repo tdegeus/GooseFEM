@@ -1,14 +1,11 @@
 /**
-Support functions.
-Not part of public API.
-
-\file detail.hpp
+\file
 \copyright Copyright 2017. Tom de Geus. All rights reserved.
 \license This project is released under the GNU Public License (GPLv3).
 */
 
-#ifndef GOOSEFEM_DETAIL_HPP
-#define GOOSEFEM_DETAIL_HPP
+#ifndef GOOSEFEM_DETAIL_H
+#define GOOSEFEM_DETAIL_H
 
 namespace GooseFEM {
 namespace detail {
