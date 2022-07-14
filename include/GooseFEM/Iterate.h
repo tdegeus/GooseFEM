@@ -31,19 +31,30 @@ public:
 
     \param n Number of consecutive iterations to consider.
     */
-    StopList(size_t n = 1);
+    StopList(size_t n = 1)
+    {
+        m_res.resize(n);
+        reset();
+    }
 
     /**
     Reset all residuals to infinity.
     */
-    void reset();
+    void reset()
+    {
+        std::fill(m_res.begin(), m_res.end(), std::numeric_limits<double>::infinity());
+    }
 
     /**
     Reset all residuals to infinity, and change the number of residuals to check.
 
     \param n Number of consecutive iterations to consider.
     */
-    void reset(size_t n);
+    void reset(size_t n)
+    {
+        m_res.resize(n);
+        reset();
+    }
 
     /**
      *  Roll the list with the residuals, and add a new residual to the end.
@@ -55,14 +66,21 @@ public:
      *
      *  \param res New residual to add to the list of residuals.
      */
-    void roll_insert(double res);
+    void roll_insert(double res)
+    {
+        std::rotate(m_res.begin(), m_res.begin() + 1, m_res.end());
+        m_res.back() = res;
+    }
 
     /**
      *  Check of the sequence of `n` residuals is in descending order.
      *
      *  \return `true` if the `n` residuals are in descending order.
      */
-    bool descending() const;
+    bool descending() const
+    {
+        return std::is_sorted(m_res.cbegin(), m_res.cend(), std::greater<double>());
+    }
 
     /**
      *  Check of the sequence of `n` residuals are all below a tolerance.
@@ -70,12 +88,18 @@ public:
      *  \param tol Tolerance.
      *  \return `true` if all `n` residuals are less than the tolerance.
      */
-    bool all_less(double tol) const;
+    bool all_less(double tol) const
+    {
+        return !std::any_of(m_res.cbegin(), m_res.cend(), [=](const auto& i) { return i >= tol; });
+    }
 
     /**
     Get the historic residuals.
     */
-    auto get() const;
+    auto get() const
+    {
+        return m_res;
+    }
 
 private:
     std::vector<double> m_res; ///< List with residuals.
@@ -83,7 +107,5 @@ private:
 
 } // namespace Iterate
 } // namespace GooseFEM
-
-#include "Iterate.hpp"
 
 #endif
