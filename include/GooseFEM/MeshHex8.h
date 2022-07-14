@@ -121,10 +121,23 @@ public:
 
     /**
     Elements in the middle (fine) layer.
-
-    \return List of element numbers.
+    \return List of element numbers (copy, involves computation).
     */
-    array_type::tensor<size_t, 1> elementsMiddleLayer() const;
+    array_type::tensor<size_t, 1> elementsMiddleLayer() const
+    {
+        size_t nely = static_cast<size_t>(m_nhy.size());
+        size_t y = (nely - 1) / 2;
+
+        array_type::tensor<size_t, 1> ret = xt::empty<size_t>({m_layer_nelx(y) * m_layer_nelz(y)});
+
+        for (size_t x = 0; x < m_layer_nelx(y); ++x) {
+            for (size_t z = 0; z < m_layer_nelz(y); ++z) {
+                ret(x + z * m_layer_nelx(y)) = m_startElem(y) + x + z * m_layer_nelx(y);
+            }
+        }
+
+        return ret;
+    }
 
 private:
     friend class RegularBase<FineLayer>;
