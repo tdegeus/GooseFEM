@@ -342,9 +342,8 @@ void init_Mesh(py::module& mod)
             "See :cpp:class:`GooseFEM::Mesh::Renumber`.",
             py::arg("dofs"))
 
-        .def("get", &GooseFEM::Mesh::Renumber::apply<xt::pyarray<size_t>>)
         .def("apply", &GooseFEM::Mesh::Renumber::apply<xt::pyarray<size_t>>)
-        .def("index", &GooseFEM::Mesh::Renumber::index)
+        .def_property_readonly("index", &GooseFEM::Mesh::Renumber::index)
 
         .def(
             "__repr__", [](const GooseFEM::Mesh::Renumber&) { return "<GooseFEM.Mesh.Renumber>"; });
@@ -378,9 +377,8 @@ void init_Mesh(py::module& mod)
             }),
             "See :cpp:class:`GooseFEM::Mesh::Reorder`.")
 
-        .def("get", &GooseFEM::Mesh::Reorder::apply<xt::pyarray<size_t>>, py::arg("dofs"))
         .def("apply", &GooseFEM::Mesh::Reorder::apply<xt::pyarray<size_t>>)
-        .def("index", &GooseFEM::Mesh::Reorder::index)
+        .def_property_readonly("index", &GooseFEM::Mesh::Reorder::index)
 
         .def("__repr__", [](const GooseFEM::Mesh::Reorder&) { return "<GooseFEM.Mesh.Reorder>"; });
 

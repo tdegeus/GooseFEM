@@ -105,7 +105,7 @@ public:
     /**
     \return Unknown DOFs [#nnu].
     */
-    array_type::tensor<size_t, 1> iiu() const
+    const array_type::tensor<size_t, 1>& iiu() const
     {
         return m_iiu;
     }
@@ -113,7 +113,7 @@ public:
     /**
     \return Prescribed DOFs [#nnp].
     */
-    array_type::tensor<size_t, 1> iip() const
+    const array_type::tensor<size_t, 1>& iip() const
     {
         return m_iip;
     }

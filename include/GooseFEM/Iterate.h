@@ -96,7 +96,15 @@ public:
     /**
     Get the historic residuals.
     */
-    auto get() const
+    const std::vector<double>& data() const
+    {
+        return m_res;
+    }
+
+    /**
+    Get the historic residuals.
+    */
+    [[deprecated]] const std::vector<double>& get() const
     {
         return m_res;
     }
