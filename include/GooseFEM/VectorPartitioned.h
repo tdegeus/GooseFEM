@@ -19,30 +19,29 @@ Methods to switch between storage types based on a mesh and DOFs that are partit
 namespace GooseFEM {
 
 /**
- *  Class to switch between storage types,
- *  based on a mesh and DOFs that are partitioned in:
- *
- *  -   unknown DOFs (iiu()), indicated with "u".
- *  -   prescribed DOFs (iip()), indicated with "p".
- *
- *  To this end some internal re-ordering of the DOFs has to be done, as follows:
- *
- *      iiu() -> arange(nnu())
- *      iip() -> nnu() + arange(nnp())
- *
- *  which is relevant only if you interact using partitioned DOF-lists ("dofval_u" or "dofval_p").
- *
- *  The "dofval", "nodevec", and "elemvec" are all stored in the 'normal' order.
- *
- *  For reference:
- *
- *  -   "dofval": DOF values [#ndof].
- *  -   "dofval_u": unknown DOF values, `== dofval[iiu()]`, [#nnu].
- *  -   "dofval_p": prescribed DOF values, `== dofval[iip()]`, [#nnp].
- *  -   "nodevec": nodal vectors [#nnode, #ndim].
- *  -   "elemvec": nodal vectors stored per element [#nelem, #nne, #ndim].
- *
- */
+Class to switch between storage types,
+based on a mesh and DOFs that are partitioned in:
+
+-   unknown DOFs (iiu()), indicated with "u".
+-   prescribed DOFs (iip()), indicated with "p".
+
+To this end some internal re-ordering of the DOFs has to be done, as follows:
+
+    iiu() -> arange(nnu())
+    iip() -> nnu() + arange(nnp())
+
+which is relevant only if you interact using partitioned DOF-lists ("dofval_u" or "dofval_p").
+
+The "dofval", "nodevec", and "elemvec" are all stored in the 'normal' order.
+
+For reference:
+
+-   "dofval": DOF values [#ndof].
+-   "dofval_u": unknown DOF values, `== dofval[iiu()]`, [#nnu].
+-   "dofval_p": prescribed DOF values, `== dofval[iip()]`, [#nnp].
+-   "nodevec": nodal vectors [#nnode, #ndim].
+-   "elemvec": nodal vectors stored per element [#nelem, #nne, #ndim].
+*/
 class VectorPartitioned : public Vector {
 protected:
     array_type::tensor<size_t, 1> m_iiu; ///< See iiu()

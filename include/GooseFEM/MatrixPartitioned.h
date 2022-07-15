@@ -25,12 +25,12 @@ template <class>
 class MatrixPartitionedSolver;
 
 /**
- *  Sparse matrix partitioned in an unknown and a prescribed part.
- *  In particular:
- *  \f$ \begin{bmatrix} A_{uu} & A_{up} \\ A_{pu} & A_{pp} \end{bmatrix} \f$
- *
- *  See VectorPartitioned() for bookkeeping definitions.
- */
+Sparse matrix partitioned in an unknown and a prescribed part.
+In particular:
+\f$ \begin{bmatrix} A_{uu} & A_{up} \\ A_{pu} & A_{pp} \end{bmatrix} \f$
+
+See VectorPartitioned() for bookkeeping definitions.
+*/
 class MatrixPartitioned : public MatrixPartitionedBase<MatrixPartitioned> {
 private:
     friend MatrixBase<MatrixPartitioned>;
@@ -58,14 +58,14 @@ protected:
     array_type::tensor<size_t, 2> m_part;
 
     /**
-     *  Map real DOF to DOF in partitioned system.
-     *  The partitioned system is defined as::
-     *
-     *      iiu = arange(nnu)
-     *      iip = nnu + arange(nnp)
-     *
-     *  Similar to `m_part` but for a 1d sequential list of DOFs.
-     */
+    Map real DOF to DOF in partitioned system.
+    The partitioned system is defined as::
+
+        iiu = arange(nnu)
+        iip = nnu + arange(nnp)
+
+    Similar to `m_part` but for a 1d sequential list of DOFs.
+    */
     array_type::tensor<size_t, 1> m_part1d;
 
     template <class>
