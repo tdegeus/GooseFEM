@@ -153,7 +153,7 @@ public:
 
     \return Renumber-index.
     */
-    array_type::tensor<size_t, 1> index() const
+    const array_type::tensor<size_t, 1>& index() const
     {
         return m_renum;
     }
@@ -1870,7 +1870,7 @@ public:
     Nodal coordinates [#nnode, #ndim].
     \return coordinates per node
     */
-    array_type::tensor<double, 2> coor() const
+    const array_type::tensor<double, 2>& coor() const
     {
         return m_coor;
     }
@@ -1879,7 +1879,7 @@ public:
     Connectivity [#nelem, #nne].
     \return nodes per element
     */
-    array_type::tensor<size_t, 2> conn() const
+    const array_type::tensor<size_t, 2>& conn() const
     {
         return m_conn;
     }
@@ -2106,7 +2106,7 @@ public:
     Nodal coordinates [#nnode, #ndim].
     \return coordinates per node
     */
-    array_type::tensor<double, 2> coor() const
+    const array_type::tensor<double, 2>& coor() const
     {
         return m_coor;
     }
@@ -2115,7 +2115,7 @@ public:
     Connectivity [#nelem, #nne].
     \return nodes per element
     */
-    array_type::tensor<size_t, 2> conn() const
+    const array_type::tensor<size_t, 2>& conn() const
     {
         return m_conn;
     }
@@ -2441,7 +2441,7 @@ public:
 
     \return Reorder-index.
     */
-    array_type::tensor<size_t, 1> index() const
+    const array_type::tensor<size_t, 1>& index() const
     {
         return m_renum;
     }

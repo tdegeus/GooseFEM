@@ -238,7 +238,7 @@ public:
 
     \return List of size equal to the number of rows of blocks.
     */
-    array_type::tensor<size_t, 1> elemrow_nhx() const
+    const array_type::tensor<size_t, 1>& elemrow_nhx() const
     {
         return m_nhx;
     }
@@ -250,7 +250,7 @@ public:
 
     \return List of size equal to the number of rows of blocks.
     */
-    array_type::tensor<size_t, 1> elemrow_nhy() const
+    const array_type::tensor<size_t, 1>& elemrow_nhy() const
     {
         return m_nhy;
     }
@@ -262,7 +262,7 @@ public:
 
     \return List of size equal to the number of rows of blocks.
     */
-    array_type::tensor<int, 1> elemrow_type() const
+    const array_type::tensor<int, 1>& elemrow_type() const
     {
         return m_refine;
     }
@@ -274,7 +274,7 @@ public:
 
     \return List of size equal to the number of rows of blocks.
     */
-    array_type::tensor<size_t, 1> elemrow_nelem() const
+    const array_type::tensor<size_t, 1>& elemrow_nelem() const
     {
         return m_layer_nelx;
     }
@@ -1193,7 +1193,7 @@ public:
     Obtain the coarse mesh (copy of the mesh passed to the constructor).
     \return mesh
     */
-    GooseFEM::Mesh::Quad4::Regular getCoarseMesh() const
+    GooseFEM::Mesh::Quad4::Regular coarseMesh() const
     {
         return m_coarse;
     }
@@ -1202,7 +1202,7 @@ public:
     Obtain the fine mesh.
     \return mesh
     */
-    GooseFEM::Mesh::Quad4::Regular getFineMesh() const
+    GooseFEM::Mesh::Quad4::Regular fineMesh() const
     {
         return m_fine;
     }
@@ -1211,7 +1211,34 @@ public:
     Get element-mapping: elements of the fine mesh per element of the coarse mesh.
     \return [nelem_coarse, nx() * ny()]
     */
-    array_type::tensor<size_t, 2> getMap() const
+    const array_type::tensor<size_t, 2>& map() const
+    {
+        return m_coarse2fine;
+    }
+
+    /**
+    Obtain the coarse mesh (copy of the mesh passed to the constructor).
+    \return mesh
+    */
+    [[deprecated]] GooseFEM::Mesh::Quad4::Regular getCoarseMesh() const
+    {
+        return m_coarse;
+    }
+
+    /**
+    Obtain the fine mesh.
+    \return mesh
+    */
+    [[deprecated]] GooseFEM::Mesh::Quad4::Regular getFineMesh() const
+    {
+        return m_fine;
+    }
+
+    /**
+    Get element-mapping: elements of the fine mesh per element of the coarse mesh.
+    \return [nelem_coarse, nx() * ny()]
+    */
+    [[deprecated]] const array_type::tensor<size_t, 2>& getMap() const
     {
         return m_coarse2fine;
     }
@@ -1615,7 +1642,7 @@ public:
 
     \return mesh.
     */
-    GooseFEM::Mesh::Quad4::Regular getRegularMesh() const
+    GooseFEM::Mesh::Quad4::Regular regularMesh() const
     {
         return m_regular;
     }
@@ -1625,7 +1652,7 @@ public:
 
     \return mesh.
     */
-    GooseFEM::Mesh::Quad4::FineLayer getFineLayerMesh() const
+    GooseFEM::Mesh::Quad4::FineLayer fineLayerMesh() const
     {
         return m_finelayer;
     }
@@ -1639,7 +1666,51 @@ public:
 
     \return [nelem_finelayer, ?]
     */
-    std::vector<std::vector<size_t>> getMap() const
+    std::vector<std::vector<size_t>> map() const
+    {
+        return m_elem_regular;
+    }
+
+    /**
+    To overlap fraction for each item in the mapping in map().
+
+    \return [nelem_finelayer, ?]
+    */
+    std::vector<std::vector<double>> mapFraction() const
+    {
+        return m_frac_regular;
+    }
+
+    /**
+    Obtain the Regular mesh.
+
+    \return mesh.
+    */
+    [[deprecated]] GooseFEM::Mesh::Quad4::Regular getRegularMesh() const
+    {
+        return m_regular;
+    }
+
+    /**
+    Obtain the FineLayer mesh (copy of the mesh passed to the constructor).
+
+    \return mesh.
+    */
+    [[deprecated]] GooseFEM::Mesh::Quad4::FineLayer getFineLayerMesh() const
+    {
+        return m_finelayer;
+    }
+
+    // elements of the Regular mesh per element of the FineLayer mesh
+    // and the fraction by which the overlap is
+
+    /**
+    Get element-mapping: elements of the Regular mesh per element of the FineLayer mesh.
+    The number of Regular elements varies between elements of the FineLayer mesh.
+
+    \return [nelem_finelayer, ?]
+    */
+    [[deprecated]] std::vector<std::vector<size_t>> getMap() const
     {
         return m_elem_regular;
     }
@@ -1649,7 +1720,7 @@ public:
 
     \return [nelem_finelayer, ?]
     */
-    std::vector<std::vector<double>> getMapFraction() const
+    [[deprecated]] std::vector<std::vector<double>> getMapFraction() const
     {
         return m_frac_regular;
     }

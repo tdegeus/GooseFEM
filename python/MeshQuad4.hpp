@@ -110,10 +110,10 @@ void init_MeshQuad4Map(py::module& m)
             py::arg("nx"),
             py::arg("ny"))
 
-        .def_property_readonly(
-            "coarseMesh", &GooseFEM::Mesh::Quad4::Map::RefineRegular::getCoarseMesh)
-        .def_property_readonly("fineMesh", &GooseFEM::Mesh::Quad4::Map::RefineRegular::getFineMesh)
-        .def_property_readonly("map", &GooseFEM::Mesh::Quad4::Map::RefineRegular::getMap)
+        .def_property_readonly("coarseMesh", &GooseFEM::Mesh::Quad4::Map::RefineRegular::coarseMesh)
+
+        .def_property_readonly("fineMesh", &GooseFEM::Mesh::Quad4::Map::RefineRegular::fineMesh)
+        .def_property_readonly("map", &GooseFEM::Mesh::Quad4::Map::RefineRegular::map)
 
         .def(
             "meanToCoarse",
@@ -191,12 +191,15 @@ void init_MeshQuad4Map(py::module& m)
             py::arg("mesh"))
 
         .def_property_readonly(
-            "regularMesh", &GooseFEM::Mesh::Quad4::Map::FineLayer2Regular::getRegularMesh)
+            "regularMesh", &GooseFEM::Mesh::Quad4::Map::FineLayer2Regular::regularMesh)
+
         .def_property_readonly(
-            "fineLayerMesh", &GooseFEM::Mesh::Quad4::Map::FineLayer2Regular::getFineLayerMesh)
-        .def_property_readonly("map", &GooseFEM::Mesh::Quad4::Map::FineLayer2Regular::getMap)
+            "fineLayerMesh", &GooseFEM::Mesh::Quad4::Map::FineLayer2Regular::fineLayerMesh)
+
+        .def_property_readonly("map", &GooseFEM::Mesh::Quad4::Map::FineLayer2Regular::map)
+
         .def_property_readonly(
-            "mapFraction", &GooseFEM::Mesh::Quad4::Map::FineLayer2Regular::getMapFraction)
+            "mapFraction", &GooseFEM::Mesh::Quad4::Map::FineLayer2Regular::mapFraction)
 
         .def(
             "mapToRegular",

@@ -269,9 +269,7 @@ public:
     */
     std::array<size_t, 1> shape_dofval() const
     {
-        std::array<size_t, 1> shape;
-        shape[0] = m_ndof;
-        return shape;
+        return std::array<size_t, 1>{m_ndof};
     }
 
     /**
@@ -281,10 +279,7 @@ public:
     */
     std::array<size_t, 2> shape_nodevec() const
     {
-        std::array<size_t, 2> shape;
-        shape[0] = m_nnode;
-        shape[1] = m_ndim;
-        return shape;
+        return std::array<size_t, 2>{m_nnode, m_ndim};
     }
 
     /**
@@ -294,11 +289,7 @@ public:
     */
     std::array<size_t, 3> shape_elemvec() const
     {
-        std::array<size_t, 3> shape;
-        shape[0] = m_nelem;
-        shape[1] = m_nne;
-        shape[2] = m_ndim;
-        return shape;
+        return std::array<size_t, 3>{m_nelem, m_nne, m_ndim};
     }
 
     /**
@@ -308,11 +299,7 @@ public:
     */
     std::array<size_t, 3> shape_elemmat() const
     {
-        std::array<size_t, 3> shape;
-        shape[0] = m_nelem;
-        shape[1] = m_nne * m_ndim;
-        shape[2] = m_nne * m_ndim;
-        return shape;
+        return std::array<size_t, 3>{m_nelem, m_nne * m_ndim, m_nne * m_ndim};
     }
 
     /**

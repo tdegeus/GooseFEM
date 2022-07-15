@@ -154,7 +154,7 @@ public:
     /**
     \return DOF-numbers per node, as used internally (after renumbering), [nnode, ndim].
     */
-    array_type::tensor<size_t, 2> dofs() const
+    const array_type::tensor<size_t, 2>& dofs() const
     {
         return m_dofs;
     }
@@ -162,7 +162,7 @@ public:
     /**
     \return DOF-numbers for each control node, as used internally (after renumbering), [ndim, ndim].
     */
-    array_type::tensor<size_t, 2> control() const
+    const array_type::tensor<size_t, 2>& control() const
     {
         return m_control;
     }
@@ -174,7 +174,7 @@ public:
 
     \return [ntyings, 2].
     */
-    array_type::tensor<size_t, 2> nodal_tyings() const
+    const array_type::tensor<size_t, 2>& nodal_tyings() const
     {
         return m_tyings;
     }
@@ -392,7 +392,7 @@ public:
 
     \param [nnode + ndim, ndim], with nnode the number of nodes of the original system.
     */
-    array_type::tensor<double, 2> coor() const
+    const array_type::tensor<double, 2>& coor() const
     {
         return m_coor;
     }
@@ -402,7 +402,7 @@ public:
 
     \param [nnode + ndim, ndim], with nnode the number of nodes of the original system.
     */
-    array_type::tensor<size_t, 2> dofs() const
+    const array_type::tensor<size_t, 2>& dofs() const
     {
         return m_dofs;
     }
@@ -412,7 +412,7 @@ public:
 
     \param [ndim, ndim].
     */
-    array_type::tensor<size_t, 2> controlDofs() const
+    const array_type::tensor<size_t, 2>& controlDofs() const
     {
         return m_control_dofs;
     }
@@ -422,7 +422,7 @@ public:
 
     \param [ndim].
     */
-    array_type::tensor<size_t, 1> controlNodes() const
+    const array_type::tensor<size_t, 1>& controlNodes() const
     {
         return m_control_nodes;
     }

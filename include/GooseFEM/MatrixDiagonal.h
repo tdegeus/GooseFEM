@@ -177,7 +177,7 @@ public:
     Return matrix as diagonal matrix.
     \param [#ndof].
     */
-    array_type::tensor<double, 1> Todiagonal() const
+    const array_type::tensor<double, 1>& Todiagonal() const
     {
         return m_A;
     }

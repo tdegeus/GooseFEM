@@ -119,7 +119,7 @@ public:
     \return ``B`` matrix stored per element, per integration point [#nelem, #nne, #tdim, #tdim,
     #tdim]
     */
-    array_type::tensor<double, 6> B() const
+    const array_type::tensor<double, 6>& B() const
     {
         return m_B;
     }

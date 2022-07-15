@@ -30,8 +30,8 @@ void init_VectorPartitioned(py::module& m)
         .def_property_readonly("nnp", &GooseFEM::VectorPartitioned::nnp)
         .def_property_readonly("iiu", &GooseFEM::VectorPartitioned::iiu)
         .def_property_readonly("iip", &GooseFEM::VectorPartitioned::iip)
-        .def("dofs_is_u", &GooseFEM::VectorPartitioned::dofs_is_u)
-        .def("dofs_is_p", &GooseFEM::VectorPartitioned::dofs_is_p)
+        .def_property_readonly("dofs_is_u", &GooseFEM::VectorPartitioned::dofs_is_u)
+        .def_property_readonly("dofs_is_p", &GooseFEM::VectorPartitioned::dofs_is_p)
 
         .def(
             "DofsFromParitioned",
