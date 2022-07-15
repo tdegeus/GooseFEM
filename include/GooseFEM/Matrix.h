@@ -1,7 +1,5 @@
 /**
-Sparse matrix.
-
-\file Matrix.h
+\file
 \copyright Copyright 2017. Tom de Geus. All rights reserved.
 \license This project is released under the GNU Public License (GPLv3).
 */
@@ -22,15 +20,494 @@ template <class>
 class MatrixSolver;
 
 /**
+CRTP base class for a matrix.
+*/
+template <class D>
+class MatrixBase {
+protected:
+    array_type::tensor<size_t, 2> m_conn; ///< Connectivity [#nelem, #nne].
+    array_type::tensor<size_t, 2> m_dofs; ///< DOF-numbers per node [#nnode, #ndim].
+
+    size_t m_nelem; ///< See nelem().
+    size_t m_nne; ///< See nne().
+    size_t m_nnode; ///< See nnode().
+    size_t m_ndim; ///< See ndim().
+    size_t m_ndof; ///< See ndof().
+
+    bool m_changed = true; ///< Signal changes to data.
+
+public:
+    /**
+    Underlying type.
+    */
+    using derived_type = D;
+
+private:
+    auto derived_cast() -> derived_type&
+    {
+        return *static_cast<derived_type*>(this);
+    }
+
+    auto derived_cast() const -> const derived_type&
+    {
+        return *static_cast<const derived_type*>(this);
+    }
+
+public:
+    /**
+    Number of elements.
+    \return Unsigned integer.
+    */
+    size_t nelem() const
+    {
+        return derived_cast().m_nelem;
+    }
+
+    /**
+    Number of nodes per element.
+    \return Unsigned integer.
+    */
+    size_t nne() const
+    {
+        return derived_cast().m_nne;
+    }
+
+    /**
+    Number of nodes.
+    \return Unsigned integer.
+    */
+    size_t nnode() const
+    {
+        return derived_cast().m_nnode;
+    }
+
+    /**
+    Number of dimensions.
+    \return Unsigned integer.
+    */
+    size_t ndim() const
+    {
+        return derived_cast().m_ndim;
+    }
+
+    /**
+    Number of DOFs.
+    \return Unsigned integer.
+    */
+    size_t ndof() const
+    {
+        return derived_cast().m_ndof;
+    }
+
+    /**
+    DOFs per node.
+    \return [#nnode, #ndim].
+    */
+    const array_type::tensor<size_t, 2>& dofs() const
+    {
+        return derived_cast().m_dofs;
+    }
+
+    /**
+    Connectivity.
+    \return [#nelem, #nne].
+    */
+    const array_type::tensor<size_t, 2>& conn() const
+    {
+        return derived_cast().m_conn;
+    }
+
+    /**
+    Shape of dofval.
+    \return [#ndof].
+    */
+    std::array<size_t, 1> shape_dofval() const
+    {
+        return std::array<size_t, 1>{derived_cast().m_ndof};
+    }
+
+    /**
+    Shape of nodevec.
+    \return [#nnode, #ndim].
+    */
+    std::array<size_t, 2> shape_nodevec() const
+    {
+        return std::array<size_t, 2>{derived_cast().m_nnode, derived_cast().m_ndim};
+    }
+
+    /**
+    Shape of elemmat.
+    \return [#nelem, #nne * #ndim, #nne * #ndim].
+    */
+    std::array<size_t, 3> shape_elemmat() const
+    {
+        return std::array<size_t, 3>{
+            derived_cast().m_nelem,
+            derived_cast().m_nne * derived_cast().m_ndim,
+            derived_cast().m_nne * derived_cast().m_ndim};
+    }
+
+    /**
+    Assemble from matrices stored per element.
+
+    \tparam T array_type::tensor<double, 3>
+
+    \param elemmat [#nelem, #nne * #ndim, #nne * #ndim].
+    */
+    template <class T>
+    void assemble(const T& elemmat)
+    {
+        GOOSEFEM_ASSERT(xt::has_shape(elemmat, this->shape_elemmat()));
+        derived_cast().assemble_impl(elemmat);
+    }
+
+    /**
+    Matrix as dense matrix.
+    \return [#ndof, #ndof].
+    */
+    array_type::tensor<double, 2> Todense() const
+    {
+        size_t ndof = derived_cast().m_ndof;
+        array_type::tensor<double, 2> ret = xt::empty<double>({ndof, ndof});
+        derived_cast().todense_impl(ret);
+        return ret;
+    }
+
+    /**
+    Covert matrix to dense matrix.
+
+    \tparam T array_type::tensor<double, 2>
+
+    \param ret overwritten [#ndof, #ndof].
+    */
+    template <class T>
+    void todense(T& ret) const
+    {
+        GOOSEFEM_ASSERT(xt::has_shape(ret, {derived_cast().m_ndof, derived_cast().m_ndof}));
+        derived_cast().todense_impl(ret);
+    }
+
+    /**
+    Dot-product \f$ b_i = A_{ij} x_j \f$.
+
+    \param x nodevec [#nelem, #ndim].
+    \return b nodevec [#nelem, #ndim].
+    */
+    array_type::tensor<double, 2> Dot(const array_type::tensor<double, 2>& x) const
+    {
+        GOOSEFEM_ASSERT(xt::has_shape(x, this->shape_nodevec()));
+        array_type::tensor<double, 2> b = xt::empty_like(x);
+        derived_cast().dot_nodevec_impl(x, b);
+        return b;
+    }
+
+    /**
+    Dot-product \f$ b_i = A_{ij} x_j \f$.
+
+    \param x dofval [#ndof].
+    \return b dofval [#ndof].
+    */
+    array_type::tensor<double, 1> Dot(const array_type::tensor<double, 1>& x) const
+    {
+        GOOSEFEM_ASSERT(xt::has_shape(x, this->shape_dofval()));
+        array_type::tensor<double, 1> b = xt::empty_like(x);
+        derived_cast().dot_dofval_impl(x, b);
+        return b;
+    }
+
+    /**
+    Same as Dot(const array_type::tensor<double, 2>&, array_type::tensor<double, 2>& b)
+    but writing to preallocated data.
+
+    \param x nodevec [#nelem, #ndim].
+    \param b (overwritten) nodevec [#nelem, #ndim].
+    */
+    void dot(const array_type::tensor<double, 2>& x, array_type::tensor<double, 2>& b) const
+    {
+        GOOSEFEM_ASSERT(xt::has_shape(x, this->shape_nodevec()));
+        GOOSEFEM_ASSERT(xt::has_shape(b, this->shape_nodevec()));
+        derived_cast().dot_nodevec_impl(x, b);
+    }
+
+    /**
+    Same as Dot(const array_type::tensor<double, 1>&, array_type::tensor<double, 1>& b)
+    but writing to preallocated data.
+
+    \param x dofval [#ndof].
+    \param b (overwritten) dofval [#ndof].
+    */
+    void dot(const array_type::tensor<double, 1>& x, array_type::tensor<double, 1>& b) const
+    {
+        GOOSEFEM_ASSERT(xt::has_shape(x, this->shape_dofval()));
+        GOOSEFEM_ASSERT(xt::has_shape(b, this->shape_dofval()));
+        derived_cast().dot_dofval_impl(x, b);
+    }
+};
+
+/**
+CRTP base class for a partitioned matrix.
+*/
+template <class D>
+class MatrixPartitionedBase : public MatrixBase<D> {
+protected:
+    array_type::tensor<size_t, 1> m_iiu; ///< See iiu()
+    array_type::tensor<size_t, 1> m_iip; ///< See iip()
+
+    size_t m_nnu; ///< See #nnu
+    size_t m_nnp; ///< See #nnp
+
+public:
+    /**
+    Underlying type.
+    */
+    using derived_type = D;
+
+private:
+    auto derived_cast() -> derived_type&
+    {
+        return *static_cast<derived_type*>(this);
+    }
+
+    auto derived_cast() const -> const derived_type&
+    {
+        return *static_cast<const derived_type*>(this);
+    }
+
+public:
+    /**
+    Number of unknown DOFs.
+    \return Unsigned integer.
+    */
+    size_t nnu() const
+    {
+        return derived_cast().m_nnu;
+    }
+
+    /**
+    Number of prescribed DOFs.
+    \return Unsigned integer.
+    */
+    size_t nnp() const
+    {
+        return derived_cast().m_nnp;
+    }
+
+    /**
+    Unknown DOFs.
+    \return [#nnu].
+    */
+    const array_type::tensor<size_t, 1>& iiu() const
+    {
+        return derived_cast().m_iiu;
+    }
+
+    /**
+    Prescribed DOFs.
+    \return [#nnp].
+    */
+    const array_type::tensor<size_t, 1>& iip() const
+    {
+        return derived_cast().m_iip;
+    }
+
+    /**
+    Right-hand-size for corresponding to the prescribed DOFs:
+
+    \f$ b_p = A_{pu} * x_u + A_{pp} * x_p \f$
+
+    and assemble them to the appropriate places in "nodevec".
+
+    \param x "nodevec" [#nnode, #ndim].
+    \param b "nodevec" [#nnode, #ndim].
+    \return Copy of `b` with \f$ b_p \f$ overwritten.
+    */
+    array_type::tensor<double, 2>
+    Reaction(const array_type::tensor<double, 2>& x, const array_type::tensor<double, 2>& b) const
+    {
+        GOOSEFEM_ASSERT(xt::has_shape(x, this->shape_nodevec()));
+        GOOSEFEM_ASSERT(xt::has_shape(b, this->shape_nodevec()));
+        array_type::tensor<double, 2> ret = b;
+        derived_cast().reaction_nodevec_impl(x, ret);
+        return ret;
+    }
+
+    /**
+    Same as Reaction(const array_type::tensor<double, 2>&, const array_type::tensor<double, 2>&),
+    but of "dofval" input and output.
+
+    \param x "dofval" [#ndof].
+    \param b "dofval" [#ndof].
+    \return Copy of `b` with \f$ b_p \f$ overwritten.
+    */
+    array_type::tensor<double, 1>
+    Reaction(const array_type::tensor<double, 1>& x, const array_type::tensor<double, 1>& b) const
+    {
+        GOOSEFEM_ASSERT(xt::has_shape(x, this->shape_dofval()));
+        GOOSEFEM_ASSERT(xt::has_shape(b, this->shape_dofval()));
+        array_type::tensor<double, 1> ret = b;
+        derived_cast().reaction_dofval_impl(x, ret);
+        return ret;
+    }
+
+    /**
+    Same as Reaction(const array_type::tensor<double, 2>&, const array_type::tensor<double, 2>&),
+    but inserting in-place.
+
+    \param x "nodevec" [#nnode, #ndim].
+    \param b "nodevec" [#nnode, #ndim], \f$ b_p \f$ overwritten.
+    */
+    void reaction(const array_type::tensor<double, 2>& x, array_type::tensor<double, 2>& b) const
+    {
+        GOOSEFEM_ASSERT(xt::has_shape(x, this->shape_nodevec()));
+        GOOSEFEM_ASSERT(xt::has_shape(b, this->shape_nodevec()));
+        derived_cast().reaction_nodevec_impl(x, b);
+    }
+
+    /**
+    Same as Reaction(const array_type::tensor<double, 1>&, const array_type::tensor<double, 1>&),
+    but inserting in-place.
+
+    \param x "dofval" [#ndof].
+    \param b "dofval" [#ndof], \f$ b_p \f$ overwritten.
+    */
+    void reaction(const array_type::tensor<double, 1>& x, array_type::tensor<double, 1>& b) const
+    {
+        GOOSEFEM_ASSERT(xt::has_shape(x, this->shape_dofval()));
+        GOOSEFEM_ASSERT(xt::has_shape(b, this->shape_dofval()));
+        derived_cast().reaction_dofval_impl(x, b);
+    }
+
+    /**
+    Same as Reaction(const array_type::tensor<double, 1>&, const array_type::tensor<double, 1>&),
+    but with partitioned input and output.
+
+    \param x_u unknown "dofval" [#nnu].
+    \param x_p prescribed "dofval" [#nnp].
+    \return b_p prescribed "dofval" [#nnp].
+    */
+    array_type::tensor<double, 1> Reaction_p(
+        const array_type::tensor<double, 1>& x_u,
+        const array_type::tensor<double, 1>& x_p) const
+    {
+        array_type::tensor<double, 1> b_p = xt::empty<double>({m_nnp});
+        derived_cast().reaction_p_impl(x_u, x_p, b_p);
+        return b_p;
+    }
+
+    /**
+    Same as Reaction_p(const array_type::tensor<double, 1>&, const array_type::tensor<double, 1>&),
+    but writing to preallocated output.
+
+    \param x_u unknown "dofval" [#nnu].
+    \param x_p prescribed "dofval" [#nnp].
+    \param b_p (overwritten) prescribed "dofval" [#nnp].
+    */
+    void reaction_p(
+        const array_type::tensor<double, 1>& x_u,
+        const array_type::tensor<double, 1>& x_p,
+        array_type::tensor<double, 1>& b_p) const
+    {
+        derived_cast().reaction_p_impl(x_u, x_p, b_p);
+    }
+};
+
+/**
+CRTP base class for a partitioned matrix with tying.
+*/
+template <class D>
+class MatrixPartitionedTyingsBase : public MatrixPartitionedBase<D> {
+protected:
+    array_type::tensor<size_t, 1> m_iii; ///< See iii()
+    array_type::tensor<size_t, 1> m_iid; ///< See iid()
+
+    size_t m_nni; ///< See #nni
+    size_t m_nnd; ///< See #nnd
+
+public:
+    /**
+    Underlying type.
+    */
+    using derived_type = D;
+
+private:
+    auto derived_cast() -> derived_type&
+    {
+        return *static_cast<derived_type*>(this);
+    }
+
+    auto derived_cast() const -> const derived_type&
+    {
+        return *static_cast<const derived_type*>(this);
+    }
+
+public:
+    /**
+    Number of independent DOFs.
+    \return Unsigned integer.
+    */
+    size_t nni() const
+    {
+        return derived_cast().m_nni;
+    }
+
+    /**
+    Number of dependent DOFs.
+    \return Unsigned integer.
+    */
+    size_t nnd() const
+    {
+        return derived_cast().m_nnd;
+    }
+
+    /**
+    Independent DOFs.
+    \return [#nnu].
+    */
+    const array_type::tensor<size_t, 1>& iii() const
+    {
+        return derived_cast().m_iii;
+    }
+
+    /**
+    Dependent DOFs.
+    \return [#nnp].
+    */
+    const array_type::tensor<size_t, 1>& iid() const
+    {
+        return derived_cast().m_iid;
+    }
+};
+
+/**
 Sparse matrix.
 
 See Vector() for bookkeeping definitions.
 */
-class Matrix {
+class Matrix : public MatrixBase<Matrix> {
+private:
+    friend MatrixBase<Matrix>;
+
+private:
+    // array_type::tensor<size_t, 2> m_conn; ///< Connectivity [#nelem, #nne].
+    // array_type::tensor<size_t, 2> m_dofs; ///< DOF-numbers per node [#nnode, #ndim].
+
+    // size_t m_nelem; ///< See nelem().
+    // size_t m_nne; ///< See nne().
+    // size_t m_nnode; ///< See nnode().
+    // size_t m_ndim; ///< See ndim().
+    // size_t m_ndof; ///< See ndof().
+
+    bool m_changed = true; ///< Signal changes to data.
+
+    Eigen::SparseMatrix<double> m_A; ///< The matrix.
+
+    std::vector<Eigen::Triplet<double>> m_T; ///< Matrix entries.
+
+    template <class>
+    friend class MatrixSolver; ///< Grant access to solver class
+
 public:
     Matrix() = default;
-
-    virtual ~Matrix() = default;
 
     /**
     Constructor.
@@ -54,63 +531,10 @@ public:
         GOOSEFEM_ASSERT(m_ndof <= m_nnode * m_ndim);
     }
 
-    /**
-    \return Number of elements.
-    */
-    size_t nelem() const
+private:
+    template <class T>
+    void assemble_impl(const T& elemmat)
     {
-        return m_nelem;
-    }
-
-    /**
-    \return Number of nodes per element.
-    */
-    size_t nne() const
-    {
-        return m_nne;
-    }
-
-    /**
-    \return Number of nodes.
-    */
-    size_t nnode() const
-    {
-        return m_nnode;
-    }
-
-    /**
-    \return Number of dimensions.
-    */
-    size_t ndim() const
-    {
-        return m_ndim;
-    }
-
-    /**
-    \return Number of DOFs.
-    */
-    size_t ndof() const
-    {
-        return m_ndof;
-    }
-
-    /**
-    \return DOFs per node [#nnode, #ndim]
-    */
-    array_type::tensor<size_t, 2> dofs() const
-    {
-        return m_dofs;
-    }
-
-    /**
-    Assemble from matrices stored per element.
-
-    \param elemmat [#nelem, #nne * #ndim, #nne * #ndim].
-    */
-    virtual void assemble(const array_type::tensor<double, 3>& elemmat)
-    {
-        GOOSEFEM_ASSERT(xt::has_shape(elemmat, {m_nelem, m_nne * m_ndim, m_nne * m_ndim}));
-
         m_T.clear();
 
         for (size_t e = 0; e < m_nelem; ++e) {
@@ -132,6 +556,7 @@ public:
         m_changed = true;
     }
 
+public:
     /**
     Overwrite matrix with (sparse) matrix.
 
@@ -139,7 +564,7 @@ public:
     \param cols Column numbers in the matrix [n].
     \param matrix Data entries on (rows, cols) [n].
     */
-    virtual void
+    void
     set(const array_type::tensor<size_t, 1>& rows,
         const array_type::tensor<size_t, 1>& cols,
         const array_type::tensor<double, 2>& matrix)
@@ -168,7 +593,7 @@ public:
     \param cols Column numbers in the matrix [n].
     \param matrix Data entries on (rows, cols) [n].
     */
-    virtual void
+    void
     add(const array_type::tensor<size_t, 1>& rows,
         const array_type::tensor<size_t, 1>& cols,
         const array_type::tensor<double, 2>& matrix)
@@ -193,25 +618,10 @@ public:
         m_changed = true;
     }
 
-    /**
-    \return Matrix as dense matrix [#ndof, #ndof].
-    */
-    array_type::tensor<double, 2> Todense() const
+private:
+    template <class T>
+    void todense_impl(T& ret) const
     {
-        array_type::tensor<double, 2> ret = xt::empty<double>({m_ndof, m_ndof});
-        this->todense(ret);
-        return ret;
-    }
-
-    /**
-    Covert matrix to dense matrix.
-
-    \param ret overwritten [#ndof, #ndof].
-    */
-    virtual void todense(array_type::tensor<double, 2>& ret) const
-    {
-        GOOSEFEM_ASSERT(xt::has_shape(ret, {m_ndof, m_ndof}));
-
         ret.fill(0.0);
 
         for (int k = 0; k < m_A.outerSize(); ++k) {
@@ -221,85 +631,28 @@ public:
         }
     }
 
-    /**
-    Dot-product \f$ b_i = A_{ij} x_j \f$.
-
-    \param x nodevec [#nelem, #ndim].
-    \return b nodevec overwritten [#nelem, #ndim].
-    */
-    array_type::tensor<double, 2> Dot(const array_type::tensor<double, 2>& x) const
+    template <class T>
+    void dot_nodevec_impl(const T& x, T& b) const
     {
-        array_type::tensor<double, 2> b = xt::empty<double>({m_nnode, m_ndim});
-        this->dot(x, b);
-        return b;
+        this->Eigen_asNode_dofval_nodevec(m_A * this->Eigen_AsDofs_nodevec(x), b);
     }
 
-    /**
-    Same as Dot(const array_type::tensor<double, 2>&, array_type::tensor<double, 2>& b)
-    but writing to preallocated data.
-
-    \param x nodevec [#nelem, #ndim].
-    \param b nodevec overwritten [#nelem, #ndim].
-    */
-    virtual void dot(const array_type::tensor<double, 2>& x, array_type::tensor<double, 2>& b) const
+    template <class T>
+    void dot_dofval_impl(const T& x, T& b) const
     {
-        GOOSEFEM_ASSERT(xt::has_shape(b, {m_nnode, m_ndim}));
-        GOOSEFEM_ASSERT(xt::has_shape(x, {m_nnode, m_ndim}));
-        this->asNode(m_A * this->AsDofs(x), b);
-    }
-
-    /**
-    Dot-product \f$ b_i = A_{ij} x_j \f$.
-
-    \param x dofval [#ndof].
-    \return b dofval overwritten [#ndof].
-    */
-    array_type::tensor<double, 1> Dot(const array_type::tensor<double, 1>& x) const
-    {
-        array_type::tensor<double, 1> b = xt::empty<double>({m_ndof});
-        this->dot(x, b);
-        return b;
-    }
-
-    /**
-    Same as Dot(const array_type::tensor<double, 1>&, array_type::tensor<double, 1>& b)
-    but writing to preallocated data.
-
-    \param x dofval [#ndof].
-    \param b dofval overwritten [#ndof].
-    */
-    virtual void dot(const array_type::tensor<double, 1>& x, array_type::tensor<double, 1>& b) const
-    {
-        GOOSEFEM_ASSERT(b.size() == m_ndof);
-        GOOSEFEM_ASSERT(x.size() == m_ndof);
-
         Eigen::Map<Eigen::VectorXd>(b.data(), b.size()).noalias() =
             m_A * Eigen::Map<const Eigen::VectorXd>(x.data(), x.size());
     }
 
-protected:
-    array_type::tensor<size_t, 2> m_conn; ///< Connectivity [#nelem, #nne].
-    array_type::tensor<size_t, 2> m_dofs; ///< DOF-numbers per node [#nnode, #ndim].
-    size_t m_nelem; ///< See nelem().
-    size_t m_nne; ///< See nne().
-    size_t m_nnode; ///< See nnode().
-    size_t m_ndim; ///< See ndim().
-    size_t m_ndof; ///< See ndof().
-    bool m_changed = true; ///< Signal changes to data.
-
 private:
-    Eigen::SparseMatrix<double> m_A; ///< The matrix.
-    std::vector<Eigen::Triplet<double>> m_T; ///< Matrix entries.
-    template <class>
-    friend class MatrixSolver; ///< Grant access to solver class
-
     /**
     Convert "nodevec" to "dofval" (overwrite entries that occur more than once).
 
     \param nodevec input [#nnode, #ndim]
     \return dofval output [#ndof]
     */
-    Eigen::VectorXd AsDofs(const array_type::tensor<double, 2>& nodevec) const
+    template <class T>
+    Eigen::VectorXd Eigen_AsDofs_nodevec(const T& nodevec) const
     {
         GOOSEFEM_ASSERT(xt::has_shape(nodevec, {m_nnode, m_ndim}));
 
@@ -321,7 +674,8 @@ private:
     \param dofval input [#ndof]
     \param nodevec output [#nnode, #ndim]
     */
-    void asNode(const Eigen::VectorXd& dofval, array_type::tensor<double, 2>& nodevec) const
+    template <class T>
+    void Eigen_asNode_dofval_nodevec(const Eigen::VectorXd& dofval, T& nodevec) const
     {
         GOOSEFEM_ASSERT(static_cast<size_t>(dofval.size()) == m_ndof);
         GOOSEFEM_ASSERT(xt::has_shape(nodevec, {m_nnode, m_ndim}));
@@ -372,8 +726,8 @@ public:
         GOOSEFEM_ASSERT(xt::has_shape(b, {A.m_nnode, A.m_ndim}));
         GOOSEFEM_ASSERT(xt::has_shape(x, {A.m_nnode, A.m_ndim}));
         this->factorize(A);
-        Eigen::VectorXd X = m_solver.solve(A.AsDofs(b));
-        A.asNode(X, x);
+        Eigen::VectorXd X = m_solver.solve(A.Eigen_AsDofs_nodevec(b));
+        A.Eigen_asNode_dofval_nodevec(X, x);
     }
 
     /**

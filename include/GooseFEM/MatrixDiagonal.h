@@ -10,20 +10,100 @@ Diagonal matrix.
 #define GOOSEFEM_MATRIXDIAGONAL_H
 
 #include "Element.h"
+#include "Matrix.h"
 #include "config.h"
 
 namespace GooseFEM {
 
 /**
+CRTP base class for a partitioned matrix with tying.
+*/
+template <class D>
+class MatrixDiagonalBase {
+public:
+    /**
+    Underlying type.
+    */
+    using derived_type = D;
+
+private:
+    auto derived_cast() -> derived_type&
+    {
+        return *static_cast<derived_type*>(this);
+    }
+
+    auto derived_cast() const -> const derived_type&
+    {
+        return *static_cast<const derived_type*>(this);
+    }
+
+public:
+    /**
+    Solve \f$ x = A^{-1} b \f$.
+
+    \param b nodevec [nelem, ndim].
+    \return x nodevec [nelem, ndim].
+    */
+    array_type::tensor<double, 2> Solve(const array_type::tensor<double, 2>& b)
+    {
+        array_type::tensor<double, 2> x = xt::empty_like(b);
+        derived_cast().solve_nodevec_impl(b, x);
+        return x;
+    }
+
+    /**
+    Solve \f$ x = A^{-1} b \f$.
+
+    \param b dofval [ndof].
+    \return x dofval [ndof].
+    */
+    array_type::tensor<double, 1> Solve(const array_type::tensor<double, 1>& b)
+    {
+        array_type::tensor<double, 1> x = xt::empty_like(b);
+        derived_cast().solve_dofval_impl(b, x);
+        return x;
+    }
+
+    /**
+    Same as Solve(const array_type::tensor<double, 2>&)
+    but writing to preallocated data.
+
+    \param b nodevec [nelem, ndim].
+    \param x nodevec overwritten [nelem, ndim].
+    */
+    void solve(const array_type::tensor<double, 2>& b, array_type::tensor<double, 2>& x)
+    {
+        derived_cast().solve_nodevec_impl(b, x);
+    }
+
+    /**
+    Same as Solve(const array_type::tensor<double, 1>&)
+    but writing to preallocated data.
+
+    \param b nodevec [nelem, ndim].
+    \param x nodevec overwritten [nelem, ndim].
+    */
+    void solve(const array_type::tensor<double, 1>& b, array_type::tensor<double, 1>& x)
+    {
+        derived_cast().solve_dofval_impl(b, x);
+    }
+};
+
+/**
 Diagonal matrix.
+
+Warning: assemble() ignores all off-diagonal terms.
 
 See Vector() for bookkeeping definitions.
 */
-class MatrixDiagonal {
+class MatrixDiagonal : public MatrixBase<MatrixDiagonal>,
+                       public MatrixDiagonalBase<MatrixDiagonal> {
+private:
+    friend MatrixBase<MatrixDiagonal>;
+    friend MatrixDiagonalBase<MatrixDiagonal>;
+
 public:
     MatrixDiagonal() = default;
-
-    virtual ~MatrixDiagonal() = default;
 
     /**
     Constructor.
@@ -34,8 +114,10 @@ public:
     \param dofs DOFs per node [#nnode, #ndim].
     */
     template <class C, class D>
-    MatrixDiagonal(const C& conn, const D& dofs) : m_conn(conn), m_dofs(dofs)
+    MatrixDiagonal(const C& conn, const D& dofs)
     {
+        m_conn = conn;
+        m_dofs = dofs;
         m_nelem = m_conn.shape(0);
         m_nne = m_conn.shape(1);
         m_nnode = m_dofs.shape(0);
@@ -48,61 +130,9 @@ public:
         GOOSEFEM_ASSERT(m_ndof <= m_nnode * m_ndim);
     }
 
-    /**
-    \return Number of elements.
-    */
-    size_t nelem() const
-    {
-        return m_nelem;
-    }
-
-    /**
-    \return Number of nodes per element.
-    */
-    size_t nne() const
-    {
-        return m_nne;
-    }
-
-    /**
-    \return Number of nodes.
-    */
-    size_t nnode() const
-    {
-        return m_nnode;
-    }
-
-    /**
-    \return Number of dimensions.
-    */
-    size_t ndim() const
-    {
-        return m_ndim;
-    }
-
-    /**
-    \return Number of DOFs.
-    */
-    size_t ndof() const
-    {
-        return m_ndof;
-    }
-
-    /**
-    \return DOFs per node [#nnode, #ndim]
-    */
-    array_type::tensor<size_t, 2> dofs() const
-    {
-        return m_dofs;
-    }
-
-    /**
-    Assemble from matrices stored per element.
-    \warning Ignores any off-diagonal terms.
-
-    \param elemmat [#nelem, #nne * #ndim, #nne * #ndim].
-    */
-    virtual void assemble(const array_type::tensor<double, 3>& elemmat)
+private:
+    template <class T>
+    void assemble_impl(const T& elemmat)
     {
         GOOSEFEM_ASSERT(xt::has_shape(elemmat, {m_nelem, m_nne * m_ndim, m_nne * m_ndim}));
         GOOSEFEM_ASSERT(Element::isDiagonal(elemmat));
@@ -120,12 +150,23 @@ public:
         m_changed = true;
     }
 
+    template <class T>
+    void todense_impl(T& ret) const
+    {
+        ret.fill(0.0);
+
+#pragma omp parallel for
+        for (size_t d = 0; d < m_ndof; ++d) {
+            ret(d, d) = m_A(d);
+        }
+    }
+
+public:
     /**
     Set all (diagonal) matrix components.
-
     \param A The matrix [#ndof].
     */
-    virtual void set(const array_type::tensor<double, 1>& A)
+    void set(const array_type::tensor<double, 1>& A)
     {
         GOOSEFEM_ASSERT(A.size() == m_ndof);
         std::copy(A.begin(), A.end(), m_A.begin());
@@ -134,35 +175,16 @@ public:
 
     /**
     Return matrix as diagonal matrix.
-
     \param [#ndof].
     */
-    virtual array_type::tensor<double, 1> Todiagonal() const
+    array_type::tensor<double, 1> Todiagonal() const
     {
         return m_A;
     }
 
-    /**
-    Dot-product \f$ b_i = A_{ij} x_j \f$.
-
-    \param x nodevec [#nelem, #ndim].
-    \return b nodevec overwritten [#nelem, #ndim].
-    */
-    array_type::tensor<double, 2> Dot(const array_type::tensor<double, 2>& x) const
-    {
-        array_type::tensor<double, 2> b = xt::empty<double>({m_nnode, m_ndim});
-        this->dot(x, b);
-        return b;
-    }
-
-    /**
-    Same as Dot(const array_type::tensor<double, 2>&, array_type::tensor<double, 2>& b)
-    but writing to preallocated data.
-
-    \param x nodevec [#nelem, #ndim].
-    \param b nodevec overwritten [#nelem, #ndim].
-    */
-    virtual void dot(const array_type::tensor<double, 2>& x, array_type::tensor<double, 2>& b) const
+private:
+    template <class T>
+    void dot_nodevec_impl(const T& x, T& b) const
     {
         GOOSEFEM_ASSERT(xt::has_shape(x, {m_nnode, m_ndim}));
         GOOSEFEM_ASSERT(xt::has_shape(b, {m_nnode, m_ndim}));
@@ -175,27 +197,8 @@ public:
         }
     }
 
-    /**
-    Dot-product \f$ b_i = A_{ij} x_j \f$.
-
-    \param x dofval [#ndof].
-    \return b dofval overwritten [#ndof].
-    */
-    array_type::tensor<double, 1> Dot(const array_type::tensor<double, 1>& x) const
-    {
-        array_type::tensor<double, 1> b = xt::empty<double>({m_ndof});
-        this->dot(x, b);
-        return b;
-    }
-
-    /**
-    Same as Dot(const array_type::tensor<double, 1>&, array_type::tensor<double, 1>& b)
-    but writing to preallocated data.
-
-    \param x dofval [#ndof].
-    \param b dofval overwritten [#ndof].
-    */
-    virtual void dot(const array_type::tensor<double, 1>& x, array_type::tensor<double, 1>& b) const
+    template <class T>
+    void dot_dofval_impl(const T& x, T& b) const
     {
         GOOSEFEM_ASSERT(x.size() == m_ndof);
         GOOSEFEM_ASSERT(b.size() == m_ndof);
@@ -203,27 +206,9 @@ public:
         xt::noalias(b) = m_A * x;
     }
 
-    /**
-    Solve \f$ x = A^{-1} b \f$.
-
-    \param b nodevec [nelem, ndim].
-    \return x nodevec [nelem, ndim].
-    */
-    array_type::tensor<double, 2> Solve(const array_type::tensor<double, 2>& b)
-    {
-        array_type::tensor<double, 2> x = xt::empty<double>({m_nnode, m_ndim});
-        this->solve(b, x);
-        return x;
-    }
-
-    /**
-    Same as Solve(const array_type::tensor<double, 2>&)
-    but writing to preallocated data.
-
-    \param b nodevec [nelem, ndim].
-    \param x nodevec overwritten [nelem, ndim].
-    */
-    virtual void solve(const array_type::tensor<double, 2>& b, array_type::tensor<double, 2>& x)
+private:
+    template <class T>
+    void solve_nodevec_impl(const T& b, T& x)
     {
         GOOSEFEM_ASSERT(xt::has_shape(b, {m_nnode, m_ndim}));
         GOOSEFEM_ASSERT(xt::has_shape(x, {m_nnode, m_ndim}));
@@ -238,44 +223,14 @@ public:
         }
     }
 
-    /**
-    Same as Solve(const array_type::tensor<double, 2>&)
-    but for "dofval" input and output.
-
-    \param b dofval [ndof].
-    \return x dofval [ndof].
-    */
-    array_type::tensor<double, 1> Solve(const array_type::tensor<double, 1>& b)
-    {
-        array_type::tensor<double, 1> x = xt::empty<double>({m_ndof});
-        this->solve(b, x);
-        return x;
-    }
-
-    /**
-    Same as Solve(const array_type::tensor<double, 1>&)
-    but writing to preallocated data.
-
-    \param b dofval [ndof].
-    \param x dofval overwritten [ndof].
-    */
-    virtual void solve(const array_type::tensor<double, 1>& b, array_type::tensor<double, 1>& x)
+    template <class T>
+    void solve_dofval_impl(const T& b, T& x)
     {
         GOOSEFEM_ASSERT(b.size() == m_ndof);
         GOOSEFEM_ASSERT(x.size() == m_ndof);
         this->factorize();
         xt::noalias(x) = m_inv * b;
     }
-
-protected:
-    array_type::tensor<size_t, 2> m_conn; ///< Connectivity [#nelem, #nne].
-    array_type::tensor<size_t, 2> m_dofs; ///< DOF-numbers per node [#nnode, #ndim].
-    size_t m_nelem; ///< See nelem().
-    size_t m_nne; ///< See nne().
-    size_t m_nnode; ///< See nnode().
-    size_t m_ndim; ///< See ndim().
-    size_t m_ndof; ///< See ndof().
-    bool m_changed = true; ///< Signal changes to data.
 
 private:
     array_type::tensor<double, 1> m_A; ///< The matrix.

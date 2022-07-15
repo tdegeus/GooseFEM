@@ -31,7 +31,46 @@ class MatrixPartitionedSolver;
  *
  *  See VectorPartitioned() for bookkeeping definitions.
  */
-class MatrixPartitioned : public Matrix {
+class MatrixPartitioned : public MatrixPartitionedBase<MatrixPartitioned> {
+private:
+    friend MatrixBase<MatrixPartitioned>;
+    friend MatrixPartitionedBase<MatrixPartitioned>;
+
+protected:
+    Eigen::SparseMatrix<double> m_Auu; ///< The matrix.
+    Eigen::SparseMatrix<double> m_Aup; ///< The matrix.
+    Eigen::SparseMatrix<double> m_Apu; ///< The matrix.
+    Eigen::SparseMatrix<double> m_App; ///< The matrix.
+
+    std::vector<Eigen::Triplet<double>> m_Tuu; ///< Matrix entries.
+    std::vector<Eigen::Triplet<double>> m_Tup; ///< Matrix entries.
+    std::vector<Eigen::Triplet<double>> m_Tpu; ///< Matrix entries.
+    std::vector<Eigen::Triplet<double>> m_Tpp; ///< Matrix entries.
+
+    /**
+    Renumbered DOFs per node, such that
+
+        iiu = arange(nnu)
+        iip = nnu + arange(nnp)
+
+    making is much simpler to slice.
+    */
+    array_type::tensor<size_t, 2> m_part;
+
+    /**
+     *  Map real DOF to DOF in partitioned system.
+     *  The partitioned system is defined as::
+     *
+     *      iiu = arange(nnu)
+     *      iip = nnu + arange(nnp)
+     *
+     *  Similar to `m_part` but for a 1d sequential list of DOFs.
+     */
+    array_type::tensor<size_t, 1> m_part1d;
+
+    template <class>
+    friend class MatrixPartitionedSolver; ///< Grant access to solver class
+
 public:
     MatrixPartitioned() = default;
 
@@ -77,39 +116,9 @@ public:
         m_App.resize(m_nnp, m_nnp);
     }
 
-    /**
-    Number of unknown DOFs.
-    */
-    size_t nnu() const
-    {
-        return m_nnu;
-    }
-
-    /**
-    Number of prescribed DOFs.
-    */
-    size_t nnp() const
-    {
-        return m_nnp;
-    }
-
-    /**
-    Unknown DOFs [#nnu].
-    */
-    array_type::tensor<size_t, 1> iiu() const
-    {
-        return m_iiu;
-    }
-
-    /**
-    Prescribed DOFs [#nnp].
-    */
-    array_type::tensor<size_t, 1> iip() const
-    {
-        return m_iip;
-    }
-
-    void assemble(const array_type::tensor<double, 3>& elemmat) override
+private:
+    template <class T>
+    void assemble_impl(const T& elemmat)
     {
         GOOSEFEM_ASSERT(xt::has_shape(elemmat, {m_nelem, m_nne * m_ndim, m_nne * m_ndim}));
 
@@ -160,10 +169,11 @@ public:
         m_changed = true;
     }
 
+public:
     void
     set(const array_type::tensor<size_t, 1>& rows,
         const array_type::tensor<size_t, 1>& cols,
-        const array_type::tensor<double, 2>& matrix) override
+        const array_type::tensor<double, 2>& matrix)
     {
         GOOSEFEM_ASSERT(rows.size() == matrix.shape(0));
         GOOSEFEM_ASSERT(cols.size() == matrix.shape(1));
@@ -206,7 +216,7 @@ public:
     void
     add(const array_type::tensor<size_t, 1>& rows,
         const array_type::tensor<size_t, 1>& cols,
-        const array_type::tensor<double, 2>& matrix) override
+        const array_type::tensor<double, 2>& matrix)
     {
         GOOSEFEM_ASSERT(rows.size() == matrix.shape(0));
         GOOSEFEM_ASSERT(cols.size() == matrix.shape(1));
@@ -255,10 +265,10 @@ public:
         m_changed = true;
     }
 
-    void todense(array_type::tensor<double, 2>& ret) const override
+private:
+    template <class T>
+    void todense_impl(T& ret) const
     {
-        GOOSEFEM_ASSERT(xt::has_shape(ret, {m_ndof, m_ndof}));
-
         ret.fill(0.0);
 
         for (int k = 0; k < m_Auu.outerSize(); ++k) {
@@ -286,8 +296,8 @@ public:
         }
     }
 
-    void
-    dot(const array_type::tensor<double, 2>& x, array_type::tensor<double, 2>& b) const override
+    template <class T>
+    void dot_nodevec_impl(const T& x, T& b) const
     {
         GOOSEFEM_ASSERT(xt::has_shape(b, {m_nnode, m_ndim}));
         GOOSEFEM_ASSERT(xt::has_shape(x, {m_nnode, m_ndim}));
@@ -310,8 +320,8 @@ public:
         }
     }
 
-    void
-    dot(const array_type::tensor<double, 1>& x, array_type::tensor<double, 1>& b) const override
+    template <class T>
+    void dot_dofval_impl(const T& x, T& b) const
     {
         GOOSEFEM_ASSERT(b.size() == m_ndof);
         GOOSEFEM_ASSERT(x.size() == m_ndof);
@@ -333,33 +343,8 @@ public:
         }
     }
 
-    /**
-    Get right-hand-size for corresponding to the prescribed DOFs.
-
-    \f$ b_p = A_{pu} * x_u + A_{pp} * x_p \f$
-
-    and assemble them to the appropriate places in "nodevec".
-
-    \param x "nodevec" [#nnode, #ndim].
-    \param b "nodevec" [#nnode, #ndim].
-    \return Copy of `b` with \f$ b_p \f$ overwritten.
-    */
-    array_type::tensor<double, 2>
-    Reaction(const array_type::tensor<double, 2>& x, const array_type::tensor<double, 2>& b) const
-    {
-        array_type::tensor<double, 2> ret = b;
-        this->reaction(x, ret);
-        return ret;
-    }
-
-    /**
-    Same as Reaction(const array_type::tensor<double, 2>&, const array_type::tensor<double, 2>&),
-    but inserting in-place.
-
-    \param x "nodevec" [#nnode, #ndim].
-    \param b "nodevec" [#nnode, #ndim], \f$ b_p \f$ overwritten.
-    */
-    void reaction(const array_type::tensor<double, 2>& x, array_type::tensor<double, 2>& b) const
+    template <class T>
+    void reaction_nodevec_impl(const T& x, T& b) const
     {
         GOOSEFEM_ASSERT(xt::has_shape(x, {m_nnode, m_ndim}));
         GOOSEFEM_ASSERT(xt::has_shape(b, {m_nnode, m_ndim}));
@@ -378,30 +363,8 @@ public:
         }
     }
 
-    /**
-    Same as Reaction(const array_type::tensor<double, 2>&, const array_type::tensor<double, 2>&),
-    but of "dofval" input and output.
-
-    \param x "dofval" [#ndof].
-    \param b "dofval" [#ndof].
-    \return Copy of `b` with \f$ b_p \f$ overwritten.
-    */
-    array_type::tensor<double, 1>
-    Reaction(const array_type::tensor<double, 1>& x, const array_type::tensor<double, 1>& b) const
-    {
-        array_type::tensor<double, 1> ret = b;
-        this->reaction(x, ret);
-        return ret;
-    }
-
-    /**
-    Same as Reaction(const array_type::tensor<double, 1>&, const array_type::tensor<double, 1>&),
-    but inserting in-place.
-
-    \param x "dofval" [#ndof].
-    \param b "dofval" [#ndof], \f$ b_p \f$ overwritten.
-    */
-    void reaction(const array_type::tensor<double, 1>& x, array_type::tensor<double, 1>& b) const
+    template <class T>
+    void reaction_dofval_impl(const T& x, T& b) const
     {
         GOOSEFEM_ASSERT(x.size() == m_ndof);
         GOOSEFEM_ASSERT(b.size() == m_ndof);
@@ -416,32 +379,7 @@ public:
         }
     }
 
-    /**
-    Same as Reaction(const array_type::tensor<double, 1>&, const array_type::tensor<double, 1>&),
-    but with partitioned input and output.
-
-    \param x_u unknown "dofval" [#nnu].
-    \param x_p prescribed "dofval" [#nnp].
-    \return b_p prescribed "dofval" [#nnp].
-    */
-    array_type::tensor<double, 1> Reaction_p(
-        const array_type::tensor<double, 1>& x_u,
-        const array_type::tensor<double, 1>& x_p) const
-    {
-        array_type::tensor<double, 1> b_p = xt::empty<double>({m_nnp});
-        this->reaction_p(x_u, x_p, b_p);
-        return b_p;
-    }
-
-    /**
-    Same as Reaction_p(const array_type::tensor<double, 1>&, const array_type::tensor<double, 1>&),
-    but writing to preallocated output.
-
-    \param x_u unknown "dofval" [#nnu].
-    \param x_p prescribed "dofval" [#nnp].
-    \param b_p (overwritten) prescribed "dofval" [#nnp].
-    */
-    void reaction_p(
+    void reaction_p_impl(
         const array_type::tensor<double, 1>& x_u,
         const array_type::tensor<double, 1>& x_p,
         array_type::tensor<double, 1>& b_p) const
@@ -454,45 +392,6 @@ public:
             m_Apu * Eigen::Map<const Eigen::VectorXd>(x_u.data(), x_u.size()) +
             m_App * Eigen::Map<const Eigen::VectorXd>(x_p.data(), x_p.size());
     }
-
-private:
-    Eigen::SparseMatrix<double> m_Auu; ///< The matrix.
-    Eigen::SparseMatrix<double> m_Aup; ///< The matrix.
-    Eigen::SparseMatrix<double> m_Apu; ///< The matrix.
-    Eigen::SparseMatrix<double> m_App; ///< The matrix.
-    std::vector<Eigen::Triplet<double>> m_Tuu; ///< Matrix entries.
-    std::vector<Eigen::Triplet<double>> m_Tup; ///< Matrix entries.
-    std::vector<Eigen::Triplet<double>> m_Tpu; ///< Matrix entries.
-    std::vector<Eigen::Triplet<double>> m_Tpp; ///< Matrix entries.
-    array_type::tensor<size_t, 1> m_iiu; ///< See iiu()
-    array_type::tensor<size_t, 1> m_iip; ///< See iip()
-    size_t m_nnu; ///< See #nnu
-    size_t m_nnp; ///< See #nnp
-
-    /**
-    Renumbered DOFs per node, such that
-
-        iiu = arange(nnu)
-        iip = nnu + arange(nnp)
-
-    making is much simpler to slice.
-    */
-    array_type::tensor<size_t, 2> m_part;
-
-    /**
-     *  Map real DOF to DOF in partitioned system.
-     *  The partitioned system is defined as::
-     *
-     *      iiu = arange(nnu)
-     *      iip = nnu + arange(nnp)
-     *
-     *  Similar to `m_part` but for a 1d sequential list of DOFs.
-     */
-    array_type::tensor<size_t, 1> m_part1d;
-
-    // grant access to solver class
-    template <class>
-    friend class MatrixPartitionedSolver;
 
 private:
     // Convert arrays (Eigen version of VectorPartitioned, which contains public functions)
