@@ -13,68 +13,42 @@ namespace py = pybind11;
 
 void init_MatrixDiagonalPartitioned(py::module& m)
 {
+    py::class_<GooseFEM::MatrixDiagonalPartitioned> cls(m, "MatrixDiagonalPartitioned");
+    register_Matrix_MatrixBase<GooseFEM::MatrixDiagonalPartitioned>(cls);
+    register_Matrix_MatrixPartitionedBase<GooseFEM::MatrixDiagonalPartitioned>(cls);
 
-    py::class_<GooseFEM::MatrixDiagonalPartitioned, GooseFEM::MatrixDiagonal>(
-        m, "MatrixDiagonalPartitioned")
+    cls.def(
+        py::init<
+            const xt::pytensor<size_t, 2>&,
+            const xt::pytensor<size_t, 2>&,
+            const xt::pytensor<size_t, 1>&>(),
+        "See :cpp:class:`GooseFEM::MatrixDiagonalPartitioned`.",
+        py::arg("conn"),
+        py::arg("dofs"),
+        py::arg("iip"));
 
-        .def(
-            py::init<
-                const xt::pytensor<size_t, 2>&,
-                const xt::pytensor<size_t, 2>&,
-                const xt::pytensor<size_t, 1>&>(),
-            "See :cpp:class:`GooseFEM::MatrixDiagonalPartitioned`.",
-            py::arg("conn"),
-            py::arg("dofs"),
-            py::arg("iip"))
+    cls.def(
+        "Dot_u",
+        py::overload_cast<const xt::pytensor<double, 1>&, const xt::pytensor<double, 1>&>(
+            &GooseFEM::MatrixDiagonalPartitioned::Dot_u, py::const_),
+        py::arg("x_u"),
+        py::arg("x_p"));
 
-        .def_property_readonly("nnu", &GooseFEM::MatrixDiagonalPartitioned::nnu)
-        .def_property_readonly("nnp", &GooseFEM::MatrixDiagonalPartitioned::nnp)
-        .def_property_readonly("iiu", &GooseFEM::MatrixDiagonalPartitioned::iiu)
-        .def_property_readonly("iip", &GooseFEM::MatrixDiagonalPartitioned::iip)
+    cls.def(
+        "Dot_p",
+        py::overload_cast<const xt::pytensor<double, 1>&, const xt::pytensor<double, 1>&>(
+            &GooseFEM::MatrixDiagonalPartitioned::Dot_p, py::const_),
+        py::arg("x_u"),
+        py::arg("x_p"));
 
-        .def(
-            "Dot_u",
-            py::overload_cast<const xt::pytensor<double, 1>&, const xt::pytensor<double, 1>&>(
-                &GooseFEM::MatrixDiagonalPartitioned::Dot_u, py::const_),
-            py::arg("x_u"),
-            py::arg("x_p"))
+    cls.def(
+        "Solve_u",
+        py::overload_cast<const xt::pytensor<double, 1>&, const xt::pytensor<double, 1>&>(
+            &GooseFEM::MatrixDiagonalPartitioned::Solve_u),
+        py::arg("b_u"),
+        py::arg("x_p"));
 
-        .def(
-            "Dot_p",
-            py::overload_cast<const xt::pytensor<double, 1>&, const xt::pytensor<double, 1>&>(
-                &GooseFEM::MatrixDiagonalPartitioned::Dot_p, py::const_),
-            py::arg("x_u"),
-            py::arg("x_p"))
-
-        .def(
-            "Solve_u",
-            py::overload_cast<const xt::pytensor<double, 1>&, const xt::pytensor<double, 1>&>(
-                &GooseFEM::MatrixDiagonalPartitioned::Solve_u),
-            py::arg("b_u"),
-            py::arg("x_p"))
-
-        .def(
-            "Reaction",
-            py::overload_cast<const xt::pytensor<double, 1>&, const xt::pytensor<double, 1>&>(
-                &GooseFEM::MatrixDiagonalPartitioned::Reaction, py::const_),
-            py::arg("x"),
-            py::arg("b"))
-
-        .def(
-            "Reaction",
-            py::overload_cast<const xt::pytensor<double, 2>&, const xt::pytensor<double, 2>&>(
-                &GooseFEM::MatrixDiagonalPartitioned::Reaction, py::const_),
-            py::arg("x"),
-            py::arg("b"))
-
-        .def(
-            "Reaction_p",
-            py::overload_cast<const xt::pytensor<double, 1>&, const xt::pytensor<double, 1>&>(
-                &GooseFEM::MatrixDiagonalPartitioned::Reaction_p, py::const_),
-            py::arg("x_u"),
-            py::arg("x_p"))
-
-        .def("__repr__", [](const GooseFEM::MatrixDiagonalPartitioned&) {
-            return "<GooseFEM.MatrixDiagonalPartitioned>";
-        });
+    cls.def("__repr__", [](const GooseFEM::MatrixDiagonalPartitioned&) {
+        return "<GooseFEM.MatrixDiagonalPartitioned>";
+    });
 }

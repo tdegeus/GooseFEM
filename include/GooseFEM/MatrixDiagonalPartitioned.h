@@ -22,7 +22,13 @@ Diagonal and partitioned matrix.
 
 See Vector() for bookkeeping definitions.
 */
-class MatrixDiagonalPartitioned : public MatrixDiagonal {
+class MatrixDiagonalPartitioned : public MatrixPartitionedBase<MatrixDiagonalPartitioned>,
+                                  public MatrixDiagonalBase<MatrixDiagonalPartitioned> {
+private:
+    friend MatrixBase<MatrixDiagonalPartitioned>;
+    friend MatrixPartitionedBase<MatrixDiagonalPartitioned>;
+    friend MatrixDiagonalBase<MatrixDiagonalPartitioned>;
+
 public:
     MatrixDiagonalPartitioned() = default;
 
@@ -61,39 +67,9 @@ public:
         m_inv_uu = xt::empty<double>({m_nnu});
     }
 
-    /**
-    Number of unknown DOFs.
-    */
-    size_t nnu() const
-    {
-        return m_nnu;
-    }
-
-    /**
-    Number of prescribed DOFs.
-    */
-    size_t nnp() const
-    {
-        return m_nnp;
-    }
-
-    /**
-    Unknown DOFs [#nnu].
-    */
-    array_type::tensor<size_t, 1> iiu() const
-    {
-        return m_iiu;
-    }
-
-    /**
-    Prescribed DOFs [#nnp].
-    */
-    array_type::tensor<size_t, 1> iip() const
-    {
-        return m_iip;
-    }
-
-    void assemble(const array_type::tensor<double, 3>& elemmat) override
+private:
+    template <class T>
+    void assemble_impl(const T& elemmat)
     {
         GOOSEFEM_ASSERT(xt::has_shape(elemmat, {m_nelem, m_nne * m_ndim, m_nne * m_ndim}));
         GOOSEFEM_ASSERT(Element::isDiagonal(elemmat));
@@ -120,7 +96,28 @@ public:
         m_changed = true;
     }
 
-    void set(const array_type::tensor<double, 1>& A) override
+    template <class T>
+    void todense_impl(T& ret) const
+    {
+        ret.fill(0.0);
+
+#pragma omp parallel for
+        for (size_t d = 0; d < m_nnu; ++d) {
+            ret(m_iiu(d), m_iiu(d)) = m_Auu(d);
+        }
+
+#pragma omp parallel for
+        for (size_t d = 0; d < m_nnp; ++d) {
+            ret(m_iip(d), m_iip(d)) = m_App(d);
+        }
+    }
+
+public:
+    /**
+    Set all (diagonal) matrix components.
+    \param A The matrix [#ndof].
+    */
+    void set(const array_type::tensor<double, 1>& A)
     {
         GOOSEFEM_ASSERT(A.size() == m_ndof);
 
@@ -137,7 +134,11 @@ public:
         m_changed = true;
     }
 
-    array_type::tensor<double, 1> Todiagonal() const override
+    /**
+    Return matrix as diagonal matrix.
+    \param [#ndof].
+    */
+    array_type::tensor<double, 1> Todiagonal() const
     {
         array_type::tensor<double, 1> ret = xt::zeros<double>({m_ndof});
 
@@ -154,8 +155,9 @@ public:
         return ret;
     }
 
-    void
-    dot(const array_type::tensor<double, 2>& x, array_type::tensor<double, 2>& b) const override
+private:
+    template <class T>
+    void dot_nodevec_impl(const T& x, T& b) const
     {
         GOOSEFEM_ASSERT(xt::has_shape(x, {m_nnode, m_ndim}));
         GOOSEFEM_ASSERT(xt::has_shape(b, {m_nnode, m_ndim}));
@@ -176,8 +178,8 @@ public:
         }
     }
 
-    void
-    dot(const array_type::tensor<double, 1>& x, array_type::tensor<double, 1>& b) const override
+    template <class T>
+    void dot_dofval_impl(const T& x, T& b) const
     {
         GOOSEFEM_ASSERT(x.size() == m_ndof);
         GOOSEFEM_ASSERT(b.size() == m_ndof);
@@ -193,6 +195,7 @@ public:
         }
     }
 
+public:
     /**
     \param x_u dofval [#nnu].
     \param x_p dofval [#nnp].
@@ -263,13 +266,9 @@ public:
         }
     }
 
-    /**
-    Solve \f$ x_u = A_{uu}^{-1} (b_u - A_{up} * x_p) \equiv A_{uu}^{-1} b_u \f$.
-
-    \param b nodevec [#nelem, #ndim].
-    \param x nodevec, modified with `x_u` [#nelem, #ndim].
-    */
-    void solve(const array_type::tensor<double, 2>& b, array_type::tensor<double, 2>& x) override
+private:
+    template <class T>
+    void solve_nodevec_impl(const T& b, T& x)
     {
         GOOSEFEM_ASSERT(xt::has_shape(b, {m_nnode, m_ndim}));
         GOOSEFEM_ASSERT(xt::has_shape(x, {m_nnode, m_ndim}));
@@ -286,13 +285,8 @@ public:
         }
     }
 
-    /**
-    Solve \f$ x_u = A_{uu}^{-1} (b_u - A_{up} * x_p) \equiv A_{uu}^{-1} b_u \f$.
-
-    \param b dofval [#ndof].
-    \param x dofval, modified with `x_u` [#ndof].
-    */
-    void solve(const array_type::tensor<double, 1>& b, array_type::tensor<double, 1>& x) override
+    template <class T>
+    void solve_dofval_impl(const T& b, T& x)
     {
         GOOSEFEM_ASSERT(b.size() == m_ndof);
         GOOSEFEM_ASSERT(x.size() == m_ndof);
@@ -305,6 +299,7 @@ public:
         }
     }
 
+public:
     /**
     \param b_u dofval [#nnu].
     \param x_p dofval [#nnp].
@@ -342,33 +337,9 @@ public:
         }
     }
 
-    /**
-    Get right-hand-size for corresponding to the prescribed DOFs.
-
-    \f$ b_p = A_{pu} * x_u + A_{pp} * x_p = A_{pp} * x_p \equiv A_{pp} * x_p \f$
-
-    and assemble them to the appropriate places in "nodevec".
-
-    \param x "nodevec" [#nnode, #ndim].
-    \param b "nodevec" [#nnode, #ndim].
-    \return Copy of `b` with \f$ b_p \f$ overwritten.
-    */
-    array_type::tensor<double, 2>
-    Reaction(const array_type::tensor<double, 2>& x, const array_type::tensor<double, 2>& b) const
-    {
-        array_type::tensor<double, 2> ret = b;
-        this->reaction(x, ret);
-        return ret;
-    }
-
-    /**
-    Same as Reaction(const array_type::tensor<double, 2>&, const array_type::tensor<double, 2>&),
-    but inserting in-place.
-
-    \param x "nodevec" [#nnode, #ndim].
-    \param b "nodevec" [#nnode, #ndim], \f$ b_p \f$ overwritten.
-    */
-    void reaction(const array_type::tensor<double, 2>& x, array_type::tensor<double, 2>& b) const
+private:
+    template <class T>
+    void reaction_nodevec_impl(const T& x, T& b) const
     {
         GOOSEFEM_ASSERT(xt::has_shape(x, {m_nnode, m_ndim}));
         GOOSEFEM_ASSERT(xt::has_shape(b, {m_nnode, m_ndim}));
@@ -383,30 +354,8 @@ public:
         }
     }
 
-    /**
-    Same as Reaction(const array_type::tensor<double, 2>&, const array_type::tensor<double, 2>&),
-    but of "dofval" input and output.
-
-    \param x "dofval" [#ndof].
-    \param b "dofval" [#ndof].
-    \return Copy of `b` with \f$ b_p \f$ overwritten.
-    */
-    array_type::tensor<double, 1>
-    Reaction(const array_type::tensor<double, 1>& x, const array_type::tensor<double, 1>& b) const
-    {
-        array_type::tensor<double, 1> ret = b;
-        this->reaction(x, ret);
-        return ret;
-    }
-
-    /**
-    Same as Reaction(const array_type::tensor<double, 1>&, const array_type::tensor<double, 1>&),
-    but inserting in-place.
-
-    \param x "dofval" [#ndof].
-    \param b "dofval" [#ndof], \f$ b_p \f$ overwritten.
-    */
-    void reaction(const array_type::tensor<double, 1>& x, array_type::tensor<double, 1>& b) const
+    template <class T>
+    void reaction_dofval_impl(const T& x, T& b) const
     {
         GOOSEFEM_ASSERT(x.size() == m_ndof);
         GOOSEFEM_ASSERT(b.size() == m_ndof);
@@ -417,32 +366,7 @@ public:
         }
     }
 
-    /**
-    Same as Reaction(const array_type::tensor<double, 1>&, const array_type::tensor<double, 1>&),
-    but with partitioned input and output.
-
-    \param x_u unknown "dofval" [#nnu].
-    \param x_p prescribed "dofval" [#nnp].
-    \return b_p prescribed "dofval" [#nnp].
-    */
-    array_type::tensor<double, 1> Reaction_p(
-        const array_type::tensor<double, 1>& x_u,
-        const array_type::tensor<double, 1>& x_p) const
-    {
-        array_type::tensor<double, 1> b_p = xt::empty<double>({m_nnp});
-        this->reaction_p(x_u, x_p, b_p);
-        return b_p;
-    }
-
-    /**
-    Same as Reaction_p(const array_type::tensor<double, 1>&, const array_type::tensor<double, 1>&),
-    but writing to preallocated output.
-
-    \param x_u unknown "dofval" [#nnu].
-    \param x_p prescribed "dofval" [#nnp].
-    \param b_p (overwritten) prescribed "dofval" [#nnp].
-    */
-    void reaction_p(
+    void reaction_p_impl(
         const array_type::tensor<double, 1>& x_u,
         const array_type::tensor<double, 1>& x_p,
         array_type::tensor<double, 1>& b_p) const

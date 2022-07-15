@@ -11,52 +11,29 @@
 #include <xtensor-python/pyarray.hpp>
 #include <xtensor-python/pytensor.hpp>
 
+#include "Matrix.hpp"
+
 namespace py = pybind11;
 
 void init_MatrixPartitioned(py::module& m)
 {
+    py::class_<GooseFEM::MatrixPartitioned> cls(m, "MatrixPartitioned");
+    register_Matrix_MatrixBase<GooseFEM::MatrixPartitioned>(cls);
+    register_Matrix_MatrixPartitionedBase<GooseFEM::MatrixPartitioned>(cls);
 
-    py::class_<GooseFEM::MatrixPartitioned, GooseFEM::Matrix>(m, "MatrixPartitioned")
+    cls.def(
+        py::init<
+            const xt::pytensor<size_t, 2>&,
+            const xt::pytensor<size_t, 2>&,
+            const xt::pytensor<size_t, 1>&>(),
+        "See :cpp:class:`GooseFEM::MatrixPartitioned`.",
+        py::arg("conn"),
+        py::arg("dofs"),
+        py::arg("iip"));
 
-        .def(
-            py::init<
-                const xt::pytensor<size_t, 2>&,
-                const xt::pytensor<size_t, 2>&,
-                const xt::pytensor<size_t, 1>&>(),
-            "See :cpp:class:`GooseFEM::MatrixPartitioned`.",
-            py::arg("conn"),
-            py::arg("dofs"),
-            py::arg("iip"))
-
-        .def_property_readonly("nnu", &GooseFEM::MatrixPartitioned::nnu)
-        .def_property_readonly("nnp", &GooseFEM::MatrixPartitioned::nnp)
-        .def_property_readonly("iiu", &GooseFEM::MatrixPartitioned::iiu)
-        .def_property_readonly("iip", &GooseFEM::MatrixPartitioned::iip)
-
-        .def(
-            "Reaction",
-            py::overload_cast<const xt::pytensor<double, 1>&, const xt::pytensor<double, 1>&>(
-                &GooseFEM::MatrixPartitioned::Reaction, py::const_),
-            py::arg("x"),
-            py::arg("b"))
-
-        .def(
-            "Reaction",
-            py::overload_cast<const xt::pytensor<double, 2>&, const xt::pytensor<double, 2>&>(
-                &GooseFEM::MatrixPartitioned::Reaction, py::const_),
-            py::arg("x"),
-            py::arg("b"))
-
-        .def(
-            "Reaction_p",
-            py::overload_cast<const xt::pytensor<double, 1>&, const xt::pytensor<double, 1>&>(
-                &GooseFEM::MatrixPartitioned::Reaction_p, py::const_),
-            py::arg("x_u"),
-            py::arg("x_p"))
-
-        .def("__repr__", [](const GooseFEM::MatrixPartitioned&) {
-            return "<GooseFEM.MatrixPartitioned>";
-        });
+    cls.def("__repr__", [](const GooseFEM::MatrixPartitioned&) {
+        return "<GooseFEM.MatrixPartitioned>";
+    });
 
     py::class_<GooseFEM::MatrixPartitionedSolver<>>(m, "MatrixPartitionedSolver")
 

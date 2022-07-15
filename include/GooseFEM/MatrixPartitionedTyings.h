@@ -34,7 +34,44 @@ In particular:
 
 See VectorPartitionedTyings() for bookkeeping definitions.
 */
-class MatrixPartitionedTyings : public Matrix {
+class MatrixPartitionedTyings : public MatrixPartitionedTyingsBase<MatrixPartitionedTyings> {
+private:
+    friend MatrixBase<MatrixPartitionedTyings>;
+    friend MatrixPartitionedBase<MatrixPartitionedTyings>;
+    friend MatrixPartitionedTyingsBase<MatrixPartitionedTyings>;
+
+protected:
+    Eigen::SparseMatrix<double> m_Auu; ///< The matrix.
+    Eigen::SparseMatrix<double> m_Aup; ///< The matrix.
+    Eigen::SparseMatrix<double> m_Apu; ///< The matrix.
+    Eigen::SparseMatrix<double> m_App; ///< The matrix.
+    Eigen::SparseMatrix<double> m_Aud; ///< The matrix.
+    Eigen::SparseMatrix<double> m_Apd; ///< The matrix.
+    Eigen::SparseMatrix<double> m_Adu; ///< The matrix.
+    Eigen::SparseMatrix<double> m_Adp; ///< The matrix.
+    Eigen::SparseMatrix<double> m_Add; ///< The matrix.
+    Eigen::SparseMatrix<double> m_ACuu; ///< // The matrix for which the tyings have been applied.
+    Eigen::SparseMatrix<double> m_ACup; ///< // The matrix for which the tyings have been applied.
+    Eigen::SparseMatrix<double> m_ACpu; ///< // The matrix for which the tyings have been applied.
+    Eigen::SparseMatrix<double> m_ACpp; ///< // The matrix for which the tyings have been applied.
+    std::vector<Eigen::Triplet<double>> m_Tuu; ///< Matrix entries.
+    std::vector<Eigen::Triplet<double>> m_Tup; ///< Matrix entries.
+    std::vector<Eigen::Triplet<double>> m_Tpu; ///< Matrix entries.
+    std::vector<Eigen::Triplet<double>> m_Tpp; ///< Matrix entries.
+    std::vector<Eigen::Triplet<double>> m_Tud; ///< Matrix entries.
+    std::vector<Eigen::Triplet<double>> m_Tpd; ///< Matrix entries.
+    std::vector<Eigen::Triplet<double>> m_Tdu; ///< Matrix entries.
+    std::vector<Eigen::Triplet<double>> m_Tdp; ///< Matrix entries.
+    std::vector<Eigen::Triplet<double>> m_Tdd; ///< Matrix entries.
+    Eigen::SparseMatrix<double> m_Cdu; ///< Tying matrix, see Tyings::Periodic::Cdu().
+    Eigen::SparseMatrix<double> m_Cdp; ///< Tying matrix, see Tyings::Periodic::Cdp().
+    Eigen::SparseMatrix<double> m_Cud; ///< Transpose of "m_Cdu".
+    Eigen::SparseMatrix<double> m_Cpd; ///< Transpose of "m_Cdp".
+
+    // grant access to solver class
+    template <class>
+    friend class MatrixPartitionedTyingsSolver;
+
 public:
     MatrixPartitionedTyings() = default;
 
@@ -65,6 +102,7 @@ public:
         m_ndof = m_nni + m_nnd;
         m_iiu = xt::arange<size_t>(m_nnu);
         m_iip = xt::arange<size_t>(m_nnu, m_nnu + m_nnp);
+        m_iii = xt::arange<size_t>(m_nni);
         m_iid = xt::arange<size_t>(m_nni, m_nni + m_nnd);
         m_nelem = m_conn.shape(0);
         m_nne = m_conn.shape(1);
@@ -95,79 +133,9 @@ public:
         GOOSEFEM_ASSERT(m_ndof == xt::amax(m_dofs)() + 1);
     }
 
-    /**
-    \return Number of dependent DOFs.
-    */
-    size_t nnd() const
-    {
-        return m_nnd;
-    }
-
-    /**
-    \return Number of independent DOFs.
-    */
-    size_t nni() const
-    {
-        return m_nni;
-    }
-
-    /**
-    \return Number of independent unknown DOFs.
-    */
-    size_t nnu() const
-    {
-        return m_nnu;
-    }
-
-    /**
-    \return Number of independent prescribed DOFs.
-    */
-    size_t nnp() const
-    {
-        return m_nnp;
-    }
-
-    /**
-    Dependent DOFs.
-
-    \return List of DOF numbers.
-    */
-    array_type::tensor<size_t, 1> iid() const
-    {
-        return m_iid;
-    }
-
-    /**
-    Independent DOFs.
-
-    \return List of DOF numbers.
-    */
-    array_type::tensor<size_t, 1> iii() const
-    {
-        return xt::arange<size_t>(m_nni);
-    }
-
-    /**
-    Independent unknown DOFs.
-
-    \return List of DOF numbers.
-    */
-    array_type::tensor<size_t, 1> iiu() const
-    {
-        return m_iiu;
-    }
-
-    /**
-    Independent prescribed DOFs.
-
-    \return List of DOF numbers.
-    */
-    array_type::tensor<size_t, 1> iip() const
-    {
-        return m_iip;
-    }
-
-    void assemble(const array_type::tensor<double, 3>& elemmat) override
+private:
+    template <class T>
+    void assemble_impl(const T& elemmat)
     {
         GOOSEFEM_ASSERT(xt::has_shape(elemmat, {m_nelem, m_nne * m_ndim, m_nne * m_ndim}));
 
@@ -254,52 +222,109 @@ public:
         m_changed = true;
     }
 
-private:
-    using Matrix::add;
-    using Matrix::Dot;
-    using Matrix::dot;
-    using Matrix::set;
-    using Matrix::Todense;
-    using Matrix::todense;
+    // todo: test
+    template <class T>
+    void todense_impl(T& ret) const
+    {
+        ret.fill(0.0);
 
-private:
-    Eigen::SparseMatrix<double> m_Auu; ///< The matrix.
-    Eigen::SparseMatrix<double> m_Aup; ///< The matrix.
-    Eigen::SparseMatrix<double> m_Apu; ///< The matrix.
-    Eigen::SparseMatrix<double> m_App; ///< The matrix.
-    Eigen::SparseMatrix<double> m_Aud; ///< The matrix.
-    Eigen::SparseMatrix<double> m_Apd; ///< The matrix.
-    Eigen::SparseMatrix<double> m_Adu; ///< The matrix.
-    Eigen::SparseMatrix<double> m_Adp; ///< The matrix.
-    Eigen::SparseMatrix<double> m_Add; ///< The matrix.
-    Eigen::SparseMatrix<double> m_ACuu; ///< // The matrix for which the tyings have been applied.
-    Eigen::SparseMatrix<double> m_ACup; ///< // The matrix for which the tyings have been applied.
-    Eigen::SparseMatrix<double> m_ACpu; ///< // The matrix for which the tyings have been applied.
-    Eigen::SparseMatrix<double> m_ACpp; ///< // The matrix for which the tyings have been applied.
-    std::vector<Eigen::Triplet<double>> m_Tuu; ///< Matrix entries.
-    std::vector<Eigen::Triplet<double>> m_Tup; ///< Matrix entries.
-    std::vector<Eigen::Triplet<double>> m_Tpu; ///< Matrix entries.
-    std::vector<Eigen::Triplet<double>> m_Tpp; ///< Matrix entries.
-    std::vector<Eigen::Triplet<double>> m_Tud; ///< Matrix entries.
-    std::vector<Eigen::Triplet<double>> m_Tpd; ///< Matrix entries.
-    std::vector<Eigen::Triplet<double>> m_Tdu; ///< Matrix entries.
-    std::vector<Eigen::Triplet<double>> m_Tdp; ///< Matrix entries.
-    std::vector<Eigen::Triplet<double>> m_Tdd; ///< Matrix entries.
-    array_type::tensor<size_t, 1> m_iiu; ///< See iiu()
-    array_type::tensor<size_t, 1> m_iip; ///< See iip()
-    array_type::tensor<size_t, 1> m_iid; ///< See iid()
-    size_t m_nnu; ///< See #nnu
-    size_t m_nnp; ///< See #nnp
-    size_t m_nni; ///< See #nni
-    size_t m_nnd; ///< See #nnd
-    Eigen::SparseMatrix<double> m_Cdu; ///< Tying matrix, see Tyings::Periodic::Cdu().
-    Eigen::SparseMatrix<double> m_Cdp; ///< Tying matrix, see Tyings::Periodic::Cdp().
-    Eigen::SparseMatrix<double> m_Cud; ///< Transpose of "m_Cdu".
-    Eigen::SparseMatrix<double> m_Cpd; ///< Transpose of "m_Cdp".
+        for (int k = 0; k < m_Auu.outerSize(); ++k) {
+            for (Eigen::SparseMatrix<double>::InnerIterator it(m_Auu, k); it; ++it) {
+                ret(m_iiu(it.row()), m_iiu(it.col())) = it.value();
+            }
+        }
 
-    // grant access to solver class
-    template <class>
-    friend class MatrixPartitionedTyingsSolver;
+        for (int k = 0; k < m_Aup.outerSize(); ++k) {
+            for (Eigen::SparseMatrix<double>::InnerIterator it(m_Aup, k); it; ++it) {
+                ret(m_iiu(it.row()), m_iip(it.col())) = it.value();
+            }
+        }
+
+        for (int k = 0; k < m_Apu.outerSize(); ++k) {
+            for (Eigen::SparseMatrix<double>::InnerIterator it(m_Apu, k); it; ++it) {
+                ret(m_iip(it.row()), m_iiu(it.col())) = it.value();
+            }
+        }
+
+        for (int k = 0; k < m_App.outerSize(); ++k) {
+            for (Eigen::SparseMatrix<double>::InnerIterator it(m_App, k); it; ++it) {
+                ret(m_iip(it.row()), m_iip(it.col())) = it.value();
+            }
+        }
+
+        for (int k = 0; k < m_Adu.outerSize(); ++k) {
+            for (Eigen::SparseMatrix<double>::InnerIterator it(m_Adu, k); it; ++it) {
+                ret(m_iid(it.row()), m_iiu(it.col())) = it.value();
+            }
+        }
+
+        for (int k = 0; k < m_Adp.outerSize(); ++k) {
+            for (Eigen::SparseMatrix<double>::InnerIterator it(m_Adp, k); it; ++it) {
+                ret(m_iid(it.row()), m_iip(it.col())) = it.value();
+            }
+        }
+
+        for (int k = 0; k < m_Aud.outerSize(); ++k) {
+            for (Eigen::SparseMatrix<double>::InnerIterator it(m_Aud, k); it; ++it) {
+                ret(m_iiu(it.row()), m_iid(it.col())) = it.value();
+            }
+        }
+
+        for (int k = 0; k < m_Apd.outerSize(); ++k) {
+            for (Eigen::SparseMatrix<double>::InnerIterator it(m_Apd, k); it; ++it) {
+                ret(m_iip(it.row()), m_iid(it.col())) = it.value();
+            }
+        }
+
+        for (int k = 0; k < m_Add.outerSize(); ++k) {
+            for (Eigen::SparseMatrix<double>::InnerIterator it(m_Add, k); it; ++it) {
+                ret(m_iid(it.row()), m_iid(it.col())) = it.value();
+            }
+        }
+    }
+
+    template <class T>
+    void dot_nodevec_impl(const T& x, T& b) const
+    {
+        UNUSED(x);
+        UNUSED(b);
+        throw std::runtime_error("Not yet implemented");
+    }
+
+    template <class T>
+    void dot_dofval_impl(const T& x, T& b) const
+    {
+        UNUSED(x);
+        UNUSED(b);
+        throw std::runtime_error("Not yet implemented");
+    }
+
+    template <class T>
+    void reaction_nodevec_impl(const T& x, T& b) const
+    {
+        UNUSED(x);
+        UNUSED(b);
+        throw std::runtime_error("Not yet implemented");
+    }
+
+    template <class T>
+    void reaction_dofval_impl(const T& x, T& b) const
+    {
+        UNUSED(x);
+        UNUSED(b);
+        throw std::runtime_error("Not yet implemented");
+    }
+
+    void reaction_p_impl(
+        const array_type::tensor<double, 1>& x_u,
+        const array_type::tensor<double, 1>& x_p,
+        array_type::tensor<double, 1>& b_p) const
+    {
+        UNUSED(x_u);
+        UNUSED(x_p);
+        UNUSED(b_p);
+        throw std::runtime_error("Not yet implemented");
+    }
 
 private:
     // Convert arrays (Eigen version of VectorPartitioned, which contains public functions)
