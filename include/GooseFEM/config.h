@@ -74,22 +74,22 @@ using namespace xt::placeholders;
 */
 
 /**
- *  All assertions are implementation as::
- *
- *      GOOSEFEM_ASSERT(...)
- *
- *  They can be enabled by::
- *
- *      #define GOOSEFEM_ENABLE_ASSERT
- *
- *  (before including GooseFEM).
- *  The advantage is that:
- *
- *  -   File and line-number are displayed if the assertion fails.
- *  -   GooseFEM's assertions can be enabled/disabled independently from those of other libraries.
- *
- *  \throw std::runtime_error
- */
+All assertions are implementation as::
+
+    GOOSEFEM_ASSERT(...)
+
+They can be enabled by::
+
+    #define GOOSEFEM_ENABLE_ASSERT
+
+(before including GooseFEM).
+The advantage is that:
+
+-   File and line-number are displayed if the assertion fails.
+-   GooseFEM's assertions can be enabled/disabled independently from those of other libraries.
+
+\throw std::runtime_error
+*/
 #ifdef GOOSEFEM_ENABLE_ASSERT
 #define GOOSEFEM_ASSERT(expr) GOOSEFEM_ASSERT_IMPL(expr, __FILE__, __LINE__, __FUNCTION__)
 #else
@@ -97,33 +97,33 @@ using namespace xt::placeholders;
 #endif
 
 /**
- *  Assertion that cannot be switched off. Implement assertion by::
- *
- *      GOOSEFEM_CHECK(...)
- *
- *  \throw std::runtime_error
- */
+Assertion that cannot be switched off. Implement assertion by::
+
+    GOOSEFEM_CHECK(...)
+
+\throw std::runtime_error
+*/
 #define GOOSEFEM_CHECK(expr) GOOSEFEM_ASSERT_IMPL(expr, __FILE__, __LINE__, __FUNCTION__)
 
 /**
- *  Assertion that concerns temporary implementation limitations.
- *  Implement assertion by::
- *
- *      GOOSEFEM_WIP_ASSERT(...)
- *
- *  \throw std::runtime_error
- */
+Assertion that concerns temporary implementation limitations.
+Implement assertion by::
+
+    GOOSEFEM_WIP_ASSERT(...)
+
+\throw std::runtime_error
+*/
 #define GOOSEFEM_WIP_ASSERT(expr) GOOSEFEM_ASSERT_IMPL(expr, __FILE__, __LINE__, __FUNCTION__)
 
 /**
- *  All warnings are implemented as::
- *
- *      GOOSEFEM_WARNING(...)
- *
- *  They can be disabled by::
- *
- *      #define GOOSEFEM_DISABLE_WARNING
- */
+All warnings are implemented as::
+
+    GOOSEFEM_WARNING(...)
+
+They can be disabled by::
+
+    #define GOOSEFEM_DISABLE_WARNING
+*/
 #ifdef GOOSEFEM_DISABLE_WARNING
 #define GOOSEFEM_WARNING(message)
 #else
@@ -131,14 +131,14 @@ using namespace xt::placeholders;
 #endif
 
 /**
- *  All warnings specific to the Python API are implemented as::
- *
- *      GOOSEFEM_WARNING_PYTHON(...)
- *
- *  They can be enabled by::
- *
- *      #define GOOSEFEM_ENABLE_WARNING_PYTHON
- */
+All warnings specific to the Python API are implemented as::
+
+    GOOSEFEM_WARNING_PYTHON(...)
+
+They can be enabled by::
+
+    #define GOOSEFEM_ENABLE_WARNING_PYTHON
+*/
 #ifdef GOOSEFEM_ENABLE_WARNING_PYTHON
 #define GOOSEFEM_WARNING_PYTHON(message) \
     GOOSEFEM_WARNING_IMPL(message, __FILE__, __LINE__, __FUNCTION__)
