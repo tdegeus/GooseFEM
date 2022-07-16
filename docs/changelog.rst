@@ -3,7 +3,7 @@
 Changelog
 *********
 
-v1.2.0
+v1.3.0
 ======
 
 API changes
@@ -47,6 +47,23 @@ Future work
 -----------
 
 *   Working around xtensor bug and outdated GMat modules, see be7f823
+
+v1.2.0
+======
+
+API changes
+-----------
+
+*   [Python] Using NumPy (improves performance, API does not change)
+*   [Python] Adding TyingsPeriodic
+*   Removing deprecated functions
+
+Other changes
+-------------
+
+*   Switching to Catch2 v3
+*   [docs] Python example Periodic
+*   [docs] Example: nested tabs
 
 v1.1.0
 ======
