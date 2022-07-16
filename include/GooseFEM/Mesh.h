@@ -2744,7 +2744,7 @@ inline array_type::tensor<double, 2> nodal_mass(const C& coor, const E& conn, El
         throw std::runtime_error("Element-type not implemented");
     }
 
-    return vector.AsNode(M.Todiagonal());
+    return vector.AsNode(M.data());
 }
 
 /**

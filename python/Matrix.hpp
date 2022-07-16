@@ -132,20 +132,6 @@ template <class C, class M, class P>
 void register_MatrixSolver_MatrixSolverBase(P& cls)
 {
     cls.def(
-        "Solve",
-        py::overload_cast<M&, const xt::pytensor<double, 1>&>(&C::template Solve<M>),
-        "Solve system.",
-        py::arg("A"),
-        py::arg("b"));
-
-    cls.def(
-        "Solve",
-        py::overload_cast<M&, const xt::pytensor<double, 2>&>(&C::template Solve<M>),
-        "Solve system.",
-        py::arg("A"),
-        py::arg("b"));
-
-    cls.def(
         "solve",
         py::overload_cast<M&, const xt::pytensor<double, 1>&, xt::pytensor<double, 1>&>(
             &C::template solve<M>),
@@ -165,8 +151,44 @@ void register_MatrixSolver_MatrixSolverBase(P& cls)
 }
 
 template <class C, class M, class P>
+void register_MatrixSolver_MatrixSolverSingleBase(P& cls)
+{
+    cls.def(
+        "Solve",
+        py::overload_cast<M&, const xt::pytensor<double, 1>&>(&C::template Solve<M>),
+        "Solve system.",
+        py::arg("A"),
+        py::arg("b"));
+
+    cls.def(
+        "Solve",
+        py::overload_cast<M&, const xt::pytensor<double, 2>&>(&C::template Solve<M>),
+        "Solve system.",
+        py::arg("A"),
+        py::arg("b"));
+}
+
+template <class C, class M, class P>
 void register_MatrixSolver_MatrixSolverPartitionedBase(P& cls)
 {
+    cls.def(
+        "Solve",
+        py::overload_cast<M&, const xt::pytensor<double, 1>&, const xt::pytensor<double, 1>&>(
+            &C::template Solve<M>),
+        "Solve system.",
+        py::arg("A"),
+        py::arg("b"),
+        py::arg("x"));
+
+    cls.def(
+        "Solve",
+        py::overload_cast<M&, const xt::pytensor<double, 2>&, const xt::pytensor<double, 2>&>(
+            &C::template Solve<M>),
+        "Solve system.",
+        py::arg("A"),
+        py::arg("b"),
+        py::arg("x"));
+
     cls.def(
         "Solve_u",
         &C::template Solve_u<M>,
@@ -198,6 +220,8 @@ void init_Matrix(py::module& m)
         py::arg("conn"),
         py::arg("dofs"));
 
+    cls.def_property_readonly("data", &GooseFEM::Matrix::data);
+
     cls.def("set", &GooseFEM::Matrix::set, py::arg("rows"), py::arg("cols"), py::arg("matrix"));
     cls.def("add", &GooseFEM::Matrix::add, py::arg("rows"), py::arg("cols"), py::arg("matrix"));
 
@@ -207,6 +231,7 @@ void init_Matrix(py::module& m)
 
     py::class_<GooseFEM::MatrixSolver<>> slv(m, "MatrixSolver");
     register_MatrixSolver_MatrixSolverBase<GooseFEM::MatrixSolver<>, GooseFEM::Matrix>(slv);
+    register_MatrixSolver_MatrixSolverSingleBase<GooseFEM::MatrixSolver<>, GooseFEM::Matrix>(slv);
 
     slv.def(py::init<>(), "See :cpp:class:`GooseFEM::MatrixSolver`.");
 

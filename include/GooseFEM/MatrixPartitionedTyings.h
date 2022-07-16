@@ -133,6 +133,78 @@ public:
         GOOSEFEM_ASSERT(m_ndof == xt::amax(m_dofs)() + 1);
     }
 
+    /**
+    Pointer to data.
+    */
+    const Eigen::SparseMatrix<double>& data_uu() const
+    {
+        return m_Auu;
+    }
+
+    /**
+    Pointer to data.
+    */
+    const Eigen::SparseMatrix<double>& data_up() const
+    {
+        return m_Aup;
+    }
+
+    /**
+    Pointer to data.
+    */
+    const Eigen::SparseMatrix<double>& data_pu() const
+    {
+        return m_Apu;
+    }
+
+    /**
+    Pointer to data.
+    */
+    const Eigen::SparseMatrix<double>& data_pp() const
+    {
+        return m_App;
+    }
+
+    /**
+    Pointer to data.
+    */
+    const Eigen::SparseMatrix<double>& data_ud() const
+    {
+        return m_Aud;
+    }
+
+    /**
+    Pointer to data.
+    */
+    const Eigen::SparseMatrix<double>& data_pd() const
+    {
+        return m_Apd;
+    }
+
+    /**
+    Pointer to data.
+    */
+    const Eigen::SparseMatrix<double>& data_du() const
+    {
+        return m_Adu;
+    }
+
+    /**
+    Pointer to data.
+    */
+    const Eigen::SparseMatrix<double>& data_dp() const
+    {
+        return m_Adp;
+    }
+
+    /**
+    Pointer to data.
+    */
+    const Eigen::SparseMatrix<double>& data_dd() const
+    {
+        return m_Add;
+    }
+
 private:
     template <class T>
     void assemble_impl(const T& elemmat)

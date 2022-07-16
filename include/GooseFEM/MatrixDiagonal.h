@@ -41,6 +41,10 @@ public:
     /**
     Solve \f$ x = A^{-1} b \f$.
 
+    For #GooseFEM::MatrixDiagonalPartitioned under the hood solved
+    \f$ x_u = A_{uu}^{-1} (b_u - A_{up} * x_p) \equiv A_{uu}^{-1} b_u \f$.
+    Use GooseFEM::MatrixDiagonalPartitioned::Reaction() to get reaction forces.
+
     \param b nodevec [nelem, ndim].
     \return x nodevec [nelem, ndim].
     */
@@ -53,6 +57,10 @@ public:
 
     /**
     Solve \f$ x = A^{-1} b \f$.
+
+    For #GooseFEM::MatrixDiagonalPartitioned under the hood solved
+    \f$ x_u = A_{uu}^{-1} (b_u - A_{up} * x_p) \equiv A_{uu}^{-1} b_u \f$.
+    Use GooseFEM::MatrixDiagonalPartitioned::Reaction() to get reaction forces.
 
     \param b dofval [ndof].
     \return x dofval [ndof].
@@ -67,6 +75,10 @@ public:
     /**
     Solve \f$ x = A^{-1} b \f$.
 
+    For #GooseFEM::MatrixDiagonalPartitioned under the hood solved
+    \f$ x_u = A_{uu}^{-1} (b_u - A_{up} * x_p) \equiv A_{uu}^{-1} b_u \f$.
+    Use GooseFEM::MatrixDiagonalPartitioned::Reaction() to get reaction forces.
+
     \param b nodevec [nelem, ndim].
     \param x (overwritten) nodevec [nelem, ndim].
     */
@@ -77,6 +89,10 @@ public:
 
     /**
     Solve \f$ x = A^{-1} b \f$.
+
+    For #GooseFEM::MatrixDiagonalPartitioned under the hood solved
+    \f$ x_u = A_{uu}^{-1} (b_u - A_{up} * x_p) \equiv A_{uu}^{-1} b_u \f$.
+    Use GooseFEM::MatrixDiagonalPartitioned::Reaction() to get reaction forces.
 
     \param b nodevec [nelem, ndim].
     \param x (overwritten) nodevec [nelem, ndim].
@@ -175,7 +191,16 @@ public:
     Copy as diagonal matrix.
     \param [#ndof].
     */
-    const array_type::tensor<double, 1>& Todiagonal() const
+    [[deprecated]] const array_type::tensor<double, 1>& Todiagonal() const
+    {
+        return m_A;
+    }
+
+    /**
+    Underlying matrix
+    \param [#ndof].
+    */
+    const array_type::tensor<double, 1>& data() const
     {
         return m_A;
     }
