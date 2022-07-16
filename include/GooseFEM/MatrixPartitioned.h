@@ -527,6 +527,49 @@ private:
 public:
     MatrixPartitionedSolver() = default;
 
+    /**
+    Solve \f$ x = A^{-1} b \f$.
+
+    \param A GooseFEM (sparse) matrix, see e.g. GooseFEM::MatrixPartitioned().
+    \param b_u unknown dofval [nnu].
+    \param x_p prescribed dofval [nnp]
+    \return x_u unknown dofval [nnu].
+    */
+    template <class M>
+    array_type::tensor<double, 1> Solve_u(
+        M& A,
+        const array_type::tensor<double, 1>& b_u,
+        const array_type::tensor<double, 1>& x_p)
+    {
+        GOOSEFEM_ASSERT(xt::has_shape(b_u, {A.nnu()}));
+        GOOSEFEM_ASSERT(xt::has_shape(x_p, {A.nnp()}));
+        array_type::tensor<double, 1> x_u = xt::empty_like(b_u);
+        this->solve_u_impl(A, b_u, x_p, x_u);
+        return x_u;
+    }
+
+    /**
+    Same as
+    Solve \f$ x = A^{-1} b \f$.
+
+    \param A GooseFEM (sparse) matrix, see e.g. GooseFEM::MatrixPartitioned().
+    \param b_u unknown dofval [nnu].
+    \param x_p prescribed dofval [nnp]
+    \param x_u (overwritten) unknown dofval [nnu].
+    */
+    template <class M>
+    void solve_u(
+        M& A,
+        const array_type::tensor<double, 1>& b_u,
+        const array_type::tensor<double, 1>& x_p,
+        array_type::tensor<double, 1>& x_u)
+    {
+        GOOSEFEM_ASSERT(xt::has_shape(b_u, {A.nnu()}));
+        GOOSEFEM_ASSERT(xt::has_shape(x_p, {A.nnp()}));
+        GOOSEFEM_ASSERT(xt::has_shape(x_u, {A.nnu()}));
+        this->solve_u_impl(A, b_u, x_p, x_u);
+    }
+
 private:
     template <class T>
     void solve_nodevec_impl(MatrixPartitioned& A, const T& b, T& x)

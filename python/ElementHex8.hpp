@@ -34,8 +34,8 @@ void init_ElementHex8(py::module& m)
         py::arg("xi"),
         py::arg("w"));
 
-    register_Element_QuadratureBase<GooseFEM::Element::Hex8::Quadrature>(cls);
-    register_Element_QuadratureBaseCartesian<GooseFEM::Element::Hex8::Quadrature>(cls);
+    register_Mesh_QuadratureBase<GooseFEM::Element::Hex8::Quadrature>(cls);
+    register_Mesh_QuadratureBaseCartesian<GooseFEM::Element::Hex8::Quadrature>(cls);
 
     cls.def_property_readonly(
         "GradN",

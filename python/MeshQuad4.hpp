@@ -29,10 +29,10 @@ void init_MeshQuad4(py::module& m)
             py::arg("ny"),
             py::arg("h") = 1.0);
 
-        register_Element_RegularBase<GooseFEM::Mesh::Quad4::Regular>(cls);
-        register_Element_RegularBase2d<GooseFEM::Mesh::Quad4::Regular>(cls);
+        register_Mesh_RegularBase<GooseFEM::Mesh::Quad4::Regular>(cls);
+        register_Mesh_RegularBase2d<GooseFEM::Mesh::Quad4::Regular>(cls);
 
-        cls.def_property_readonly("elementgrid", &GooseFEM::Mesh::Quad4::Regular::elementgrid);
+        cls.def("elementgrid", &GooseFEM::Mesh::Quad4::Regular::elementgrid);
 
         cls.def("__repr__", [](const GooseFEM::Mesh::Quad4::Regular&) {
             return "<GooseFEM.Mesh.Quad4.Regular>";
@@ -56,18 +56,19 @@ void init_MeshQuad4(py::module& m)
             py::arg("coor"),
             py::arg("conn"));
 
-        register_Element_RegularBase<GooseFEM::Mesh::Quad4::FineLayer>(cls);
-        register_Element_RegularBase2d<GooseFEM::Mesh::Quad4::FineLayer>(cls);
+        register_Mesh_RegularBase<GooseFEM::Mesh::Quad4::FineLayer>(cls);
+        register_Mesh_RegularBase2d<GooseFEM::Mesh::Quad4::FineLayer>(cls);
 
         cls.def_property_readonly("elemrow_nhx", &GooseFEM::Mesh::Quad4::FineLayer::elemrow_nhx);
         cls.def_property_readonly("elemrow_nhy", &GooseFEM::Mesh::Quad4::FineLayer::elemrow_nhy);
         cls.def_property_readonly("elemrow_type", &GooseFEM::Mesh::Quad4::FineLayer::elemrow_type);
         cls.def_property_readonly(
             "elemrow_nelem", &GooseFEM::Mesh::Quad4::FineLayer::elemrow_nelem);
-        cls.def_property_readonly(
-            "elementsMiddleLayer", &GooseFEM::Mesh::Quad4::FineLayer::elementsMiddleLayer);
-        cls.def_property_readonly(
-            "elementsLayer", &GooseFEM::Mesh::Quad4::FineLayer::elementsLayer);
+
+        cls.def("elementsMiddleLayer", &GooseFEM::Mesh::Quad4::FineLayer::elementsMiddleLayer);
+
+        cls.def(
+            "elementsLayer", &GooseFEM::Mesh::Quad4::FineLayer::elementsLayer, py::arg("layer"));
 
         cls.def(
             "elementgrid_ravel",

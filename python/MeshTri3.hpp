@@ -28,8 +28,8 @@ void init_MeshTri3(py::module& mod)
         py::arg("ny"),
         py::arg("h") = 1.);
 
-    register_Element_RegularBase<GooseFEM::Mesh::Tri3::Regular>(cls);
-    register_Element_RegularBase2d<GooseFEM::Mesh::Tri3::Regular>(cls);
+    register_Mesh_RegularBase<GooseFEM::Mesh::Tri3::Regular>(cls);
+    register_Mesh_RegularBase2d<GooseFEM::Mesh::Tri3::Regular>(cls);
 
     cls.def("__repr__", [](const GooseFEM::Mesh::Tri3::Regular&) {
         return "<GooseFEM.Mesh.Tri3.Regular>";

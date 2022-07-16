@@ -16,7 +16,7 @@
 namespace py = pybind11;
 
 template <class C, class P>
-void register_Element_QuadratureBase(P& cls)
+void register_Mesh_QuadratureBase(P& cls)
 {
     cls.def_property_readonly("nelem", &C::nelem, "Number of elements");
     cls.def_property_readonly("nne", &C::nne, "Number of nodes per element");
@@ -69,7 +69,7 @@ void register_Element_QuadratureBase(P& cls)
 }
 
 template <class C, class P>
-void register_Element_QuadratureBaseCartesian(P& cls)
+void register_Mesh_QuadratureBaseCartesian(P& cls)
 {
     cls.def("update_x", &C::template update_x<xt::pytensor<double, 3>>, py::arg("x"));
 

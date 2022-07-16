@@ -15,9 +15,9 @@ plt.style.use(["goose", "goose-latex"])
 mesh = GooseFEM.Mesh.Quad4.Regular(5, 5)
 
 # mesh dimensions
-nelem = mesh.nelem()
-nne = mesh.nne()
-ndim = mesh.ndim()
+nelem = mesh.nelem
+nne = mesh.nne
+ndim = mesh.ndim
 
 # mesh definition, displacement, external forces
 coor = mesh.coor()
@@ -71,7 +71,7 @@ Ke = np.empty((nelem, nne * ndim, nne * ndim))
 
 # element definition
 elem = GooseFEM.Element.Quad4.QuadraturePlanar(vector.AsElement(coor))
-nip = elem.nip()
+nip = elem.nip
 
 # material definition
 mat = GMatElastic.Cartesian3d.Array2d([nelem, nip])
@@ -138,7 +138,7 @@ fres = fext - fint
 print(np.sum(np.abs(fres)) / np.sum(np.abs(fext)))
 
 # average stress per element
-dV = elem.AsTensor(2, elem.dV())
+dV = elem.AsTensor(2, elem.dV)
 Sig = np.average(Sig, weights=dV, axis=1)
 
 # skip plot with "--no-plot" command line argument

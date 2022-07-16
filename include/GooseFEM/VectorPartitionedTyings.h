@@ -33,6 +33,7 @@ class VectorPartitionedTyings : public Vector {
 private:
     array_type::tensor<size_t, 1> m_iiu; ///< See iiu().
     array_type::tensor<size_t, 1> m_iip; ///< See iip().
+    array_type::tensor<size_t, 1> m_iii; ///< See iii().
     array_type::tensor<size_t, 1> m_iid; ///< See iid().
     size_t m_nnu; ///< See nnu().
     size_t m_nnp; ///< See nnp().
@@ -99,6 +100,7 @@ public:
         m_nni = m_nnu + m_nnp;
         m_iiu = xt::arange<size_t>(m_nnu);
         m_iip = xt::arange<size_t>(m_nnu, m_nnu + m_nnp);
+        m_iii = xt::arange<size_t>(m_nni);
         m_iid = xt::arange<size_t>(m_nni, m_nni + m_nnd);
         m_Cud = m_Cdu.transpose();
         m_Cpd = m_Cdp.transpose();
@@ -153,9 +155,9 @@ public:
     Independent DOFs (list of DOF numbers).
     \return Copy.
     */
-    array_type::tensor<size_t, 1> iii() const
+    const array_type::tensor<size_t, 1>& iii() const
     {
-        return xt::arange<size_t>(m_nni);
+        return m_iii;
     }
 
     /**

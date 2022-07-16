@@ -37,8 +37,8 @@ void init_ElementQuad4Planar(py::module& m)
         py::arg("w"),
         py::arg("thick") = 1.0);
 
-    register_Element_QuadratureBase<GooseFEM::Element::Quad4::QuadraturePlanar>(cls);
-    register_Element_QuadratureBaseCartesian<GooseFEM::Element::Quad4::QuadraturePlanar>(cls);
+    register_Mesh_QuadratureBase<GooseFEM::Element::Quad4::QuadraturePlanar>(cls);
+    register_Mesh_QuadratureBaseCartesian<GooseFEM::Element::Quad4::QuadraturePlanar>(cls);
 
     cls.def_property_readonly(
         "GradN",

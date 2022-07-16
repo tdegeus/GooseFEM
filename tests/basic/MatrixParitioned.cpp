@@ -24,7 +24,7 @@ TEST_CASE("GooseFEM::MatrixPartitioned", "MatrixPartitioned.h")
 
         for (size_t e = 0; e < nelem; ++e) {
             xt::xtensor<double, 2> ae = xt::random::rand<double>({nne * ndim, nne * ndim});
-            ae = (ae + xt::transpose(ae)) / 2.0;
+            ae = 0.5 * (ae + xt::transpose(ae));
             xt::view(a, e, xt::all(), xt::all()) = ae;
         }
 
