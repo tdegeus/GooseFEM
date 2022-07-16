@@ -128,6 +128,63 @@ void register_Matrix_MatrixPartitionedTyingsBase(P& cls)
     cls.def_property_readonly("iid", &C::iip, "Dependent DOFs");
 }
 
+template <class C, class M, class P>
+void register_MatrixSolver_MatrixSolverBase(P& cls)
+{
+    cls.def(
+        "Solve",
+        py::overload_cast<M&, const xt::pytensor<double, 1>&>(&C::template Solve<M>),
+        "Solve system.",
+        py::arg("A"),
+        py::arg("b"));
+
+    cls.def(
+        "Solve",
+        py::overload_cast<M&, const xt::pytensor<double, 2>&>(&C::template Solve<M>),
+        "Solve system.",
+        py::arg("A"),
+        py::arg("b"));
+
+    cls.def(
+        "solve",
+        py::overload_cast<M&, const xt::pytensor<double, 1>&, xt::pytensor<double, 1>&>(
+            &C::template solve<M>),
+        "Solve system.",
+        py::arg("A"),
+        py::arg("b"),
+        py::arg("x"));
+
+    cls.def(
+        "solve",
+        py::overload_cast<M&, const xt::pytensor<double, 2>&, xt::pytensor<double, 2>&>(
+            &C::template solve<M>),
+        "Solve system.",
+        py::arg("A"),
+        py::arg("b"),
+        py::arg("x"));
+}
+
+template <class C, class M, class P>
+void register_MatrixSolver_MatrixSolverPartitionedBase(P& cls)
+{
+    cls.def(
+        "Solve_u",
+        &C::template Solve_u<M>,
+        "Solve system.",
+        py::arg("A"),
+        py::arg("b_u"),
+        py::arg("x_p"));
+
+    cls.def(
+        "solve_u",
+        &C::template solve_u<M>,
+        "Solve system.",
+        py::arg("A"),
+        py::arg("b_u"),
+        py::arg("x_p"),
+        py::arg("x_u"));
+}
+
 void init_Matrix(py::module& m)
 {
     // ---
@@ -148,25 +205,12 @@ void init_Matrix(py::module& m)
 
     // ---
 
-    py::class_<GooseFEM::MatrixSolver<>>(m, "MatrixSolver")
+    py::class_<GooseFEM::MatrixSolver<>> slv(m, "MatrixSolver");
+    register_MatrixSolver_MatrixSolverBase<GooseFEM::MatrixSolver<>, GooseFEM::Matrix>(slv);
 
-        .def(py::init<>(), "See :cpp:class:`GooseFEM::MatrixSolver`.")
+    slv.def(py::init<>(), "See :cpp:class:`GooseFEM::MatrixSolver`.");
 
-        .def(
-            "Solve",
-            py::overload_cast<GooseFEM::Matrix&, const xt::pytensor<double, 1>&>(
-                &GooseFEM::MatrixSolver<>::Solve),
-            py::arg("A"),
-            py::arg("b"))
-
-        .def(
-            "Solve",
-            py::overload_cast<GooseFEM::Matrix&, const xt::pytensor<double, 2>&>(
-                &GooseFEM::MatrixSolver<>::Solve),
-            py::arg("A"),
-            py::arg("b"))
-
-        .def("__repr__", [](const GooseFEM::MatrixSolver<>&) { return "<GooseFEM.MatrixSolver>"; });
+    slv.def("__repr__", [](const GooseFEM::MatrixSolver<>&) { return "<GooseFEM.MatrixSolver>"; });
 }
 
 #endif

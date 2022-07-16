@@ -48,7 +48,7 @@ protected:
     std::vector<Eigen::Triplet<double>> m_Tpp; ///< Matrix entries.
 
     /**
-    Renumbered DOFs per node, such that
+    Renumbered DOFs per node, such that:
 
         iiu = arange(nnu)
         iip = nnu + arange(nnp)
@@ -59,7 +59,7 @@ protected:
 
     /**
     Map real DOF to DOF in partitioned system.
-    The partitioned system is defined as::
+    The partitioned system is defined as:
 
         iiu = arange(nnu)
         iip = nnu + arange(nnp)
@@ -68,8 +68,11 @@ protected:
     */
     array_type::tensor<size_t, 1> m_part1d;
 
+    /**
+    Class to solve the system (allowing single factorisation for multiple right-hand-sides).
+    */
     template <class>
-    friend class MatrixPartitionedSolver; ///< Grant access to solver class
+    friend class MatrixPartitionedSolver;
 
 public:
     MatrixPartitioned() = default;
@@ -170,6 +173,13 @@ private:
     }
 
 public:
+    /**
+    Overwrite matrix.
+
+    \param rows Row numbers [m].
+    \param cols Column numbers [n].
+    \param matrix Data entries `matrix(i, j)` for `rows(i), cols(j)` [m, n].
+    */
     void
     set(const array_type::tensor<size_t, 1>& rows,
         const array_type::tensor<size_t, 1>& cols,
@@ -213,6 +223,13 @@ public:
         m_changed = true;
     }
 
+    /**
+    Add matrix.
+
+    \param rows Row numbers [m].
+    \param cols Column numbers [n].
+    \param matrix Data entries `matrix(i, j)` for `rows(i), cols(j)` [m, n].
+    */
     void
     add(const array_type::tensor<size_t, 1>& rows,
         const array_type::tensor<size_t, 1>& cols,
@@ -461,49 +478,27 @@ private:
 };
 
 /**
-Solver for MatrixPartitioned().
-The idea is that this solver class can be used to solve for multiple right-hand-sides
-using one factorisation.
+Solve \f$ x_u = A_{uu}^{-1} (b_u - A_{up} * x_p) \f$ for `A` of the MatrixPartitioned() class.
+You can solve for multiple right-hand-sides using one factorisation.
+
+For "nodevec" input `x` is used to read \f$ x_p \f$, while \f$ x_u \f$ is written.
+See MatrixPartitioned::Reaction() to get \f$ b_p \f$.
 */
 template <class Solver = Eigen::SimplicialLDLT<Eigen::SparseMatrix<double>>>
-class MatrixPartitionedSolver {
+class MatrixPartitionedSolver
+    : public MatrixSolverBase<MatrixPartitionedSolver<Solver>>,
+      public MatrixSolverPartitionedBase<MatrixPartitionedSolver<Solver>> {
+private:
+    friend MatrixSolverBase<MatrixPartitionedSolver<Solver>>;
+    friend MatrixSolverPartitionedBase<MatrixPartitionedSolver<Solver>>;
+
 public:
     MatrixPartitionedSolver() = default;
 
-    /**
-    Solve \f$ x_u = A_{uu}^{-1} (b_u - A_{up} * x_p) \f$.
-
-    \param A sparse matrix, see MatrixPartitioned().
-    \param b nodevec [nelem, ndim].
-    \param x nodevec [nelem, ndim], used to read \f$ x_p \f$.
-    \return x nodevec [nelem, ndim], \f$ x_u \f$ filled, \f$ x_p \f$ copied.
-    */
-    array_type::tensor<double, 2> Solve(
-        MatrixPartitioned& A,
-        const array_type::tensor<double, 2>& b,
-        const array_type::tensor<double, 2>& x)
+private:
+    template <class T>
+    void solve_nodevec_impl(MatrixPartitioned& A, const T& b, T& x)
     {
-        array_type::tensor<double, 2> ret = x;
-        this->solve(A, b, ret);
-        return ret;
-    }
-
-    /**
-    Same as Solve(MatrixPartitioned&, const array_type::tensor<double, 2>&, const
-    array_type::tensor<double, 2>&), but filling \f$ x_u \f$ in place.
-
-    \param A sparse matrix, see MatrixPartitioned().
-    \param b nodevec [nelem, ndim].
-    \param x nodevec [nelem, ndim], \f$ x_p \f$ read, \f$ x_u \f$ filled.
-    */
-    void solve(
-        MatrixPartitioned& A,
-        const array_type::tensor<double, 2>& b,
-        array_type::tensor<double, 2>& x)
-    {
-        GOOSEFEM_ASSERT(xt::has_shape(b, {A.m_nnode, A.m_ndim}));
-        GOOSEFEM_ASSERT(xt::has_shape(x, {A.m_nnode, A.m_ndim}));
-
         this->factorize(A);
         Eigen::VectorXd B_u = A.AsDofs_u(b);
         Eigen::VectorXd X_p = A.AsDofs_p(x);
@@ -519,41 +514,9 @@ public:
         }
     }
 
-    /**
-    Same as Solve(MatrixPartitioned&, const array_type::tensor<double, 2>&, const
-    array_type::tensor<double, 2>&), but for "dofval" input and output.
-
-    \param A sparse matrix, see MatrixPartitioned().
-    \param b dofval [ndof].
-    \param x dofval [ndof], used to read \f$ x_p \f$.
-    \return x dofval [ndof], \f$ x_u \f$ filled, \f$ x_p \f$ copied.
-    */
-    array_type::tensor<double, 1> Solve(
-        MatrixPartitioned& A,
-        const array_type::tensor<double, 1>& b,
-        const array_type::tensor<double, 1>& x)
+    template <class T>
+    void solve_dofval_impl(MatrixPartitioned& A, const T& b, T& x)
     {
-        array_type::tensor<double, 1> ret = x;
-        this->solve(A, b, ret);
-        return ret;
-    }
-
-    /**
-    Same as Solve(MatrixPartitioned&, const array_type::tensor<double, 1>&, const
-    array_type::tensor<double, 1>&), but filling \f$ x_u \f$ in place.
-
-    \param A sparse matrix, see MatrixPartitioned().
-    \param b dofval [ndof].
-    \param x dofval [ndof], \f$ x_p \f$ read, \f$ x_u \f$ filled.
-    */
-    void solve(
-        MatrixPartitioned& A,
-        const array_type::tensor<double, 1>& b,
-        array_type::tensor<double, 1>& x)
-    {
-        GOOSEFEM_ASSERT(b.size() == A.m_ndof);
-        GOOSEFEM_ASSERT(x.size() == A.m_ndof);
-
         this->factorize(A);
         Eigen::VectorXd B_u = A.AsDofs_u(b);
         Eigen::VectorXd X_p = A.AsDofs_p(x);
@@ -565,45 +528,9 @@ public:
         }
     }
 
-    /**
-    Same as Solve(MatrixPartitioned&, const array_type::tensor<double, 2>&, const
-    array_type::tensor<double, 2>&), but with partitioned input and output.
-
-    \param A sparse matrix, see MatrixPartitioned().
-    \param b_u unknown dofval [nnu].
-    \param x_p prescribed dofval [nnp]
-    \return x_u unknown dofval [nnu].
-    */
-    array_type::tensor<double, 1> Solve_u(
-        MatrixPartitioned& A,
-        const array_type::tensor<double, 1>& b_u,
-        const array_type::tensor<double, 1>& x_p)
+    template <class T>
+    void solve_u_impl(MatrixPartitioned& A, const T& b_u, const T& x_p, T& x_u)
     {
-        array_type::tensor<double, 1> x_u = xt::empty<double>({A.m_nnu});
-        this->solve_u(A, b_u, x_p, x_u);
-        return x_u;
-    }
-
-    /**
-    Same as
-    Solve_u(MatrixPartitioned&, const array_type::tensor<double, 1>&, const
-    array_type::tensor<double, 1>&), but writing to pre-allocated output.
-
-    \param A sparse matrix, see MatrixPartitioned().
-    \param b_u unknown dofval [nnu].
-    \param x_p prescribed dofval [nnp]
-    \param x_u (overwritten) unknown dofval [nnu].
-    */
-    void solve_u(
-        MatrixPartitioned& A,
-        const array_type::tensor<double, 1>& b_u,
-        const array_type::tensor<double, 1>& x_p,
-        array_type::tensor<double, 1>& x_u)
-    {
-        GOOSEFEM_ASSERT(b_u.size() == A.m_nnu);
-        GOOSEFEM_ASSERT(x_p.size() == A.m_nnp);
-        GOOSEFEM_ASSERT(x_u.size() == A.m_nnu);
-
         this->factorize(A);
 
         Eigen::Map<Eigen::VectorXd>(x_u.data(), x_u.size()).noalias() =

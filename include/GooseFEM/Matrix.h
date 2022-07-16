@@ -20,6 +20,159 @@ template <class>
 class MatrixSolver;
 
 /**
+CRTP base class for a solver class.
+*/
+template <class D>
+class MatrixSolverBase {
+public:
+    /**
+    Underlying type.
+    */
+    using derived_type = D;
+
+private:
+    auto derived_cast() -> derived_type&
+    {
+        return *static_cast<derived_type*>(this);
+    }
+
+    auto derived_cast() const -> const derived_type&
+    {
+        return *static_cast<const derived_type*>(this);
+    }
+
+public:
+    /**
+    Solve \f$ x = A^{-1} b \f$.
+
+    \param A GooseFEM (sparse) matrix, see e.g. GooseFEM::Matrix().
+    \param b nodevec [nelem, ndim].
+    \return x nodevec [nelem, ndim].
+    */
+    template <class M>
+    array_type::tensor<double, 2> Solve(M& A, const array_type::tensor<double, 2>& b)
+    {
+        GOOSEFEM_ASSERT(xt::has_shape(b, A.shape_nodevec()));
+        array_type::tensor<double, 2> x = xt::empty_like(b);
+        derived_cast().solve_nodevec_impl(A, b, x);
+        return x;
+    }
+
+    /**
+    Solve \f$ x = A^{-1} b \f$.
+
+    \param A GooseFEM (sparse) matrix, see e.g. GooseFEM::Matrix().
+    \param b dofval [ndof].
+    \return x dofval [ndof].
+    */
+    template <class M>
+    array_type::tensor<double, 1> Solve(M& A, const array_type::tensor<double, 1>& b)
+    {
+        GOOSEFEM_ASSERT(xt::has_shape(b, A.shape_dofval()));
+        array_type::tensor<double, 1> x = xt::empty_like(b);
+        derived_cast().solve_dofval_impl(A, b, x);
+        return x;
+    }
+
+    /**
+    Solve \f$ x = A^{-1} b \f$.
+
+    \param A GooseFEM (sparse) matrix, see e.g. GooseFEM::Matrix().
+    \param b nodevec [nelem, ndim].
+    \param x (overwritten) nodevec [nelem, ndim].
+    */
+    template <class M>
+    void solve(M& A, const array_type::tensor<double, 2>& b, array_type::tensor<double, 2>& x)
+    {
+        GOOSEFEM_ASSERT(xt::has_shape(b, A.shape_nodevec()));
+        GOOSEFEM_ASSERT(xt::has_shape(x, A.shape_nodevec()));
+        derived_cast().solve_nodevec_impl(A, b, x);
+    }
+
+    /**
+    Solve \f$ x = A^{-1} b \f$.
+
+    \param A GooseFEM (sparse) matrix, see e.g. GooseFEM::Matrix().
+    \param b dofval [ndof].
+    \param x (overwritten) dofval [ndof].
+    */
+    template <class M>
+    void solve(M& A, const array_type::tensor<double, 1>& b, array_type::tensor<double, 1>& x)
+    {
+        GOOSEFEM_ASSERT(xt::has_shape(b, A.shape_dofval()));
+        GOOSEFEM_ASSERT(xt::has_shape(x, A.shape_dofval()));
+        derived_cast().solve_dofval_impl(A, b, x);
+    }
+};
+
+/**
+CRTP base class for a extra functions for a partitioned solver class.
+*/
+template <class D>
+class MatrixSolverPartitionedBase {
+public:
+    /**
+    Underlying type.
+    */
+    using derived_type = D;
+
+private:
+    auto derived_cast() -> derived_type&
+    {
+        return *static_cast<derived_type*>(this);
+    }
+
+    auto derived_cast() const -> const derived_type&
+    {
+        return *static_cast<const derived_type*>(this);
+    }
+
+public:
+    /**
+    Solve \f$ x = A^{-1} b \f$.
+
+    \param A GooseFEM (sparse) matrix, see e.g. GooseFEM::MatrixPartitioned().
+    \param b_u unknown dofval [nnu].
+    \param x_p prescribed dofval [nnp]
+    \return x_u unknown dofval [nnu].
+    */
+    template <class M>
+    array_type::tensor<double, 1> Solve_u(
+        M& A,
+        const array_type::tensor<double, 1>& b_u,
+        const array_type::tensor<double, 1>& x_p)
+    {
+        GOOSEFEM_ASSERT(xt::has_shape(b_u, {A.nnu()}));
+        GOOSEFEM_ASSERT(xt::has_shape(x_p, {A.nnp()}));
+        array_type::tensor<double, 1> x_u = xt::empty_like(b_u);
+        derived_cast().solve_u_impl(A, b_u, x_p, x_u);
+        return x_u;
+    }
+
+    /**
+    Same as
+    Solve \f$ x = A^{-1} b \f$.
+
+    \param A GooseFEM (sparse) matrix, see e.g. GooseFEM::MatrixPartitioned().
+    \param b_u unknown dofval [nnu].
+    \param x_p prescribed dofval [nnp]
+    \param x_u (overwritten) unknown dofval [nnu].
+    */
+    template <class M>
+    void solve_u(
+        M& A,
+        const array_type::tensor<double, 1>& b_u,
+        const array_type::tensor<double, 1>& x_p,
+        array_type::tensor<double, 1>& x_u)
+    {
+        GOOSEFEM_ASSERT(xt::has_shape(b_u, {A.nnu()}));
+        GOOSEFEM_ASSERT(xt::has_shape(x_p, {A.nnp()}));
+        GOOSEFEM_ASSERT(xt::has_shape(x_u, {A.nnu()}));
+        derived_cast().solve_u_impl(A, b_u, x_p, x_u);
+    }
+};
+
+/**
 CRTP base class for a matrix.
 */
 template <class D>
@@ -118,7 +271,7 @@ public:
     }
 
     /**
-    Shape of dofval.
+    Shape of "dofval".
     \return [#ndof].
     */
     std::array<size_t, 1> shape_dofval() const
@@ -127,7 +280,7 @@ public:
     }
 
     /**
-    Shape of nodevec.
+    Shape of "nodevec".
     \return [#nnode, #ndim].
     */
     std::array<size_t, 2> shape_nodevec() const
@@ -136,7 +289,7 @@ public:
     }
 
     /**
-    Shape of elemmat.
+    Shape of "elemmat".
     \return [#nelem, #nne * #ndim, #nne * #ndim].
     */
     std::array<size_t, 3> shape_elemmat() const
@@ -148,10 +301,7 @@ public:
     }
 
     /**
-    Assemble from matrices stored per element.
-
-    \tparam T array_type::tensor<double, 3>
-
+    Assemble from "elemmat".
     \param elemmat [#nelem, #nne * #ndim, #nne * #ndim].
     */
     template <class T>
@@ -162,7 +312,7 @@ public:
     }
 
     /**
-    Matrix as dense matrix.
+    Copy as dense matrix.
     \return [#ndof, #ndof].
     */
     array_type::tensor<double, 2> Todense() const
@@ -174,10 +324,7 @@ public:
     }
 
     /**
-    Covert matrix to dense matrix.
-
-    \tparam T array_type::tensor<double, 2>
-
+    Copy to dense matrix.
     \param ret overwritten [#ndof, #ndof].
     */
     template <class T>
@@ -216,8 +363,7 @@ public:
     }
 
     /**
-    Same as Dot(const array_type::tensor<double, 2>&, array_type::tensor<double, 2>& b)
-    but writing to preallocated data.
+    Dot-product \f$ b_i = A_{ij} x_j \f$.
 
     \param x nodevec [#nelem, #ndim].
     \param b (overwritten) nodevec [#nelem, #ndim].
@@ -230,8 +376,7 @@ public:
     }
 
     /**
-    Same as Dot(const array_type::tensor<double, 1>&, array_type::tensor<double, 1>& b)
-    but writing to preallocated data.
+    Dot-product \f$ b_i = A_{ij} x_j \f$.
 
     \param x dofval [#ndof].
     \param b (overwritten) dofval [#ndof].
@@ -481,30 +626,24 @@ public:
 /**
 Sparse matrix.
 
-See Vector() for bookkeeping definitions.
+See GooseFEM::Vector() for bookkeeping definitions.
 */
 class Matrix : public MatrixBase<Matrix> {
 private:
     friend MatrixBase<Matrix>;
 
 private:
-    // array_type::tensor<size_t, 2> m_conn; ///< Connectivity [#nelem, #nne].
-    // array_type::tensor<size_t, 2> m_dofs; ///< DOF-numbers per node [#nnode, #ndim].
-
-    // size_t m_nelem; ///< See nelem().
-    // size_t m_nne; ///< See nne().
-    // size_t m_nnode; ///< See nnode().
-    // size_t m_ndim; ///< See ndim().
-    // size_t m_ndof; ///< See ndof().
-
     bool m_changed = true; ///< Signal changes to data.
 
     Eigen::SparseMatrix<double> m_A; ///< The matrix.
 
     std::vector<Eigen::Triplet<double>> m_T; ///< Matrix entries.
 
+    /**
+    Class to solve the system (allowing single factorisation for multiple right-hand-sides).
+    */
     template <class>
-    friend class MatrixSolver; ///< Grant access to solver class
+    friend class MatrixSolver;
 
 public:
     Matrix() = default;
@@ -558,11 +697,11 @@ private:
 
 public:
     /**
-    Overwrite matrix with (sparse) matrix.
+    Overwrite matrix.
 
-    \param rows Row numbers in the matrix [n].
-    \param cols Column numbers in the matrix [n].
-    \param matrix Data entries on (rows, cols) [n].
+    \param rows Row numbers [m].
+    \param cols Column numbers [n].
+    \param matrix Data entries `matrix(i, j)` for `rows(i), cols(j)` [m, n].
     */
     void
     set(const array_type::tensor<size_t, 1>& rows,
@@ -587,11 +726,11 @@ public:
     }
 
     /**
-    Add a (sparse) matrix to the matrix.
+    Add matrix.
 
-    \param rows Row numbers in the matrix [n].
-    \param cols Column numbers in the matrix [n].
-    \param matrix Data entries on (rows, cols) [n].
+    \param rows Row numbers [m].
+    \param cols Column numbers [n].
+    \param matrix Data entries `matrix(i, j)` for `rows(i), cols(j)` [m, n].
     */
     void
     add(const array_type::tensor<size_t, 1>& rows,
@@ -690,73 +829,29 @@ private:
 };
 
 /**
-Solver for Matrix().
-The idea is that this solver class can be used to solve for multiple right-hand-sides
-using one factorisation.
+Solve \f$ x = A^{-1} b \f$, for `A` of the GooseFEM::Matrix() class.
+You can solve for multiple right-hand-sides using one factorisation.
 */
 template <class Solver = Eigen::SimplicialLDLT<Eigen::SparseMatrix<double>>>
-class MatrixSolver {
+class MatrixSolver : public MatrixSolverBase<MatrixSolver<Solver>> {
+private:
+    friend MatrixSolverBase<MatrixSolver<Solver>>;
+
 public:
     MatrixSolver() = default;
 
-    /**
-    Solve \f$ x = A^{-1} b \f$.
-
-    \param A sparse matrix, see Matrix().
-    \param b nodevec [nelem, ndim].
-    \return x nodevec [nelem, ndim].
-    */
-    array_type::tensor<double, 2> Solve(Matrix& A, const array_type::tensor<double, 2>& b)
+private:
+    template <class T>
+    void solve_nodevec_impl(Matrix& A, const T& b, T& x)
     {
-        array_type::tensor<double, 2> x = xt::empty<double>({A.m_nnode, A.m_ndim});
-        this->solve(A, b, x);
-        return x;
-    }
-
-    /**
-    Same as Solve(Matrix&, const array_type::tensor<double, 2>&)
-    but writing to preallocated data.
-
-    \param A sparse matrix, see Matrix().
-    \param b nodevec [nelem, ndim].
-    \param x nodevec overwritten [nelem, ndim].
-    */
-    void solve(Matrix& A, const array_type::tensor<double, 2>& b, array_type::tensor<double, 2>& x)
-    {
-        GOOSEFEM_ASSERT(xt::has_shape(b, {A.m_nnode, A.m_ndim}));
-        GOOSEFEM_ASSERT(xt::has_shape(x, {A.m_nnode, A.m_ndim}));
         this->factorize(A);
         Eigen::VectorXd X = m_solver.solve(A.Eigen_AsDofs_nodevec(b));
         A.Eigen_asNode_dofval_nodevec(X, x);
     }
 
-    /**
-    Same as Solve(Matrix&, const array_type::tensor<double, 2>&)
-    but for "dofval" input and output.
-
-    \param A sparse matrix, see Matrix().
-    \param b dofval [ndof].
-    \return x dofval [ndof].
-    */
-    array_type::tensor<double, 1> Solve(Matrix& A, const array_type::tensor<double, 1>& b)
+    template <class T>
+    void solve_dofval_impl(Matrix& A, const T& b, T& x)
     {
-        array_type::tensor<double, 1> x = xt::empty<double>({A.m_ndof});
-        this->solve(A, b, x);
-        return x;
-    }
-
-    /**
-    Same as Solve(Matrix&, const array_type::tensor<double, 1>&)
-    but writing to preallocated data.
-
-    \param A sparse matrix, see Matrix().
-    \param b dofval [ndof].
-    \param x dofval overwritten [ndof].
-    */
-    void solve(Matrix& A, const array_type::tensor<double, 1>& b, array_type::tensor<double, 1>& x)
-    {
-        GOOSEFEM_ASSERT(b.size() == A.m_ndof);
-        GOOSEFEM_ASSERT(x.size() == A.m_ndof);
         this->factorize(A);
         Eigen::Map<Eigen::VectorXd>(x.data(), x.size()).noalias() =
             m_solver.solve(Eigen::Map<const Eigen::VectorXd>(b.data(), A.m_ndof));
