@@ -119,6 +119,38 @@ public:
         m_App.resize(m_nnp, m_nnp);
     }
 
+    /**
+    Pointer to data.
+    */
+    const Eigen::SparseMatrix<double>& data_uu() const
+    {
+        return m_Auu;
+    }
+
+    /**
+    Pointer to data.
+    */
+    const Eigen::SparseMatrix<double>& data_up() const
+    {
+        return m_Aup;
+    }
+
+    /**
+    Pointer to data.
+    */
+    const Eigen::SparseMatrix<double>& data_pu() const
+    {
+        return m_Apu;
+    }
+
+    /**
+    Pointer to data.
+    */
+    const Eigen::SparseMatrix<double>& data_pp() const
+    {
+        return m_App;
+    }
+
 private:
     template <class T>
     void assemble_impl(const T& elemmat)

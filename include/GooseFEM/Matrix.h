@@ -47,38 +47,6 @@ public:
 
     \param A GooseFEM (sparse) matrix, see e.g. GooseFEM::Matrix().
     \param b nodevec [nelem, ndim].
-    \return x nodevec [nelem, ndim].
-    */
-    template <class M>
-    array_type::tensor<double, 2> Solve(M& A, const array_type::tensor<double, 2>& b)
-    {
-        GOOSEFEM_ASSERT(xt::has_shape(b, A.shape_nodevec()));
-        array_type::tensor<double, 2> x = xt::empty_like(b);
-        derived_cast().solve_nodevec_impl(A, b, x);
-        return x;
-    }
-
-    /**
-    Solve \f$ x = A^{-1} b \f$.
-
-    \param A GooseFEM (sparse) matrix, see e.g. GooseFEM::Matrix().
-    \param b dofval [ndof].
-    \return x dofval [ndof].
-    */
-    template <class M>
-    array_type::tensor<double, 1> Solve(M& A, const array_type::tensor<double, 1>& b)
-    {
-        GOOSEFEM_ASSERT(xt::has_shape(b, A.shape_dofval()));
-        array_type::tensor<double, 1> x = xt::empty_like(b);
-        derived_cast().solve_dofval_impl(A, b, x);
-        return x;
-    }
-
-    /**
-    Solve \f$ x = A^{-1} b \f$.
-
-    \param A GooseFEM (sparse) matrix, see e.g. GooseFEM::Matrix().
-    \param b nodevec [nelem, ndim].
     \param x (overwritten) nodevec [nelem, ndim].
     */
     template <class M>
@@ -106,6 +74,62 @@ public:
 };
 
 /**
+CRTP base class for a solver class.
+*/
+template <class D>
+class MatrixSolverSingleBase {
+public:
+    /**
+    Underlying type.
+    */
+    using derived_type = D;
+
+private:
+    auto derived_cast() -> derived_type&
+    {
+        return *static_cast<derived_type*>(this);
+    }
+
+    auto derived_cast() const -> const derived_type&
+    {
+        return *static_cast<const derived_type*>(this);
+    }
+
+public:
+    /**
+    Solve \f$ x = A^{-1} b \f$.
+
+    \param A GooseFEM (sparse) matrix, see e.g. GooseFEM::Matrix().
+    \param b nodevec [nelem, ndim].
+    \return x nodevec [nelem, ndim].
+    */
+    template <class M>
+    array_type::tensor<double, 2> Solve(M& A, const array_type::tensor<double, 2>& b)
+    {
+        GOOSEFEM_ASSERT(xt::has_shape(b, A.shape_nodevec()));
+        array_type::tensor<double, 2> x = xt::empty_like(b);
+        derived_cast().solve_nodevec_impl(A, b, x);
+        return x;
+    }
+
+    /**
+    Solve \f$ x = A^{-1} b \f$.
+
+    \param A GooseFEM (sparse) matrix, see e.g. GooseFEM::Matrix().
+    \param b dofval [ndof].
+    \return x dofval [ndof].
+    */
+    template <class M>
+    array_type::tensor<double, 1> Solve(M& A, const array_type::tensor<double, 1>& b)
+    {
+        GOOSEFEM_ASSERT(xt::has_shape(b, A.shape_dofval()));
+        array_type::tensor<double, 1> x = xt::empty_like(b);
+        derived_cast().solve_dofval_impl(A, b, x);
+        return x;
+    }
+};
+
+/**
 CRTP base class for a extra functions for a partitioned solver class.
 */
 template <class D>
@@ -128,6 +152,42 @@ private:
     }
 
 public:
+    /**
+    Solve \f$ x = A^{-1} b \f$.
+
+    \param A GooseFEM (sparse) matrix, see e.g. GooseFEM::Matrix().
+    \param b nodevec [nelem, ndim].
+    \return x nodevec [nelem, ndim].
+    */
+    template <class M>
+    array_type::tensor<double, 2>
+    Solve(M& A, const array_type::tensor<double, 2>& b, const array_type::tensor<double, 2>& x)
+    {
+        GOOSEFEM_ASSERT(xt::has_shape(b, A.shape_nodevec()));
+        GOOSEFEM_ASSERT(xt::has_shape(x, A.shape_nodevec()));
+        array_type::tensor<double, 2> ret = xt::empty_like(x);
+        derived_cast().solve_nodevec_impl(A, b, ret);
+        return x;
+    }
+
+    /**
+    Solve \f$ x = A^{-1} b \f$.
+
+    \param A GooseFEM (sparse) matrix, see e.g. GooseFEM::Matrix().
+    \param b dofval [ndof].
+    \return x dofval [ndof].
+    */
+    template <class M>
+    array_type::tensor<double, 1>
+    Solve(M& A, const array_type::tensor<double, 1>& b, const array_type::tensor<double, 1>& x)
+    {
+        GOOSEFEM_ASSERT(xt::has_shape(b, A.shape_dofval()));
+        GOOSEFEM_ASSERT(xt::has_shape(x, A.shape_dofval()));
+        array_type::tensor<double, 1> ret = xt::empty_like(x);
+        derived_cast().solve_dofval_impl(A, b, ret);
+        return x;
+    }
+
     /**
     Solve \f$ x = A^{-1} b \f$.
 
@@ -670,6 +730,14 @@ public:
         GOOSEFEM_ASSERT(m_ndof <= m_nnode * m_ndim);
     }
 
+    /**
+    Pointer to data.
+    */
+    const Eigen::SparseMatrix<double>& data() const
+    {
+        return m_A;
+    }
+
 private:
     template <class T>
     void assemble_impl(const T& elemmat)
@@ -833,9 +901,11 @@ Solve \f$ x = A^{-1} b \f$, for `A` of the GooseFEM::Matrix() class.
 You can solve for multiple right-hand-sides using one factorisation.
 */
 template <class Solver = Eigen::SimplicialLDLT<Eigen::SparseMatrix<double>>>
-class MatrixSolver : public MatrixSolverBase<MatrixSolver<Solver>> {
+class MatrixSolver : public MatrixSolverBase<MatrixSolver<Solver>>,
+                     public MatrixSolverSingleBase<MatrixSolver<Solver>> {
 private:
     friend MatrixSolverBase<MatrixSolver<Solver>>;
+    friend MatrixSolverSingleBase<MatrixSolver<Solver>>;
 
 public:
     MatrixSolver() = default;

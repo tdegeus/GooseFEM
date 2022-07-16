@@ -31,6 +31,11 @@ void init_MatrixPartitioned(py::module& m)
         py::arg("dofs"),
         py::arg("iip"));
 
+    cls.def_property_readonly("data_uu", &GooseFEM::MatrixPartitioned::data_uu);
+    cls.def_property_readonly("data_up", &GooseFEM::MatrixPartitioned::data_up);
+    cls.def_property_readonly("data_pu", &GooseFEM::MatrixPartitioned::data_pu);
+    cls.def_property_readonly("data_pp", &GooseFEM::MatrixPartitioned::data_pp);
+
     cls.def("__repr__", [](const GooseFEM::MatrixPartitioned&) {
         return "<GooseFEM.MatrixPartitioned>";
     });

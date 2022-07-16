@@ -35,6 +35,16 @@ void init_MatrixPartitionedTyings(py::module& m)
         py::arg("Cdu"),
         py::arg("Cdp"));
 
+    cls.def_property_readonly("data_uu", &GooseFEM::MatrixPartitionedTyings::data_uu);
+    cls.def_property_readonly("data_up", &GooseFEM::MatrixPartitionedTyings::data_up);
+    cls.def_property_readonly("data_pu", &GooseFEM::MatrixPartitionedTyings::data_pu);
+    cls.def_property_readonly("data_pp", &GooseFEM::MatrixPartitionedTyings::data_pp);
+    cls.def_property_readonly("data_ud", &GooseFEM::MatrixPartitionedTyings::data_ud);
+    cls.def_property_readonly("data_pd", &GooseFEM::MatrixPartitionedTyings::data_pd);
+    cls.def_property_readonly("data_du", &GooseFEM::MatrixPartitionedTyings::data_du);
+    cls.def_property_readonly("data_dp", &GooseFEM::MatrixPartitionedTyings::data_dp);
+    cls.def_property_readonly("data_dd", &GooseFEM::MatrixPartitionedTyings::data_dd);
+
     cls.def("__repr__", [](const GooseFEM::MatrixPartitionedTyings&) {
         return "<GooseFEM.MatrixPartitionedTyings>";
     });

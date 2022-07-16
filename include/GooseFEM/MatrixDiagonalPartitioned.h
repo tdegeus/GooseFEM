@@ -135,10 +135,10 @@ public:
     }
 
     /**
-    Copy as diagonal matrix.
+    Assemble to diagonal matrix (involves copies).
     \param [#ndof].
     */
-    array_type::tensor<double, 1> Todiagonal() const
+    array_type::tensor<double, 1> data() const
     {
         array_type::tensor<double, 1> ret = xt::zeros<double>({m_ndof});
 
@@ -153,6 +153,29 @@ public:
         }
 
         return ret;
+    }
+
+    /**
+    Pointer to data.
+    \param [#nnu].
+    */
+    const array_type::tensor<double, 1>& data_uu() const
+    {
+        return m_Auu;
+    }
+
+    /**
+    Pointer to data.
+    \param [#nnu].
+    */
+    const array_type::tensor<double, 1>& data_pp() const
+    {
+        return m_App;
+    }
+
+    [[deprecated]] array_type::tensor<double, 1> Todiagonal() const
+    {
+        return this->data();
     }
 
 private:
