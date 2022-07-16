@@ -34,8 +34,8 @@ void init_ElementQuad4(py::module& m)
         py::arg("xi"),
         py::arg("w"));
 
-    register_Element_QuadratureBase<GooseFEM::Element::Quad4::Quadrature>(cls);
-    register_Element_QuadratureBaseCartesian<GooseFEM::Element::Quad4::Quadrature>(cls);
+    register_Mesh_QuadratureBase<GooseFEM::Element::Quad4::Quadrature>(cls);
+    register_Mesh_QuadratureBaseCartesian<GooseFEM::Element::Quad4::Quadrature>(cls);
 
     cls.def_property_readonly(
         "GradN",

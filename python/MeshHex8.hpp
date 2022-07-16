@@ -30,8 +30,8 @@ void init_MeshHex8(py::module& mod)
             py::arg("nz"),
             py::arg("h") = 1.);
 
-        register_Element_RegularBase<GooseFEM::Mesh::Hex8::Regular>(cls);
-        register_Element_RegularBase3d<GooseFEM::Mesh::Hex8::Regular>(cls);
+        register_Mesh_RegularBase<GooseFEM::Mesh::Hex8::Regular>(cls);
+        register_Mesh_RegularBase3d<GooseFEM::Mesh::Hex8::Regular>(cls);
 
         cls.def("__repr__", [](const GooseFEM::Mesh::Hex8::Regular&) {
             return "<GooseFEM.Mesh.Hex8.Regular>";
@@ -50,8 +50,7 @@ void init_MeshHex8(py::module& mod)
             py::arg("h") = 1.0,
             py::arg("nfine") = 1);
 
-        cls.def_property_readonly(
-            "elementsMiddleLayer", &GooseFEM::Mesh::Hex8::FineLayer::elementsMiddleLayer);
+        cls.def("elementsMiddleLayer", &GooseFEM::Mesh::Hex8::FineLayer::elementsMiddleLayer);
 
         cls.def("__repr__", [](const GooseFEM::Mesh::Hex8::FineLayer&) {
             return "<GooseFEM.Mesh.Hex8.FineLayer>";

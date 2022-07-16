@@ -15,9 +15,9 @@ plt.style.use(["goose", "goose-latex"])
 mesh = GooseFEM.Mesh.Quad4.Regular(5, 5)
 
 # mesh dimensions
-nelem = mesh.nelem()
-nne = mesh.nne()
-ndim = mesh.ndim()
+nelem = mesh.nelem
+nne = mesh.nne
+ndim = mesh.ndim
 
 # mesh definition, displacement, external forces
 coor = mesh.coor()
@@ -59,7 +59,7 @@ Solver = GooseFEM.MatrixPartitionedSolver()
 
 # element definition
 elem = GooseFEM.Element.Quad4.QuadraturePlanar(vector.AsElement(coor))
-nip = elem.nip()
+nip = elem.nip
 
 # material definition
 mat = GMatElastic.Cartesian3d.Array2d([nelem, nip], 1.0, 1.0)
@@ -101,7 +101,10 @@ fres_u = vector.AsDofs_u(fres)
 u_u = Solver.Solve_u(K, fres_u, u_p)
 
 # assemble to nodal vector
-disp = vector.AsNode(u_u, u_p)
+u = np.empty(vector.shape_dofval())
+u[vector.iiu] = u_u
+u[vector.iip] = u_p
+disp = vector.AsNode(u)
 
 # post-process
 # ------------
@@ -127,7 +130,7 @@ fres_u = vector.AsDofs_u(fres)
 print(np.sum(np.abs(fres_u)) / np.sum(np.abs(fext_p)))
 
 # average stress per element
-dV = elem.AsTensor(2, elem.dV())
+dV = elem.AsTensor(2, elem.dV)
 Sig = np.average(Sig, weights=dV, axis=1)
 
 # skip plot with "--no-plot" command line argument

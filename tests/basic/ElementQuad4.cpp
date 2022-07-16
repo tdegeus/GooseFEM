@@ -182,10 +182,9 @@ TEST_CASE("GooseFEM::ElementQuad4", "ElementQuad4.h")
         xt::xtensor<double, 2> rho = xt::ones<double>({mesh.nelem(), quad.nip()});
 
         mat.assemble(quad.Int_N_scalar_NT_dV(rho));
-        auto M = mat.Todiagonal();
 
-        REQUIRE(M.size() == vec.ndof());
-        REQUIRE(xt::allclose(M, 1.0));
+        REQUIRE(mat.data().size() == vec.ndof());
+        REQUIRE(xt::allclose(mat.data(), 1.0));
     }
 
     SECTION("Int_gradN_dot_tensor2_dV")

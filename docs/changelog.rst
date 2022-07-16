@@ -3,6 +3,46 @@
 Changelog
 *********
 
+v1.2.0
+======
+
+API changes
+-----------
+
+*   [C++] [Python] Several functions now return a pointer to internal data rather than a copy.
+    In the Python-API this changes these functions (e.g. `.foo()`) to properties (e.g. `.foo`).
+
+*   [MeshQuad4.h] Renaming:
+    -   ``getCoarseMesh()`` to ``coarseMesh()``
+    -   ``getFineMesh()`` to ``fineMesh()``
+    -   ``getRegularMesh()`` to ``regularMesh()``
+    -   ``getFineLayerMesh()`` to ``fineLayerMesh()``
+    -   ``getMap()`` to ``map()``
+    -   ``getMapFraction()`` to ``mapFraction()``
+    (immediate removal in Python, as there are any changes; functions marked as deprecated in C++).
+
+*   [Iterate.h] Renaming:
+    -   ``.get()`` to ``.data()``
+    (immediate removal in Python, as there are any changes; functions marked as deprecated in C++).
+
+*   [Mesh.h] Renaming:
+    -   ``.getElementType()`` to ``.elementType()``
+    (immediate removal in Python, as there are any changes; functions marked as deprecated in C++).
+
+*   [Matrix*.h] Adding pointers to ``.data*()``.
+    This deprecates ``Todiagonal``
+    (immediate removal in Python, as there are any changes; functions marked as deprecated in C++).
+
+*   [Matrix*.h] Adding allocation free API to Python API.
+
+Other changes
+-------------
+
+*   Integrating implementation and headers for maintainability.
+    The user is expected to get an overview from the doxygen docs.
+
+*   Using CRTP for `Matrix*`.
+
 v1.1.0
 ======
 

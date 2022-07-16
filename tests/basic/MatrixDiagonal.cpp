@@ -47,7 +47,7 @@ TEST_CASE("GooseFEM::MatrixDiagonal", "MatrixDiagonal.h")
             0.25,
             0.25};
 
-        REQUIRE(xt::allclose(A.Todiagonal(), a));
+        REQUIRE(xt::allclose(A.data(), a));
     }
 
     SECTION("dot")
@@ -64,7 +64,7 @@ TEST_CASE("GooseFEM::MatrixDiagonal", "MatrixDiagonal.h")
 
         REQUIRE(B.size() == b.size());
         REQUIRE(xt::allclose(B, b));
-        REQUIRE(xt::allclose(A.Todiagonal(), a));
+        REQUIRE(xt::allclose(A.data(), a));
     }
 
     SECTION("solve")

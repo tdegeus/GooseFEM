@@ -173,6 +173,10 @@ public:
         return m_App;
     }
 
+    /**
+    Pointer to data.
+    \param [#nnu].
+    */
     [[deprecated]] array_type::tensor<double, 1> Todiagonal() const
     {
         return this->data();

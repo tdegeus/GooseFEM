@@ -188,23 +188,6 @@ void register_MatrixSolver_MatrixSolverPartitionedBase(P& cls)
         py::arg("A"),
         py::arg("b"),
         py::arg("x"));
-
-    cls.def(
-        "Solve_u",
-        &C::template Solve_u<M>,
-        "Solve system.",
-        py::arg("A"),
-        py::arg("b_u"),
-        py::arg("x_p"));
-
-    cls.def(
-        "solve_u",
-        &C::template solve_u<M>,
-        "Solve system.",
-        py::arg("A"),
-        py::arg("b_u"),
-        py::arg("x_p"),
-        py::arg("x_u"));
 }
 
 void init_Matrix(py::module& m)

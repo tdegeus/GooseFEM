@@ -515,9 +515,11 @@ Solving proceeds as follows:
 */
 template <class Solver = Eigen::SimplicialLDLT<Eigen::SparseMatrix<double>>>
 class MatrixPartitionedTyingsSolver
-    : public MatrixSolverBase<MatrixPartitionedTyingsSolver<Solver>> {
+    : public MatrixSolverBase<MatrixPartitionedTyingsSolver<Solver>>,
+      public MatrixSolverPartitionedBase<MatrixPartitionedTyingsSolver<Solver>> {
 private:
     friend MatrixSolverBase<MatrixPartitionedTyingsSolver<Solver>>;
+    friend MatrixSolverPartitionedBase<MatrixPartitionedTyingsSolver<Solver>>;
 
 public:
     MatrixPartitionedTyingsSolver() = default;

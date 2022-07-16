@@ -157,6 +157,7 @@ public:
 
     \param A GooseFEM (sparse) matrix, see e.g. GooseFEM::Matrix().
     \param b nodevec [nelem, ndim].
+    \param x nodevec [nelem, ndim].
     \return x nodevec [nelem, ndim].
     */
     template <class M>
@@ -165,9 +166,9 @@ public:
     {
         GOOSEFEM_ASSERT(xt::has_shape(b, A.shape_nodevec()));
         GOOSEFEM_ASSERT(xt::has_shape(x, A.shape_nodevec()));
-        array_type::tensor<double, 2> ret = xt::empty_like(x);
+        array_type::tensor<double, 2> ret = x;
         derived_cast().solve_nodevec_impl(A, b, ret);
-        return x;
+        return ret;
     }
 
     /**
@@ -175,6 +176,7 @@ public:
 
     \param A GooseFEM (sparse) matrix, see e.g. GooseFEM::Matrix().
     \param b dofval [ndof].
+    \param x nodevec [nelem, ndim].
     \return x dofval [ndof].
     */
     template <class M>
@@ -183,52 +185,9 @@ public:
     {
         GOOSEFEM_ASSERT(xt::has_shape(b, A.shape_dofval()));
         GOOSEFEM_ASSERT(xt::has_shape(x, A.shape_dofval()));
-        array_type::tensor<double, 1> ret = xt::empty_like(x);
+        array_type::tensor<double, 1> ret = x;
         derived_cast().solve_dofval_impl(A, b, ret);
-        return x;
-    }
-
-    /**
-    Solve \f$ x = A^{-1} b \f$.
-
-    \param A GooseFEM (sparse) matrix, see e.g. GooseFEM::MatrixPartitioned().
-    \param b_u unknown dofval [nnu].
-    \param x_p prescribed dofval [nnp]
-    \return x_u unknown dofval [nnu].
-    */
-    template <class M>
-    array_type::tensor<double, 1> Solve_u(
-        M& A,
-        const array_type::tensor<double, 1>& b_u,
-        const array_type::tensor<double, 1>& x_p)
-    {
-        GOOSEFEM_ASSERT(xt::has_shape(b_u, {A.nnu()}));
-        GOOSEFEM_ASSERT(xt::has_shape(x_p, {A.nnp()}));
-        array_type::tensor<double, 1> x_u = xt::empty_like(b_u);
-        derived_cast().solve_u_impl(A, b_u, x_p, x_u);
-        return x_u;
-    }
-
-    /**
-    Same as
-    Solve \f$ x = A^{-1} b \f$.
-
-    \param A GooseFEM (sparse) matrix, see e.g. GooseFEM::MatrixPartitioned().
-    \param b_u unknown dofval [nnu].
-    \param x_p prescribed dofval [nnp]
-    \param x_u (overwritten) unknown dofval [nnu].
-    */
-    template <class M>
-    void solve_u(
-        M& A,
-        const array_type::tensor<double, 1>& b_u,
-        const array_type::tensor<double, 1>& x_p,
-        array_type::tensor<double, 1>& x_u)
-    {
-        GOOSEFEM_ASSERT(xt::has_shape(b_u, {A.nnu()}));
-        GOOSEFEM_ASSERT(xt::has_shape(x_p, {A.nnp()}));
-        GOOSEFEM_ASSERT(xt::has_shape(x_u, {A.nnu()}));
-        derived_cast().solve_u_impl(A, b_u, x_p, x_u);
+        return ret;
     }
 };
 

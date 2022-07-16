@@ -13,9 +13,9 @@ plt.style.use(["goose", "goose-autolayout"])
 mesh = GooseFEM.Mesh.Quad4.Regular(5, 5)
 
 # mesh dimensions
-nelem = mesh.nelem()
-nne = mesh.nne()
-ndim = mesh.ndim()
+nelem = mesh.nelem
+nne = mesh.nne
+ndim = mesh.ndim
 
 # mesh definitions
 coor = mesh.coor()
@@ -28,10 +28,10 @@ elmat = mesh.elementgrid()
 
 # add control nodes
 control = GooseFEM.Tyings.Control(coor, dofs)
-coor = control.coor()
-dofs = control.dofs()
-control_dofs = control.controlDofs()
-control_nodes = control.controlNodes()
+coor = control.coor
+dofs = control.dofs
+control_dofs = control.controlDofs
+control_nodes = control.controlNodes
 
 # extract fixed DOFs:
 # - all control nodes: to prescribe the deformation gradient
@@ -41,7 +41,7 @@ iip = np.concatenate((control_dofs.ravel(), dofs[mesh.nodesOrigin(), :].ravel())
 
 # get DOF-tyings, reorganise system
 tyings = GooseFEM.Tyings.Periodic(coor, dofs, control_dofs, mesh.nodesPeriodic(), iip)
-dofs = tyings.dofs()
+dofs = tyings.dofs
 
 # simulation variables
 # --------------------
@@ -63,16 +63,16 @@ fe = np.empty([nelem, nne, ndim])
 Ke = np.empty([nelem, nne * ndim, nne * ndim])
 
 # DOF values
-Fext = np.zeros([tyings.nni()])
-Fint = np.zeros([tyings.nni()])
+Fext = np.zeros([tyings.nni])
+Fint = np.zeros([tyings.nni])
 
 # element/material definition
 # ---------------------------
 
 # FEM quadrature
 elem = GooseFEM.Element.Quad4.QuadraturePlanar(vector.AsElement(coor))
-nip = elem.nip()
-dV = elem.AsTensor(2, elem.dV())
+nip = elem.nip
+dV = elem.AsTensor(2, elem.dV)
 
 # material model
 # even though the problem is 2-d, the material model is 3-d, plane strain is implicitly assumed
@@ -167,7 +167,7 @@ for inc in range(dgamma.size):
             du[control_nodes[0], 1] = dgamma[inc]
 
         # solve
-        du = Solver.Solve(K, fres, du)
+        Solver.solve(K, fres, du)
 
         # add displacement update
         disp += du

@@ -82,7 +82,7 @@ int main()
 
     M.assemble(nodalQuad.Int_N_scalar_NT_dV(rho));
 
-    xt::xtensor<double, 1> mass = M.Todiagonal();
+    xt::xtensor<double, 1> mass = M.data();
 
     // update in macroscopic deformation gradient
 

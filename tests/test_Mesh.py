@@ -15,15 +15,15 @@ class Test_Mesh(unittest.TestCase):
         """
 
         mesh = GooseFEM.Mesh.Quad4.Regular(3, 3)
-        coor = mesh.coor
-        conn = mesh.conn
+        coor = mesh.coor()
+        conn = mesh.conn()
 
         self.assertTrue(np.allclose([1.5, 1.5], GooseFEM.Mesh.center_of_gravity(coor, conn)))
 
     def test_coordination_dofs(self):
 
         mesh = GooseFEM.Mesh.Quad4.Regular(4, 4)
-        dofs = mesh.dofsPeriodic
+        dofs = mesh.dofsPeriodic()
         real = np.array(
             [
                 [4, 4],
@@ -52,7 +52,7 @@ class Test_Mesh(unittest.TestCase):
     def test_coordination_node2dof(self):
 
         mesh = GooseFEM.Mesh.Quad4.Regular(4, 4)
-        dofs = mesh.dofsPeriodic
+        dofs = mesh.dofsPeriodic()
         real = [
             [0, 4, 20, 24],
             [0, 4, 20, 24],
@@ -98,7 +98,7 @@ class Test_Mesh(unittest.TestCase):
     def test_coordination_nodaltyings(self):
 
         mesh = GooseFEM.Mesh.Quad4.Regular(4, 4)
-        dofs = mesh.dofsPeriodic
+        dofs = mesh.dofsPeriodic()
         real = [
             [0, 4, 20, 24],
             [1, 21],
@@ -137,8 +137,8 @@ class Test_Mesh(unittest.TestCase):
     def test_elem2node_periodic(self):
 
         mesh = GooseFEM.Mesh.Quad4.Regular(4, 4)
-        conn = mesh.conn
-        dofs = mesh.dofsPeriodic
+        conn = mesh.conn()
+        dofs = mesh.dofsPeriodic()
 
         real = np.array(
             [
