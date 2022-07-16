@@ -43,6 +43,11 @@ Other changes
 
 *   Using CRTP for `Matrix*`.
 
+Future work
+-----------
+
+*   Working around xtensor bug and outdated GMat modules, see be7f823
+
 v1.1.0
 ======
 
