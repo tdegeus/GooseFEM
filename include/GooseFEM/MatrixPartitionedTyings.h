@@ -427,59 +427,33 @@ private:
 
 /**
 Solver for MatrixPartitionedTyings().
-The idea is that this solver class can be used to solve for multiple right-hand-sides
-using one factorisation.
+This solver class can be used to solve for multiple right-hand-sides using one factorisation.
+
+Solving proceeds as follows:
+
+\f$ A' = A_{ii} + A_{id} * C_{di} + C_{di}^T * A_{di} + C_{di}^T * A_{dd} * C_{di} \f$
+
+\f$ b' = b_i + C_{di}^T * b_d \f$
+
+\f$ x_u = A'_{uu} \ ( b'_u - A'_{up} * x_p ) \f$
+
+\f$ x_i = \begin{bmatrix} x_u \\ x_p \end{bmatrix} \f$
+
+\f$ x_d = C_{di} * x_i \f$
 */
 template <class Solver = Eigen::SimplicialLDLT<Eigen::SparseMatrix<double>>>
-class MatrixPartitionedTyingsSolver {
+class MatrixPartitionedTyingsSolver
+    : public MatrixSolverBase<MatrixPartitionedTyingsSolver<Solver>> {
+private:
+    friend MatrixSolverBase<MatrixPartitionedTyingsSolver<Solver>>;
+
 public:
     MatrixPartitionedTyingsSolver() = default;
 
-    /**
-    Solve as follows.
-
-    \f$ A' = A_{ii} + A_{id} * C_{di} + C_{di}^T * A_{di} + C_{di}^T * A_{dd} * C_{di} \f$
-
-    \f$ b' = b_i + C_{di}^T * b_d \f$
-
-    \f$ x_u = A'_{uu} \ ( b'_u - A'_{up} * x_p ) \f$
-
-    \f$ x_i = \begin{bmatrix} x_u \\ x_p \end{bmatrix} \f$
-
-    \f$ x_d = C_{di} * x_i \f$
-
-    \param A sparse matrix, see MatrixPartitionedTyings().
-    \param b nodevec [nelem, ndim].
-    \param x nodevec [nelem, ndim], used to read \f$ x_p \f$.
-    \return x nodevec [nelem, ndim], \f$ x_u \f$ filled, \f$ x_p \f$ copied.
-    */
-    array_type::tensor<double, 2> Solve(
-        MatrixPartitionedTyings& A,
-        const array_type::tensor<double, 2>& b,
-        const array_type::tensor<double, 2>& x)
+private:
+    template <class T>
+    void solve_nodevec_impl(MatrixPartitionedTyings& A, const T& b, T& x)
     {
-        array_type::tensor<double, 2> ret = x;
-        this->solve(A, b, ret);
-        return ret;
-    }
-
-    /**
-    Same as
-    Solve(MatrixPartitionedTyings&, const array_type::tensor<double, 2>&, const
-    array_type::tensor<double, 2>&), but filling \f$ x_u \f$ and \f$ x_d \f$ in place.
-
-    \param A sparse matrix, see MatrixPartitionedTyings().
-    \param b nodevec [nelem, ndim].
-    \param x nodevec [nelem, ndim], \f$ x_p \f$ read, \f$ x_u \f$ and \f$ x_d \f$ filled.
-    */
-    void solve(
-        MatrixPartitionedTyings& A,
-        const array_type::tensor<double, 2>& b,
-        array_type::tensor<double, 2>& x)
-    {
-        GOOSEFEM_ASSERT(xt::has_shape(b, {A.m_nnode, A.m_ndim}));
-        GOOSEFEM_ASSERT(xt::has_shape(x, {A.m_nnode, A.m_ndim}));
-
         this->factorize(A);
 
         Eigen::VectorXd B_u = A.AsDofs_u(b);
@@ -504,43 +478,9 @@ public:
         }
     }
 
-    /**
-    Same as
-    Solve(MatrixPartitionedTyings&, const array_type::tensor<double, 2>&, const
-    array_type::tensor<double, 2>&), but for "dofval" input and output.
-
-    \param A sparse matrix, see MatrixPartitionedTyings().
-    \param b dofval [ndof].
-    \param x dofval [ndof], used to read \f$ x_p \f$.
-    \return x dofval [ndof], \f$ x_u \f$ and \f$ x_d \f$ filled, \f$ x_p \f$ copied.
-    */
-    array_type::tensor<double, 1> Solve(
-        MatrixPartitionedTyings& A,
-        const array_type::tensor<double, 1>& b,
-        const array_type::tensor<double, 1>& x)
+    template <class T>
+    void solve_dofval_impl(MatrixPartitionedTyings& A, const T& b, T& x)
     {
-        array_type::tensor<double, 1> ret = x;
-        this->solve(A, b, ret);
-        return ret;
-    }
-
-    /**
-    Same as
-    Solve(MatrixPartitionedTyings&, const array_type::tensor<double, 1>&, const
-    array_type::tensor<double, 1>&), but filling \f$ x_u \f$ and \f$ x_d \f$ in place.
-
-    \param A sparse matrix, see MatrixPartitionedTyings().
-    \param b dofval [ndof].
-    \param x dofval [ndof], \f$ x_p \f$ read, \f$ x_u \f$ and \f$ x_d \f$ filled.
-    */
-    void solve(
-        MatrixPartitionedTyings& A,
-        const array_type::tensor<double, 1>& b,
-        array_type::tensor<double, 1>& x)
-    {
-        GOOSEFEM_ASSERT(b.size() == A.m_ndof);
-        GOOSEFEM_ASSERT(x.size() == A.m_ndof);
-
         this->factorize(A);
 
         Eigen::VectorXd B_u = A.AsDofs_u(b);
@@ -561,6 +501,7 @@ public:
         }
     }
 
+public:
     /**
     Same as
     Solve(MatrixPartitionedTyings&, const array_type::tensor<double, 2>&, const

@@ -39,44 +39,27 @@ void init_MatrixPartitionedTyings(py::module& m)
         return "<GooseFEM.MatrixPartitionedTyings>";
     });
 
-    py::class_<GooseFEM::MatrixPartitionedTyingsSolver<>>(m, "MatrixPartitionedTyingsSolver")
+    py::class_<GooseFEM::MatrixPartitionedTyingsSolver<>> slv(m, "MatrixPartitionedTyingsSolver");
 
-        .def(py::init<>(), "See :cpp:class:`GooseFEM::MatrixPartitionedTyingsSolver`.")
+    register_MatrixSolver_MatrixSolverBase<
+        GooseFEM::MatrixPartitionedTyingsSolver<>,
+        GooseFEM::MatrixPartitionedTyings>(slv);
 
-        .def(
-            "Solve",
-            py::overload_cast<
-                GooseFEM::MatrixPartitionedTyings&,
-                const xt::pytensor<double, 1>&,
-                const xt::pytensor<double, 1>&>(&GooseFEM::MatrixPartitionedTyingsSolver<>::Solve),
-            py::arg("matrix"),
-            py::arg("b"),
-            py::arg("x"))
+    slv.def(py::init<>(), "See :cpp:class:`GooseFEM::MatrixPartitionedTyingsSolver`.");
 
-        .def(
-            "Solve",
-            py::overload_cast<
-                GooseFEM::MatrixPartitionedTyings&,
-                const xt::pytensor<double, 2>&,
-                const xt::pytensor<double, 2>&>(&GooseFEM::MatrixPartitionedTyingsSolver<>::Solve),
-            py::arg("matrix"),
-            py::arg("b"),
-            py::arg("x"))
+    slv.def(
+        "Solve_u",
+        py::overload_cast<
+            GooseFEM::MatrixPartitionedTyings&,
+            const xt::pytensor<double, 1>&,
+            const xt::pytensor<double, 1>&,
+            const xt::pytensor<double, 1>&>(&GooseFEM::MatrixPartitionedTyingsSolver<>::Solve_u),
+        py::arg("matrix"),
+        py::arg("b_u"),
+        py::arg("b_d"),
+        py::arg("x_p"));
 
-        .def(
-            "Solve_u",
-            py::overload_cast<
-                GooseFEM::MatrixPartitionedTyings&,
-                const xt::pytensor<double, 1>&,
-                const xt::pytensor<double, 1>&,
-                const xt::pytensor<double, 1>&>(
-                &GooseFEM::MatrixPartitionedTyingsSolver<>::Solve_u),
-            py::arg("matrix"),
-            py::arg("b_u"),
-            py::arg("b_d"),
-            py::arg("x_p"))
-
-        .def("__repr__", [](const GooseFEM::MatrixPartitionedTyingsSolver<>&) {
-            return "<GooseFEM.MatrixPartitionedTyingsSolver>";
-        });
+    slv.def("__repr__", [](const GooseFEM::MatrixPartitionedTyingsSolver<>&) {
+        return "<GooseFEM.MatrixPartitionedTyingsSolver>";
+    });
 }

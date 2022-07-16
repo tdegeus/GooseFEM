@@ -35,41 +35,19 @@ void init_MatrixPartitioned(py::module& m)
         return "<GooseFEM.MatrixPartitioned>";
     });
 
-    py::class_<GooseFEM::MatrixPartitionedSolver<>>(m, "MatrixPartitionedSolver")
+    py::class_<GooseFEM::MatrixPartitionedSolver<>> slv(m, "MatrixPartitionedSolver");
 
-        .def(py::init<>(), "See :cpp:class:`GooseFEM::MatrixPartitionedSolver`.")
+    register_MatrixSolver_MatrixSolverBase<
+        GooseFEM::MatrixPartitionedSolver<>,
+        GooseFEM::MatrixPartitioned>(slv);
 
-        .def(
-            "Solve",
-            py::overload_cast<
-                GooseFEM::MatrixPartitioned&,
-                const xt::pytensor<double, 1>&,
-                const xt::pytensor<double, 1>&>(&GooseFEM::MatrixPartitionedSolver<>::Solve),
-            py::arg("matrix"),
-            py::arg("b"),
-            py::arg("x"))
+    register_MatrixSolver_MatrixSolverPartitionedBase<
+        GooseFEM::MatrixPartitionedSolver<>,
+        GooseFEM::MatrixPartitioned>(slv);
 
-        .def(
-            "Solve",
-            py::overload_cast<
-                GooseFEM::MatrixPartitioned&,
-                const xt::pytensor<double, 2>&,
-                const xt::pytensor<double, 2>&>(&GooseFEM::MatrixPartitionedSolver<>::Solve),
-            py::arg("matrix"),
-            py::arg("b"),
-            py::arg("x"))
+    slv.def(py::init<>(), "See :cpp:class:`GooseFEM::MatrixPartitionedSolver`.");
 
-        .def(
-            "Solve_u",
-            py::overload_cast<
-                GooseFEM::MatrixPartitioned&,
-                const xt::pytensor<double, 1>&,
-                const xt::pytensor<double, 1>&>(&GooseFEM::MatrixPartitionedSolver<>::Solve_u),
-            py::arg("matrix"),
-            py::arg("b_u"),
-            py::arg("x_p"))
-
-        .def("__repr__", [](const GooseFEM::MatrixPartitionedSolver<>&) {
-            return "<GooseFEM.MatrixPartitionedSolver>";
-        });
+    slv.def("__repr__", [](const GooseFEM::MatrixPartitionedSolver<>&) {
+        return "<GooseFEM.MatrixPartitionedSolver>";
+    });
 }

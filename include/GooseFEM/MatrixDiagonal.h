@@ -65,11 +65,10 @@ public:
     }
 
     /**
-    Same as Solve(const array_type::tensor<double, 2>&)
-    but writing to preallocated data.
+    Solve \f$ x = A^{-1} b \f$.
 
     \param b nodevec [nelem, ndim].
-    \param x nodevec overwritten [nelem, ndim].
+    \param x (overwritten) nodevec [nelem, ndim].
     */
     void solve(const array_type::tensor<double, 2>& b, array_type::tensor<double, 2>& x)
     {
@@ -77,11 +76,10 @@ public:
     }
 
     /**
-    Same as Solve(const array_type::tensor<double, 1>&)
-    but writing to preallocated data.
+    Solve \f$ x = A^{-1} b \f$.
 
     \param b nodevec [nelem, ndim].
-    \param x nodevec overwritten [nelem, ndim].
+    \param x (overwritten) nodevec [nelem, ndim].
     */
     void solve(const array_type::tensor<double, 1>& b, array_type::tensor<double, 1>& x)
     {
@@ -174,7 +172,7 @@ public:
     }
 
     /**
-    Return matrix as diagonal matrix.
+    Copy as diagonal matrix.
     \param [#ndof].
     */
     const array_type::tensor<double, 1>& Todiagonal() const

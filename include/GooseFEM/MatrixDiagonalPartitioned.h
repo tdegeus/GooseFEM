@@ -135,7 +135,7 @@ public:
     }
 
     /**
-    Return matrix as diagonal matrix.
+    Copy as diagonal matrix.
     \param [#ndof].
     */
     array_type::tensor<double, 1> Todiagonal() const
@@ -197,6 +197,7 @@ private:
 
 public:
     /**
+    \todo Decide if this function should be kept.
     \param x_u dofval [#nnu].
     \param x_p dofval [#nnp].
     \return b_u dofval [#nnu].
@@ -210,6 +211,7 @@ public:
     }
 
     /**
+    \todo Decide if this function should be kept.
     \param x_u dofval [#nnu].
     \param x_p dofval [#nnp].
     \param b_u (overwritten) dofval [#nnu].
@@ -232,6 +234,7 @@ public:
     }
 
     /**
+    \todo Decide if this function should be kept.
     \param x_u dofval [#nnu].
     \param x_p dofval [#nnp].
     \return b_p dofval [#nnp].
@@ -245,6 +248,7 @@ public:
     }
 
     /**
+    \todo Decide if this function should be kept.
     \param x_u dofval [#nnu].
     \param x_p dofval [#nnp].
     \param b_p (overwritten) dofval [#nnp].
