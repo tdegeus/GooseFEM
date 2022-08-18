@@ -6,19 +6,27 @@ dependencies:
 - cmake
 - doxygen
 - eigen
+- furo
 - gmatelastic
-- gmatelastoplasticqpot
-- qpot <0.12.0 # remove when "gmatelastoplasticqpot" is updated
+- gmatelastoplastic
+- gmatelastoplasticfinitestrainsimo
+- gmatelastoplasticqpot >=0.17.0
+- gmatnonlinearelastic
+- h5py
+- highfive
 - mathjax
 - ninja
 - numpy
 - pybind11
 - python
+- python-gmatelastic
 - scikit-build
 - setuptools_scm
 - sphinx
-- sphinx-tabs
 - sphinx_rtd_theme
+- sphinx-tabs
+- xdmfwrite_h5py
+- xdmfwrite_highfive
 - xsimd
 - xtensor
 - xtensor-python
