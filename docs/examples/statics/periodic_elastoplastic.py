@@ -1,10 +1,9 @@
-import GMatElastoPlastic.Cartesian3d as GMat
-import GooseFEM
-import GooseMPL as gplt
-import matplotlib.pyplot as plt
-import numpy as np
+import argparse
+import sys
 
-plt.style.use(["goose", "goose-autolayout"])
+import GMatElastoPlastic
+import GooseFEM
+import numpy as np
 
 # mesh
 # ----
@@ -21,7 +20,6 @@ ndim = mesh.ndim
 coor = mesh.coor()
 conn = mesh.conn()
 dofs = mesh.dofs()
-elmat = mesh.elementgrid()
 
 # periodicity and fixed displacements DOFs
 # ----------------------------------------
@@ -38,7 +36,6 @@ control_nodes = control.controlNodes
 # - one node of the mesh: to remove rigid body modes
 iip = np.concatenate((control_dofs.ravel(), dofs[mesh.nodesOrigin(), :].ravel()))
 
-
 # get DOF-tyings, reorganise system
 tyings = GooseFEM.Tyings.Periodic(coor, dofs, control_dofs, mesh.nodesPeriodic(), iip)
 dofs = tyings.dofs
@@ -46,16 +43,18 @@ dofs = tyings.dofs
 # simulation variables
 # --------------------
 
-# vector definition:
-# provides methods to switch between dofval/nodeval/elemvec, or to manipulate a part of them
+# vector definition
 vector = GooseFEM.VectorPartitionedTyings(conn, dofs, tyings.Cdu(), tyings.Cdp(), tyings.Cdi())
+
+# element definition
+elem = GooseFEM.Element.Quad4.QuadraturePlanar(vector.AsElement(coor))
+nip = elem.nip
 
 # nodal quantities
 disp = np.zeros_like(coor)  # nodal displacement
 du = np.zeros_like(coor)  # iterative displacement update
 fint = np.zeros_like(coor)  # internal force
 fext = np.zeros_like(coor)  # external force
-fres = np.zeros_like(coor)  # residual force
 
 # element vectors / matrix
 ue = np.empty([nelem, nne, ndim])
@@ -66,42 +65,26 @@ Ke = np.empty([nelem, nne * ndim, nne * ndim])
 Fext = np.zeros([tyings.nni])
 Fint = np.zeros([tyings.nni])
 
-# element/material definition
-# ---------------------------
+# material definition
+# -------------------
 
-# FEM quadrature
-elem = GooseFEM.Element.Quad4.QuadraturePlanar(vector.AsElement(coor))
-nip = elem.nip
-dV = elem.AsTensor(2, elem.dV)
+kappa = np.ones([nelem, nip])
+mu = np.ones([nelem, nip])
+sigy0 = 0.05 * np.ones([nelem, nip])
+H = np.ones([nelem, nip])
 
-# material model
-# even though the problem is 2-d, the material model is 3-d, plane strain is implicitly assumed
-mat = GMat.Array2d([nelem, nip])
-tdim = 3
+elmat = mesh.elementgrid()
+ehard = elmat[:2, :2].ravel()
+sigy0[ehard, :] = 100
 
-# some artificial material definition
-ehard = elmat[:2, :2]
-Ihard = np.zeros([nelem, nip], dtype=bool)
-Ihard[ehard, :] = True
-Isoft = ~Ihard
-
-mat.setLinearHardening(Isoft, 1.0, 1.0, 0.05, 0.05)
-mat.setElastic(Ihard, 1.0, 1.0)
+mat = GMatElastoPlastic.Cartesian3d.LinearHardening2d(kappa, mu, sigy0, H)
 
 # solve
 # -----
 
-# allocate tensors
-Eps = np.empty([nelem, nip, tdim, tdim])
-Sig = np.empty([nelem, nip, tdim, tdim])
-C = np.empty([nelem, nip, tdim, tdim, tdim, tdim])
-
 # allocate system matrix
 K = GooseFEM.MatrixPartitionedTyings(conn, dofs, tyings.Cdu(), tyings.Cdp())
 Solver = GooseFEM.MatrixPartitionedTyingsSolver()
-
-# # allocate internal variables
-# double res
 
 # some shear strain history
 dgamma = 0.001 * np.ones([101])
@@ -117,19 +100,15 @@ for inc in range(dgamma.size):
 
         # strain
         vector.asElement(disp, ue)
-        elem.symGradN_vector(ue, Eps)
-
-        # stress & tangent
-        mat.setStrain(Eps)
-        Sig = mat.Stress()  # todo, replace with : mat.stress(Sig)
-        C = mat.Tangent()  # todo, replace with : mat.tangent(C)
+        elem.symGradN_vector(ue, mat.Eps)
+        mat.refresh()
 
         # internal force
-        elem.int_gradN_dot_tensor2_dV(Sig, fe)
+        elem.int_gradN_dot_tensor2_dV(mat.Sig, fe)
         vector.assembleNode(fe, fint)
 
         # stiffness matrix
-        elem.int_gradN_dot_tensor4_dot_gradNT_dV(C, Ke)
+        elem.int_gradN_dot_tensor4_dot_gradNT_dV(mat.C, Ke)
         K.assemble(Ke)
 
         # residual
@@ -150,8 +129,6 @@ for inc in range(dgamma.size):
                 res = nfres / nfext
             else:
                 res = nfres
-            # - print progress to screen
-            print("inc = ", inc, "iiter = ", iiter, "res = ", res)
             # - check for convergence
             if res < 1e-5:
                 break
@@ -173,14 +150,40 @@ for inc in range(dgamma.size):
         disp += du
 
 
-vector.asElement(disp, ue)
-elem.symGradN_vector(ue, Eps)
-mat.setStrain(Eps)
-Sig = mat.Stress()  # todo, replace with mat.stress(Sig)
-sigeq = GMat.Sigeq(np.mean(Sig, axis=1))
+# plot
+# ----
 
-fig, ax = plt.subplots()
-gplt.patch(coor=coor + disp, conn=conn, cindex=sigeq, cmap="jet")
-plt.show()
-# fig.savefig("")
-plt.close(fig)
+parser = argparse.ArgumentParser()
+parser.add_argument("--plot", action="store_true", help="Plot result")
+parser.add_argument("--save", type=str, help="Save plot (plot not shown)")
+args = parser.parse_args(sys.argv[1:])
+
+if args.plot:
+
+    import GooseMPL as gplt
+    import matplotlib.pyplot as plt
+
+    plt.style.use(["goose", "goose-latex"])
+
+    # strain
+    vector.asElement(disp, ue)
+    elem.symGradN_vector(ue, mat.Eps)
+    mat.refresh()
+
+    # average equivalent stress per element
+    dV = elem.AsTensor(2, elem.dV)
+    Sigav = np.average(mat.Sig, weights=dV, axis=1)
+    sigeq = GMatElastoPlastic.Cartesian3d.Sigeq(Sigav)
+
+    # plot
+    fig, ax = plt.subplots()
+    gplt.patch(coor=coor + disp, conn=conn, cindex=sigeq, cmap="jet", axis=ax, clim=(0, 0.1))
+    gplt.patch(coor=coor, conn=conn, linestyle="--", axis=ax)
+
+    # optional save
+    if args.save is not None:
+        fig.savefig(args.save)
+    else:
+        plt.show()
+
+    plt.close(fig)
