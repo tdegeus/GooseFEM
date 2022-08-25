@@ -7,11 +7,6 @@ dependencies:
 - doxygen
 - eigen
 - furo
-- gmatelastic
-- gmatelastoplastic
-- gmatelastoplasticfinitestrainsimo
-- gmatelastoplasticqpot >=0.17.0
-- gmatnonlinearelastic
 - h5py
 - highfive
 - mathjax
@@ -19,14 +14,15 @@ dependencies:
 - numpy
 - pybind11
 - python
-- python-gmatelastic
+- python-gmatelastic >=0.5.1
+- python-gmatelastoplastic >=0.3.1
+- python-gmatelastoplasticfinitestrainsimo >=0.3.0
+- python-gmattensor
 - scikit-build
 - setuptools_scm
 - sphinx
 - sphinx_rtd_theme
 - sphinx-tabs
-- xdmfwrite_h5py
-- xdmfwrite_highfive
 - xsimd
 - xtensor
 - xtensor-python
