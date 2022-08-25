@@ -78,8 +78,26 @@ void init_VectorPartitioned(py::module& m)
             py::arg("dofval_u"),
             py::arg("dofval_p"))
 
-        .def("Copy_u", &GooseFEM::VectorPartitioned::Copy_u)
-        .def("Copy_p", &GooseFEM::VectorPartitioned::Copy_p)
+        .def(
+            "Copy_u",
+            &GooseFEM::VectorPartitioned::Copy_u,
+            py::arg("nodevec_src"),
+            py::arg("nodevec_dest"))
+        .def(
+            "Copy_p",
+            &GooseFEM::VectorPartitioned::Copy_p,
+            py::arg("nodevec_src"),
+            py::arg("nodevec_dest"))
+        .def(
+            "copy_u",
+            &GooseFEM::VectorPartitioned::copy_u,
+            py::arg("nodevec_src"),
+            py::arg("nodevec_dest"))
+        .def(
+            "copy_p",
+            &GooseFEM::VectorPartitioned::copy_p,
+            py::arg("nodevec_src"),
+            py::arg("nodevec_dest"))
 
         .def("__repr__", [](const GooseFEM::VectorPartitioned&) {
             return "<GooseFEM.VectorPartitioned>";
