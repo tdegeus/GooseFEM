@@ -30,7 +30,7 @@ from *GooseFEM* or even from somewhere else.
 Consequently the readability of the end-user's code and of the library remains high:
 Only the end-user's "main" combines different ingredients,
 there is no interdependence between *GooseFEM*'s classes,
- and data can be inspected and changed at any time.
+and data can be inspected and changed at any time.
 
 Documentation
 -------------
