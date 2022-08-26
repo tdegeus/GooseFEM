@@ -68,6 +68,15 @@ jobs:
     - name: Run Python tests
       run: python -m unittest discover tests
 
+    - name: Run examples (statics)
+      working-directory: docs/examples/statics
+      run: |
+        python fixed-displacement_elastic.py
+        python fixed-displacement_elastic_manual-partition.py
+        python partial-periodic_elastic.py
+        python periodic_elastoplastic.py
+        python periodic_elastoplastic_finite-strain.py
+
     - name: Build doxygen-docs (error on warning)
       if: runner.os == 'macOS'
       working-directory: build
