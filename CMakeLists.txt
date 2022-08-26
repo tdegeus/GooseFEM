@@ -115,8 +115,6 @@ if(BUILD_TESTS OR BUILD_ALL)
     enable_testing()
     add_subdirectory(tests/basic)
 
-    enable_testing()
-    add_subdirectory(tests/gmat)
 endif()
 
 # Build examples
