@@ -7,8 +7,6 @@ dependencies:
 - doxygen
 - eigen
 - furo
-- h5py
-- highfive
 - mathjax
 - ninja
 - numpy
@@ -19,6 +17,7 @@ dependencies:
 - python-gmatelastoplasticfinitestrainsimo >=0.3.0
 - python-gmattensor
 - scikit-build
+- scipy
 - setuptools_scm
 - sphinx
 - sphinx_rtd_theme
