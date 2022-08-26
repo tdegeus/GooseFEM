@@ -3,6 +3,27 @@
 Changelog
 *********
 
+v1.3.1
+======
+
+Bugfixes
+--------
+
+*   [Python] Adding `VectorPartitioned.copy*`.
+*   `is_unique` gave a broadcast error, instead of returning `false` for non-unique data.
+
+Documentation
+-------------
+
+*   Removing ParaView example. Considered out-of-scope (better suited as example upstream).
+*   Examples now Python-only for readability.
+*   Using "furo" sphinx theme
+
+Internal
+--------
+
+*   Removing GMat tests. It was not clear which purpose they served.
+
 v1.3.0
 ======
 
