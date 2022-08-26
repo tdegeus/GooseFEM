@@ -37,7 +37,7 @@ author = "Tom de Geus"
 # ones.
 extensions = [
     "breathe",
-    "sphinx.ext.imgmath",
+    "sphinx.ext.mathjax ",
     "sphinx.ext.todo",
     "sphinx.ext.autodoc",
     "sphinx.ext.autosummary",
