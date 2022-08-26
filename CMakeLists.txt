@@ -9,7 +9,6 @@ string(TOUPPER "${PROJECT_NAME}" PROJECT_NAME_UPPER)
 
 option(BUILD_ALL "${PROJECT_NAME}: Build tests, Python API & docs" OFF)
 option(BUILD_TESTS "${PROJECT_NAME}: Build tests" OFF)
-option(BUILD_EXAMPLES "${PROJECT_NAME}: Build examples" OFF)
 option(BUILD_PYTHON "${PROJECT_NAME}: Build Python API" OFF)
 option(BUILD_DOCS "${PROJECT_NAME}: Build docs" OFF)
 option(USE_WARNINGS "${PROJECT_NAME}: Build with runtime warnings" ON)
@@ -114,16 +113,6 @@ if(BUILD_TESTS OR BUILD_ALL)
 
     enable_testing()
     add_subdirectory(tests/basic)
-
-endif()
-
-# Build examples
-# ==============
-
-if(BUILD_EXAMPLES OR BUILD_ALL)
-
-    enable_testing()
-    add_subdirectory(docs/examples)
 
 endif()
 
