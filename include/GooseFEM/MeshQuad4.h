@@ -16,7 +16,7 @@ namespace GooseFEM {
 namespace Mesh {
 
 /**
-Simple meshes of 3-noded quadrilateral elements in 2d (ElementType::Quad4).
+Simple meshes of 4-noded quadrilateral elements in 2d (ElementType::Quad4).
 */
 namespace Quad4 {
 
