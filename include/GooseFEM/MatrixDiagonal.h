@@ -189,7 +189,7 @@ public:
 
     /**
     Copy as diagonal matrix.
-    \param [#ndof].
+    \return [#ndof].
     */
     [[deprecated]] const array_type::tensor<double, 1>& Todiagonal() const
     {
@@ -198,7 +198,7 @@ public:
 
     /**
     Underlying matrix
-    \param [#ndof].
+    \return [#ndof].
     */
     const array_type::tensor<double, 1>& data() const
     {
