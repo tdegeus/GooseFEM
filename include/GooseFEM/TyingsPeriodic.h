@@ -390,7 +390,7 @@ public:
     /**
     Nodal coordinates, for the system with control nodes added to it.
 
-    \param [nnode + ndim, ndim], with nnode the number of nodes of the original system.
+    \return [nnode + ndim, ndim], with nnode the number of nodes of the original system.
     */
     const array_type::tensor<double, 2>& coor() const
     {
@@ -400,7 +400,7 @@ public:
     /**
     DOF-numbers per node, for the system with control nodes added to it.
 
-    \param [nnode + ndim, ndim], with nnode the number of nodes of the original system.
+    \return [nnode + ndim, ndim], with nnode the number of nodes of the original system.
     */
     const array_type::tensor<size_t, 2>& dofs() const
     {
@@ -410,7 +410,7 @@ public:
     /**
     DOF-numbers of each control node.
 
-    \param [ndim, ndim].
+    \return [ndim, ndim].
     */
     const array_type::tensor<size_t, 2>& controlDofs() const
     {
@@ -420,7 +420,7 @@ public:
     /**
     Node-numbers of the control nodes.
 
-    \param [ndim].
+    \return [ndim].
     */
     const array_type::tensor<size_t, 1>& controlNodes() const
     {

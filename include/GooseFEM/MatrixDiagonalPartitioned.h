@@ -136,7 +136,7 @@ public:
 
     /**
     Assemble to diagonal matrix (involves copies).
-    \param [#ndof].
+    \return [#ndof].
     */
     array_type::tensor<double, 1> data() const
     {
@@ -157,7 +157,7 @@ public:
 
     /**
     Pointer to data.
-    \param [#nnu].
+    \return [#nnu].
     */
     const array_type::tensor<double, 1>& data_uu() const
     {
@@ -166,7 +166,7 @@ public:
 
     /**
     Pointer to data.
-    \param [#nnu].
+    \return [#nnu].
     */
     const array_type::tensor<double, 1>& data_pp() const
     {
@@ -175,7 +175,7 @@ public:
 
     /**
     Pointer to data.
-    \param [#nnu].
+    \return [#nnu].
     */
     [[deprecated]] array_type::tensor<double, 1> Todiagonal() const
     {

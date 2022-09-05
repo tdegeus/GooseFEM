@@ -223,7 +223,6 @@ public:
     \tparam E e.g. `array_type::tensor<size_t, 2>`
     \param coor Nodal coordinates ``[nnode, ndim]`` with ``ndim == 2``.
     \param conn Connectivity ``[nne, nne]`` with ``nne == 4``.
-    \throw GOOSEFEM_CHECK()
     */
     template <class C, class E, std::enable_if_t<xt::is_xexpression<C>::value, bool> = true>
     FineLayer(const C& coor, const E& conn)
