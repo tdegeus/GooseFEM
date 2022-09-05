@@ -77,10 +77,13 @@ jobs:
         python periodic_elastoplastic.py
         python periodic_elastoplastic_finite-strain.py
 
-    - name: Build doxygen-docs (error on warning)
+    - name: Build doxygen-docs
       if: runner.os == 'macOS'
       working-directory: build
-      run: make html
+      run: |
+        make html
+        cat doxygen_warnings.log
+        cat doxygen_warnings.log | grep -q "not documented" || echo "Fix not documented!" && exit 1
 
     - name: Build sphinx-docs
       if: runner.os == 'macOS'
