@@ -26,10 +26,10 @@ jobs:
       with:
         fetch-depth: 0
 
-    - name: Set conda environment (using micromamba for speed)
+    - name: Set conda environment
       uses: mamba-org/provision-with-micromamba@main
       with:
-        environment-file: .ci_environment_docs.yaml
+        environment-file: environment.yaml
         environment-name: myenv
 
     - name: Configure using CMake

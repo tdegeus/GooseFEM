@@ -1,8 +1,0 @@
-channels:
-- conda-forge
-dependencies:
-- cmake
-- doxygen
-- eigen
-- setuptools_scm
-- xtensor
