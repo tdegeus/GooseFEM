@@ -1,10 +1,10 @@
 /**
-Generate simple meshes of 8-noded hexahedral elements in 3d (GooseFEM::Mesh::ElementType::Hex8).
-
-\file MeshHex8.h
-\copyright Copyright 2017. Tom de Geus. All rights reserved.
-\license This project is released under the GNU Public License (GPLv3).
-*/
+ * Generate simple meshes of 8-noded hexahedral elements in 3d (GooseFEM::Mesh::ElementType::Hex8).
+ *
+ * @file MeshHex8.h
+ * @copyright Copyright 2017. Tom de Geus. All rights reserved.
+ * @license This project is released under the GNU Public License (GPLv3).
+ */
 
 #ifndef GOOSEFEM_MESHHEX8_H
 #define GOOSEFEM_MESHHEX8_H
@@ -16,23 +16,23 @@ namespace GooseFEM {
 namespace Mesh {
 
 /**
-Simple meshes of 8-noded hexahedral elements in 3d (ElementType::Hex8).
-*/
+ * Simple meshes of 8-noded hexahedral elements in 3d (ElementType::Hex8).
+ */
 namespace Hex8 {
 
 /**
-Regular mesh: equi-sized elements.
-*/
+ * Regular mesh: equi-sized elements.
+ */
 class Regular : public RegularBase3d<Regular> {
 public:
     /**
-    Constructor.
-
-    \param nelx Number of elements in horizontal (x) direction.
-    \param nely Number of elements in vertical (y) direction.
-    \param nelz Number of elements in vertical (z) direction.
-    \param h Edge size (width == height == depth).
-    */
+     * Constructor.
+     *
+     * @param nelx Number of elements in horizontal (x) direction.
+     * @param nely Number of elements in vertical (y) direction.
+     * @param nelz Number of elements in vertical (z) direction.
+     * @param h Edge size (width == height == depth).
+     */
     Regular(size_t nelx, size_t nely, size_t nelz, double h = 1.0)
     {
         m_h = h;
@@ -608,22 +608,22 @@ private:
 };
 
 /**
-Mesh with fine middle layer, and coarser elements towards the top and bottom.
-*/
+ * Mesh with fine middle layer, and coarser elements towards the top and bottom.
+ */
 class FineLayer : public RegularBase3d<FineLayer> {
 public:
     /**
-    Constructor.
-
-    \param nelx Number of elements (along the middle layer) in horizontal (x) direction.
-    \param nely Approximate equivalent number of elements in vertical (y) direction.
-    \param nelz Number of elements (along the middle layer) in depth (z) direction.
-    \param h Edge size (width == height == depth) of elements along the weak layer.
-
-    \param nfine
-        Extra number of fine layers around the middle layer.
-        By default the element size is kept smaller than the distance to the middle layer.
-    */
+     * Constructor.
+     *
+     * @param nelx Number of elements (along the middle layer) in horizontal (x) direction.
+     * @param nely Approximate equivalent number of elements in vertical (y) direction.
+     * @param nelz Number of elements (along the middle layer) in depth (z) direction.
+     * @param h Edge size (width == height == depth) of elements along the weak layer.
+     *
+     * @param nfine
+     *      Extra number of fine layers around the middle layer.
+     *      By default the element size is kept smaller than the distance to the middle layer.
+     */
     FineLayer(size_t nelx, size_t nely, size_t nelz, double h = 1.0, size_t nfine = 1)
     {
         m_h = h;
@@ -848,9 +848,9 @@ public:
     }
 
     /**
-    Elements in the middle (fine) layer.
-    \return List of element numbers (copy, involves computation).
-    */
+     * Elements in the middle (fine) layer.
+     * @return List of element numbers (copy, involves computation).
+     */
     array_type::tensor<size_t, 1> elementsMiddleLayer() const
     {
         size_t nely = static_cast<size_t>(m_nhy.size());

@@ -1,11 +1,11 @@
 /**
-Quadrature for 8-noded hexahedral element in 3d (GooseFEM::Mesh::ElementType::Hex8),
-in a Cartesian coordinate system.
-
-\file ElementHex8.h
-\copyright Copyright 2017. Tom de Geus. All rights reserved.
-\license This project is released under the GNU Public License (GPLv3).
-*/
+ * Quadrature for 8-noded hexahedral element in 3d (GooseFEM::Mesh::ElementType::Hex8),
+ * in a Cartesian coordinate system.
+ *
+ * @file ElementHex8.h
+ * @copyright Copyright 2017. Tom de Geus. All rights reserved.
+ * @license This project is released under the GNU Public License (GPLv3).
+ */
 
 #ifndef GOOSEFEM_ELEMENTHEX8_H
 #define GOOSEFEM_ELEMENTHEX8_H
@@ -16,32 +16,32 @@ namespace GooseFEM {
 namespace Element {
 
 /**
-8-noded hexahedral element in 3d (GooseFEM::Mesh::ElementType::Hex8).
-*/
+ * 8-noded hexahedral element in 3d (GooseFEM::Mesh::ElementType::Hex8).
+ */
 namespace Hex8 {
 
 /**
-gauss quadrature: quadrature points such that integration is exact for these bi-linear elements::
-*/
+ * gauss quadrature: quadrature points such that integration is exact for these bi-linear elements::
+ */
 namespace Gauss {
 
 /**
-Number of integration points:
-
-    nip = nne = 8
-
-\return unsigned int
-*/
+ * Number of integration points:
+ *
+ *      nip = nne = 8
+ *
+ * @return unsigned int
+ */
 inline size_t nip()
 {
     return 8;
 }
 
 /**
-Integration point coordinates (local coordinates).
-
-\return Coordinates [#nip, ndim], with `ndim = 3`.
-*/
+ * Integration point coordinates (local coordinates).
+ *
+ * @return Coordinates [#nip, ndim], with `ndim = 3`.
+ */
 inline array_type::tensor<double, 2> xi()
 {
     size_t nip = 8;
@@ -85,10 +85,10 @@ inline array_type::tensor<double, 2> xi()
 }
 
 /**
-Integration point weights.
-
-\return Coordinates [#nip].
-*/
+ * Integration point weights.
+ *
+ * @return Coordinates [#nip].
+ */
 inline array_type::tensor<double, 1> w()
 {
     size_t nip = 8;
@@ -110,28 +110,28 @@ inline array_type::tensor<double, 1> w()
 } // namespace Gauss
 
 /**
-nodal quadrature: quadrature points coincide with the nodes.
-The order is the same as in the connectivity.
-*/
+ * nodal quadrature: quadrature points coincide with the nodes.
+ * The order is the same as in the connectivity.
+ */
 namespace Nodal {
 
 /**
-Number of integration points:
-
-    nip = nne = 8
-
-\return unsigned int
-*/
+ * Number of integration points:
+ *
+ *      nip = nne = 8
+ *
+ * @return unsigned int
+ */
 inline size_t nip()
 {
     return 8;
 }
 
 /**
-Integration point coordinates (local coordinates).
-
-\return Coordinates [#nip, `ndim`], with ``ndim = 3``.
-*/
+ * Integration point coordinates (local coordinates).
+ *
+ * @return Coordinates [#nip, `ndim`], with ``ndim = 3``.
+ */
 inline array_type::tensor<double, 2> xi()
 {
     size_t nip = 8;
@@ -175,10 +175,10 @@ inline array_type::tensor<double, 2> xi()
 }
 
 /**
-Integration point weights.
-
-\return Coordinates [#nip].
-*/
+ * Integration point weights.
+ *
+ * @return Coordinates [#nip].
+ */
 inline array_type::tensor<double, 1> w()
 {
     size_t nip = 8;
@@ -200,57 +200,57 @@ inline array_type::tensor<double, 1> w()
 } // namespace Nodal
 
 /**
-Interpolation and quadrature.
-
-Fixed dimensions:
--   ``ndim = 3``: number of dimensions.
--   ``nne = 8``: number of nodes per element.
-
-Naming convention:
--    ``elemmat``:  matrices stored per element, [#nelem, #nne * #ndim, #nne * #ndim]
--    ``elemvec``:  nodal vectors stored per element, [#nelem, #nne, #ndim]
--    ``qtensor``:  integration point tensor, [#nelem, #nip, #ndim, #ndim]
--    ``qscalar``:  integration point scalar, [#nelem, #nip]
-*/
+ * Interpolation and quadrature.
+ *
+ * Fixed dimensions:
+ * -   `ndim = 3`: number of dimensions.
+ * -   `nne = 8`: number of nodes per element.
+ *
+ * Naming convention:
+ * -    `elemmat`:  matrices stored per element, [#nelem, #nne * #ndim, #nne * #ndim]
+ * -    `elemvec`:  nodal vectors stored per element, [#nelem, #nne, #ndim]
+ * -    `qtensor`:  integration point tensor, [#nelem, #nip, #ndim, #ndim]
+ * -    `qscalar`:  integration point scalar, [#nelem, #nip]
+ */
 class Quadrature : public QuadratureBaseCartesian<Quadrature> {
 public:
     Quadrature() = default;
 
     /**
-    Constructor: use default Gauss integration.
-    The following is pre-computed during construction:
-    -   the shape functions,
-    -   the shape function gradients (in local and global) coordinates,
-    -   the integration points volumes.
-    They can be reused without any cost.
-    They only have to be recomputed when the nodal position changes
-    (note that they are assumed to be constant under a small-strain assumption).
-    In that case use update_x() to update the nodal positions and
-    to recompute the above listed quantities.
-
-    \param x nodal coordinates (``elemvec``).
-    */
+     * Constructor: use default Gauss integration.
+     * The following is pre-computed during construction:
+     * -   the shape functions,
+     * -   the shape function gradients (in local and global) coordinates,
+     * -   the integration points volumes.
+     * They can be reused without any cost.
+     * They only have to be recomputed when the nodal position changes
+     * (note that they are assumed to be constant under a small-strain assumption).
+     * In that case use update_x() to update the nodal positions and
+     * to recompute the above listed quantities.
+     *
+     * @param x nodal coordinates (``elemvec``).
+     */
     template <class T>
     Quadrature(const T& x) : Quadrature(x, Gauss::xi(), Gauss::w())
     {
     }
 
     /**
-    Constructor with custom integration.
-    The following is pre-computed during construction:
-    -   the shape functions,
-    -   the shape function gradients (in local and global) coordinates,
-    -   the integration points volumes.
-    They can be reused without any cost.
-    They only have to be recomputed when the nodal position changes
-    (note that they are assumed to be constant under a small-strain assumption).
-    In that case use update_x() to update the nodal positions and
-    to recompute the above listed quantities.
-
-    \param x nodal coordinates (``elemvec``).
-    \param xi Integration point coordinates (local coordinates) [#nip].
-    \param w Integration point weights [#nip].
-    */
+     * Constructor with custom integration.
+     * The following is pre-computed during construction:
+     * -   the shape functions,
+     * -   the shape function gradients (in local and global) coordinates,
+     * -   the integration points volumes.
+     * They can be reused without any cost.
+     * They only have to be recomputed when the nodal position changes
+     * (note that they are assumed to be constant under a small-strain assumption).
+     * In that case use update_x() to update the nodal positions and
+     * to recompute the above listed quantities.
+     *
+     * @param x nodal coordinates (``elemvec``).
+     * @param xi Integration point coordinates (local coordinates) [#nip].
+     * @param w Integration point weights [#nip].
+     */
     template <class T, class X, class W>
     Quadrature(const T& x, const X& xi, const W& w)
     {

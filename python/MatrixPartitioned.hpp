@@ -1,8 +1,8 @@
 /**
-\file
-\copyright Copyright 2017. Tom de Geus. All rights reserved.
-\license This project is released under the GNU Public License (GPLv3).
-*/
+ * @file
+ * @copyright Copyright 2017. Tom de Geus. All rights reserved.
+ * \license This project is released under the GNU Public License (GPLv3).
+ */
 
 #include <Eigen/Eigen>
 #include <GooseFEM/MatrixPartitioned.h>

@@ -1,10 +1,10 @@
 /**
-Diagonal matrix.
-
-\file MatrixDiagonal.h
-\copyright Copyright 2017. Tom de Geus. All rights reserved.
-\license This project is released under the GNU Public License (GPLv3).
-*/
+ * Diagonal matrix.
+ *
+ * @file MatrixDiagonal.h
+ * @copyright Copyright 2017. Tom de Geus. All rights reserved.
+ * @license This project is released under the GNU Public License (GPLv3).
+ */
 
 #ifndef GOOSEFEM_MATRIXDIAGONAL_H
 #define GOOSEFEM_MATRIXDIAGONAL_H
@@ -16,14 +16,14 @@ Diagonal matrix.
 namespace GooseFEM {
 
 /**
-CRTP base class for a partitioned matrix with tying.
-*/
+ * CRTP base class for a partitioned matrix with tying.
+ */
 template <class D>
 class MatrixDiagonalBase {
 public:
     /**
-    Underlying type.
-    */
+     * Underlying type.
+     */
     using derived_type = D;
 
 private:
@@ -58,15 +58,15 @@ public:
     }
 
     /**
-    Solve \f$ x = A^{-1} b \f$.
-
-    For #GooseFEM::MatrixDiagonalPartitioned under the hood solved
-    \f$ x_u = A_{uu}^{-1} (b_u - A_{up} * x_p) \equiv A_{uu}^{-1} b_u \f$.
-    Use GooseFEM::MatrixDiagonalPartitioned::Reaction() to get reaction forces.
-
-    \param b dofval [ndof].
-    \return x dofval [ndof].
-    */
+     * Solve \f$ x = A^{-1} b \f$.
+     *
+     * For #GooseFEM::MatrixDiagonalPartitioned under the hood solved
+     * \f$ x_u = A_{uu}^{-1} (b_u - A_{up} * x_p) \equiv A_{uu}^{-1} b_u \f$.
+     * Use GooseFEM::MatrixDiagonalPartitioned::Reaction() to get reaction forces.
+     *
+     * @param b dofval [ndof].
+     * @return x dofval [ndof].
+     */
     array_type::tensor<double, 1> Solve(const array_type::tensor<double, 1>& b)
     {
         array_type::tensor<double, 1> x = xt::empty_like(b);
@@ -75,30 +75,30 @@ public:
     }
 
     /**
-    Solve \f$ x = A^{-1} b \f$.
-
-    For #GooseFEM::MatrixDiagonalPartitioned under the hood solved
-    \f$ x_u = A_{uu}^{-1} (b_u - A_{up} * x_p) \equiv A_{uu}^{-1} b_u \f$.
-    Use GooseFEM::MatrixDiagonalPartitioned::Reaction() to get reaction forces.
-
-    \param b nodevec [nelem, ndim].
-    \param x (overwritten) nodevec [nelem, ndim].
-    */
+     * Solve \f$ x = A^{-1} b \f$.
+     *
+     * For #GooseFEM::MatrixDiagonalPartitioned under the hood solved
+     * \f$ x_u = A_{uu}^{-1} (b_u - A_{up} * x_p) \equiv A_{uu}^{-1} b_u \f$.
+     * Use GooseFEM::MatrixDiagonalPartitioned::Reaction() to get reaction forces.
+     *
+     * @param b nodevec [nelem, ndim].
+     * @param x (overwritten) nodevec [nelem, ndim].
+     */
     void solve(const array_type::tensor<double, 2>& b, array_type::tensor<double, 2>& x)
     {
         derived_cast().solve_nodevec_impl(b, x);
     }
 
     /**
-    Solve \f$ x = A^{-1} b \f$.
-
-    For #GooseFEM::MatrixDiagonalPartitioned under the hood solved
-    \f$ x_u = A_{uu}^{-1} (b_u - A_{up} * x_p) \equiv A_{uu}^{-1} b_u \f$.
-    Use GooseFEM::MatrixDiagonalPartitioned::Reaction() to get reaction forces.
-
-    \param b nodevec [nelem, ndim].
-    \param x (overwritten) nodevec [nelem, ndim].
-    */
+     * Solve \f$ x = A^{-1} b \f$.
+     *
+     * For #GooseFEM::MatrixDiagonalPartitioned under the hood solved
+     * \f$ x_u = A_{uu}^{-1} (b_u - A_{up} * x_p) \equiv A_{uu}^{-1} b_u \f$.
+     * Use GooseFEM::MatrixDiagonalPartitioned::Reaction() to get reaction forces.
+     *
+     * @param b nodevec [nelem, ndim].
+     * @param x (overwritten) nodevec [nelem, ndim].
+     */
     void solve(const array_type::tensor<double, 1>& b, array_type::tensor<double, 1>& x)
     {
         derived_cast().solve_dofval_impl(b, x);
@@ -106,12 +106,12 @@ public:
 };
 
 /**
-Diagonal matrix.
-
-Warning: assemble() ignores all off-diagonal terms.
-
-See Vector() for bookkeeping definitions.
-*/
+ * Diagonal matrix.
+ *
+ * Warning: assemble() ignores all off-diagonal terms.
+ *
+ * See Vector() for bookkeeping definitions.
+ */
 class MatrixDiagonal : public MatrixBase<MatrixDiagonal>,
                        public MatrixDiagonalBase<MatrixDiagonal> {
 private:
@@ -122,13 +122,13 @@ public:
     MatrixDiagonal() = default;
 
     /**
-    Constructor.
-
-    \tparam C e.g. `array_type::tensor<size_t, 2>`
-    \tparam D e.g. `array_type::tensor<size_t, 2>`
-    \param conn connectivity [#nelem, #nne].
-    \param dofs DOFs per node [#nnode, #ndim].
-    */
+     * Constructor.
+     *
+     * @tparam C e.g. `array_type::tensor<size_t, 2>`
+     * @tparam D e.g. `array_type::tensor<size_t, 2>`
+     * @param conn connectivity [#nelem, #nne].
+     * @param dofs DOFs per node [#nnode, #ndim].
+     */
     template <class C, class D>
     MatrixDiagonal(const C& conn, const D& dofs)
     {
@@ -179,9 +179,9 @@ private:
 
 public:
     /**
-    Set all (diagonal) matrix components.
-    \param A The matrix [#ndof].
-    */
+     * Set all (diagonal) matrix components.
+     * @param A The matrix [#ndof].
+     */
     void set(const array_type::tensor<double, 1>& A)
     {
         GOOSEFEM_ASSERT(A.size() == m_ndof);
@@ -190,18 +190,18 @@ public:
     }
 
     /**
-    Copy as diagonal matrix.
-    \return [#ndof].
-    */
+     * Copy as diagonal matrix.
+     * @return [#ndof].
+     */
     [[deprecated]] const array_type::tensor<double, 1>& Todiagonal() const
     {
         return m_A;
     }
 
     /**
-    Underlying matrix
-    \return [#ndof].
-    */
+     * Underlying matrix
+     * @return [#ndof].
+     */
     const array_type::tensor<double, 1>& data() const
     {
         return m_A;
@@ -262,8 +262,8 @@ private:
     array_type::tensor<double, 1> m_inv; /// Inverse of the matrix.
 
     /**
-    Compute inverse (automatically evaluated by "solve").
-    */
+     * Compute inverse (automatically evaluated by "solve").
+     */
     void factorize()
     {
         if (!m_changed) {
