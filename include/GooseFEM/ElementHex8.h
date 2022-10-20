@@ -130,7 +130,7 @@ inline size_t nip()
 /**
  * Integration point coordinates (local coordinates).
  *
- * @return Coordinates [#nip, `ndim`], with ``ndim = 3``.
+ * @return Coordinates [#nip, `ndim`], with `ndim = 3`.
  */
 inline array_type::tensor<double, 2> xi()
 {
@@ -228,7 +228,7 @@ public:
      * In that case use update_x() to update the nodal positions and
      * to recompute the above listed quantities.
      *
-     * @param x nodal coordinates (``elemvec``).
+     * @param x nodal coordinates (`elemvec`).
      */
     template <class T>
     Quadrature(const T& x) : Quadrature(x, Gauss::xi(), Gauss::w())
@@ -247,7 +247,7 @@ public:
      * In that case use update_x() to update the nodal positions and
      * to recompute the above listed quantities.
      *
-     * @param x nodal coordinates (``elemvec``).
+     * @param x nodal coordinates (`elemvec`).
      * @param xi Integration point coordinates (local coordinates) [#nip].
      * @param w Integration point weights [#nip].
      */

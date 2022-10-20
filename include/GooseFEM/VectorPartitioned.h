@@ -164,7 +164,7 @@ public:
      *
      *      nodevec_dest[vector.dofs_is_u()] = nodevec_src
      *
-     * the other DOFs are taken from ``nodevec_dest``:
+     * the other DOFs are taken from `nodevec_dest`:
      *
      *      nodevec_dest[vector.dofs_is_p()] = nodevec_dest
      *
@@ -186,7 +186,7 @@ public:
      *
      *      nodevec_dest[vector.dofs_is_u()] = nodevec_src
      *
-     * the other DOFs are taken from ``nodevec_dest``:
+     * the other DOFs are taken from `nodevec_dest`:
      *
      *      nodevec_dest[vector.dofs_is_p()] = nodevec_dest
      *
@@ -215,7 +215,7 @@ public:
      *
      *      nodevec_dest[vector.dofs_is_p()] = nodevec_src
      *
-     * the other DOFs are taken from ``nodevec_dest``:
+     * the other DOFs are taken from `nodevec_dest`:
      *
      *      nodevec_dest[vector.dofs_is_u()] = nodevec_dest
      *
@@ -237,7 +237,7 @@ public:
      *
      *      nodevec_dest[vector.dofs_is_p()] = nodevec_src
      *
-     * the other DOFs are taken from ``nodevec_dest``:
+     * the other DOFs are taken from `nodevec_dest`:
      *
      *      nodevec_dest[vector.dofs_is_u()] = nodevec_dest
      *

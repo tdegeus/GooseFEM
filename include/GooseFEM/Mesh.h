@@ -1756,7 +1756,7 @@ public:
      * @param coor_b Nodal coordinates of mesh "b"  [nnode, ndim].
      * @param conn_b Connectivity of mesh "b" [nelem, nne].
      * @param overlapping_nodes_b Node-numbers of mesh "b" that overlap with mesh "a" [n].
-     * @param check_position If ``true`` the nodes are checked for position overlap.
+     * @param check_position If `true` the nodes are checked for position overlap.
      * @param rtol Relative tolerance for check on position overlap.
      * @param atol Absolute tolerance for check on position overlap.
      */
@@ -2476,7 +2476,7 @@ inline array_type::tensor<size_t, 1> coordination(const E& conn)
  * Elements connected to each node.
  *
  * @param conn Connectivity [nelem, nne].
- * @param sorted If ``true`` the list of elements for each node is sorted.
+ * @param sorted If `true` the list of elements for each node is sorted.
  * @return Elements per node [nnode, ...].
  */
 template <class E>
@@ -2547,7 +2547,7 @@ inline std::vector<std::vector<size_t>> elem2node(const E& conn, const D& dofs, 
  * Nodes connected to each DOF.
  *
  * @param dofs DOFs per node [nnode, ndim].
- * @param sorted If ``true`` the list of nodes for each DOF is sorted.
+ * @param sorted If `true` the list of nodes for each DOF is sorted.
  * @return Nodes per DOF [ndof, ...].
  */
 template <class D>
@@ -2658,11 +2658,11 @@ inline array_type::tensor<double, 2> centers(const C& coor, const E& conn)
 /**
  * Convert an element-map to a node-map.
  *
- * @param elem_map Element-map such that ``new_elvar = elvar[elem_map]``.
+ * @param elem_map Element-map such that `new_elvar = elvar[elem_map]`.
  * @param coor Nodal coordinates.
  * @param conn Connectivity.
  * @param type ElementType.
- * @return Node-map such that ``new_nodevar = nodevar[node_map]``
+ * @return Node-map such that `new_nodevar = nodevar[node_map]`
  */
 template <class T, class C, class E>
 inline array_type::tensor<size_t, 1>
@@ -2699,10 +2699,10 @@ elemmap2nodemap(const T& elem_map, const C& coor, const E& conn, ElementType typ
  * Convert an element-map to a node-map.
  * The element-type is automatically determined, see defaultElementType().
  *
- * @param elem_map Element-map such that ``new_elvar = elvar[elem_map]``.
+ * @param elem_map Element-map such that `new_elvar = elvar[elem_map]`.
  * @param coor Nodal coordinates.
  * @param conn Connectivity.
- * @return Node-map such that ``new_nodevar = nodevar[node_map]``
+ * @return Node-map such that `new_nodevar = nodevar[node_map]`
  */
 template <class T, class C, class E>
 inline array_type::tensor<size_t, 1>

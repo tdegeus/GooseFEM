@@ -21,8 +21,8 @@ namespace GooseFEM {
 namespace Element {
 
 /**
- * Convert nodal vector with ("nodevec", shape:``[nnode, ndim]``) to nodal vector stored per element
- * ("elemvec", shape: ``[nelem, nne, ndim]``).
+ * Convert nodal vector with ("nodevec", shape:`[nnode, ndim]`) to nodal vector stored per element
+ * ("elemvec", shape: `[nelem, nne, ndim]`).
  *
  * @param conn Connectivity.
  * @param nodevec "nodevec".
@@ -51,9 +51,9 @@ inline array_type::tensor<double, 3> asElementVector(
 }
 
 /**
- * Assemble nodal vector stored per element ("elemvec", shape ``[nelem, nne, ndim]``) to nodal
+ * Assemble nodal vector stored per element ("elemvec", shape `[nelem, nne, ndim]`) to nodal
  * vector
- * ("nodevec", shape ``[nnode, ndim]``).
+ * ("nodevec", shape `[nnode, ndim]`).
  *
  * @param conn Connectivity.
  * @param elemvec "elemvec".
@@ -88,7 +88,7 @@ inline array_type::tensor<double, 2> assembleNodeVector(
  * Check that DOFs leave no holes.
  *
  * @param dofs DOFs ("nodevec")
- * @return ``true`` if there are no holds.
+ * @return `true` if there are no holds.
  */
 template <class E>
 inline bool isSequential(const E& dofs)
@@ -111,11 +111,11 @@ inline bool isSequential(const E& dofs)
 }
 
 /**
- * Check that all of the matrices stored per elemmat (shape: ``[nelem, nne * ndim, nne * ndim]``)
+ * Check that all of the matrices stored per elemmat (shape: `[nelem, nne * ndim, nne * ndim]`)
  * are diagonal.
  *
  * @param elemmat Element-vectors ("elemmat")
- * @return ``true`` if all element matrices are diagonal.
+ * @return `true` if all element matrices are diagonal.
  */
 bool isDiagonal(const array_type::tensor<double, 3>& elemmat)
 {
@@ -534,10 +534,10 @@ private:
  * CRTP base class for interpolation and quadrature for a generic element in Cartesian coordinates.
  *
  * Naming convention:
- * -    ``elemmat``:  matrices stored per element, [#nelem, #nne * #ndim, #nne * #ndim]
- * -    ``elemvec``:  nodal vectors stored per element, [#nelem, #nne, #ndim]
- * -    ``qtensor``:  integration point tensor, [#nelem, #nip, #tdim, #tdim]
- * -    ``qscalar``:  integration point scalar, [#nelem, #nip]
+ * -    `elemmat`: matrices stored per element, [#nelem, #nne * #ndim, #nne * #ndim]
+ * -    `elemvec`: nodal vectors stored per element, [#nelem, #nne, #ndim]
+ * -    `qtensor`: integration point tensor, [#nelem, #nip, #tdim, #tdim]
+ * -    `qscalar`: integration point scalar, [#nelem, #nip]
  */
 template <class D>
 class QuadratureBaseCartesian : public QuadratureBase<D> {
@@ -555,7 +555,7 @@ public:
      * -   the integration points volumes.
      * Under the small deformations assumption this function should not be called.
      *
-     * @param x nodal coordinates (``elemvec``). Shape should match the earlier definition.
+     * @param x nodal coordinates (`elemvec`). Shape should match the earlier definition.
      */
     template <class T>
     void update_x(const T& x)
@@ -567,7 +567,7 @@ public:
 
     /**
      * Shape function gradients (in global coordinates).
-     * @return ``gradN`` stored per element, per integration point [#nelem, #nip, #nne, #ndim].
+     * @return `gradN` stored per element, per integration point [#nelem, #nip, #nne, #ndim].
      */
     auto GradN() const -> const array_type::tensor<double, 4>&
     {
@@ -757,7 +757,7 @@ public:
      *                      elemmat(e, m * ndim + i, n * ndim + i) +=
      *                          N(e, q, m) * qscalar(e, q) * N(e, q, n) * dV(e, q)
      *
-     * with ``i`` a tensor dimension.
+     * with `i` a tensor dimension.
      * Note that the functions and their gradients are precomputed upon construction,
      * or updated when calling update_x().
      *
@@ -794,7 +794,7 @@ public:
      *              for m in range(nne):
      *                  elemvec(e, m, j) += dNdx(e, q, m, i) * qtensor(e, q, i, j) * dV(e, q)
      *
-     * with ``i`` and ``j`` tensor dimensions.
+     * with `i` and `j` tensor dimensions.
      * Note that the functions and their gradients are precomputed upon construction,
      * or updated when calling update_x().
      *
@@ -836,7 +836,7 @@ public:
      *                      elemmat(e, m * ndim + j, n * ndim + k) +=
      *                          dNdx(e,q,m,i) * qtensor(e,q,i,j,k,l) * dNdx(e,q,n,l) * dV(e,q)
      *
-     * with ``i``, ``j``, ``k``, and ``l`` tensor dimensions.
+     * with `i`, `j`, `k`, and `l` tensor dimensions.
      * Note that the functions and their gradients are precomputed upon construction,
      * or updated when calling update_x().
      *
