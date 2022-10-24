@@ -28,7 +28,7 @@ namespace Gauss {
 /**
  * Number of integration points:
  *
- *     nip = nne = 8
+ *      nip = nne = 8
  *
  * @return unsigned int
  */
@@ -118,7 +118,7 @@ namespace Nodal {
 /**
  * Number of integration points:
  *
- *     nip = nne = 8
+ *      nip = nne = 8
  *
  * @return unsigned int
  */

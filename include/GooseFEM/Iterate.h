@@ -60,7 +60,7 @@ public:
      * Roll the list with the residuals, and add a new residual to the end.
      * In Python code this function corresponds to::
      *
-     *     residuals = residuals[1:] + [new_residual]
+     *      residuals = residuals[1:] + [new_residual]
      *
      * I.e. the residual of `n` iterations ago will be forgotten.
      *

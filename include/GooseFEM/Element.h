@@ -279,7 +279,7 @@ public:
      * (0 = scalar, 1, vector, 2 = 2nd-order tensor, etc.).
      *
      * @tparam rank The rank of the tensor.
-     *     Since this function is templated, the output is fixed-size of type `std::array<size_t,
+     *      Since this function is templated, the output is fixed-size of type `std::array<size_t,
      * n>`.
      *
      * @returns [#nelem, #nip, #tdim, ...].
@@ -315,11 +315,11 @@ public:
      * (0 = scalar, 1, vector, 2 = 2nd-order tensor, etc.).
      *
      * @tparam rank The rank of the tensor.
-     *     Since this function is templated, the output is fixed-size of type `std::array<size_t,
+     *      Since this function is templated, the output is fixed-size of type `std::array<size_t,
      * n>`.
      *
      * @param rank The tensor rank.
-     *     Effectively useless, but is there to distinguish from the dynamic-sized overloads.
+     *      Effectively useless, but is there to distinguish from the dynamic-sized overloads.
      * @param arg The tensor dimension.
      * @returns [#nelem, #nip, tdim, ...].
      */
@@ -624,10 +624,10 @@ public:
      * Typical input: nodal displacements. Typical output: quadrature point strains.
      * Within one element::
      *
-     *     for e in range(nelem):
-     *         for q in range(nip):
-     *             for m in range(nne):
-     *                 qtensor(e, q, i, j) += dNdx(e, q, m, i) * elemvec(e, m, j)
+     *      for e in range(nelem):
+     *          for q in range(nip):
+     *              for m in range(nne):
+     *                  qtensor(e, q, i, j) += dNdx(e, q, m, i) * elemvec(e, m, j)
      *
      * Note that the functions and their gradients are precomputed upon construction,
      * or updated when calling update_x().
@@ -659,10 +659,10 @@ public:
      * The transposed output of GradN_vector().
      * Within one element::
      *
-     *     for e in range(nelem):
-     *         for q in range(nip):
-     *             for m in range(nne):
-     *                 qtensor(e, q, j, i) += dNdx(e, q, m, i) * elemvec(e, m, j)
+     *      for e in range(nelem):
+     *          for q in range(nip):
+     *              for m in range(nne):
+     *                  qtensor(e, q, j, i) += dNdx(e, q, m, i) * elemvec(e, m, j)
      *
      * @param elemvec [#nelem, #nne, #ndim]
      * @return qtensor [#nelem, #nip, #tdim, #tdim]
@@ -691,11 +691,11 @@ public:
      * The symmetric output of GradN_vector().
      * Without one element::
      *
-     *     for e in range(nelem):
-     *         for q in range(nip):
-     *             for m in range(nne):
-     *                 qtensor(e, q, i, j) += 0.5 * dNdx(e, q, m, i) * elemvec(e, m, j)
-     *                 qtensor(e, q, j, i) += 0.5 * dNdx(e, q, m, i) * elemvec(e, m, j)
+     *      for e in range(nelem):
+     *          for q in range(nip):
+     *              for m in range(nne):
+     *                  qtensor(e, q, i, j) += 0.5 * dNdx(e, q, m, i) * elemvec(e, m, j)
+     *                  qtensor(e, q, j, i) += 0.5 * dNdx(e, q, m, i) * elemvec(e, m, j)
      *
      * @param elemvec [#nelem, #nne, #ndim]
      * @return qtensor [#nelem, #nip, #tdim, #tdim]
@@ -757,12 +757,12 @@ public:
      * Element-by-element: integral of the scalar product of the shape function with a scalar.
      * Within one one element::
      *
-     *     for e in range(nelem):
-     *         for q in range(nip):
-     *             for m in range(nne):
-     *                 for n in range(nne):
-     *                     elemmat(e, m * ndim + i, n * ndim + i) +=
-     *                         N(e, q, m) * qscalar(e, q) * N(e, q, n) * dV(e, q)
+     *      for e in range(nelem):
+     *          for q in range(nip):
+     *              for m in range(nne):
+     *                  for n in range(nne):
+     *                      elemmat(e, m * ndim + i, n * ndim + i) +=
+     *                          N(e, q, m) * qscalar(e, q) * N(e, q, n) * dV(e, q)
      *
      * with `i` a tensor dimension.
      * Note that the functions and their gradients are precomputed upon construction,
@@ -796,10 +796,10 @@ public:
      * a second order tensor. Typical input: stress. Typical output: nodal force.
      * Within one one element::
      *
-     *     for e in range(nelem):
-     *         for q in range(nip):
-     *             for m in range(nne):
-     *                 elemvec(e, m, j) += dNdx(e, q, m, i) * qtensor(e, q, i, j) * dV(e, q)
+     *      for e in range(nelem):
+     *          for q in range(nip):
+     *              for m in range(nne):
+     *                  elemvec(e, m, j) += dNdx(e, q, m, i) * qtensor(e, q, i, j) * dV(e, q)
      *
      * with `i` and `j` tensor dimensions.
      * Note that the functions and their gradients are precomputed upon construction,
@@ -836,12 +836,12 @@ public:
      * a fourth order tensor. Typical input: stiffness tensor. Typical output: stiffness matrix.
      * Within one one element::
      *
-     *     for e in range(nelem):
-     *         for q in range(nip):
-     *             for m in range(nne):
-     *                 for n in range(nne):
-     *                     elemmat(e, m * ndim + j, n * ndim + k) +=
-     *                         dNdx(e,q,m,i) * qtensor(e,q,i,j,k,l) * dNdx(e,q,n,l) * dV(e,q)
+     *      for e in range(nelem):
+     *          for q in range(nip):
+     *              for m in range(nne):
+     *                  for n in range(nne):
+     *                      elemmat(e, m * ndim + j, n * ndim + k) +=
+     *                          dNdx(e,q,m,i) * qtensor(e,q,i,j,k,l) * dNdx(e,q,n,l) * dV(e,q)
      *
      * with `i`, `j`, `k`, and `l` tensor dimensions.
      * Note that the functions and their gradients are precomputed upon construction,

@@ -27,8 +27,8 @@ namespace GooseFEM {
  *
  * To this end some internal re-ordering of the DOFs has to be done, as follows:
  *
- *     iiu() -> arange(nnu())
- *     iip() -> nnu() + arange(nnp())
+ *      iiu() -> arange(nnu())
+ *      iip() -> nnu() + arange(nnp())
  *
  * which is relevant only if you interact using partitioned DOF-lists ("dofval_u" or "dofval_p").
  *
@@ -52,8 +52,8 @@ protected:
     /**
      * Renumbered DOFs per node, such that
      *
-     *     iiu = arange(nnu)
-     *     iip = nnu + arange(nnp)
+     *      iiu = arange(nnu)
+     *      iip = nnu + arange(nnp)
      *
      * making is much simpler to slice.
      */
@@ -162,11 +162,11 @@ public:
     /**
      * Copy unknown DOFs from "nodevec" to another "nodvec":
      *
-     *     nodevec_dest[vector.dofs_is_u()] = nodevec_src
+     *      nodevec_dest[vector.dofs_is_u()] = nodevec_src
      *
      * the other DOFs are taken from `nodevec_dest`:
      *
-     *     nodevec_dest[vector.dofs_is_p()] = nodevec_dest
+     *      nodevec_dest[vector.dofs_is_p()] = nodevec_dest
      *
      * @param nodevec_src input [#nnode, #ndim]
      * @param nodevec_dest input [#nnode, #ndim]
@@ -184,11 +184,11 @@ public:
     /**
      * Copy unknown DOFs from "nodevec" to another "nodvec":
      *
-     *     nodevec_dest[vector.dofs_is_u()] = nodevec_src
+     *      nodevec_dest[vector.dofs_is_u()] = nodevec_src
      *
      * the other DOFs are taken from `nodevec_dest`:
      *
-     *     nodevec_dest[vector.dofs_is_p()] = nodevec_dest
+     *      nodevec_dest[vector.dofs_is_p()] = nodevec_dest
      *
      * @param nodevec_src input [#nnode, #ndim]
      * @param nodevec_dest input/output [#nnode, #ndim]
@@ -213,11 +213,11 @@ public:
     /**
      * Copy prescribed DOFs from "nodevec" to another "nodvec":
      *
-     *     nodevec_dest[vector.dofs_is_p()] = nodevec_src
+     *      nodevec_dest[vector.dofs_is_p()] = nodevec_src
      *
      * the other DOFs are taken from `nodevec_dest`:
      *
-     *     nodevec_dest[vector.dofs_is_u()] = nodevec_dest
+     *      nodevec_dest[vector.dofs_is_u()] = nodevec_dest
      *
      * @param nodevec_src input [#nnode, #ndim]
      * @param nodevec_dest input [#nnode, #ndim]
@@ -235,11 +235,11 @@ public:
     /**
      * Copy prescribed DOFs from "nodevec" to another "nodvec":
      *
-     *     nodevec_dest[vector.dofs_is_p()] = nodevec_src
+     *      nodevec_dest[vector.dofs_is_p()] = nodevec_src
      *
      * the other DOFs are taken from `nodevec_dest`:
      *
-     *     nodevec_dest[vector.dofs_is_u()] = nodevec_dest
+     *      nodevec_dest[vector.dofs_is_u()] = nodevec_dest
      *
      * @param nodevec_src input [#nnode, #ndim]
      * @param nodevec_dest input/output [#nnode, #ndim]
@@ -409,7 +409,7 @@ public:
     /**
      * Extract the unknown "dofval":
      *
-     *     dofval[iiu()]
+     *      dofval[iiu()]
      *
      * @param dofval input [#ndof]
      * @return dofval_u input [#nnu]
@@ -424,7 +424,7 @@ public:
     /**
      * Extract the unknown "dofval":
      *
-     *     dofval[iiu()]
+     *      dofval[iiu()]
      *
      * @param dofval input [#ndof]
      * @param dofval_u input [#nnu]
@@ -527,7 +527,7 @@ public:
     /**
      * Extract the prescribed "dofval":
      *
-     *     dofval[iip()]
+     *      dofval[iip()]
      *
      * @param dofval input [#ndof]
      * @return dofval_p input [#nnp]
@@ -542,7 +542,7 @@ public:
     /**
      * Extract the prescribed "dofval":
      *
-     *     dofval[iip()]
+     *      dofval[iip()]
      *
      * @param dofval input [#ndof]
      * @param dofval_p input [#nnp]

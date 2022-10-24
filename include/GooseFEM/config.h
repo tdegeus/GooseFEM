@@ -76,11 +76,11 @@ using namespace xt::placeholders;
 /**
  * All assertions are implementation as::
  *
- *     GOOSEFEM_ASSERT(...)
+ *      GOOSEFEM_ASSERT(...)
  *
  * They can be enabled by::
  *
- *     #define GOOSEFEM_ENABLE_ASSERT
+ *      #define GOOSEFEM_ENABLE_ASSERT
  *
  * (before including GooseFEM).
  * The advantage is that:
@@ -99,7 +99,7 @@ using namespace xt::placeholders;
 /**
  * Assertion that cannot be switched off. Implement assertion by::
  *
- *     GOOSEFEM_CHECK(...)
+ *      GOOSEFEM_CHECK(...)
  *
  * \throw std::runtime_error
  */
@@ -109,7 +109,7 @@ using namespace xt::placeholders;
  * Assertion that concerns temporary implementation limitations.
  * Implement assertion by::
  *
- *     GOOSEFEM_WIP_ASSERT(...)
+ *      GOOSEFEM_WIP_ASSERT(...)
  *
  * \throw std::runtime_error
  */
@@ -118,11 +118,11 @@ using namespace xt::placeholders;
 /**
  * All warnings are implemented as::
  *
- *     GOOSEFEM_WARNING(...)
+ *      GOOSEFEM_WARNING(...)
  *
  * They can be disabled by::
  *
- *     #define GOOSEFEM_DISABLE_WARNING
+ *      #define GOOSEFEM_DISABLE_WARNING
  */
 #ifdef GOOSEFEM_DISABLE_WARNING
 #define GOOSEFEM_WARNING(message)
@@ -133,11 +133,11 @@ using namespace xt::placeholders;
 /**
  * All warnings specific to the Python API are implemented as::
  *
- *     GOOSEFEM_WARNING_PYTHON(...)
+ *      GOOSEFEM_WARNING_PYTHON(...)
  *
  * They can be enabled by::
  *
- *     #define GOOSEFEM_ENABLE_WARNING_PYTHON
+ *      #define GOOSEFEM_ENABLE_WARNING_PYTHON
  */
 #ifdef GOOSEFEM_ENABLE_WARNING_PYTHON
 #define GOOSEFEM_WARNING_PYTHON(message) \

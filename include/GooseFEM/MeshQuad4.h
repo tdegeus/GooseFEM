@@ -209,8 +209,8 @@ public:
      * @param h Edge size (width == height) of elements along the weak layer.
      *
      * @param nfine
-     *     Extra number of fine layers around the middle layer.
-     *     By default the element size is kept smaller than the distance to the middle layer.
+     *      Extra number of fine layers around the middle layer.
+     *      By default the element size is kept smaller than the distance to the middle layer.
      */
     FineLayer(size_t nelx, size_t nely, double h = 1.0, size_t nfine = 1)
     {
@@ -257,8 +257,8 @@ public:
 
     /**
      * Per row of blocks:
-     *   `-1`: normal layer
-     *   `0`: transition layer to match coarse and finer element on the previous/next row.
+     *      `-1`: normal layer
+     *      `0`: transition layer to match coarse and finer element on the previous/next row.
      *
      * @return List of size equal to the number of rows of blocks.
      */
@@ -1309,7 +1309,7 @@ public:
      * The mapping is a bit simplistic: no interpolation is involved.
      * The mapping is such that::
      *
-     *     ret[e_fine, ...] <- data[e_coarse, ...]
+     *      ret[e_fine, ...] <- data[e_coarse, ...]
      *
      * @tparam T type of the data (e.g. `double`).
      * @tparam rank rank of the data.
@@ -1731,7 +1731,7 @@ public:
      * accounts the fraction of overlap between the FineLayer element and the Regular element.
      * The mapping is such that::
      *
-     *     ret[e_regular, ...] <- arg[e_finelayer, ...]
+     *      ret[e_regular, ...] <- arg[e_finelayer, ...]
      *
      * @tparam T type of the data (e.g. `double`).
      * @tparam rank rank of the data.
