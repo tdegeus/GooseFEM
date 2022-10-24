@@ -130,7 +130,7 @@ inline size_t nip()
 /**
  * Integration point coordinates (local coordinates).
  *
- * @return Coordinates [#nip, `ndim`], with ``ndim = 3``.
+ * @return Coordinates [#nip, `ndim`], with `ndim = 3`.
  */
 inline array_type::tensor<double, 2> xi()
 {
@@ -203,14 +203,14 @@ inline array_type::tensor<double, 1> w()
  * Interpolation and quadrature.
  *
  * Fixed dimensions:
- * -   ``ndim = 3``: number of dimensions.
- * -   ``nne = 8``: number of nodes per element.
+ * -   `ndim = 3`: number of dimensions.
+ * -   `nne = 8`: number of nodes per element.
  *
  * Naming convention:
- * -    ``elemmat``:  matrices stored per element, [#nelem, #nne * #ndim, #nne * #ndim]
- * -    ``elemvec``:  nodal vectors stored per element, [#nelem, #nne, #ndim]
- * -    ``qtensor``:  integration point tensor, [#nelem, #nip, #ndim, #ndim]
- * -    ``qscalar``:  integration point scalar, [#nelem, #nip]
+ * -    `elemmat`:  matrices stored per element, [#nelem, #nne * #ndim, #nne * #ndim]
+ * -    `elemvec`:  nodal vectors stored per element, [#nelem, #nne, #ndim]
+ * -    `qtensor`:  integration point tensor, [#nelem, #nip, #ndim, #ndim]
+ * -    `qscalar`:  integration point scalar, [#nelem, #nip]
  */
 class Quadrature : public QuadratureBaseCartesian<Quadrature> {
 public:
@@ -228,7 +228,7 @@ public:
      * In that case use update_x() to update the nodal positions and
      * to recompute the above listed quantities.
      *
-     * @param x nodal coordinates (``elemvec``).
+     * @param x nodal coordinates (`elemvec`).
      */
     template <class T>
     Quadrature(const T& x) : Quadrature(x, Gauss::xi(), Gauss::w())
@@ -247,7 +247,7 @@ public:
      * In that case use update_x() to update the nodal positions and
      * to recompute the above listed quantities.
      *
-     * @param x nodal coordinates (``elemvec``).
+     * @param x nodal coordinates (`elemvec`).
      * @param xi Integration point coordinates (local coordinates) [#nip].
      * @param w Integration point weights [#nip].
      */

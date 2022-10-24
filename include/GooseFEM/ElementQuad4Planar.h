@@ -25,15 +25,15 @@ namespace Quad4 {
  * are 3d ("plane strain") while the mesh is 2d.
  *
  * Fixed dimensions:
- * -   ``ndim = 2``: number of dimensions.
- * -   ``tdim = 3``: number of dimensions or tensor.
- * -   ``nne = 4``: number of nodes per element.
+ * -   `ndim = 2`: number of dimensions.
+ * -   `tdim = 3`: number of dimensions or tensor.
+ * -   `nne = 4`: number of nodes per element.
  *
  * Naming convention:
- * -    ``elemmat``:  matrices stored per element, [#nelem, #nne * #ndim, #nne * #ndim]
- * -    ``elemvec``:  nodal vectors stored per element, [#nelem, #nne, #ndim]
- * -    ``qtensor``:  integration point tensor, [#nelem, #nip, #tdim, #tdim]
- * -    ``qscalar``:  integration point scalar, [#nelem, #nip]
+ * -    `elemmat`:  matrices stored per element, [#nelem, #nne * #ndim, #nne * #ndim]
+ * -    `elemvec`:  nodal vectors stored per element, [#nelem, #nne, #ndim]
+ * -    `qtensor`:  integration point tensor, [#nelem, #nip, #tdim, #tdim]
+ * -    `qscalar`:  integration point scalar, [#nelem, #nip]
  */
 class QuadraturePlanar : public QuadratureBaseCartesian<QuadraturePlanar> {
 public:
@@ -51,7 +51,7 @@ public:
      * In that case use update_x() to update the nodal positions and
      * to recompute the above listed quantities.
      *
-     * @param x nodal coordinates (``elemvec``).
+     * @param x nodal coordinates (`elemvec`).
      * @param thick out-of-plane thickness (incorporated in the element volume).
      */
     template <class T>
@@ -72,7 +72,7 @@ public:
      * In that case use update_x() to update the nodal positions and
      * to recompute the above listed quantities.
      *
-     * @param x nodal coordinates (``elemvec``).
+     * @param x nodal coordinates (`elemvec`).
      * @param xi Integration point coordinates (local coordinates) [#nip].
      * @param w Integration point weights [#nip].
      * @param thick out-of-plane thickness (incorporated in the element volume).
