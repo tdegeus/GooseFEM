@@ -1700,8 +1700,10 @@ private:
 /**
  * Find overlapping nodes. The output has the following structure:
  *
- *      [[nodes_from_mesh_a],
- *      [nodes_from_mesh_b]]
+ *      [
+ *          [nodes_from_mesh_a],
+ *          [nodes_from_mesh_b],
+ *      ]
  *
  * @param coor_a Nodal coordinates of mesh "a" [nnode, ndim].
  * @param coor_b Nodal coordinates of mesh "b" [nnode, ndim].

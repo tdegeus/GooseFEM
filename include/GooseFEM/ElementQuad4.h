@@ -23,7 +23,7 @@ namespace Element {
 namespace Quad4 {
 
 /**
- * Gauss quadrature: quadrature points such that integration is exact for this bi-linear element::
+ * Gauss quadrature: quadrature points such that integration is exact for this bi-linear element:
  *
  *      + ----------- +
  *      |             |

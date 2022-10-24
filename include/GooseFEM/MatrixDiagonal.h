@@ -39,10 +39,12 @@ private:
 
 public:
     /**
-     * Solve \f$ x = A^{-1} b \f$.
+     * @brief Solve \f$ x = A^{-1} b \f$.
+     * Note that this does not involve a conversion to DOFs.
      *
-     * For #GooseFEM::MatrixDiagonalPartitioned under the hood solved
-     * \f$ x_u = A_{uu}^{-1} (b_u - A_{up} * x_p) \equiv A_{uu}^{-1} b_u \f$.
+     * In case of #GooseFEM::MatrixDiagonalPartitioned under the hood, schematically:
+     * \f$ x_u = A_{uu}^{-1} (b_u - A_{up} * x_p) \equiv A_{uu}^{-1} b_u \f$
+     * (again, no conversion to DOFs is needed).
      * Use GooseFEM::MatrixDiagonalPartitioned::Reaction() to get reaction forces.
      *
      * @param b nodevec [nelem, ndim].

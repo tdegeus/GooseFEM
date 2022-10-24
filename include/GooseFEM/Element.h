@@ -278,10 +278,7 @@ public:
      * Get the shape of a "qtensor" of a certain rank
      * (0 = scalar, 1, vector, 2 = 2nd-order tensor, etc.).
      *
-     * @tparam rank The rank of the tensor.
-     *      Since this function is templated, the output is fixed-size of type `std::array<size_t,
-     * n>`.
-     *
+     * @tparam rank Rank of the tensor. Output is fixed-size: `std::array<size_t, rank>`.
      * @returns [#nelem, #nip, #tdim, ...].
      */
     template <size_t rank = 0>
@@ -314,12 +311,8 @@ public:
      * Get the shape of a "qtensor" of a certain rank
      * (0 = scalar, 1, vector, 2 = 2nd-order tensor, etc.).
      *
-     * @tparam rank The rank of the tensor.
-     *      Since this function is templated, the output is fixed-size of type `std::array<size_t,
-     * n>`.
-     *
-     * @param rank The tensor rank.
-     *      Effectively useless, but is there to distinguish from the dynamic-sized overloads.
+     * @tparam rank Rank of the tensor. Output is fixed-size: `std::array<size_t, rank>`.
+     * @param rank The tensor rank. Effectively useless: to distinguish from the dynamic-sized.
      * @param arg The tensor dimension.
      * @returns [#nelem, #nip, tdim, ...].
      */
