@@ -43,6 +43,7 @@ repos:
   rev: v0.2.0
   hooks:
   - id: cpp_comment_format
+    args: [-c, -t, '4']
 - repo: https://github.com/pocc/pre-commit-hooks
   rev: v1.3.5
   hooks:
