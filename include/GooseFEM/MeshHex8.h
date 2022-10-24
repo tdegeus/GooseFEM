@@ -621,8 +621,8 @@ public:
      * @param h Edge size (width == height == depth) of elements along the weak layer.
      *
      * @param nfine
-     *     Extra number of fine layers around the middle layer.
-     *     By default the element size is kept smaller than the distance to the middle layer.
+     *      Extra number of fine layers around the middle layer.
+     *      By default the element size is kept smaller than the distance to the middle layer.
      */
     FineLayer(size_t nelx, size_t nely, size_t nelz, double h = 1.0, size_t nfine = 1)
     {

@@ -106,8 +106,8 @@ inline array_type::tensor<size_t, 2> dofs(size_t nnode, size_t ndim)
  *
  * Or, in pseudo-code, the result of this function is that:
  *
- *     dofs = renumber(dofs)
- *     sort(unique(dofs[:])) == range(max(dofs+1))
+ *      dofs = renumber(dofs)
+ *      sort(unique(dofs[:])) == range(max(dofs+1))
  *
  * \note One can use the wrapper function renumber(). This class gives more advanced features.
  */
@@ -149,7 +149,7 @@ public:
     /**
      * Get the list needed to renumber, e.g.:
      *
-     *     dofs_renumbered(i, j) = index(dofs(i, j))
+     *      dofs_renumbered(i, j) = index(dofs(i, j))
      *
      * @return Renumber-index.
      */
@@ -1700,7 +1700,7 @@ private:
 /**
  * Find overlapping nodes. The output has the following structure:
  *
- *     [[nodes_from_mesh_a],
+ *      [[nodes_from_mesh_a],
  *      [nodes_from_mesh_b]]
  *
  * @param coor_a Nodal coordinates of mesh "a" [nnode, ndim].
@@ -2379,8 +2379,8 @@ private:
  *
  * For example for ``Reorder({iiu, iip})`` after reordering:
  *
- *     iiu = xt::range<size_t>(nnu);
- *     iip = xt::range<size_t>(nnp) + nnu;
+ *      iiu = xt::range<size_t>(nnu);
+ *      iip = xt::range<size_t>(nnp) + nnu;
  */
 class Reorder {
 public:
@@ -2441,7 +2441,7 @@ public:
     /**
      * Get the list needed to reorder, e.g.:
      *
-     *     dofs_reordered(i, j) = index(dofs(i, j))
+     *      dofs_reordered(i, j) = index(dofs(i, j))
      *
      * @return Reorder-index.
      */
@@ -2720,7 +2720,7 @@ elemmap2nodemap(const T& elem_map, const C& coor, const E& conn)
  * If nodes are not part of the connectivity the mass is set to zero,
  * such that the center of gravity is simply::
  *
- *     average(coor, GooseFEM.Mesh.nodal_mass(coor, conn, type), axis=0);
+ *      average(coor, GooseFEM.Mesh.nodal_mass(coor, conn, type), axis=0);
  *
  * @tparam C e.g. `array_type::tensor<double, 2>`
  * @tparam E e.g. `array_type::tensor<size_t, 2>`
@@ -2756,7 +2756,7 @@ inline array_type::tensor<double, 2> nodal_mass(const C& coor, const E& conn, El
  * If nodes are not part of the connectivity the mass is set to zero,
  * such that the center of gravity is simply::
  *
- *     average(coor, GooseFEM.Mesh.nodal_mass(coor, conn), axis=0);
+ *      average(coor, GooseFEM.Mesh.nodal_mass(coor, conn), axis=0);
  *
  * @tparam C e.g. `array_type::tensor<double, 2>`
  * @tparam E e.g. `array_type::tensor<size_t, 2>`

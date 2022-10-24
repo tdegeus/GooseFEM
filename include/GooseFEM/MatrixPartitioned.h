@@ -50,8 +50,8 @@ protected:
     /**
      * Renumbered DOFs per node, such that:
      *
-     *     iiu = arange(nnu)
-     *     iip = nnu + arange(nnp)
+     *      iiu = arange(nnu)
+     *      iip = nnu + arange(nnp)
      *
      * making is much simpler to slice.
      */
@@ -61,8 +61,8 @@ protected:
      * Map real DOF to DOF in partitioned system.
      * The partitioned system is defined as:
      *
-     *     iiu = arange(nnu)
-     *     iip = nnu + arange(nnp)
+     *      iiu = arange(nnu)
+     *      iip = nnu + arange(nnp)
      *
      * Similar to `m_part` but for a 1d sequential list of DOFs.
      */

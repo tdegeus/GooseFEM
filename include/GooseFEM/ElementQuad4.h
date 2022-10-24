@@ -25,20 +25,20 @@ namespace Quad4 {
 /**
  * Gauss quadrature: quadrature points such that integration is exact for this bi-linear element::
  *
- *     + ----------- +
- *     |             |
- *     |   3     2   |
- *     |             |
- *     |   0     1   |
- *     |             |
- *     + ----------- +
+ *      + ----------- +
+ *      |             |
+ *      |   3     2   |
+ *      |             |
+ *      |   0     1   |
+ *      |             |
+ *      + ----------- +
  */
 namespace Gauss {
 
 /**
  * Number of integration points:
  *
- *     nip = nne = 4
+ *      nip = nne = 4
  *
  * @return unsigned int
  */
@@ -96,16 +96,16 @@ inline array_type::tensor<double, 1> w()
  * nodal quadrature: quadrature points coincide with the nodes.
  * The order is the same as in the connectivity:
  *
- *     3 -- 2
- *     |    |
- *     0 -- 1
+ *      3 -- 2
+ *      |    |
+ *      0 -- 1
  */
 namespace Nodal {
 
 /**
  * Number of integration points::
  *
- *     nip = nne = 4
+ *      nip = nne = 4
  *
  * @return unsigned int
  */
@@ -165,18 +165,18 @@ inline array_type::tensor<double, 1> w()
 /**
  * midpoint quadrature: quadrature points in the middle of the element::
  *
- *     + ------- +
- *     |         |
- *     |    0    |
- *     |         |
- *     + ------- +
+ *      + ------- +
+ *      |         |
+ *      |    0    |
+ *      |         |
+ *      + ------- +
  */
 namespace MidPoint {
 
 /**
  * Number of integration points::
  *
- *     nip = 1
+ *      nip = 1
  *
  * @return unsigned int
  */
