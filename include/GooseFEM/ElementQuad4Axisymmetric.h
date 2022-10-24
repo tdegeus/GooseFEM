@@ -20,15 +20,15 @@ namespace Quad4 {
  * Interpolation and quadrature.
  *
  * Fixed dimensions:
- * -   ``ndim = 2``: number of dimensions.
- * -   ``tdim = 3``: number of dimensions or tensor.
- * -   ``nne = 4``: number of nodes per element.
+ * -   `ndim = 2`: number of dimensions.
+ * -   `tdim = 3`: number of dimensions or tensor.
+ * -   `nne = 4`: number of nodes per element.
  *
  * Naming convention:
- * -    ``elemmat``:  matrices stored per element, [#nelem, #nne * #ndim, #nne * #ndim]
- * -    ``elemvec``:  nodal vectors stored per element, [#nelem, #nne, #ndim]
- * -    ``qtensor``:  integration point tensor, [#nelem, #nip, #tdim, #tdim]
- * -    ``qscalar``:  integration point scalar, [#nelem, #nip]
+ * -    `elemmat`:  matrices stored per element, [#nelem, #nne * #ndim, #nne * #ndim]
+ * -    `elemvec`:  nodal vectors stored per element, [#nelem, #nne, #ndim]
+ * -    `qtensor`:  integration point tensor, [#nelem, #nip, #tdim, #tdim]
+ * -    `qscalar`:  integration point scalar, [#nelem, #nip]
  */
 class QuadratureAxisymmetric : public QuadratureBaseCartesian<QuadratureAxisymmetric> {
 public:
@@ -46,7 +46,7 @@ public:
      * In that case use update_x() to update the nodal positions and
      * to recompute the above listed quantities.
      *
-     * @param x nodal coordinates (``elemvec``).
+     * @param x nodal coordinates (`elemvec`).
      */
     template <class T>
     QuadratureAxisymmetric(const T& x) : QuadratureAxisymmetric(x, Gauss::xi(), Gauss::w())
@@ -65,7 +65,7 @@ public:
      * In that case use update_x() to update the nodal positions and
      * to recompute the above listed quantities.
      *
-     * @param x nodal coordinates (``elemvec``).
+     * @param x nodal coordinates (`elemvec`).
      * @param xi Integration point coordinates (local coordinates) [#nip].
      * @param w Integration point weights [#nip].
      */
@@ -116,7 +116,7 @@ public:
      * Note that the functions and their gradients are precomputed upon construction,
      * or updated when calling update_x().
      *
-     * @return ``B`` matrix stored per element, per integration point [#nelem, #nne, #tdim, #tdim,
+     * @return `B` matrix stored per element, per integration point [#nelem, #nne, #tdim, #tdim,
      * #tdim]
      */
     const array_type::tensor<double, 6>& B() const

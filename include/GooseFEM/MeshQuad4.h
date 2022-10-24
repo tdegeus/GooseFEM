@@ -222,8 +222,8 @@ public:
      *
      * @tparam C e.g. `array_type::tensor<double, 2>`
      * @tparam E e.g. `array_type::tensor<size_t, 2>`
-     * @param coor Nodal coordinates ``[nnode, ndim]`` with ``ndim == 2``.
-     * @param conn Connectivity ``[nne, nne]`` with ``nne == 4``.
+     * @param coor Nodal coordinates `[nnode, ndim]` with `ndim == 2`.
+     * @param conn Connectivity `[nne, nne]` with `nne == 4`.
      */
     template <class C, class E, std::enable_if_t<xt::is_xexpression<C>::value, bool> = true>
     FineLayer(const C& coor, const E& conn)
@@ -398,7 +398,7 @@ public:
 
     /**
      * Select region of elements from 'matrix' of element numbers around an element:
-     * square box with edge-size ``(2 * size + 1) * h``, around ``element``.
+     * square box with edge-size `(2 * size + 1) * h`, around `element`.
      *
      * @param e The element around which to select elements.
      * @param size Edge size of the square box encapsulating the selected element.
@@ -469,7 +469,7 @@ public:
 
     /**
      * Select region of elements from 'matrix' of element numbers around an element:
-     * left/right from ``element`` (on the same layer).
+     * left/right from `element` (on the same layer).
      *
      * @param e The element around which to select elements.
      * @param left Number of elements to select to the left.
@@ -1246,7 +1246,7 @@ public:
     /**
      * Compute the mean of the quantity define on the fine mesh when mapped on the coarse mesh.
      *
-     * @tparam T type of the data (e.g. ``double``).
+     * @tparam T type of the data (e.g. `double`).
      * @tparam rank rank of the data.
      * @param data the data [nelem_fine, ...]
      * @return the average data of the coarse mesh [nelem_coarse, ...]
@@ -1274,9 +1274,9 @@ public:
     /**
      * Compute the average of the quantity define on the fine mesh when mapped on the coarse mesh.
      *
-     * @tparam T type of the data (e.g. ``double``).
+     * @tparam T type of the data (e.g. `double`).
      * @tparam rank rank of the data.
-     * @tparam S type of the weights (e.g. ``double``).
+     * @tparam S type of the weights (e.g. `double`).
      * @param data the data [nelem_fine, ...]
      * @param weights the weights [nelem_fine, ...]
      * @return the average data of the coarse mesh [nelem_coarse, ...]
@@ -1311,7 +1311,7 @@ public:
      *
      *     ret[e_fine, ...] <- data[e_coarse, ...]
      *
-     * @tparam T type of the data (e.g. ``double``).
+     * @tparam T type of the data (e.g. `double`).
      * @tparam rank rank of the data.
      * @param data the data.
      * @return mapped data.
@@ -1733,7 +1733,7 @@ public:
      *
      *     ret[e_regular, ...] <- arg[e_finelayer, ...]
      *
-     * @tparam T type of the data (e.g. ``double``).
+     * @tparam T type of the data (e.g. `double`).
      * @tparam rank rank of the data.
      * @param data data.
      * @return mapped data.
