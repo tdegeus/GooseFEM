@@ -1,8 +1,8 @@
 /**
-\file
-\copyright Copyright 2017. Tom de Geus. All rights reserved.
-\license This project is released under the GNU Public License (GPLv3).
-*/
+ * @file
+ * @copyright Copyright 2017. Tom de Geus. All rights reserved.
+ * @license This project is released under the GNU Public License (GPLv3).
+ */
 
 #ifndef GOOSEFEM_DETAIL_H
 #define GOOSEFEM_DETAIL_H
@@ -17,12 +17,12 @@ struct tensor {
 template <size_t nd>
 struct tensor<nd, typename std::enable_if_t<nd == 2>> {
     /**
-    Inverse of a 2nd order tensor.
-
-    \param The tensor.
-    \param The inverse (overwritten).
-    \return Determinant.
-    */
+     * Inverse of a 2nd order tensor.
+     *
+     * @param The tensor.
+     * @param The inverse (overwritten).
+     * @return Determinant.
+     */
     template <class T>
     static double inv(const T& A, T& Ainv)
     {
@@ -40,12 +40,12 @@ struct tensor<nd, typename std::enable_if_t<nd == 2>> {
 template <size_t nd>
 struct tensor<nd, typename std::enable_if_t<nd == 3>> {
     /**
-    Inverse of a 2nd order tensor (shape: [3, 3]).
-
-    \param The tensor.
-    \param The inverse (overwritten).
-    \return Determinant.
-    */
+     * Inverse of a 2nd order tensor (shape: [3, 3]).
+     *
+     * @param The tensor.
+     * @param The inverse (overwritten).
+     * @return Determinant.
+     */
     template <class T>
     static double inv(const T& A, T& Ainv)
     {

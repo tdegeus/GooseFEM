@@ -1,11 +1,11 @@
 /**
-Quadrature for 4-noded quadrilateral element in 2d (GooseFEM::Mesh::ElementType::Quad4),
-in an axisymmetric coordinated system.
-
-\file ElementQuad4Axisymmetric.h
-\copyright Copyright 2017. Tom de Geus. All rights reserved.
-\license This project is released under the GNU Public License (GPLv3).
-*/
+ * Quadrature for 4-noded quadrilateral element in 2d (GooseFEM::Mesh::ElementType::Quad4),
+ * in an axisymmetric coordinated system.
+ *
+ * @file ElementQuad4Axisymmetric.h
+ * @copyright Copyright 2017. Tom de Geus. All rights reserved.
+ * @license This project is released under the GNU Public License (GPLv3).
+ */
 
 #ifndef GOOSEFEM_ELEMENTQUAD4AXISYMMETRIC_H
 #define GOOSEFEM_ELEMENTQUAD4AXISYMMETRIC_H
@@ -17,58 +17,58 @@ namespace Element {
 namespace Quad4 {
 
 /**
-Interpolation and quadrature.
-
-Fixed dimensions:
--   ``ndim = 2``: number of dimensions.
--   ``tdim = 3``: number of dimensions or tensor.
--   ``nne = 4``: number of nodes per element.
-
-Naming convention:
--    ``elemmat``:  matrices stored per element, [#nelem, #nne * #ndim, #nne * #ndim]
--    ``elemvec``:  nodal vectors stored per element, [#nelem, #nne, #ndim]
--    ``qtensor``:  integration point tensor, [#nelem, #nip, #tdim, #tdim]
--    ``qscalar``:  integration point scalar, [#nelem, #nip]
-*/
+ * Interpolation and quadrature.
+ *
+ * Fixed dimensions:
+ * -   ``ndim = 2``: number of dimensions.
+ * -   ``tdim = 3``: number of dimensions or tensor.
+ * -   ``nne = 4``: number of nodes per element.
+ *
+ * Naming convention:
+ * -    ``elemmat``:  matrices stored per element, [#nelem, #nne * #ndim, #nne * #ndim]
+ * -    ``elemvec``:  nodal vectors stored per element, [#nelem, #nne, #ndim]
+ * -    ``qtensor``:  integration point tensor, [#nelem, #nip, #tdim, #tdim]
+ * -    ``qscalar``:  integration point scalar, [#nelem, #nip]
+ */
 class QuadratureAxisymmetric : public QuadratureBaseCartesian<QuadratureAxisymmetric> {
 public:
     QuadratureAxisymmetric() = default;
 
     /**
-    Constructor: use default Gauss integration.
-    The following is pre-computed during construction:
-    -   the shape functions,
-    -   the shape function gradients (in local and global) coordinates,
-    -   the integration points volumes.
-    They can be reused without any cost.
-    They only have to be recomputed when the nodal position changes
-    (note that they are assumed to be constant under a small-strain assumption).
-    In that case use update_x() to update the nodal positions and
-    to recompute the above listed quantities.
-
-    \param x nodal coordinates (``elemvec``).
-    */
+     * Constructor: use default Gauss integration.
+     * The following is pre-computed during construction:
+     * -   the shape functions,
+     * -   the shape function gradients (in local and global) coordinates,
+     * -   the integration points volumes.
+     * They can be reused without any cost.
+     * They only have to be recomputed when the nodal position changes
+     * (note that they are assumed to be constant under a small-strain assumption).
+     * In that case use update_x() to update the nodal positions and
+     * to recompute the above listed quantities.
+     *
+     * @param x nodal coordinates (``elemvec``).
+     */
     template <class T>
     QuadratureAxisymmetric(const T& x) : QuadratureAxisymmetric(x, Gauss::xi(), Gauss::w())
     {
     }
 
     /**
-    Constructor with custom integration.
-    The following is pre-computed during construction:
-    -   the shape functions,
-    -   the shape function gradients (in local and global) coordinates,
-    -   the integration points volumes.
-    They can be reused without any cost.
-    They only have to be recomputed when the nodal position changes
-    (note that they are assumed to be constant under a small-strain assumption).
-    In that case use update_x() to update the nodal positions and
-    to recompute the above listed quantities.
-
-    \param x nodal coordinates (``elemvec``).
-    \param xi Integration point coordinates (local coordinates) [#nip].
-    \param w Integration point weights [#nip].
-    */
+     * Constructor with custom integration.
+     * The following is pre-computed during construction:
+     * -   the shape functions,
+     * -   the shape function gradients (in local and global) coordinates,
+     * -   the integration points volumes.
+     * They can be reused without any cost.
+     * They only have to be recomputed when the nodal position changes
+     * (note that they are assumed to be constant under a small-strain assumption).
+     * In that case use update_x() to update the nodal positions and
+     * to recompute the above listed quantities.
+     *
+     * @param x nodal coordinates (``elemvec``).
+     * @param xi Integration point coordinates (local coordinates) [#nip].
+     * @param w Integration point weights [#nip].
+     */
     template <class T, class X, class W>
     QuadratureAxisymmetric(const T& x, const X& xi, const W& w)
     {
@@ -112,13 +112,13 @@ public:
     }
 
     /**
-    Get the B-matrix (shape function gradients) (in global coordinates).
-    Note that the functions and their gradients are precomputed upon construction,
-    or updated when calling update_x().
-
-    \return ``B`` matrix stored per element, per integration point [#nelem, #nne, #tdim, #tdim,
-    #tdim]
-    */
+     * Get the B-matrix (shape function gradients) (in global coordinates).
+     * Note that the functions and their gradients are precomputed upon construction,
+     * or updated when calling update_x().
+     *
+     * @return ``B`` matrix stored per element, per integration point [#nelem, #nne, #tdim, #tdim,
+     * #tdim]
+     */
     const array_type::tensor<double, 6>& B() const
     {
         return m_B;

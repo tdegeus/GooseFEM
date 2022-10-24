@@ -1,10 +1,10 @@
 /**
-Generic mesh operations.
-
-\file Mesh.h
-\copyright Copyright 2017. Tom de Geus. All rights reserved.
-\license This project is released under the GNU Public License (GPLv3).
-*/
+ * Generic mesh operations.
+ *
+ * @file Mesh.h
+ * @copyright Copyright 2017. Tom de Geus. All rights reserved.
+ * @license This project is released under the GNU Public License (GPLv3).
+ */
 
 #ifndef GOOSEFEM_MESH_H
 #define GOOSEFEM_MESH_H
@@ -18,16 +18,16 @@ Generic mesh operations.
 namespace GooseFEM {
 
 /**
-Generic mesh operations, and simple mesh definitions.
-*/
+ * Generic mesh operations, and simple mesh definitions.
+ */
 namespace Mesh {
 
 template <class D>
 inline std::vector<std::vector<size_t>> nodaltyings(const D& dofs);
 
 /**
-Enumerator for element-types
-*/
+ * Enumerator for element-types
+ */
 enum class ElementType {
     Unknown, ///< Unknown element-type
     Quad4, ///< Quadrilateral: 4-noded element in 2-d
@@ -36,12 +36,12 @@ enum class ElementType {
 };
 
 /**
-Extract the element type based on the connectivity.
-
-\param coor Nodal coordinates [nnode, ndim].
-\param conn Connectivity [nelem, nne].
-\return ElementType().
-*/
+ * Extract the element type based on the connectivity.
+ *
+ * @param coor Nodal coordinates [nnode, ndim].
+ * @param conn Connectivity [nelem, nne].
+ * @return ElementType().
+ */
 template <class S, class T>
 inline ElementType defaultElementType(const S& coor, const T& conn)
 {
@@ -80,44 +80,44 @@ inline T renum(const T& arg, const R& mapping)
 } // namespace detail
 
 /**
-List with DOF-numbers in sequential order.
-The output is a sequential list of DOF-numbers for each vector-component of each node.
-For example for 3 nodes in 2 dimensions the output is
-
-\f$ \begin{bmatrix} 0 & 1 \\ 2 & 3 \\ 4 & 5 \end{bmatrix} \f$
-
-\param nnode Number of nodes.
-\param ndim Number of dimensions.
-\return DOF-numbers.
-*/
+ * List with DOF-numbers in sequential order.
+ * The output is a sequential list of DOF-numbers for each vector-component of each node.
+ * For example for 3 nodes in 2 dimensions the output is
+ *
+ * \f$ \begin{bmatrix} 0 & 1 \\ 2 & 3 \\ 4 & 5 \end{bmatrix} \f$
+ *
+ * @param nnode Number of nodes.
+ * @param ndim Number of dimensions.
+ * @return DOF-numbers.
+ */
 inline array_type::tensor<size_t, 2> dofs(size_t nnode, size_t ndim)
 {
     return xt::reshape_view(xt::arange<size_t>(nnode * ndim), {nnode, ndim});
 }
 
 /**
-Renumber indices to lowest possible index. For example:
-
-\f$ \begin{bmatrix} 0 & 1 \\ 5 & 4 \end{bmatrix} \f$
-
-is renumbered to
-
-\f$ \begin{bmatrix} 0 & 1 \\ 3 & 2 \end{bmatrix} \f$
-
-Or, in pseudo-code, the result of this function is that:
-
-    dofs = renumber(dofs)
-    sort(unique(dofs[:])) == range(max(dofs+1))
-
-\note One can use the wrapper function renumber(). This class gives more advanced features.
-*/
+ * Renumber indices to lowest possible index. For example:
+ *
+ * \f$ \begin{bmatrix} 0 & 1 \\ 5 & 4 \end{bmatrix} \f$
+ *
+ * is renumbered to
+ *
+ * \f$ \begin{bmatrix} 0 & 1 \\ 3 & 2 \end{bmatrix} \f$
+ *
+ * Or, in pseudo-code, the result of this function is that:
+ *
+ *     dofs = renumber(dofs)
+ *     sort(unique(dofs[:])) == range(max(dofs+1))
+ *
+ * \note One can use the wrapper function renumber(). This class gives more advanced features.
+ */
 class Renumber {
 public:
     Renumber() = default;
 
     /**
-    \param dofs DOF-numbers.
-    */
+     * @param dofs DOF-numbers.
+     */
     template <class T>
     Renumber(const T& dofs)
     {
@@ -135,11 +135,11 @@ public:
     }
 
     /**
-    Apply renumbering to other set.
-
-    \param list List of (DOF-)numbers.
-    \return Renumbered list of (DOF-)numbers.
-    */
+     * Apply renumbering to other set.
+     *
+     * @param list List of (DOF-)numbers.
+     * @return Renumbered list of (DOF-)numbers.
+     */
     template <class T>
     T apply(const T& list) const
     {
@@ -147,12 +147,12 @@ public:
     }
 
     /**
-    Get the list needed to renumber, e.g.:
-
-        dofs_renumbered(i, j) = index(dofs(i, j))
-
-    \return Renumber-index.
-    */
+     * Get the list needed to renumber, e.g.:
+     *
+     *     dofs_renumbered(i, j) = index(dofs(i, j))
+     *
+     * @return Renumber-index.
+     */
     const array_type::tensor<size_t, 1>& index() const
     {
         return m_renum;
@@ -163,11 +163,11 @@ private:
 };
 
 /**
-Renumber to lowest possible index (see GooseFEM::Mesh::Renumber).
-
-\param dofs DOF-numbers [nnode, ndim].
-\return Renumbered DOF-numbers.
-*/
+ * Renumber to lowest possible index (see GooseFEM::Mesh::Renumber).
+ *
+ * @param dofs DOF-numbers [nnode, ndim].
+ * @return Renumbered DOF-numbers.
+ */
 template <class T>
 inline T renumber(const T& dofs)
 {
@@ -175,119 +175,119 @@ inline T renumber(const T& dofs)
 }
 
 /**
-CRTP base class for regular meshes.
-*/
+ * CRTP base class for regular meshes.
+ */
 template <class D>
 class RegularBase {
 public:
     /**
-    Underlying type.
-    */
+     * Underlying type.
+     */
     using derived_type = D;
 
     /**
-    Number of elements.
-    \return unsigned int
-    */
+     * Number of elements.
+     * @return unsigned int
+     */
     auto nelem() const
     {
         return derived_cast().m_nelem;
     }
 
     /**
-    Number of nodes.
-    \return unsigned int
-    */
+     * Number of nodes.
+     * @return unsigned int
+     */
     auto nnode() const
     {
         return derived_cast().m_nnode;
     }
 
     /**
-    Number of nodes-per-element == 4.
-    \return unsigned int
-    */
+     * Number of nodes-per-element == 4.
+     * @return unsigned int
+     */
     auto nne() const
     {
         return derived_cast().m_nne;
     }
 
     /**
-    Number of dimensions == 2.
-    \return unsigned int
-    */
+     * Number of dimensions == 2.
+     * @return unsigned int
+     */
     auto ndim() const
     {
         return derived_cast().m_ndim;
     }
 
     /**
-    Number of elements in x-direction == width of the mesh in units of #h.
-    \return unsigned int
-    */
+     * Number of elements in x-direction == width of the mesh in units of #h.
+     * @return unsigned int
+     */
     auto nelx() const
     {
         return derived_cast().nelx_impl();
     }
 
     /**
-    Number of elements in y-direction == height of the mesh, in units of #h,
-    \return unsigned int
-    */
+     * Number of elements in y-direction == height of the mesh, in units of #h,
+     * @return unsigned int
+     */
     auto nely() const
     {
         return derived_cast().nely_impl();
     }
 
     /**
-    Linear edge size of one 'block'.
-    \return double
-    */
+     * Linear edge size of one 'block'.
+     * @return double
+     */
     auto h() const
     {
         return derived_cast().m_h;
     }
 
     /**
-    The ElementType().
-    \return element type
-    */
+     * The ElementType().
+     * @return element type
+     */
     auto getElementType() const
     {
         return derived_cast().getElementType_impl();
     }
 
     /**
-    Nodal coordinates [#nnode, #ndim].
-    \return coordinates per node
-    */
+     * Nodal coordinates [#nnode, #ndim].
+     * @return coordinates per node
+     */
     auto coor() const
     {
         return derived_cast().coor_impl();
     }
 
     /**
-    Connectivity [#nelem, #nne].
-    \return nodes per element
-    */
+     * Connectivity [#nelem, #nne].
+     * @return nodes per element
+     */
     auto conn() const
     {
         return derived_cast().conn_impl();
     }
 
     /**
-    DOF numbers for each node (numbered sequentially) [#nnode, #ndim].
-    \return DOFs per node
-    */
+     * DOF numbers for each node (numbered sequentially) [#nnode, #ndim].
+     * @return DOFs per node
+     */
     auto dofs() const
     {
         return GooseFEM::Mesh::dofs(this->nnode(), this->ndim());
     }
 
     /**
-    DOF-numbers for the case that the periodicity if fully eliminated.
-    \return DOF numbers for each node [#nnode, #ndim].
-    */
+     * DOF-numbers for the case that the periodicity if fully eliminated.
+     * @return DOF numbers for each node [#nnode, #ndim].
+     */
     auto dofsPeriodic() const
     {
         array_type::tensor<size_t, 2> ret = this->dofs();
@@ -303,18 +303,18 @@ public:
     }
 
     /**
-    Periodic node pairs, in two columns: (independent, dependent).
-    \return [ntyings, #ndim].
-    */
+     * Periodic node pairs, in two columns: (independent, dependent).
+     * @return [ntyings, #ndim].
+     */
     auto nodesPeriodic() const
     {
         return derived_cast().nodesPeriodic_impl();
     }
 
     /**
-    Reference node to use for periodicity, because all corners are tied to it.
-    \return Node number.
-    */
+     * Reference node to use for periodicity, because all corners are tied to it.
+     * @return Node number.
+     */
     auto nodesOrigin() const
     {
         return derived_cast().nodesOrigin_impl();
@@ -333,163 +333,163 @@ private:
 };
 
 /**
-CRTP base class for regular meshes in 2d.
-*/
+ * CRTP base class for regular meshes in 2d.
+ */
 template <class D>
 class RegularBase2d : public RegularBase<D> {
 public:
     /**
-    Underlying type.
-    */
+     * Underlying type.
+     */
     using derived_type = D;
 
     /**
-    Nodes along the bottom edge (y = 0), in order of increasing x.
-    \return List of node numbers.
-    */
+     * Nodes along the bottom edge (y = 0), in order of increasing x.
+     * @return List of node numbers.
+     */
     auto nodesBottomEdge() const
     {
         return derived_cast().nodesBottomEdge_impl();
     }
 
     /**
-    Nodes along the top edge (y = #nely * #h), in order of increasing x.
-    \return List of node numbers.
-    */
+     * Nodes along the top edge (y = #nely * #h), in order of increasing x.
+     * @return List of node numbers.
+     */
     auto nodesTopEdge() const
     {
         return derived_cast().nodesTopEdge_impl();
     }
 
     /**
-    Nodes along the left edge (x = 0), in order of increasing y.
-    \return List of node numbers.
-    */
+     * Nodes along the left edge (x = 0), in order of increasing y.
+     * @return List of node numbers.
+     */
     auto nodesLeftEdge() const
     {
         return derived_cast().nodesLeftEdge_impl();
     }
 
     /**
-    Nodes along the right edge (x = #nelx * #h), in order of increasing y.
-    \return List of node numbers.
-    */
+     * Nodes along the right edge (x = #nelx * #h), in order of increasing y.
+     * @return List of node numbers.
+     */
     auto nodesRightEdge() const
     {
         return derived_cast().nodesRightEdge_impl();
     }
 
     /**
-    Nodes along the bottom edge (y = 0), without the corners (at x = 0 and x = #nelx * #h).
-    Same as: nodesBottomEdge()[1: -1].
-    \return List of node numbers.
-    */
+     * Nodes along the bottom edge (y = 0), without the corners (at x = 0 and x = #nelx * #h).
+     * Same as: nodesBottomEdge()[1: -1].
+     * @return List of node numbers.
+     */
     auto nodesBottomOpenEdge() const
     {
         return derived_cast().nodesBottomOpenEdge_impl();
     }
 
     /**
-    Nodes along the top edge (y = #nely * #h), without the corners (at x = 0 and x = #nelx * #h).
-    Same as: nodesTopEdge()[1: -1].
-    \return List of node numbers.
-    */
+     * Nodes along the top edge (y = #nely * #h), without the corners (at x = 0 and x = #nelx * #h).
+     * Same as: nodesTopEdge()[1: -1].
+     * @return List of node numbers.
+     */
     auto nodesTopOpenEdge() const
     {
         return derived_cast().nodesTopOpenEdge_impl();
     }
 
     /**
-    Nodes along the left edge (x = 0), without the corners (at y = 0 and y = #nely * #h).
-    Same as: nodesLeftEdge()[1: -1].
-    \return List of node numbers.
-    */
+     * Nodes along the left edge (x = 0), without the corners (at y = 0 and y = #nely * #h).
+     * Same as: nodesLeftEdge()[1: -1].
+     * @return List of node numbers.
+     */
     auto nodesLeftOpenEdge() const
     {
         return derived_cast().nodesLeftOpenEdge_impl();
     }
 
     /**
-    Nodes along the right edge (x = #nelx * #h), without the corners (at y = 0 and y = #nely * #h).
-    Same as: nodesRightEdge()[1: -1].
-    \return List of node numbers.
-    */
+     * Nodes along the right edge (x = #nelx * #h), without the corners (at y = 0 and y = #nely *
+     * #h). Same as: nodesRightEdge()[1: -1].
+     * @return List of node numbers.
+     */
     auto nodesRightOpenEdge() const
     {
         return derived_cast().nodesRightOpenEdge_impl();
     }
 
     /**
-    The bottom-left corner node (at x = 0, y = 0).
-    Same as nodesBottomEdge()[0] and nodesLeftEdge()[0].
-    \return Node number.
-    */
+     * The bottom-left corner node (at x = 0, y = 0).
+     * Same as nodesBottomEdge()[0] and nodesLeftEdge()[0].
+     * @return Node number.
+     */
     auto nodesBottomLeftCorner() const
     {
         return derived_cast().nodesBottomLeftCorner_impl();
     }
 
     /**
-    The bottom-right corner node (at x = #nelx * #h, y = 0).
-    Same as nodesBottomEdge()[-1] and nodesRightEdge()[0].
-    \return Node number.
-    */
+     * The bottom-right corner node (at x = #nelx * #h, y = 0).
+     * Same as nodesBottomEdge()[-1] and nodesRightEdge()[0].
+     * @return Node number.
+     */
     auto nodesBottomRightCorner() const
     {
         return derived_cast().nodesBottomRightCorner_impl();
     }
 
     /**
-    The top-left corner node (at x = 0, y = #nely * #h).
-    Same as nodesTopEdge()[0] and nodesRightEdge()[-1].
-    \return Node number.
-    */
+     * The top-left corner node (at x = 0, y = #nely * #h).
+     * Same as nodesTopEdge()[0] and nodesRightEdge()[-1].
+     * @return Node number.
+     */
     auto nodesTopLeftCorner() const
     {
         return derived_cast().nodesTopLeftCorner_impl();
     }
 
     /**
-    The top-right corner node (at x = #nelx * #h, y = #nely * #h).
-    Same as nodesTopEdge()[-1] and nodesRightEdge()[-1].
-    \return Node number.
-    */
+     * The top-right corner node (at x = #nelx * #h, y = #nely * #h).
+     * Same as nodesTopEdge()[-1] and nodesRightEdge()[-1].
+     * @return Node number.
+     */
     auto nodesTopRightCorner() const
     {
         return derived_cast().nodesTopRightCorner_impl();
     }
 
     /**
-    Alias of nodesBottomLeftCorner().
-    \return Node number.
-    */
+     * Alias of nodesBottomLeftCorner().
+     * @return Node number.
+     */
     auto nodesLeftBottomCorner() const
     {
         return derived_cast().nodesBottomLeftCorner_impl();
     }
 
     /**
-    Alias of nodesTopLeftCorner().
-    \return Node number.
-    */
+     * Alias of nodesTopLeftCorner().
+     * @return Node number.
+     */
     auto nodesLeftTopCorner() const
     {
         return derived_cast().nodesTopLeftCorner_impl();
     }
 
     /**
-    Alias of nodesBottomRightCorner().
-    \return Node number.
-    */
+     * Alias of nodesBottomRightCorner().
+     * @return Node number.
+     */
     auto nodesRightBottomCorner() const
     {
         return derived_cast().nodesBottomRightCorner_impl();
     }
 
     /**
-    Alias of nodesTopRightCorner().
-    \return Node number.
-    */
+     * Alias of nodesTopRightCorner().
+     * @return Node number.
+     */
     auto nodesRightTopCorner() const
     {
         return derived_cast().nodesTopRightCorner_impl();
@@ -546,1016 +546,1016 @@ private:
 };
 
 /**
-CRTP base class for regular meshes in 3d.
-*/
+ * CRTP base class for regular meshes in 3d.
+ */
 template <class D>
 class RegularBase3d : public RegularBase<D> {
 public:
     /**
-    Underlying type.
-    */
+     * Underlying type.
+     */
     using derived_type = D;
 
     /**
-    Number of elements in y-direction == height of the mesh, in units of #h,
-    \return unsigned int
-    */
+     * Number of elements in y-direction == height of the mesh, in units of #h,
+     * @return unsigned int
+     */
     auto nelz() const
     {
         return derived_cast().nelz_impl();
     }
 
     /**
-    Nodes along the bottom face (y = 0).
-    \return List of node numbers.
-    */
+     * Nodes along the bottom face (y = 0).
+     * @return List of node numbers.
+     */
     auto nodesBottom() const
     {
         return derived_cast().nodesBottom_impl();
     }
 
     /**
-    Nodes along the top face (y = #nely * #h).
-    \return List of node numbers.
-    */
+     * Nodes along the top face (y = #nely * #h).
+     * @return List of node numbers.
+     */
     auto nodesTop() const
     {
         return derived_cast().nodesTop_impl();
     }
 
     /**
-    Nodes along the left face (x = 0).
-    \return List of node numbers.
-    */
+     * Nodes along the left face (x = 0).
+     * @return List of node numbers.
+     */
     auto nodesLeft() const
     {
         return derived_cast().nodesLeft_impl();
     }
 
     /**
-    Nodes along the right face (x = #nelx * #h).
-    \return List of node numbers.
-    */
+     * Nodes along the right face (x = #nelx * #h).
+     * @return List of node numbers.
+     */
     auto nodesRight() const
     {
         return derived_cast().nodesRight_impl();
     }
 
     /**
-    Nodes along the front face (z = 0).
-    \return List of node numbers.
-    */
+     * Nodes along the front face (z = 0).
+     * @return List of node numbers.
+     */
     auto nodesFront() const
     {
         return derived_cast().nodesFront_impl();
     }
 
     /**
-    Nodes along the back face (z = #nelz * #h).
-    \return List of node numbers.
-    */
+     * Nodes along the back face (z = #nelz * #h).
+     * @return List of node numbers.
+     */
     auto nodesBack() const
     {
         return derived_cast().nodesBack_impl();
     }
 
     /**
-    Nodes along the edge at the intersection of the front and bottom faces
-    (z = 0 and y = 0).
-    \return List of node numbers.
-    */
+     * Nodes along the edge at the intersection of the front and bottom faces
+     * (z = 0 and y = 0).
+     * @return List of node numbers.
+     */
     auto nodesFrontBottomEdge() const
     {
         return derived_cast().nodesFrontBottomEdge_impl();
     }
 
     /**
-    Nodes along the edge at the intersection of the front and top faces
-    (z = 0 and y = #nely * #h).
-    \return List of node numbers.
-    */
+     * Nodes along the edge at the intersection of the front and top faces
+     * (z = 0 and y = #nely * #h).
+     * @return List of node numbers.
+     */
     auto nodesFrontTopEdge() const
     {
         return derived_cast().nodesFrontTopEdge_impl();
     }
 
     /**
-    Nodes along the edge at the intersection of the front and left faces
-    (z = 0 and x = 0).
-    \return List of node numbers.
-    */
+     * Nodes along the edge at the intersection of the front and left faces
+     * (z = 0 and x = 0).
+     * @return List of node numbers.
+     */
     auto nodesFrontLeftEdge() const
     {
         return derived_cast().nodesFrontLeftEdge_impl();
     }
 
     /**
-    Nodes along the edge at the intersection of the front and right faces
-    (z = 0 and x = #nelx * #h).
-    \return List of node numbers.
-    */
+     * Nodes along the edge at the intersection of the front and right faces
+     * (z = 0 and x = #nelx * #h).
+     * @return List of node numbers.
+     */
     auto nodesFrontRightEdge() const
     {
         return derived_cast().nodesFrontRightEdge_impl();
     }
 
     /**
-    Nodes along the edge at the intersection of the back and bottom faces
-    (z = #nelz * #h and y = #nely * #h).
-    \return List of node numbers.
-    */
+     * Nodes along the edge at the intersection of the back and bottom faces
+     * (z = #nelz * #h and y = #nely * #h).
+     * @return List of node numbers.
+     */
     auto nodesBackBottomEdge() const
     {
         return derived_cast().nodesBackBottomEdge_impl();
     }
 
     /**
-    Nodes along the edge at the intersection of the back and top faces
-    (z = #nelz * #h and x = 0).
-    \return List of node numbers.
-    */
+     * Nodes along the edge at the intersection of the back and top faces
+     * (z = #nelz * #h and x = 0).
+     * @return List of node numbers.
+     */
     auto nodesBackTopEdge() const
     {
         return derived_cast().nodesBackTopEdge_impl();
     }
 
     /**
-    Nodes along the edge at the intersection of the back and left faces
-    (z = #nelz * #h and x = #nelx * #h).
-    \return List of node numbers.
-    */
+     * Nodes along the edge at the intersection of the back and left faces
+     * (z = #nelz * #h and x = #nelx * #h).
+     * @return List of node numbers.
+     */
     auto nodesBackLeftEdge() const
     {
         return derived_cast().nodesBackLeftEdge_impl();
     }
 
     /**
-    Nodes along the edge at the intersection of the back and right faces
-    (? = #nelz * #h and ? = ?).
-    \return List of node numbers.
-    */
+     * Nodes along the edge at the intersection of the back and right faces
+     * (? = #nelz * #h and ? = ?).
+     * @return List of node numbers.
+     */
     auto nodesBackRightEdge() const
     {
         return derived_cast().nodesBackRightEdge_impl();
     }
 
     /**
-    Nodes along the edge at the intersection of the bottom and left faces
-    (y = 0 and x = 0).
-    \return List of node numbers.
-    */
+     * Nodes along the edge at the intersection of the bottom and left faces
+     * (y = 0 and x = 0).
+     * @return List of node numbers.
+     */
     auto nodesBottomLeftEdge() const
     {
         return derived_cast().nodesBottomLeftEdge_impl();
     }
 
     /**
-    Nodes along the edge at the intersection of the bottom and right faces
-    (y = 0 and x = #nelx * #h).
-    \return List of node numbers.
-    */
+     * Nodes along the edge at the intersection of the bottom and right faces
+     * (y = 0 and x = #nelx * #h).
+     * @return List of node numbers.
+     */
     auto nodesBottomRightEdge() const
     {
         return derived_cast().nodesBottomRightEdge_impl();
     }
 
     /**
-    Nodes along the edge at the intersection of the top and left faces
-    (y = 0 and x = #nelx * #h).
-    \return List of node numbers.
-    */
+     * Nodes along the edge at the intersection of the top and left faces
+     * (y = 0 and x = #nelx * #h).
+     * @return List of node numbers.
+     */
     auto nodesTopLeftEdge() const
     {
         return derived_cast().nodesTopLeftEdge_impl();
     }
 
     /**
-    Nodes along the edge at the intersection of the top and right faces
-    (y = #nely * #h and x = #nelx * #h).
-    \return List of node numbers.
-    */
+     * Nodes along the edge at the intersection of the top and right faces
+     * (y = #nely * #h and x = #nelx * #h).
+     * @return List of node numbers.
+     */
     auto nodesTopRightEdge() const
     {
         return derived_cast().nodesTopRightEdge_impl();
     }
 
     /**
-    Alias of nodesFrontBottomEdge()
-    \return List of node numbers.
-    */
+     * Alias of nodesFrontBottomEdge()
+     * @return List of node numbers.
+     */
     auto nodesBottomFrontEdge() const
     {
         return derived_cast().nodesFrontBottomEdge_impl();
     }
 
     /**
-    Alias of nodesBackBottomEdge()
-    \return List of node numbers.
-    */
+     * Alias of nodesBackBottomEdge()
+     * @return List of node numbers.
+     */
     auto nodesBottomBackEdge() const
     {
         return derived_cast().nodesBackBottomEdge_impl();
     }
 
     /**
-    Alias of nodesFrontTopEdge()
-    \return List of node numbers.
-    */
+     * Alias of nodesFrontTopEdge()
+     * @return List of node numbers.
+     */
     auto nodesTopFrontEdge() const
     {
         return derived_cast().nodesFrontTopEdge_impl();
     }
 
     /**
-    Alias of nodesBackTopEdge()
-    \return List of node numbers.
-    */
+     * Alias of nodesBackTopEdge()
+     * @return List of node numbers.
+     */
     auto nodesTopBackEdge() const
     {
         return derived_cast().nodesBackTopEdge_impl();
     }
 
     /**
-    Alias of nodesBottomLeftEdge()
-    \return List of node numbers.
-    */
+     * Alias of nodesBottomLeftEdge()
+     * @return List of node numbers.
+     */
     auto nodesLeftBottomEdge() const
     {
         return derived_cast().nodesBottomLeftEdge_impl();
     }
 
     /**
-    Alias of nodesFrontLeftEdge()
-    \return List of node numbers.
-    */
+     * Alias of nodesFrontLeftEdge()
+     * @return List of node numbers.
+     */
     auto nodesLeftFrontEdge() const
     {
         return derived_cast().nodesFrontLeftEdge_impl();
     }
 
     /**
-    Alias of nodesBackLeftEdge()
-    \return List of node numbers.
-    */
+     * Alias of nodesBackLeftEdge()
+     * @return List of node numbers.
+     */
     auto nodesLeftBackEdge() const
     {
         return derived_cast().nodesBackLeftEdge_impl();
     }
 
     /**
-    Alias of nodesTopLeftEdge()
-    \return List of node numbers.
-    */
+     * Alias of nodesTopLeftEdge()
+     * @return List of node numbers.
+     */
     auto nodesLeftTopEdge() const
     {
         return derived_cast().nodesTopLeftEdge_impl();
     }
 
     /**
-    Alias of nodesBottomRightEdge()
-    \return List of node numbers.
-    */
+     * Alias of nodesBottomRightEdge()
+     * @return List of node numbers.
+     */
     auto nodesRightBottomEdge() const
     {
         return derived_cast().nodesBottomRightEdge_impl();
     }
 
     /**
-    Alias of nodesTopRightEdge()
-    \return List of node numbers.
-    */
+     * Alias of nodesTopRightEdge()
+     * @return List of node numbers.
+     */
     auto nodesRightTopEdge() const
     {
         return derived_cast().nodesTopRightEdge_impl();
     }
 
     /**
-    Alias of nodesFrontRightEdge()
-    \return List of node numbers.
-    */
+     * Alias of nodesFrontRightEdge()
+     * @return List of node numbers.
+     */
     auto nodesRightFrontEdge() const
     {
         return derived_cast().nodesFrontRightEdge_impl();
     }
 
     /**
-    Alias of nodesBackRightEdge()
-    \return List of node numbers.
-    */
+     * Alias of nodesBackRightEdge()
+     * @return List of node numbers.
+     */
     auto nodesRightBackEdge() const
     {
         return derived_cast().nodesBackRightEdge_impl();
     }
 
     /**
-    Nodes along the front face excluding edges.
-    Same as different between nodesFront() and
-    [nodesFrontBottomEdge(), nodesFrontTopEdge(), nodesFrontLeftEdge(), nodesFrontRightEdge()]
-    \return list of node numbers.
-    */
+     * Nodes along the front face excluding edges.
+     * Same as different between nodesFront() and
+     * [nodesFrontBottomEdge(), nodesFrontTopEdge(), nodesFrontLeftEdge(), nodesFrontRightEdge()]
+     * @return list of node numbers.
+     */
     auto nodesFrontFace() const
     {
         return derived_cast().nodesFrontFace_impl();
     }
 
     /**
-    Nodes along the back face excluding edges.
-    Same as different between nodesBack() and
-    [nodesBackBottomEdge(), nodesBackTopEdge(), nodesBackLeftEdge(), nodesBackRightEdge()]
-    \return list of node numbers.
-    */
+     * Nodes along the back face excluding edges.
+     * Same as different between nodesBack() and
+     * [nodesBackBottomEdge(), nodesBackTopEdge(), nodesBackLeftEdge(), nodesBackRightEdge()]
+     * @return list of node numbers.
+     */
     auto nodesBackFace() const
     {
         return derived_cast().nodesBackFace_impl();
     }
 
     /**
-    Nodes along the left face excluding edges.
-    Same as different between nodesLeft() and
-    [nodesFrontLeftEdge(), nodesBackLeftEdge(), nodesBottomLeftEdge(), nodesTopLeftEdge()]
-    \return list of node numbers.
-    */
+     * Nodes along the left face excluding edges.
+     * Same as different between nodesLeft() and
+     * [nodesFrontLeftEdge(), nodesBackLeftEdge(), nodesBottomLeftEdge(), nodesTopLeftEdge()]
+     * @return list of node numbers.
+     */
     auto nodesLeftFace() const
     {
         return derived_cast().nodesLeftFace_impl();
     }
 
     /**
-    Nodes along the right face excluding edges.
-    Same as different between nodesRight() and
-    [nodesFrontRightEdge(), nodesBackRightEdge(), nodesBottomRightEdge(), nodesTopRightEdge()]
-    \return list of node numbers.
-    */
+     * Nodes along the right face excluding edges.
+     * Same as different between nodesRight() and
+     * [nodesFrontRightEdge(), nodesBackRightEdge(), nodesBottomRightEdge(), nodesTopRightEdge()]
+     * @return list of node numbers.
+     */
     auto nodesRightFace() const
     {
         return derived_cast().nodesRightFace_impl();
     }
 
     /**
-    Nodes along the bottom face excluding edges.
-    Same as different between nodesBottom() and
-    [nodesBackBottomEdge(), nodesBackTopEdge(), nodesBackLeftEdge(), nodesBackRightEdge()]
-    \return list of node numbers.
-    */
+     * Nodes along the bottom face excluding edges.
+     * Same as different between nodesBottom() and
+     * [nodesBackBottomEdge(), nodesBackTopEdge(), nodesBackLeftEdge(), nodesBackRightEdge()]
+     * @return list of node numbers.
+     */
     auto nodesBottomFace() const
     {
         return derived_cast().nodesBottomFace_impl();
     }
 
     /**
-    Nodes along the top face excluding edges.
-    Same as different between nodesTop() and
-    [nodesFrontBottomEdge(), nodesFrontTopEdge(), nodesFrontLeftEdge(), nodesFrontRightEdge()]
-    \return list of node numbers.
-    */
+     * Nodes along the top face excluding edges.
+     * Same as different between nodesTop() and
+     * [nodesFrontBottomEdge(), nodesFrontTopEdge(), nodesFrontLeftEdge(), nodesFrontRightEdge()]
+     * @return list of node numbers.
+     */
     auto nodesTopFace() const
     {
         return derived_cast().nodesTopFace_impl();
     }
 
     /**
-    Same as nodesFrontBottomEdge() but without corners.
-    \return List of node numbers.
-    */
+     * Same as nodesFrontBottomEdge() but without corners.
+     * @return List of node numbers.
+     */
     auto nodesFrontBottomOpenEdge() const
     {
         return derived_cast().nodesFrontBottomOpenEdge_impl();
     }
 
     /**
-    Same as nodesFrontTopEdge() but without corners.
-    \return List of node numbers.
-    */
+     * Same as nodesFrontTopEdge() but without corners.
+     * @return List of node numbers.
+     */
     auto nodesFrontTopOpenEdge() const
     {
         return derived_cast().nodesFrontTopOpenEdge_impl();
     }
 
     /**
-    Same as nodesFrontLeftEdge() but without corners.
-    \return List of node numbers.
-    */
+     * Same as nodesFrontLeftEdge() but without corners.
+     * @return List of node numbers.
+     */
     auto nodesFrontLeftOpenEdge() const
     {
         return derived_cast().nodesFrontLeftOpenEdge_impl();
     }
 
     /**
-    Same as nodesFrontRightEdge() but without corners.
-    \return List of node numbers.
-    */
+     * Same as nodesFrontRightEdge() but without corners.
+     * @return List of node numbers.
+     */
     auto nodesFrontRightOpenEdge() const
     {
         return derived_cast().nodesFrontRightOpenEdge_impl();
     }
 
     /**
-    Same as nodesBackBottomEdge() but without corners.
-    \return List of node numbers.
-    */
+     * Same as nodesBackBottomEdge() but without corners.
+     * @return List of node numbers.
+     */
     auto nodesBackBottomOpenEdge() const
     {
         return derived_cast().nodesBackBottomOpenEdge_impl();
     }
 
     /**
-    Same as nodesBackTopEdge() but without corners.
-    \return List of node numbers.
-    */
+     * Same as nodesBackTopEdge() but without corners.
+     * @return List of node numbers.
+     */
     auto nodesBackTopOpenEdge() const
     {
         return derived_cast().nodesBackTopOpenEdge_impl();
     }
 
     /**
-    Same as nodesBackLeftEdge() but without corners.
-    \return List of node numbers.
-    */
+     * Same as nodesBackLeftEdge() but without corners.
+     * @return List of node numbers.
+     */
     auto nodesBackLeftOpenEdge() const
     {
         return derived_cast().nodesBackLeftOpenEdge_impl();
     }
 
     /**
-    Same as nodesBackRightEdge() but without corners.
-    \return List of node numbers.
-    */
+     * Same as nodesBackRightEdge() but without corners.
+     * @return List of node numbers.
+     */
     auto nodesBackRightOpenEdge() const
     {
         return derived_cast().nodesBackRightOpenEdge_impl();
     }
 
     /**
-    Same as nodesBottomLeftEdge() but without corners.
-    \return List of node numbers.
-    */
+     * Same as nodesBottomLeftEdge() but without corners.
+     * @return List of node numbers.
+     */
     auto nodesBottomLeftOpenEdge() const
     {
         return derived_cast().nodesBottomLeftOpenEdge_impl();
     }
 
     /**
-    Same as nodesBottomRightEdge() but without corners.
-    \return List of node numbers.
-    */
+     * Same as nodesBottomRightEdge() but without corners.
+     * @return List of node numbers.
+     */
     auto nodesBottomRightOpenEdge() const
     {
         return derived_cast().nodesBottomRightOpenEdge_impl();
     }
 
     /**
-    Same as nodesTopLeftEdge() but without corners.
-    \return List of node numbers.
-    */
+     * Same as nodesTopLeftEdge() but without corners.
+     * @return List of node numbers.
+     */
     auto nodesTopLeftOpenEdge() const
     {
         return derived_cast().nodesTopLeftOpenEdge_impl();
     }
 
     /**
-    Same as nodesTopRightEdge() but without corners.
-    \return List of node numbers.
-    */
+     * Same as nodesTopRightEdge() but without corners.
+     * @return List of node numbers.
+     */
     auto nodesTopRightOpenEdge() const
     {
         return derived_cast().nodesTopRightOpenEdge_impl();
     }
 
     /**
-    Alias of nodesFrontBottomOpenEdge().
-    \return List of node numbers.
-    */
+     * Alias of nodesFrontBottomOpenEdge().
+     * @return List of node numbers.
+     */
     auto nodesBottomFrontOpenEdge() const
     {
         return derived_cast().nodesFrontBottomOpenEdge_impl();
     }
 
     /**
-    Alias of nodesBackBottomOpenEdge().
-    \return List of node numbers.
-    */
+     * Alias of nodesBackBottomOpenEdge().
+     * @return List of node numbers.
+     */
     auto nodesBottomBackOpenEdge() const
     {
         return derived_cast().nodesBackBottomOpenEdge_impl();
     }
 
     /**
-    Alias of nodesFrontTopOpenEdge().
-    \return List of node numbers.
-    */
+     * Alias of nodesFrontTopOpenEdge().
+     * @return List of node numbers.
+     */
     auto nodesTopFrontOpenEdge() const
     {
         return derived_cast().nodesFrontTopOpenEdge_impl();
     }
 
     /**
-    Alias of nodesBackTopOpenEdge().
-    \return List of node numbers.
-    */
+     * Alias of nodesBackTopOpenEdge().
+     * @return List of node numbers.
+     */
     auto nodesTopBackOpenEdge() const
     {
         return derived_cast().nodesBackTopOpenEdge_impl();
     }
 
     /**
-    Alias of nodesBottomLeftOpenEdge().
-    \return List of node numbers.
-    */
+     * Alias of nodesBottomLeftOpenEdge().
+     * @return List of node numbers.
+     */
     auto nodesLeftBottomOpenEdge() const
     {
         return derived_cast().nodesBottomLeftOpenEdge_impl();
     }
 
     /**
-    Alias of nodesFrontLeftOpenEdge().
-    \return List of node numbers.
-    */
+     * Alias of nodesFrontLeftOpenEdge().
+     * @return List of node numbers.
+     */
     auto nodesLeftFrontOpenEdge() const
     {
         return derived_cast().nodesFrontLeftOpenEdge_impl();
     }
 
     /**
-    Alias of nodesBackLeftOpenEdge().
-    \return List of node numbers.
-    */
+     * Alias of nodesBackLeftOpenEdge().
+     * @return List of node numbers.
+     */
     auto nodesLeftBackOpenEdge() const
     {
         return derived_cast().nodesBackLeftOpenEdge_impl();
     }
 
     /**
-    Alias of nodesTopLeftOpenEdge().
-    \return List of node numbers.
-    */
+     * Alias of nodesTopLeftOpenEdge().
+     * @return List of node numbers.
+     */
     auto nodesLeftTopOpenEdge() const
     {
         return derived_cast().nodesTopLeftOpenEdge_impl();
     }
 
     /**
-    Alias of nodesBottomRightOpenEdge().
-    \return List of node numbers.
-    */
+     * Alias of nodesBottomRightOpenEdge().
+     * @return List of node numbers.
+     */
     auto nodesRightBottomOpenEdge() const
     {
         return derived_cast().nodesBottomRightOpenEdge_impl();
     }
 
     /**
-    Alias of nodesTopRightOpenEdge().
-    \return List of node numbers.
-    */
+     * Alias of nodesTopRightOpenEdge().
+     * @return List of node numbers.
+     */
     auto nodesRightTopOpenEdge() const
     {
         return derived_cast().nodesTopRightOpenEdge_impl();
     }
 
     /**
-    Alias of nodesFrontRightOpenEdge().
-    \return List of node numbers.
-    */
+     * Alias of nodesFrontRightOpenEdge().
+     * @return List of node numbers.
+     */
     auto nodesRightFrontOpenEdge() const
     {
         return derived_cast().nodesFrontRightOpenEdge_impl();
     }
 
     /**
-    Alias of nodesBackRightOpenEdge().
-    \return List of node numbers.
-    */
+     * Alias of nodesBackRightOpenEdge().
+     * @return List of node numbers.
+     */
     auto nodesRightBackOpenEdge() const
     {
         return derived_cast().nodesBackRightOpenEdge_impl();
     }
 
     /**
-    Front-Bottom-Left corner node.
-    \return Node number.
-    */
+     * Front-Bottom-Left corner node.
+     * @return Node number.
+     */
     auto nodesFrontBottomLeftCorner() const
     {
         return derived_cast().nodesFrontBottomLeftCorner_impl();
     }
 
     /**
-    Front-Bottom-Right corner node.
-    \return Node number.
-    */
+     * Front-Bottom-Right corner node.
+     * @return Node number.
+     */
     auto nodesFrontBottomRightCorner() const
     {
         return derived_cast().nodesFrontBottomRightCorner_impl();
     }
 
     /**
-    Front-Top-Left corner node.
-    \return Node number.
-    */
+     * Front-Top-Left corner node.
+     * @return Node number.
+     */
     auto nodesFrontTopLeftCorner() const
     {
         return derived_cast().nodesFrontTopLeftCorner_impl();
     }
 
     /**
-    Front-Top-Right corner node.
-    \return Node number.
-    */
+     * Front-Top-Right corner node.
+     * @return Node number.
+     */
     auto nodesFrontTopRightCorner() const
     {
         return derived_cast().nodesFrontTopRightCorner_impl();
     }
 
     /**
-    Back-Bottom-Left corner node.
-    \return Node number.
-    */
+     * Back-Bottom-Left corner node.
+     * @return Node number.
+     */
     auto nodesBackBottomLeftCorner() const
     {
         return derived_cast().nodesBackBottomLeftCorner_impl();
     }
 
     /**
-    Back-Bottom-Right corner node.
-    \return Node number.
-    */
+     * Back-Bottom-Right corner node.
+     * @return Node number.
+     */
     auto nodesBackBottomRightCorner() const
     {
         return derived_cast().nodesBackBottomRightCorner_impl();
     }
 
     /**
-    Back-Top-Left corner node.
-    \return Node number.
-    */
+     * Back-Top-Left corner node.
+     * @return Node number.
+     */
     auto nodesBackTopLeftCorner() const
     {
         return derived_cast().nodesBackTopLeftCorner_impl();
     }
 
     /**
-    Back-Top-Right corner node.
-    \return Node number.
-    */
+     * Back-Top-Right corner node.
+     * @return Node number.
+     */
     auto nodesBackTopRightCorner() const
     {
         return derived_cast().nodesBackTopRightCorner_impl();
     }
 
     /**
-    Alias of nodesFrontBottomLeftCorner().
-    \return Node number.
-    */
+     * Alias of nodesFrontBottomLeftCorner().
+     * @return Node number.
+     */
     auto nodesFrontLeftBottomCorner() const
     {
         return derived_cast().nodesFrontBottomLeftCorner_impl();
     }
 
     /**
-    Alias of nodesFrontBottomLeftCorner().
-    \return Node number.
-    */
+     * Alias of nodesFrontBottomLeftCorner().
+     * @return Node number.
+     */
     auto nodesBottomFrontLeftCorner() const
     {
         return derived_cast().nodesFrontBottomLeftCorner_impl();
     }
 
     /**
-    Alias of nodesFrontBottomLeftCorner().
-    \return Node number.
-    */
+     * Alias of nodesFrontBottomLeftCorner().
+     * @return Node number.
+     */
     auto nodesBottomLeftFrontCorner() const
     {
         return derived_cast().nodesFrontBottomLeftCorner_impl();
     }
 
     /**
-    Alias of nodesFrontBottomLeftCorner().
-    \return Node number.
-    */
+     * Alias of nodesFrontBottomLeftCorner().
+     * @return Node number.
+     */
     auto nodesLeftFrontBottomCorner() const
     {
         return derived_cast().nodesFrontBottomLeftCorner_impl();
     }
 
     /**
-    Alias of nodesFrontBottomLeftCorner().
-    \return Node number.
-    */
+     * Alias of nodesFrontBottomLeftCorner().
+     * @return Node number.
+     */
     auto nodesLeftBottomFrontCorner() const
     {
         return derived_cast().nodesFrontBottomLeftCorner_impl();
     }
 
     /**
-    Alias of nodesFrontBottomRightCorner().
-    \return Node number.
-    */
+     * Alias of nodesFrontBottomRightCorner().
+     * @return Node number.
+     */
     auto nodesFrontRightBottomCorner() const
     {
         return derived_cast().nodesFrontBottomRightCorner_impl();
     }
 
     /**
-    Alias of nodesFrontBottomRightCorner().
-    \return Node number.
-    */
+     * Alias of nodesFrontBottomRightCorner().
+     * @return Node number.
+     */
     auto nodesBottomFrontRightCorner() const
     {
         return derived_cast().nodesFrontBottomRightCorner_impl();
     }
 
     /**
-    Alias of nodesFrontBottomRightCorner().
-    \return Node number.
-    */
+     * Alias of nodesFrontBottomRightCorner().
+     * @return Node number.
+     */
     auto nodesBottomRightFrontCorner() const
     {
         return derived_cast().nodesFrontBottomRightCorner_impl();
     }
 
     /**
-    Alias of nodesFrontBottomRightCorner().
-    \return Node number.
-    */
+     * Alias of nodesFrontBottomRightCorner().
+     * @return Node number.
+     */
     auto nodesRightFrontBottomCorner() const
     {
         return derived_cast().nodesFrontBottomRightCorner_impl();
     }
 
     /**
-    Alias of nodesFrontBottomRightCorner().
-    \return Node number.
-    */
+     * Alias of nodesFrontBottomRightCorner().
+     * @return Node number.
+     */
     auto nodesRightBottomFrontCorner() const
     {
         return derived_cast().nodesFrontBottomRightCorner_impl();
     }
 
     /**
-    Alias of nodesFrontTopLeftCorner().
-    \return Node number.
-    */
+     * Alias of nodesFrontTopLeftCorner().
+     * @return Node number.
+     */
     auto nodesFrontLeftTopCorner() const
     {
         return derived_cast().nodesFrontTopLeftCorner_impl();
     }
 
     /**
-    Alias of nodesFrontTopLeftCorner().
-    \return Node number.
-    */
+     * Alias of nodesFrontTopLeftCorner().
+     * @return Node number.
+     */
     auto nodesTopFrontLeftCorner() const
     {
         return derived_cast().nodesFrontTopLeftCorner_impl();
     }
 
     /**
-    Alias of nodesFrontTopLeftCorner().
-    \return Node number.
-    */
+     * Alias of nodesFrontTopLeftCorner().
+     * @return Node number.
+     */
     auto nodesTopLeftFrontCorner() const
     {
         return derived_cast().nodesFrontTopLeftCorner_impl();
     }
 
     /**
-    Alias of nodesFrontTopLeftCorner().
-    \return Node number.
-    */
+     * Alias of nodesFrontTopLeftCorner().
+     * @return Node number.
+     */
     auto nodesLeftFrontTopCorner() const
     {
         return derived_cast().nodesFrontTopLeftCorner_impl();
     }
 
     /**
-    Alias of nodesFrontTopLeftCorner().
-    \return Node number.
-    */
+     * Alias of nodesFrontTopLeftCorner().
+     * @return Node number.
+     */
     auto nodesLeftTopFrontCorner() const
     {
         return derived_cast().nodesFrontTopLeftCorner_impl();
     }
 
     /**
-    Alias of nodesFrontTopRightCorner().
-    \return Node number.
-    */
+     * Alias of nodesFrontTopRightCorner().
+     * @return Node number.
+     */
     auto nodesFrontRightTopCorner() const
     {
         return derived_cast().nodesFrontTopRightCorner_impl();
     }
 
     /**
-    Alias of nodesFrontTopRightCorner().
-    \return Node number.
-    */
+     * Alias of nodesFrontTopRightCorner().
+     * @return Node number.
+     */
     auto nodesTopFrontRightCorner() const
     {
         return derived_cast().nodesFrontTopRightCorner_impl();
     }
 
     /**
-    Alias of nodesFrontTopRightCorner().
-    \return Node number.
-    */
+     * Alias of nodesFrontTopRightCorner().
+     * @return Node number.
+     */
     auto nodesTopRightFrontCorner() const
     {
         return derived_cast().nodesFrontTopRightCorner_impl();
     }
 
     /**
-    Alias of nodesFrontTopRightCorner().
-    \return Node number.
-    */
+     * Alias of nodesFrontTopRightCorner().
+     * @return Node number.
+     */
     auto nodesRightFrontTopCorner() const
     {
         return derived_cast().nodesFrontTopRightCorner_impl();
     }
 
     /**
-    Alias of nodesFrontTopRightCorner().
-    \return Node number.
-    */
+     * Alias of nodesFrontTopRightCorner().
+     * @return Node number.
+     */
     auto nodesRightTopFrontCorner() const
     {
         return derived_cast().nodesFrontTopRightCorner_impl();
     }
 
     /**
-    Alias of nodesBackBottomLeftCorner().
-    \return Node number.
-    */
+     * Alias of nodesBackBottomLeftCorner().
+     * @return Node number.
+     */
     auto nodesBackLeftBottomCorner() const
     {
         return derived_cast().nodesBackBottomLeftCorner_impl();
     }
 
     /**
-    Alias of nodesBackBottomLeftCorner().
-    \return Node number.
-    */
+     * Alias of nodesBackBottomLeftCorner().
+     * @return Node number.
+     */
     auto nodesBottomBackLeftCorner() const
     {
         return derived_cast().nodesBackBottomLeftCorner_impl();
     }
 
     /**
-    Alias of nodesBackBottomLeftCorner().
-    \return Node number.
-    */
+     * Alias of nodesBackBottomLeftCorner().
+     * @return Node number.
+     */
     auto nodesBottomLeftBackCorner() const
     {
         return derived_cast().nodesBackBottomLeftCorner_impl();
     }
 
     /**
-    Alias of nodesBackBottomLeftCorner().
-    \return Node number.
-    */
+     * Alias of nodesBackBottomLeftCorner().
+     * @return Node number.
+     */
     auto nodesLeftBackBottomCorner() const
     {
         return derived_cast().nodesBackBottomLeftCorner_impl();
     }
 
     /**
-    Alias of nodesBackBottomLeftCorner().
-    \return Node number.
-    */
+     * Alias of nodesBackBottomLeftCorner().
+     * @return Node number.
+     */
     auto nodesLeftBottomBackCorner() const
     {
         return derived_cast().nodesBackBottomLeftCorner_impl();
     }
 
     /**
-    Alias of nodesBackBottomRightCorner().
-    \return Node number.
-    */
+     * Alias of nodesBackBottomRightCorner().
+     * @return Node number.
+     */
     auto nodesBackRightBottomCorner() const
     {
         return derived_cast().nodesBackBottomRightCorner_impl();
     }
 
     /**
-    Alias of nodesBackBottomRightCorner().
-    \return Node number.
-    */
+     * Alias of nodesBackBottomRightCorner().
+     * @return Node number.
+     */
     auto nodesBottomBackRightCorner() const
     {
         return derived_cast().nodesBackBottomRightCorner_impl();
     }
 
     /**
-    Alias of nodesBackBottomRightCorner().
-    \return Node number.
-    */
+     * Alias of nodesBackBottomRightCorner().
+     * @return Node number.
+     */
     auto nodesBottomRightBackCorner() const
     {
         return derived_cast().nodesBackBottomRightCorner_impl();
     }
 
     /**
-    Alias of nodesBackBottomRightCorner().
-    \return Node number.
-    */
+     * Alias of nodesBackBottomRightCorner().
+     * @return Node number.
+     */
     auto nodesRightBackBottomCorner() const
     {
         return derived_cast().nodesBackBottomRightCorner_impl();
     }
 
     /**
-    Alias of nodesBackBottomRightCorner().
-    \return Node number.
-    */
+     * Alias of nodesBackBottomRightCorner().
+     * @return Node number.
+     */
     auto nodesRightBottomBackCorner() const
     {
         return derived_cast().nodesBackBottomRightCorner_impl();
     }
 
     /**
-    Alias of nodesBackTopLeftCorner().
-    \return Node number.
-    */
+     * Alias of nodesBackTopLeftCorner().
+     * @return Node number.
+     */
     auto nodesBackLeftTopCorner() const
     {
         return derived_cast().nodesBackTopLeftCorner_impl();
     }
 
     /**
-    Alias of nodesBackTopLeftCorner().
-    \return Node number.
-    */
+     * Alias of nodesBackTopLeftCorner().
+     * @return Node number.
+     */
     auto nodesTopBackLeftCorner() const
     {
         return derived_cast().nodesBackTopLeftCorner_impl();
     }
 
     /**
-    Alias of nodesBackTopLeftCorner().
-    \return Node number.
-    */
+     * Alias of nodesBackTopLeftCorner().
+     * @return Node number.
+     */
     auto nodesTopLeftBackCorner() const
     {
         return derived_cast().nodesBackTopLeftCorner_impl();
     }
 
     /**
-    Alias of nodesBackTopLeftCorner().
-    \return Node number.
-    */
+     * Alias of nodesBackTopLeftCorner().
+     * @return Node number.
+     */
     auto nodesLeftBackTopCorner() const
     {
         return derived_cast().nodesBackTopLeftCorner_impl();
     }
 
     /**
-    Alias of nodesBackTopLeftCorner().
-    \return Node number.
-    */
+     * Alias of nodesBackTopLeftCorner().
+     * @return Node number.
+     */
     auto nodesLeftTopBackCorner() const
     {
         return derived_cast().nodesBackTopLeftCorner_impl();
     }
 
     /**
-    Alias of nodesBackTopRightCorner().
-    \return Node number.
-    */
+     * Alias of nodesBackTopRightCorner().
+     * @return Node number.
+     */
     auto nodesBackRightTopCorner() const
     {
         return derived_cast().nodesBackTopRightCorner_impl();
     }
 
     /**
-    Alias of nodesBackTopRightCorner().
-    \return Node number.
-    */
+     * Alias of nodesBackTopRightCorner().
+     * @return Node number.
+     */
     auto nodesTopBackRightCorner() const
     {
         return derived_cast().nodesBackTopRightCorner_impl();
     }
 
     /**
-    Alias of nodesBackTopRightCorner().
-    \return Node number.
-    */
+     * Alias of nodesBackTopRightCorner().
+     * @return Node number.
+     */
     auto nodesTopRightBackCorner() const
     {
         return derived_cast().nodesBackTopRightCorner_impl();
     }
 
     /**
-    Alias of nodesBackTopRightCorner().
-    \return Node number.
-    */
+     * Alias of nodesBackTopRightCorner().
+     * @return Node number.
+     */
     auto nodesRightBackTopCorner() const
     {
         return derived_cast().nodesBackTopRightCorner_impl();
     }
 
     /**
-    Alias of nodesBackTopRightCorner().
-    \return Node number.
-    */
+     * Alias of nodesBackTopRightCorner().
+     * @return Node number.
+     */
     auto nodesRightTopBackCorner() const
     {
         return derived_cast().nodesBackTopRightCorner_impl();
@@ -1698,17 +1698,17 @@ private:
 };
 
 /**
-Find overlapping nodes. The output has the following structure:
-
-    [[nodes_from_mesh_a],
-     [nodes_from_mesh_b]]
-
-\param coor_a Nodal coordinates of mesh "a" [nnode, ndim].
-\param coor_b Nodal coordinates of mesh "b" [nnode, ndim].
-\param rtol Relative tolerance for position match.
-\param atol Absolute tolerance for position match.
-\return Overlapping nodes.
-*/
+ * Find overlapping nodes. The output has the following structure:
+ *
+ *     [[nodes_from_mesh_a],
+ *      [nodes_from_mesh_b]]
+ *
+ * @param coor_a Nodal coordinates of mesh "a" [nnode, ndim].
+ * @param coor_b Nodal coordinates of mesh "b" [nnode, ndim].
+ * @param rtol Relative tolerance for position match.
+ * @param atol Absolute tolerance for position match.
+ * @return Overlapping nodes.
+ */
 template <class S, class T>
 inline array_type::tensor<size_t, 2>
 overlapping(const S& coor_a, const T& coor_b, double rtol = 1e-5, double atol = 1e-8)
@@ -1741,23 +1741,23 @@ overlapping(const S& coor_a, const T& coor_b, double rtol = 1e-5, double atol = 
 }
 
 /**
-Stitch two mesh objects, specifying overlapping nodes by hand.
-*/
+ * Stitch two mesh objects, specifying overlapping nodes by hand.
+ */
 class ManualStitch {
 public:
     ManualStitch() = default;
 
     /**
-    \param coor_a Nodal coordinates of mesh "a"  [nnode, ndim].
-    \param conn_a Connectivity of mesh "a" [nelem, nne].
-    \param overlapping_nodes_a Node-numbers of mesh "a" that overlap with mesh "b" [n].
-    \param coor_b Nodal coordinates of mesh "b"  [nnode, ndim].
-    \param conn_b Connectivity of mesh "b" [nelem, nne].
-    \param overlapping_nodes_b Node-numbers of mesh "b" that overlap with mesh "a" [n].
-    \param check_position If ``true`` the nodes are checked for position overlap.
-    \param rtol Relative tolerance for check on position overlap.
-    \param atol Absolute tolerance for check on position overlap.
-    */
+     * @param coor_a Nodal coordinates of mesh "a"  [nnode, ndim].
+     * @param conn_a Connectivity of mesh "a" [nelem, nne].
+     * @param overlapping_nodes_a Node-numbers of mesh "a" that overlap with mesh "b" [n].
+     * @param coor_b Nodal coordinates of mesh "b"  [nnode, ndim].
+     * @param conn_b Connectivity of mesh "b" [nelem, nne].
+     * @param overlapping_nodes_b Node-numbers of mesh "b" that overlap with mesh "a" [n].
+     * @param check_position If ``true`` the nodes are checked for position overlap.
+     * @param rtol Relative tolerance for check on position overlap.
+     * @param atol Absolute tolerance for check on position overlap.
+     */
     template <class CA, class EA, class NA, class CB, class EB, class NB>
     ManualStitch(
         const CA& coor_a,
@@ -1822,72 +1822,72 @@ public:
     }
 
     /**
-    Number of sub meshes == 2.
-    \return unsigned int
-    */
+     * Number of sub meshes == 2.
+     * @return unsigned int
+     */
     size_t nmesh() const
     {
         return 2;
     }
 
     /**
-    Number of elements.
-    \return unsigned int
-    */
+     * Number of elements.
+     * @return unsigned int
+     */
     size_t nelem() const
     {
         return m_conn.shape(0);
     }
 
     /**
-    Number of nodes.
-    \return unsigned int
-    */
+     * Number of nodes.
+     * @return unsigned int
+     */
     size_t nnode() const
     {
         return m_coor.shape(0);
     }
 
     /**
-    Number of nodes-per-element.
-    \return unsigned int
-    */
+     * Number of nodes-per-element.
+     * @return unsigned int
+     */
     size_t nne() const
     {
         return m_conn.shape(1);
     }
 
     /**
-    Number of dimensions.
-    \return unsigned int
-    */
+     * Number of dimensions.
+     * @return unsigned int
+     */
     size_t ndim() const
     {
         return m_coor.shape(1);
     }
 
     /**
-    Nodal coordinates [#nnode, #ndim].
-    \return coordinates per node
-    */
+     * Nodal coordinates [#nnode, #ndim].
+     * @return coordinates per node
+     */
     const array_type::tensor<double, 2>& coor() const
     {
         return m_coor;
     }
 
     /**
-    Connectivity [#nelem, #nne].
-    \return nodes per element
-    */
+     * Connectivity [#nelem, #nne].
+     * @return nodes per element
+     */
     const array_type::tensor<size_t, 2>& conn() const
     {
         return m_conn;
     }
 
     /**
-    DOF numbers for each node (numbered sequentially) [#nnode, #ndim].
-    \return DOFs per node
-    */
+     * DOF numbers for each node (numbered sequentially) [#nnode, #ndim].
+     * @return DOFs per node
+     */
     array_type::tensor<size_t, 2> dofs() const
     {
         size_t nnode = this->nnode();
@@ -1896,9 +1896,9 @@ public:
     }
 
     /**
-    Node-map per sub-mesh.
-    \return nodes per mesh
-    */
+     * Node-map per sub-mesh.
+     * @return nodes per mesh
+     */
     std::vector<array_type::tensor<size_t, 1>> nodemap() const
     {
         std::vector<array_type::tensor<size_t, 1>> ret(this->nmesh());
@@ -1909,9 +1909,9 @@ public:
     }
 
     /**
-    Element-map per sub-mesh.
-    \return elements per mesh
-    */
+     * Element-map per sub-mesh.
+     * @return elements per mesh
+     */
     std::vector<array_type::tensor<size_t, 1>> elemmap() const
     {
         std::vector<array_type::tensor<size_t, 1>> ret(this->nmesh());
@@ -1922,9 +1922,9 @@ public:
     }
 
     /**
-    \param mesh_index Index of the mesh ("a" = 1, "b" = 1).
-    \return Node-map for a given mesh.
-    */
+     * @param mesh_index Index of the mesh ("a" = 1, "b" = 1).
+     * @return Node-map for a given mesh.
+     */
     array_type::tensor<size_t, 1> nodemap(size_t mesh_index) const
     {
         GOOSEFEM_ASSERT(mesh_index <= 1);
@@ -1937,9 +1937,9 @@ public:
     }
 
     /**
-    \param mesh_index Index of the mesh ("a" = 1, "b" = 1).
-    \return Element-map for a given mesh.
-    */
+     * @param mesh_index Index of the mesh ("a" = 1, "b" = 1).
+     * @return Element-map for a given mesh.
+     */
     array_type::tensor<size_t, 1> elemmap(size_t mesh_index) const
     {
         GOOSEFEM_ASSERT(mesh_index <= 1);
@@ -1952,12 +1952,12 @@ public:
     }
 
     /**
-    Convert set of node numbers for an original mesh to the stitched mesh.
-
-    \param set List of node numbers.
-    \param mesh_index Index of the mesh ("a" = 1, "b" = 1).
-    \return List of node numbers for the stitched mesh.
-    */
+     * Convert set of node numbers for an original mesh to the stitched mesh.
+     *
+     * @param set List of node numbers.
+     * @param mesh_index Index of the mesh ("a" = 1, "b" = 1).
+     * @return List of node numbers for the stitched mesh.
+     */
     template <class T>
     T nodeset(const T& set, size_t mesh_index) const
     {
@@ -1973,12 +1973,12 @@ public:
     }
 
     /**
-    Convert set of element numbers for an original mesh to the stitched mesh.
-
-    \param set List of element numbers.
-    \param mesh_index Index of the mesh ("a" = 1, "b" = 1).
-    \return List of element numbers for the stitched mesh.
-    */
+     * Convert set of element numbers for an original mesh to the stitched mesh.
+     *
+     * @param set List of element numbers.
+     * @param mesh_index Index of the mesh ("a" = 1, "b" = 1).
+     * @return List of element numbers for the stitched mesh.
+     */
     template <class T>
     T elemset(const T& set, size_t mesh_index) const
     {
@@ -2003,14 +2003,14 @@ private:
 };
 
 /**
-Stitch mesh objects, automatically searching for overlapping nodes.
-*/
+ * Stitch mesh objects, automatically searching for overlapping nodes.
+ */
 class Stitch {
 public:
     /**
-    \param rtol Relative tolerance for position match.
-    \param atol Absolute tolerance for position match.
-    */
+     * @param rtol Relative tolerance for position match.
+     * @param atol Absolute tolerance for position match.
+     */
     Stitch(double rtol = 1e-5, double atol = 1e-8)
     {
         m_rtol = rtol;
@@ -2018,11 +2018,11 @@ public:
     }
 
     /**
-    Add mesh to be stitched.
-
-    \param coor Nodal coordinates [nnode, ndim].
-    \param conn Connectivity [nelem, nne].
-    */
+     * Add mesh to be stitched.
+     *
+     * @param coor Nodal coordinates [nnode, ndim].
+     * @param conn Connectivity [nelem, nne].
+     */
     template <class C, class E>
     void push_back(const C& coor, const E& conn)
     {
@@ -2058,72 +2058,72 @@ public:
     }
 
     /**
-    Number of sub meshes.
-    \return unsigned int
-    */
+     * Number of sub meshes.
+     * @return unsigned int
+     */
     size_t nmesh() const
     {
         return m_map.size();
     }
 
     /**
-    Number of elements.
-    \return unsigned int
-    */
+     * Number of elements.
+     * @return unsigned int
+     */
     size_t nelem() const
     {
         return m_conn.shape(0);
     }
 
     /**
-    Number of nodes.
-    \return unsigned int
-    */
+     * Number of nodes.
+     * @return unsigned int
+     */
     size_t nnode() const
     {
         return m_coor.shape(0);
     }
 
     /**
-    Number of nodes-per-element.
-    \return unsigned int
-    */
+     * Number of nodes-per-element.
+     * @return unsigned int
+     */
     size_t nne() const
     {
         return m_conn.shape(1);
     }
 
     /**
-    Number of dimensions.
-    \return unsigned int
-    */
+     * Number of dimensions.
+     * @return unsigned int
+     */
     size_t ndim() const
     {
         return m_coor.shape(1);
     }
 
     /**
-    Nodal coordinates [#nnode, #ndim].
-    \return coordinates per node
-    */
+     * Nodal coordinates [#nnode, #ndim].
+     * @return coordinates per node
+     */
     const array_type::tensor<double, 2>& coor() const
     {
         return m_coor;
     }
 
     /**
-    Connectivity [#nelem, #nne].
-    \return nodes per element
-    */
+     * Connectivity [#nelem, #nne].
+     * @return nodes per element
+     */
     const array_type::tensor<size_t, 2>& conn() const
     {
         return m_conn;
     }
 
     /**
-    DOF numbers for each node (numbered sequentially) [#nnode, #ndim].
-    \return DOFs per node
-    */
+     * DOF numbers for each node (numbered sequentially) [#nnode, #ndim].
+     * @return DOFs per node
+     */
     array_type::tensor<size_t, 2> dofs() const
     {
         size_t nnode = this->nnode();
@@ -2132,9 +2132,9 @@ public:
     }
 
     /**
-    Node-map per sub-mesh.
-    \return nodes per mesh
-    */
+     * Node-map per sub-mesh.
+     * @return nodes per mesh
+     */
     std::vector<array_type::tensor<size_t, 1>> nodemap() const
     {
         std::vector<array_type::tensor<size_t, 1>> ret(this->nmesh());
@@ -2145,9 +2145,9 @@ public:
     }
 
     /**
-    Element-map per sub-mesh.
-    \return elements per mesh
-    */
+     * Element-map per sub-mesh.
+     * @return elements per mesh
+     */
     std::vector<array_type::tensor<size_t, 1>> elemmap() const
     {
         std::vector<array_type::tensor<size_t, 1>> ret(this->nmesh());
@@ -2158,11 +2158,11 @@ public:
     }
 
     /**
-    The node numbers in the stitched mesh that are coming from a specific sub-mesh.
-
-    \param mesh_index Index of the sub-mesh.
-    \return List of node numbers.
-    */
+     * The node numbers in the stitched mesh that are coming from a specific sub-mesh.
+     *
+     * @param mesh_index Index of the sub-mesh.
+     * @return List of node numbers.
+     */
     array_type::tensor<size_t, 1> nodemap(size_t mesh_index) const
     {
         GOOSEFEM_ASSERT(mesh_index < m_map.size());
@@ -2170,11 +2170,11 @@ public:
     }
 
     /**
-    The element numbers in the stitched mesh that are coming from a specific sub-mesh.
-
-    \param mesh_index Index of the sub-mesh.
-    \return List of element numbers.
-    */
+     * The element numbers in the stitched mesh that are coming from a specific sub-mesh.
+     *
+     * @param mesh_index Index of the sub-mesh.
+     * @return List of element numbers.
+     */
     array_type::tensor<size_t, 1> elemmap(size_t mesh_index) const
     {
         GOOSEFEM_ASSERT(mesh_index < m_map.size());
@@ -2182,12 +2182,12 @@ public:
     }
 
     /**
-    Convert set of node-numbers for a sub-mesh to the stitched mesh.
-
-    \param set List of node numbers.
-    \param mesh_index Index of the sub-mesh.
-    \return List of node numbers for the stitched mesh.
-    */
+     * Convert set of node-numbers for a sub-mesh to the stitched mesh.
+     *
+     * @param set List of node numbers.
+     * @param mesh_index Index of the sub-mesh.
+     * @return List of node numbers for the stitched mesh.
+     */
     template <class T>
     T nodeset(const T& set, size_t mesh_index) const
     {
@@ -2197,12 +2197,12 @@ public:
     }
 
     /**
-    Convert set of element-numbers for a sub-mesh to the stitched mesh.
-
-    \param set List of element numbers.
-    \param mesh_index Index of the sub-mesh.
-    \return List of element numbers for the stitched mesh.
-    */
+     * Convert set of element-numbers for a sub-mesh to the stitched mesh.
+     *
+     * @param set List of element numbers.
+     * @param mesh_index Index of the sub-mesh.
+     * @return List of element numbers for the stitched mesh.
+     */
     template <class T>
     T elemset(const T& set, size_t mesh_index) const
     {
@@ -2212,11 +2212,11 @@ public:
     }
 
     /**
-    Combine set of node numbers for an original to the final mesh (removes duplicates).
-
-    \param set List of node numbers per mesh.
-    \return List of node numbers for the stitched mesh.
-    */
+     * Combine set of node numbers for an original to the final mesh (removes duplicates).
+     *
+     * @param set List of node numbers per mesh.
+     * @return List of node numbers for the stitched mesh.
+     */
     template <class T>
     T nodeset(const std::vector<T>& set) const
     {
@@ -2240,7 +2240,9 @@ public:
         return xt::unique(ret);
     }
 
-    /** \copydoc nodeset(const std::vector<T>&) const */
+    /**
+     * \copydoc nodeset(const std::vector<T>&) const
+     */
     template <class T>
     T nodeset(std::initializer_list<T> set) const
     {
@@ -2248,11 +2250,11 @@ public:
     }
 
     /**
-    Combine set of element numbers for an original to the final mesh.
-
-    \param set List of element numbers per mesh.
-    \return List of element numbers for the stitched mesh.
-    */
+     * Combine set of element numbers for an original to the final mesh.
+     *
+     * @param set List of element numbers per mesh.
+     * @return List of element numbers for the stitched mesh.
+     */
     template <class T>
     T elemset(const std::vector<T>& set) const
     {
@@ -2276,7 +2278,9 @@ public:
         return ret;
     }
 
-    /** \copydoc elemset(const std::vector<T>&) const */
+    /**
+     * \copydoc elemset(const std::vector<T>&) const
+     */
     template <class T>
     T elemset(std::initializer_list<T> set) const
     {
@@ -2294,15 +2298,15 @@ protected:
 };
 
 /**
-Vertically stack meshes.
-*/
+ * Vertically stack meshes.
+ */
 class Vstack : public Stitch {
 public:
     /**
-    \param check_overlap Check if nodes are overlapping when adding a mesh.
-    \param rtol Relative tolerance for position match.
-    \param atol Absolute tolerance for position match.
-    */
+     * @param check_overlap Check if nodes are overlapping when adding a mesh.
+     * @param rtol Relative tolerance for position match.
+     * @param atol Absolute tolerance for position match.
+     */
     Vstack(bool check_overlap = true, double rtol = 1e-5, double atol = 1e-8)
     {
         m_check_overlap = check_overlap;
@@ -2311,14 +2315,14 @@ public:
     }
 
     /**
-    Add a mesh to the top of the current stack.
-    Each time the current `nodes_bot` are stitched with the then highest `nodes_top`.
-
-    \param coor Nodal coordinates [nnode, ndim].
-    \param conn Connectivity [nelem, nne].
-    \param nodes_bot Nodes along the bottom edge [n].
-    \param nodes_top Nodes along the top edge [n].
-    */
+     * Add a mesh to the top of the current stack.
+     * Each time the current `nodes_bot` are stitched with the then highest `nodes_top`.
+     *
+     * @param coor Nodal coordinates [nnode, ndim].
+     * @param conn Connectivity [nelem, nne].
+     * @param nodes_bot Nodes along the bottom edge [n].
+     * @param nodes_top Nodes along the top edge [n].
+     */
     template <class C, class E, class N>
     void push_back(const C& coor, const E& conn, const N& nodes_bot, const N& nodes_top)
     {
@@ -2371,20 +2375,20 @@ private:
 };
 
 /**
-Reorder to lowest possible index, in specific order.
-
-For example for ``Reorder({iiu, iip})`` after reordering:
-
-    iiu = xt::range<size_t>(nnu);
-    iip = xt::range<size_t>(nnp) + nnu;
-*/
+ * Reorder to lowest possible index, in specific order.
+ *
+ * For example for ``Reorder({iiu, iip})`` after reordering:
+ *
+ *     iiu = xt::range<size_t>(nnu);
+ *     iip = xt::range<size_t>(nnp) + nnu;
+ */
 class Reorder {
 public:
     Reorder() = default;
 
     /**
-    \param args List of (DOF-)numbers.
-    */
+     * @param args List of (DOF-)numbers.
+     */
     template <class T>
     Reorder(const std::initializer_list<T> args)
     {
@@ -2415,11 +2419,11 @@ public:
     }
 
     /**
-    Apply reordering to other set.
-
-    \param list List of (DOF-)numbers.
-    \return Reordered list of (DOF-)numbers.
-    */
+     * Apply reordering to other set.
+     *
+     * @param list List of (DOF-)numbers.
+     * @return Reordered list of (DOF-)numbers.
+     */
     template <class T>
     T apply(const T& list) const
     {
@@ -2435,12 +2439,12 @@ public:
     }
 
     /**
-    Get the list needed to reorder, e.g.:
-
-        dofs_reordered(i, j) = index(dofs(i, j))
-
-    \return Reorder-index.
-    */
+     * Get the list needed to reorder, e.g.:
+     *
+     *     dofs_reordered(i, j) = index(dofs(i, j))
+     *
+     * @return Reorder-index.
+     */
     const array_type::tensor<size_t, 1>& index() const
     {
         return m_renum;
@@ -2451,11 +2455,11 @@ private:
 };
 
 /**
-Number of elements connected to each node.
-
-\param conn Connectivity [nelem, nne].
-\return Coordination per node.
-*/
+ * Number of elements connected to each node.
+ *
+ * @param conn Connectivity [nelem, nne].
+ * @return Coordination per node.
+ */
 template <class E>
 inline array_type::tensor<size_t, 1> coordination(const E& conn)
 {
@@ -2473,12 +2477,12 @@ inline array_type::tensor<size_t, 1> coordination(const E& conn)
 }
 
 /**
-Elements connected to each node.
-
-\param conn Connectivity [nelem, nne].
-\param sorted If ``true`` the list of elements for each node is sorted.
-\return Elements per node [nnode, ...].
-*/
+ * Elements connected to each node.
+ *
+ * @param conn Connectivity [nelem, nne].
+ * @param sorted If ``true`` the list of elements for each node is sorted.
+ * @return Elements per node [nnode, ...].
+ */
 template <class E>
 inline std::vector<std::vector<size_t>> elem2node(const E& conn, bool sorted = true)
 {
@@ -2506,10 +2510,10 @@ inline std::vector<std::vector<size_t>> elem2node(const E& conn, bool sorted = t
 }
 
 /**
-\copydoc elem2node(const E&, bool)
-
-\param dofs DOFs per node, allowing accounting for periodicity [nnode, ndim].
-*/
+ * @copydoc elem2node(const E&, bool)
+ *
+ * @param dofs DOFs per node, allowing accounting for periodicity [nnode, ndim].
+ */
 template <class E, class D>
 inline std::vector<std::vector<size_t>> elem2node(const E& conn, const D& dofs, bool sorted = true)
 {
@@ -2544,12 +2548,12 @@ inline std::vector<std::vector<size_t>> elem2node(const E& conn, const D& dofs, 
 }
 
 /**
-Nodes connected to each DOF.
-
-\param dofs DOFs per node [nnode, ndim].
-\param sorted If ``true`` the list of nodes for each DOF is sorted.
-\return Nodes per DOF [ndof, ...].
-*/
+ * Nodes connected to each DOF.
+ *
+ * @param dofs DOFs per node [nnode, ndim].
+ * @param sorted If ``true`` the list of nodes for each DOF is sorted.
+ * @return Nodes per DOF [ndof, ...].
+ */
 template <class D>
 inline std::vector<std::vector<size_t>> node2dof(const D& dofs, bool sorted = true)
 {
@@ -2557,13 +2561,13 @@ inline std::vector<std::vector<size_t>> node2dof(const D& dofs, bool sorted = tr
 }
 
 /**
-Return size of each element edge.
-
-\param coor Nodal coordinates.
-\param conn Connectivity.
-\param type ElementType.
-\return Edge-sizes per element.
-*/
+ * Return size of each element edge.
+ *
+ * @param coor Nodal coordinates.
+ * @param conn Connectivity.
+ * @param type ElementType.
+ * @return Edge-sizes per element.
+ */
 template <class C, class E>
 inline array_type::tensor<double, 2> edgesize(const C& coor, const E& conn, ElementType type)
 {
@@ -2598,13 +2602,13 @@ inline array_type::tensor<double, 2> edgesize(const C& coor, const E& conn, Elem
 }
 
 /**
-Return size of each element edge.
-The element-type is automatically determined, see defaultElementType().
-
-\param coor Nodal coordinates.
-\param conn Connectivity.
-\return Edge-sizes per element.
-*/
+ * Return size of each element edge.
+ * The element-type is automatically determined, see defaultElementType().
+ *
+ * @param coor Nodal coordinates.
+ * @param conn Connectivity.
+ * @return Edge-sizes per element.
+ */
 template <class C, class E>
 inline array_type::tensor<double, 2> edgesize(const C& coor, const E& conn)
 {
@@ -2612,13 +2616,13 @@ inline array_type::tensor<double, 2> edgesize(const C& coor, const E& conn)
 }
 
 /**
-Coordinates of the center of each element.
-
-\param coor Nodal coordinates.
-\param conn Connectivity.
-\param type ElementType.
-\return Center of each element.
-*/
+ * Coordinates of the center of each element.
+ *
+ * @param coor Nodal coordinates.
+ * @param conn Connectivity.
+ * @param type ElementType.
+ * @return Center of each element.
+ */
 template <class C, class E>
 inline array_type::tensor<double, 2> centers(const C& coor, const E& conn, ElementType type)
 {
@@ -2642,13 +2646,13 @@ inline array_type::tensor<double, 2> centers(const C& coor, const E& conn, Eleme
 }
 
 /**
-Coordinates of the center of each element.
-The element-type is automatically determined, see defaultElementType().
-
-\param coor Nodal coordinates.
-\param conn Connectivity.
-\return Center of each element.
-*/
+ * Coordinates of the center of each element.
+ * The element-type is automatically determined, see defaultElementType().
+ *
+ * @param coor Nodal coordinates.
+ * @param conn Connectivity.
+ * @return Center of each element.
+ */
 template <class C, class E>
 inline array_type::tensor<double, 2> centers(const C& coor, const E& conn)
 {
@@ -2656,14 +2660,14 @@ inline array_type::tensor<double, 2> centers(const C& coor, const E& conn)
 }
 
 /**
-Convert an element-map to a node-map.
-
-\param elem_map Element-map such that ``new_elvar = elvar[elem_map]``.
-\param coor Nodal coordinates.
-\param conn Connectivity.
-\param type ElementType.
-\return Node-map such that ``new_nodevar = nodevar[node_map]``
-*/
+ * Convert an element-map to a node-map.
+ *
+ * @param elem_map Element-map such that ``new_elvar = elvar[elem_map]``.
+ * @param coor Nodal coordinates.
+ * @param conn Connectivity.
+ * @param type ElementType.
+ * @return Node-map such that ``new_nodevar = nodevar[node_map]``
+ */
 template <class T, class C, class E>
 inline array_type::tensor<size_t, 1>
 elemmap2nodemap(const T& elem_map, const C& coor, const E& conn, ElementType type)
@@ -2696,14 +2700,14 @@ elemmap2nodemap(const T& elem_map, const C& coor, const E& conn, ElementType typ
 }
 
 /**
-Convert an element-map to a node-map.
-The element-type is automatically determined, see defaultElementType().
-
-\param elem_map Element-map such that ``new_elvar = elvar[elem_map]``.
-\param coor Nodal coordinates.
-\param conn Connectivity.
-\return Node-map such that ``new_nodevar = nodevar[node_map]``
-*/
+ * Convert an element-map to a node-map.
+ * The element-type is automatically determined, see defaultElementType().
+ *
+ * @param elem_map Element-map such that ``new_elvar = elvar[elem_map]``.
+ * @param coor Nodal coordinates.
+ * @param conn Connectivity.
+ * @return Node-map such that ``new_nodevar = nodevar[node_map]``
+ */
 template <class T, class C, class E>
 inline array_type::tensor<size_t, 1>
 elemmap2nodemap(const T& elem_map, const C& coor, const E& conn)
@@ -2712,19 +2716,19 @@ elemmap2nodemap(const T& elem_map, const C& coor, const E& conn)
 }
 
 /**
-Compute the mass of each node in the mesh.
-If nodes are not part of the connectivity the mass is set to zero,
-such that the center of gravity is simply::
-
-    average(coor, GooseFEM.Mesh.nodal_mass(coor, conn, type), axis=0);
-
-\tparam C e.g. `array_type::tensor<double, 2>`
-\tparam E e.g. `array_type::tensor<size_t, 2>`
-\param coor Nodal coordinates `[nnode, ndim]`.
-\param conn Connectivity `[nelem, nne]`.
-\param type ElementType.
-\return Center of gravity `[ndim]`.
-*/
+ * Compute the mass of each node in the mesh.
+ * If nodes are not part of the connectivity the mass is set to zero,
+ * such that the center of gravity is simply::
+ *
+ *     average(coor, GooseFEM.Mesh.nodal_mass(coor, conn, type), axis=0);
+ *
+ * @tparam C e.g. `array_type::tensor<double, 2>`
+ * @tparam E e.g. `array_type::tensor<size_t, 2>`
+ * @param coor Nodal coordinates `[nnode, ndim]`.
+ * @param conn Connectivity `[nelem, nne]`.
+ * @param type ElementType.
+ * @return Center of gravity `[ndim]`.
+ */
 template <class C, class E>
 inline array_type::tensor<double, 2> nodal_mass(const C& coor, const E& conn, ElementType type)
 {
@@ -2748,18 +2752,18 @@ inline array_type::tensor<double, 2> nodal_mass(const C& coor, const E& conn, El
 }
 
 /**
-Compute the mass of each node in the mesh.
-If nodes are not part of the connectivity the mass is set to zero,
-such that the center of gravity is simply::
-
-    average(coor, GooseFEM.Mesh.nodal_mass(coor, conn), axis=0);
-
-\tparam C e.g. `array_type::tensor<double, 2>`
-\tparam E e.g. `array_type::tensor<size_t, 2>`
-\param coor Nodal coordinates `[nnode, ndim]`.
-\param conn Connectivity `[nelem, nne]`.
-\return Center of gravity `[ndim]`.
-*/
+ * Compute the mass of each node in the mesh.
+ * If nodes are not part of the connectivity the mass is set to zero,
+ * such that the center of gravity is simply::
+ *
+ *     average(coor, GooseFEM.Mesh.nodal_mass(coor, conn), axis=0);
+ *
+ * @tparam C e.g. `array_type::tensor<double, 2>`
+ * @tparam E e.g. `array_type::tensor<size_t, 2>`
+ * @param coor Nodal coordinates `[nnode, ndim]`.
+ * @param conn Connectivity `[nelem, nne]`.
+ * @return Center of gravity `[ndim]`.
+ */
 template <class C, class E>
 inline array_type::tensor<double, 2> nodal_mass(const C& coor, const E& conn)
 {
@@ -2791,15 +2795,15 @@ array_type::tensor<double, 1> average_axis_0(const T& data, const T& weights)
 } // namespace detail
 
 /**
-Compute the center of gravity of a mesh.
-
-\tparam C e.g. `array_type::tensor<double, 2>`
-\tparam E e.g. `array_type::tensor<size_t, 2>`
-\param coor Nodal coordinates `[nnode, ndim]`.
-\param conn Connectivity `[nelem, nne]`.
-\param type ElementType.
-\return Center of gravity `[ndim]`.
-*/
+ * Compute the center of gravity of a mesh.
+ *
+ * @tparam C e.g. `array_type::tensor<double, 2>`
+ * @tparam E e.g. `array_type::tensor<size_t, 2>`
+ * @param coor Nodal coordinates `[nnode, ndim]`.
+ * @param conn Connectivity `[nelem, nne]`.
+ * @param type ElementType.
+ * @return Center of gravity `[ndim]`.
+ */
 template <class C, class E>
 inline array_type::tensor<double, 1>
 center_of_gravity(const C& coor, const E& conn, ElementType type)
@@ -2810,14 +2814,14 @@ center_of_gravity(const C& coor, const E& conn, ElementType type)
 }
 
 /**
-Compute the center of gravity of a mesh.
-
-\tparam C e.g. `array_type::tensor<double, 2>`
-\tparam E e.g. `array_type::tensor<size_t, 2>`
-\param coor Nodal coordinates `[nnode, ndim]`.
-\param conn Connectivity `[nelem, nne]`.
-\return Center of gravity `[ndim]`.
-*/
+ * Compute the center of gravity of a mesh.
+ *
+ * @tparam C e.g. `array_type::tensor<double, 2>`
+ * @tparam E e.g. `array_type::tensor<size_t, 2>`
+ * @param coor Nodal coordinates `[nnode, ndim]`.
+ * @param conn Connectivity `[nelem, nne]`.
+ * @return Center of gravity `[ndim]`.
+ */
 template <class C, class E>
 inline array_type::tensor<double, 1> center_of_gravity(const C& coor, const E& conn)
 {
@@ -2827,11 +2831,11 @@ inline array_type::tensor<double, 1> center_of_gravity(const C& coor, const E& c
 }
 
 /**
-List nodal tyings based on DOF-numbers per node.
-
-\param dofs DOFs per node [nnode, ndim].
-\return Nodes to which the nodes is connected (sorted) [nnode, ...]
-*/
+ * List nodal tyings based on DOF-numbers per node.
+ *
+ * @param dofs DOFs per node [nnode, ndim].
+ * @return Nodes to which the nodes is connected (sorted) [nnode, ...]
+ */
 template <class D>
 inline std::vector<std::vector<size_t>> nodaltyings(const D& dofs)
 {

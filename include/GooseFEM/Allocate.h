@@ -1,10 +1,10 @@
 /**
-Common allocation methods.
-
-\file
-\copyright Copyright 2017. Tom de Geus. All rights reserved.
-\license This project is released under the GNU Public License (GPLv3).
-*/
+ * Common allocation methods.
+ *
+ * @file
+ * @copyright Copyright 2017. Tom de Geus. All rights reserved.
+ * @license This project is released under the GNU Public License (GPLv3).
+ */
 
 #ifndef GOOSEFEM_ALLOCATE_H
 #define GOOSEFEM_ALLOCATE_H
@@ -19,9 +19,9 @@ inline void asTensor(const T& arg, R& ret);
 namespace detail {
 
 /**
-Check that two shapes partly overlap. If `s` has more dimensions that `t` the excess dimensions
-of `s` are ignored and the first `t.size()` dimensions are checked for equality.
-*/
+ * Check that two shapes partly overlap. If `s` has more dimensions that `t` the excess dimensions
+ * of `s` are ignored and the first `t.size()` dimensions are checked for equality.
+ */
 template <class T, class S>
 inline bool has_shape_begin(const T& t, const S& s)
 {
@@ -30,8 +30,8 @@ inline bool has_shape_begin(const T& t, const S& s)
 }
 
 /**
-Static identification of an std::array
-*/
+ * Static identification of an std::array
+ */
 template <class T>
 struct is_std_array : std::false_type {
 };
@@ -41,20 +41,20 @@ struct is_std_array<std::array<T, N>> : std::true_type {
 };
 
 /**
-Helper for std_array_size
-*/
+ * Helper for std_array_size
+ */
 template <class T, std::size_t N>
 auto std_array_size_impl(const std::array<T, N>&) -> std::integral_constant<std::size_t, N>;
 
 /**
-Get the size of an std:array (T::size is not static)
-*/
+ * Get the size of an std:array (T::size is not static)
+ */
 template <class T>
 using std_array_size = decltype(std_array_size_impl(std::declval<const T&>()));
 
 /**
-Return as std::array.
-*/
+ * Return as std::array.
+ */
 template <class I, std::size_t L>
 std::array<I, L> to_std_array(const I (&shape)[L])
 {
@@ -64,8 +64,8 @@ std::array<I, L> to_std_array(const I (&shape)[L])
 }
 
 /**
-asTensor for array_type::array.
-*/
+ * asTensor for array_type::array.
+ */
 template <class T, class R, typename = void>
 struct asTensor_write {
     static void impl(const T& arg, R& ret)
@@ -82,8 +82,8 @@ struct asTensor_write {
 };
 
 /**
-asTensor for xt::tensor.
-*/
+ * asTensor for xt::tensor.
+ */
 template <class T, class R>
 struct asTensor_write<
     T,
@@ -103,8 +103,8 @@ struct asTensor_write<
 };
 
 /**
-AsTensor for array_type::array.
-*/
+ * AsTensor for array_type::array.
+ */
 template <class T, class S, typename = void>
 struct asTensor_allocate {
     static auto impl(const T& arg, const S& shape)
@@ -122,8 +122,8 @@ struct asTensor_allocate {
 };
 
 /**
-AsTensor for xt::tensor.
-*/
+ * AsTensor for xt::tensor.
+ */
 template <class T, class S>
 struct asTensor_allocate<T, S, typename std::enable_if_t<detail::is_std_array<S>::value>> {
     static auto impl(const T& arg, const S& shape)
@@ -143,12 +143,12 @@ struct asTensor_allocate<T, S, typename std::enable_if_t<detail::is_std_array<S>
 } // namespace detail
 
 /**
-"Broadcast" a scalar stored in an array (e.g. ``[r, s]``) to the same scalar of all
-tensor components of a tensor of certain rank (e.g. for rank 2: ``[r, s, i, j]``).
-
-\param arg An array with scalars.
-\param ret Corresponding array with tensors.
-*/
+ * "Broadcast" a scalar stored in an array (e.g. ``[r, s]``) to the same scalar of all
+ * tensor components of a tensor of certain rank (e.g. for rank 2: ``[r, s, i, j]``).
+ *
+ * @param arg An array with scalars.
+ * @param ret Corresponding array with tensors.
+ */
 template <class T, class R>
 inline void asTensor(const T& arg, R& ret)
 {
@@ -156,13 +156,13 @@ inline void asTensor(const T& arg, R& ret)
 }
 
 /**
-"Broadcast" a scalar stored in an array (e.g. ``[r, s]``) to the same scalar of all
-tensor components of a tensor of certain rank (e.g. for rank 2: ``[r, s, i, j]``).
-
-\param arg An array with scalars.
-\param shape The shape of the added tensor dimensions (e.g.: ``[i, j]``).
-\return Corresponding array with tensors.
-*/
+ * "Broadcast" a scalar stored in an array (e.g. ``[r, s]``) to the same scalar of all
+ * tensor components of a tensor of certain rank (e.g. for rank 2: ``[r, s, i, j]``).
+ *
+ * @param arg An array with scalars.
+ * @param shape The shape of the added tensor dimensions (e.g.: ``[i, j]``).
+ * @return Corresponding array with tensors.
+ */
 template <class T, class S>
 inline auto AsTensor(const T& arg, const S& shape)
 {
@@ -170,8 +170,8 @@ inline auto AsTensor(const T& arg, const S& shape)
 }
 
 /**
-\copydoc AsTensor(const T& arg, const S& shape)
-*/
+ * @copydoc AsTensor(const T& arg, const S& shape)
+ */
 template <class T, class I, size_t L>
 inline auto AsTensor(const T& arg, const I (&shape)[L])
 {
@@ -180,14 +180,14 @@ inline auto AsTensor(const T& arg, const I (&shape)[L])
 }
 
 /**
-"Broadcast" a scalar stored in an array (e.g. ``[r, s]``) to the same scalar of all
-tensor components of a tensor of certain rank (e.g. for rank 2: ``[r, s, n, n]``).
-
-\tparam rank Number of tensor dimensions (number of dimensions to add to the input).
-\param arg An array with scalars.
-\param n The shape along each of the added dimensions.
-\return Corresponding array with tensors.
-*/
+ * "Broadcast" a scalar stored in an array (e.g. ``[r, s]``) to the same scalar of all
+ * tensor components of a tensor of certain rank (e.g. for rank 2: ``[r, s, n, n]``).
+ *
+ * @tparam rank Number of tensor dimensions (number of dimensions to add to the input).
+ * @param arg An array with scalars.
+ * @param n The shape along each of the added dimensions.
+ * @return Corresponding array with tensors.
+ */
 template <size_t rank, class T>
 inline auto AsTensor(const T& arg, size_t n)
 {
@@ -197,14 +197,14 @@ inline auto AsTensor(const T& arg, size_t n)
 }
 
 /**
-"Broadcast" a scalar stored in an array (e.g. ``[r, s]``) to the same scalar of all
-tensor components of a tensor of certain rank (e.g. for rank 2: ``[r, s, n, n]``).
-
-\param rank Number of tensor dimensions (number of dimensions to add to the input).
-\param arg An array with scalars.
-\param n The shape along each of the added dimensions.
-\return Corresponding array with tensors.
-*/
+ * "Broadcast" a scalar stored in an array (e.g. ``[r, s]``) to the same scalar of all
+ * tensor components of a tensor of certain rank (e.g. for rank 2: ``[r, s, n, n]``).
+ *
+ * @param rank Number of tensor dimensions (number of dimensions to add to the input).
+ * @param arg An array with scalars.
+ * @param n The shape along each of the added dimensions.
+ * @return Corresponding array with tensors.
+ */
 template <class T>
 inline auto AsTensor(size_t rank, const T& arg, size_t n)
 {
@@ -214,11 +214,11 @@ inline auto AsTensor(size_t rank, const T& arg, size_t n)
 }
 
 /**
-Zero-pad columns to a matrix until is that shape ``[m, 3]``.
-
-\param arg A "nodevec" (``arg.shape(1) <= 3``).
-\return Corresponding "nodevec" in 3-d (``ret.shape(1) == 3``)
-*/
+ * Zero-pad columns to a matrix until is that shape ``[m, 3]``.
+ *
+ * @param arg A "nodevec" (``arg.shape(1) <= 3``).
+ * @return Corresponding "nodevec" in 3-d (``ret.shape(1) == 3``)
+ */
 template <class T>
 inline T as3d(const T& arg)
 {

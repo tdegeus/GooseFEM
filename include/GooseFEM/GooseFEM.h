@@ -1,10 +1,10 @@
 /**
-Basic include of common methods.
-
-\file GooseFEM.h
-\copyright Copyright 2017. Tom de Geus. All rights reserved.
-\license This project is released under the GNU Public License (GPLv3).
-*/
+ * Basic include of common methods.
+ *
+ * @file GooseFEM.h
+ * @copyright Copyright 2017. Tom de Geus. All rights reserved.
+ * @license This project is released under the GNU Public License (GPLv3).
+ */
 
 #ifndef GOOSEFEM_H
 #define GOOSEFEM_H

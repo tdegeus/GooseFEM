@@ -1,12 +1,12 @@
 /**
-Sparse matrix that is partitioned in:
--   unknown DOFs
--   prescribed DOFs
-
-\file MatrixPartitioned.h
-\copyright Copyright 2017. Tom de Geus. All rights reserved.
-\license This project is released under the GNU Public License (GPLv3).
-*/
+ * Sparse matrix that is partitioned in:
+ * -   unknown DOFs
+ * -   prescribed DOFs
+ *
+ * @file MatrixPartitioned.h
+ * @copyright Copyright 2017. Tom de Geus. All rights reserved.
+ * @license This project is released under the GNU Public License (GPLv3).
+ */
 
 #ifndef GOOSEFEM_MATRIXPARTITIONED_H
 #define GOOSEFEM_MATRIXPARTITIONED_H
@@ -25,12 +25,12 @@ template <class>
 class MatrixPartitionedSolver;
 
 /**
-Sparse matrix partitioned in an unknown and a prescribed part.
-In particular:
-\f$ \begin{bmatrix} A_{uu} & A_{up} \\ A_{pu} & A_{pp} \end{bmatrix} \f$
-
-See VectorPartitioned() for bookkeeping definitions.
-*/
+ * Sparse matrix partitioned in an unknown and a prescribed part.
+ * In particular:
+ * \f$ \begin{bmatrix} A_{uu} & A_{up} \\ A_{pu} & A_{pp} \end{bmatrix} \f$
+ *
+ * See VectorPartitioned() for bookkeeping definitions.
+ */
 class MatrixPartitioned : public MatrixPartitionedBase<MatrixPartitioned> {
 private:
     friend MatrixBase<MatrixPartitioned>;
@@ -48,29 +48,29 @@ protected:
     std::vector<Eigen::Triplet<double>> m_Tpp; ///< Matrix entries.
 
     /**
-    Renumbered DOFs per node, such that:
-
-        iiu = arange(nnu)
-        iip = nnu + arange(nnp)
-
-    making is much simpler to slice.
-    */
+     * Renumbered DOFs per node, such that:
+     *
+     *     iiu = arange(nnu)
+     *     iip = nnu + arange(nnp)
+     *
+     * making is much simpler to slice.
+     */
     array_type::tensor<size_t, 2> m_part;
 
     /**
-    Map real DOF to DOF in partitioned system.
-    The partitioned system is defined as:
-
-        iiu = arange(nnu)
-        iip = nnu + arange(nnp)
-
-    Similar to `m_part` but for a 1d sequential list of DOFs.
-    */
+     * Map real DOF to DOF in partitioned system.
+     * The partitioned system is defined as:
+     *
+     *     iiu = arange(nnu)
+     *     iip = nnu + arange(nnp)
+     *
+     * Similar to `m_part` but for a 1d sequential list of DOFs.
+     */
     array_type::tensor<size_t, 1> m_part1d;
 
     /**
-    Class to solve the system (allowing single factorisation for multiple right-hand-sides).
-    */
+     * Class to solve the system (allowing single factorisation for multiple right-hand-sides).
+     */
     template <class>
     friend class MatrixPartitionedSolver;
 
@@ -78,12 +78,12 @@ public:
     MatrixPartitioned() = default;
 
     /**
-    Constructor.
-
-    \param conn connectivity [#nelem, #nne].
-    \param dofs DOFs per node [#nnode, #ndim].
-    \param iip prescribed DOFs [#nnp].
-    */
+     * Constructor.
+     *
+     * @param conn connectivity [#nelem, #nne].
+     * @param dofs DOFs per node [#nnode, #ndim].
+     * @param iip prescribed DOFs [#nnp].
+     */
     MatrixPartitioned(
         const array_type::tensor<size_t, 2>& conn,
         const array_type::tensor<size_t, 2>& dofs,
@@ -120,32 +120,32 @@ public:
     }
 
     /**
-    Pointer to data.
-    */
+     * Pointer to data.
+     */
     const Eigen::SparseMatrix<double>& data_uu() const
     {
         return m_Auu;
     }
 
     /**
-    Pointer to data.
-    */
+     * Pointer to data.
+     */
     const Eigen::SparseMatrix<double>& data_up() const
     {
         return m_Aup;
     }
 
     /**
-    Pointer to data.
-    */
+     * Pointer to data.
+     */
     const Eigen::SparseMatrix<double>& data_pu() const
     {
         return m_Apu;
     }
 
     /**
-    Pointer to data.
-    */
+     * Pointer to data.
+     */
     const Eigen::SparseMatrix<double>& data_pp() const
     {
         return m_App;
@@ -206,12 +206,12 @@ private:
 
 public:
     /**
-    Overwrite matrix.
-
-    \param rows Row numbers [m].
-    \param cols Column numbers [n].
-    \param matrix Data entries `matrix(i, j)` for `rows(i), cols(j)` [m, n].
-    */
+     * Overwrite matrix.
+     *
+     * @param rows Row numbers [m].
+     * @param cols Column numbers [n].
+     * @param matrix Data entries `matrix(i, j)` for `rows(i), cols(j)` [m, n].
+     */
     void
     set(const array_type::tensor<size_t, 1>& rows,
         const array_type::tensor<size_t, 1>& cols,
@@ -256,12 +256,12 @@ public:
     }
 
     /**
-    Add matrix.
-
-    \param rows Row numbers [m].
-    \param cols Column numbers [n].
-    \param matrix Data entries `matrix(i, j)` for `rows(i), cols(j)` [m, n].
-    */
+     * Add matrix.
+     *
+     * @param rows Row numbers [m].
+     * @param cols Column numbers [n].
+     * @param matrix Data entries `matrix(i, j)` for `rows(i), cols(j)` [m, n].
+     */
     void
     add(const array_type::tensor<size_t, 1>& rows,
         const array_type::tensor<size_t, 1>& cols,
@@ -510,12 +510,12 @@ private:
 };
 
 /**
-Solve \f$ x_u = A_{uu}^{-1} (b_u - A_{up} * x_p) \f$ for `A` of the MatrixPartitioned() class.
-You can solve for multiple right-hand-sides using one factorisation.
-
-For "nodevec" input `x` is used to read \f$ x_p \f$, while \f$ x_u \f$ is written.
-See MatrixPartitioned::Reaction() to get \f$ b_p \f$.
-*/
+ * Solve \f$ x_u = A_{uu}^{-1} (b_u - A_{up} * x_p) \f$ for `A` of the MatrixPartitioned() class.
+ * You can solve for multiple right-hand-sides using one factorisation.
+ *
+ * For "nodevec" input `x` is used to read \f$ x_p \f$, while \f$ x_u \f$ is written.
+ * See MatrixPartitioned::Reaction() to get \f$ b_p \f$.
+ */
 template <class Solver = Eigen::SimplicialLDLT<Eigen::SparseMatrix<double>>>
 class MatrixPartitionedSolver
     : public MatrixSolverBase<MatrixPartitionedSolver<Solver>>,
@@ -528,13 +528,13 @@ public:
     MatrixPartitionedSolver() = default;
 
     /**
-    Solve \f$ x = A^{-1} b \f$.
-
-    \param A GooseFEM (sparse) matrix, see e.g. GooseFEM::MatrixPartitioned().
-    \param b_u unknown dofval [nnu].
-    \param x_p prescribed dofval [nnp]
-    \return x_u unknown dofval [nnu].
-    */
+     * Solve \f$ x = A^{-1} b \f$.
+     *
+     * @param A GooseFEM (sparse) matrix, see e.g. GooseFEM::MatrixPartitioned().
+     * @param b_u unknown dofval [nnu].
+     * @param x_p prescribed dofval [nnp]
+     * @return x_u unknown dofval [nnu].
+     */
     template <class M>
     array_type::tensor<double, 1> Solve_u(
         M& A,
@@ -549,14 +549,14 @@ public:
     }
 
     /**
-    Same as
-    Solve \f$ x = A^{-1} b \f$.
-
-    \param A GooseFEM (sparse) matrix, see e.g. GooseFEM::MatrixPartitioned().
-    \param b_u unknown dofval [nnu].
-    \param x_p prescribed dofval [nnp]
-    \param x_u (overwritten) unknown dofval [nnu].
-    */
+     * Same as
+     * Solve \f$ x = A^{-1} b \f$.
+     *
+     * @param A GooseFEM (sparse) matrix, see e.g. GooseFEM::MatrixPartitioned().
+     * @param b_u unknown dofval [nnu].
+     * @param x_p prescribed dofval [nnp]
+     * @param x_u (overwritten) unknown dofval [nnu].
+     */
     template <class M>
     void solve_u(
         M& A,
@@ -619,8 +619,8 @@ private:
     bool m_factor = true; ///< signal to force factorization
 
     /**
-    compute inverse (evaluated by "solve")
-    */
+     * compute inverse (evaluated by "solve")
+     */
     void factorize(MatrixPartitioned& A)
     {
         if (!A.m_changed && !m_factor) {

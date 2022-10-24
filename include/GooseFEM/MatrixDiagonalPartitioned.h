@@ -1,12 +1,12 @@
 /**
-Diagonal matrix that is partitioned in:
--   unknown DOFs
--   prescribed DOFs
-
-\file MatrixDiagonalPartitioned.h
-\copyright Copyright 2017. Tom de Geus. All rights reserved.
-\license This project is released under the GNU Public License (GPLv3).
-*/
+ * Diagonal matrix that is partitioned in:
+ * -   unknown DOFs
+ * -   prescribed DOFs
+ *
+ * @file MatrixDiagonalPartitioned.h
+ * @copyright Copyright 2017. Tom de Geus. All rights reserved.
+ * @license This project is released under the GNU Public License (GPLv3).
+ */
 
 #ifndef GOOSEFEM_MATRIXDIAGONALPARTITIONED_H
 #define GOOSEFEM_MATRIXDIAGONALPARTITIONED_H
@@ -18,10 +18,10 @@ Diagonal matrix that is partitioned in:
 namespace GooseFEM {
 
 /**
-Diagonal and partitioned matrix.
-
-See Vector() for bookkeeping definitions.
-*/
+ * Diagonal and partitioned matrix.
+ *
+ * See Vector() for bookkeeping definitions.
+ */
 class MatrixDiagonalPartitioned : public MatrixPartitionedBase<MatrixDiagonalPartitioned>,
                                   public MatrixDiagonalBase<MatrixDiagonalPartitioned> {
 private:
@@ -33,12 +33,12 @@ public:
     MatrixDiagonalPartitioned() = default;
 
     /**
-    Constructor.
-
-    \param conn connectivity [#nelem, #nne].
-    \param dofs DOFs per node [#nnode, #ndim].
-    \param iip prescribed DOFs [#nnp].
-    */
+     * Constructor.
+     *
+     * @param conn connectivity [#nelem, #nne].
+     * @param dofs DOFs per node [#nnode, #ndim].
+     * @param iip prescribed DOFs [#nnp].
+     */
     MatrixDiagonalPartitioned(
         const array_type::tensor<size_t, 2>& conn,
         const array_type::tensor<size_t, 2>& dofs,
@@ -114,9 +114,9 @@ private:
 
 public:
     /**
-    Set all (diagonal) matrix components.
-    \param A The matrix [#ndof].
-    */
+     * Set all (diagonal) matrix components.
+     * @param A The matrix [#ndof].
+     */
     void set(const array_type::tensor<double, 1>& A)
     {
         GOOSEFEM_ASSERT(A.size() == m_ndof);
@@ -135,9 +135,9 @@ public:
     }
 
     /**
-    Assemble to diagonal matrix (involves copies).
-    \return [#ndof].
-    */
+     * Assemble to diagonal matrix (involves copies).
+     * @return [#ndof].
+     */
     array_type::tensor<double, 1> data() const
     {
         array_type::tensor<double, 1> ret = xt::zeros<double>({m_ndof});
@@ -156,27 +156,27 @@ public:
     }
 
     /**
-    Pointer to data.
-    \return [#nnu].
-    */
+     * Pointer to data.
+     * @return [#nnu].
+     */
     const array_type::tensor<double, 1>& data_uu() const
     {
         return m_Auu;
     }
 
     /**
-    Pointer to data.
-    \return [#nnu].
-    */
+     * Pointer to data.
+     * @return [#nnu].
+     */
     const array_type::tensor<double, 1>& data_pp() const
     {
         return m_App;
     }
 
     /**
-    Pointer to data.
-    \return [#nnu].
-    */
+     * Pointer to data.
+     * @return [#nnu].
+     */
     [[deprecated]] array_type::tensor<double, 1> Todiagonal() const
     {
         return this->data();
@@ -224,11 +224,11 @@ private:
 
 public:
     /**
-    \todo Decide if this function should be kept.
-    \param x_u dofval [#nnu].
-    \param x_p dofval [#nnp].
-    \return b_u dofval [#nnu].
-    */
+     * \todo Decide if this function should be kept.
+     * @param x_u dofval [#nnu].
+     * @param x_p dofval [#nnp].
+     * @return b_u dofval [#nnu].
+     */
     array_type::tensor<double, 1>
     Dot_u(const array_type::tensor<double, 1>& x_u, const array_type::tensor<double, 1>& x_p) const
     {
@@ -238,11 +238,11 @@ public:
     }
 
     /**
-    \todo Decide if this function should be kept.
-    \param x_u dofval [#nnu].
-    \param x_p dofval [#nnp].
-    \param b_u (overwritten) dofval [#nnu].
-    */
+     * \todo Decide if this function should be kept.
+     * @param x_u dofval [#nnu].
+     * @param x_p dofval [#nnp].
+     * @param b_u (overwritten) dofval [#nnu].
+     */
     void dot_u(
         const array_type::tensor<double, 1>& x_u,
         const array_type::tensor<double, 1>& x_p,
@@ -261,11 +261,11 @@ public:
     }
 
     /**
-    \todo Decide if this function should be kept.
-    \param x_u dofval [#nnu].
-    \param x_p dofval [#nnp].
-    \return b_p dofval [#nnp].
-    */
+     * \todo Decide if this function should be kept.
+     * @param x_u dofval [#nnu].
+     * @param x_p dofval [#nnp].
+     * @return b_p dofval [#nnp].
+     */
     array_type::tensor<double, 1>
     Dot_p(const array_type::tensor<double, 1>& x_u, const array_type::tensor<double, 1>& x_p) const
     {
@@ -275,11 +275,11 @@ public:
     }
 
     /**
-    \todo Decide if this function should be kept.
-    \param x_u dofval [#nnu].
-    \param x_p dofval [#nnp].
-    \param b_p (overwritten) dofval [#nnp].
-    */
+     * \todo Decide if this function should be kept.
+     * @param x_u dofval [#nnu].
+     * @param x_p dofval [#nnp].
+     * @param b_p (overwritten) dofval [#nnp].
+     */
     void dot_p(
         const array_type::tensor<double, 1>& x_u,
         const array_type::tensor<double, 1>& x_p,
@@ -332,10 +332,10 @@ private:
 
 public:
     /**
-    \param b_u dofval [#nnu].
-    \param x_p dofval [#nnp].
-    \return x_u dofval [#nnu].
-    */
+     * @param b_u dofval [#nnu].
+     * @param x_p dofval [#nnp].
+     * @return x_u dofval [#nnu].
+     */
     array_type::tensor<double, 1>
     Solve_u(const array_type::tensor<double, 1>& b_u, const array_type::tensor<double, 1>& x_p)
     {
@@ -345,10 +345,10 @@ public:
     }
 
     /**
-    \param b_u dofval [#nnu].
-    \param x_p dofval [#nnp].
-    \param x_u (overwritten) dofval [#nnu].
-    */
+     * @param b_u dofval [#nnu].
+     * @param x_p dofval [#nnp].
+     * @param x_u (overwritten) dofval [#nnu].
+     */
     void solve_u(
         const array_type::tensor<double, 1>& b_u,
         const array_type::tensor<double, 1>& x_p,
