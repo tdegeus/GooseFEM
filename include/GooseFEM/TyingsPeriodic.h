@@ -1,10 +1,10 @@
 /**
-Tools to store and apply nodal/DOF tyings.
-
-\file TyingsPeriodic.h
-\copyright Copyright 2017. Tom de Geus. All rights reserved.
-\license This project is released under the GNU Public License (GPLv3).
-*/
+ * Tools to store and apply nodal/DOF tyings.
+ *
+ * @file TyingsPeriodic.h
+ * @copyright Copyright 2017. Tom de Geus. All rights reserved.
+ * @license This project is released under the GNU Public License (GPLv3).
+ */
 
 #ifndef GOOSEFEM_TYINGSPERIODIC_H
 #define GOOSEFEM_TYINGSPERIODIC_H
@@ -18,47 +18,47 @@ Tools to store and apply nodal/DOF tyings.
 namespace GooseFEM {
 
 /**
-Tools to store and apply nodal/DOF tyings.
-*/
+ * Tools to store and apply nodal/DOF tyings.
+ */
 namespace Tyings {
 
 /**
-Nodal tyings per periodic boundary conditions.
-The idea is that the displacement of all DOFs of a node are tied to another node
-and to the average displacement gradient.
-The latter is applied/measured using 'virtual' control nodes.
-
-Consider the DOF list \f$ u \f$ renumbered such that it is split up in
-independent and dependent DOFs as follows
-
-\f$ u = \begin{bmatrix} u_i \\ u_d \end{bmatrix}\f$
-
-whereby the independent DOFs are furthermore split up in unknown and prescribed nodes as follows
-
-\f$ u_i = \begin{bmatrix} u_u \\ u_p \end{bmatrix}\f$
-
-such that
-
-\f$ u = \begin{bmatrix} u_u \\ u_p \\ u_d \end{bmatrix}\f$
-
-\todo Document how the DOFs are tied to the control nodes, and what the has to do with the mean.
-*/
+ * Nodal tyings per periodic boundary conditions.
+ * The idea is that the displacement of all DOFs of a node are tied to another node
+ * and to the average displacement gradient.
+ * The latter is applied/measured using 'virtual' control nodes.
+ *
+ * Consider the DOF list \f$ u \f$ renumbered such that it is split up in
+ * independent and dependent DOFs as follows
+ *
+ * \f$ u = \begin{bmatrix} u_i \\ u_d \end{bmatrix}\f$
+ *
+ * whereby the independent DOFs are furthermore split up in unknown and prescribed nodes as follows
+ *
+ * \f$ u_i = \begin{bmatrix} u_u \\ u_p \end{bmatrix}\f$
+ *
+ * such that
+ *
+ * \f$ u = \begin{bmatrix} u_u \\ u_p \\ u_d \end{bmatrix}\f$
+ *
+ * \todo Document how the DOFs are tied to the control nodes, and what the has to do with the mean.
+ */
 class Periodic {
 public:
     Periodic() = default;
 
     /**
-    Constructor.
-
-    \tparam C array_type::tensor<double, 2>
-    \tparam D array_type::tensor<size_t, 2>
-    \tparam S array_type::tensor<size_t, 2>
-    \tparam T array_type::tensor<size_t, 2>
-    \param coor Nodal coordinates [nnode, ndim].
-    \param dofs DOF-numbers per node [nnode, ndim].
-    \param control_dofs DOF-numbers per control node [ndim, ndim].
-    \param nodal_tyings List of nodal tyings, see nodal_tyings(). [ntyings, 2].
-    */
+     * Constructor.
+     *
+     * @tparam C array_type::tensor<double, 2>
+     * @tparam D array_type::tensor<size_t, 2>
+     * @tparam S array_type::tensor<size_t, 2>
+     * @tparam T array_type::tensor<size_t, 2>
+     * @param coor Nodal coordinates [nnode, ndim].
+     * @param dofs DOF-numbers per node [nnode, ndim].
+     * @param control_dofs DOF-numbers per control node [ndim, ndim].
+     * @param nodal_tyings List of nodal tyings, see nodal_tyings(). [ntyings, 2].
+     */
     template <class C, class D, class S, class T>
     Periodic(const C& coor, const D& dofs, const S& control_dofs, const T& nodal_tyings)
         : Periodic(coor, dofs, control_dofs, nodal_tyings, xt::eval(xt::empty<size_t>({0})))
@@ -66,19 +66,19 @@ public:
     }
 
     /**
-    Constructor.
-
-    \tparam C array_type::tensor<double, 2>
-    \tparam D array_type::tensor<size_t, 2>
-    \tparam S array_type::tensor<size_t, 2>
-    \tparam T array_type::tensor<size_t, 2>
-    \tparam U array_type::tensor<size_t, 1>
-    \param coor Nodal coordinates [nnode, ndim].
-    \param dofs DOF-numbers per node [nnode, ndim].
-    \param control_dofs DOF-numbers per control node [ndim, ndim].
-    \param nodal_tyings List of nodal tyings, see nodal_tyings(). [ntyings, 2].
-    \param iip List of prescribed DOF-numbers.
-    */
+     * Constructor.
+     *
+     * @tparam C array_type::tensor<double, 2>
+     * @tparam D array_type::tensor<size_t, 2>
+     * @tparam S array_type::tensor<size_t, 2>
+     * @tparam T array_type::tensor<size_t, 2>
+     * @tparam U array_type::tensor<size_t, 1>
+     * @param coor Nodal coordinates [nnode, ndim].
+     * @param dofs DOF-numbers per node [nnode, ndim].
+     * @param control_dofs DOF-numbers per control node [ndim, ndim].
+     * @param nodal_tyings List of nodal tyings, see nodal_tyings(). [ntyings, 2].
+     * @param iip List of prescribed DOF-numbers.
+     */
     template <class C, class D, class S, class T, class U>
     Periodic(
         const C& coor,
@@ -120,119 +120,120 @@ public:
     }
 
     /**
-    \return Number of dependent DOFs.
-    */
+     * @return Number of dependent DOFs.
+     */
     size_t nnd() const
     {
         return m_nnd;
     }
 
     /**
-    \return Number of independent DOFs.
-    */
+     * @return Number of independent DOFs.
+     */
     size_t nni() const
     {
         return m_nni;
     }
 
     /**
-    \return Number of independent unknown DOFs.
-    */
+     * @return Number of independent unknown DOFs.
+     */
     size_t nnu() const
     {
         return m_nnu;
     }
 
     /**
-    \return Number of independent prescribed DOFs.
-    */
+     * @return Number of independent prescribed DOFs.
+     */
     size_t nnp() const
     {
         return m_nnp;
     }
 
     /**
-    \return DOF-numbers per node, as used internally (after renumbering), [nnode, ndim].
-    */
+     * @return DOF-numbers per node, as used internally (after renumbering), [nnode, ndim].
+     */
     const array_type::tensor<size_t, 2>& dofs() const
     {
         return m_dofs;
     }
 
     /**
-    \return DOF-numbers for each control node, as used internally (after renumbering), [ndim, ndim].
-    */
+     * @return DOF-numbers for each control node, as used internally (after renumbering), [ndim,
+     * ndim].
+     */
     const array_type::tensor<size_t, 2>& control() const
     {
         return m_control;
     }
 
     /**
-    Return the applied nodal tyings.
-    Per tying (row) two node numbers are specified,
-    according to the convention (independent, dependent).
-
-    \return [ntyings, 2].
-    */
+     * Return the applied nodal tyings.
+     * Per tying (row) two node numbers are specified,
+     * according to the convention (independent, dependent).
+     *
+     * @return [ntyings, 2].
+     */
     const array_type::tensor<size_t, 2>& nodal_tyings() const
     {
         return m_tyings;
     }
 
     /**
-    Dependent DOFs.
-
-    \return List of DOF numbers.
-    */
+     * Dependent DOFs.
+     *
+     * @return List of DOF numbers.
+     */
     array_type::tensor<size_t, 1> iid() const
     {
         return xt::arange<size_t>(m_nni, m_nni + m_nnd);
     }
 
     /**
-    Independent DOFs.
-
-    \return List of DOF numbers.
-    */
+     * Independent DOFs.
+     *
+     * @return List of DOF numbers.
+     */
     array_type::tensor<size_t, 1> iii() const
     {
         return xt::arange<size_t>(m_nni);
     }
 
     /**
-    Independent unknown DOFs.
-
-    \return List of DOF numbers.
-    */
+     * Independent unknown DOFs.
+     *
+     * @return List of DOF numbers.
+     */
     array_type::tensor<size_t, 1> iiu() const
     {
         return xt::arange<size_t>(m_nnu);
     }
 
     /**
-    Independent prescribed DOFs.
-
-    \return List of DOF numbers.
-    */
+     * Independent prescribed DOFs.
+     *
+     * @return List of DOF numbers.
+     */
     array_type::tensor<size_t, 1> iip() const
     {
         return xt::arange<size_t>(m_nnp) + m_nnu;
     }
 
     /**
-    Return tying matrix such as to get the dependent DOFs \f$ u_d \f$ from
-    the independent DOFs \f$ u_i \f$ as follows
-
-    \f$ u_d = C_{di} u_i \f$
-
-    Note that this can be further partitioned in
-
-    \f$ u_d = C_{du} u_u + C_{dp} u_p \f$
-
-    See Cdu() and Cdp().
-
-    \return Sparse matrix.
-    */
+     * Return tying matrix such as to get the dependent DOFs \f$ u_d \f$ from
+     * the independent DOFs \f$ u_i \f$ as follows
+     *
+     * \f$ u_d = C_{di} u_i \f$
+     *
+     * Note that this can be further partitioned in
+     *
+     * \f$ u_d = C_{du} u_u + C_{dp} u_p \f$
+     *
+     * See Cdu() and Cdp().
+     *
+     * @return Sparse matrix.
+     */
     Eigen::SparseMatrix<double> Cdi() const
     {
         std::vector<Eigen::Triplet<double>> data;
@@ -262,10 +263,10 @@ public:
     }
 
     /**
-    Unknown part of the partitioned tying matrix, see Cdi().
-
-    \return Sparse matrix.
-    */
+     * Unknown part of the partitioned tying matrix, see Cdi().
+     *
+     * @return Sparse matrix.
+     */
     Eigen::SparseMatrix<double> Cdu() const
     {
         std::vector<Eigen::Triplet<double>> data;
@@ -299,10 +300,10 @@ public:
     }
 
     /**
-    Prescribed part of the partitioned tying matrix, see Cdi().
-
-    \return Sparse matrix.
-    */
+     * Prescribed part of the partitioned tying matrix, see Cdi().
+     *
+     * @return Sparse matrix.
+     */
     Eigen::SparseMatrix<double> Cdp() const
     {
         std::vector<Eigen::Triplet<double>> data;
@@ -352,20 +353,20 @@ private:
 };
 
 /**
-Add control nodes to an existing system.
-*/
+ * Add control nodes to an existing system.
+ */
 class Control {
 public:
     Control() = default;
 
     /**
-    Constructor.
-
-    \tparam C array_type::tensor<double, 2>
-    \tparam N array_type::tensor<size_t, 2>
-    \param coor Nodal coordinates [nnode, ndim].
-    \param dofs DOF-numbers per node [nnode, ndim].
-    */
+     * Constructor.
+     *
+     * @tparam C array_type::tensor<double, 2>
+     * @tparam N array_type::tensor<size_t, 2>
+     * @param coor Nodal coordinates [nnode, ndim].
+     * @param dofs DOF-numbers per node [nnode, ndim].
+     */
     template <class C, class N>
     Control(const C& coor, const N& dofs)
     {
@@ -388,40 +389,40 @@ public:
     }
 
     /**
-    Nodal coordinates, for the system with control nodes added to it.
-
-    \return [nnode + ndim, ndim], with nnode the number of nodes of the original system.
-    */
+     * Nodal coordinates, for the system with control nodes added to it.
+     *
+     * @return [nnode + ndim, ndim], with nnode the number of nodes of the original system.
+     */
     const array_type::tensor<double, 2>& coor() const
     {
         return m_coor;
     }
 
     /**
-    DOF-numbers per node, for the system with control nodes added to it.
-
-    \return [nnode + ndim, ndim], with nnode the number of nodes of the original system.
-    */
+     * DOF-numbers per node, for the system with control nodes added to it.
+     *
+     * @return [nnode + ndim, ndim], with nnode the number of nodes of the original system.
+     */
     const array_type::tensor<size_t, 2>& dofs() const
     {
         return m_dofs;
     }
 
     /**
-    DOF-numbers of each control node.
-
-    \return [ndim, ndim].
-    */
+     * DOF-numbers of each control node.
+     *
+     * @return [ndim, ndim].
+     */
     const array_type::tensor<size_t, 2>& controlDofs() const
     {
         return m_control_dofs;
     }
 
     /**
-    Node-numbers of the control nodes.
-
-    \return [ndim].
-    */
+     * Node-numbers of the control nodes.
+     *
+     * @return [ndim].
+     */
     const array_type::tensor<size_t, 1>& controlNodes() const
     {
         return m_control_nodes;

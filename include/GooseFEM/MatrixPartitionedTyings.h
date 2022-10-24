@@ -1,13 +1,13 @@
 /**
-Sparse matrix that is partitioned in:
--   unknown DOFs
--   prescribed DOFs
--   tied DOFs
-
-\file MatrixPartitionedTyings.h
-\copyright Copyright 2017. Tom de Geus. All rights reserved.
-\license This project is released under the GNU Public License (GPLv3).
-*/
+ * Sparse matrix that is partitioned in:
+ * -   unknown DOFs
+ * -   prescribed DOFs
+ * -   tied DOFs
+ *
+ * @file MatrixPartitionedTyings.h
+ * @copyright Copyright 2017. Tom de Geus. All rights reserved.
+ * @license This project is released under the GNU Public License (GPLv3).
+ */
 
 #ifndef GOOSEFEM_MATRIXPARTITIONEDTYINGS_H
 #define GOOSEFEM_MATRIXPARTITIONEDTYINGS_H
@@ -26,14 +26,14 @@ template <class>
 class MatrixPartitionedTyingsSolver;
 
 /**
-Sparse matrix from with dependent DOFs are eliminated,
-and the remaining (small) independent system is partitioned in an unknown and a prescribed part.
-In particular:
-
-\f$ A_{ii} = \begin{bmatrix} A_{uu} & A_{up} \\ A_{pu} & A_{pp} \end{bmatrix} \f$
-
-See VectorPartitionedTyings() for bookkeeping definitions.
-*/
+ * Sparse matrix from with dependent DOFs are eliminated,
+ * and the remaining (small) independent system is partitioned in an unknown and a prescribed part.
+ * In particular:
+ *
+ * \f$ A_{ii} = \begin{bmatrix} A_{uu} & A_{up} \\ A_{pu} & A_{pp} \end{bmatrix} \f$
+ *
+ * See VectorPartitionedTyings() for bookkeeping definitions.
+ */
 class MatrixPartitionedTyings : public MatrixPartitionedTyingsBase<MatrixPartitionedTyings> {
 private:
     friend MatrixBase<MatrixPartitionedTyings>;
@@ -76,13 +76,13 @@ public:
     MatrixPartitionedTyings() = default;
 
     /**
-    Constructor.
-
-    \param conn connectivity [#nelem, #nne].
-    \param dofs DOFs per node [#nnode, #ndim].
-    \param Cdu See Tyings::Periodic::Cdu().
-    \param Cdp See Tyings::Periodic::Cdp().
-    */
+     * Constructor.
+     *
+     * @param conn connectivity [#nelem, #nne].
+     * @param dofs DOFs per node [#nnode, #ndim].
+     * @param Cdu See Tyings::Periodic::Cdu().
+     * @param Cdp See Tyings::Periodic::Cdp().
+     */
     MatrixPartitionedTyings(
         const array_type::tensor<size_t, 2>& conn,
         const array_type::tensor<size_t, 2>& dofs,
@@ -134,72 +134,72 @@ public:
     }
 
     /**
-    Pointer to data.
-    */
+     * Pointer to data.
+     */
     const Eigen::SparseMatrix<double>& data_uu() const
     {
         return m_Auu;
     }
 
     /**
-    Pointer to data.
-    */
+     * Pointer to data.
+     */
     const Eigen::SparseMatrix<double>& data_up() const
     {
         return m_Aup;
     }
 
     /**
-    Pointer to data.
-    */
+     * Pointer to data.
+     */
     const Eigen::SparseMatrix<double>& data_pu() const
     {
         return m_Apu;
     }
 
     /**
-    Pointer to data.
-    */
+     * Pointer to data.
+     */
     const Eigen::SparseMatrix<double>& data_pp() const
     {
         return m_App;
     }
 
     /**
-    Pointer to data.
-    */
+     * Pointer to data.
+     */
     const Eigen::SparseMatrix<double>& data_ud() const
     {
         return m_Aud;
     }
 
     /**
-    Pointer to data.
-    */
+     * Pointer to data.
+     */
     const Eigen::SparseMatrix<double>& data_pd() const
     {
         return m_Apd;
     }
 
     /**
-    Pointer to data.
-    */
+     * Pointer to data.
+     */
     const Eigen::SparseMatrix<double>& data_du() const
     {
         return m_Adu;
     }
 
     /**
-    Pointer to data.
-    */
+     * Pointer to data.
+     */
     const Eigen::SparseMatrix<double>& data_dp() const
     {
         return m_Adp;
     }
 
     /**
-    Pointer to data.
-    */
+     * Pointer to data.
+     */
     const Eigen::SparseMatrix<double>& data_dd() const
     {
         return m_Add;
@@ -498,21 +498,21 @@ private:
 };
 
 /**
-Solver for MatrixPartitionedTyings().
-This solver class can be used to solve for multiple right-hand-sides using one factorisation.
-
-Solving proceeds as follows:
-
-\f$ A' = A_{ii} + A_{id} * C_{di} + C_{di}^T * A_{di} + C_{di}^T * A_{dd} * C_{di} \f$
-
-\f$ b' = b_i + C_{di}^T * b_d \f$
-
-\f$ x_u = A'_{uu} \ ( b'_u - A'_{up} * x_p ) \f$
-
-\f$ x_i = \begin{bmatrix} x_u \\ x_p \end{bmatrix} \f$
-
-\f$ x_d = C_{di} * x_i \f$
-*/
+ * Solver for MatrixPartitionedTyings().
+ * This solver class can be used to solve for multiple right-hand-sides using one factorisation.
+ *
+ * Solving proceeds as follows:
+ *
+ * \f$ A' = A_{ii} + A_{id} * C_{di} + C_{di}^T * A_{di} + C_{di}^T * A_{dd} * C_{di} \f$
+ *
+ * \f$ b' = b_i + C_{di}^T * b_d \f$
+ *
+ * \f$ x_u = A'_{uu} \ ( b'_u - A'_{up} * x_p ) \f$
+ *
+ * \f$ x_i = \begin{bmatrix} x_u \\ x_p \end{bmatrix} \f$
+ *
+ * \f$ x_d = C_{di} * x_i \f$
+ */
 template <class Solver = Eigen::SimplicialLDLT<Eigen::SparseMatrix<double>>>
 class MatrixPartitionedTyingsSolver
     : public MatrixSolverBase<MatrixPartitionedTyingsSolver<Solver>>,
@@ -577,16 +577,16 @@ private:
 
 public:
     /**
-    Same as
-    Solve(MatrixPartitionedTyings&, const array_type::tensor<double, 2>&, const
-    array_type::tensor<double, 2>&), but with partitioned input and output.
-
-    \param A sparse matrix, see MatrixPartitionedTyings().
-    \param b_u unknown dofval [nnu].
-    \param b_d dependent dofval [nnd].
-    \param x_p prescribed dofval [nnp]
-    \return x_u unknown dofval [nnu].
-    */
+     * Same as
+     * Solve(MatrixPartitionedTyings&, const array_type::tensor<double, 2>&, const
+     * array_type::tensor<double, 2>&), but with partitioned input and output.
+     *
+     * @param A sparse matrix, see MatrixPartitionedTyings().
+     * @param b_u unknown dofval [nnu].
+     * @param b_d dependent dofval [nnd].
+     * @param x_p prescribed dofval [nnp]
+     * @return x_u unknown dofval [nnu].
+     */
     array_type::tensor<double, 1> Solve_u(
         MatrixPartitionedTyings& A,
         const array_type::tensor<double, 1>& b_u,
@@ -599,17 +599,17 @@ public:
     }
 
     /**
-    Same as
-    Solve_u(MatrixPartitionedTyings&, const array_type::tensor<double, 1>&, const
-    array_type::tensor<double, 1>&, const array_type::tensor<double, 1>&), but writing to
-    pre-allocated output.
-
-    \param A sparse matrix, see MatrixPartitionedTyings().
-    \param b_u unknown dofval [nnu].
-    \param b_d dependent dofval [nnd].
-    \param x_p prescribed dofval [nnp]
-    \param x_u (overwritten) unknown dofval [nnu].
-    */
+     * Same as
+     * Solve_u(MatrixPartitionedTyings&, const array_type::tensor<double, 1>&, const
+     * array_type::tensor<double, 1>&, const array_type::tensor<double, 1>&), but writing to
+     * pre-allocated output.
+     *
+     * @param A sparse matrix, see MatrixPartitionedTyings().
+     * @param b_u unknown dofval [nnu].
+     * @param b_d dependent dofval [nnd].
+     * @param x_p prescribed dofval [nnp]
+     * @param x_u (overwritten) unknown dofval [nnu].
+     */
     void solve_u(
         MatrixPartitionedTyings& A,
         const array_type::tensor<double, 1>& b_u,
@@ -636,8 +636,8 @@ private:
     bool m_factor = true; ///< signal to force factorization
 
     /**
-    compute inverse (evaluated by "solve")
-    */
+     * compute inverse (evaluated by "solve")
+     */
     void factorize(MatrixPartitionedTyings& A)
     {
         if (!A.m_changed && !m_factor) {

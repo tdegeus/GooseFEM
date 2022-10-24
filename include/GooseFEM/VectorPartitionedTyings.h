@@ -1,13 +1,13 @@
 /**
-Methods to switch between storage types based on a mesh and DOFs that are partitioned in:
--   unknown DOFs
--   prescribed DOFs
--   dependent DOFs
-
-\file VectorPartitionedTyings.h
-\copyright Copyright 2017. Tom de Geus. All rights reserved.
-\license This project is released under the GNU Public License (GPLv3).
-*/
+ * Methods to switch between storage types based on a mesh and DOFs that are partitioned in:
+ * -   unknown DOFs
+ * -   prescribed DOFs
+ * -   dependent DOFs
+ *
+ * @file VectorPartitionedTyings.h
+ * @copyright Copyright 2017. Tom de Geus. All rights reserved.
+ * @license This project is released under the GNU Public License (GPLv3).
+ */
 
 #ifndef GOOSEFEM_VECTORPARTITIONEDTYINGS_H
 #define GOOSEFEM_VECTORPARTITIONEDTYINGS_H
@@ -21,14 +21,14 @@ Methods to switch between storage types based on a mesh and DOFs that are partit
 namespace GooseFEM {
 
 /**
-Class to switch between storage types. In particular:
-
--   "nodevec": nodal vectors [#nnode, #ndim].
--   "elemvec": nodal vectors stored per element [nelem, #nne, #ndim].
--   "dofval": DOF values [#ndof].
--   "dofval_u": DOF values (Unknown), `== dofval[iiu]`, [#nnu].
--   "dofval_p": DOF values (Prescribed), `== dofval[iiu]`,  [#nnp].
-*/
+ * Class to switch between storage types. In particular:
+ *
+ * -   "nodevec": nodal vectors [#nnode, #ndim].
+ * -   "elemvec": nodal vectors stored per element [nelem, #nne, #ndim].
+ * -   "dofval": DOF values [#ndof].
+ * -   "dofval_u": DOF values (Unknown), `== dofval[iiu]`, [#nnu].
+ * -   "dofval_p": DOF values (Prescribed), `== dofval[iiu]`,  [#nnp].
+ */
 class VectorPartitionedTyings : public Vector {
 private:
     array_type::tensor<size_t, 1> m_iiu; ///< See iiu().
@@ -48,12 +48,12 @@ private:
 
 private:
     /**
-    Convert to "dofval" (overwrite entries that occur more than once).
-    Only the dependent DOFs are retained.
-
-    \param nodevec nodal vectors [#nnode, #ndim].
-    \return dofval[iid()] [#nnd].
-    */
+     * Convert to "dofval" (overwrite entries that occur more than once).
+     * Only the dependent DOFs are retained.
+     *
+     * @param nodevec nodal vectors [#nnode, #ndim].
+     * @return dofval[iid()] [#nnd].
+     */
     template <class T>
     Eigen::VectorXd Eigen_asDofs_d(const T& nodevec) const
     {
@@ -77,16 +77,16 @@ public:
     VectorPartitionedTyings() = default;
 
     /**
-    Constructor.
-
-    \tparam E e.g. `array_type::tensor<size_t, 2>`
-    \tparam M e.g. `Eigen::SparseMatrix<double>`
-    \param conn connectivity [#nelem, #nne].
-    \param dofs DOFs per node [#nnode, #ndim].
-    \param Cdu See Tyings::Periodic::Cdu().
-    \param Cdp See Tyings::Periodic::Cdp().
-    \param Cdi See Tyings::Periodic::Cdi().
-    */
+     * Constructor.
+     *
+     * @tparam E e.g. `array_type::tensor<size_t, 2>`
+     * @tparam M e.g. `Eigen::SparseMatrix<double>`
+     * @param conn connectivity [#nelem, #nne].
+     * @param dofs DOFs per node [#nnode, #ndim].
+     * @param Cdu See Tyings::Periodic::Cdu().
+     * @param Cdp See Tyings::Periodic::Cdp().
+     * @param Cdi See Tyings::Periodic::Cdi().
+     */
     template <class E, class M>
     VectorPartitionedTyings(const E& conn, const E& dofs, const M& Cdu, const M& Cdp, const M& Cdi)
         : Vector(conn, dofs), m_Cdu(Cdu), m_Cdp(Cdp), m_Cdi(Cdi)
@@ -111,79 +111,79 @@ public:
     }
 
     /**
-    \return Number of dependent DOFs.
-    */
+     * @return Number of dependent DOFs.
+     */
     size_t nnd() const
     {
         return m_nnd;
     }
 
     /**
-    \return Number of independent DOFs.
-    */
+     * @return Number of independent DOFs.
+     */
     size_t nni() const
     {
         return m_nni;
     }
 
     /**
-    \return Number of independent unknown DOFs.
-    */
+     * @return Number of independent unknown DOFs.
+     */
     size_t nnu() const
     {
         return m_nnu;
     }
 
     /**
-    \return Number of independent prescribed DOFs.
-    */
+     * @return Number of independent prescribed DOFs.
+     */
     size_t nnp() const
     {
         return m_nnp;
     }
 
     /**
-    Dependent DOFs (list of DOF numbers).
-    \return Pointer.
-    */
+     * Dependent DOFs (list of DOF numbers).
+     * @return Pointer.
+     */
     const array_type::tensor<size_t, 1>& iid() const
     {
         return m_iid;
     }
 
     /**
-    Independent DOFs (list of DOF numbers).
-    \return Copy.
-    */
+     * Independent DOFs (list of DOF numbers).
+     * @return Copy.
+     */
     const array_type::tensor<size_t, 1>& iii() const
     {
         return m_iii;
     }
 
     /**
-    Independent unknown DOFs (list of DOF numbers).
-    \return Pointer.
-    */
+     * Independent unknown DOFs (list of DOF numbers).
+     * @return Pointer.
+     */
     const array_type::tensor<size_t, 1>& iiu() const
     {
         return m_iiu;
     }
 
     /**
-    Independent prescribed DOFs (list of DOF numbers).
-    \return Pointer.
-    */
+     * Independent prescribed DOFs (list of DOF numbers).
+     * @return Pointer.
+     */
     const array_type::tensor<size_t, 1>& iip() const
     {
         return m_iip;
     }
 
     /**
-    Copy (part of) "dofval" to another "dofval": dofval_dest[iip()] = dofval_src[iip()].
-
-    \param dofval_src DOF values, iip() updated, [#ndof].
-    \param dofval_dest DOF values, iip() updated, [#ndof].
-    */
+     * Copy (part of) "dofval" to another "dofval": dofval_dest[iip()] = dofval_src[iip()].
+     *
+     * @param dofval_src DOF values, iip() updated, [#ndof].
+     * @param dofval_dest DOF values, iip() updated, [#ndof].
+     */
     template <class T>
     void copy_p(const T& dofval_src, T& dofval_dest) const
     {
@@ -199,12 +199,12 @@ public:
     }
 
     /**
-    Convert to "dofval" (overwrite entries that occur more than once).
-    Only the independent DOFs are retained.
-
-    \param nodevec nodal vectors [#nnode, #ndim].
-    \return dofval[iii()] [#nni].
-    */
+     * Convert to "dofval" (overwrite entries that occur more than once).
+     * Only the independent DOFs are retained.
+     *
+     * @param nodevec nodal vectors [#nnode, #ndim].
+     * @return dofval[iii()] [#nni].
+     */
     template <class T>
     array_type::tensor<double, 1> AsDofs_i(const T& nodevec) const
     {
@@ -214,12 +214,12 @@ public:
     }
 
     /**
-    Same as InterpQuad_vector(), but writing to preallocated return.
-
-    \param nodevec [#nnode, #ndim].
-    \param dofval_i [#nni].
-    \param apply_tyings If `true` the dependent DOFs are eliminated.
-    */
+     * Same as InterpQuad_vector(), but writing to preallocated return.
+     *
+     * @param nodevec [#nnode, #ndim].
+     * @param dofval_i [#nni].
+     * @param apply_tyings If `true` the dependent DOFs are eliminated.
+     */
     template <class T, class R>
     void asDofs_i(const T& nodevec, R& dofval_i, bool apply_tyings = true) const
     {

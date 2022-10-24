@@ -1,12 +1,12 @@
 /**
-Methods to switch between storage types based on a mesh and DOFs that are partitioned in:
--   unknown DOFs
--   prescribed DOFs
-
-\file VectorPartitioned.h
-\copyright Copyright 2017. Tom de Geus. All rights reserved.
-\license This project is released under the GNU Public License (GPLv3).
-*/
+ * Methods to switch between storage types based on a mesh and DOFs that are partitioned in:
+ * -   unknown DOFs
+ * -   prescribed DOFs
+ *
+ * @file VectorPartitioned.h
+ * @copyright Copyright 2017. Tom de Geus. All rights reserved.
+ * @license This project is released under the GNU Public License (GPLv3).
+ */
 
 #ifndef GOOSEFEM_VECTORPARTITIONED_H
 #define GOOSEFEM_VECTORPARTITIONED_H
@@ -19,29 +19,29 @@ Methods to switch between storage types based on a mesh and DOFs that are partit
 namespace GooseFEM {
 
 /**
-Class to switch between storage types,
-based on a mesh and DOFs that are partitioned in:
-
--   unknown DOFs (iiu()), indicated with "u".
--   prescribed DOFs (iip()), indicated with "p".
-
-To this end some internal re-ordering of the DOFs has to be done, as follows:
-
-    iiu() -> arange(nnu())
-    iip() -> nnu() + arange(nnp())
-
-which is relevant only if you interact using partitioned DOF-lists ("dofval_u" or "dofval_p").
-
-The "dofval", "nodevec", and "elemvec" are all stored in the 'normal' order.
-
-For reference:
-
--   "dofval": DOF values [#ndof].
--   "dofval_u": unknown DOF values, `== dofval[iiu()]`, [#nnu].
--   "dofval_p": prescribed DOF values, `== dofval[iip()]`, [#nnp].
--   "nodevec": nodal vectors [#nnode, #ndim].
--   "elemvec": nodal vectors stored per element [#nelem, #nne, #ndim].
-*/
+ * Class to switch between storage types,
+ * based on a mesh and DOFs that are partitioned in:
+ *
+ * -   unknown DOFs (iiu()), indicated with "u".
+ * -   prescribed DOFs (iip()), indicated with "p".
+ *
+ * To this end some internal re-ordering of the DOFs has to be done, as follows:
+ *
+ *     iiu() -> arange(nnu())
+ *     iip() -> nnu() + arange(nnp())
+ *
+ * which is relevant only if you interact using partitioned DOF-lists ("dofval_u" or "dofval_p").
+ *
+ * The "dofval", "nodevec", and "elemvec" are all stored in the 'normal' order.
+ *
+ * For reference:
+ *
+ * -   "dofval": DOF values [#ndof].
+ * -   "dofval_u": unknown DOF values, `== dofval[iiu()]`, [#nnu].
+ * -   "dofval_p": prescribed DOF values, `== dofval[iip()]`, [#nnp].
+ * -   "nodevec": nodal vectors [#nnode, #ndim].
+ * -   "elemvec": nodal vectors stored per element [#nelem, #nne, #ndim].
+ */
 class VectorPartitioned : public Vector {
 protected:
     array_type::tensor<size_t, 1> m_iiu; ///< See iiu()
@@ -50,25 +50,25 @@ protected:
     size_t m_nnp; ///< See #nnp
 
     /**
-    Renumbered DOFs per node, such that
-
-        iiu = arange(nnu)
-        iip = nnu + arange(nnp)
-
-    making is much simpler to slice.
-    */
+     * Renumbered DOFs per node, such that
+     *
+     *     iiu = arange(nnu)
+     *     iip = nnu + arange(nnp)
+     *
+     * making is much simpler to slice.
+     */
     array_type::tensor<size_t, 2> m_part;
 
 public:
     VectorPartitioned() = default;
 
     /**
-    Constructor.
-
-    \param conn connectivity [#nelem, #nne].
-    \param dofs DOFs per node [#nnode, #ndim].
-    \param iip prescribed DOFs [#nnp].
-    */
+     * Constructor.
+     *
+     * @param conn connectivity [#nelem, #nne].
+     * @param dofs DOFs per node [#nnode, #ndim].
+     * @param iip prescribed DOFs [#nnp].
+     */
     VectorPartitioned(
         const array_type::tensor<size_t, 2>& conn,
         const array_type::tensor<size_t, 2>& dofs,
@@ -86,42 +86,42 @@ public:
     }
 
     /**
-    \return Number of unknown DOFs.
-    */
+     * @return Number of unknown DOFs.
+     */
     size_t nnu() const
     {
         return m_nnu;
     }
 
     /**
-    \return Number of prescribed DOFs.
-    */
+     * @return Number of prescribed DOFs.
+     */
     size_t nnp() const
     {
         return m_nnp;
     }
 
     /**
-    \return Unknown DOFs [#nnu].
-    */
+     * @return Unknown DOFs [#nnu].
+     */
     const array_type::tensor<size_t, 1>& iiu() const
     {
         return m_iiu;
     }
 
     /**
-    \return Prescribed DOFs [#nnp].
-    */
+     * @return Prescribed DOFs [#nnp].
+     */
     const array_type::tensor<size_t, 1>& iip() const
     {
         return m_iip;
     }
 
     /**
-    Per DOF (see Vector::dofs()) list if unknown ("u").
-
-    \return Boolean "nodevec".
-    */
+     * Per DOF (see Vector::dofs()) list if unknown ("u").
+     *
+     * @return Boolean "nodevec".
+     */
     array_type::tensor<bool, 2> dofs_is_u() const
     {
         array_type::tensor<bool, 2> ret = xt::zeros<bool>(this->shape_nodevec());
@@ -139,10 +139,10 @@ public:
     }
 
     /**
-    Per DOF (see Vector::dofs()) list if prescribed ("p").
-
-    \return Boolean "nodevec".
-    */
+     * Per DOF (see Vector::dofs()) list if prescribed ("p").
+     *
+     * @return Boolean "nodevec".
+     */
     array_type::tensor<bool, 2> dofs_is_p() const
     {
         array_type::tensor<bool, 2> ret = xt::zeros<bool>(this->shape_nodevec());
@@ -160,18 +160,18 @@ public:
     }
 
     /**
-    Copy unknown DOFs from "nodevec" to another "nodvec":
-
-        nodevec_dest[vector.dofs_is_u()] = nodevec_src
-
-    the other DOFs are taken from ``nodevec_dest``:
-
-        nodevec_dest[vector.dofs_is_p()] = nodevec_dest
-
-    \param nodevec_src input [#nnode, #ndim]
-    \param nodevec_dest input [#nnode, #ndim]
-    \return nodevec output [#nnode, #ndim]
-    */
+     * Copy unknown DOFs from "nodevec" to another "nodvec":
+     *
+     *     nodevec_dest[vector.dofs_is_u()] = nodevec_src
+     *
+     * the other DOFs are taken from ``nodevec_dest``:
+     *
+     *     nodevec_dest[vector.dofs_is_p()] = nodevec_dest
+     *
+     * @param nodevec_src input [#nnode, #ndim]
+     * @param nodevec_dest input [#nnode, #ndim]
+     * @return nodevec output [#nnode, #ndim]
+     */
     array_type::tensor<double, 2> Copy_u(
         const array_type::tensor<double, 2>& nodevec_src,
         const array_type::tensor<double, 2>& nodevec_dest) const
@@ -182,17 +182,17 @@ public:
     }
 
     /**
-    Copy unknown DOFs from "nodevec" to another "nodvec":
-
-        nodevec_dest[vector.dofs_is_u()] = nodevec_src
-
-    the other DOFs are taken from ``nodevec_dest``:
-
-        nodevec_dest[vector.dofs_is_p()] = nodevec_dest
-
-    \param nodevec_src input [#nnode, #ndim]
-    \param nodevec_dest input/output [#nnode, #ndim]
-    */
+     * Copy unknown DOFs from "nodevec" to another "nodvec":
+     *
+     *     nodevec_dest[vector.dofs_is_u()] = nodevec_src
+     *
+     * the other DOFs are taken from ``nodevec_dest``:
+     *
+     *     nodevec_dest[vector.dofs_is_p()] = nodevec_dest
+     *
+     * @param nodevec_src input [#nnode, #ndim]
+     * @param nodevec_dest input/output [#nnode, #ndim]
+     */
     void copy_u(
         const array_type::tensor<double, 2>& nodevec_src,
         array_type::tensor<double, 2>& nodevec_dest) const
@@ -211,18 +211,18 @@ public:
     }
 
     /**
-    Copy prescribed DOFs from "nodevec" to another "nodvec":
-
-        nodevec_dest[vector.dofs_is_p()] = nodevec_src
-
-    the other DOFs are taken from ``nodevec_dest``:
-
-        nodevec_dest[vector.dofs_is_u()] = nodevec_dest
-
-    \param nodevec_src input [#nnode, #ndim]
-    \param nodevec_dest input [#nnode, #ndim]
-    \return nodevec output [#nnode, #ndim]
-    */
+     * Copy prescribed DOFs from "nodevec" to another "nodvec":
+     *
+     *     nodevec_dest[vector.dofs_is_p()] = nodevec_src
+     *
+     * the other DOFs are taken from ``nodevec_dest``:
+     *
+     *     nodevec_dest[vector.dofs_is_u()] = nodevec_dest
+     *
+     * @param nodevec_src input [#nnode, #ndim]
+     * @param nodevec_dest input [#nnode, #ndim]
+     * @return nodevec output [#nnode, #ndim]
+     */
     array_type::tensor<double, 2> Copy_p(
         const array_type::tensor<double, 2>& nodevec_src,
         const array_type::tensor<double, 2>& nodevec_dest) const
@@ -233,17 +233,17 @@ public:
     }
 
     /**
-    Copy prescribed DOFs from "nodevec" to another "nodvec":
-
-        nodevec_dest[vector.dofs_is_p()] = nodevec_src
-
-    the other DOFs are taken from ``nodevec_dest``:
-
-        nodevec_dest[vector.dofs_is_u()] = nodevec_dest
-
-    \param nodevec_src input [#nnode, #ndim]
-    \param nodevec_dest input/output [#nnode, #ndim]
-    */
+     * Copy prescribed DOFs from "nodevec" to another "nodvec":
+     *
+     *     nodevec_dest[vector.dofs_is_p()] = nodevec_src
+     *
+     * the other DOFs are taken from ``nodevec_dest``:
+     *
+     *     nodevec_dest[vector.dofs_is_u()] = nodevec_dest
+     *
+     * @param nodevec_src input [#nnode, #ndim]
+     * @param nodevec_dest input/output [#nnode, #ndim]
+     */
     void copy_p(
         const array_type::tensor<double, 2>& nodevec_src,
         array_type::tensor<double, 2>& nodevec_dest) const
@@ -262,12 +262,12 @@ public:
     }
 
     /**
-    Combine unknown and prescribed "dofval" into a single "dofval" list.
-
-    \param dofval_u input [#nnu]
-    \param dofval_p input [#nnp]
-    \return dofval output [#ndof]
-    */
+     * Combine unknown and prescribed "dofval" into a single "dofval" list.
+     *
+     * @param dofval_u input [#nnu]
+     * @param dofval_p input [#nnp]
+     * @return dofval output [#ndof]
+     */
     array_type::tensor<double, 1> DofsFromParitioned(
         const array_type::tensor<double, 1>& dofval_u,
         const array_type::tensor<double, 1>& dofval_p) const
@@ -278,12 +278,12 @@ public:
     }
 
     /**
-    Combine unknown and prescribed "dofval" into a single "dofval" list.
-
-    \param dofval_u input [#nnu]
-    \param dofval_p input [#nnp]
-    \param dofval output [#ndof]
-    */
+     * Combine unknown and prescribed "dofval" into a single "dofval" list.
+     *
+     * @param dofval_u input [#nnu]
+     * @param dofval_p input [#nnp]
+     * @param dofval output [#ndof]
+     */
     void dofsFromParitioned(
         const array_type::tensor<double, 1>& dofval_u,
         const array_type::tensor<double, 1>& dofval_p,
@@ -307,14 +307,14 @@ public:
     }
 
     /**
-    Combine unknown and prescribed "dofval" into a single "dofval" list
-    and directly convert to "nodeval" without a temporary
-    (overwrite entries that occur more than once).
-
-    \param dofval_u input [#nnu]
-    \param dofval_p input [#nnp]
-    \return nodevec output [#nnode, #ndim]
-    */
+     * Combine unknown and prescribed "dofval" into a single "dofval" list
+     * and directly convert to "nodeval" without a temporary
+     * (overwrite entries that occur more than once).
+     *
+     * @param dofval_u input [#nnu]
+     * @param dofval_p input [#nnp]
+     * @return nodevec output [#nnode, #ndim]
+     */
     array_type::tensor<double, 2> NodeFromPartitioned(
         const array_type::tensor<double, 1>& dofval_u,
         const array_type::tensor<double, 1>& dofval_p) const
@@ -325,14 +325,14 @@ public:
     }
 
     /**
-    Combine unknown and prescribed "dofval" into a single "dofval" list
-    and directly convert to "nodeval" without a temporary
-    (overwrite entries that occur more than once).
-
-    \param dofval_u input [#nnu]
-    \param dofval_p input [#nnp]
-    \param nodevec output [#nnode, #ndim]
-    */
+     * Combine unknown and prescribed "dofval" into a single "dofval" list
+     * and directly convert to "nodeval" without a temporary
+     * (overwrite entries that occur more than once).
+     *
+     * @param dofval_u input [#nnu]
+     * @param dofval_p input [#nnp]
+     * @param nodevec output [#nnode, #ndim]
+     */
     void nodeFromPartitioned(
         const array_type::tensor<double, 1>& dofval_u,
         const array_type::tensor<double, 1>& dofval_p,
@@ -356,14 +356,14 @@ public:
     }
 
     /**
-    Combine unknown and prescribed "dofval" into a single "dofval" list
-    and directly convert to "elemvec" without a temporary
-    (overwrite entries that occur more than once).
-
-    \param dofval_u input [#nnu]
-    \param dofval_p input [#nnp]
-    \return elemvec output [#nelem, #nne, #ndim]
-    */
+     * Combine unknown and prescribed "dofval" into a single "dofval" list
+     * and directly convert to "elemvec" without a temporary
+     * (overwrite entries that occur more than once).
+     *
+     * @param dofval_u input [#nnu]
+     * @param dofval_p input [#nnp]
+     * @return elemvec output [#nelem, #nne, #ndim]
+     */
     array_type::tensor<double, 3> ElementFromPartitioned(
         const array_type::tensor<double, 1>& dofval_u,
         const array_type::tensor<double, 1>& dofval_p) const
@@ -374,14 +374,14 @@ public:
     }
 
     /**
-    Combine unknown and prescribed "dofval" into a single "dofval" list
-    and directly convert to "elemvec" without a temporary
-    (overwrite entries that occur more than once).
-
-    \param dofval_u input [#nnu]
-    \param dofval_p input [#nnp]
-    \param elemvec output [#nelem, #nne, #ndim]
-    */
+     * Combine unknown and prescribed "dofval" into a single "dofval" list
+     * and directly convert to "elemvec" without a temporary
+     * (overwrite entries that occur more than once).
+     *
+     * @param dofval_u input [#nnu]
+     * @param dofval_p input [#nnp]
+     * @param elemvec output [#nelem, #nne, #ndim]
+     */
     void elementFromPartitioned(
         const array_type::tensor<double, 1>& dofval_u,
         const array_type::tensor<double, 1>& dofval_p,
@@ -407,13 +407,13 @@ public:
     }
 
     /**
-    Extract the unknown "dofval":
-
-        dofval[iiu()]
-
-    \param dofval input [#ndof]
-    \return dofval_u input [#nnu]
-    */
+     * Extract the unknown "dofval":
+     *
+     *     dofval[iiu()]
+     *
+     * @param dofval input [#ndof]
+     * @return dofval_u input [#nnu]
+     */
     array_type::tensor<double, 1> AsDofs_u(const array_type::tensor<double, 1>& dofval) const
     {
         array_type::tensor<double, 1> dofval_u = xt::empty<double>({m_nnu});
@@ -422,13 +422,13 @@ public:
     }
 
     /**
-    Extract the unknown "dofval":
-
-        dofval[iiu()]
-
-    \param dofval input [#ndof]
-    \param dofval_u input [#nnu]
-    */
+     * Extract the unknown "dofval":
+     *
+     *     dofval[iiu()]
+     *
+     * @param dofval input [#ndof]
+     * @param dofval_u input [#nnu]
+     */
     void asDofs_u(
         const array_type::tensor<double, 1>& dofval,
         array_type::tensor<double, 1>& dofval_u) const
@@ -443,12 +443,12 @@ public:
     }
 
     /**
-    Convert "nodevec" to "dofval" (overwrite entries that occur more than once)
-    and extract the unknown "dofval" without a temporary.
-
-    \param nodevec input [#nnode, #ndim]
-    \return dofval_u input [#nnu]
-    */
+     * Convert "nodevec" to "dofval" (overwrite entries that occur more than once)
+     * and extract the unknown "dofval" without a temporary.
+     *
+     * @param nodevec input [#nnode, #ndim]
+     * @return dofval_u input [#nnu]
+     */
     array_type::tensor<double, 1> AsDofs_u(const array_type::tensor<double, 2>& nodevec) const
     {
         array_type::tensor<double, 1> dofval_u = xt::empty<double>({m_nnu});
@@ -457,12 +457,12 @@ public:
     }
 
     /**
-    Convert "nodevec" to "dofval" (overwrite entries that occur more than once)
-    and extract the unknown "dofval" without a temporary.
-
-    \param nodevec input [#nnode, #ndim]
-    \param dofval_u input [#nnu]
-    */
+     * Convert "nodevec" to "dofval" (overwrite entries that occur more than once)
+     * and extract the unknown "dofval" without a temporary.
+     *
+     * @param nodevec input [#nnode, #ndim]
+     * @param dofval_u input [#nnu]
+     */
     void asDofs_u(
         const array_type::tensor<double, 2>& nodevec,
         array_type::tensor<double, 1>& dofval_u) const
@@ -483,12 +483,12 @@ public:
     }
 
     /**
-    Convert "elemvec" to "dofval" (overwrite entries that occur more than once)
-    and extract the unknown "dofval" without a temporary.
-
-    \param elemvec input [#nelem, #nne, #ndim]
-    \return dofval_u input [#nnu]
-    */
+     * Convert "elemvec" to "dofval" (overwrite entries that occur more than once)
+     * and extract the unknown "dofval" without a temporary.
+     *
+     * @param elemvec input [#nelem, #nne, #ndim]
+     * @return dofval_u input [#nnu]
+     */
     array_type::tensor<double, 1> AsDofs_u(const array_type::tensor<double, 3>& elemvec) const
     {
         array_type::tensor<double, 1> dofval_u = xt::empty<double>({m_nnu});
@@ -497,12 +497,12 @@ public:
     }
 
     /**
-    Convert "elemvec" to "dofval" (overwrite entries that occur more than once)
-    and extract the unknown "dofval" without a temporary.
-
-    \param elemvec input [#nelem, #nne, #ndim]
-    \param dofval_u input [#nnu]
-    */
+     * Convert "elemvec" to "dofval" (overwrite entries that occur more than once)
+     * and extract the unknown "dofval" without a temporary.
+     *
+     * @param elemvec input [#nelem, #nne, #ndim]
+     * @param dofval_u input [#nnu]
+     */
     void asDofs_u(
         const array_type::tensor<double, 3>& elemvec,
         array_type::tensor<double, 1>& dofval_u) const
@@ -525,13 +525,13 @@ public:
     }
 
     /**
-    Extract the prescribed "dofval":
-
-        dofval[iip()]
-
-    \param dofval input [#ndof]
-    \return dofval_p input [#nnp]
-    */
+     * Extract the prescribed "dofval":
+     *
+     *     dofval[iip()]
+     *
+     * @param dofval input [#ndof]
+     * @return dofval_p input [#nnp]
+     */
     array_type::tensor<double, 1> AsDofs_p(const array_type::tensor<double, 1>& dofval) const
     {
         array_type::tensor<double, 1> dofval_p = xt::empty<double>({m_nnp});
@@ -540,13 +540,13 @@ public:
     }
 
     /**
-    Extract the prescribed "dofval":
-
-        dofval[iip()]
-
-    \param dofval input [#ndof]
-    \param dofval_p input [#nnp]
-    */
+     * Extract the prescribed "dofval":
+     *
+     *     dofval[iip()]
+     *
+     * @param dofval input [#ndof]
+     * @param dofval_p input [#nnp]
+     */
     void asDofs_p(
         const array_type::tensor<double, 1>& dofval,
         array_type::tensor<double, 1>& dofval_p) const
@@ -561,12 +561,12 @@ public:
     }
 
     /**
-    Convert "nodevec" to "dofval" (overwrite entries that occur more than once)
-    and extract the prescribed "dofval" without a temporary.
-
-    \param nodevec input [#nnode, #ndim]
-    \return dofval_p input [#nnp]
-    */
+     * Convert "nodevec" to "dofval" (overwrite entries that occur more than once)
+     * and extract the prescribed "dofval" without a temporary.
+     *
+     * @param nodevec input [#nnode, #ndim]
+     * @return dofval_p input [#nnp]
+     */
     array_type::tensor<double, 1> AsDofs_p(const array_type::tensor<double, 2>& nodevec) const
     {
         array_type::tensor<double, 1> dofval_p = xt::empty<double>({m_nnp});
@@ -575,12 +575,12 @@ public:
     }
 
     /**
-    Convert "nodevec" to "dofval" (overwrite entries that occur more than once)
-    and extract the prescribed "dofval" without a temporary.
-
-    \param nodevec input [#nnode, #ndim]
-    \param dofval_p input [#nnp]
-    */
+     * Convert "nodevec" to "dofval" (overwrite entries that occur more than once)
+     * and extract the prescribed "dofval" without a temporary.
+     *
+     * @param nodevec input [#nnode, #ndim]
+     * @param dofval_p input [#nnp]
+     */
     void asDofs_p(
         const array_type::tensor<double, 2>& nodevec,
         array_type::tensor<double, 1>& dofval_p) const
@@ -601,12 +601,12 @@ public:
     }
 
     /**
-    Convert "elemvec" to "dofval" (overwrite entries that occur more than once)
-    and extract the prescribed "dofval" without a temporary.
-
-    \param elemvec input [#nelem, #nne, #ndim]
-    \return dofval_p input [#nnp]
-    */
+     * Convert "elemvec" to "dofval" (overwrite entries that occur more than once)
+     * and extract the prescribed "dofval" without a temporary.
+     *
+     * @param elemvec input [#nelem, #nne, #ndim]
+     * @return dofval_p input [#nnp]
+     */
     array_type::tensor<double, 1> AsDofs_p(const array_type::tensor<double, 3>& elemvec) const
     {
         array_type::tensor<double, 1> dofval_p = xt::empty<double>({m_nnp});
@@ -615,12 +615,12 @@ public:
     }
 
     /**
-    Convert "elemvec" to "dofval" (overwrite entries that occur more than once)
-    and extract the prescribed "dofval" without a temporary.
-
-    \param elemvec input [#nelem, #nne, #ndim]
-    \param dofval_p input [#nnp]
-    */
+     * Convert "elemvec" to "dofval" (overwrite entries that occur more than once)
+     * and extract the prescribed "dofval" without a temporary.
+     *
+     * @param elemvec input [#nelem, #nne, #ndim]
+     * @param dofval_p input [#nnp]
+     */
     void asDofs_p(
         const array_type::tensor<double, 3>& elemvec,
         array_type::tensor<double, 1>& dofval_p) const
