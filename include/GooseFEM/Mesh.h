@@ -2242,8 +2242,11 @@ public:
         return xt::unique(ret);
     }
 
-    * / template <class T>
-        T nodeset(std::initializer_list<T> set) const
+    /**
+     * @copydoc nodeset(const std::vector<T>&) const
+     */
+    template <class T>
+    T nodeset(std::initializer_list<T> set) const
     {
         return this->nodeset(std::vector<T>(set));
     }
@@ -2277,8 +2280,11 @@ public:
         return ret;
     }
 
-    * / template <class T>
-        T elemset(std::initializer_list<T> set) const
+    /**
+     * @copydoc elemset(const std::vector<T>&) const
+     */
+    template <class T>
+    T elemset(std::initializer_list<T> set) const
     {
         return this->elemset(std::vector<T>(set));
     }
