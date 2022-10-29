@@ -3,5 +3,5 @@ includedir=${prefix}/include
 
 Name: @PROJECT_NAME@
 Description: Finite Element simulation, some simple meshes and operations.
-Version: @GooseFEM_VERSION@
+Version: @PROJECT_VERSION@
 Cflags: -I${includedir}
