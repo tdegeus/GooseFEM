@@ -27,7 +27,8 @@ void init_MatrixDiagonalPartitioned(py::module& m)
         py::arg("dofs"),
         py::arg("iip"));
 
-    cls.def("data", &GooseFEM::MatrixDiagonalPartitioned::data, "Copy to assemble diagonal matrix");
+    cls.def_property_readonly(
+        "data", &GooseFEM::MatrixDiagonalPartitioned::data, "Copy to assemble diagonal matrix");
     cls.def_property_readonly("data_uu", &GooseFEM::MatrixDiagonalPartitioned::data_uu);
     cls.def_property_readonly("data_pp", &GooseFEM::MatrixDiagonalPartitioned::data_pp);
 

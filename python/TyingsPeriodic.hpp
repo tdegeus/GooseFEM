@@ -53,13 +53,13 @@ void init_TyingsPeriodic(py::module& mod)
         cls.def_property_readonly("dofs", &GooseFEM::Tyings::Periodic::dofs);
         cls.def_property_readonly("control", &GooseFEM::Tyings::Periodic::control);
         cls.def_property_readonly("nodal_tyings", &GooseFEM::Tyings::Periodic::nodal_tyings);
-        cls.def("iid", &GooseFEM::Tyings::Periodic::iid);
-        cls.def("iii", &GooseFEM::Tyings::Periodic::iii);
-        cls.def("iiu", &GooseFEM::Tyings::Periodic::iiu);
-        cls.def("iip", &GooseFEM::Tyings::Periodic::iip);
-        cls.def("Cdi", &GooseFEM::Tyings::Periodic::Cdi);
-        cls.def("Cdu", &GooseFEM::Tyings::Periodic::Cdu);
-        cls.def("Cdp", &GooseFEM::Tyings::Periodic::Cdp);
+        cls.def_property_readonly("iid", &GooseFEM::Tyings::Periodic::iid);
+        cls.def_property_readonly("iii", &GooseFEM::Tyings::Periodic::iii);
+        cls.def_property_readonly("iiu", &GooseFEM::Tyings::Periodic::iiu);
+        cls.def_property_readonly("iip", &GooseFEM::Tyings::Periodic::iip);
+        cls.def_property_readonly("Cdi", &GooseFEM::Tyings::Periodic::Cdi);
+        cls.def_property_readonly("Cdu", &GooseFEM::Tyings::Periodic::Cdu);
+        cls.def_property_readonly("Cdp", &GooseFEM::Tyings::Periodic::Cdp);
 
         cls.def("__repr__", [](const GooseFEM::Tyings::Periodic&) {
             return "<GooseFEM.Tyings.Periodic>";
