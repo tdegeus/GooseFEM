@@ -34,7 +34,7 @@ control_nodes = control.controlNodes
 # extract fixed DOFs:
 # - all control nodes: to prescribe the deformation gradient
 # - one node of the mesh: to remove rigid body modes
-iip = np.concatenate((control_dofs.ravel(), dofs[mesh.nodesOrigin(), :].ravel))
+iip = np.concatenate((control_dofs.ravel(), dofs[mesh.nodesOrigin, :].ravel()))
 
 # get DOF-tyings, reorganise system
 tyings = GooseFEM.Tyings.Periodic(coor, dofs, control_dofs, mesh.nodesPeriodic, iip)
@@ -44,7 +44,7 @@ dofs = tyings.dofs
 # --------------------
 
 # vector definition
-vector = GooseFEM.VectorPartitionedTyings(conn, dofs, tyings.Cdu(), tyings.Cdp(), tyings.Cdi())
+vector = GooseFEM.VectorPartitionedTyings(conn, dofs, tyings.Cdu, tyings.Cdp, tyings.Cdi)
 
 # element definition
 elem = GooseFEM.Element.Quad4.QuadraturePlanar(vector.AsElement(coor))
@@ -73,8 +73,7 @@ mu = np.ones([nelem, nip])
 sigy0 = 0.05 * np.ones([nelem, nip])
 H = np.ones([nelem, nip])
 
-elmat = mesh.elementgrid()
-ehard = elmat[:2, :2].ravel()
+ehard = mesh.elementgrid[:2, :2].ravel()
 sigy0[ehard, :] = 100
 
 mat = GMatElastoPlastic.Cartesian3d.LinearHardening2d(kappa, mu, sigy0, H)
@@ -83,7 +82,7 @@ mat = GMatElastoPlastic.Cartesian3d.LinearHardening2d(kappa, mu, sigy0, H)
 # -----
 
 # allocate system matrix
-K = GooseFEM.MatrixPartitionedTyings(conn, dofs, tyings.Cdu(), tyings.Cdp())
+K = GooseFEM.MatrixPartitionedTyings(conn, dofs, tyings.Cdu, tyings.Cdp)
 Solver = GooseFEM.MatrixPartitionedTyingsSolver()
 
 # some shear strain history

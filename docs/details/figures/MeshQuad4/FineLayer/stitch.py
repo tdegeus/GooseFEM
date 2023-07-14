@@ -27,12 +27,12 @@ coor = stitch.coor
 conn = stitch.conn
 
 cindex = np.zeros(conn.shape[0])
-cindex[stitch.elemset(np.arange(mesh.nelem()), 0)] = 1
-cindex[stitch.elemset(np.arange(mesh.nelem()), 1)] = 2
-cindex[stitch.elemset(np.arange(mesh.nelem()), 2)] = 3
+cindex[stitch.elemset(np.arange(mesh.nelem), 0)] = 1
+cindex[stitch.elemset(np.arange(mesh.nelem), 1)] = 2
+cindex[stitch.elemset(np.arange(mesh.nelem), 2)] = 3
 
-left = stitch.nodeset([mesh.nodesLeftEdge(), mesh.nodesLeftEdge(), mesh.nodesLeftEdge])
-right = stitch.nodeset([mesh.nodesRightEdge(), mesh.nodesRightEdge(), mesh.nodesRightEdge])
+left = stitch.nodeset([mesh.nodesLeftEdge, mesh.nodesLeftEdge, mesh.nodesLeftEdge])
+right = stitch.nodeset([mesh.nodesRightEdge, mesh.nodesRightEdge, mesh.nodesRightEdge])
 top = stitch.nodeset(mesh.nodesTopEdge, 2)
 bottom = stitch.nodeset(mesh.nodesBottomEdge, 0)
 left = np.setdiff1d(np.setdiff1d(left, top), bottom)
