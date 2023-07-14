@@ -252,9 +252,9 @@ public:
      * The ElementType().
      * @return element type
      */
-    auto getElementType() const
+    auto elementType() const
     {
-        return derived_cast().getElementType_impl();
+        return derived_cast().elementType_impl();
     }
 
     /**

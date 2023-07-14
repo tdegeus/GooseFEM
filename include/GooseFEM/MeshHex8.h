@@ -69,7 +69,7 @@ private:
         return m_nelz;
     }
 
-    ElementType getElementType_impl() const
+    ElementType elementType_impl() const
     {
         return ElementType::Hex8;
     }
@@ -885,7 +885,7 @@ private:
     {
         return xt::amax(m_layer_nelz)();
     }
-    ElementType getElementType_impl() const
+    ElementType elementType_impl() const
     {
         return ElementType::Hex8;
     }

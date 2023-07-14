@@ -25,7 +25,7 @@ void register_Mesh_RegularBase(P& cls)
     cls.def_property_readonly("nelx", &C::nelx);
     cls.def_property_readonly("nely", &C::nely);
     cls.def_property_readonly("h", &C::h);
-    cls.def_property_readonly("elementType", &C::getElementType);
+    cls.def_property_readonly("elementType", &C::elementType);
     cls.def_property_readonly("coor", &C::coor);
     cls.def_property_readonly("conn", &C::conn);
     cls.def_property_readonly("dofs", &C::dofs);

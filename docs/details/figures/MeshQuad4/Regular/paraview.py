@@ -17,6 +17,6 @@ with h5py.File(fname, "w") as data:
 
 # write XDMF-file with metadata
 pv.Mesh(
-    pv.Connectivity(fname, "/conn", mesh.getElementType(), mesh.conn.shape),
+    pv.Connectivity(fname, "/conn", mesh.elementType, mesh.conn.shape),
     pv.Coordinates(fname, "/coor", mesh.coor.shape),
 ).write(os.path.splitext(fname)[0] + ".xdmf")

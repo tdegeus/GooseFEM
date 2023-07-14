@@ -61,7 +61,7 @@ private:
         return m_nely;
     }
 
-    ElementType getElementType_impl() const
+    ElementType elementType_impl() const
     {
         return ElementType::Tri3;
     }
