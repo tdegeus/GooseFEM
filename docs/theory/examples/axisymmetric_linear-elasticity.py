@@ -122,13 +122,11 @@ vol = np.empty((nelem, nip))
 
 # loop over nodes
 for e, nodes in enumerate(conn):
-
     # nodal coordinates
     xe = coor[nodes, :]
 
     # loop over integration points
     for q, (w, xi) in enumerate(zip(W, Xi)):
-
         # shape functions
         N = np.array(
             [
@@ -163,7 +161,6 @@ for e, nodes in enumerate(conn):
 
         # compute B-matrix and integration-point volume and store for later use
         for m in range(nne):
-
             Be = np.zeros((3, 3, 3))
 
             Be[0, 0, 0] = dNdxe[m, 1]  # B(m, r, r, r)
@@ -205,7 +202,6 @@ Eps = np.empty((nelem, nip, 3, 3))
 
 # loop over nodes
 for e, nodes in enumerate(conn):
-
     # nodal displacements in 3-d
     #   u_theta = 0
     #   (z,r) -> (r,theta,z)
@@ -215,7 +211,6 @@ for e, nodes in enumerate(conn):
 
     # loop over integration points
     for q, (w, xi) in enumerate(zip(W, Xi)):
-
         # alias integration point values
         Be = B[e, q, :, :, :, :]
 
@@ -237,13 +232,11 @@ fint = np.zeros(ndof)
 
 # loop over nodes
 for e, nodes in enumerate(conn):
-
     # allocate element internal force
     fe = np.zeros(nne * ndim)
 
     # loop over integration points
     for q, (w, xi) in enumerate(zip(W, Xi)):
-
         # alias integration point values
         sig = Sig[e, q, :, :]
         Be = B[e, q, :, :, :, :]
@@ -269,13 +262,11 @@ K = np.zeros((ndof, ndof))
 
 # loop over nodes
 for e, nodes in enumerate(conn):
-
     # allocate element stiffness matrix
     Ke = np.zeros((nne * ndim, nne * ndim))
 
     # loop over integration points
     for q, (w, xi) in enumerate(zip(W, Xi)):
-
         # alias integration point values
         c4 = C4[e, q, :, :, :, :]
         Be = B[e, q, :, :, :, :]
@@ -356,7 +347,6 @@ Eps = np.empty((nelem, nip, 3, 3))
 
 # loop over nodes
 for e, nodes in enumerate(conn):
-
     # nodal displacements in 3-d
     #   u_theta = 0
     #   (z,r) -> (r,theta,z)
@@ -366,7 +356,6 @@ for e, nodes in enumerate(conn):
 
     # loop over integration points
     for q, (w, xi) in enumerate(zip(W, Xi)):
-
         # alias integration point values
         Be = B[e, q, :, :, :, :]
 
@@ -388,13 +377,11 @@ fint = np.zeros(ndof)
 
 # loop over nodes
 for e, nodes in enumerate(conn):
-
     # allocate element internal force
     fe = np.zeros(nne * ndim)
 
     # loop over integration points
     for q, (w, xi) in enumerate(zip(W, Xi)):
-
         # alias integration point values
         sig = Sig[e, q, :, :]
         Be = B[e, q, :, :, :, :]

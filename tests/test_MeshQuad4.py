@@ -10,7 +10,6 @@ class Test_MeshQuad4(unittest.TestCase):
     """
 
     def test_Regular(self):
-
         coor = np.array(
             [
                 [0, 0],
@@ -80,5 +79,4 @@ class Test_MeshQuad4(unittest.TestCase):
 
 
 if __name__ == "__main__":
-
     unittest.main()

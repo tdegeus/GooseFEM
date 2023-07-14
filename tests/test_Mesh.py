@@ -21,7 +21,6 @@ class Test_Mesh(unittest.TestCase):
         self.assertTrue(np.allclose([1.5, 1.5], GooseFEM.Mesh.center_of_gravity(coor, conn)))
 
     def test_coordination_dofs(self):
-
         mesh = GooseFEM.Mesh.Quad4.Regular(4, 4)
         dofs = mesh.dofsPeriodic
         real = np.array(
@@ -50,7 +49,6 @@ class Test_Mesh(unittest.TestCase):
         self.assertTrue(np.all(real == ret))
 
     def test_coordination_node2dof(self):
-
         mesh = GooseFEM.Mesh.Quad4.Regular(4, 4)
         dofs = mesh.dofsPeriodic
         real = [
@@ -96,7 +94,6 @@ class Test_Mesh(unittest.TestCase):
             self.assertTrue(np.all(np.array(real[i]) == np.array(ret[i])))
 
     def test_coordination_nodaltyings(self):
-
         mesh = GooseFEM.Mesh.Quad4.Regular(4, 4)
         dofs = mesh.dofsPeriodic
         real = [
@@ -135,7 +132,6 @@ class Test_Mesh(unittest.TestCase):
             self.assertTrue(np.all(np.array(real[i]) == np.array(ret[i])))
 
     def test_elem2node_periodic(self):
-
         mesh = GooseFEM.Mesh.Quad4.Regular(4, 4)
         conn = mesh.conn
         dofs = mesh.dofsPeriodic
@@ -177,5 +173,4 @@ class Test_Mesh(unittest.TestCase):
 
 
 if __name__ == "__main__":
-
     unittest.main()

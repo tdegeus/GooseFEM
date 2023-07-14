@@ -97,12 +97,10 @@ dgamma[0] = 0
 
 # # loop over increments
 for inc in range(dgamma.size):
-
     # update history
     mat.increment()
 
     for iiter in range(100):
-
         # deformation gradient
         vector.asElement(disp, ue)
         elem0.symGradN_vector(ue, mat.F)
@@ -167,7 +165,6 @@ parser.add_argument("--save", type=str, help="Save plot (plot not shown)")
 args = parser.parse_args(sys.argv[1:])
 
 if args.plot:
-
     import GooseMPL as gplt
     import matplotlib.pyplot as plt
 

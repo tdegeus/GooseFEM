@@ -8,7 +8,6 @@ class Test_MeshQuad4(unittest.TestCase):
     """ """
 
     def test_basic(self):
-
         mesh = GooseFEM.Mesh.Quad4.Regular(2, 2)
 
         nne = mesh.nne
@@ -39,5 +38,4 @@ class Test_MeshQuad4(unittest.TestCase):
 
 
 if __name__ == "__main__":
-
     unittest.main()

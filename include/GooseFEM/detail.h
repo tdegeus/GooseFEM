@@ -11,8 +11,7 @@ namespace GooseFEM {
 namespace detail {
 
 template <size_t nd, typename = void>
-struct tensor {
-};
+struct tensor {};
 
 template <size_t nd>
 struct tensor<nd, typename std::enable_if_t<nd == 2>> {
