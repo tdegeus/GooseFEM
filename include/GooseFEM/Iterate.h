@@ -104,7 +104,8 @@ public:
     /**
      * Get the historic residuals.
      */
-    [[deprecated]] const std::vector<double>& get() const
+    [[deprecated]]
+    const std::vector<double>& get() const
     {
         return m_res;
     }

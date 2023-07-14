@@ -75,7 +75,8 @@ struct asTensor_write {
         std::copy(arg.strides().begin(), arg.strides().end(), ret_strides.begin());
         std::fill(ret_strides.begin() + arg.dimension(), ret_strides.end(), 0);
         ret = xt::strided_view(
-            arg, ret.shape(), std::move(ret_strides), 0ul, xt::layout_type::dynamic);
+            arg, ret.shape(), std::move(ret_strides), 0ul, xt::layout_type::dynamic
+        );
     }
 };
 
@@ -96,7 +97,8 @@ struct asTensor_write<
         std::copy(arg.strides().begin(), arg.strides().end(), ret_strides.begin());
         std::fill(ret_strides.begin() + T::rank, ret_strides.end(), 0);
         ret = xt::strided_view(
-            arg, ret.shape(), std::move(ret_strides), 0ul, xt::layout_type::dynamic);
+            arg, ret.shape(), std::move(ret_strides), 0ul, xt::layout_type::dynamic
+        );
     }
 };
 

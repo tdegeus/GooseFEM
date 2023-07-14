@@ -42,7 +42,8 @@ public:
     MatrixDiagonalPartitioned(
         const array_type::tensor<size_t, 2>& conn,
         const array_type::tensor<size_t, 2>& dofs,
-        const array_type::tensor<size_t, 1>& iip)
+        const array_type::tensor<size_t, 1>& iip
+    )
     {
         m_conn = conn;
         m_dofs = dofs;
@@ -177,7 +178,8 @@ public:
      * Pointer to data.
      * @return [#nnu].
      */
-    [[deprecated]] array_type::tensor<double, 1> Todiagonal() const
+    [[deprecated]]
+    array_type::tensor<double, 1> Todiagonal() const
     {
         return this->data();
     }
@@ -246,7 +248,8 @@ public:
     void dot_u(
         const array_type::tensor<double, 1>& x_u,
         const array_type::tensor<double, 1>& x_p,
-        array_type::tensor<double, 1>& b_u) const
+        array_type::tensor<double, 1>& b_u
+    ) const
     {
         UNUSED(x_p);
 
@@ -283,7 +286,8 @@ public:
     void dot_p(
         const array_type::tensor<double, 1>& x_u,
         const array_type::tensor<double, 1>& x_p,
-        array_type::tensor<double, 1>& b_p) const
+        array_type::tensor<double, 1>& b_p
+    ) const
     {
         UNUSED(x_u);
 
@@ -352,7 +356,8 @@ public:
     void solve_u(
         const array_type::tensor<double, 1>& b_u,
         const array_type::tensor<double, 1>& x_p,
-        array_type::tensor<double, 1>& x_u)
+        array_type::tensor<double, 1>& x_u
+    )
     {
         UNUSED(x_p);
 
@@ -400,7 +405,8 @@ private:
     void reaction_p_impl(
         const array_type::tensor<double, 1>& x_u,
         const array_type::tensor<double, 1>& x_p,
-        array_type::tensor<double, 1>& b_p) const
+        array_type::tensor<double, 1>& b_p
+    ) const
     {
         UNUSED(x_u);
 

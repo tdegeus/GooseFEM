@@ -66,7 +66,8 @@ using namespace xt::placeholders;
     if (!(expr)) { \
         throw std::runtime_error( \
             std::string(file) + ":" + std::to_string(line) + " (" + std::string(function) + ")" + \
-            ": assertion failed (" #expr ") \n\t"); \
+            ": assertion failed (" #expr ") \n\t" \
+        ); \
     }
 
 /**

@@ -17,5 +17,6 @@ void init_version(py::module& m)
     m.def(
         "version_dependencies",
         &GooseFEM::version_dependencies,
-        "See :cpp:func:`GooseFEM::version_dependencies`.");
+        "See :cpp:func:`GooseFEM::version_dependencies`."
+    );
 }

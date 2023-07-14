@@ -52,15 +52,19 @@ TEST_CASE("GooseFEM::Mesh", "Mesh.h")
         REQUIRE(xt::all(xt::equal(stitch.elemmap(1), xt::arange<size_t>(5 * 5) + 5 * 5)));
 
         REQUIRE(xt::all(xt::equal(
-            stitch.nodeset(xt::eval(xt::arange<size_t>(6 * 6)), 0), xt::arange<size_t>(6 * 6))));
+            stitch.nodeset(xt::eval(xt::arange<size_t>(6 * 6)), 0), xt::arange<size_t>(6 * 6)
+        )));
         REQUIRE(xt::all(xt::equal(
             stitch.nodeset(xt::eval(xt::arange<size_t>(6 * 6)), 1),
-            xt::arange<size_t>(6 * 6) + 5 * 6)));
+            xt::arange<size_t>(6 * 6) + 5 * 6
+        )));
         REQUIRE(xt::all(xt::equal(
-            stitch.elemset(xt::eval(xt::arange<size_t>(5 * 5)), 0), xt::arange<size_t>(5 * 5))));
+            stitch.elemset(xt::eval(xt::arange<size_t>(5 * 5)), 0), xt::arange<size_t>(5 * 5)
+        )));
         REQUIRE(xt::all(xt::equal(
             stitch.elemset(xt::eval(xt::arange<size_t>(5 * 5)), 1),
-            xt::arange<size_t>(5 * 5) + 5 * 5)));
+            xt::arange<size_t>(5 * 5) + 5 * 5
+        )));
 
         REQUIRE(xt::all(xt::equal(stitch.nodeset(overlap_a, 0), stitch.nodeset(overlap_b, 1))));
     }
@@ -97,20 +101,25 @@ TEST_CASE("GooseFEM::Mesh", "Mesh.h")
         REQUIRE(xt::all(xt::equal(stitch.elemmap(1), xt::arange<size_t>(5 * 5) + 5 * 5)));
 
         REQUIRE(xt::all(xt::equal(
-            stitch.nodeset(xt::eval(xt::arange<size_t>(6 * 6)), 0), xt::arange<size_t>(6 * 6))));
+            stitch.nodeset(xt::eval(xt::arange<size_t>(6 * 6)), 0), xt::arange<size_t>(6 * 6)
+        )));
         REQUIRE(xt::all(xt::equal(
             stitch.nodeset(xt::eval(xt::arange<size_t>(6 * 6)), 1),
-            xt::arange<size_t>(6 * 6) + 5 * 6)));
+            xt::arange<size_t>(6 * 6) + 5 * 6
+        )));
         REQUIRE(xt::all(xt::equal(
-            stitch.elemset(xt::eval(xt::arange<size_t>(5 * 5)), 0), xt::arange<size_t>(5 * 5))));
+            stitch.elemset(xt::eval(xt::arange<size_t>(5 * 5)), 0), xt::arange<size_t>(5 * 5)
+        )));
         REQUIRE(xt::all(xt::equal(
             stitch.elemset(xt::eval(xt::arange<size_t>(5 * 5)), 1),
-            xt::arange<size_t>(5 * 5) + 5 * 5)));
+            xt::arange<size_t>(5 * 5) + 5 * 5
+        )));
 
         REQUIRE(xt::all(xt::equal(stitch.nodeset(overlap_a, 0), stitch.nodeset(overlap_b, 1))));
 
         REQUIRE(xt::all(
-            xt::equal(stitch.nodeset({nset, nset}), xt::arange<size_t>(0, 6 * 6 + 5 * 6, 6))));
+            xt::equal(stitch.nodeset({nset, nset}), xt::arange<size_t>(0, 6 * 6 + 5 * 6, 6))
+        ));
         REQUIRE(xt::all(xt::equal(stitch.elemset({eset, eset}), xt::arange<size_t>(2 * 5 * 5))));
     }
 
@@ -138,18 +147,23 @@ TEST_CASE("GooseFEM::Mesh", "Mesh.h")
         REQUIRE(xt::all(xt::equal(stitch.elemmap(1), xt::arange<size_t>(5 * 5) + 5 * 5)));
 
         REQUIRE(xt::all(xt::equal(
-            stitch.nodeset(xt::eval(xt::arange<size_t>(6 * 6)), 0), xt::arange<size_t>(6 * 6))));
+            stitch.nodeset(xt::eval(xt::arange<size_t>(6 * 6)), 0), xt::arange<size_t>(6 * 6)
+        )));
         REQUIRE(xt::all(xt::equal(
             stitch.nodeset(xt::eval(xt::arange<size_t>(6 * 6)), 1),
-            xt::arange<size_t>(6 * 6) + 5 * 6)));
+            xt::arange<size_t>(6 * 6) + 5 * 6
+        )));
         REQUIRE(xt::all(xt::equal(
-            stitch.elemset(xt::eval(xt::arange<size_t>(5 * 5)), 0), xt::arange<size_t>(5 * 5))));
+            stitch.elemset(xt::eval(xt::arange<size_t>(5 * 5)), 0), xt::arange<size_t>(5 * 5)
+        )));
         REQUIRE(xt::all(xt::equal(
             stitch.elemset(xt::eval(xt::arange<size_t>(5 * 5)), 1),
-            xt::arange<size_t>(5 * 5) + 5 * 5)));
+            xt::arange<size_t>(5 * 5) + 5 * 5
+        )));
 
         REQUIRE(xt::all(
-            xt::equal(stitch.nodeset({nset, nset}), xt::arange<size_t>(0, 6 * 6 + 5 * 6, 6))));
+            xt::equal(stitch.nodeset({nset, nset}), xt::arange<size_t>(0, 6 * 6 + 5 * 6, 6))
+        ));
         REQUIRE(xt::all(xt::equal(stitch.elemset({eset, eset}), xt::arange<size_t>(2 * 5 * 5))));
     }
 
@@ -233,12 +247,15 @@ TEST_CASE("GooseFEM::Mesh", "Mesh.h")
         xt::xtensor<size_t, 1> nodemap1 = {2, 0, 1, 2, 6, 4, 5, 6, 10, 8, 9, 10, 14, 15, 13, 14};
         xt::xtensor<size_t, 1> nodemap2 = {1, 2, 0, 1, 5, 6, 4, 5, 9, 10, 8, 9, 13, 14, 15, 13};
 
-        REQUIRE(xt::all(xt::equal(
-            GooseFEM::Mesh::elemmap2nodemap(elmap0, mesh.coor(), mesh.conn()), nodemap0)));
-        REQUIRE(xt::all(xt::equal(
-            GooseFEM::Mesh::elemmap2nodemap(elmap1, mesh.coor(), mesh.conn()), nodemap1)));
-        REQUIRE(xt::all(xt::equal(
-            GooseFEM::Mesh::elemmap2nodemap(elmap2, mesh.coor(), mesh.conn()), nodemap2)));
+        REQUIRE(xt::all(
+            xt::equal(GooseFEM::Mesh::elemmap2nodemap(elmap0, mesh.coor(), mesh.conn()), nodemap0)
+        ));
+        REQUIRE(xt::all(
+            xt::equal(GooseFEM::Mesh::elemmap2nodemap(elmap1, mesh.coor(), mesh.conn()), nodemap1)
+        ));
+        REQUIRE(xt::all(
+            xt::equal(GooseFEM::Mesh::elemmap2nodemap(elmap2, mesh.coor(), mesh.conn()), nodemap2)
+        ));
     }
 
     SECTION("elemmap2nodemap - example 1")

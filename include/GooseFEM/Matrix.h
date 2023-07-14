@@ -551,7 +551,8 @@ public:
      */
     array_type::tensor<double, 1> Reaction_p(
         const array_type::tensor<double, 1>& x_u,
-        const array_type::tensor<double, 1>& x_p) const
+        const array_type::tensor<double, 1>& x_p
+    ) const
     {
         array_type::tensor<double, 1> b_p = xt::empty<double>({m_nnp});
         derived_cast().reaction_p_impl(x_u, x_p, b_p);
@@ -569,7 +570,8 @@ public:
     void reaction_p(
         const array_type::tensor<double, 1>& x_u,
         const array_type::tensor<double, 1>& x_p,
-        array_type::tensor<double, 1>& b_p) const
+        array_type::tensor<double, 1>& b_p
+    ) const
     {
         derived_cast().reaction_p_impl(x_u, x_p, b_p);
     }
@@ -711,7 +713,8 @@ private:
                             m_T.push_back(Eigen::Triplet<double>(
                                 m_dofs(m_conn(e, m), i),
                                 m_dofs(m_conn(e, n), j),
-                                elemmat(e, m * m_ndim + i, n * m_ndim + j)));
+                                elemmat(e, m * m_ndim + i, n * m_ndim + j)
+                            ));
                         }
                     }
                 }

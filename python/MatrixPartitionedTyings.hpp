@@ -33,7 +33,8 @@ void init_MatrixPartitionedTyings(py::module& m)
         py::arg("conn"),
         py::arg("dofs"),
         py::arg("Cdu"),
-        py::arg("Cdp"));
+        py::arg("Cdp")
+    );
 
     cls.def_property_readonly("data_uu", &GooseFEM::MatrixPartitionedTyings::data_uu);
     cls.def_property_readonly("data_up", &GooseFEM::MatrixPartitionedTyings::data_up);
@@ -71,7 +72,8 @@ void init_MatrixPartitionedTyings(py::module& m)
         py::arg("matrix"),
         py::arg("b_u"),
         py::arg("b_d"),
-        py::arg("x_p"));
+        py::arg("x_p")
+    );
 
     slv.def(
         "solve_u",
@@ -85,7 +87,8 @@ void init_MatrixPartitionedTyings(py::module& m)
         py::arg("b_u"),
         py::arg("b_d"),
         py::arg("x_p"),
-        py::arg("x_u"));
+        py::arg("x_u")
+    );
 
     slv.def("__repr__", [](const GooseFEM::MatrixPartitionedTyingsSolver<>&) {
         return "<GooseFEM.MatrixPartitionedTyingsSolver>";

@@ -18,7 +18,8 @@ TEST_CASE("GooseFEM::MatrixDiagonal", "MatrixDiagonal.h")
         GooseFEM::Element::Quad4::Quadrature quad(
             vector.AsElement(mesh.coor()),
             GooseFEM::Element::Quad4::Nodal::xi(),
-            GooseFEM::Element::Quad4::Nodal::w());
+            GooseFEM::Element::Quad4::Nodal::w()
+        );
 
         xt::xtensor<double, 2> val_quad = xt::empty<double>({mesh.nelem(), quad.nip()});
         for (size_t q = 0; q < quad.nip(); ++q) {

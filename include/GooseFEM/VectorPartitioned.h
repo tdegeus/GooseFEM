@@ -72,7 +72,8 @@ public:
     VectorPartitioned(
         const array_type::tensor<size_t, 2>& conn,
         const array_type::tensor<size_t, 2>& dofs,
-        const array_type::tensor<size_t, 1>& iip)
+        const array_type::tensor<size_t, 1>& iip
+    )
         : Vector(conn, dofs), m_iip(iip)
     {
         GOOSEFEM_ASSERT(is_unique(iip));
@@ -174,7 +175,8 @@ public:
      */
     array_type::tensor<double, 2> Copy_u(
         const array_type::tensor<double, 2>& nodevec_src,
-        const array_type::tensor<double, 2>& nodevec_dest) const
+        const array_type::tensor<double, 2>& nodevec_dest
+    ) const
     {
         array_type::tensor<double, 2> ret = nodevec_dest;
         this->copy_u(nodevec_src, ret);
@@ -195,7 +197,8 @@ public:
      */
     void copy_u(
         const array_type::tensor<double, 2>& nodevec_src,
-        array_type::tensor<double, 2>& nodevec_dest) const
+        array_type::tensor<double, 2>& nodevec_dest
+    ) const
     {
         GOOSEFEM_ASSERT(xt::has_shape(nodevec_src, {m_nnode, m_ndim}));
         GOOSEFEM_ASSERT(xt::has_shape(nodevec_dest, {m_nnode, m_ndim}));
@@ -225,7 +228,8 @@ public:
      */
     array_type::tensor<double, 2> Copy_p(
         const array_type::tensor<double, 2>& nodevec_src,
-        const array_type::tensor<double, 2>& nodevec_dest) const
+        const array_type::tensor<double, 2>& nodevec_dest
+    ) const
     {
         array_type::tensor<double, 2> ret = nodevec_dest;
         this->copy_p(nodevec_src, ret);
@@ -246,7 +250,8 @@ public:
      */
     void copy_p(
         const array_type::tensor<double, 2>& nodevec_src,
-        array_type::tensor<double, 2>& nodevec_dest) const
+        array_type::tensor<double, 2>& nodevec_dest
+    ) const
     {
         GOOSEFEM_ASSERT(xt::has_shape(nodevec_src, {m_nnode, m_ndim}));
         GOOSEFEM_ASSERT(xt::has_shape(nodevec_dest, {m_nnode, m_ndim}));
@@ -270,7 +275,8 @@ public:
      */
     array_type::tensor<double, 1> DofsFromParitioned(
         const array_type::tensor<double, 1>& dofval_u,
-        const array_type::tensor<double, 1>& dofval_p) const
+        const array_type::tensor<double, 1>& dofval_p
+    ) const
     {
         array_type::tensor<double, 1> dofval = xt::empty<double>({m_ndof});
         this->dofsFromParitioned(dofval_u, dofval_p, dofval);
@@ -287,7 +293,8 @@ public:
     void dofsFromParitioned(
         const array_type::tensor<double, 1>& dofval_u,
         const array_type::tensor<double, 1>& dofval_p,
-        array_type::tensor<double, 1>& dofval) const
+        array_type::tensor<double, 1>& dofval
+    ) const
     {
         GOOSEFEM_ASSERT(dofval_u.size() == m_nnu);
         GOOSEFEM_ASSERT(dofval_p.size() == m_nnp);
@@ -317,7 +324,8 @@ public:
      */
     array_type::tensor<double, 2> NodeFromPartitioned(
         const array_type::tensor<double, 1>& dofval_u,
-        const array_type::tensor<double, 1>& dofval_p) const
+        const array_type::tensor<double, 1>& dofval_p
+    ) const
     {
         array_type::tensor<double, 2> nodevec = xt::empty<double>({m_nnode, m_ndim});
         this->nodeFromPartitioned(dofval_u, dofval_p, nodevec);
@@ -336,7 +344,8 @@ public:
     void nodeFromPartitioned(
         const array_type::tensor<double, 1>& dofval_u,
         const array_type::tensor<double, 1>& dofval_p,
-        array_type::tensor<double, 2>& nodevec) const
+        array_type::tensor<double, 2>& nodevec
+    ) const
     {
         GOOSEFEM_ASSERT(dofval_u.size() == m_nnu);
         GOOSEFEM_ASSERT(dofval_p.size() == m_nnp);
@@ -366,7 +375,8 @@ public:
      */
     array_type::tensor<double, 3> ElementFromPartitioned(
         const array_type::tensor<double, 1>& dofval_u,
-        const array_type::tensor<double, 1>& dofval_p) const
+        const array_type::tensor<double, 1>& dofval_p
+    ) const
     {
         array_type::tensor<double, 3> elemvec = xt::empty<double>({m_nelem, m_nne, m_ndim});
         this->elementFromPartitioned(dofval_u, dofval_p, elemvec);
@@ -385,7 +395,8 @@ public:
     void elementFromPartitioned(
         const array_type::tensor<double, 1>& dofval_u,
         const array_type::tensor<double, 1>& dofval_p,
-        array_type::tensor<double, 3>& elemvec) const
+        array_type::tensor<double, 3>& elemvec
+    ) const
     {
         GOOSEFEM_ASSERT(dofval_u.size() == m_nnu);
         GOOSEFEM_ASSERT(dofval_p.size() == m_nnp);
@@ -431,7 +442,8 @@ public:
      */
     void asDofs_u(
         const array_type::tensor<double, 1>& dofval,
-        array_type::tensor<double, 1>& dofval_u) const
+        array_type::tensor<double, 1>& dofval_u
+    ) const
     {
         GOOSEFEM_ASSERT(dofval.size() == m_ndof);
         GOOSEFEM_ASSERT(dofval_u.size() == m_nnu);
@@ -465,7 +477,8 @@ public:
      */
     void asDofs_u(
         const array_type::tensor<double, 2>& nodevec,
-        array_type::tensor<double, 1>& dofval_u) const
+        array_type::tensor<double, 1>& dofval_u
+    ) const
     {
         GOOSEFEM_ASSERT(xt::has_shape(nodevec, {m_nnode, m_ndim}));
         GOOSEFEM_ASSERT(dofval_u.size() == m_nnu);
@@ -505,7 +518,8 @@ public:
      */
     void asDofs_u(
         const array_type::tensor<double, 3>& elemvec,
-        array_type::tensor<double, 1>& dofval_u) const
+        array_type::tensor<double, 1>& dofval_u
+    ) const
     {
         GOOSEFEM_ASSERT(xt::has_shape(elemvec, {m_nelem, m_nne, m_ndim}));
         GOOSEFEM_ASSERT(dofval_u.size() == m_nnu);
@@ -549,7 +563,8 @@ public:
      */
     void asDofs_p(
         const array_type::tensor<double, 1>& dofval,
-        array_type::tensor<double, 1>& dofval_p) const
+        array_type::tensor<double, 1>& dofval_p
+    ) const
     {
         GOOSEFEM_ASSERT(dofval.size() == m_ndof);
         GOOSEFEM_ASSERT(dofval_p.size() == m_nnp);
@@ -583,7 +598,8 @@ public:
      */
     void asDofs_p(
         const array_type::tensor<double, 2>& nodevec,
-        array_type::tensor<double, 1>& dofval_p) const
+        array_type::tensor<double, 1>& dofval_p
+    ) const
     {
         GOOSEFEM_ASSERT(xt::has_shape(nodevec, {m_nnode, m_ndim}));
         GOOSEFEM_ASSERT(dofval_p.size() == m_nnp);
@@ -623,7 +639,8 @@ public:
      */
     void asDofs_p(
         const array_type::tensor<double, 3>& elemvec,
-        array_type::tensor<double, 1>& dofval_p) const
+        array_type::tensor<double, 1>& dofval_p
+    ) const
     {
         GOOSEFEM_ASSERT(xt::has_shape(elemvec, {m_nelem, m_nne, m_ndim}));
         GOOSEFEM_ASSERT(dofval_p.size() == m_nnp);

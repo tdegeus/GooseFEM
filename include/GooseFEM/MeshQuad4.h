@@ -313,7 +313,8 @@ public:
      */
     array_type::tensor<size_t, 1> elementgrid_ravel(
         std::vector<size_t> start_stop_rows,
-        std::vector<size_t> start_stop_cols) const
+        std::vector<size_t> start_stop_cols
+    ) const
     {
         GOOSEFEM_ASSERT(start_stop_rows.size() == 0 || start_stop_rows.size() == 2);
         GOOSEFEM_ASSERT(start_stop_cols.size() == 0 || start_stop_cols.size() == 2);
@@ -1128,7 +1129,8 @@ private:
         GOOSEFEM_CHECK(xt::all(xt::equal(this->conn(), conn)));
         GOOSEFEM_CHECK(xt::allclose(this->coor(), coor));
         GOOSEFEM_CHECK(
-            xt::all(xt::equal(this->elementsMiddleLayer(), eleft + xt::arange<size_t>(nelx))));
+            xt::all(xt::equal(this->elementsMiddleLayer(), eleft + xt::arange<size_t>(nelx)))
+        );
     }
 };
 
@@ -1164,7 +1166,8 @@ public:
         for (size_t i = 0; i < elmat_coarse.shape(0); ++i) {
             for (size_t j = 0; j < elmat_coarse.shape(1); ++j) {
                 xt::view(m_coarse2fine, elmat_coarse(i, j), xt::all()) = xt::flatten(xt::view(
-                    elmat_fine, xt::range(i * ny, (i + 1) * ny), xt::range(j * nx, (j + 1) * nx)));
+                    elmat_fine, xt::range(i * ny, (i + 1) * ny), xt::range(j * nx, (j + 1) * nx)
+                ));
             }
         }
     }
@@ -1220,7 +1223,8 @@ public:
      * Obtain the coarse mesh (copy of the mesh passed to the constructor).
      * @return mesh
      */
-    [[deprecated]] GooseFEM::Mesh::Quad4::Regular getCoarseMesh() const
+    [[deprecated]]
+    GooseFEM::Mesh::Quad4::Regular getCoarseMesh() const
     {
         return m_coarse;
     }
@@ -1229,7 +1233,8 @@ public:
      * Obtain the fine mesh.
      * @return mesh
      */
-    [[deprecated]] GooseFEM::Mesh::Quad4::Regular getFineMesh() const
+    [[deprecated]]
+    GooseFEM::Mesh::Quad4::Regular getFineMesh() const
     {
         return m_fine;
     }
@@ -1238,7 +1243,8 @@ public:
      * Get element-mapping: elements of the fine mesh per element of the coarse mesh.
      * @return [nelem_coarse, nx() * ny()]
      */
-    [[deprecated]] const array_type::tensor<size_t, 2>& getMap() const
+    [[deprecated]]
+    const array_type::tensor<size_t, 2>& getMap() const
     {
         return m_coarse2fine;
     }
@@ -1284,7 +1290,8 @@ public:
     template <class T, size_t rank, class S>
     array_type::tensor<T, rank> averageToCoarse(
         const array_type::tensor<T, rank>& data,
-        const array_type::tensor<S, rank>& weights) const
+        const array_type::tensor<S, rank>& weights
+    ) const
     {
         GOOSEFEM_ASSERT(data.shape(0) == m_coarse2fine.size());
 
@@ -1365,7 +1372,8 @@ public:
         // ------------
 
         m_regular = GooseFEM::Mesh::Quad4::Regular(
-            xt::amax(m_finelayer.m_layer_nelx)(), xt::sum(m_finelayer.m_nhy)(), m_finelayer.m_h);
+            xt::amax(m_finelayer.m_layer_nelx)(), xt::sum(m_finelayer.m_nhy)(), m_finelayer.m_h
+        );
 
         // -------
         // mapping
@@ -1457,7 +1465,8 @@ public:
                         auto e = xt::view(
                             block,
                             xt::range(nhy(iy) / 2, nhy(iy)),
-                            xt::range(1 * nhx(iy) / 3, 2 * nhx(iy) / 3));
+                            xt::range(1 * nhx(iy) / 3, 2 * nhx(iy) / 3)
+                        );
 
                         for (auto& i : e) {
                             m_elem_regular[el_old(ix, 2)].push_back(i);
@@ -1485,7 +1494,8 @@ public:
                             auto e = xt::view(
                                 block,
                                 xt::range(nhy(iy) / 2, nhy(iy)),
-                                xt::range(0 * nhx(iy) / 3, 1 * nhx(iy) / 3));
+                                xt::range(0 * nhx(iy) / 3, 1 * nhx(iy) / 3)
+                            );
 
                             for (auto& i : e) {
                                 m_elem_regular[el_old(ix, 3)].push_back(i);
@@ -1514,7 +1524,8 @@ public:
                             auto e = xt::view(
                                 block,
                                 xt::range(nhy(iy) / 2, nhy(iy)),
-                                xt::range(2 * nhx(iy) / 3, 3 * nhx(iy) / 3));
+                                xt::range(2 * nhx(iy) / 3, 3 * nhx(iy) / 3)
+                            );
 
                             for (auto& i : e) {
                                 m_elem_regular[el_old(ix, 1)].push_back(i);
@@ -1545,7 +1556,8 @@ public:
                             auto e = xt::view(
                                 block,
                                 nhy(iy) / 2 + j,
-                                xt::range(1 * nhx(iy) / 3 - j - 1, 2 * nhx(iy) / 3 + j + 1));
+                                xt::range(1 * nhx(iy) / 3 - j - 1, 2 * nhx(iy) / 3 + j + 1)
+                            );
 
                             m_elem_regular[el_old(ix, 3)].push_back(e(0));
                             m_frac_regular[el_old(ix, 3)].push_back(0.5);
@@ -1565,7 +1577,8 @@ public:
                         auto e = xt::view(
                             block,
                             xt::range(0, nhy(iy) / 2),
-                            xt::range(1 * nhx(iy) / 3, 2 * nhx(iy) / 3));
+                            xt::range(1 * nhx(iy) / 3, 2 * nhx(iy) / 3)
+                        );
 
                         for (auto& i : e) {
                             m_elem_regular[el_old(ix, 1)].push_back(i);
@@ -1580,7 +1593,8 @@ public:
                             auto e = xt::view(
                                 block,
                                 xt::range(0, nhy(iy) / 2),
-                                xt::range(0 * nhx(iy) / 3, 1 * nhx(iy) / 3));
+                                xt::range(0 * nhx(iy) / 3, 1 * nhx(iy) / 3)
+                            );
 
                             for (auto& i : e) {
                                 m_elem_regular[el_old(ix, 0)].push_back(i);
@@ -1610,7 +1624,8 @@ public:
                             auto e = xt::view(
                                 block,
                                 xt::range(0, nhy(iy) / 2),
-                                xt::range(2 * nhx(iy) / 3, 3 * nhx(iy) / 3));
+                                xt::range(2 * nhx(iy) / 3, 3 * nhx(iy) / 3)
+                            );
 
                             for (auto& i : e) {
                                 m_elem_regular[el_old(ix, 2)].push_back(i);
@@ -1621,7 +1636,8 @@ public:
                         // right-top: narrow-to-wide
                         for (size_t j = 0; j < nhy(iy) / 2; ++j) {
                             auto e = xt::view(
-                                block, nhy(iy) / 2 + j, xt::range(2 * nhx(iy) / 3 + j, nhx(iy)));
+                                block, nhy(iy) / 2 + j, xt::range(2 * nhx(iy) / 3 + j, nhx(iy))
+                            );
 
                             m_elem_regular[el_old(ix, 2)].push_back(e(0));
                             m_frac_regular[el_old(ix, 2)].push_back(0.5);
@@ -1686,7 +1702,8 @@ public:
      *
      * @return mesh.
      */
-    [[deprecated]] GooseFEM::Mesh::Quad4::Regular getRegularMesh() const
+    [[deprecated]]
+    GooseFEM::Mesh::Quad4::Regular getRegularMesh() const
     {
         return m_regular;
     }
@@ -1696,7 +1713,8 @@ public:
      *
      * @return mesh.
      */
-    [[deprecated]] GooseFEM::Mesh::Quad4::FineLayer getFineLayerMesh() const
+    [[deprecated]]
+    GooseFEM::Mesh::Quad4::FineLayer getFineLayerMesh() const
     {
         return m_finelayer;
     }
@@ -1710,7 +1728,8 @@ public:
      *
      * @return [nelem_finelayer, ?]
      */
-    [[deprecated]] std::vector<std::vector<size_t>> getMap() const
+    [[deprecated]]
+    std::vector<std::vector<size_t>> getMap() const
     {
         return m_elem_regular;
     }
@@ -1720,7 +1739,8 @@ public:
      *
      * @return [nelem_finelayer, ?]
      */
-    [[deprecated]] std::vector<std::vector<double>> getMapFraction() const
+    [[deprecated]]
+    std::vector<std::vector<double>> getMapFraction() const
     {
         return m_frac_regular;
     }

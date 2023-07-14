@@ -29,7 +29,8 @@ void init_MatrixPartitioned(py::module& m)
         "See :cpp:class:`GooseFEM::MatrixPartitioned`.",
         py::arg("conn"),
         py::arg("dofs"),
-        py::arg("iip"));
+        py::arg("iip")
+    );
 
     cls.def_property_readonly("data_uu", &GooseFEM::MatrixPartitioned::data_uu);
     cls.def_property_readonly("data_up", &GooseFEM::MatrixPartitioned::data_up);
@@ -58,7 +59,8 @@ void init_MatrixPartitioned(py::module& m)
         "Solve system.",
         py::arg("A"),
         py::arg("b_u"),
-        py::arg("x_p"));
+        py::arg("x_p")
+    );
 
     slv.def(
         "solve_u",
@@ -67,7 +69,8 @@ void init_MatrixPartitioned(py::module& m)
         py::arg("A"),
         py::arg("b_u"),
         py::arg("x_p"),
-        py::arg("x_u"));
+        py::arg("x_u")
+    );
 
     slv.def("__repr__", [](const GooseFEM::MatrixPartitionedSolver<>&) {
         return "<GooseFEM.MatrixPartitionedSolver>";
