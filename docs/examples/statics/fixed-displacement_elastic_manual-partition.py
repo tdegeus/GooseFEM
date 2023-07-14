@@ -123,7 +123,6 @@ parser.add_argument("--save", type=str, help="Save plot (plot not shown)")
 args = parser.parse_args(sys.argv[1:])
 
 if args.plot:
-
     import GooseMPL as gplt
     import matplotlib.pyplot as plt
 

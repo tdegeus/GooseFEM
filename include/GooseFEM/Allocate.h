@@ -33,12 +33,10 @@ inline bool has_shape_begin(const T& t, const S& s)
  * Static identification of an std::array
  */
 template <class T>
-struct is_std_array : std::false_type {
-};
+struct is_std_array : std::false_type {};
 
 template <class T, size_t N>
-struct is_std_array<std::array<T, N>> : std::true_type {
-};
+struct is_std_array<std::array<T, N>> : std::true_type {};
 
 /**
  * Helper for std_array_size

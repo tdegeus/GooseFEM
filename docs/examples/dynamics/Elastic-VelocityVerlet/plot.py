@@ -8,7 +8,6 @@ plt.style.use(["goose", "goose-latex"])
 # --------------------------------------------------------------------------------------------------
 
 with h5py.File("example.hdf5", "r") as data:
-
     t = data["/global/t"][...]
 
     Epot = data["/global/Epot"][...]

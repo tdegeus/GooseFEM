@@ -110,13 +110,11 @@ vol = np.empty((nelem, nip))
 
 # loop over nodes
 for e, nodes in enumerate(conn):
-
     # nodal coordinates
     xe = coor[nodes, :]
 
     # loop over integration points
     for q, (w, xi) in enumerate(zip(W, Xi)):
-
         # shape function gradients (w.r.t. the local element coordinates)
         dNdxi = np.array(
             [
@@ -169,13 +167,11 @@ Eps = np.zeros((nelem, nip, 3, 3))
 
 # loop over nodes
 for e, nodes in enumerate(conn):
-
     # nodal displacements
     ue = disp[nodes, :]
 
     # loop over integration points
     for q, (w, xi) in enumerate(zip(W, Xi)):
-
         # alias integration point values
         dNdxe = dNx[e, q, :, :]
 
@@ -198,13 +194,11 @@ fint = np.zeros(ndof)
 
 # loop over nodes
 for e, nodes in enumerate(conn):
-
     # allocate element internal force
     fe = np.zeros(nne * ndim)
 
     # loop over integration points
     for q, (w, xi) in enumerate(zip(W, Xi)):
-
         # alias integration point values
         # (plane strain: stress in z-direction irrelevant)
         sig = Sig[e, q, :2, :2]
@@ -228,13 +222,11 @@ K = np.zeros((ndof, ndof))
 
 # loop over nodes
 for e, nodes in enumerate(conn):
-
     # allocate element stiffness matrix
     Ke = np.zeros((nne * ndim, nne * ndim))
 
     # loop over integration points
     for q, (w, xi) in enumerate(zip(W, Xi)):
-
         # alias integration point values
         c4 = C4[e, q, :2, :2, :2, :2]
         dNdxe = dNx[e, q, :, :]
@@ -310,13 +302,11 @@ Eps = np.zeros((nelem, nip, 3, 3))
 
 # loop over nodes
 for e, nodes in enumerate(conn):
-
     # nodal displacements
     ue = disp[nodes, :]
 
     # loop over integration points
     for q, (w, xi) in enumerate(zip(W, Xi)):
-
         # alias integration point values
         dNdxe = dNx[e, q, :, :]
 
@@ -339,13 +329,11 @@ fint = np.zeros(ndof)
 
 # loop over nodes
 for e, nodes in enumerate(conn):
-
     # allocate element internal force
     fe = np.zeros(nne * ndim)
 
     # loop over integration points
     for q, (w, xi) in enumerate(zip(W, Xi)):
-
         # alias integration point values
         # (plane strain: stress in z-direction irrelevant)
         sig = Sig[e, q, :2, :2]
