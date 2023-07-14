@@ -13,7 +13,7 @@ fname = "paraview.hdf5"
 
 # define element set
 elementsMiddleLayer = np.zeros((mesh.nelem()), dtype="int")
-elementsMiddleLayer[mesh.elementsMiddleLayer()] = 1
+elementsMiddleLayer[mesh.elementsMiddleLayer] = 1
 
 # write HDF-file containing the data
 with h5py.File(fname, "w") as data:

@@ -24,7 +24,7 @@ disp = np.zeros_like(coor)
 fext = np.zeros_like(coor)
 
 # periodicity in horizontal direction
-dofs[mesh.nodesRightOpenEdge()] = dofs[mesh.nodesLeftOpenEdge]
+dofs[mesh.nodesRightOpenEdge] = dofs[mesh.nodesLeftOpenEdge]
 dofs = GooseFEM.Mesh.renumber(dofs)
 
 # fixed displacement top and bottom
@@ -57,8 +57,7 @@ nip = elem.nip
 kappa = np.ones([nelem, nip])
 mu = np.ones([nelem, nip])
 
-elmat = mesh.elementgrid()
-ehard = elmat[:2, :2].ravel()
+ehard = mesh.elementgrid[:2, :2].ravel()
 mu[ehard, :] = 10
 
 mat = GMatElastic.Cartesian3d.Elastic2d(kappa, mu)
