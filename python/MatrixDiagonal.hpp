@@ -57,8 +57,7 @@ void init_MatrixDiagonal(py::module& m)
         py::arg("dofs")
     );
 
-    cls.def("set", &GooseFEM::MatrixDiagonal::set, py::arg("A"));
-    cls.def_property_readonly("data", &GooseFEM::MatrixDiagonal::data);
+    cls.def_property("data", &GooseFEM::MatrixDiagonal::data, &GooseFEM::MatrixDiagonal::set);
 
     cls.def("__repr__", [](const GooseFEM::MatrixDiagonal&) {
         return "<GooseFEM.MatrixDiagonal>";

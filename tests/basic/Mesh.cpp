@@ -191,7 +191,7 @@ TEST_CASE("GooseFEM::Mesh", "Mesh.h")
     {
         GooseFEM::Mesh::Quad4::Regular mesh(2, 2, 10.0);
         auto s = GooseFEM::Mesh::edgesize(mesh.coor(), mesh.conn());
-        auto t = GooseFEM::Mesh::edgesize(mesh.coor(), mesh.conn(), mesh.getElementType());
+        auto t = GooseFEM::Mesh::edgesize(mesh.coor(), mesh.conn(), mesh.elementType());
         REQUIRE(xt::allclose(s, 10.0));
         REQUIRE(xt::allclose(t, 10.0));
     }

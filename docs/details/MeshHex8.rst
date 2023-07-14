@@ -55,8 +55,8 @@ Mesh::Hex8::Regular::ndim()
 
 Return number of dimensions (= 2).
 
-Mesh::Hex8::Regular::getElementType()
--------------------------------------
+Mesh::Hex8::Regular::elementType()
+----------------------------------
 
 Return element-type.
 
@@ -150,8 +150,8 @@ Mesh::Hex8::FineLayer::h()
 
 Unit edge size (matches input).
 
-Mesh::Hex8::FineLayer::getElementType()
----------------------------------------
+Mesh::Hex8::FineLayer::elementType()
+------------------------------------
 
 Return element-type.
 

@@ -43,8 +43,8 @@ Mesh::Quad4::Regular::ndim()
 
 Return number of dimensions (= 2).
 
-Mesh::Quad4::Regular::getElementType()
---------------------------------------
+Mesh::Quad4::Regular::elementType()
+-----------------------------------
 
 Return element-type.
 
@@ -148,8 +148,8 @@ Mesh::Quad4::FineLayer::h()
 
 Unit edge size (matches input).
 
-Mesh::Quad4::FineLayer::getElementType()
-----------------------------------------
+Mesh::Quad4::FineLayer::elementType()
+-------------------------------------
 
 Return element-type.
 

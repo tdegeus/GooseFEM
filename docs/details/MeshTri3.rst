@@ -43,8 +43,8 @@ Mesh::Tri3::Regular::ndim()
 
 Return number of dimensions (= 2).
 
-Mesh::Tri3::Regular::getElementType()
--------------------------------------
+Mesh::Tri3::Regular::elementType()
+----------------------------------
 
 Return element-type.
 
