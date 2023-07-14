@@ -88,7 +88,7 @@ fres_u = vector.AsDofs_u(fres)
 u_u = Solver.Solve_u(K, fres_u, u_p)
 
 # assemble to nodal vector
-u = np.empty(vector.shape_dofval())
+u = np.empty(vector.shape_dofval)
 u[vector.iiu] = u_u
 u[vector.iip] = u_p
 disp = vector.AsNode(u)

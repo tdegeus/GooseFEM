@@ -32,7 +32,7 @@ void init_MeshQuad4(py::module& m)
         register_Mesh_RegularBase<GooseFEM::Mesh::Quad4::Regular>(cls);
         register_Mesh_RegularBase2d<GooseFEM::Mesh::Quad4::Regular>(cls);
 
-        cls.def("elementgrid", &GooseFEM::Mesh::Quad4::Regular::elementgrid);
+        cls.def_property_readonly("elementgrid", &GooseFEM::Mesh::Quad4::Regular::elementgrid);
 
         cls.def("__repr__", [](const GooseFEM::Mesh::Quad4::Regular&) {
             return "<GooseFEM.Mesh.Quad4.Regular>";
@@ -65,7 +65,8 @@ void init_MeshQuad4(py::module& m)
         cls.def_property_readonly(
             "elemrow_nelem", &GooseFEM::Mesh::Quad4::FineLayer::elemrow_nelem);
 
-        cls.def("elementsMiddleLayer", &GooseFEM::Mesh::Quad4::FineLayer::elementsMiddleLayer);
+        cls.def_property_readonly(
+            "elementsMiddleLayer", &GooseFEM::Mesh::Quad4::FineLayer::elementsMiddleLayer);
 
         cls.def(
             "elementsLayer", &GooseFEM::Mesh::Quad4::FineLayer::elementsLayer, py::arg("layer"));

@@ -82,10 +82,10 @@ void init_Vector(py::module& m)
             py::arg("arg"),
             py::arg("ret"))
 
-        .def("shape_dofval", &GooseFEM::Vector::shape_dofval)
-        .def("shape_nodevec", &GooseFEM::Vector::shape_nodevec)
-        .def("shape_elemvec", &GooseFEM::Vector::shape_elemvec)
-        .def("shape_elemmat", &GooseFEM::Vector::shape_elemmat)
+        .def_property_readonly("shape_dofval", &GooseFEM::Vector::shape_dofval)
+        .def_property_readonly("shape_nodevec", &GooseFEM::Vector::shape_nodevec)
+        .def_property_readonly("shape_elemvec", &GooseFEM::Vector::shape_elemvec)
+        .def_property_readonly("shape_elemmat", &GooseFEM::Vector::shape_elemmat)
 
         .def("allocate_dofval", py::overload_cast<>(&GooseFEM::Vector::allocate_dofval, py::const_))
 
