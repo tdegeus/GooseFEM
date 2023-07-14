@@ -319,7 +319,8 @@ private:
                 auto B =
                     xt::adapt(&m_B(e, q, 0, 0, 0, 0), xt::xshape<s_nne, s_tdim, s_tdim, s_tdim>());
                 auto C = xt::adapt(
-                    &qtensor(e, q, 0, 0, 0, 0), xt::xshape<s_tdim, s_tdim, s_tdim, s_tdim>());
+                    &qtensor(e, q, 0, 0, 0, 0), xt::xshape<s_tdim, s_tdim, s_tdim, s_tdim>()
+                );
                 auto& vol = m_vol(e, q);
 
                 // K(m*s_ndim+perm(c), n*s_ndim+perm(f)) = B(m,a,b,c) * C(a,b,d,e) * B(n,e,d,f) *
@@ -405,7 +406,8 @@ private:
 
                     auto dNxi = xt::adapt(&m_dNxi(q, 0, 0), xt::xshape<s_nne, s_ndim>());
                     auto B = xt::adapt(
-                        &m_B(e, q, 0, 0, 0, 0), xt::xshape<s_nne, s_tdim, s_tdim, s_tdim>());
+                        &m_B(e, q, 0, 0, 0, 0), xt::xshape<s_nne, s_tdim, s_tdim, s_tdim>()
+                    );
                     auto N = xt::adapt(&m_N(q, 0), xt::xshape<s_nne>());
 
                     // J(i,j) += dNxi(m,i) * x(m,j);

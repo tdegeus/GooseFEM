@@ -30,7 +30,8 @@ namespace Element {
  */
 inline array_type::tensor<double, 3> asElementVector(
     const array_type::tensor<size_t, 2>& conn,
-    const array_type::tensor<double, 2>& nodevec)
+    const array_type::tensor<double, 2>& nodevec
+)
 {
     size_t nelem = conn.shape(0);
     size_t nne = conn.shape(1);
@@ -61,7 +62,8 @@ inline array_type::tensor<double, 3> asElementVector(
  */
 inline array_type::tensor<double, 2> assembleNodeVector(
     const array_type::tensor<size_t, 2>& conn,
-    const array_type::tensor<double, 3>& elemvec)
+    const array_type::tensor<double, 3>& elemvec
+)
 {
     size_t nelem = conn.shape(0);
     size_t nne = conn.shape(1);
@@ -1069,7 +1071,8 @@ private:
         for (size_t e = 0; e < nelem; ++e) {
 
             auto Me = xt::adapt(
-                &elemmat(e, 0, 0), xt::xshape<D::s_nne * D::s_ndim, D::s_nne * D::s_ndim>());
+                &elemmat(e, 0, 0), xt::xshape<D::s_nne * D::s_ndim, D::s_nne * D::s_ndim>()
+            );
 
             for (size_t q = 0; q < nip; ++q) {
 
@@ -1141,14 +1144,16 @@ private:
         for (size_t e = 0; e < nelem; ++e) {
 
             auto K = xt::adapt(
-                &elemmat(e, 0, 0), xt::xshape<D::s_nne * D::s_ndim, D::s_nne * D::s_ndim>());
+                &elemmat(e, 0, 0), xt::xshape<D::s_nne * D::s_ndim, D::s_nne * D::s_ndim>()
+            );
 
             for (size_t q = 0; q < nip; ++q) {
 
                 auto dNxq = xt::adapt(&dNx(e, q, 0, 0), xt::xshape<D::s_nne, D::s_ndim>());
                 auto Cq = xt::adapt(
                     &qtensor(e, q, 0, 0, 0, 0),
-                    xt::xshape<D::s_tdim, D::s_tdim, D::s_tdim, D::s_tdim>());
+                    xt::xshape<D::s_tdim, D::s_tdim, D::s_tdim, D::s_tdim>()
+                );
                 auto& volq = vol(e, q);
 
                 for (size_t m = 0; m < D::s_nne; ++m) {

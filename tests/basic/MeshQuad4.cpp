@@ -355,7 +355,8 @@ TEST_CASE("GooseFEM::MeshQuad4", "MeshQuad4.h")
         REQUIRE(xt::all(xt::equal(xt::sort(r0), xt::sort(mesh.elementgrid_around_ravel(48, 1)))));
         for (size_t n = 0; n < 10; ++n) {
             REQUIRE(xt::all(
-                xt::equal(xt::sort(r1) + n, xt::sort(mesh.elementgrid_around_ravel(49 + n, 1)))));
+                xt::equal(xt::sort(r1) + n, xt::sort(mesh.elementgrid_around_ravel(49 + n, 1)))
+            ));
         }
         REQUIRE(xt::all(xt::equal(xt::sort(r12), xt::sort(mesh.elementgrid_around_ravel(59, 1)))));
     }
@@ -382,7 +383,8 @@ TEST_CASE("GooseFEM::MeshQuad4", "MeshQuad4.h")
         REQUIRE(xt::all(xt::equal(xt::sort(r0), xt::sort(mesh.elementgrid_leftright(48, 1, 1)))));
         for (size_t n = 0; n < 10; ++n) {
             REQUIRE(xt::all(
-                xt::equal(xt::sort(r1) + n, xt::sort(mesh.elementgrid_leftright(49 + n, 1, 1)))));
+                xt::equal(xt::sort(r1) + n, xt::sort(mesh.elementgrid_leftright(49 + n, 1, 1)))
+            ));
         }
         REQUIRE(xt::all(xt::equal(xt::sort(r12), xt::sort(mesh.elementgrid_leftright(59, 1, 1)))));
     }

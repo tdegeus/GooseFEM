@@ -20,30 +20,28 @@ template <class C, class P>
 void register_Matrix_MatrixDiagonalBase(P& cls)
 {
     cls.def(
-        "Solve",
-        py::overload_cast<const xt::pytensor<double, 1>&>(&C::Solve),
-        "Solve",
-        py::arg("b"));
+        "Solve", py::overload_cast<const xt::pytensor<double, 1>&>(&C::Solve), "Solve", py::arg("b")
+    );
 
     cls.def(
-        "Solve",
-        py::overload_cast<const xt::pytensor<double, 2>&>(&C::Solve),
-        "Solve",
-        py::arg("b"));
+        "Solve", py::overload_cast<const xt::pytensor<double, 2>&>(&C::Solve), "Solve", py::arg("b")
+    );
 
     cls.def(
         "solve",
         py::overload_cast<const xt::pytensor<double, 1>&, xt::pytensor<double, 1>&>(&C::solve),
         "Solve (write to x)",
         py::arg("b"),
-        py::arg("x"));
+        py::arg("x")
+    );
 
     cls.def(
         "solve",
         py::overload_cast<const xt::pytensor<double, 2>&, xt::pytensor<double, 2>&>(&C::solve),
         "Solve (write to x)",
         py::arg("b"),
-        py::arg("x"));
+        py::arg("x")
+    );
 }
 
 void init_MatrixDiagonal(py::module& m)
@@ -56,13 +54,15 @@ void init_MatrixDiagonal(py::module& m)
         py::init<const xt::pytensor<size_t, 2>&, const xt::pytensor<size_t, 2>&>(),
         "See :cpp:class:`GooseFEM::MatrixDiagonal`.",
         py::arg("conn"),
-        py::arg("dofs"));
+        py::arg("dofs")
+    );
 
     cls.def("set", &GooseFEM::MatrixDiagonal::set, py::arg("A"));
     cls.def_property_readonly("data", &GooseFEM::MatrixDiagonal::data);
 
-    cls.def(
-        "__repr__", [](const GooseFEM::MatrixDiagonal&) { return "<GooseFEM.MatrixDiagonal>"; });
+    cls.def("__repr__", [](const GooseFEM::MatrixDiagonal&) {
+        return "<GooseFEM.MatrixDiagonal>";
+    });
 }
 
 #endif

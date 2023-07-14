@@ -22,7 +22,8 @@ void init_ElementQuad4(py::module& m)
     cls.def(
         py::init<const xt::pytensor<double, 3>&>(),
         "See :cpp:class:`GooseFEM::Element::Quad4::Quadrature`.",
-        py::arg("x"));
+        py::arg("x")
+    );
 
     cls.def(
         py::init<
@@ -32,7 +33,8 @@ void init_ElementQuad4(py::module& m)
         "See :cpp:class:`GooseFEM::Element::Quad4::Quadrature`.",
         py::arg("x"),
         py::arg("xi"),
-        py::arg("w"));
+        py::arg("w")
+    );
 
     register_Mesh_QuadratureBase<GooseFEM::Element::Quad4::Quadrature>(cls);
     register_Mesh_QuadratureBaseCartesian<GooseFEM::Element::Quad4::Quadrature>(cls);
@@ -40,7 +42,8 @@ void init_ElementQuad4(py::module& m)
     cls.def_property_readonly(
         "GradN",
         &GooseFEM::Element::Quad4::Quadrature::GradN,
-        "Shape function gradients [nelem, nip, nne, ndim]");
+        "Shape function gradients [nelem, nip, nne, ndim]"
+    );
 
     cls.def("__repr__", [](const GooseFEM::Element::Quad4::Quadrature&) {
         return "<GooseFEM.Element.Quad4.Quadrature>";

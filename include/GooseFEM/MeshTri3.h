@@ -280,7 +280,8 @@ inline array_type::tensor<size_t, 2> setOrientation(
     const array_type::tensor<double, 2>& coor,
     const array_type::tensor<size_t, 2>& conn,
     const array_type::tensor<int, 1>& val,
-    int orientation = -1)
+    int orientation = -1
+)
 {
     GOOSEFEM_ASSERT(conn.shape(1) == 3ul);
     GOOSEFEM_ASSERT(coor.shape(1) == 2ul);
@@ -312,7 +313,8 @@ inline array_type::tensor<size_t, 2> setOrientation(
 inline array_type::tensor<size_t, 2> setOrientation(
     const array_type::tensor<double, 2>& coor,
     const array_type::tensor<size_t, 2>& conn,
-    int orientation = -1)
+    int orientation = -1
+)
 {
     GOOSEFEM_ASSERT(conn.shape(1) == 3ul);
     GOOSEFEM_ASSERT(coor.shape(1) == 2ul);

@@ -569,7 +569,8 @@ private:
     void asDofs_impl_nodevec(const T& arg, R& ret) const
     {
         static_assert(
-            xt::get_rank<R>::value == 1 || !xt::has_fixed_rank_t<R>::value, "Unknown rank 'ret'");
+            xt::get_rank<R>::value == 1 || !xt::has_fixed_rank_t<R>::value, "Unknown rank 'ret'"
+        );
         GOOSEFEM_ASSERT(xt::has_shape(arg, this->shape_nodevec()));
         GOOSEFEM_ASSERT(xt::has_shape(ret, this->shape_dofval()));
 
@@ -590,7 +591,8 @@ private:
     void asDofs_impl_elemvec(const T& arg, R& ret) const
     {
         static_assert(
-            xt::get_rank<R>::value == 1 || !xt::has_fixed_rank_t<R>::value, "Unknown rank 'ret'");
+            xt::get_rank<R>::value == 1 || !xt::has_fixed_rank_t<R>::value, "Unknown rank 'ret'"
+        );
         GOOSEFEM_ASSERT(xt::has_shape(arg, this->shape_elemvec()));
         GOOSEFEM_ASSERT(xt::has_shape(ret, this->shape_dofval()));
 
@@ -613,7 +615,8 @@ private:
     void asNode_impl_dofval(const T& arg, R& ret) const
     {
         static_assert(
-            xt::get_rank<R>::value == 2 || !xt::has_fixed_rank_t<R>::value, "Unknown rank 'ret'");
+            xt::get_rank<R>::value == 2 || !xt::has_fixed_rank_t<R>::value, "Unknown rank 'ret'"
+        );
         GOOSEFEM_ASSERT(xt::has_shape(arg, this->shape_dofval()));
         GOOSEFEM_ASSERT(xt::has_shape(ret, this->shape_nodevec()));
 
@@ -632,7 +635,8 @@ private:
     void asNode_impl_elemvec(const T& arg, R& ret) const
     {
         static_assert(
-            xt::get_rank<R>::value == 2 || !xt::has_fixed_rank_t<R>::value, "Unknown rank 'ret'");
+            xt::get_rank<R>::value == 2 || !xt::has_fixed_rank_t<R>::value, "Unknown rank 'ret'"
+        );
         GOOSEFEM_ASSERT(xt::has_shape(arg, this->shape_elemvec()));
         GOOSEFEM_ASSERT(xt::has_shape(ret, this->shape_nodevec()));
 
@@ -655,7 +659,8 @@ private:
     void asElement_impl_dofval(const T& arg, R& ret) const
     {
         static_assert(
-            xt::get_rank<R>::value == 3 || !xt::has_fixed_rank_t<R>::value, "Unknown rank 'ret'");
+            xt::get_rank<R>::value == 3 || !xt::has_fixed_rank_t<R>::value, "Unknown rank 'ret'"
+        );
         GOOSEFEM_ASSERT(arg.size() == m_ndof);
         GOOSEFEM_ASSERT(xt::has_shape(ret, this->shape_elemvec()));
 
@@ -676,7 +681,8 @@ private:
     void asElement_impl_nodevec(const T& arg, R& ret) const
     {
         static_assert(
-            xt::get_rank<R>::value == 3 || !xt::has_fixed_rank_t<R>::value, "Unknown rank 'ret'");
+            xt::get_rank<R>::value == 3 || !xt::has_fixed_rank_t<R>::value, "Unknown rank 'ret'"
+        );
         GOOSEFEM_ASSERT(xt::has_shape(arg, this->shape_nodevec()));
         GOOSEFEM_ASSERT(xt::has_shape(ret, this->shape_elemvec()));
 
@@ -697,7 +703,8 @@ private:
     void assembleDofs_impl_nodevec(const T& arg, R& ret) const
     {
         static_assert(
-            xt::get_rank<R>::value == 1 || !xt::has_fixed_rank_t<R>::value, "Unknown rank 'ret'");
+            xt::get_rank<R>::value == 1 || !xt::has_fixed_rank_t<R>::value, "Unknown rank 'ret'"
+        );
         GOOSEFEM_ASSERT(xt::has_shape(arg, this->shape_nodevec()));
         GOOSEFEM_ASSERT(xt::has_shape(ret, this->shape_dofval()));
 
@@ -717,7 +724,8 @@ private:
     void assembleDofs_impl_elemvec(const T& arg, R& ret) const
     {
         static_assert(
-            xt::get_rank<R>::value == 1 || !xt::has_fixed_rank_t<R>::value, "Unknown rank 'ret'");
+            xt::get_rank<R>::value == 1 || !xt::has_fixed_rank_t<R>::value, "Unknown rank 'ret'"
+        );
         GOOSEFEM_ASSERT(xt::has_shape(arg, this->shape_elemvec()));
         GOOSEFEM_ASSERT(xt::has_shape(ret, this->shape_dofval()));
 
@@ -739,7 +747,8 @@ private:
     void assembleNode_impl_elemvec(const T& arg, R& ret) const
     {
         static_assert(
-            xt::get_rank<R>::value == 2 || !xt::has_fixed_rank_t<R>::value, "Unknown rank 'ret'");
+            xt::get_rank<R>::value == 2 || !xt::has_fixed_rank_t<R>::value, "Unknown rank 'ret'"
+        );
         GOOSEFEM_ASSERT(xt::has_shape(arg, this->shape_elemvec()));
         GOOSEFEM_ASSERT(xt::has_shape(ret, this->shape_nodevec()));
 

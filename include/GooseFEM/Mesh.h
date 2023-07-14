@@ -1725,7 +1725,8 @@ overlapping(const S& coor_a, const T& coor_b, double rtol = 1e-5, double atol = 
     for (size_t i = 0; i < coor_a.shape(0); ++i) {
 
         auto idx = xt::flatten_indices(xt::argwhere(
-            xt::prod(xt::isclose(coor_b, xt::view(coor_a, i, xt::all()), rtol, atol), 1)));
+            xt::prod(xt::isclose(coor_b, xt::view(coor_a, i, xt::all()), rtol, atol), 1)
+        ));
 
         for (auto& j : idx) {
             ret_a.push_back(i);
@@ -1770,7 +1771,8 @@ public:
         const NB& overlapping_nodes_b,
         bool check_position = true,
         double rtol = 1e-5,
-        double atol = 1e-8)
+        double atol = 1e-8
+    )
     {
         UNUSED(rtol);
         UNUSED(atol);
@@ -1790,7 +1792,8 @@ public:
                 xt::view(coor_a, xt::keep(overlapping_nodes_a), xt::all()),
                 xt::view(coor_b, xt::keep(overlapping_nodes_b), xt::all()),
                 rtol,
-                atol));
+                atol
+            ));
         }
 
         size_t nnda = coor_a.shape(0);
@@ -2050,7 +2053,8 @@ public:
             coor,
             conn,
             xt::eval(xt::view(overlap, 1, xt::all())),
-            false);
+            false
+        );
 
         m_coor = stitch.coor();
         m_conn = stitch.conn();
@@ -2348,15 +2352,8 @@ public:
         xt::view(x, xt::all(), 1) += shift;
 
         ManualStitch stitch(
-            m_coor,
-            m_conn,
-            m_nodes_top.back(),
-            x,
-            conn,
-            nodes_bot,
-            m_check_overlap,
-            m_rtol,
-            m_atol);
+            m_coor, m_conn, m_nodes_top.back(), x, conn, nodes_bot, m_check_overlap, m_rtol, m_atol
+        );
 
         m_nodes_bot.push_back(stitch.nodeset(nodes_bot, 1));
         m_nodes_top.push_back(stitch.nodeset(nodes_top, 1));
@@ -2743,7 +2740,8 @@ inline array_type::tensor<double, 2> nodal_mass(const C& coor, const E& conn, El
         GooseFEM::Element::Quad4::Quadrature quad(
             vector.AsElement(coor),
             GooseFEM::Element::Quad4::Nodal::xi(),
-            GooseFEM::Element::Quad4::Nodal::w());
+            GooseFEM::Element::Quad4::Nodal::w()
+        );
         M.assemble(quad.Int_N_scalar_NT_dV(rho));
     }
     else {

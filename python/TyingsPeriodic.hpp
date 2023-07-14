@@ -30,7 +30,8 @@ void init_TyingsPeriodic(py::module& mod)
             py::arg("coor"),
             py::arg("dofs"),
             py::arg("control_dofs"),
-            py::arg("nodal_tyings"));
+            py::arg("nodal_tyings")
+        );
 
         cls.def(
             py::init<
@@ -44,7 +45,8 @@ void init_TyingsPeriodic(py::module& mod)
             py::arg("dofs"),
             py::arg("control_dofs"),
             py::arg("nodal_tyings"),
-            py::arg("iip"));
+            py::arg("iip")
+        );
 
         cls.def_property_readonly("nnd", &GooseFEM::Tyings::Periodic::nnd);
         cls.def_property_readonly("nni", &GooseFEM::Tyings::Periodic::nni);
@@ -73,7 +75,8 @@ void init_TyingsPeriodic(py::module& mod)
             py::init<const xt::pytensor<double, 2>&, const xt::pytensor<size_t, 2>&>(),
             "See :cpp:class:`GooseFEM::Tyings::Control`.",
             py::arg("coor"),
-            py::arg("dofs"));
+            py::arg("dofs")
+        );
 
         cls.def_property_readonly("coor", &GooseFEM::Tyings::Control::coor);
         cls.def_property_readonly("dofs", &GooseFEM::Tyings::Control::dofs);

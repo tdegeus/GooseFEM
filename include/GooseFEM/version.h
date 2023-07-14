@@ -76,14 +76,16 @@ inline std::vector<std::string> version_dependencies()
     ret.push_back(
         "xtensor=" + detail::unquote(std::string(QUOTE(XTENSOR_VERSION_MAJOR))) + "." +
         detail::unquote(std::string(QUOTE(XTENSOR_VERSION_MINOR))) + "." +
-        detail::unquote(std::string(QUOTE(XTENSOR_VERSION_PATCH))));
+        detail::unquote(std::string(QUOTE(XTENSOR_VERSION_PATCH)))
+    );
 
 #if defined(GOOSEFEM_EIGEN) || defined(EIGEN_WORLD_VERSION)
 
     ret.push_back(
         "eigen=" + detail::unquote(std::string(QUOTE(EIGEN_WORLD_VERSION))) + "." +
         detail::unquote(std::string(QUOTE(EIGEN_MAJOR_VERSION))) + "." +
-        detail::unquote(std::string(QUOTE(EIGEN_MINOR_VERSION))));
+        detail::unquote(std::string(QUOTE(EIGEN_MINOR_VERSION)))
+    );
 
 #endif
 

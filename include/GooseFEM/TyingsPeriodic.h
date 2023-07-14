@@ -85,7 +85,8 @@ public:
         const D& dofs,
         const S& control_dofs,
         const T& nodal_tyings,
-        const U& iip)
+        const U& iip
+    )
     {
         m_tyings = nodal_tyings;
         m_coor = coor;
@@ -250,7 +251,8 @@ public:
 
                 for (size_t k = 0; k < m_ndim; ++k) {
                     data.push_back(Eigen::Triplet<double>(
-                        i * m_ndim + j, m_control(j, k), m_coor(nd, k) - m_coor(ni, k)));
+                        i * m_ndim + j, m_control(j, k), m_coor(nd, k) - m_coor(ni, k)
+                    ));
                 }
             }
         }
@@ -286,7 +288,8 @@ public:
                 for (size_t k = 0; k < m_ndim; ++k) {
                     if (m_control(j, k) < m_nnu) {
                         data.push_back(Eigen::Triplet<double>(
-                            i * m_ndim + j, m_control(j, k), m_coor(nd, k) - m_coor(ni, k)));
+                            i * m_ndim + j, m_control(j, k), m_coor(nd, k) - m_coor(ni, k)
+                        ));
                     }
                 }
             }
@@ -318,15 +321,15 @@ public:
 
                 if (m_dofs(ni, j) >= m_nnu) {
                     data.push_back(
-                        Eigen::Triplet<double>(i * m_ndim + j, m_dofs(ni, j) - m_nnu, +1.0));
+                        Eigen::Triplet<double>(i * m_ndim + j, m_dofs(ni, j) - m_nnu, +1.0)
+                    );
                 }
 
                 for (size_t k = 0; k < m_ndim; ++k) {
                     if (m_control(j, k) >= m_nnu) {
                         data.push_back(Eigen::Triplet<double>(
-                            i * m_ndim + j,
-                            m_control(j, k) - m_nnu,
-                            m_coor(nd, k) - m_coor(ni, k)));
+                            i * m_ndim + j, m_control(j, k) - m_nnu, m_coor(nd, k) - m_coor(ni, k)
+                        ));
                     }
                 }
             }

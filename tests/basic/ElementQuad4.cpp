@@ -177,7 +177,8 @@ TEST_CASE("GooseFEM::ElementQuad4", "ElementQuad4.h")
         GooseFEM::Element::Quad4::Quadrature quad(
             vec.AsElement(mesh.coor()),
             GooseFEM::Element::Quad4::Nodal::xi(),
-            GooseFEM::Element::Quad4::Nodal::w());
+            GooseFEM::Element::Quad4::Nodal::w()
+        );
 
         xt::xtensor<double, 2> rho = xt::ones<double>({mesh.nelem(), quad.nip()});
 

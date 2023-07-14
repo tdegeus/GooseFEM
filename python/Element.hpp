@@ -34,29 +34,34 @@ void register_Mesh_QuadratureBase(P& cls)
     cls.def(
         "AsTensor",
         static_cast<xt::xarray<double> (C::*)(size_t, const xt::pyarray<double>&) const>(
-            &C::AsTensor),
+            &C::AsTensor
+        ),
         py::arg("rank"),
-        py::arg("qscalar"));
+        py::arg("qscalar")
+    );
 
     cls.def("shape_elemvec", static_cast<std::array<size_t, 3> (C::*)() const>(&C::shape_elemvec));
 
     cls.def(
         "shape_elemvec",
         static_cast<std::array<size_t, 3> (C::*)(size_t) const>(&C::shape_elemvec),
-        py::arg("tdim"));
+        py::arg("tdim")
+    );
 
     cls.def("shape_elemmat", &C::shape_elemmat);
 
     cls.def(
         "shape_qtensor",
         static_cast<std::vector<size_t> (C::*)(size_t) const>(&C::shape_qtensor),
-        py::arg("rank"));
+        py::arg("rank")
+    );
 
     cls.def(
         "shape_qtensor",
         static_cast<std::vector<size_t> (C::*)(size_t, size_t) const>(&C::shape_qtensor),
         py::arg("rank"),
-        py::arg("tdim"));
+        py::arg("tdim")
+    );
 
     cls.def("shape_qscalar", &C::shape_qscalar);
 
@@ -65,7 +70,8 @@ void register_Mesh_QuadratureBase(P& cls)
     cls.def(
         "shape_qvector",
         static_cast<std::array<size_t, 3> (C::*)(size_t) const>(&C::shape_qvector),
-        py::arg("tdim"));
+        py::arg("tdim")
+    );
 }
 
 template <class C, class P>
@@ -78,13 +84,15 @@ void register_Mesh_QuadratureBaseCartesian(P& cls)
     cls.def(
         "InterpQuad_vector",
         &C::template InterpQuad_vector<xt::pytensor<double, 3>>,
-        py::arg("elemvec"));
+        py::arg("elemvec")
+    );
 
     cls.def(
         "interpQuad_vector",
         &C::template interpQuad_vector<xt::pytensor<double, 3>, xt::pytensor<double, 3>>,
         py::arg("elemvec"),
-        py::arg("qvector"));
+        py::arg("qvector")
+    );
 
     cls.def("GradN_vector", &C::template GradN_vector<xt::pytensor<double, 3>>, py::arg("elemvec"));
 
@@ -92,65 +100,73 @@ void register_Mesh_QuadratureBaseCartesian(P& cls)
         "gradN_vector",
         &C::template gradN_vector<xt::pytensor<double, 3>, xt::pytensor<double, 4>>,
         py::arg("elemvec"),
-        py::arg("qtensor"));
+        py::arg("qtensor")
+    );
 
     cls.def(
-        "GradN_vector_T", &C::template GradN_vector_T<xt::pytensor<double, 3>>, py::arg("elemvec"));
+        "GradN_vector_T", &C::template GradN_vector_T<xt::pytensor<double, 3>>, py::arg("elemvec")
+    );
 
     cls.def(
         "gradN_vector_T",
         &C::template gradN_vector_T<xt::pytensor<double, 3>, xt::pytensor<double, 4>>,
         py::arg("elemvec"),
-        py::arg("qtensor"));
+        py::arg("qtensor")
+    );
 
     cls.def(
-        "SymGradN_vector",
-        &C::template SymGradN_vector<xt::pytensor<double, 3>>,
-        py::arg("elemvec"));
+        "SymGradN_vector", &C::template SymGradN_vector<xt::pytensor<double, 3>>, py::arg("elemvec")
+    );
 
     cls.def(
         "symGradN_vector",
         &C::template symGradN_vector<xt::pytensor<double, 3>, xt::pytensor<double, 4>>,
         py::arg("elemvec"),
-        py::arg("qtensor"));
+        py::arg("qtensor")
+    );
 
     cls.def(
-        "Int_N_vector_dV",
-        &C::template Int_N_vector_dV<xt::pytensor<double, 3>>,
-        py::arg("qvector"));
+        "Int_N_vector_dV", &C::template Int_N_vector_dV<xt::pytensor<double, 3>>, py::arg("qvector")
+    );
 
     cls.def(
         "int_N_vector_dV",
         &C::template int_N_vector_dV<xt::pytensor<double, 3>, xt::pytensor<double, 3>>,
         py::arg("qvector"),
-        py::arg("elemvec"));
+        py::arg("elemvec")
+    );
 
     cls.def(
         "Int_N_scalar_NT_dV",
         &C::template Int_N_scalar_NT_dV<xt::pytensor<double, 2>>,
-        py::arg("qscalar"));
+        py::arg("qscalar")
+    );
 
     cls.def(
         "int_N_scalar_NT_dV",
         &C::template int_N_scalar_NT_dV<xt::pytensor<double, 2>, xt::pytensor<double, 3>>,
         py::arg("qscalar"),
-        py::arg("elemmat"));
+        py::arg("elemmat")
+    );
 
     cls.def(
         "Int_gradN_dot_tensor2_dV",
         &C::template Int_gradN_dot_tensor2_dV<xt::pytensor<double, 4>>,
-        py::arg("qtensor"));
+        py::arg("qtensor")
+    );
 
     cls.def(
         "int_gradN_dot_tensor2_dV",
         &C::template int_gradN_dot_tensor2_dV<xt::pytensor<double, 4>, xt::pytensor<double, 3>>,
         py::arg("qtensor"),
-        py::arg("elemvec"));
+        py::arg("elemvec")
+    );
 
     cls.def(
         "Int_gradN_dot_tensor4_dot_gradNT_dV",
         &C::template Int_gradN_dot_tensor4_dot_gradNT_dV<xt::pytensor<double, 6>>,
-        py::arg("qtensor"));
+        py::arg("qtensor")
+    );
 
     cls.def(
         "int_gradN_dot_tensor4_dot_gradNT_dV",
@@ -158,7 +174,8 @@ void register_Mesh_QuadratureBaseCartesian(P& cls)
             xt::pytensor<double, 6>,
             xt::pytensor<double, 3>>,
         py::arg("qtensor"),
-        py::arg("elemmat"));
+        py::arg("elemmat")
+    );
 }
 
 void init_Element(py::module& m)
@@ -169,14 +186,16 @@ void init_Element(py::module& m)
         &GooseFEM::Element::asElementVector,
         "See :cpp:func:`GooseFEM::Element::asElementVector`.",
         py::arg("conn"),
-        py::arg("nodevec"));
+        py::arg("nodevec")
+    );
 
     m.def(
         "assembleElementVector",
         &GooseFEM::Element::assembleNodeVector,
         "See :cpp:func:`GooseFEM::Element::assembleNodeVector`.",
         py::arg("conn"),
-        py::arg("elemvec"));
+        py::arg("elemvec")
+    );
 }
 
 #endif

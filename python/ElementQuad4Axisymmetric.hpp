@@ -22,7 +22,8 @@ void init_ElementQuad4Axisymmetric(py::module& m)
     cls.def(
         py::init<const xt::pytensor<double, 3>&>(),
         "See :cpp:class:`GooseFEM::Element::Quad4::QuadratureAxisymmetric`.",
-        py::arg("x"));
+        py::arg("x")
+    );
 
     cls.def(
         py::init<
@@ -32,7 +33,8 @@ void init_ElementQuad4Axisymmetric(py::module& m)
         "See :cpp:class:`GooseFEM::Element::Quad4::QuadratureAxisymmetric`.",
         py::arg("x"),
         py::arg("xi"),
-        py::arg("w"));
+        py::arg("w")
+    );
 
     register_Mesh_QuadratureBase<GooseFEM::Element::Quad4::QuadratureAxisymmetric>(cls);
     register_Mesh_QuadratureBaseCartesian<GooseFEM::Element::Quad4::QuadratureAxisymmetric>(cls);
@@ -40,7 +42,8 @@ void init_ElementQuad4Axisymmetric(py::module& m)
     cls.def_property_readonly(
         "B",
         &GooseFEM::Element::Quad4::QuadratureAxisymmetric::B,
-        "B-matrix (shape function gradients) [nelem, nne, tdim, tdim, tdim]");
+        "B-matrix (shape function gradients) [nelem, nne, tdim, tdim, tdim]"
+    );
 
     cls.def("__repr__", [](const GooseFEM::Element::Quad4::QuadratureAxisymmetric&) {
         return "<GooseFEM.Element.Quad4.QuadratureAxisymmetric>";

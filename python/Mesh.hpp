@@ -171,7 +171,8 @@ void register_Mesh_RegularBase3d(P& cls)
 void init_Mesh(py::module& mod)
 {
     py::enum_<GooseFEM::Mesh::ElementType>(
-        mod, "ElementType", "See :cpp:enum:`GooseFEM::Mesh::ElementType`.")
+        mod, "ElementType", "See :cpp:enum:`GooseFEM::Mesh::ElementType`."
+    )
         .value("Unknown", GooseFEM::Mesh::ElementType::Unknown)
         .value("Tri3", GooseFEM::Mesh::ElementType::Tri3)
         .value("Quad4", GooseFEM::Mesh::ElementType::Quad4)
@@ -185,7 +186,8 @@ void init_Mesh(py::module& mod)
         py::arg("coor_a"),
         py::arg("coor_b"),
         py::arg("rtol") = 1e-5,
-        py::arg("atol") = 1e-8);
+        py::arg("atol") = 1e-8
+    );
 
     py::class_<GooseFEM::Mesh::ManualStitch>(mod, "ManualStitch")
 
@@ -209,7 +211,8 @@ void init_Mesh(py::module& mod)
             py::arg("overlapping_nodes_b"),
             py::arg("check_position") = true,
             py::arg("rtol") = 1e-5,
-            py::arg("atol") = 1e-8)
+            py::arg("atol") = 1e-8
+        )
 
         .def_property_readonly("nmesh", &GooseFEM::Mesh::ManualStitch::nmesh)
         .def_property_readonly("nnode", &GooseFEM::Mesh::ManualStitch::nnode)
@@ -225,24 +228,28 @@ void init_Mesh(py::module& mod)
         .def(
             "nodemap",
             py::overload_cast<size_t>(&GooseFEM::Mesh::ManualStitch::nodemap, py::const_),
-            py::arg("mesh_index"))
+            py::arg("mesh_index")
+        )
 
         .def(
             "elemmap",
             py::overload_cast<size_t>(&GooseFEM::Mesh::ManualStitch::elemmap, py::const_),
-            py::arg("mesh_index"))
+            py::arg("mesh_index")
+        )
 
         .def(
             "nodeset",
             &GooseFEM::Mesh::ManualStitch::nodeset<xt::pytensor<size_t, 1>>,
             py::arg("set"),
-            py::arg("mesh_index"))
+            py::arg("mesh_index")
+        )
 
         .def(
             "elemset",
             &GooseFEM::Mesh::ManualStitch::elemset<xt::pytensor<size_t, 1>>,
             py::arg("set"),
-            py::arg("mesh_index"))
+            py::arg("mesh_index")
+        )
 
         .def("__repr__", [](const GooseFEM::Mesh::ManualStitch&) {
             return "<GooseFEM.Mesh.ManualStitch>";
@@ -254,13 +261,15 @@ void init_Mesh(py::module& mod)
             py::init<double, double>(),
             "See :cpp:class:`GooseFEM::Mesh::Stitch`.",
             py::arg("rtol") = 1e-5,
-            py::arg("atol") = 1e-8)
+            py::arg("atol") = 1e-8
+        )
 
         .def(
             "push_back",
             &GooseFEM::Mesh::Stitch::push_back<xt::pytensor<double, 2>, xt::pytensor<size_t, 2>>,
             py::arg("coor"),
-            py::arg("conn"))
+            py::arg("conn")
+        )
 
         .def_property_readonly("nmesh", &GooseFEM::Mesh::Stitch::nmesh)
         .def_property_readonly("nnode", &GooseFEM::Mesh::Stitch::nnode)
@@ -276,40 +285,52 @@ void init_Mesh(py::module& mod)
         .def(
             "nodemap",
             py::overload_cast<size_t>(&GooseFEM::Mesh::Stitch::nodemap, py::const_),
-            py::arg("mesh_index"))
+            py::arg("mesh_index")
+        )
 
         .def(
             "elemmap",
             py::overload_cast<size_t>(&GooseFEM::Mesh::Stitch::elemmap, py::const_),
-            py::arg("mesh_index"))
+            py::arg("mesh_index")
+        )
 
         .def(
             "nodeset",
             static_cast<xt::pytensor<size_t, 1> (GooseFEM::Mesh::Stitch::*)(
-                const xt::pytensor<size_t, 1>&, size_t) const>(&GooseFEM::Mesh::Stitch::nodeset),
+                const xt::pytensor<size_t, 1>&, size_t
+            ) const>(&GooseFEM::Mesh::Stitch::nodeset),
             py::arg("set"),
-            py::arg("mesh_index"))
+            py::arg("mesh_index")
+        )
 
         .def(
             "elemset",
             static_cast<xt::pytensor<size_t, 1> (GooseFEM::Mesh::Stitch::*)(
-                const xt::pytensor<size_t, 1>&, size_t) const>(&GooseFEM::Mesh::Stitch::elemset),
+                const xt::pytensor<size_t, 1>&, size_t
+            ) const>(&GooseFEM::Mesh::Stitch::elemset),
             py::arg("set"),
-            py::arg("mesh_index"))
+            py::arg("mesh_index")
+        )
 
         .def(
             "nodeset",
-            static_cast<xt::pytensor<size_t, 1> (GooseFEM::Mesh::Stitch::*)(
-                const std::vector<xt::pytensor<size_t, 1>>&) const>(
-                &GooseFEM::Mesh::Stitch::nodeset),
-            py::arg("set"))
+            static_cast<xt::pytensor<
+                size_t,
+                1> (GooseFEM::Mesh::Stitch::*)(const std::vector<xt::pytensor<size_t, 1>>&) const>(
+                &GooseFEM::Mesh::Stitch::nodeset
+            ),
+            py::arg("set")
+        )
 
         .def(
             "elemset",
-            static_cast<xt::pytensor<size_t, 1> (GooseFEM::Mesh::Stitch::*)(
-                const std::vector<xt::pytensor<size_t, 1>>&) const>(
-                &GooseFEM::Mesh::Stitch::elemset),
-            py::arg("set"))
+            static_cast<xt::pytensor<
+                size_t,
+                1> (GooseFEM::Mesh::Stitch::*)(const std::vector<xt::pytensor<size_t, 1>>&) const>(
+                &GooseFEM::Mesh::Stitch::elemset
+            ),
+            py::arg("set")
+        )
 
         .def("__repr__", [](const GooseFEM::Mesh::Stitch&) { return "<GooseFEM.Mesh.Stitch>"; });
 
@@ -320,7 +341,8 @@ void init_Mesh(py::module& mod)
             "See :cpp:class:`GooseFEM::Mesh::Vstack`.",
             py::arg("check_overlap") = true,
             py::arg("rtol") = 1e-5,
-            py::arg("atol") = 1e-8)
+            py::arg("atol") = 1e-8
+        )
 
         .def(
             "push_back",
@@ -331,7 +353,8 @@ void init_Mesh(py::module& mod)
             py::arg("coor"),
             py::arg("conn"),
             py::arg("nodes_bottom"),
-            py::arg("nodes_top"))
+            py::arg("nodes_top")
+        )
 
         .def("__repr__", [](const GooseFEM::Mesh::Vstack&) { return "<GooseFEM.Mesh.Vstack>"; });
 
@@ -340,25 +363,29 @@ void init_Mesh(py::module& mod)
         .def(
             py::init<const xt::pyarray<size_t>&>(),
             "See :cpp:class:`GooseFEM::Mesh::Renumber`.",
-            py::arg("dofs"))
+            py::arg("dofs")
+        )
 
         .def("apply", &GooseFEM::Mesh::Renumber::apply<xt::pyarray<size_t>>)
         .def_property_readonly("index", &GooseFEM::Mesh::Renumber::index)
 
-        .def(
-            "__repr__", [](const GooseFEM::Mesh::Renumber&) { return "<GooseFEM.Mesh.Renumber>"; });
+        .def("__repr__", [](const GooseFEM::Mesh::Renumber&) {
+            return "<GooseFEM.Mesh.Renumber>";
+        });
 
     py::class_<GooseFEM::Mesh::Reorder>(mod, "Reorder")
 
         .def(
             py::init([](xt::pytensor<size_t, 1>& a) { return new GooseFEM::Mesh::Reorder({a}); }),
-            "See :cpp:class:`GooseFEM::Mesh::Reorder`.")
+            "See :cpp:class:`GooseFEM::Mesh::Reorder`."
+        )
 
         .def(
             py::init([](xt::pytensor<size_t, 1>& a, xt::pytensor<size_t, 1>& b) {
                 return new GooseFEM::Mesh::Reorder({a, b});
             }),
-            "See :cpp:class:`GooseFEM::Mesh::Reorder`.")
+            "See :cpp:class:`GooseFEM::Mesh::Reorder`."
+        )
 
         .def(
             py::init([](xt::pytensor<size_t, 1>& a,
@@ -366,7 +393,8 @@ void init_Mesh(py::module& mod)
                         xt::pytensor<size_t, 1>& c) {
                 return new GooseFEM::Mesh::Reorder({a, b, c});
             }),
-            "See :cpp:class:`GooseFEM::Mesh::Reorder`.")
+            "See :cpp:class:`GooseFEM::Mesh::Reorder`."
+        )
 
         .def(
             py::init([](xt::pytensor<size_t, 1>& a,
@@ -375,7 +403,8 @@ void init_Mesh(py::module& mod)
                         xt::pytensor<size_t, 1>& d) {
                 return new GooseFEM::Mesh::Reorder({a, b, c, d});
             }),
-            "See :cpp:class:`GooseFEM::Mesh::Reorder`.")
+            "See :cpp:class:`GooseFEM::Mesh::Reorder`."
+        )
 
         .def("apply", &GooseFEM::Mesh::Reorder::apply<xt::pyarray<size_t>>)
         .def_property_readonly("index", &GooseFEM::Mesh::Reorder::index)
@@ -387,89 +416,110 @@ void init_Mesh(py::module& mod)
         &GooseFEM::Mesh::dofs,
         "See :cpp:func:`GooseFEM::Mesh::dofs`.",
         py::arg("nnode"),
-        py::arg("ndim"));
+        py::arg("ndim")
+    );
 
     mod.def(
         "nodaltyings",
         &GooseFEM::Mesh::nodaltyings<xt::pytensor<size_t, 2>>,
         "See :cpp:func:`GooseFEM::Mesh::nodaltyings`.",
-        py::arg("dofs"));
+        py::arg("dofs")
+    );
 
     mod.def(
         "renumber",
         &GooseFEM::Mesh::renumber<xt::pytensor<size_t, 2>>,
         "See :cpp:func:`GooseFEM::Mesh::renumber`.",
-        py::arg("dofs"));
+        py::arg("dofs")
+    );
 
     mod.def(
         "coordination",
         &GooseFEM::Mesh::coordination<xt::pytensor<size_t, 2>>,
         "See :cpp:func:`GooseFEM::Mesh::coordination`.",
-        py::arg("conn"));
+        py::arg("conn")
+    );
 
     mod.def(
         "node2dof",
         &GooseFEM::Mesh::node2dof<xt::pytensor<size_t, 2>>,
         "See :cpp:func:`GooseFEM::Mesh::node2dof`.",
         py::arg("dofs"),
-        py::arg("sorted") = true);
+        py::arg("sorted") = true
+    );
 
     mod.def(
         "elem2node",
-        py::overload_cast<const xt::pytensor<size_t, 2>&, bool>(
-            &GooseFEM::Mesh::elem2node<xt::pytensor<size_t, 2>>),
+        py::overload_cast<const xt::pytensor<size_t, 2>&, bool>(&GooseFEM::Mesh::elem2node<
+                                                                xt::pytensor<size_t, 2>>),
         "See :cpp:func:`GooseFEM::Mesh::elem2node`.",
         py::arg("conn"),
-        py::arg("sorted") = true);
+        py::arg("sorted") = true
+    );
 
     mod.def(
         "elem2node",
-        py::overload_cast<const xt::pytensor<size_t, 2>&, const xt::pytensor<size_t, 2>&, bool>(
-            &GooseFEM::Mesh::elem2node<xt::pytensor<size_t, 2>, xt::pytensor<size_t, 2>>),
+        py::overload_cast<
+            const xt::pytensor<size_t, 2>&,
+            const xt::pytensor<size_t, 2>&,
+            bool>(&GooseFEM::Mesh::elem2node<xt::pytensor<size_t, 2>, xt::pytensor<size_t, 2>>),
         "See :cpp:func:`GooseFEM::Mesh::elem2node`.",
         py::arg("conn"),
         py::arg("dofs"),
-        py::arg("sorted") = true);
+        py::arg("sorted") = true
+    );
 
     mod.def(
         "edgesize",
-        py::overload_cast<const xt::pytensor<double, 2>&, const xt::pytensor<size_t, 2>&>(
-            &GooseFEM::Mesh::edgesize<xt::pytensor<double, 2>, xt::pytensor<size_t, 2>>),
+        py::overload_cast<
+            const xt::pytensor<double, 2>&,
+            const xt::pytensor<size_t, 2>&>(&GooseFEM::Mesh::edgesize<
+                                            xt::pytensor<double, 2>,
+                                            xt::pytensor<size_t, 2>>),
         "See :cpp:func:`GooseFEM::Mesh::edgesize`.",
         py::arg("coor"),
-        py::arg("conn"));
+        py::arg("conn")
+    );
 
     mod.def(
         "edgesize",
         py::overload_cast<
             const xt::pytensor<double, 2>&,
             const xt::pytensor<size_t, 2>&,
-            GooseFEM::Mesh::ElementType>(
-            &GooseFEM::Mesh::edgesize<xt::pytensor<double, 2>, xt::pytensor<size_t, 2>>),
+            GooseFEM::Mesh::ElementType>(&GooseFEM::Mesh::edgesize<
+                                         xt::pytensor<double, 2>,
+                                         xt::pytensor<size_t, 2>>),
         "See :cpp:func:`GooseFEM::Mesh::edgesize`.",
         py::arg("coor"),
         py::arg("conn"),
-        py::arg("type"));
+        py::arg("type")
+    );
 
     mod.def(
         "centers",
-        py::overload_cast<const xt::pytensor<double, 2>&, const xt::pytensor<size_t, 2>&>(
-            &GooseFEM::Mesh::centers<xt::pytensor<double, 2>, xt::pytensor<size_t, 2>>),
+        py::overload_cast<
+            const xt::pytensor<double, 2>&,
+            const xt::pytensor<size_t, 2>&>(&GooseFEM::Mesh::centers<
+                                            xt::pytensor<double, 2>,
+                                            xt::pytensor<size_t, 2>>),
         "See :cpp:func:`GooseFEM::Mesh::centers`.",
         py::arg("coor"),
-        py::arg("conn"));
+        py::arg("conn")
+    );
 
     mod.def(
         "centers",
         py::overload_cast<
             const xt::pytensor<double, 2>&,
             const xt::pytensor<size_t, 2>&,
-            GooseFEM::Mesh::ElementType>(
-            &GooseFEM::Mesh::centers<xt::pytensor<double, 2>, xt::pytensor<size_t, 2>>),
+            GooseFEM::Mesh::ElementType>(&GooseFEM::Mesh::centers<
+                                         xt::pytensor<double, 2>,
+                                         xt::pytensor<size_t, 2>>),
         "See :cpp:func:`GooseFEM::Mesh::centers`.",
         py::arg("coor"),
         py::arg("conn"),
-        py::arg("type"));
+        py::arg("type")
+    );
 
     mod.def(
         "elemmap2nodemap",
@@ -483,7 +533,8 @@ void init_Mesh(py::module& mod)
         "See :cpp:func:`GooseFEM::Mesh::elemmap2nodemap`.",
         py::arg("elem_map"),
         py::arg("coor"),
-        py::arg("conn"));
+        py::arg("conn")
+    );
 
     mod.def(
         "elemmap2nodemap",
@@ -499,47 +550,60 @@ void init_Mesh(py::module& mod)
         py::arg("elem_map"),
         py::arg("coor"),
         py::arg("conn"),
-        py::arg("type"));
+        py::arg("type")
+    );
 
     mod.def(
         "nodal_mass",
-        py::overload_cast<const xt::pytensor<double, 2>&, const xt::pytensor<size_t, 2>&>(
-            &GooseFEM::Mesh::nodal_mass<xt::pytensor<double, 2>, xt::pytensor<size_t, 2>>),
+        py::overload_cast<
+            const xt::pytensor<double, 2>&,
+            const xt::pytensor<size_t, 2>&>(&GooseFEM::Mesh::nodal_mass<
+                                            xt::pytensor<double, 2>,
+                                            xt::pytensor<size_t, 2>>),
         "See :cpp:func:`GooseFEM::Mesh::nodal_mass`.",
         py::arg("coor"),
-        py::arg("conn"));
+        py::arg("conn")
+    );
 
     mod.def(
         "nodal_mass",
         py::overload_cast<
             const xt::pytensor<double, 2>&,
             const xt::pytensor<size_t, 2>&,
-            GooseFEM::Mesh::ElementType>(
-            &GooseFEM::Mesh::nodal_mass<xt::pytensor<double, 2>, xt::pytensor<size_t, 2>>),
+            GooseFEM::Mesh::ElementType>(&GooseFEM::Mesh::nodal_mass<
+                                         xt::pytensor<double, 2>,
+                                         xt::pytensor<size_t, 2>>),
         "See :cpp:func:`GooseFEM::Mesh::nodal_mass`.",
         py::arg("coor"),
         py::arg("conn"),
-        py::arg("type"));
+        py::arg("type")
+    );
 
     mod.def(
         "center_of_gravity",
-        py::overload_cast<const xt::pytensor<double, 2>&, const xt::pytensor<size_t, 2>&>(
-            &GooseFEM::Mesh::center_of_gravity<xt::pytensor<double, 2>, xt::pytensor<size_t, 2>>),
+        py::overload_cast<
+            const xt::pytensor<double, 2>&,
+            const xt::pytensor<size_t, 2>&>(&GooseFEM::Mesh::center_of_gravity<
+                                            xt::pytensor<double, 2>,
+                                            xt::pytensor<size_t, 2>>),
         "See :cpp:func:`GooseFEM::Mesh::center_of_gravity`.",
         py::arg("coor"),
-        py::arg("conn"));
+        py::arg("conn")
+    );
 
     mod.def(
         "center_of_gravity",
         py::overload_cast<
             const xt::pytensor<double, 2>&,
             const xt::pytensor<size_t, 2>&,
-            GooseFEM::Mesh::ElementType>(
-            &GooseFEM::Mesh::center_of_gravity<xt::pytensor<double, 2>, xt::pytensor<size_t, 2>>),
+            GooseFEM::Mesh::ElementType>(&GooseFEM::Mesh::center_of_gravity<
+                                         xt::pytensor<double, 2>,
+                                         xt::pytensor<size_t, 2>>),
         "See :cpp:func:`GooseFEM::Mesh::center_of_gravity`.",
         py::arg("coor"),
         py::arg("conn"),
-        py::arg("type"));
+        py::arg("type")
+    );
 }
 
 #endif

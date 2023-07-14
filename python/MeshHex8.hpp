@@ -28,7 +28,8 @@ void init_MeshHex8(py::module& mod)
             py::arg("nx"),
             py::arg("ny"),
             py::arg("nz"),
-            py::arg("h") = 1.);
+            py::arg("h") = 1.
+        );
 
         register_Mesh_RegularBase<GooseFEM::Mesh::Hex8::Regular>(cls);
         register_Mesh_RegularBase3d<GooseFEM::Mesh::Hex8::Regular>(cls);
@@ -48,7 +49,8 @@ void init_MeshHex8(py::module& mod)
             py::arg("ny"),
             py::arg("nz"),
             py::arg("h") = 1.0,
-            py::arg("nfine") = 1);
+            py::arg("nfine") = 1
+        );
 
         cls.def("elementsMiddleLayer", &GooseFEM::Mesh::Hex8::FineLayer::elementsMiddleLayer);
 

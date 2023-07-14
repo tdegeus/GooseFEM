@@ -26,7 +26,8 @@ void init_MeshTri3(py::module& mod)
         "See :cpp:class:`GooseFEM::Mesh::Tri3::Regular`.",
         py::arg("nx"),
         py::arg("ny"),
-        py::arg("h") = 1.);
+        py::arg("h") = 1.
+    );
 
     register_Mesh_RegularBase<GooseFEM::Mesh::Tri3::Regular>(cls);
     register_Mesh_RegularBase2d<GooseFEM::Mesh::Tri3::Regular>(cls);
@@ -40,16 +41,19 @@ void init_MeshTri3(py::module& mod)
         &GooseFEM::Mesh::Tri3::getOrientation,
         "See :cpp:func:`GooseFEM::Mesh::Tri3::getOrientation`.",
         py::arg("coor"),
-        py::arg("conn"));
+        py::arg("conn")
+    );
 
     mod.def(
         "setOrientation",
         py::overload_cast<const xt::pytensor<double, 2>&, const xt::pytensor<size_t, 2>&, int>(
-            &GooseFEM::Mesh::Tri3::setOrientation),
+            &GooseFEM::Mesh::Tri3::setOrientation
+        ),
         "See :cpp:func:`GooseFEM::Mesh::Tri3::setOrientation`.",
         py::arg("coor"),
         py::arg("conn"),
-        py::arg("orientation"));
+        py::arg("orientation")
+    );
 
     mod.def(
         "setOrientation",
@@ -62,7 +66,8 @@ void init_MeshTri3(py::module& mod)
         py::arg("coor"),
         py::arg("conn"),
         py::arg("val"),
-        py::arg("orientation"));
+        py::arg("orientation")
+    );
 }
 
 #endif

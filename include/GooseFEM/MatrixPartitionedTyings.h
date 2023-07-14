@@ -87,7 +87,8 @@ public:
         const array_type::tensor<size_t, 2>& conn,
         const array_type::tensor<size_t, 2>& dofs,
         const Eigen::SparseMatrix<double>& Cdu,
-        const Eigen::SparseMatrix<double>& Cdp)
+        const Eigen::SparseMatrix<double>& Cdp
+    )
     {
         GOOSEFEM_ASSERT(Cdu.rows() == Cdp.rows());
 
@@ -234,47 +235,56 @@ private:
 
                             if (di < m_nnu && dj < m_nnu) {
                                 m_Tuu.push_back(Eigen::Triplet<double>(
-                                    di, dj, elemmat(e, m * m_ndim + i, n * m_ndim + j)));
+                                    di, dj, elemmat(e, m * m_ndim + i, n * m_ndim + j)
+                                ));
                             }
                             else if (di < m_nnu && dj < m_nni) {
                                 m_Tup.push_back(Eigen::Triplet<double>(
-                                    di, dj - m_nnu, elemmat(e, m * m_ndim + i, n * m_ndim + j)));
+                                    di, dj - m_nnu, elemmat(e, m * m_ndim + i, n * m_ndim + j)
+                                ));
                             }
                             else if (di < m_nnu) {
                                 m_Tud.push_back(Eigen::Triplet<double>(
-                                    di, dj - m_nni, elemmat(e, m * m_ndim + i, n * m_ndim + j)));
+                                    di, dj - m_nni, elemmat(e, m * m_ndim + i, n * m_ndim + j)
+                                ));
                             }
                             else if (di < m_nni && dj < m_nnu) {
                                 m_Tpu.push_back(Eigen::Triplet<double>(
-                                    di - m_nnu, dj, elemmat(e, m * m_ndim + i, n * m_ndim + j)));
+                                    di - m_nnu, dj, elemmat(e, m * m_ndim + i, n * m_ndim + j)
+                                ));
                             }
                             else if (di < m_nni && dj < m_nni) {
                                 m_Tpp.push_back(Eigen::Triplet<double>(
                                     di - m_nnu,
                                     dj - m_nnu,
-                                    elemmat(e, m * m_ndim + i, n * m_ndim + j)));
+                                    elemmat(e, m * m_ndim + i, n * m_ndim + j)
+                                ));
                             }
                             else if (di < m_nni) {
                                 m_Tpd.push_back(Eigen::Triplet<double>(
                                     di - m_nnu,
                                     dj - m_nni,
-                                    elemmat(e, m * m_ndim + i, n * m_ndim + j)));
+                                    elemmat(e, m * m_ndim + i, n * m_ndim + j)
+                                ));
                             }
                             else if (dj < m_nnu) {
                                 m_Tdu.push_back(Eigen::Triplet<double>(
-                                    di - m_nni, dj, elemmat(e, m * m_ndim + i, n * m_ndim + j)));
+                                    di - m_nni, dj, elemmat(e, m * m_ndim + i, n * m_ndim + j)
+                                ));
                             }
                             else if (dj < m_nni) {
                                 m_Tdp.push_back(Eigen::Triplet<double>(
                                     di - m_nni,
                                     dj - m_nnu,
-                                    elemmat(e, m * m_ndim + i, n * m_ndim + j)));
+                                    elemmat(e, m * m_ndim + i, n * m_ndim + j)
+                                ));
                             }
                             else {
                                 m_Tdd.push_back(Eigen::Triplet<double>(
                                     di - m_nni,
                                     dj - m_nni,
-                                    elemmat(e, m * m_ndim + i, n * m_ndim + j)));
+                                    elemmat(e, m * m_ndim + i, n * m_ndim + j)
+                                ));
                             }
                         }
                     }
@@ -390,7 +400,8 @@ private:
     void reaction_p_impl(
         const array_type::tensor<double, 1>& x_u,
         const array_type::tensor<double, 1>& x_p,
-        array_type::tensor<double, 1>& b_p) const
+        array_type::tensor<double, 1>& b_p
+    ) const
     {
         UNUSED(x_u);
         UNUSED(x_p);
@@ -591,7 +602,8 @@ public:
         MatrixPartitionedTyings& A,
         const array_type::tensor<double, 1>& b_u,
         const array_type::tensor<double, 1>& b_d,
-        const array_type::tensor<double, 1>& x_p)
+        const array_type::tensor<double, 1>& x_p
+    )
     {
         array_type::tensor<double, 1> x_u = xt::empty<double>({A.m_nnu});
         this->solve_u(A, b_u, b_d, x_p, x_u);
@@ -615,7 +627,8 @@ public:
         const array_type::tensor<double, 1>& b_u,
         const array_type::tensor<double, 1>& b_d,
         const array_type::tensor<double, 1>& x_p,
-        array_type::tensor<double, 1>& x_u)
+        array_type::tensor<double, 1>& x_u
+    )
     {
         UNUSED(b_d);
         GOOSEFEM_ASSERT(b_u.size() == A.m_nnu);
@@ -628,7 +641,8 @@ public:
         Eigen::Map<Eigen::VectorXd>(x_u.data(), x_u.size()).noalias() =
             m_solver.solve(Eigen::VectorXd(
                 Eigen::Map<const Eigen::VectorXd>(b_u.data(), b_u.size()) -
-                A.m_ACup * Eigen::Map<const Eigen::VectorXd>(x_p.data(), x_p.size())));
+                A.m_ACup * Eigen::Map<const Eigen::VectorXd>(x_p.data(), x_p.size())
+            ));
     }
 
 private:

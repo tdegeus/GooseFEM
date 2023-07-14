@@ -193,7 +193,8 @@ public:
      * Copy as diagonal matrix.
      * @return [#ndof].
      */
-    [[deprecated]] const array_type::tensor<double, 1>& Todiagonal() const
+    [[deprecated]]
+    const array_type::tensor<double, 1>& Todiagonal() const
     {
         return m_A;
     }
