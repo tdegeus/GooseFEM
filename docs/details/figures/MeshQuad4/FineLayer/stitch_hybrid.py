@@ -9,9 +9,9 @@ fig, ax = plt.subplots()
 
 finelayer = GooseFEM.Mesh.Quad4.FineLayer(6 * 9, 51)
 
-coor_l0 = finelayer.coor()
-coor_l1 = finelayer.coor()
-coor_l2 = finelayer.coor()
+coor_l0 = finelayer.coor
+coor_l1 = finelayer.coor
+coor_l2 = finelayer.coor
 
 Hl = np.max(coor_l0[:, 1])
 
@@ -24,8 +24,8 @@ ny = np.ceil(((finelayer.nely() - 1) / 2) / h)
 
 regular = GooseFEM.Mesh.Quad4.Regular(int(nx), int(ny), float(h))
 
-coor_r0 = regular.coor()
-coor_r1 = regular.coor()
+coor_r0 = regular.coor
+coor_r1 = regular.coor
 
 Hr = np.max(coor_r0[:, 1])
 
@@ -33,14 +33,14 @@ coor_r0[:, 1] -= Hr
 coor_r1[:, 1] += 3 * Hl
 
 stitch = GooseFEM.Mesh.Stitch()
-stitch.push_back(coor_r0, regular.conn())
-stitch.push_back(coor_l0, finelayer.conn())
-stitch.push_back(coor_l1, finelayer.conn())
-stitch.push_back(coor_l2, finelayer.conn())
-stitch.push_back(coor_r1, regular.conn())
+stitch.push_back(coor_r0, regular.conn)
+stitch.push_back(coor_l0, finelayer.conn)
+stitch.push_back(coor_l1, finelayer.conn)
+stitch.push_back(coor_l2, finelayer.conn)
+stitch.push_back(coor_r1, regular.conn)
 
-coor = stitch.coor()
-conn = stitch.conn()
+coor = stitch.coor
+conn = stitch.conn
 
 cindex = np.zeros(conn.shape[0])
 cindex[stitch.elemset(np.arange(regular.nelem()), 0)] = 1

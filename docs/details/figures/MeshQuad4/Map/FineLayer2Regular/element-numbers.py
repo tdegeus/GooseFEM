@@ -14,8 +14,8 @@ fig, axes = plt.subplots(figsize=(10, 10), ncols=2)
 ax = axes[0]
 
 mesh = gf.Mesh.Quad4.FineLayer(6, 18)
-coor = mesh.coor()
-conn = mesh.conn()
+coor = mesh.coor
+conn = mesh.conn
 
 cindex = np.arange(mesh.nelem())
 
@@ -36,8 +36,8 @@ ax = axes[1]
 
 new_mesh = gf.Mesh.Quad4.Regular(mesh.nelx(), mesh.nely())
 
-coor = new_mesh.coor()
-conn = new_mesh.conn()
+coor = new_mesh.coor
+conn = new_mesh.conn
 
 cindex = np.arange(new_mesh.nelem())
 

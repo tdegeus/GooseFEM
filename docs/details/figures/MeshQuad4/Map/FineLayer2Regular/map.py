@@ -14,8 +14,8 @@ fig, axes = plt.subplots(figsize=(10, 10), ncols=2)
 ax = axes[0]
 
 mesh = gf.Mesh.Quad4.FineLayer(6 * 3, 18 * 2)
-coor = mesh.coor()
-conn = mesh.conn()
+coor = mesh.coor
+conn = mesh.conn
 
 cindex = np.random.random(mesh.nelem())
 
@@ -33,8 +33,8 @@ mapping = gf.Mesh.Quad4.Map.FineLayer2Regular(mesh)
 
 new_mesh = mapping.getRegularMesh()
 
-coor = new_mesh.coor()
-conn = new_mesh.conn()
+coor = new_mesh.coor
+conn = new_mesh.conn
 
 c = mapping.mapToRegular(cindex)
 

@@ -8,8 +8,8 @@ plt.style.use(["goose"])
 fig, ax = plt.subplots()
 
 mesh = GooseFEM.Mesh.Quad4.FineLayer(6 * 9, 51)
-coor = mesh.coor()
-conn = mesh.conn()
+coor = mesh.coor
+conn = mesh.conn
 
 cindex = np.zeros(mesh.nelem())
 

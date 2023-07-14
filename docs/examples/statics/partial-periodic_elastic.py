@@ -17,23 +17,23 @@ nne = mesh.nne
 ndim = mesh.ndim
 
 # mesh definition, displacement, external forces
-coor = mesh.coor()
-conn = mesh.conn()
-dofs = mesh.dofs()
+coor = mesh.coor
+conn = mesh.conn
+dofs = mesh.dofs
 disp = np.zeros_like(coor)
 fext = np.zeros_like(coor)
 
 # periodicity in horizontal direction
-dofs[mesh.nodesRightOpenEdge()] = dofs[mesh.nodesLeftOpenEdge()]
+dofs[mesh.nodesRightOpenEdge()] = dofs[mesh.nodesLeftOpenEdge]
 dofs = GooseFEM.Mesh.renumber(dofs)
 
 # fixed displacement top and bottom
 iip = np.concatenate(
     (
-        dofs[mesh.nodesBottomEdge(), 0],
-        dofs[mesh.nodesBottomEdge(), 1],
-        dofs[mesh.nodesTopEdge(), 0],
-        dofs[mesh.nodesTopEdge(), 1],
+        dofs[mesh.nodesBottomEdge, 0],
+        dofs[mesh.nodesBottomEdge, 1],
+        dofs[mesh.nodesTopEdge, 0],
+        dofs[mesh.nodesTopEdge, 1],
     )
 )
 
@@ -83,7 +83,7 @@ K.assemble(Ke)
 fres = fext - fint
 
 # set fixed displacements
-disp[mesh.nodesTopEdge(), 0] = +0.1
+disp[mesh.nodesTopEdge, 0] = +0.1
 
 # solve
 Solver.solve(K, fres, disp)
