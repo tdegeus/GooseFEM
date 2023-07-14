@@ -57,69 +57,69 @@ nodesets = dict(
 )
 
 # define node-sets
-nodesets["nodesFront"][mesh.nodesFront()] = 1
-nodesets["nodesBack"][mesh.nodesBack()] = 1
-nodesets["nodesLeft"][mesh.nodesLeft()] = 1
-nodesets["nodesRight"][mesh.nodesRight()] = 1
-nodesets["nodesBottom"][mesh.nodesBottom()] = 1
-nodesets["nodesTop"][mesh.nodesTop()] = 1
-nodesets["nodesFrontFace"][mesh.nodesFrontFace()] = 1
-nodesets["nodesBackFace"][mesh.nodesBackFace()] = 1
-nodesets["nodesLeftFace"][mesh.nodesLeftFace()] = 1
-nodesets["nodesRightFace"][mesh.nodesRightFace()] = 1
-nodesets["nodesBottomFace"][mesh.nodesBottomFace()] = 1
-nodesets["nodesTopFace"][mesh.nodesTopFace()] = 1
-nodesets["nodesFrontBottomEdge"][mesh.nodesFrontBottomEdge()] = 1
-nodesets["nodesFrontTopEdge"][mesh.nodesFrontTopEdge()] = 1
-nodesets["nodesFrontLeftEdge"][mesh.nodesFrontLeftEdge()] = 1
-nodesets["nodesFrontRightEdge"][mesh.nodesFrontRightEdge()] = 1
-nodesets["nodesBackBottomEdge"][mesh.nodesBackBottomEdge()] = 1
-nodesets["nodesBackTopEdge"][mesh.nodesBackTopEdge()] = 1
-nodesets["nodesBackLeftEdge"][mesh.nodesBackLeftEdge()] = 1
-nodesets["nodesBackRightEdge"][mesh.nodesBackRightEdge()] = 1
-nodesets["nodesBottomLeftEdge"][mesh.nodesBottomLeftEdge()] = 1
-nodesets["nodesBottomRightEdge"][mesh.nodesBottomRightEdge()] = 1
-nodesets["nodesTopLeftEdge"][mesh.nodesTopLeftEdge()] = 1
-nodesets["nodesTopRightEdge"][mesh.nodesTopRightEdge()] = 1
-nodesets["nodesFrontBottomOpenEdge"][mesh.nodesFrontBottomOpenEdge()] = 1
-nodesets["nodesFrontTopOpenEdge"][mesh.nodesFrontTopOpenEdge()] = 1
-nodesets["nodesFrontLeftOpenEdge"][mesh.nodesFrontLeftOpenEdge()] = 1
-nodesets["nodesFrontRightOpenEdge"][mesh.nodesFrontRightOpenEdge()] = 1
-nodesets["nodesBackBottomOpenEdge"][mesh.nodesBackBottomOpenEdge()] = 1
-nodesets["nodesBackTopOpenEdge"][mesh.nodesBackTopOpenEdge()] = 1
-nodesets["nodesBackLeftOpenEdge"][mesh.nodesBackLeftOpenEdge()] = 1
-nodesets["nodesBackRightOpenEdge"][mesh.nodesBackRightOpenEdge()] = 1
-nodesets["nodesBottomLeftOpenEdge"][mesh.nodesBottomLeftOpenEdge()] = 1
-nodesets["nodesBottomRightOpenEdge"][mesh.nodesBottomRightOpenEdge()] = 1
-nodesets["nodesTopLeftOpenEdge"][mesh.nodesTopLeftOpenEdge()] = 1
-nodesets["nodesTopRightOpenEdge"][mesh.nodesTopRightOpenEdge()] = 1
-nodesets["nodesFrontBottomLeftCorner"][mesh.nodesFrontBottomLeftCorner()] = 1
-nodesets["nodesFrontBottomRightCorner"][mesh.nodesFrontBottomRightCorner()] = 1
-nodesets["nodesFrontTopLeftCorner"][mesh.nodesFrontTopLeftCorner()] = 1
-nodesets["nodesFrontTopRightCorner"][mesh.nodesFrontTopRightCorner()] = 1
-nodesets["nodesBackBottomLeftCorner"][mesh.nodesBackBottomLeftCorner()] = 1
-nodesets["nodesBackBottomRightCorner"][mesh.nodesBackBottomRightCorner()] = 1
-nodesets["nodesBackTopLeftCorner"][mesh.nodesBackTopLeftCorner()] = 1
-nodesets["nodesBackTopRightCorner"][mesh.nodesBackTopRightCorner()] = 1
+nodesets["nodesFront"][mesh.nodesFront] = 1
+nodesets["nodesBack"][mesh.nodesBack] = 1
+nodesets["nodesLeft"][mesh.nodesLeft] = 1
+nodesets["nodesRight"][mesh.nodesRight] = 1
+nodesets["nodesBottom"][mesh.nodesBottom] = 1
+nodesets["nodesTop"][mesh.nodesTop] = 1
+nodesets["nodesFrontFace"][mesh.nodesFrontFace] = 1
+nodesets["nodesBackFace"][mesh.nodesBackFace] = 1
+nodesets["nodesLeftFace"][mesh.nodesLeftFace] = 1
+nodesets["nodesRightFace"][mesh.nodesRightFace] = 1
+nodesets["nodesBottomFace"][mesh.nodesBottomFace] = 1
+nodesets["nodesTopFace"][mesh.nodesTopFace] = 1
+nodesets["nodesFrontBottomEdge"][mesh.nodesFrontBottomEdge] = 1
+nodesets["nodesFrontTopEdge"][mesh.nodesFrontTopEdge] = 1
+nodesets["nodesFrontLeftEdge"][mesh.nodesFrontLeftEdge] = 1
+nodesets["nodesFrontRightEdge"][mesh.nodesFrontRightEdge] = 1
+nodesets["nodesBackBottomEdge"][mesh.nodesBackBottomEdge] = 1
+nodesets["nodesBackTopEdge"][mesh.nodesBackTopEdge] = 1
+nodesets["nodesBackLeftEdge"][mesh.nodesBackLeftEdge] = 1
+nodesets["nodesBackRightEdge"][mesh.nodesBackRightEdge] = 1
+nodesets["nodesBottomLeftEdge"][mesh.nodesBottomLeftEdge] = 1
+nodesets["nodesBottomRightEdge"][mesh.nodesBottomRightEdge] = 1
+nodesets["nodesTopLeftEdge"][mesh.nodesTopLeftEdge] = 1
+nodesets["nodesTopRightEdge"][mesh.nodesTopRightEdge] = 1
+nodesets["nodesFrontBottomOpenEdge"][mesh.nodesFrontBottomOpenEdge] = 1
+nodesets["nodesFrontTopOpenEdge"][mesh.nodesFrontTopOpenEdge] = 1
+nodesets["nodesFrontLeftOpenEdge"][mesh.nodesFrontLeftOpenEdge] = 1
+nodesets["nodesFrontRightOpenEdge"][mesh.nodesFrontRightOpenEdge] = 1
+nodesets["nodesBackBottomOpenEdge"][mesh.nodesBackBottomOpenEdge] = 1
+nodesets["nodesBackTopOpenEdge"][mesh.nodesBackTopOpenEdge] = 1
+nodesets["nodesBackLeftOpenEdge"][mesh.nodesBackLeftOpenEdge] = 1
+nodesets["nodesBackRightOpenEdge"][mesh.nodesBackRightOpenEdge] = 1
+nodesets["nodesBottomLeftOpenEdge"][mesh.nodesBottomLeftOpenEdge] = 1
+nodesets["nodesBottomRightOpenEdge"][mesh.nodesBottomRightOpenEdge] = 1
+nodesets["nodesTopLeftOpenEdge"][mesh.nodesTopLeftOpenEdge] = 1
+nodesets["nodesTopRightOpenEdge"][mesh.nodesTopRightOpenEdge] = 1
+nodesets["nodesFrontBottomLeftCorner"][mesh.nodesFrontBottomLeftCorner] = 1
+nodesets["nodesFrontBottomRightCorner"][mesh.nodesFrontBottomRightCorner] = 1
+nodesets["nodesFrontTopLeftCorner"][mesh.nodesFrontTopLeftCorner] = 1
+nodesets["nodesFrontTopRightCorner"][mesh.nodesFrontTopRightCorner] = 1
+nodesets["nodesBackBottomLeftCorner"][mesh.nodesBackBottomLeftCorner] = 1
+nodesets["nodesBackBottomRightCorner"][mesh.nodesBackBottomRightCorner] = 1
+nodesets["nodesBackTopLeftCorner"][mesh.nodesBackTopLeftCorner] = 1
+nodesets["nodesBackTopRightCorner"][mesh.nodesBackTopRightCorner] = 1
 
 # add DOF-numbers after eliminating periodicity
-nodesets["dofsPeriodic"] = mesh.dofsPeriodic()[:, 0]
+nodesets["dofsPeriodic"] = mesh.dofsPeriodic[:, 0]
 
 # filename of the HDF5-file
 fname = "paraview_nodesets.hdf5"
 
 # write HDF-file containing the data
 with h5py.File(fname, "w") as data:
-    data.file["coor"] = mesh.coor()
-    data.file["conn"] = mesh.conn()
+    data.file["coor"] = mesh.coor
+    data.file["conn"] = mesh.conn
 
     for key, value in nodesets.items():
         data[key] = value
 
 # write XDMF-file with metadata
 xdmf = pv.Mesh(
-    pv.Connectivity(fname, "/conn", mesh.getElementType(), mesh.conn().shape),
-    pv.Coordinates(fname, "/coor", mesh.coor().shape),
+    pv.Connectivity(fname, "/conn", mesh.getElementType(), mesh.conn.shape),
+    pv.Coordinates(fname, "/coor", mesh.coor.shape),
 )
 
 for key, value in nodesets.items():

@@ -25,37 +25,37 @@ nodesets = dict(
 )
 
 # define node-sets
-nodesets["nodesBottomEdge"][mesh.nodesBottomEdge()] = 1
-nodesets["nodesTopEdge"][mesh.nodesTopEdge()] = 1
-nodesets["nodesLeftEdge"][mesh.nodesLeftEdge()] = 1
-nodesets["nodesRightEdge"][mesh.nodesRightEdge()] = 1
-nodesets["nodesBottomOpenEdge"][mesh.nodesBottomOpenEdge()] = 1
-nodesets["nodesTopOpenEdge"][mesh.nodesTopOpenEdge()] = 1
-nodesets["nodesLeftOpenEdge"][mesh.nodesLeftOpenEdge()] = 1
-nodesets["nodesRightOpenEdge"][mesh.nodesRightOpenEdge()] = 1
-nodesets["nodesBottomLeftCorner"][mesh.nodesBottomLeftCorner()] = 1
-nodesets["nodesBottomRightCorner"][mesh.nodesBottomRightCorner()] = 1
-nodesets["nodesTopLeftCorner"][mesh.nodesTopLeftCorner()] = 1
-nodesets["nodesTopRightCorner"][mesh.nodesTopRightCorner()] = 1
+nodesets["nodesBottomEdge"][mesh.nodesBottomEdge] = 1
+nodesets["nodesTopEdge"][mesh.nodesTopEdge] = 1
+nodesets["nodesLeftEdge"][mesh.nodesLeftEdge] = 1
+nodesets["nodesRightEdge"][mesh.nodesRightEdge] = 1
+nodesets["nodesBottomOpenEdge"][mesh.nodesBottomOpenEdge] = 1
+nodesets["nodesTopOpenEdge"][mesh.nodesTopOpenEdge] = 1
+nodesets["nodesLeftOpenEdge"][mesh.nodesLeftOpenEdge] = 1
+nodesets["nodesRightOpenEdge"][mesh.nodesRightOpenEdge] = 1
+nodesets["nodesBottomLeftCorner"][mesh.nodesBottomLeftCorner] = 1
+nodesets["nodesBottomRightCorner"][mesh.nodesBottomRightCorner] = 1
+nodesets["nodesTopLeftCorner"][mesh.nodesTopLeftCorner] = 1
+nodesets["nodesTopRightCorner"][mesh.nodesTopRightCorner] = 1
 
 # add DOF-numbers after eliminating periodicity
-nodesets["dofsPeriodic"] = mesh.dofsPeriodic()[:, 0]
+nodesets["dofsPeriodic"] = mesh.dofsPeriodic[:, 0]
 
 # filename of the HDF5-file
 fname = "paraview_nodesets.hdf5"
 
 # write HDF-file containing the data
 with h5py.File(fname, "w") as data:
-    data.file["coor"] = mesh.coor()
-    data.file["conn"] = mesh.conn()
+    data.file["coor"] = mesh.coor
+    data.file["conn"] = mesh.conn
 
     for key, value in nodesets.items():
         data[key] = value
 
 # write XDMF-file with metadata
 xdmf = pv.Mesh(
-    pv.Connectivity(fname, "/conn", mesh.getElementType(), mesh.conn().shape),
-    pv.Coordinates(fname, "/coor", mesh.coor().shape),
+    pv.Connectivity(fname, "/conn", mesh.getElementType(), mesh.conn.shape),
+    pv.Coordinates(fname, "/coor", mesh.coor.shape),
 )
 
 for key, value in nodesets.items():

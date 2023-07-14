@@ -17,19 +17,19 @@ nne = mesh.nne
 ndim = mesh.ndim
 
 # mesh definition, displacement, external forces
-coor = mesh.coor()
-conn = mesh.conn()
-dofs = mesh.dofs()
+coor = mesh.coor
+conn = mesh.conn
+dofs = mesh.dofs
 disp = np.zeros_like(coor)
 fext = np.zeros_like(coor)
 
 # list of prescribed DOFs
 iip = np.concatenate(
     (
-        dofs[mesh.nodesRightEdge(), 0],
-        dofs[mesh.nodesTopEdge(), 1],
-        dofs[mesh.nodesLeftEdge(), 0],
-        dofs[mesh.nodesBottomEdge(), 1],
+        dofs[mesh.nodesRightEdge, 0],
+        dofs[mesh.nodesTopEdge, 1],
+        dofs[mesh.nodesLeftEdge, 0],
+        dofs[mesh.nodesBottomEdge, 1],
     )
 )
 
@@ -71,10 +71,10 @@ K.assemble(Ke)
 # set fixed displacements
 u_p = np.concatenate(
     (
-        +0.2 * np.ones(mesh.nodesRightEdge().size),
-        -0.2 * np.ones(mesh.nodesTopEdge().size),
-        np.zeros(mesh.nodesLeftEdge().size),
-        np.zeros(mesh.nodesBottomEdge().size),
+        +0.2 * np.ones(mesh.nodesRightEdge.size),
+        -0.2 * np.ones(mesh.nodesTopEdge.size),
+        np.zeros(mesh.nodesLeftEdge.size),
+        np.zeros(mesh.nodesBottomEdge.size),
     )
 )
 

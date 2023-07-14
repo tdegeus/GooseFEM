@@ -8,15 +8,15 @@ plt.style.use(["goose"])
 # --------------------------------------------------------------------------------------------------
 
 mesh = gf.Mesh.Tri3.Regular(5, 6)
-coor = mesh.coor()
-conn = mesh.conn()
+coor = mesh.coor
+conn = mesh.conn
 
 cindex = np.arange(mesh.nelem())
 
-Left = mesh.nodesLeftEdge()
-Right = mesh.nodesRightEdge()
-Bottom = mesh.nodesBottomEdge()
-Top = mesh.nodesTopEdge()
+Left = mesh.nodesLeftEdge
+Right = mesh.nodesRightEdge
+Bottom = mesh.nodesBottomEdge
+Top = mesh.nodesTopEdge
 
 # --------------------------------------------------------------------------------------------------
 

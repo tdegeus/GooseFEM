@@ -18,9 +18,9 @@ nne = mesh.nne
 ndim = mesh.ndim
 
 # mesh definitions
-coor = mesh.coor()
-conn = mesh.conn()
-dofs = mesh.dofs()
+coor = mesh.coor
+conn = mesh.conn
+dofs = mesh.dofs
 
 # periodicity and fixed displacements DOFs
 # ----------------------------------------
@@ -35,10 +35,10 @@ control_nodes = control.controlNodes
 # extract fixed DOFs:
 # - all control nodes: to prescribe the deformation gradient
 # - one node of the mesh: to remove rigid body modes
-iip = np.concatenate((control_dofs.ravel(), dofs[mesh.nodesOrigin(), :].ravel()))
+iip = np.concatenate((control_dofs.ravel(), dofs[mesh.nodesOrigin(), :].ravel))
 
 # get DOF-tyings, reorganise system
-tyings = GooseFEM.Tyings.Periodic(coor, dofs, control_dofs, mesh.nodesPeriodic(), iip)
+tyings = GooseFEM.Tyings.Periodic(coor, dofs, control_dofs, mesh.nodesPeriodic, iip)
 dofs = tyings.dofs
 
 # simulation variables

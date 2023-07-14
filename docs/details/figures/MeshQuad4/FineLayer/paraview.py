@@ -17,14 +17,14 @@ elementsMiddleLayer[mesh.elementsMiddleLayer()] = 1
 
 # write HDF-file containing the data
 with h5py.File(fname, "w") as data:
-    data["coor"] = mesh.coor()
-    data["conn"] = mesh.conn()
+    data["coor"] = mesh.coor
+    data["conn"] = mesh.conn
     data["elementsMiddleLayer"] = elementsMiddleLayer
 
 # write XDMF-file with metadata
 xdmf = pv.Mesh(
-    pv.Connectivity(fname, "/conn", mesh.getElementType(), mesh.conn().shape),
-    pv.Coordinates(fname, "/coor", mesh.coor().shape),
+    pv.Connectivity(fname, "/conn", mesh.getElementType(), mesh.conn.shape),
+    pv.Coordinates(fname, "/coor", mesh.coor.shape),
 )
 
 xdmf.push_back(

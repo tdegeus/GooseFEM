@@ -6,8 +6,8 @@ import numpy as np
 plt.style.use(["goose"])
 
 mesh = gf.Mesh.Quad4.FineLayer(12, 38)
-coor = mesh.coor()
-conn = mesh.conn()
+coor = mesh.coor
+conn = mesh.conn
 layer = mesh.elementsMiddleLayer()
 mid = layer[-1]
 select = mesh.elementgrid_around_ravel(mid, 2)

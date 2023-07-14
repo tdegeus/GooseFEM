@@ -8,8 +8,8 @@ plt.style.use(["goose"])
 # --------------------------------------------------------------------------------------------------
 
 mesh = gf.Mesh.Quad4.FineLayer(6, 18)
-coor = mesh.coor()
-conn = mesh.conn()
+coor = mesh.coor
+conn = mesh.conn
 
 cindex = np.arange(mesh.nelem())
 

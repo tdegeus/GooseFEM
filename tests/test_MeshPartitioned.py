@@ -15,7 +15,7 @@ class Test_MeshQuad4(unittest.TestCase):
         ndim = mesh.ndim
         nelem = mesh.nelem
         nnode = mesh.nnode
-        dofs = mesh.dofs()
+        dofs = mesh.dofs
         iip = [0, 5, 7, 13]
 
         a = np.empty([nelem, nne * ndim, nne * ndim])
@@ -25,8 +25,8 @@ class Test_MeshQuad4(unittest.TestCase):
             ae = np.random.random([nne * ndim, nne * ndim])
             a[e, ...] = 0.5 * (ae + ae.T)
 
-        A = GooseFEM.MatrixPartitioned(mesh.conn(), dofs, iip)
-        B = GooseFEM.Matrix(mesh.conn(), dofs)
+        A = GooseFEM.MatrixPartitioned(mesh.conn, dofs, iip)
+        B = GooseFEM.Matrix(mesh.conn, dofs)
 
         A.assemble(a)
         B.assemble(a)
