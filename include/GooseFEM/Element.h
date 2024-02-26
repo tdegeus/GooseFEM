@@ -273,7 +273,8 @@ public:
     auto shape_elemmat() const -> std::array<size_t, 3>
     {
         return std::array<size_t, 3>{
-            derived_cast().m_nelem, D::s_nne * D::s_ndim, D::s_nne * D::s_ndim};
+            derived_cast().m_nelem, D::s_nne * D::s_ndim, D::s_nne * D::s_ndim
+        };
     }
 
     /**

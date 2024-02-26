@@ -316,7 +316,8 @@ public:
         return std::array<size_t, 3>{
             derived_cast().m_nelem,
             derived_cast().m_nne * derived_cast().m_ndim,
-            derived_cast().m_nne * derived_cast().m_ndim};
+            derived_cast().m_nne * derived_cast().m_ndim
+        };
     }
 
     /**

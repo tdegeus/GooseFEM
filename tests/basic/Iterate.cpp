@@ -14,7 +14,8 @@ TEST_CASE("GooseFEM::Iterate", "Iterate.h")
 
         std::vector<double> res = {5e+0, 5e+1, 5e-1, 5e-2, 5e-3, 5e-4, 4e-4, 3e-4, 2e-4, 1e-4};
         std::vector<bool> conv = {
-            false, false, false, false, false, false, false, false, false, true};
+            false, false, false, false, false, false, false, false, false, true
+        };
 
         for (size_t i = 0; i < res.size(); ++i) {
             residuals.roll_insert(res[i]);
@@ -28,7 +29,8 @@ TEST_CASE("GooseFEM::Iterate", "Iterate.h")
 
         std::vector<double> res = {5e+0, 5e+1, 5e-1, 5e-2, 5e-3, 5e-4, 4e-4, 5e-4, 4e-4, 4e-4};
         std::vector<bool> conv = {
-            false, false, false, false, false, false, false, false, false, true};
+            false, false, false, false, false, false, false, false, false, true
+        };
 
         for (size_t i = 0; i < res.size(); ++i) {
             residuals.roll_insert(res[i]);
@@ -42,7 +44,8 @@ TEST_CASE("GooseFEM::Iterate", "Iterate.h")
 
         std::vector<double> res = {5e+0, 5e+1, 5e-1, 5e-2, 5e-3, 5e-4, 4e-4, 3e-4, 2e-4, 1e-4};
         std::vector<bool> conv = {
-            false, false, false, false, false, false, false, false, false, true};
+            false, false, false, false, false, false, false, false, false, true
+        };
 
         for (size_t i = 0; i < res.size(); ++i) {
             residuals.roll_insert(res[i]);
@@ -55,7 +58,8 @@ TEST_CASE("GooseFEM::Iterate", "Iterate.h")
         GooseFEM::Iterate::StopList residuals(5);
 
         std::vector<double> res = {
-            5e+0, 5e+1, 5e-1, 5e-2, 5e-3, 5e-4, 4e-4, 3e-4, 2e-4, 3e-4, 2e-4, 1e-4, 9e-5, 8e-5};
+            5e+0, 5e+1, 5e-1, 5e-2, 5e-3, 5e-4, 4e-4, 3e-4, 2e-4, 3e-4, 2e-4, 1e-4, 9e-5, 8e-5
+        };
         std::vector<bool> conv = {
             false,
             false,
@@ -70,7 +74,8 @@ TEST_CASE("GooseFEM::Iterate", "Iterate.h")
             false,
             false,
             false,
-            true};
+            true
+        };
 
         for (size_t i = 0; i < res.size(); ++i) {
             residuals.roll_insert(res[i]);

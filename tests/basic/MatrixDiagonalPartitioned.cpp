@@ -47,7 +47,8 @@ TEST_CASE("GooseFEM::MatrixDiagonalPartitioned", "MatrixDiagonalPartitioned.h")
             0.5,
             0.5,
             0.25,
-            0.25};
+            0.25
+        };
 
         REQUIRE(xt::allclose(A.data(), a));
     }

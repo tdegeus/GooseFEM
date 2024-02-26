@@ -16,7 +16,8 @@ TEST_CASE("GooseFEM::Allocate", "Allocate.h")
 
         xt::xtensor<int, 4> a2 = {
             {{{1, 1}, {1, 1}, {1, 1}}, {{2, 2}, {2, 2}, {2, 2}}},
-            {{{3, 3}, {3, 3}, {3, 3}}, {{4, 4}, {4, 4}, {4, 4}}}};
+            {{{3, 3}, {3, 3}, {3, 3}}, {{4, 4}, {4, 4}, {4, 4}}}
+        };
 
         xt::xtensor<int, 3> b1 = xt::empty<int>({2, 2, 3});
         xt::xtensor<int, 4> b2 = xt::empty<int>({2, 2, 3, 2});
@@ -36,7 +37,8 @@ TEST_CASE("GooseFEM::Allocate", "Allocate.h")
 
         xt::xtensor<int, 4> a2 = {
             {{{1, 1}, {1, 1}, {1, 1}}, {{2, 2}, {2, 2}, {2, 2}}},
-            {{{3, 3}, {3, 3}, {3, 3}}, {{4, 4}, {4, 4}, {4, 4}}}};
+            {{{3, 3}, {3, 3}, {3, 3}}, {{4, 4}, {4, 4}, {4, 4}}}
+        };
 
         auto b1 = GooseFEM::AsTensor<1>(a0, 3);
         auto c1 = GooseFEM::AsTensor(1, a0, 3);
