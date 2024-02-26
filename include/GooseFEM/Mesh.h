@@ -109,7 +109,7 @@ inline array_type::tensor<size_t, 2> dofs(size_t nnode, size_t ndim)
  *      dofs = renumber(dofs)
  *      sort(unique(dofs[:])) == range(max(dofs+1))
  *
- * \note One can use the wrapper function renumber(). This class gives more advanced features.
+ * @note One can use the wrapper function renumber(). This class gives more advanced features.
  */
 class Renumber {
 public:

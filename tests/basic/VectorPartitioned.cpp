@@ -30,7 +30,8 @@ TEST_CASE("GooseFEM::VectorPartitioned", "VectorPartitioned.h")
             {false, false},
             {false, false},
             {false, false},
-            {false, false}};
+            {false, false}
+        };
 
         REQUIRE(xt::all(xt::equal(vector.dofs_is_p(), is_p)));
         REQUIRE(xt::all(xt::not_equal(vector.dofs_is_u(), is_p)));
